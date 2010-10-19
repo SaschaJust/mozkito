@@ -1,0 +1,12 @@
+syntax: regexp
+^reposuite-.*/target$
+syntax: regexp
+^reposuite-.*/.DS_Store$
+syntax: regexp
+^reposuite-.*/.classpath
+syntax: regexp
+^reposuite-.*/.project
+syntax: regexp
+^reposuite-.*/.settings
+syntax: regexp
+^target$

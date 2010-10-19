@@ -9,4 +9,11 @@
 	<artifactId>reposuite-nalatra</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-nalatra</name>
+	<dependencies>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>
