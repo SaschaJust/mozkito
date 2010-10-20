@@ -6,6 +6,7 @@
 		<artifactId>reposuite</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
+	<groupId>de.unisaarland.cs.st</groupId>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>reposuite-core</artifactId>
 	<packaging>jar</packaging>
