@@ -3,9 +3,6 @@ package de.unisaarland.cs.st.reposuite.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
@@ -16,9 +13,6 @@ import de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 public final class RepositoryFactory {
-	
-	private static Logger                                           logger             = LoggerFactory
-	                                                                                           .getLogger(RepositoryFactory.class);
 	
 	/**
 	 * container for repository connector mappings
@@ -63,8 +57,7 @@ public final class RepositoryFactory {
 		assert (repositoryHandlers.get(repositoryIdentifier) == null);
 		
 		if (RepoSuiteSettings.debug) {
-			logger.debug("[Line:" + Utilities.getLineNumber() + "] Adding new RepositoryType handler "
-			        + repositoryIdentifier.toString() + ".");
+			Logger.warn("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 		}
 		
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
@@ -88,6 +81,9 @@ public final class RepositoryFactory {
 	        throws UnregisteredRepositoryTypeException {
 		assert (repositoryIdentifier != null);
 		
+		if (RepoSuiteSettings.debug) {
+			Logger.warn("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
+		}
 		Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
