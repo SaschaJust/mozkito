@@ -2,12 +2,21 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class EnumArgument extends RepoSuiteArgument {
 	
 	private HashSet<String> possibleValues;
 	
+	/**
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
+	 * 
+	 */
 	public EnumArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
 	        boolean isRequired, String[] possibleValues) throws DuplicateArgumentException {
 		super(settings, name, description, defaultValue, isRequired);
@@ -17,11 +26,23 @@ public class EnumArgument extends RepoSuiteArgument {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
+	 */
 	@Override
 	public String getValue() {
 		return stringValue;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#setStringValue
+	 * (java.lang.String)
+	 */
 	@Override
 	protected void setStringValue(String value) {
 		if (!possibleValues.contains(value)) {
@@ -37,7 +58,7 @@ public class EnumArgument extends RepoSuiteArgument {
 				ss.append(s);
 				ss.append(System.getProperty("line.separator"));
 			}
-			Logger.getLogger(EnumArgument.class).error(ss.toString());
+			Logger.error(ss.toString());
 			System.exit(-1);
 		}
 		super.setStringValue(value);

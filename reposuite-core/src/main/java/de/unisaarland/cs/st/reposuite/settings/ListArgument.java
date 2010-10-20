@@ -2,6 +2,10 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.util.HashSet;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class ListArgument extends RepoSuiteArgument {
 	
 	private String delimiter;

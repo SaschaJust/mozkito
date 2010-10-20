@@ -1,5 +1,9 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public abstract class RepoSuiteArgument {
 	
 	private boolean  isRequired;
@@ -20,7 +24,7 @@ public abstract class RepoSuiteArgument {
 	 *            Set to <code>true</code> if this argument will be required
 	 */
 	public RepoSuiteArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
@@ -30,6 +34,11 @@ public abstract class RepoSuiteArgument {
 		settings.addArgument(this);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -52,16 +61,27 @@ public abstract class RepoSuiteArgument {
 		return true;
 	}
 	
+	/**
+	 * @return The description of the argument (as printed in help string).
+	 */
 	public String getDescription() {
 		return description;
 	}
 	
+	/**
+	 * @return The name of the argument (as printed in help string).
+	 */
 	public String getName() {
 		return name;
 	}
 	
 	public abstract Object getValue();
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,14 +90,27 @@ public abstract class RepoSuiteArgument {
 		return result;
 	}
 	
+	/**
+	 * @return <code>true</code> if the argument is set to be required
+	 */
 	public boolean isRequired() {
 		return isRequired;
 	}
 	
+	/**
+	 * Sets the argument to be required
+	 * 
+	 * @param required
+	 */
 	public void setRequired(boolean required) {
 		isRequired = required;
 	}
 	
+	/**
+	 * Sets the string value for the argument.
+	 * 
+	 * @param value
+	 */
 	protected void setStringValue(String value) {
 		stringValue = value;
 	}

@@ -2,14 +2,20 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class DirectoryArgument extends RepoSuiteArgument {
 	
 	private boolean create = false;
 	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
 	 * @param settings
 	 * @param name
@@ -18,10 +24,9 @@ public class DirectoryArgument extends RepoSuiteArgument {
 	 * @param isRequired
 	 * @param create
 	 *            Attempts to create directory if not exist
-	 * @throws DuplicateArgumentException
 	 */
 	public DirectoryArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, boolean create) throws DuplicateArgumentException {
+	        boolean isRequired, boolean create) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -41,22 +46,20 @@ public class DirectoryArgument extends RepoSuiteArgument {
 		
 		if (!file.exists()) {
 			if (!create) {
-				Logger.getLogger(DirectoryArgument.class).error(
-				        "The file `" + stringValue + "` specified for argument `" + getName() + "` does not exist.");
+				Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
+				        + "` does not exist.");
 				throw new RuntimeException();
 			} else {
 				if (!file.mkdirs()) {
-					Logger.getLogger(DirectoryArgument.class).error(
-					        "The file `" + stringValue + "` specified for argument `" + getName()
-					                + "` does not exist and cannot be created.");
+					Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
+					        + "` does not exist and cannot be created.");
 					throw new RuntimeException();
 				}
 			}
 		}
 		if (!file.isDirectory()) {
-			Logger.getLogger(DirectoryArgument.class).error(
-			        "The directory `" + stringValue + "` specified for argument `" + getName()
-			                + "` is not a directory. Please remove file or choose different argument value.");
+			Logger.error("The directory `" + stringValue + "` specified for argument `" + getName()
+			        + "` is not a directory. Please remove file or choose different argument value.");
 			throw new RuntimeException();
 		}
 		return file;

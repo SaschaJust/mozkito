@@ -3,12 +3,18 @@ package de.unisaarland.cs.st.reposuite.settings;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.log4j.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class URIArgument extends RepoSuiteArgument {
 	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
 	 * @param settings
 	 * @param name
@@ -39,9 +45,8 @@ public class URIArgument extends RepoSuiteArgument {
 		try {
 			return new URI(stringValue);
 		} catch (URISyntaxException e) {
-			Logger.getLogger(URIArgument.class).error(
-			        "When parsing URI string `" + stringValue + "` for argument `" + getName()
-			                + "`, the following error occurred: " + e.getMessage());
+			Logger.error("When parsing URI string `" + stringValue + "` for argument `" + getName()
+			        + "`, the following error occurred: " + e.getMessage());
 			throw new RuntimeException();
 		}
 	}

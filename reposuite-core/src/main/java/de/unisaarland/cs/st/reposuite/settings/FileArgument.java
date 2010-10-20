@@ -3,8 +3,12 @@ package de.unisaarland.cs.st.reposuite.settings;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class FileArgument extends RepoSuiteArgument {
 	
 	private boolean overwrite = false;
@@ -54,52 +58,49 @@ public class FileArgument extends RepoSuiteArgument {
 		File file = new File(stringValue.trim());
 		
 		if (file.isDirectory()) {
-			Logger.getLogger(FileArgument.class).error(
-			        "The file `" + stringValue + "` specified for argument `" + getName()
-			                + "` is a directory. Expected file. Abort.");
+			Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
+			        + "` is a directory. Expected file. Abort.");
 			throw new RuntimeException();
 		}
 		if (file.exists() && (!overwrite)) {
-			Logger.getLogger(FileArgument.class).error(
-			        "The file `" + stringValue + "` specified for argument `" + getName()
-			                + "` exists already. Please remove file or choose different argument value.");
+			Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
+			        + "` exists already. Please remove file or choose different argument value.");
 			throw new RuntimeException();
 		} else if (file.exists() && (overwrite)) {
-			Logger.getLogger(FileArgument.class).debug("Attempt overwriting file `" + file.getAbsolutePath() + "` ...");
+			
+			if (RepoSuiteSettings.debug) {
+				Logger.debug("Attempt overwriting file `" + file.getAbsolutePath() + "` ...");
+			}
+			
 			if (!file.delete()) {
-				Logger.getLogger(FileArgument.class).error(
-				        "Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
+				Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
 				throw new RuntimeException();
 			}
 			try {
 				if (!file.createNewFile()) {
-					Logger.getLogger(FileArgument.class).error(
-					        "Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
+					Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 					throw new RuntimeException();
 				}
 			} catch (IOException e) {
-				Logger.getLogger(FileArgument.class).error(e.getMessage(), e);
-				Logger.getLogger(FileArgument.class).error(
-				        "Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+				Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+				Logger.error(e.getMessage());
+				
 			}
 		} else {
 			//file does not exist so far
 			if (mustExist) {
-				Logger.getLogger(FileArgument.class).error(
-				        "Specified file `" + file.getAbsolutePath() + "` for argument `" + getName()
-				                + "` must exist but does not exist. Abort.");
+				Logger.error("Specified file `" + file.getAbsolutePath() + "` for argument `" + getName()
+				        + "` must exist but does not exist. Abort.");
 				throw new RuntimeException();
 			} else {
 				try {
 					if (!file.createNewFile()) {
-						Logger.getLogger(FileArgument.class).error(
-						        "Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 						throw new RuntimeException();
 					}
 				} catch (IOException e) {
-					Logger.getLogger(FileArgument.class).error(e.getMessage(), e);
-					Logger.getLogger(FileArgument.class).error(
-					        "Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+					Logger.error(e.getMessage());
 				}
 			}
 		}

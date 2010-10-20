@@ -1,12 +1,19 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public abstract class RepoSuiteArgumentSet {
 	
-	protected HashMap<String, RepoSuiteArgument> arguments;
+	private HashMap<String, RepoSuiteArgument> arguments;
 	
+	/**
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
+	 */
 	public RepoSuiteArgumentSet() {
 		arguments = new HashMap<String, RepoSuiteArgument>();
 	}
@@ -17,18 +24,24 @@ public abstract class RepoSuiteArgumentSet {
 	 * 
 	 * @param argument
 	 *            MinerArgument to be added
-	 * @throws DuplicateArgumentException
-	 *             If the argument given to be added was added before.
+	 * @return <code>true</code> if the argument could be added.
+	 *         <code>false</code> otherwise.
 	 */
-	public void addArgument(RepoSuiteArgument argument) throws DuplicateArgumentException {
+	public boolean addArgument(RepoSuiteArgument argument) {
 		if (arguments.containsKey(argument.getName())) {
-			throw new DuplicateArgumentException(argument);
+			return false;
 		}
 		arguments.put(argument.getName(), argument);
+		return true;
 	}
 	
-	public Collection<RepoSuiteArgument> getArguments() {
-		return arguments.values();
+	/**
+	 * Return the arguments held within the set.
+	 * 
+	 * @return
+	 */
+	public Map<String, RepoSuiteArgument> getArguments() {
+		return arguments;
 	}
 	
 	public abstract Object getValue();

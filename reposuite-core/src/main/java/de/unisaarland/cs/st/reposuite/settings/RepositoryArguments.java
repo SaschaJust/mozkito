@@ -2,13 +2,16 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.net.URI;
 
-import org.apache.log4j.Logger;
-
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RepositoryFactory;
 
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class RepositoryArguments extends RepoSuiteArgumentSet {
 	
 	private final URIArgument    repoDirArg;
@@ -16,10 +19,18 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	private final StringArgument userArg;
 	private final StringArgument passArg;
 	
+	/**
+	 * Is an argument set that contains all arguments necessary for the
+	 * repositories.
+	 * 
+	 * @param settings
+	 * @param isRequired
+	 * @throws DuplicateArgumentException
+	 */
 	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) throws DuplicateArgumentException {
 		super();
-		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory",
-		        "Directory where the rcs repository is stored", null, true);
+		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
+		        null, true);
 		RepositoryType[] rcsTypes = RepositoryType.values();
 		String[] argEnums = new String[rcsTypes.length];
 		StringBuilder ss = new StringBuilder();
@@ -29,21 +40,26 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			ss.append(rcsTypes[i].toString());
 			ss.append(" ");
 		}
-		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
-		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
-		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
+		userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
+		passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
+	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = this.repoDirArg.getValue();
-		String username = this.userArg.getValue();
-		String password = this.passArg.getValue();
-		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
+		URI repositoryURI = repoDirArg.getValue();
+		String username = userArg.getValue();
+		String password = passArg.getValue();
+		RepositoryType rcsType = RepositoryType.valueOf(repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
-			Logger.getLogger(RepositoryArguments.class).warn(
-			        "You provided username or password only. Ignoring set options.");
+			Logger.warn("You provided username or password only. Ignoring set options.");
 			username = null;
 			password = null;
 		}
@@ -58,13 +74,13 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			}
 			return repository;
 		} catch (UnregisteredRepositoryTypeException e) {
-			Logger.getLogger(RepositoryArguments.class).error(e.getMessage(), e);
+			Logger.error(e.getMessage());
 			throw new RuntimeException();
 		} catch (InstantiationException e) {
-			Logger.getLogger(RepositoryArguments.class).error(e.getMessage(), e);
+			Logger.error(e.getMessage());
 			throw new RuntimeException();
 		} catch (IllegalAccessException e) {
-			Logger.getLogger(RepositoryArguments.class).error(e.getMessage(), e);
+			Logger.error(e.getMessage());
 			throw new RuntimeException();
 		}
 	}
