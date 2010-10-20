@@ -189,6 +189,7 @@
 					<useStandardDocletOptions>true</useStandardDocletOptions>
 					<minmemory>128m</minmemory>
 					<maxmemory>512m</maxmemory>
+					<show>private</show>
 					<source>1.6</source>
 				</configuration>
 			</plugin>
