@@ -23,7 +23,7 @@ public class RepoSuiteSettings {
 	private Properties                         commandlineProps;
 	
 	public RepoSuiteSettings() {
-		arguments = new HashMap<String, RepoSuiteArgument>();
+		this.arguments = new HashMap<String, RepoSuiteArgument>();
 	}
 	
 	/**
@@ -41,10 +41,10 @@ public class RepoSuiteSettings {
 	 *         <code>False</code> otherwise.
 	 */
 	protected boolean addArgument(RepoSuiteArgument argument) {
-		if (arguments.containsKey(argument.getName())) {
+		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
-		arguments.put(argument.getName(), argument);
+		this.arguments.put(argument.getName(), argument);
 		return true;
 	}
 	
@@ -57,14 +57,14 @@ public class RepoSuiteSettings {
 	 */
 	protected boolean addArgumentSet(RepoSuiteArgumentSet argSet) {
 		
-		HashMap<String, RepoSuiteArgument> tmpArguments = new HashMap<String, RepoSuiteArgument>(arguments);
+		HashMap<String, RepoSuiteArgument> tmpArguments = new HashMap<String, RepoSuiteArgument>(this.arguments);
 		for (RepoSuiteArgument argument : argSet.getArguments().values()) {
 			if (tmpArguments.containsKey(argument.getName())) {
 				return false;
 			}
 			tmpArguments.put(argument.getName(), argument);
 		}
-		arguments = tmpArguments;
+		this.arguments = tmpArguments;
 		return true;
 	}
 	
@@ -74,7 +74,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 */
 	public Collection<RepoSuiteArgument> getArguments() {
-		return arguments.values();
+		return this.arguments.values();
 	}
 	
 	/**
@@ -95,13 +95,13 @@ public class RepoSuiteSettings {
 		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
 		ss.append(System.getProperty("line.separator"));
 		
-		for (String argName : arguments.keySet()) {
+		for (String argName : this.arguments.keySet()) {
 			ss.append("\t");
 			ss.append("-D");
 			ss.append(argName);
 			ss.append(": ");
-			ss.append(arguments.get(argName).getDescription());
-			if (arguments.get(argName).isRequired()) {
+			ss.append(this.arguments.get(argName).getDescription());
+			if (this.arguments.get(argName).isRequired()) {
 				ss.append(" (required!)");
 			}
 			ss.append(System.getProperty("line.separator"));
@@ -118,7 +118,7 @@ public class RepoSuiteSettings {
 	public void parseArguments() {
 		
 		// save given arguments to load if necessary
-		commandlineProps = System.getProperties();
+		this.commandlineProps = System.getProperties();
 		
 		if (System.getProperty("repoSuiteSettings") != null) {
 			boolean parseSettingFile = true;
@@ -148,17 +148,17 @@ public class RepoSuiteSettings {
 			for (Entry<Object, Object> entry : System.getProperties().entrySet()) {
 				String argName = entry.getKey().toString();
 				String value = entry.getValue().toString();
-				if (arguments.containsKey(argName)) {
-					arguments.get(argName).setStringValue(value);
+				if (this.arguments.containsKey(argName)) {
+					this.arguments.get(argName).setStringValue(value);
 				}
 			}
 		}
 		
-		for (Entry<Object, Object> entry : commandlineProps.entrySet()) {
+		for (Entry<Object, Object> entry : this.commandlineProps.entrySet()) {
 			String argName = entry.getKey().toString();
 			String value = entry.getValue().toString();
-			if ((arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
-				arguments.get(argName).setStringValue(value);
+			if ((this.arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
+				this.arguments.get(argName).setStringValue(value);
 			}
 		}
 		
@@ -194,11 +194,11 @@ public class RepoSuiteSettings {
 	 *             If no argument with the specified name is registered.
 	 */
 	protected void setField(String argument, String value) throws NoSuchFieldException {
-		if (!arguments.containsKey(argument)) {
+		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
 			        + "The argument is not part of the current argument set.");
 		}
-		arguments.get(argument).setStringValue(value);
+		this.arguments.get(argument).setStringValue(value);
 	}
 	
 	/**
@@ -215,6 +215,25 @@ public class RepoSuiteSettings {
 		return minerRepoArgSet;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(RepoSuiteSettings.class.getSimpleName() + ":");
+		builder.append(System.getProperty("line.separator"));
+		
+		for (int i = 0; i < builder.length(); ++i) {
+			builder.append('Ñ');
+		}
+		
+		for (RepoSuiteArgument arg : this.arguments.values()) {
+			builder.append(System.getProperty("line.separator"));
+			builder.append(arg.toString());
+		}
+		
+		return builder.toString();
+	}
+	
 	/**
 	 * Check if all required arguments are set.
 	 * 
@@ -222,7 +241,7 @@ public class RepoSuiteSettings {
 	 *         required argument with no value set first found.
 	 */
 	private RepoSuiteArgument validateSettings() {
-		for (RepoSuiteArgument arg : arguments.values()) {
+		for (RepoSuiteArgument arg : this.arguments.values()) {
 			if (arg.isRequired() && (arg.getValue() == null)) {
 				return arg;
 			}

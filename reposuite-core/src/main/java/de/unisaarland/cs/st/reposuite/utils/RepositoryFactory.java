@@ -57,7 +57,7 @@ public final class RepositoryFactory {
 		assert (repositoryHandlers.get(repositoryIdentifier) == null);
 		
 		if (RepoSuiteSettings.debug) {
-			Logger.warn("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
+			Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 		}
 		
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
@@ -82,7 +82,7 @@ public final class RepositoryFactory {
 		assert (repositoryIdentifier != null);
 		
 		if (RepoSuiteSettings.debug) {
-			Logger.warn("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
+			Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 		}
 		Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
 		

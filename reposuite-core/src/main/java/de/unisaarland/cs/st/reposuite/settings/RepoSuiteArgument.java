@@ -6,10 +6,11 @@ package de.unisaarland.cs.st.reposuite.settings;
  */
 public abstract class RepoSuiteArgument {
 	
-	private boolean  isRequired;
-	private String   description;
-	private String   name;
-	protected String stringValue;
+	private boolean      isRequired;
+	private final String description;
+	private final String name;
+	private String       defaultValue;
+	protected String     stringValue;
 	
 	/**
 	 * @param settings
@@ -29,7 +30,8 @@ public abstract class RepoSuiteArgument {
 		this.description = description;
 		this.isRequired = isRequired;
 		if (defaultValue != null) {
-			stringValue = defaultValue;
+			this.stringValue = defaultValue;
+			this.defaultValue = defaultValue;
 		}
 		settings.addArgument(this);
 	}
@@ -51,11 +53,11 @@ public abstract class RepoSuiteArgument {
 			return false;
 		}
 		RepoSuiteArgument other = (RepoSuiteArgument) obj;
-		if (name == null) {
+		if (this.name == null) {
 			if (other.name != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!this.name.equals(other.name)) {
 			return false;
 		}
 		return true;
@@ -65,14 +67,14 @@ public abstract class RepoSuiteArgument {
 	 * @return The description of the argument (as printed in help string).
 	 */
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 	
 	/**
 	 * @return The name of the argument (as printed in help string).
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public abstract Object getValue();
@@ -86,7 +88,7 @@ public abstract class RepoSuiteArgument {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
 		return result;
 	}
 	
@@ -94,7 +96,7 @@ public abstract class RepoSuiteArgument {
 	 * @return <code>true</code> if the argument is set to be required
 	 */
 	public boolean isRequired() {
-		return isRequired;
+		return this.isRequired;
 	}
 	
 	/**
@@ -103,7 +105,7 @@ public abstract class RepoSuiteArgument {
 	 * @param required
 	 */
 	public void setRequired(boolean required) {
-		isRequired = required;
+		this.isRequired = required;
 	}
 	
 	/**
@@ -112,7 +114,12 @@ public abstract class RepoSuiteArgument {
 	 * @param value
 	 */
 	protected void setStringValue(String value) {
-		stringValue = value;
+		this.stringValue = value;
 	}
 	
+	@Override
+	public String toString() {
+		return "name " + (this.isRequired ? "(required) " : "")
+		        + (this.defaultValue != null ? "[default: " + this.defaultValue + "] " : "") + ": " + this.description;
+	}
 }
