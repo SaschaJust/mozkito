@@ -13,9 +13,19 @@ import de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository;
 
 public final class RepositoryFactory {
 	
+	/**
+	 * container for repository connector mappings
+	 */
 	private static Map<RCSType, Map<String, Class<? extends Repository>>> repositoryHandlers = new HashMap<RCSType, Map<String, Class<? extends Repository>>>();
 	
+	/**
+	 * static registration of known modules
+	 */
 	static {
+		// this can be removed after adding classpath traversal search for classes implementing Repository
+		// requires addRepositoryHandler to become public to register repository connectors from settings
+		// class
+		
 		// ======== Repository handlers ========
 		// Subversion
 		addRepositoryHandler(RCSType.SUBVERSION, null, SubversionRepository.class);
@@ -39,12 +49,16 @@ public final class RepositoryFactory {
 	 * version string
 	 * 
 	 * @param repositoryIdentifier
+	 *            not null
 	 * @param version
+	 *            assumed to be "default" if null
 	 * @param repositoryClass
+	 *            class object implementing {@link Repository}, not null
 	 */
 	private static void addRepositoryHandler(RCSType repositoryIdentifier, String version,
 	        Class<? extends Repository> repositoryClass) {
 		assert (repositoryIdentifier != null);
+		assert (repositoryClass != null);
 		
 		Map<String, Class<? extends Repository>> map = new HashMap<String, Class<? extends Repository>>();
 		map.put(version == null ? "default" : version.toLowerCase(), repositoryClass);
@@ -60,8 +74,10 @@ public final class RepositoryFactory {
 	 * repositoryIdentifier and version (=default if null)
 	 * 
 	 * @param repositoryIdentifier
+	 *            may not be null
 	 * @param version
-	 * @return
+	 *            handled as "default" if null
+	 * @return the corresponding {@link Repository} class object
 	 * @throws UnregisteredRepositoryTypeException
 	 */
 	public static Class<? extends Repository> getRepositoryHandler(RCSType repositoryIdentifier, String version)
