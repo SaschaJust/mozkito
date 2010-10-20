@@ -7,8 +7,6 @@ import org.apache.log4j.Logger;
 
 public class URIArgument extends RepoSuiteArgument {
 	
-	private boolean create = false;
-	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory
 	 * 
@@ -22,7 +20,7 @@ public class URIArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public URIArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, boolean create) throws DuplicateArgumentException {
+	        boolean isRequired) throws DuplicateArgumentException {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
