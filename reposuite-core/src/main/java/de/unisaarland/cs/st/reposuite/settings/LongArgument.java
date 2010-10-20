@@ -19,7 +19,7 @@ public class LongArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public LongArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	

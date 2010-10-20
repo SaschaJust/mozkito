@@ -26,7 +26,7 @@ public class URIArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public URIArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}

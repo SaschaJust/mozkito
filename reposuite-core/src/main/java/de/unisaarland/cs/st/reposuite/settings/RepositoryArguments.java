@@ -27,7 +27,7 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 * @param isRequired
 	 * @throws DuplicateArgumentException
 	 */
-	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) throws DuplicateArgumentException {
+	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) {
 		super();
 		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
 		        null, true);

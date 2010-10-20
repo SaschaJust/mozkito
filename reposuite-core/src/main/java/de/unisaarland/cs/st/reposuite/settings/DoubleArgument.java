@@ -19,7 +19,7 @@ public class DoubleArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public DoubleArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	

@@ -17,7 +17,7 @@ public class StringArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public StringArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}

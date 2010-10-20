@@ -178,7 +178,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 * @throws DuplicateArgumentException
 	 */
-	public DatabaseArguments setDatabaseArgs(boolean isRequired) throws DuplicateArgumentException {
+	public DatabaseArguments setDatabaseArgs(boolean isRequired) {
 		DatabaseArguments minerDatabaseArguments = new DatabaseArguments(this, isRequired);
 		return minerDatabaseArguments;
 	}
@@ -210,7 +210,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 * @throws DuplicateArgumentException
 	 */
-	public RepositoryArguments setRepositoryArg(boolean isRequired) throws DuplicateArgumentException {
+	public RepositoryArguments setRepositoryArg(boolean isRequired) {
 		RepositoryArguments minerRepoArgSet = new RepositoryArguments(this, isRequired);
 		return minerRepoArgSet;
 	}

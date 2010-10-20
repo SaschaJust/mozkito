@@ -24,7 +24,7 @@ public class ListArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) throws DuplicateArgumentException {
+	        boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		delimiter = ",";
 	}
@@ -46,7 +46,7 @@ public class ListArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, String delimiter) throws DuplicateArgumentException {
+	        boolean isRequired, String delimiter) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.delimiter = delimiter;
 	}

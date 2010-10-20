@@ -15,20 +15,15 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
 	protected DatabaseArguments(RepoSuiteSettings settings, boolean isRequired) {
 		super();
-		try {
-			addArgument(new StringArgument(settings, "database", "Name of the database", null, isRequired));
-			addArgument(new StringArgument(settings, "dbUser", "User name for database. Default: miner", "miner",
-			        isRequired));
-			addArgument(new StringArgument(settings, "dbHost", "Name of database host. Default: localhost",
-			        "localhost", isRequired));
-			addArgument(new StringArgument(settings, "dbPassword", "Password for database. Default: miner", "miner",
-			        isRequired));
-			addArgument(new EnumArgument(settings, "dbType", "Possible values: PSQL, MYSQL", "PSQL", isRequired,
-			        new String[] { "PSQL", "MYSQL" }));
-		} catch (DuplicateArgumentException e) {
-			Logger.error(e.getMessage());
-			throw new RuntimeException();
-		}
+		addArgument(new StringArgument(settings, "database", "Name of the database", null, isRequired));
+		addArgument(new StringArgument(settings, "dbUser", "User name for database. Default: miner", "miner",
+		        isRequired));
+		addArgument(new StringArgument(settings, "dbHost", "Name of database host. Default: localhost", "localhost",
+		        isRequired));
+		addArgument(new StringArgument(settings, "dbPassword", "Password for database. Default: miner", "miner",
+		        isRequired));
+		addArgument(new EnumArgument(settings, "dbType", "Possible values: PSQL, MYSQL", "PSQL", isRequired,
+		        new String[] { "PSQL", "MYSQL" }));
 	}
 	
 	@Override

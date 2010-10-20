@@ -39,7 +39,7 @@ public class FileArgument extends RepoSuiteArgument {
 	 * @throws DuplicateArgumentException
 	 */
 	public FileArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, boolean overwrite, boolean mustExist) throws DuplicateArgumentException {
+	        boolean isRequired, boolean overwrite, boolean mustExist) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
 		this.mustExist = mustExist;

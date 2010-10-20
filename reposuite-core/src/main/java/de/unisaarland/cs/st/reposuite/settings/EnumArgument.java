@@ -18,7 +18,7 @@ public class EnumArgument extends RepoSuiteArgument {
 	 * 
 	 */
 	public EnumArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, String[] possibleValues) throws DuplicateArgumentException {
+	        boolean isRequired, String[] possibleValues) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.possibleValues = new HashSet<String>();
 		for (String s : possibleValues) {
