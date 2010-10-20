@@ -17,6 +17,11 @@ import java.util.jar.JarFile;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public class ClassFinder {
 	
 	public static Collection<Class<?>> getClassesForPackage(String pckgname) throws ClassNotFoundException {
