@@ -162,9 +162,7 @@ public class RepoSuiteSettings {
 			}
 		}
 		
-		RepoSuiteArgument nonValid = validateSettings();
-		if (nonValid != null) {
-			Logger.error("Required argument " + nonValid.getName() + " was not set.");
+		if (!validateSettings()) {
 			System.err.println(getHelpString());
 			throw new RuntimeException();
 		}
@@ -221,12 +219,13 @@ public class RepoSuiteSettings {
 	 * @return <code>null</code> if all required arguments are set. Returns the
 	 *         required argument with no value set first found.
 	 */
-	private RepoSuiteArgument validateSettings() {
+	private boolean validateSettings() {
 		for (RepoSuiteArgument arg : arguments.values()) {
 			if (arg.isRequired() && (arg.getValue() == null)) {
-				return arg;
+				Logger.error("Required argument `" + arg.getName() + "` is not set.");
+				return false;
 			}
 		}
-		return null;
+		return true;
 	}
 }
