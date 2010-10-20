@@ -4,6 +4,27 @@ import org.slf4j.LoggerFactory;
 
 public class Logger {
 	
+	public static void debug(String message) {
+		Tuple<org.slf4j.Logger, String> ret = tags();
+		assert (ret.getFirst() != null);
+		assert (ret.getSecond() != null);
+		ret.getFirst().debug("[" + ret.getSecond() + "] " + message);
+	}
+	
+	public static void error(String message) {
+		Tuple<org.slf4j.Logger, String> ret = tags();
+		assert (ret.getFirst() != null);
+		assert (ret.getSecond() != null);
+		ret.getFirst().error("[" + ret.getSecond() + "] " + message);
+	}
+	
+	public static void info(String message) {
+		Tuple<org.slf4j.Logger, String> ret = tags();
+		assert (ret.getFirst() != null);
+		assert (ret.getSecond() != null);
+		ret.getFirst().info("[" + ret.getSecond() + "] " + message);
+	}
+	
 	private static Tuple<org.slf4j.Logger, String> tags() {
 		Throwable throwable = new Throwable();
 		assert (throwable != null);
@@ -25,11 +46,17 @@ public class Logger {
 		return new Tuple<org.slf4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
 	}
 	
+	public static void trace(String message) {
+		Tuple<org.slf4j.Logger, String> ret = tags();
+		assert (ret.getFirst() != null);
+		assert (ret.getSecond() != null);
+		ret.getFirst().trace("[" + ret.getSecond() + "] " + message);
+	}
+	
 	public static void warn(String message) {
 		Tuple<org.slf4j.Logger, String> ret = tags();
 		assert (ret.getFirst() != null);
 		assert (ret.getSecond() != null);
 		ret.getFirst().warn("[" + ret.getSecond() + "] " + message);
-		
 	}
 }
