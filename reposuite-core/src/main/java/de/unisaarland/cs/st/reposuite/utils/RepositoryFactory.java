@@ -3,20 +3,27 @@ package de.unisaarland.cs.st.reposuite.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository;
 import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 public final class RepositoryFactory {
+	
+	private static Logger                                           logger             = LoggerFactory
+	                                                                                           .getLogger(RepositoryFactory.class);
 	
 	/**
 	 * container for repository connector mappings
 	 */
-	private static Map<RepositoryType, Map<String, Class<? extends Repository>>> repositoryHandlers = new HashMap<RepositoryType, Map<String, Class<? extends Repository>>>();
+	private static Map<RepositoryType, Class<? extends Repository>> repositoryHandlers = new HashMap<RepositoryType, Class<? extends Repository>>();
 	
 	/**
 	 * static registration of known modules
@@ -28,45 +35,42 @@ public final class RepositoryFactory {
 		
 		// ======== Repository handlers ========
 		// Subversion
-		addRepositoryHandler(RepositoryType.SUBVERSION, null, SubversionRepository.class);
-		addRepositoryHandler(RepositoryType.SUBVERSION, "1.6", SubversionRepository.class);
+		addRepositoryHandler(RepositoryType.SUBVERSION, SubversionRepository.class);
 		
 		// Mercurial
-		addRepositoryHandler(RepositoryType.MERCURIAL, null, MercurialRepository.class);
-		addRepositoryHandler(RepositoryType.MERCURIAL, "1.6.3", MercurialRepository.class);
+		addRepositoryHandler(RepositoryType.MERCURIAL, MercurialRepository.class);
 		
 		// Git
-		addRepositoryHandler(RepositoryType.GIT, null, GitRepository.class);
-		addRepositoryHandler(RepositoryType.GIT, "1.6.3.3", GitRepository.class);
+		addRepositoryHandler(RepositoryType.GIT, GitRepository.class);
 		
 		// CVS
-		addRepositoryHandler(RepositoryType.CVS, null, CVSRepository.class);
-		addRepositoryHandler(RepositoryType.CVS, "1.12.13", CVSRepository.class);
+		addRepositoryHandler(RepositoryType.CVS, CVSRepository.class);
 	}
 	
 	/**
-	 * registers a repository to the factory keyed by the {@link RepositoryType} and
-	 * version string
+	 * registers a repository to the factory keyed by the {@link RepositoryType}
+	 * and version string
 	 * 
 	 * @param repositoryIdentifier
 	 *            not null
-	 * @param version
-	 *            assumed to be "default" if null
 	 * @param repositoryClass
 	 *            class object implementing {@link Repository}, not null
 	 */
-	private static void addRepositoryHandler(RepositoryType repositoryIdentifier, String version,
+	private static void addRepositoryHandler(RepositoryType repositoryIdentifier,
 	        Class<? extends Repository> repositoryClass) {
 		assert (repositoryIdentifier != null);
 		assert (repositoryClass != null);
+		assert (repositoryHandlers.get(repositoryIdentifier) == null);
 		
-		Map<String, Class<? extends Repository>> map = new HashMap<String, Class<? extends Repository>>();
-		map.put(version == null ? "default" : version.toLowerCase(), repositoryClass);
-		repositoryHandlers.put(repositoryIdentifier, map);
+		if (RepoSuiteSettings.debug) {
+			logger.debug("[" + Utilities.getLineNumber() + "] Adding new RepositoryType handler "
+			        + repositoryIdentifier.toString() + ".");
+		}
+		
+		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
 		
 		assert (repositoryHandlers.get(repositoryIdentifier) != null);
-		assert (repositoryHandlers.get(repositoryIdentifier).size() > 0);
-		assert (repositoryHandlers.get(repositoryIdentifier).get("default") != null);
+		assert (repositoryHandlers.get(repositoryIdentifier) == repositoryClass);
 	}
 	
 	/**
@@ -74,18 +78,17 @@ public final class RepositoryFactory {
 	 * repositoryIdentifier and version (=default if null)
 	 * 
 	 * @param repositoryIdentifier
-	 *            may not be null
-	 * @param version
-	 *            handled as "default" if null
+	 *            not null
 	 * @return the corresponding {@link Repository} class object
 	 * @throws UnregisteredRepositoryTypeException
+	 *             if no matching repository class object could be found in the
+	 *             registry
 	 */
-	public static Class<? extends Repository> getRepositoryHandler(RepositoryType repositoryIdentifier, String version)
+	public static Class<? extends Repository> getRepositoryHandler(RepositoryType repositoryIdentifier)
 	        throws UnregisteredRepositoryTypeException {
 		assert (repositoryIdentifier != null);
 		
-		Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier).get(
-		        version != null ? version.toLowerCase() : "default");
+		Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException();

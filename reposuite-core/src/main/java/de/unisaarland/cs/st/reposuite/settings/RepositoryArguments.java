@@ -11,15 +11,15 @@ import de.unisaarland.cs.st.reposuite.utils.RepositoryFactory;
 
 public class RepositoryArguments extends RepoSuiteArgumentSet {
 	
-	private URIArgument    repoDirArg;
-	private EnumArgument   repoTypeArg;
-	private StringArgument userArg;
-	private StringArgument passArg;
+	private final URIArgument    repoDirArg;
+	private final EnumArgument   repoTypeArg;
+	private final StringArgument userArg;
+	private final StringArgument passArg;
 	
 	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) throws DuplicateArgumentException {
 		super();
-		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
-		        null, true);
+		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory",
+		        "Directory where the rcs repository is stored", null, true);
 		RepositoryType[] rcsTypes = RepositoryType.values();
 		String[] argEnums = new String[rcsTypes.length];
 		StringBuilder ss = new StringBuilder();
@@ -29,17 +29,17 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			ss.append(rcsTypes[i].toString());
 			ss.append(" ");
 		}
-		repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
-		userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
-		passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
+		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
+		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
 	}
 	
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = repoDirArg.getValue();
-		String username = userArg.getValue();
-		String password = passArg.getValue();
-		RepositoryType rcsType = RepositoryType.valueOf(repoTypeArg.getValue());
+		URI repositoryURI = this.repoDirArg.getValue();
+		String username = this.userArg.getValue();
+		String password = this.passArg.getValue();
+		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			Logger.getLogger(RepositoryArguments.class).warn(
@@ -49,7 +49,7 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		}
 		
 		try {
-			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType, null);
+			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
 			Repository repository = repositoryClass.newInstance();
 			if ((username != null) && (password != null)) {
 				repository.setup(repositoryURI);

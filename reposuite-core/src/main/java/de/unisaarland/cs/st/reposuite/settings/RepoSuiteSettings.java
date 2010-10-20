@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+<<<<<<< local
+=======
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,8 +13,12 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+>>>>>>> other
 public class RepoSuiteSettings {
 	
+<<<<<<< local
+	public static final boolean debug = Boolean.parseBoolean(System.getProperty("debug", "false"));
+=======
 	private HashMap<String, RepoSuiteArgument> arguments;
 	
 	private Properties                         commandlineProps;
@@ -177,4 +183,5 @@ public class RepoSuiteSettings {
 		}
 	}
 	
+>>>>>>> other
 }
