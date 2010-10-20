@@ -221,7 +221,7 @@ public class RepoSuiteSettings {
 		builder.append(System.getProperty("line.separator"));
 		
 		for (int i = 0; i < builder.length(); ++i) {
-			builder.append('Ñ');
+			builder.append('-');
 		}
 		
 		for (RepoSuiteArgument arg : arguments.values()) {
