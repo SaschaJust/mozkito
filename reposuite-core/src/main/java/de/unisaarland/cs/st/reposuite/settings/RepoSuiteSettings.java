@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 public class RepoSuiteSettings {
 	
-	public static final boolean                      debug = Boolean.parseBoolean(System.getProperty("debug", "false"));
+	public static final boolean                      debug = (System.getProperty("debug") != null);
 	private final HashMap<String, RepoSuiteArgument> arguments;
 	
 	private Properties                               commandlineProps;

@@ -63,7 +63,7 @@ public final class RepositoryFactory {
 		assert (repositoryHandlers.get(repositoryIdentifier) == null);
 		
 		if (RepoSuiteSettings.debug) {
-			logger.debug("[" + Utilities.getLineNumber() + "] Adding new RepositoryType handler "
+			logger.debug("[Line:" + Utilities.getLineNumber() + "] Adding new RepositoryType handler "
 			        + repositoryIdentifier.toString() + ".");
 		}
 		
