@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.rcs.RCSType;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository;
 import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
@@ -16,7 +16,7 @@ public final class RepositoryFactory {
 	/**
 	 * container for repository connector mappings
 	 */
-	private static Map<RCSType, Map<String, Class<? extends Repository>>> repositoryHandlers = new HashMap<RCSType, Map<String, Class<? extends Repository>>>();
+	private static Map<RepositoryType, Map<String, Class<? extends Repository>>> repositoryHandlers = new HashMap<RepositoryType, Map<String, Class<? extends Repository>>>();
 	
 	/**
 	 * static registration of known modules
@@ -28,24 +28,24 @@ public final class RepositoryFactory {
 		
 		// ======== Repository handlers ========
 		// Subversion
-		addRepositoryHandler(RCSType.SUBVERSION, null, SubversionRepository.class);
-		addRepositoryHandler(RCSType.SUBVERSION, "1.6", SubversionRepository.class);
+		addRepositoryHandler(RepositoryType.SUBVERSION, null, SubversionRepository.class);
+		addRepositoryHandler(RepositoryType.SUBVERSION, "1.6", SubversionRepository.class);
 		
 		// Mercurial
-		addRepositoryHandler(RCSType.MERCURIAL, null, MercurialRepository.class);
-		addRepositoryHandler(RCSType.MERCURIAL, "1.6.3", MercurialRepository.class);
+		addRepositoryHandler(RepositoryType.MERCURIAL, null, MercurialRepository.class);
+		addRepositoryHandler(RepositoryType.MERCURIAL, "1.6.3", MercurialRepository.class);
 		
 		// Git
-		addRepositoryHandler(RCSType.GIT, null, GitRepository.class);
-		addRepositoryHandler(RCSType.GIT, "1.6.3.3", GitRepository.class);
+		addRepositoryHandler(RepositoryType.GIT, null, GitRepository.class);
+		addRepositoryHandler(RepositoryType.GIT, "1.6.3.3", GitRepository.class);
 		
 		// CVS
-		addRepositoryHandler(RCSType.CVS, null, CVSRepository.class);
-		addRepositoryHandler(RCSType.CVS, "1.12.13", CVSRepository.class);
+		addRepositoryHandler(RepositoryType.CVS, null, CVSRepository.class);
+		addRepositoryHandler(RepositoryType.CVS, "1.12.13", CVSRepository.class);
 	}
 	
 	/**
-	 * registers a repository to the factory keyed by the {@link RCSType} and
+	 * registers a repository to the factory keyed by the {@link RepositoryType} and
 	 * version string
 	 * 
 	 * @param repositoryIdentifier
@@ -55,7 +55,7 @@ public final class RepositoryFactory {
 	 * @param repositoryClass
 	 *            class object implementing {@link Repository}, not null
 	 */
-	private static void addRepositoryHandler(RCSType repositoryIdentifier, String version,
+	private static void addRepositoryHandler(RepositoryType repositoryIdentifier, String version,
 	        Class<? extends Repository> repositoryClass) {
 		assert (repositoryIdentifier != null);
 		assert (repositoryClass != null);
@@ -80,7 +80,7 @@ public final class RepositoryFactory {
 	 * @return the corresponding {@link Repository} class object
 	 * @throws UnregisteredRepositoryTypeException
 	 */
-	public static Class<? extends Repository> getRepositoryHandler(RCSType repositoryIdentifier, String version)
+	public static Class<? extends Repository> getRepositoryHandler(RepositoryType repositoryIdentifier, String version)
 	        throws UnregisteredRepositoryTypeException {
 		assert (repositoryIdentifier != null);
 		
