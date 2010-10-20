@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
-<<<<<<< local
-=======
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,18 +11,15 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
->>>>>>> other
 public class RepoSuiteSettings {
 	
-<<<<<<< local
-	public static final boolean debug = Boolean.parseBoolean(System.getProperty("debug", "false"));
-=======
-	private HashMap<String, RepoSuiteArgument> arguments;
+	public static final boolean                      debug = Boolean.parseBoolean(System.getProperty("debug", "false"));
+	private final HashMap<String, RepoSuiteArgument> arguments;
 	
-	private Properties                         commandlineProps;
+	private Properties                               commandlineProps;
 	
 	public RepoSuiteSettings() {
-		arguments = new HashMap<String, RepoSuiteArgument>();
+		this.arguments = new HashMap<String, RepoSuiteArgument>();
 	}
 	
 	/**
@@ -41,10 +36,10 @@ public class RepoSuiteSettings {
 	 */
 	protected void addArgument(RepoSuiteArgument argument) throws DuplicateArgumentException {
 		
-		if (arguments.containsKey(argument.getName())) {
+		if (this.arguments.containsKey(argument.getName())) {
 			throw new DuplicateArgumentException(argument);
 		}
-		arguments.put(argument.getName(), argument);
+		this.arguments.put(argument.getName(), argument);
 	}
 	
 	/**
@@ -56,15 +51,15 @@ public class RepoSuiteSettings {
 	protected void addArgumentSet(RepoSuiteArgumentSet argSet) throws DuplicateArgumentException {
 		
 		for (RepoSuiteArgument argument : argSet.getArguments()) {
-			if (arguments.containsKey(argument.getName())) {
+			if (this.arguments.containsKey(argument.getName())) {
 				throw new DuplicateArgumentException(argument);
 			}
-			arguments.put(argument.getName(), argument);
+			this.arguments.put(argument.getName(), argument);
 		}
 	}
 	
 	public Collection<RepoSuiteArgument> getArguments() {
-		return arguments.values();
+		return this.arguments.values();
 	}
 	
 	public String getHelpString() {
@@ -79,13 +74,13 @@ public class RepoSuiteSettings {
 		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
 		ss.append(System.getProperty("line.separator"));
 		
-		for (String argName : arguments.keySet()) {
+		for (String argName : this.arguments.keySet()) {
 			ss.append("\t");
 			ss.append("-D");
 			ss.append(argName);
 			ss.append(": ");
-			ss.append(arguments.get(argName).getDescription());
-			if (arguments.get(argName).isRequired()) {
+			ss.append(this.arguments.get(argName).getDescription());
+			if (this.arguments.get(argName).isRequired()) {
 				ss.append(" (required!)");
 			}
 			ss.append(System.getProperty("line.separator"));
@@ -102,7 +97,7 @@ public class RepoSuiteSettings {
 	public void parseArguments() {
 		
 		// save given arguments to load if necessary
-		commandlineProps = System.getProperties();
+		this.commandlineProps = System.getProperties();
 		
 		if (System.getProperty("repoSuiteSettings") != null) {
 			boolean parseSettingFile = true;
@@ -134,17 +129,17 @@ public class RepoSuiteSettings {
 			for (Entry<Object, Object> entry : System.getProperties().entrySet()) {
 				String argName = entry.getKey().toString();
 				String value = entry.getValue().toString();
-				if (arguments.containsKey(argName)) {
-					arguments.get(argName).setStringValue(value);
+				if (this.arguments.containsKey(argName)) {
+					this.arguments.get(argName).setStringValue(value);
 				}
 			}
 		}
 		
-		for (Entry<Object, Object> entry : commandlineProps.entrySet()) {
+		for (Entry<Object, Object> entry : this.commandlineProps.entrySet()) {
 			String argName = entry.getKey().toString();
 			String value = entry.getValue().toString();
-			if ((arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
-				arguments.get(argName).setStringValue(value);
+			if ((this.arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
+				this.arguments.get(argName).setStringValue(value);
 			}
 		}
 		
@@ -163,11 +158,11 @@ public class RepoSuiteSettings {
 	}
 	
 	protected void setField(String argument, String value) throws NoSuchFieldException {
-		if (!arguments.containsKey(argument)) {
+		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
 			        + "The argument is not part of the current argument set.");
 		}
-		arguments.get(argument).setStringValue(value);
+		this.arguments.get(argument).setStringValue(value);
 	}
 	
 	public RepositoryArguments setRepositoryArg(boolean isRequired) throws DuplicateArgumentException {
@@ -176,12 +171,11 @@ public class RepoSuiteSettings {
 	}
 	
 	private void validateSettings() throws MissingRequiredArgumentException {
-		for (RepoSuiteArgument arg : arguments.values()) {
+		for (RepoSuiteArgument arg : this.arguments.values()) {
 			if (arg.isRequired() && (arg.getValue() == null)) {
 				throw new MissingRequiredArgumentException(arg);
 			}
 		}
 	}
 	
->>>>>>> other
 }
