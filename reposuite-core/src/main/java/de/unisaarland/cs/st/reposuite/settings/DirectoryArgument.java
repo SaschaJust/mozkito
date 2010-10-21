@@ -28,7 +28,7 @@ public class DirectoryArgument extends RepoSuiteArgument {
 	public DirectoryArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
 	        boolean isRequired, boolean create) {
 		super(settings, name, description, defaultValue, isRequired);
-		
+		this.create = create;
 	}
 	
 	/*
