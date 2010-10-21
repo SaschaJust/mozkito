@@ -76,7 +76,6 @@ public class DirectoryArgumentTest {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
 		new DirectoryArgument(settings, "testArg", "test argument", dirName, true, false);
 		try {
-			System.err.println(dirName);
 			settings.parseArguments();
 			fail();
 		} catch (RuntimeException e) {
