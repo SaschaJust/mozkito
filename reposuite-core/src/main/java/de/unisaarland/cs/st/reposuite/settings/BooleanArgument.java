@@ -24,6 +24,9 @@ public class BooleanArgument extends RepoSuiteArgument {
 	
 	@Override
 	public Boolean getValue() {
+		if (stringValue == null) {
+			return null;
+		}
 		return Boolean.parseBoolean(stringValue);
 	}
 }
