@@ -1,13 +1,21 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * The Class FileUtils.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public class FileUtils {
+	
+	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
+	public static final String fileSeparator = System.getProperty("file.separator");
 	
 	/**
 	 * Created a directory in parent directory with given name. If the directory
@@ -54,4 +62,84 @@ public class FileUtils {
 		return newDir;
 	}
 	
+	/**
+	 * Creates the random dir.
+	 * 
+	 * @param parentDir
+	 *            the parent dir
+	 * @param prefix
+	 *            the prefix
+	 * @param suffix
+	 *            the suffix
+	 * @return the file
+	 */
+	public static File createRandomDir(File parentDir, String prefix, String suffix) {
+		try {
+			File file = File.createTempFile(prefix, suffix, parentDir);
+			if (!file.delete()) {
+				Logger.error("Could not delete random file `" + file.getAbsolutePath() + "`");
+				return null;
+			}
+			if (!file.mkdirs()) {
+				Logger.error("Could not create random directory `" + file.getAbsolutePath() + "`");
+				return null;
+			}
+			return file;
+		} catch (IOException e) {
+			Logger.error("Could not create random file in `" + tmpDir.getAbsolutePath() + "`");
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates the random dir.
+	 * 
+	 * @param prefix
+	 *            the prefix
+	 * @param suffix
+	 *            the suffix
+	 * @return the file
+	 */
+	public static File createRandomDir(String prefix, String suffix) {
+		return createRandomDir(tmpDir, prefix, suffix);
+	}
+	
+	/**
+	 * Delete directory.
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @see {@link org.apache.commons.io.FileUtils#deleteDirectory(File)}
+	 */
+	public static void deleteDirectory(File directory) throws IOException {
+		org.apache.commons.io.FileUtils.deleteDirectory(directory);
+	}
+	
+	/**
+	 * Force delete.
+	 * 
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @see {@link org.apache.commons.io.FileUtils#forceDelete(File)}
+	 */
+	public static void forceDelete(File file) throws IOException {
+		org.apache.commons.io.FileUtils.forceDelete(file);
+	}
+	
+	/**
+	 * Force delete on exit.
+	 * 
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @see {@link org.apache.commons.io.FileUtils#forceDeleteOnExit(File)}
+	 */
+	public static void forceDeleteOnExit(File file) throws IOException {
+		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
+	}
 }

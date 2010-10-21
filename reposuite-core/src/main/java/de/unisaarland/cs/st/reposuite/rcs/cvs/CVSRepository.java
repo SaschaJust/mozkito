@@ -6,9 +6,10 @@ package de.unisaarland.cs.st.reposuite.rcs.cvs;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import difflib.Delta;
 
@@ -19,7 +20,7 @@ import difflib.Delta;
 public class CVSRepository extends Repository {
 	
 	@Override
-	public HashMap<Integer, AnnotationEntry> annotate(String filePath, String revision) {
+	public List<AnnotationEntry> annotate(String filePath, String revision) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -44,6 +45,12 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getLastRevisionId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<LogEntry> log() {
 		// TODO Auto-generated method stub
 		return null;
 	}

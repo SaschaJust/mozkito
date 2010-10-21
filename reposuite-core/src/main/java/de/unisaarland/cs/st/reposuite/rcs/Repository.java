@@ -3,7 +3,7 @@ package de.unisaarland.cs.st.reposuite.rcs;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 
 import difflib.Delta;
 
@@ -21,9 +21,9 @@ public abstract class Repository {
 	 *            the file path to be annotated
 	 * @param revision
 	 *            the revision the file path will be annotated in
-	 * @return Map of lines -> AnnotationEntry
+	 * @return List of AnnotationEntry for all lines starting by first line
 	 */
-	public abstract HashMap<Integer, AnnotationEntry> annotate(String filePath, String revision);
+	public abstract List<AnnotationEntry> annotate(String filePath, String revision);
 	
 	/**
 	 * Checks out the given relative path in repository and returns the file
@@ -66,6 +66,13 @@ public abstract class Repository {
 	 * @return the last revision id
 	 */
 	public abstract String getLastRevisionId();
+	
+	/**
+	 * Extract a log from the repository.
+	 * 
+	 * @return the list of log entries. The first entry is the newest log entry.
+	 */
+	public abstract List<LogEntry> log();
 	
 	/**
 	 * Connect to repository at URI address.
