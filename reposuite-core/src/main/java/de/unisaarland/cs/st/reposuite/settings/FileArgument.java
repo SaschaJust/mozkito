@@ -6,8 +6,9 @@ import java.io.IOException;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * The Class FileArgument.
  * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class FileArgument extends RepoSuiteArgument {
 	
@@ -36,7 +37,6 @@ public class FileArgument extends RepoSuiteArgument {
 	 * @param mustExist
 	 *            Set to true if you want to ensure that the file at given
 	 *            location must already exist.
-	 * @throws DuplicateArgumentException
 	 */
 	public FileArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
 	        boolean isRequired, boolean overwrite, boolean mustExist) {
