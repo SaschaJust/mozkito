@@ -3,12 +3,13 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.subversion;
 
-import static org.junit.Assert.assertTrue;
-
+import java.io.BufferedReader;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Test;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.reposuite.utils.CMDExecutor;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -36,11 +39,18 @@ public class SubversionRepositoryTest {
 	
 	@Test
 	public void testCheckout() {
+		URL url = SubversionRepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.svn");
+		File tmpDirectory = FileUtils.createRandomDir("repotest_svn", "");
 		try {
-			this.repository.setup(new URI("file:///tmp/svn_repo_2010-05-14"));
-			File checkoutPath = this.repository.checkoutPath("notes", "17822");
-			System.err.println(checkoutPath.getAbsolutePath());
-		} catch (MalformedURLException e) {
+			List<String> list = new LinkedList<String>();
+			String line;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			while ((line = reader.readLine()) != null) {
+				list.add(line);
+			}
+			CMDExecutor.execute("svnadmin load " + tmpDirectory.getAbsolutePath(), FileUtils.tmpDir, list);
+			this.repository.setup(tmpDirectory.toURI());
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidProtocolType e) {
@@ -52,14 +62,7 @@ public class SubversionRepositoryTest {
 		} catch (UnsupportedProtocolType e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RuntimeException e) {
-			e.printStackTrace();
 		}
-		assertTrue(true);
-		
 	}
 	
 }
