@@ -11,10 +11,17 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 public class CMDExecutor {
 	
 	public static Tuple<Integer, List<String>> execute(String cmd, File dir) {
+		return execute(cmd, dir, null);
+	}
+	
+	public static Tuple<Integer, List<String>> execute(String cmd, File dir, String pipeTo) {
 		List<String> lines = new ArrayList<String>();
 		try {
 			String line;
 			Process p = Runtime.getRuntime().exec(cmd, new String[0], dir);
+			if (pipeTo != null) {
+				p.getOutputStream().write(pipeTo.getBytes());
+			}
 			int returnCode = p.waitFor();
 			if (returnCode != 0) {
 				if (RepoSuiteSettings.logError()) {
@@ -42,5 +49,4 @@ public class CMDExecutor {
 			return new Tuple<Integer, List<String>>(-1, lines);
 		}
 	}
-	
 }
