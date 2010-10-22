@@ -118,7 +118,7 @@ public class SubversionRepository extends Repository {
 	}
 	
 	@Override
-	public List<LogEntry> log() {
+	public List<LogEntry> log(String fromRevision, String toRevision) {
 		// TODO Auto-generated method stub
 		return null;
 	}

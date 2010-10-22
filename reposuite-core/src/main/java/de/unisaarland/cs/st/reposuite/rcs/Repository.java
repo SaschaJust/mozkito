@@ -16,6 +16,10 @@ import difflib.Delta;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
+ */
 public abstract class Repository {
 	
 	/**
@@ -83,9 +87,13 @@ public abstract class Repository {
 	/**
 	 * Extract a log from the repository.
 	 * 
+	 * @param fromRevision
+	 *            the from revision
+	 * @param toRevision
+	 *            the to revision
 	 * @return the list of log entries. The first entry is the newest log entry.
 	 */
-	public abstract List<LogEntry> log();
+	public abstract List<LogEntry> log(String fromRevision, String toRevision);
 	
 	/**
 	 * Connect to repository at URI address.

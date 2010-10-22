@@ -189,8 +189,12 @@ public class GitRepository extends Repository {
 	}
 	
 	@Override
-	public List<LogEntry> log() {
-		// TODO Auto-generated method stub
+	public List<LogEntry> log(String fromRevision, String toRevision) {
+		//TODO implement this
+		if ((fromRevision == null) || (toRevision == null)) {
+			return null;
+		}
+		String cmd = "git log --pretty=fuller";
 		return null;
 	}
 	
