@@ -1,10 +1,14 @@
 package de.unisaarland.cs.st.reposuite.rcs;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import difflib.Delta;
 
 /**
@@ -61,6 +65,15 @@ public abstract class Repository {
 	public abstract String getFirstRevisionId();
 	
 	/**
+	 * determines the simple classname of the object
+	 * 
+	 * @return this.getClass().getSimpleName();
+	 */
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
+	
+	/**
 	 * Gets the last revision of the repository.
 	 * 
 	 * @return the last revision id
@@ -79,8 +92,13 @@ public abstract class Repository {
 	 * 
 	 * @param address
 	 *            the address the repository can be found
+	 * @throws InvalidRepositoryURI
+	 * @throws InvalidProtocolType
+	 * @throws MalformedURLException
+	 * @throws UnsupportedProtocolType
 	 */
-	public abstract void setup(URI address);
+	public abstract void setup(URI address) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
+	        UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -91,7 +109,12 @@ public abstract class Repository {
 	 *            the username
 	 * @param password
 	 *            the password
+	 * @throws MalformedURLException
+	 * @throws InvalidProtocolType
+	 * @throws InvalidRepositoryURI
+	 * @throws UnsupportedProtocolType
 	 */
-	public abstract void setup(URI address, String username, String password);
+	public abstract void setup(URI address, String username, String password) throws MalformedURLException,
+	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 }

@@ -1,8 +1,12 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -29,8 +33,8 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) {
 		super();
-		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
-		        null, true);
+		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory",
+		        "Directory where the rcs repository is stored", null, true);
 		RepositoryType[] rcsTypes = RepositoryType.values();
 		String[] argEnums = new String[rcsTypes.length];
 		StringBuilder ss = new StringBuilder();
@@ -40,9 +44,9 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			ss.append(rcsTypes[i].toString());
 			ss.append(" ");
 		}
-		repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
-		userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
-		passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
+		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
+		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
 	}
 	
 	/*
@@ -53,10 +57,10 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = repoDirArg.getValue();
-		String username = userArg.getValue();
-		String password = passArg.getValue();
-		RepositoryType rcsType = RepositoryType.valueOf(repoTypeArg.getValue());
+		URI repositoryURI = this.repoDirArg.getValue();
+		String username = this.userArg.getValue();
+		String password = this.passArg.getValue();
+		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			Logger.warn("You provided username or password only. Ignoring set options.");
@@ -80,6 +84,18 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			Logger.error(e.getMessage());
 			throw new RuntimeException();
 		} catch (IllegalAccessException e) {
+			Logger.error(e.getMessage());
+			throw new RuntimeException();
+		} catch (MalformedURLException e) {
+			Logger.error(e.getMessage());
+			throw new RuntimeException();
+		} catch (InvalidProtocolType e) {
+			Logger.error(e.getMessage());
+			throw new RuntimeException();
+		} catch (InvalidRepositoryURI e) {
+			Logger.error(e.getMessage());
+			throw new RuntimeException();
+		} catch (UnsupportedProtocolType e) {
 			Logger.error(e.getMessage());
 			throw new RuntimeException();
 		}

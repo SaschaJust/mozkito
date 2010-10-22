@@ -15,15 +15,25 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 
 /**
+ * Searches for class matching certain criteria in the classpath or the current
+ * jar file
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class ClassFinder {
 	
+	/**
+	 * Finds all classes in the current classpath that are contained in the
+	 * given package (from packagename)
+	 * 
+	 * @param pckgname
+	 *            the name of the package the classes have to be contained in
+	 * @return a collection of all classes from the supplied package
+	 * @throws ClassNotFoundException
+	 */
 	public static Collection<Class<?>> getClassesForPackage(String pckgname) throws ClassNotFoundException {
 		// This will hold a list of directories matching the pckgname. There may
 		// be more than one if a package is split over multiple jars/paths
@@ -69,18 +79,40 @@ public class ClassFinder {
 		return classes;
 	}
 	
+	/**
+	 * Scans through the given JAR file and finds all class objects for a given
+	 * package name
+	 * 
+	 * @param pckgname
+	 *            the name of the package the classes have to be contained in
+	 * @param baseDirPath
+	 *            path to the JAR file
+	 * @return a collection of all classes from the supplied package
+	 * @throws ClassNotFoundException
+	 */
 	public static Collection<Class<?>> getClassesFromFileJarFile(String pckgname, String baseDirPath)
 	        throws ClassNotFoundException {
+		
+		// TODO this needs a lot of rework
+		// TODO throw exception if baseDirPath is not a JAR file
+		// TODO determine baseDirPath rather than requiring the argument
 		if (!baseDirPath.endsWith(".jar")) {
 			return null;
 		}
 		
 		Collection<Class<?>> classes = new Vector<Class<?>>();
+		
+		// determine the full qualified pathname string from the package name by replacing all '.' with OS file seperators. 
 		String path = pckgname.replaceAll("\\.", System.getProperty("file.separator"))
 		        + System.getProperty("file.separator");
 		
 		try {
 			JarFile currentFile = new JarFile(baseDirPath);
+			/*
+			 * step through all elements in the jar file and check if there
+			 * exists a class file in given package. If so, load it and add it
+			 * to the collection.
+			 */
 			for (Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
 				JarEntry current = e.nextElement();
 				if ((current.getName().length() > path.length())
@@ -98,6 +130,16 @@ public class ClassFinder {
 		return classes;
 	}
 	
+	/**
+	 * Finds all classes in a package that implement a given interface
+	 * 
+	 * @param pakkage
+	 *            the package that contains the classes
+	 * @param theInterface
+	 *            the interface the classes must implement
+	 * @return a list of all classes fitting the search criteria
+	 * @throws ClassNotFoundException
+	 */
 	public static List<Class<?>> getClassessOfInterface(Package pakkage, Class<?> theInterface)
 	        throws ClassNotFoundException {
 		assert (pakkage != null);
@@ -119,7 +161,7 @@ public class ClassFinder {
 			Class<?> matchingClass = null;
 			do {
 				
-				Logger.getLogger(ClassFinder.class).trace("Checking Class: " + aClass.getName());
+				Logger.trace("Checking Class: " + aClass.getName());
 				if (discovered.equals(theInterface)) {
 					break;
 				}
@@ -127,18 +169,16 @@ public class ClassFinder {
 				
 				for (int j = 0; j < classInterfaces.length; j++) {
 					if (classInterfaces[j] == theInterface) {
-						Logger.getLogger(ClassFinder.class).trace(
-						        "Class implements the " + theInterface.getSimpleName() + " interface: "
-						                + aClass.getName());
+						Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
+						        + aClass.getName());
 						matchingClass = discovered;
 						break;
 					}
 				}
 				
 				if (matchingClass == null) {
-					Logger.getLogger(ClassFinder.class).trace(
-					        "Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
-					                + aClass.getName() + ", checking its superclasses");
+					Logger.trace("Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
+					        + aClass.getName() + ", checking its superclasses");
 					// find noarg constructable objects in the hierarchy
 					boolean noargCons = false;
 					do {
@@ -149,21 +189,19 @@ public class ClassFinder {
 						}
 						// check for noarg constructor, required for
 						// reflective instantiation
-						Logger.getLogger(ClassFinder.class).trace(
-						        "Checking superclass : " + aClass.getName() + " for noarg constructor");
+						Logger.trace("Checking superclass : " + aClass.getName() + " for noarg constructor");
 						Constructor<?>[] cons = aClass.getConstructors();
 						for (int j = 0; j < cons.length; j++) {
 							if (cons[j].getTypeParameters().length == 0) {
 								// it will work
-								Logger.getLogger(ClassFinder.class).trace(
-								        "Superclass : " + aClass.getName() + " has a noarg constructor");
+								Logger.trace("Superclass : " + aClass.getName() + " has a noarg constructor");
 								noargCons = true;
 							}
 						}
 					} while (!noargCons && !aClass.equals(Object.class));
 				} else {
 					// match
-					Logger.getLogger(ClassFinder.class).trace("Adding Class: " + matchingClass);
+					Logger.trace("Adding Class: " + matchingClass);
 					classList.add(matchingClass);
 				}
 			} while ((matchingClass == null) && !aClass.equals(Object.class));

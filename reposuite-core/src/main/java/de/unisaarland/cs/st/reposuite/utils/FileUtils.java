@@ -58,8 +58,10 @@ public class FileUtils {
 			Logger.error("Could not create directory `" + name + "` in parent directory `"
 			        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			return null;
+		} else {
+			Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
+			return newDir;
 		}
-		return newDir;
 	}
 	
 	/**
