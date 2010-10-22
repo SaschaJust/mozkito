@@ -41,9 +41,14 @@ public abstract class Repository {
 	public static URI encodeUsername(URI address, String username) {
 		//[scheme:][//authority][path][?query][#fragment]
 		//[user-info@]host[:port]
-		URI uri = null;
+		
+		if (username == null) {
+			return address;
+		}
+		
+		URI uri = address;
 		String authority = address.getAuthority();
-		if (!address.getUserInfo().equals(username)) {
+		if ((address.getUserInfo() == null) || (!address.getUserInfo().equals(username))) {
 			if (RepoSuiteSettings.logWarn()) {
 				Logger.warn("Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.");
 			}
@@ -53,14 +58,14 @@ public abstract class Repository {
 			}
 			StringBuilder uriString = new StringBuilder();
 			uriString.append(address.getScheme());
-			uriString.append("//");
+			uriString.append("://");
 			uriString.append(authority);
 			uriString.append(address.getPath());
-			if (!address.getQuery().equals("")) {
+			if ((address.getQuery() != null) && (!address.getQuery().equals(""))) {
 				uriString.append("?");
 				uriString.append(address.getQuery());
 			}
-			if (!address.getFragment().equals("")) {
+			if ((address.getFragment() != null) && (!address.getFragment().equals(""))) {
 				uriString.append("#");
 				uriString.append(address.getFragment());
 			}

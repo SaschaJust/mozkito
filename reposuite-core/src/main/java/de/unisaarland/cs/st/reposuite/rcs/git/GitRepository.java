@@ -312,6 +312,34 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(URI address, String username, String password) {
-		//TODO implement this method
+		
+		uri = Repository.encodeUsername(address, username);
+		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
+		        + DateTimeUtils.currentTimeMillis();
+		StringBuilder cmd = new StringBuilder();
+		cmd.append("git clone -n -q ");
+		cmd.append(uri);
+		cmd.append(" ");
+		cmd.append(gitName);
+		
+		Tuple<Integer, List<String>> returnValue = CMDExecutor.execute(cmd.toString(), cloneDir, password);
+		if (returnValue.getFirst() == 0) {
+			cloneDir = new File(gitName);
+			if (!cloneDir.exists()) {
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + gitName
+					        + "`");
+					Logger.error("Used command: " + cmd.toString());
+				}
+				return;
+			}
+			try {
+				FileUtils.forceDeleteOnExit(cloneDir);
+			} catch (IOException e) {
+				if (RepoSuiteSettings.logError()) {
+					Logger.error(e.getMessage());
+				}
+			}
+		}
 	}
 }
