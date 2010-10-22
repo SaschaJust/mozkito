@@ -108,7 +108,7 @@ public class SubversionRepository extends Repository {
 	}
 	
 	@Override
-	public Map<String, ChangeType> getChangedPaths() {
+	public Map<String, ChangeType> getChangedPaths(String revision) {
 		// TODO Auto-generated method stub
 		return null;
 	}

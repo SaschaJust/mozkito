@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,9 +145,53 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths()
 	 */
 	@Override
-	public Map<String, ChangeType> getChangedPaths() {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, ChangeType> getChangedPaths(String revision) {
+		String cmd = "git log --pretty=format:%H --name-status " + revision;
+		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		if (response.getFirst() != 0) {
+			return null;
+		}
+		List<String> lines = response.getSecond();
+		
+		//delete first line. Contains the SHA hash of the wanted transaction
+		if (lines.size() < 1) {
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Error while parsing GIT log to unveil changed paths for reviosion `" + revision
+				        + "`. Abort parsing.");
+			}
+			return null;
+		}
+		lines.remove(0);
+		Map<String, ChangeType> result = new HashMap<String, ChangeType>();
+		for (String line : lines) {
+			if (line.trim().equals("")) {
+				//found the end of the log entry. 
+				break;
+			}
+			line = line.replaceAll("\\s+", " ");
+			String[] lineParts = line.split(" ");
+			if (lineParts.length < 2) {
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Error while parsing GIT log to unveil changed paths for reviosion `" + revision
+					        + "`. Abort parsing.");
+				}
+				return null;
+			}
+			String type = lineParts[0];
+			String path = lineParts[1];
+			if (type.equals("A")) {
+				result.put(path, ChangeType.Added);
+			} else if (type.equals("C")) {
+				result.put(path, ChangeType.Modified);
+			} else if (type.equals("D")) {
+				result.put(path, ChangeType.Deleted);
+			} else if (type.equals("M")) {
+				result.put(path, ChangeType.Modified);
+			} else if (type.equals("U")) {
+				result.put(path, ChangeType.Modified);
+			}
+		}
+		return result;
 	}
 	
 	/**

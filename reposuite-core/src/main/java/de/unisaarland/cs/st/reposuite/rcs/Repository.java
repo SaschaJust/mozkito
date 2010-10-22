@@ -63,11 +63,13 @@ public abstract class Repository {
 	public abstract Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision);
 	
 	/**
-	 * Gets the files that changed within the corresponding transaction
+	 * Gets the files that changed within the corresponding transaction.
 	 * 
+	 * @param revision
+	 *            the revision to be analyzed
 	 * @return the changed paths
 	 */
-	public abstract Map<String, ChangeType> getChangedPaths();
+	public abstract Map<String, ChangeType> getChangedPaths(String revision);
 	
 	/**
 	 * Gets the first revision of the repository.
@@ -77,7 +79,7 @@ public abstract class Repository {
 	public abstract String getFirstRevisionId();
 	
 	/**
-	 * determines the simple classname of the object
+	 * determines the simple classname of the object.
 	 * 
 	 * @return this.getClass().getSimpleName();
 	 */
@@ -108,10 +110,14 @@ public abstract class Repository {
 	 * 
 	 * @param address
 	 *            the address the repository can be found
-	 * @throws InvalidRepositoryURI
-	 * @throws InvalidProtocolType
 	 * @throws MalformedURLException
+	 *             the malformed url exception
+	 * @throws InvalidProtocolType
+	 *             the invalid protocol type
+	 * @throws InvalidRepositoryURI
+	 *             the invalid repository uri
 	 * @throws UnsupportedProtocolType
+	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
 	        UnsupportedProtocolType;
@@ -126,9 +132,13 @@ public abstract class Repository {
 	 * @param password
 	 *            the password
 	 * @throws MalformedURLException
+	 *             the malformed url exception
 	 * @throws InvalidProtocolType
+	 *             the invalid protocol type
 	 * @throws InvalidRepositoryURI
+	 *             the invalid repository uri
 	 * @throws UnsupportedProtocolType
+	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String username, String password) throws MalformedURLException,
 	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
