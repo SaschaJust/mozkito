@@ -156,7 +156,9 @@ public class SubversionRepository extends Repository {
 					}
 					break;
 				default:
-					Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
+					if (RepoSuiteSettings.logError()) {
+						Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
+					}
 					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + this.type.name());
 			}
 		} else {
