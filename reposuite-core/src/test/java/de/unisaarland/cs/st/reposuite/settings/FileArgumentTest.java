@@ -19,8 +19,8 @@ public class FileArgumentTest {
 	
 	@Before
 	public void setUp() {
-		dir = FileUtils.createDir(tmpDir, "fileargumenttestdir");
-		file = new File(tmpDir.getAbsolutePath() + System.getProperty("file.separator") + "fileargumenttestfile");
+		this.dir = FileUtils.createDir(tmpDir, "fileargumenttestdir");
+		this.file = new File(tmpDir.getAbsolutePath() + System.getProperty("file.separator") + "fileargumenttestfile");
 	}
 	
 	@Test
@@ -30,17 +30,17 @@ public class FileArgumentTest {
 	
 	@After
 	public void tearDown() {
-		dir.delete();
-		file.delete();
+		this.dir.delete();
+		this.file.delete();
 	}
 	
 	@Test
 	public void testDirectory() {
-		if (dir == null) {
+		if (this.dir == null) {
 			fail();
 		}
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", dir.getAbsolutePath(), true, false, false);
+		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
 			fail();
@@ -48,7 +48,7 @@ public class FileArgumentTest {
 			
 		}
 		settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", dir.getAbsolutePath(), true, true, false);
+		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, true, false);
 		try {
 			settings.parseArguments();
 			fail();
@@ -56,7 +56,7 @@ public class FileArgumentTest {
 			
 		}
 		settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", dir.getAbsolutePath(), true, false, true);
+		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, false, true);
 		try {
 			settings.parseArguments();
 			fail();
@@ -64,7 +64,7 @@ public class FileArgumentTest {
 			
 		}
 		settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", dir.getAbsolutePath(), true, true, true);
+		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, true, true);
 		try {
 			settings.parseArguments();
 			fail();
@@ -76,14 +76,14 @@ public class FileArgumentTest {
 	@Test
 	public void testExistsNoOverwrite() {
 		try {
-			if (!file.createNewFile()) {
+			if (!this.file.createNewFile()) {
 				fail();
 			}
 		} catch (IOException e) {
 			fail();
 		}
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", file.getAbsolutePath(), true, false, false);
+		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
 			fail();
@@ -95,14 +95,14 @@ public class FileArgumentTest {
 	@Test
 	public void testExistsOverwrite() {
 		try {
-			if (!file.createNewFile()) {
+			if (!this.file.createNewFile()) {
 				fail();
 			}
 		} catch (IOException e) {
 			fail();
 		}
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", file.getAbsolutePath(), true, true, false);
+		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, true, false);
 		try {
 			settings.parseArguments();
 		} catch (RuntimeException e) {
@@ -136,7 +136,7 @@ public class FileArgumentTest {
 	@Test
 	public void testNotExistsMustExist() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", file.getAbsolutePath(), true, false, true);
+		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, true);
 		try {
 			settings.parseArguments();
 			fail();
@@ -148,7 +148,7 @@ public class FileArgumentTest {
 	@Test
 	public void testNotExistsMustNotExist() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new FileArgument(settings, "testArg", "test argument", file.getAbsolutePath(), true, false, false);
+		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
 		} catch (RuntimeException e) {

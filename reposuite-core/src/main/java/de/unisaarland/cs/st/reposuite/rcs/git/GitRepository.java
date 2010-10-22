@@ -15,6 +15,7 @@ import org.joda.time.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CMDExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -68,7 +69,9 @@ public class GitRepository extends Repository {
 			
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				Logger.error("Could not parse git blame output!");
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Could not parse git blame output!");
+				}
 				return null;
 			}
 			String fileName = lineParts[1];
@@ -97,7 +100,9 @@ public class GitRepository extends Repository {
 		}
 		File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			Logger.error("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
+			}
 			return null;
 		}
 		return result;
@@ -153,7 +158,9 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			Logger.error("Command `" + cmd + "` did not produc any output!");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Command `" + cmd + "` did not produc any output!");
+			}
 			return null;
 		}
 		List<String> lines = response.getSecond();
@@ -173,7 +180,9 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			Logger.error("Command `" + cmd + "` did not produc any output!");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Command `" + cmd + "` did not produc any output!");
+			}
 			return null;
 		}
 		return response.getSecond().get(0).trim();
@@ -207,15 +216,19 @@ public class GitRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(gitName);
 			if (!this.cloneDir.exists()) {
-				Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `" + gitName
-				        + "`");
-				Logger.error("Used command: " + cmd.toString());
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `"
+					        + gitName + "`");
+					Logger.error("Used command: " + cmd.toString());
+				}
 				return;
 			}
 			try {
 				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
-				Logger.error(e.getMessage());
+				if (RepoSuiteSettings.logError()) {
+					Logger.error(e.getMessage());
+				}
 			}
 		}
 	}

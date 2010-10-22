@@ -30,14 +30,16 @@ public class DoubleArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public Double getValue() {
-		if (stringValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		try {
-			return new Double(stringValue);
+			return new Double(this.stringValue);
 		} catch (NumberFormatException e) {
-			Logger.error("Value given for argument `" + getName()
-			        + "` could not be interpreted as a Double value. Abort!");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Value given for argument `" + getName()
+				        + "` could not be interpreted as a Double value. Abort!");
+			}
 			throw new RuntimeException();
 		}
 	}

@@ -16,6 +16,8 @@ import java.util.jar.JarFile;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+
 /**
  * Searches for class matching certain criteria in the classpath or the current
  * jar file
@@ -161,7 +163,9 @@ public class ClassFinder {
 			Class<?> matchingClass = null;
 			do {
 				
-				Logger.trace("Checking Class: " + aClass.getName());
+				if (RepoSuiteSettings.logTrace()) {
+					Logger.trace("Checking Class: " + aClass.getName());
+				}
 				if (discovered.equals(theInterface)) {
 					break;
 				}
@@ -169,16 +173,20 @@ public class ClassFinder {
 				
 				for (int j = 0; j < classInterfaces.length; j++) {
 					if (classInterfaces[j] == theInterface) {
-						Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
-						        + aClass.getName());
+						if (RepoSuiteSettings.logTrace()) {
+							Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
+							        + aClass.getName());
+						}
 						matchingClass = discovered;
 						break;
 					}
 				}
 				
 				if (matchingClass == null) {
-					Logger.trace("Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
-					        + aClass.getName() + ", checking its superclasses");
+					if (RepoSuiteSettings.logTrace()) {
+						Logger.trace("Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
+						        + aClass.getName() + ", checking its superclasses");
+					}
 					// find noarg constructable objects in the hierarchy
 					boolean noargCons = false;
 					do {
@@ -189,19 +197,25 @@ public class ClassFinder {
 						}
 						// check for noarg constructor, required for
 						// reflective instantiation
-						Logger.trace("Checking superclass : " + aClass.getName() + " for noarg constructor");
+						if (RepoSuiteSettings.logTrace()) {
+							Logger.trace("Checking superclass : " + aClass.getName() + " for noarg constructor");
+						}
 						Constructor<?>[] cons = aClass.getConstructors();
 						for (int j = 0; j < cons.length; j++) {
 							if (cons[j].getTypeParameters().length == 0) {
 								// it will work
-								Logger.trace("Superclass : " + aClass.getName() + " has a noarg constructor");
+								if (RepoSuiteSettings.logTrace()) {
+									Logger.trace("Superclass : " + aClass.getName() + " has a noarg constructor");
+								}
 								noargCons = true;
 							}
 						}
 					} while (!noargCons && !aClass.equals(Object.class));
 				} else {
 					// match
-					Logger.trace("Adding Class: " + matchingClass);
+					if (RepoSuiteSettings.logTrace()) {
+						Logger.trace("Adding Class: " + matchingClass);
+					}
 					classList.add(matchingClass);
 				}
 			} while ((matchingClass == null) && !aClass.equals(Object.class));

@@ -67,7 +67,9 @@ public class SubversionRepository extends Repository {
 		try {
 			FileUtils.forceDeleteOnExit(workingDirectory);
 		} catch (IOException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		}
 		
@@ -88,7 +90,9 @@ public class SubversionRepository extends Repository {
 				return workingDirectory;
 			}
 		} catch (SVNException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		}
 		
@@ -140,7 +144,9 @@ public class SubversionRepository extends Repository {
 		this.type = ProtocolType.valueOf(this.uri.toURL().getProtocol().toUpperCase());
 		if (this.type != null) {
 			try {
-				Logger.info("Parsing URL: " + this.uri.toString());
+				if (RepoSuiteSettings.logInfo()) {
+					Logger.info("Parsing URL: " + this.uri.toString());
+				}
 				this.svnurl = SVNURL.parseURIEncoded(this.uri.toString());
 			} catch (SVNException e) {
 				throw new InvalidRepositoryURI(e.getMessage());
@@ -151,7 +157,7 @@ public class SubversionRepository extends Repository {
 				case HTTP:
 				case HTTPS:
 				case SSH:
-					if (RepoSuiteSettings.debug) {
+					if (RepoSuiteSettings.logTrace()) {
 						Logger.trace("Using valid mode " + this.type.name() + ".");
 					}
 					break;

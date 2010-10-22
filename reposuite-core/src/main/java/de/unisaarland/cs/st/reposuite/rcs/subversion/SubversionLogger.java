@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import org.tmatesoft.svn.util.SVNDebugLogAdapter;
 import org.tmatesoft.svn.util.SVNLogType;
 
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -25,7 +26,9 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, byte[] data) {
-		Logger.debug(message, 4);
+		if (RepoSuiteSettings.logDebug()) {
+			Logger.debug(message, 4);
+		}
 	}
 	
 	/*
@@ -37,7 +40,9 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, Level logLevel) {
-		Logger.debug(message, 4);
+		if (RepoSuiteSettings.logDebug()) {
+			Logger.debug(message, 4);
+		}
 	}
 	
 	/*
@@ -49,6 +54,8 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, Throwable th, Level logLevel) {
-		Logger.debug(th.getMessage(), 4);
+		if (RepoSuiteSettings.logDebug()) {
+			Logger.debug(th.getMessage(), 4);
+		}
 	}
 }

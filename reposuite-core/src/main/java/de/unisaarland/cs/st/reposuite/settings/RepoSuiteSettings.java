@@ -177,12 +177,16 @@ public class RepoSuiteSettings {
 			boolean parseSettingFile = true;
 			File settingFile = new File(System.getProperty("repoSuiteSettings"));
 			if (!settingFile.exists()) {
-				Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-				        + "` does not exists. Ignoring ...");
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
+					        + "` does not exists. Ignoring ...");
+				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
-				Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-				        + "` is a directory. Ignoring ...");
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
+					        + "` is a directory. Ignoring ...");
+				}
 				parseSettingFile = true;
 			}
 			
@@ -191,10 +195,14 @@ public class RepoSuiteSettings {
 				try {
 					System.getProperties().load(new FileInputStream(settingFile));
 				} catch (FileNotFoundException e) {
-					Logger.error(e.getMessage());
+					if (RepoSuiteSettings.logError()) {
+						Logger.error(e.getMessage());
+					}
 					throw new RuntimeException();
 				} catch (IOException e) {
-					Logger.error(e.getMessage());
+					if (RepoSuiteSettings.logError()) {
+						Logger.error(e.getMessage());
+					}
 					throw new RuntimeException();
 				}
 			}
@@ -294,7 +302,9 @@ public class RepoSuiteSettings {
 	private boolean validateSettings() {
 		for (RepoSuiteArgument arg : this.arguments.values()) {
 			if (arg.isRequired() && (arg.getValue() == null)) {
-				Logger.error("Required argument `" + arg.getName() + "` is not set.");
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Required argument `" + arg.getName() + "` is not set.");
+				}
 				return false;
 			}
 		}

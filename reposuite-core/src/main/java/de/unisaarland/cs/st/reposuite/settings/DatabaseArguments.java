@@ -38,7 +38,9 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 			        arguments.get("database").getValue().toString(), arguments.get("dbUser").getValue().toString(),
 			        arguments.get("dbPassword").getValue().toString());
 		} else {
-			Logger.error("Unsupported db type found! Abort!");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Unsupported db type found! Abort!");
+			}
 			throw new RuntimeException();
 		}
 	}

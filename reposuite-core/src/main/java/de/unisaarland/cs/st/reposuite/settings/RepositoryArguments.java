@@ -63,7 +63,9 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
-			Logger.warn("You provided username or password only. Ignoring set options.");
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("You provided username or password only. Ignoring set options.");
+			}
 			username = null;
 			password = null;
 		}
@@ -78,25 +80,39 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			}
 			return repository;
 		} catch (UnregisteredRepositoryTypeException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (InstantiationException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (IllegalAccessException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (MalformedURLException e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (InvalidProtocolType e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (InvalidRepositoryURI e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		} catch (UnsupportedProtocolType e) {
-			Logger.error(e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage());
+			}
 			throw new RuntimeException();
 		}
 	}

@@ -30,14 +30,16 @@ public class LongArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public Long getValue() {
-		if (stringValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		try {
-			return new Long(stringValue);
+			return new Long(this.stringValue);
 		} catch (NumberFormatException e) {
-			Logger.error("Value given for argument `" + getName()
-			        + "` could not be interpreted as a Long value. Abort!");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("Value given for argument `" + getName()
+				        + "` could not be interpreted as a Long value. Abort!");
+			}
 			throw new RuntimeException();
 		}
 	}

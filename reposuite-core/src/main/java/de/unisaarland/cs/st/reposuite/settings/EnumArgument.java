@@ -10,7 +10,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class EnumArgument extends RepoSuiteArgument {
 	
-	private HashSet<String> possibleValues;
+	private final HashSet<String> possibleValues;
 	
 	/**
 	 * 
@@ -33,7 +33,7 @@ public class EnumArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public String getValue() {
-		return stringValue;
+		return this.stringValue;
 	}
 	
 	/*
@@ -45,7 +45,7 @@ public class EnumArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	protected void setStringValue(String value) {
-		if (!possibleValues.contains(value)) {
+		if (!this.possibleValues.contains(value)) {
 			StringBuilder ss = new StringBuilder();
 			ss.append("Value set for argument `");
 			ss.append(getName());
@@ -53,12 +53,14 @@ public class EnumArgument extends RepoSuiteArgument {
 			ss.append(System.getProperty("line.separator"));
 			ss.append("Please choose one of the following possible values:");
 			ss.append(System.getProperty("line.separator"));
-			for (String s : possibleValues) {
+			for (String s : this.possibleValues) {
 				ss.append("\t");
 				ss.append(s);
 				ss.append(System.getProperty("line.separator"));
 			}
-			Logger.error(ss.toString());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(ss.toString());
+			}
 			System.exit(-1);
 		}
 		super.setStringValue(value);

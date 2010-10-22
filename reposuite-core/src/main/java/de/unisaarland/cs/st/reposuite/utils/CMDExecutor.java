@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+
 public class CMDExecutor {
 	
 	public static Tuple<Integer, List<String>> execute(String cmd, File dir) {
@@ -15,12 +17,16 @@ public class CMDExecutor {
 			Process p = Runtime.getRuntime().exec(cmd, new String[0], dir);
 			int returnCode = p.waitFor();
 			if (returnCode != 0) {
-				Logger.error("Process `" + cmd.toString() + "` terminated abnomally.");
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Process `" + cmd.toString() + "` terminated abnomally.");
+				}
 			}
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			if (returnCode != 0) {
 				while ((line = input.readLine()) != null) {
-					Logger.error(line);
+					if (RepoSuiteSettings.logError()) {
+						Logger.error(line);
+					}
 				}
 			} else {
 				while ((line = input.readLine()) != null) {
@@ -30,7 +36,9 @@ public class CMDExecutor {
 			input.close();
 			return new Tuple<Integer, List<String>>(returnCode, lines);
 		} catch (Exception err) {
-			Logger.error(err.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(err.getMessage());
+			}
 			return new Tuple<Integer, List<String>>(-1, lines);
 		}
 	}

@@ -38,28 +38,34 @@ public class DirectoryArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public File getValue() {
-		if (stringValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		
-		File file = new File(stringValue.trim());
+		File file = new File(this.stringValue.trim());
 		
 		if (!file.exists()) {
-			if (!create) {
-				Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
-				        + "` does not exist.");
+			if (!this.create) {
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+					        + "` does not exist.");
+				}
 				throw new RuntimeException();
 			} else {
 				if (!file.mkdirs()) {
-					Logger.error("The file `" + stringValue + "` specified for argument `" + getName()
-					        + "` does not exist and cannot be created.");
+					if (RepoSuiteSettings.logError()) {
+						Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+						        + "` does not exist and cannot be created.");
+					}
 					throw new RuntimeException();
 				}
 			}
 		}
 		if (!file.isDirectory()) {
-			Logger.error("The directory `" + stringValue + "` specified for argument `" + getName()
-			        + "` is not a directory. Please remove file or choose different argument value.");
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("The directory `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` is not a directory. Please remove file or choose different argument value.");
+			}
 			throw new RuntimeException();
 		}
 		return file;

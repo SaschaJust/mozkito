@@ -38,15 +38,17 @@ public class URIArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public URI getValue() {
-		if (stringValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		
 		try {
-			return new URI(stringValue);
+			return new URI(this.stringValue);
 		} catch (URISyntaxException e) {
-			Logger.error("When parsing URI string `" + stringValue + "` for argument `" + getName()
-			        + "`, the following error occurred: " + e.getMessage());
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `" + getName()
+				        + "`, the following error occurred: " + e.getMessage());
+			}
 			throw new RuntimeException();
 		}
 	}
