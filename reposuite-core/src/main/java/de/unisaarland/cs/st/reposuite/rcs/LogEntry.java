@@ -9,17 +9,19 @@ import org.joda.time.DateTime;
  */
 public class LogEntry implements Comparable<LogEntry> {
 	
-	private String   revision;
-	private String   author;
-	private String   message;
-	
-	private DateTime dateTime;
+	protected String   revision;
+	protected String   author;
+	protected String   message;
+	protected DateTime commitDate;
+	protected LogEntry previous;
 	
 	/**
 	 * Instantiates a new log entry.
 	 * 
 	 * @param revision
 	 *            the revision
+	 * @param previous
+	 *            the previous LogEntry, null if this is the first revision
 	 * @param author
 	 *            the author
 	 * @param message
@@ -27,10 +29,11 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @param dateTime
 	 *            the date time
 	 */
-	public LogEntry(String revision, String author, String message, DateTime dateTime) {
+	public LogEntry(String revision, LogEntry previous, String author, String message, DateTime dateTime) {
 		this.revision = revision;
 		this.author = author;
 		this.message = message;
+		this.previous = previous;
 	}
 	
 	/*
@@ -40,7 +43,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	@Override
 	public int compareTo(LogEntry o) {
-		return dateTime.compareTo(o.dateTime);
+		return commitDate.compareTo(o.commitDate);
 	}
 	
 	/**
@@ -58,7 +61,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @return the date time
 	 */
 	public DateTime getDateTime() {
-		return dateTime;
+		return commitDate;
 	}
 	
 	/**

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
@@ -60,6 +61,13 @@ public abstract class Repository {
 	 * @return Collection of deltas found between two revision
 	 */
 	public abstract Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision);
+	
+	/**
+	 * Gets the files that changed within the corresponding transaction
+	 * 
+	 * @return the changed paths
+	 */
+	public abstract Map<String, ChangeType> getChangedPaths();
 	
 	/**
 	 * Gets the first revision of the repository.

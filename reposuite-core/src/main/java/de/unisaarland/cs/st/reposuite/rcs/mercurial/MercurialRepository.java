@@ -7,8 +7,10 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import difflib.Delta;
@@ -37,6 +39,12 @@ public class MercurialRepository extends Repository {
 	
 	@Override
 	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Map<String, ChangeType> getChangedPaths() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -18,6 +18,7 @@ public class FileUtils {
 	
 	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
 	public static final String fileSeparator = System.getProperty("file.separator");
+	public static final String lineSeparator = System.getProperty("line.separator");
 	
 	/**
 	 * Created a directory in parent directory with given name. If the directory

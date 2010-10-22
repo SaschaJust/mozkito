@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTimeUtils;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -27,6 +28,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -82,8 +84,8 @@ public class SubversionRepository extends Repository {
 		
 		try {
 			// check out the svnurl recursively into the createDir visible from revision 0 to given revision string 
-			long doCheckout = updateClient.doCheckout(this.svnurl, workingDirectory,
-			        SVNRevision.create(revisionNumber), SVNRevision.create(revisionNumber), SVNDepth.INFINITY, false);
+			long doCheckout = updateClient.doCheckout(svnurl, workingDirectory, SVNRevision.create(revisionNumber),
+			        SVNRevision.create(revisionNumber), SVNDepth.INFINITY, false);
 			if (doCheckout != revisionNumber) {
 				
 			} else {
@@ -101,6 +103,12 @@ public class SubversionRepository extends Repository {
 	
 	@Override
 	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Map<String, ChangeType> getChangedPaths() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -133,7 +141,7 @@ public class SubversionRepository extends Repository {
 	public void setup(URI address, String username, String password) throws MalformedURLException, InvalidProtocolType,
 	        InvalidRepositoryURI, UnsupportedProtocolType {
 		assert (address != null);
-		this.uri = address;
+		uri = address;
 		this.username = username;
 		this.password = password;
 		
@@ -141,34 +149,34 @@ public class SubversionRepository extends Repository {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
 		
-		this.type = ProtocolType.valueOf(this.uri.toURL().getProtocol().toUpperCase());
-		if (this.type != null) {
+		type = ProtocolType.valueOf(uri.toURL().getProtocol().toUpperCase());
+		if (type != null) {
 			try {
 				if (RepoSuiteSettings.logInfo()) {
-					Logger.info("Parsing URL: " + this.uri.toString());
+					Logger.info("Parsing URL: " + uri.toString());
 				}
-				this.svnurl = SVNURL.parseURIEncoded(this.uri.toString());
+				svnurl = SVNURL.parseURIEncoded(uri.toString());
 			} catch (SVNException e) {
 				throw new InvalidRepositoryURI(e.getMessage());
 			}
-			Logger.info("Setting up in '" + this.type.name() + "' mode.");
-			switch (this.type) {
+			Logger.info("Setting up in '" + type.name() + "' mode.");
+			switch (type) {
 				case FILE:
 				case HTTP:
 				case HTTPS:
 				case SSH:
 					if (RepoSuiteSettings.logTrace()) {
-						Logger.trace("Using valid mode " + this.type.name() + ".");
+						Logger.trace("Using valid mode " + type.name() + ".");
 					}
 					break;
 				default:
 					if (RepoSuiteSettings.logError()) {
-						Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
+						Logger.error("Failed to setup in '" + type.name() + "' mode. Unsupported at this time.");
 					}
-					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + this.type.name());
+					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + type.name());
 			}
 		} else {
-			throw new InvalidProtocolType(this.uri.toURL().getProtocol().toUpperCase());
+			throw new InvalidProtocolType(uri.toURL().getProtocol().toUpperCase());
 		}
 	}
 	
