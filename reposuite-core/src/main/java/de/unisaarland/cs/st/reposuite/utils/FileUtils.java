@@ -1,7 +1,11 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
@@ -138,6 +142,20 @@ public class FileUtils {
 	 */
 	public static void deleteDirectory(File directory) throws IOException {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
+	}
+	
+	public static List<String> fileToLines(File file) {
+		List<String> lines = new LinkedList<String>();
+		String line = "";
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(file));
+			while ((line = in.readLine()) != null) {
+				lines.add(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return lines;
 	}
 	
 	/**
