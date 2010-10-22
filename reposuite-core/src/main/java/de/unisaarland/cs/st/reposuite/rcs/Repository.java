@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.rcs;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Map;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
@@ -22,6 +25,60 @@ import difflib.Delta;
  * 
  */
 public abstract class Repository {
+	
+	/**
+	 * Check if in the given URI the user name is set to the
+	 * <code>username</code> argument. If this is not the case, try to replace
+	 * the user name info in the authority part with the specified user name.
+	 * 
+	 * @param address
+	 *            The original URI to be checked and modified if necessary
+	 * @param username
+	 *            the user name to be encoded into the URI
+	 * @return the URI with encoded user name. If the encoding fails, the
+	 *         original URI will be returned.
+	 */
+	public static URI encodeUsername(URI address, String username) {
+		//[scheme:][//authority][path][?query][#fragment]
+		//[user-info@]host[:port]
+		URI uri = null;
+		String authority = address.getAuthority();
+		if (!address.getUserInfo().equals(username)) {
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.");
+			}
+			authority = username + "@" + address.getHost();
+			if (address.getPort() > -1) {
+				authority += ":" + address.getPort();
+			}
+			StringBuilder uriString = new StringBuilder();
+			uriString.append(address.getScheme());
+			uriString.append("//");
+			uriString.append(authority);
+			uriString.append(address.getPath());
+			if (!address.getQuery().equals("")) {
+				uriString.append("?");
+				uriString.append(address.getQuery());
+			}
+			if (!address.getFragment().equals("")) {
+				uriString.append("#");
+				uriString.append(address.getFragment());
+			}
+			try {
+				uri = new URI(uriString.toString());
+			} catch (URISyntaxException e1) {
+				if (RepoSuiteSettings.logError()) {
+					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
+					        + uriString.toString() + "`");
+				}
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.warn("Falling back original URI.");
+				}
+				uri = address;
+			}
+		}
+		return uri;
+	}
 	
 	/**
 	 * Annotate file specified by file path at given revision.
