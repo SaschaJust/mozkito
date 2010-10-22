@@ -6,12 +6,17 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
 import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
@@ -34,12 +39,11 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	private URI    uri;
-	@SuppressWarnings("unused")
-	private String username;
-	@SuppressWarnings("unused")
-	private String password;
-	private File   cloneDir;
+	private URI                       uri;
+	private File                      cloneDir;
+	private static Pattern            compile          = Pattern
+	                                                           .compile("\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+-[^ ]+)\\s+[0-9]+\\)\\s+(.*)");
+	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	/**
 	 * Instantiates a new git repository.
@@ -64,6 +68,7 @@ public class GitRepository extends Repository {
 		if (response.getFirst() != 0) {
 			return null;
 		}
+		
 		for (String line : response.getSecond()) {
 			String sha = line.substring(0, 40);
 			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, 40)))) {
@@ -78,10 +83,32 @@ public class GitRepository extends Repository {
 				return null;
 			}
 			String fileName = lineParts[1];
-			if (fileName.equals(filePath)) {
-				result.add(new AnnotationEntry(sha));
+			String author = "<unknown>";
+			DateTime date = new DateTime();
+			Matcher matcher = compile.matcher(line);
+			String lineContent = "<unkown>";
+			if (matcher.matches()) {
+				author = matcher.group(1);
+				try {
+					date = new DateTime(gitLogDateFormat.parse(matcher.group(2)));
+				} catch (ParseException e) {
+					if (RepoSuiteSettings.logError()) {
+						Logger.error(e.getMessage());
+					}
+				}
+				lineContent = matcher.group(3);
 			} else {
-				result.add(new AnnotationEntry(sha, fileName));
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.error("Could not extract author and date info from log entry for revision `" + revision
+					        + "`");
+				}
+				return null;
+			}
+			
+			if (fileName.equals(filePath)) {
+				result.add(new AnnotationEntry(sha, author, date, lineContent));
+			} else {
+				result.add(new AnnotationEntry(sha, author, date, lineContent, fileName));
 			}
 		}
 		return result;

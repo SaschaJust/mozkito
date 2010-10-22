@@ -52,8 +52,11 @@ class GitLogParser {
 						}
 						return null;
 					}
-					result.add(new LogEntry(currentID, result.get(result.size() - 1), author, message.toString(),
-					        dateTime));
+					LogEntry previous = null;
+					if (result.size() > 0) {
+						previous = result.get(result.size() - 1);
+					}
+					result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
@@ -101,7 +104,11 @@ class GitLogParser {
 				}
 				return null;
 			}
-			result.add(new LogEntry(currentID, result.get(result.size() - 1), author, message.toString(), dateTime));
+			LogEntry previous = null;
+			if (result.size() > 0) {
+				previous = result.get(result.size() - 1);
+			}
+			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
 		}
 		return result;
 	}

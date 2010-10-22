@@ -81,6 +81,11 @@ public class GitRepositoryTest {
 	}
 	
 	@Test
+	public void testCloneUsername() {
+		//TODO implements
+	}
+	
+	@Test
 	public void testDiff() {
 		//TODO implement test
 	}

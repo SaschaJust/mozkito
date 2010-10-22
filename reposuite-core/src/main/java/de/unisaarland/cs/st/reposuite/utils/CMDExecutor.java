@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -22,8 +23,11 @@ public class CMDExecutor {
 			String line;
 			Process p = Runtime.getRuntime().exec(cmd, new String[0], dir);
 			if (pipeTo != null) {
+				OutputStream pipe = p.getOutputStream();
 				for (String input : pipeTo) {
-					p.getOutputStream().write(input.getBytes());
+					pipe.write(input.getBytes());
+					pipe.flush();
+					pipe.close();
 				}
 			}
 			int returnCode = p.waitFor();
