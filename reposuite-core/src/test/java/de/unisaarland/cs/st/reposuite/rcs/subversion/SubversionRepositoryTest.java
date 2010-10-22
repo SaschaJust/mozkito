@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
@@ -26,12 +25,21 @@ public class SubversionRepositoryTest {
 	
 	private SubversionRepository repository;
 	
-	@Before
 	public void setup() {
 		this.repository = new SubversionRepository();
+	}
+	
+	@After
+	public void tearDown() {
+		
+	}
+	
+	@Test
+	public void testCheckout() {
 		try {
-			this.repository.setup(new URI(
-			        "file:///Users/just/Documents/University/msa_ss10/project/svn_repo_2010-05-14"));
+			this.repository.setup(new URI("file:///tmp/svn_repo_2010-05-14"));
+			File checkoutPath = this.repository.checkoutPath("notes", "17822");
+			System.err.println(checkoutPath.getAbsolutePath());
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,19 +55,11 @@ public class SubversionRepositoryTest {
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (RuntimeException e) {
+			e.printStackTrace();
 		}
 		assertTrue(true);
-	}
-	
-	@After
-	public void tearDown() {
 		
-	}
-	
-	@Test
-	public void testCheckout() {
-		File checkoutPath = this.repository.checkoutPath("/", "17822");
-		System.err.println(checkoutPath.getAbsolutePath());
 	}
 	
 }
