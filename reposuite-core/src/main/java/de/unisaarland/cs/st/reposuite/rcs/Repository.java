@@ -156,6 +156,8 @@ public abstract class Repository {
 	 */
 	public abstract String getLastRevisionId();
 	
+	public abstract RepositoryType getRepositoryType();
+	
 	/**
 	 * Extract a log from the repository.
 	 * 
@@ -204,5 +206,4 @@ public abstract class Repository {
 	 */
 	public abstract void setup(URI address, String username, String password) throws MalformedURLException,
 	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
-	
 }
