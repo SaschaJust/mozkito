@@ -34,6 +34,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.author = author;
 		this.message = message;
 		this.previous = previous;
+		this.commitDate = dateTime;
 	}
 	
 	/*
