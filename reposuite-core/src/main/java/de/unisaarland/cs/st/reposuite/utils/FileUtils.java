@@ -231,6 +231,21 @@ public class FileUtils {
 		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
 	}
 	
+	public static List<File> getRecursiveDirectories(File baseDirectory) {
+		List<File> list = new LinkedList<File>();
+		for (String subDirectoryPath : baseDirectory.list()) {
+			File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator + subDirectoryPath);
+			if (subDirectory.isDirectory() && subDirectory.canExecute() && subDirectory.canRead()) {
+				list.add(subDirectory);
+				list.addAll(getRecursiveDirectories(subDirectory));
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * @return the simple class name
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
