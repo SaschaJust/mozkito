@@ -9,20 +9,10 @@ package de.unisaarland.cs.st.reposuite.exceptions;
  */
 public class UnsupportedProtocolType extends Exception {
 	
-	private final String      message;
-	
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 4200014637263024209L;
 	
 	public UnsupportedProtocolType(String message) {
-		this.message = message;
-	}
-	
-	@Override
-	public String getMessage() {
-		return this.message;
+		super(message);
 	}
 	
 }
