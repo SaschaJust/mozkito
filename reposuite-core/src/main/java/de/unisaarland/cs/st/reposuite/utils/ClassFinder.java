@@ -9,13 +9,14 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
@@ -27,40 +28,92 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  */
 public class ClassFinder {
 	
+	public static List<Class<?>> getClassesExtendingClass(Package pakkage, Class<?> superClass)
+	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
+		assert (pakkage != null);
+		assert (superClass != null);
+		
+		String classPath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		Collection<Class<?>> discoveredClasses = null;
+		String thePackage = pakkage.getName();
+		
+		if (classPath.endsWith(".jar")) {
+			discoveredClasses = getClassesInCurrentJarFile(thePackage);
+		} else {
+			discoveredClasses = getClassesFromCurrentClasspath(thePackage);
+		}
+		
+		List<Class<?>> classList = new LinkedList<Class<?>>();
+		for (Class<?> discovered : discoveredClasses) {
+			Class<?> aClass = discovered;
+			do {
+				Class<?> tmpClass = aClass.getSuperclass();
+				if (tmpClass == null) {
+					// Object case
+					break;
+				} else {
+					aClass = tmpClass;
+				}
+				
+				if (aClass.equals(superClass)) {
+					classList.add(discovered);
+					break;
+				}
+				
+			} while (true);
+		}
+		
+		return classList;
+	}
+	
 	/**
 	 * Finds all classes in the current classpath that are contained in the
-	 * given package (from packagename)
+	 * given package (from packageName)
 	 * 
-	 * @param pckgname
+	 * @param packageName
 	 *            the name of the package the classes have to be contained in
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesForPackage(String pckgname) throws ClassNotFoundException {
-		// This will hold a list of directories matching the pckgname. There may
+	public static Collection<Class<?>> getClassesFromCurrentClasspath(String packageName)
+	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
+		// This will hold a list of directories matching the packageName. There may
 		// be more than one if a package is split over multiple jars/paths
 		ArrayList<File> directories = new ArrayList<File>();
-		try {
-			ClassLoader cld = Thread.currentThread().getContextClassLoader();
-			if (cld == null) {
-				throw new ClassNotFoundException("Can't get class loader.");
-			}
-			String path = pckgname.replace('.', '/');
-			// Ask for all resources for the path
-			Enumeration<URL> resources = cld.getResources(path);
-			while (resources.hasMoreElements()) {
-				directories.add(new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8")));
-			}
-		} catch (NullPointerException x) {
-			throw new ClassNotFoundException(pckgname
-			        + " does not appear to be a valid package (Null pointer exception)");
-		} catch (UnsupportedEncodingException encex) {
-			throw new ClassNotFoundException(pckgname + " does not appear to be a valid package (Unsupported encoding)");
-		} catch (IOException ioex) {
-			throw new ClassNotFoundException("IOException was thrown when trying to get all resources for " + pckgname);
+		
+		String filePath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String path = packageName.replaceAll("\\.", FileUtils.fileSeparator);
+		
+		if (filePath.endsWith(".jar")) {
+			throw new WrongClassSearchMethodException();
 		}
 		
-		Collection<Class<?>> classes = new Vector<Class<?>>();
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			
+			if (classLoader == null) {
+				throw new ClassNotFoundException("Can't get class loader.");
+			}
+			
+			// Ask for all resources for the path
+			Enumeration<URL> resources = classLoader.getResources(path);
+			while (resources.hasMoreElements()) {
+				File directory = new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8"));
+				directories.add(directory);
+				directories.addAll(FileUtils.getRecursiveDirectories(directory));
+			}
+		} catch (NullPointerException x) {
+			throw new ClassNotFoundException(packageName
+			        + " does not appear to be a valid package (Null pointer exception)");
+		} catch (UnsupportedEncodingException encex) {
+			throw new ClassNotFoundException(packageName
+			        + " does not appear to be a valid package (Unsupported encoding)");
+		}
+		
+		Collection<Class<?>> classes = new LinkedList<Class<?>>();
+		
 		// For every directory identified capture all the .class files
 		for (File directory : directories) {
 			if (directory.exists()) {
@@ -70,11 +123,14 @@ public class ClassFinder {
 					// we are only interested in .class files
 					if (file.endsWith(".class")) {
 						// removes the .class extension
-						classes.add(Class.forName(pckgname + '.' + file.substring(0, file.length() - 6)));
+						int index = directory.getAbsolutePath().indexOf(path);
+						String absolutePackageName = directory.getAbsolutePath().substring(index)
+						        .replaceAll(FileUtils.fileSeparator, ".");
+						classes.add(Class.forName(absolutePackageName + '.' + file.substring(0, file.length() - 6)));
 					}
 				}
 			} else {
-				throw new ClassNotFoundException(pckgname + " (" + directory.getPath()
+				throw new ClassNotFoundException(packageName + " (" + directory.getPath()
 				        + ") does not appear to be a valid package");
 			}
 		}
@@ -85,48 +141,48 @@ public class ClassFinder {
 	 * Scans through the given JAR file and finds all class objects for a given
 	 * package name
 	 * 
-	 * @param pckgname
+	 * @param packageName
 	 *            the name of the package the classes have to be contained in
-	 * @param baseDirPath
-	 *            path to the JAR file
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesFromFileJarFile(String pckgname, String baseDirPath)
-	        throws ClassNotFoundException {
+	public static Collection<Class<?>> getClassesInCurrentJarFile(String packageName) throws ClassNotFoundException,
+	        WrongClassSearchMethodException, IOException {
+		String filePath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		
-		// TODO this needs a lot of rework
-		// TODO throw exception if baseDirPath is not a JAR file
-		// TODO determine baseDirPath rather than requiring the argument
-		if (!baseDirPath.endsWith(".jar")) {
-			return null;
+		if (!filePath.endsWith(".jar")) {
+			throw new WrongClassSearchMethodException();
 		}
 		
-		Collection<Class<?>> classes = new Vector<Class<?>>();
+		Collection<Class<?>> classes = new LinkedList<Class<?>>();
 		
-		// determine the full qualified pathname string from the package name by replacing all '.' with OS file seperators. 
-		String path = pckgname.replaceAll("\\.", System.getProperty("file.separator"))
-		        + System.getProperty("file.separator");
+		// determine the full qualified pathname string from the package name by replacing all '.' with OS file separators. 
+		String path = packageName.replaceAll("\\.", FileUtils.fileSeparator) + FileUtils.fileSeparator;
 		
-		try {
-			JarFile currentFile = new JarFile(baseDirPath);
-			/*
-			 * step through all elements in the jar file and check if there
-			 * exists a class file in given package. If so, load it and add it
-			 * to the collection.
-			 */
-			for (Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
-				JarEntry current = e.nextElement();
-				if ((current.getName().length() > path.length())
-				        && current.getName().substring(0, path.length()).equals(path)
-				        && current.getName().endsWith(".class")) {
-					classes.add(Class.forName(current.getName()
-					        .replaceAll(StringEscapeUtils.escapeJava(System.getProperty("file.separator")), ".")
-					        .replace(".class", "")));
-				}
+		JarFile currentFile = new JarFile(filePath);
+		
+		/*
+		 * step through all elements in the jar file and check if there exists a
+		 * class file in given package. If so, load it and add it to the
+		 * collection.
+		 */
+		for (Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
+			JarEntry current = e.nextElement();
+			
+			if ((current.getName().length() > path.length())
+			        && current.getName().substring(0, path.length()).equals(path)
+			        && current.getName().endsWith(".class")) {
+				classes.add(Class.forName(current.getName()
+				        .replaceAll(StringEscapeUtils.escapeJava(System.getProperty("file.separator")), ".")
+				        .replace(".class", "")));
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		
+		if (classes.size() == 0) {
+			throw new ClassNotFoundException("Could not find a class in file `" + currentFile.getName()
+			        + "` in the package `" + packageName + "`");
 		}
 		
 		return classes;
@@ -141,9 +197,11 @@ public class ClassFinder {
 	 *            the interface the classes must implement
 	 * @return a list of all classes fitting the search criteria
 	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws WrongClassSearchMethodException
 	 */
-	public static List<Class<?>> getClassessOfInterface(Package pakkage, Class<?> theInterface)
-	        throws ClassNotFoundException {
+	public static List<Class<?>> getClassesOfInterface(Package pakkage, Class<?> theInterface)
+	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		assert (pakkage != null);
 		assert (theInterface != null);
 		
@@ -152,23 +210,25 @@ public class ClassFinder {
 		String thePackage = pakkage.getName();
 		
 		if (classPath.endsWith(".jar")) {
-			discoveredClasses = getClassesFromFileJarFile(thePackage, classPath);
+			discoveredClasses = getClassesInCurrentJarFile(thePackage);
 		} else {
-			discoveredClasses = getClassesForPackage(thePackage);
+			discoveredClasses = getClassesFromCurrentClasspath(thePackage);
 		}
 		
-		List<Class<?>> classList = new ArrayList<Class<?>>();
+		List<Class<?>> classList = new LinkedList<Class<?>>();
 		for (Class<?> discovered : discoveredClasses) {
 			Class<?> aClass = discovered;
 			Class<?> matchingClass = null;
+			
 			do {
-				
 				if (RepoSuiteSettings.logTrace()) {
 					Logger.trace("Checking Class: " + aClass.getName());
 				}
+				
 				if (discovered.equals(theInterface)) {
 					break;
 				}
+				
 				Class<?>[] classInterfaces = aClass.getInterfaces();
 				
 				for (int j = 0; j < classInterfaces.length; j++) {
