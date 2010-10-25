@@ -27,6 +27,17 @@ public class AnnotationEntry {
 		
 	}
 	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
+	
+	/**
+	 * @return the line
+	 */
+	public String getLine() {
+		return this.line;
+	}
+	
 	public String getRevision() {
 		return this.revision;
 	}
@@ -48,11 +59,16 @@ public class AnnotationEntry {
 	public boolean hasAlternativePath() {
 		return (this.alternativeFilePath != null);
 	}
-
-	/**
-     * @return the line
-     */
-    public String getLine() {
-	    return line;
-    }
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AnnotationEntry [revision=" + this.revision + ", alternativeFilePath=" + this.alternativeFilePath
+		        + ", username=" + this.username + ", timestamp=" + this.timestamp + ", line=" + this.line + "]";
+	}
+	
 }

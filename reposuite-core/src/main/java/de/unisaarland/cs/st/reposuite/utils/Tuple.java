@@ -17,6 +17,10 @@ public class Tuple<K, M> {
 		return this.first;
 	}
 	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
+	
 	/**
 	 * @return the second
 	 */
@@ -40,4 +44,13 @@ public class Tuple<K, M> {
 		this.second = second;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Tuple [first=" + this.first + ", second=" + this.second + "]";
+	}
 }

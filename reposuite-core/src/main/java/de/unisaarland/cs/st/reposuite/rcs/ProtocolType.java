@@ -11,4 +11,8 @@ package de.unisaarland.cs.st.reposuite.rcs;
  */
 public enum ProtocolType {
 	FILE, HTTP, HTTPS, SSH;
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
 }

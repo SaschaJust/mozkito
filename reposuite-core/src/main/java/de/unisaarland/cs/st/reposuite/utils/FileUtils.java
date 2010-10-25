@@ -230,4 +230,8 @@ public class FileUtils {
 	public static void forceDeleteOnExit(File file) throws IOException {
 		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
 	}
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
 }

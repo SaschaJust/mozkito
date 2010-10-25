@@ -605,4 +605,8 @@ public class Logger {
 	public static void warn(String message, Throwable t) {
 		warn(message, null, t, 3);
 	}
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
 }

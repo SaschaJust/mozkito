@@ -102,4 +102,8 @@ public final class RepositoryFactory {
 	 */
 	private RepositoryFactory() {
 	}
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
 }

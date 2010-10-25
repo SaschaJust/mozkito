@@ -222,4 +222,8 @@ public class ClassFinder {
 		}
 		return classList;
 	}
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
 }

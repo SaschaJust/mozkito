@@ -43,7 +43,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	@Override
 	public int compareTo(LogEntry o) {
-		return commitDate.compareTo(o.commitDate);
+		return this.commitDate.compareTo(o.commitDate);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @return the author
 	 */
 	public String getAuthor() {
-		return author;
+		return this.author;
 	}
 	
 	/**
@@ -61,7 +61,11 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @return the date time
 	 */
 	public DateTime getDateTime() {
-		return commitDate;
+		return this.commitDate;
+	}
+	
+	public String getHandle() {
+		return this.getClass().getSimpleName();
 	}
 	
 	/**
@@ -70,7 +74,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @return the message
 	 */
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	/**
@@ -79,7 +83,18 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @return the revision
 	 */
 	public String getRevision() {
-		return revision;
+		return this.revision;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "LogEntry [revision=" + this.revision + ", author=" + this.author + ", message=" + this.message
+		        + ", commitDate=" + this.commitDate + ", previous=" + this.previous + "]";
 	}
 	
 }

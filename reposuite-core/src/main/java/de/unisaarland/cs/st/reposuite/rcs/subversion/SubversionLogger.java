@@ -26,8 +26,8 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, byte[] data) {
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug(message, 4);
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace(message, 4);
 		}
 	}
 	
@@ -40,8 +40,8 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, Level logLevel) {
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug(message, 4);
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace(message, 4);
 		}
 	}
 	
@@ -54,8 +54,8 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 */
 	@Override
 	public void log(SVNLogType logType, Throwable th, Level logLevel) {
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug(th.getMessage(), 4);
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace(th.getMessage(), 4);
 		}
 	}
 }

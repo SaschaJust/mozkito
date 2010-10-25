@@ -23,7 +23,7 @@ import difflib.Patch;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-class SVNDiffParser implements ISVNDiffGenerator {
+class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	public static HashSet<Integer> getLineNumbers(Chunk chunk) {
 		HashSet<Integer> result = new HashSet<Integer>();
@@ -45,7 +45,7 @@ class SVNDiffParser implements ISVNDiffGenerator {
 	
 	protected HashSet<Delta> deltas;
 	
-	public SVNDiffParser() {
+	public SubversionDiffParser() {
 		this.deltas = new HashSet<Delta>();
 	}
 	

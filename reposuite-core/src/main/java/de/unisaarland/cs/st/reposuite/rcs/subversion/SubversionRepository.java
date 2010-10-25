@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
@@ -50,7 +48,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class SubversionRepository extends Repository {
@@ -68,56 +66,58 @@ public class SubversionRepository extends Repository {
 	public SubversionRepository() {
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
+	 * java.lang.String)
+	 */
 	@Override
 	public List<AnnotationEntry> annotate(String filePath, String revision) {
 		SVNURL relativePath;
 		try {
 			
 			relativePath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
-			Long revisionNumber = Long.parseLong(revision);
 			SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
 			        SVNWCUtil.createDefaultOptions(true));
 			
-			SVNRevision svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
+			SVNRevision svnRevision = buildRevision(revision);
 			
 			// check out the svnurl recursively into the createDir visible from revision 0 to given revision string
-			ISVNAnnotateHandler annotateHandler = new ISVNAnnotateHandler() {
-				
-				private final List<AnnotationEntry> list = new LinkedList<AnnotationEntry>();
-				
-				@Override
-				public void handleEOF() {
-				}
-				
-				@Override
-				public void handleLine(Date date, long revision, String author, String line) throws SVNException {
-					AnnotationEntry annotationEntry = new AnnotationEntry(revision + "", author, new DateTime(date),
-					        line);
-					this.list.add(annotationEntry);
-				}
-				
-				@Override
-				public void handleLine(Date date, long revision, String author, String line, Date mergedDate,
-				        long mergedRevision, String mergedAuthor, String mergedPath, int lineNumber)
-				        throws SVNException {
-				}
-				
-				@Override
-				public boolean handleRevision(Date date, long revision, String author, File contents)
-				        throws SVNException {
-					return false;
-				}
-			};
+			SubversionAnnotationHandler annotateHandler = new SubversionAnnotationHandler();
 			logClient.doAnnotate(relativePath, svnRevision, svnRevision, svnRevision, annotateHandler);
+			return annotateHandler.getResults();
 		} catch (SVNException e) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
 		}
-		return null;
 	}
 	
+	private SVNRevision buildRevision(String revision) {
+		assert (revision != null);
+		
+		SVNRevision svnRevision;
+		
+		try {
+			Long revisionNumber = Long.parseLong(revision);
+			svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
+		} catch (NumberFormatException e) {
+			svnRevision = SVNRevision.parse(revision.toUpperCase());
+		}
+		
+		return svnRevision;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
+	 * String, java.lang.String)
+	 */
 	@Override
 	public File checkoutPath(String relativeRepoPath, String revision) {
 		File workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
@@ -138,18 +138,9 @@ public class SubversionRepository extends Repository {
 			SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
 			        SVNWCUtil.createDefaultOptions(true));
 			
-			SVNRevision svnRevision;
-			
-			try {
-				Long revisionNumber = Long.parseLong(revision);
-				svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
-			} catch (NumberFormatException e) {
-				svnRevision = SVNRevision.parse(revision.toUpperCase());
-			}
-			
+			SVNRevision svnRevision = buildRevision(revision);
 			// check out the svnurl recursively into the createDir visible from revision 0 to given revision string 
-			long checkout = updateClient.doCheckout(checkoutPath, workingDirectory, svnRevision, svnRevision,
-			        SVNDepth.INFINITY, false);
+			updateClient.doCheckout(checkoutPath, workingDirectory, svnRevision, svnRevision, SVNDepth.INFINITY, false);
 			
 			return workingDirectory;
 		} catch (SVNException e) {
@@ -160,17 +151,21 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
+	 * java.lang.String, java.lang.String)
+	 */
 	@Override
 	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
 		try {
 			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
-			Long revisionNumberFrom = Long.parseLong(baseRevision);
-			SVNRevision fromRevision = SVNRevision.create(revisionNumberFrom);
-			Long revisionNumberTo = Long.parseLong(revisedRevision);
-			SVNRevision toRevision = SVNRevision.create(revisionNumberTo);
+			SVNRevision fromRevision = buildRevision(baseRevision);
+			SVNRevision toRevision = buildRevision(revisedRevision);
 			SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
 			        SVNWCUtil.createDefaultOptions(true));
-			SVNDiffParser diffParser = new SVNDiffParser();
+			SubversionDiffParser diffParser = new SubversionDiffParser();
 			diffClient.setDiffGenerator(diffParser);
 			diffClient.doDiff(repoPath, toRevision, fromRevision, toRevision, SVNDepth.FILES, false,
 			        new NullOutputStream());
@@ -184,9 +179,20 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths(java.lang
+	 * .String)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(String revision) {
+		assert (revision != null);
+		assert (revision.matches("[0-9]+"));
+		// TODO add support for HEAD, PREVIOUS, etc...
+		
 		Long revisionNumber = Long.parseLong(revision);
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
 		Collection<SVNLogEntry> logs;
@@ -221,11 +227,21 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
+	 */
 	@Override
 	public String getFirstRevisionId() {
 		return "0";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
+	 */
 	@Override
 	public String getLastRevisionId() {
 		try {
@@ -238,6 +254,13 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
+	 * java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<LogEntry> log(String fromRevision, String toRevision) {
 		Long revisionFromNumber = Long.parseLong(fromRevision);
@@ -263,12 +286,23 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
+	 */
 	@Override
 	public void setup(URI address) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
 	        UnsupportedProtocolType {
 		setup(address, null, null);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
+	 * java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void setup(URI address, String username, String password) throws MalformedURLException, InvalidProtocolType,
 	        InvalidRepositoryURI, UnsupportedProtocolType {

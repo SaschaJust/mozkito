@@ -71,6 +71,13 @@ public abstract class RepoSuiteArgument {
 	}
 	
 	/**
+	 * @return the simple class name
+	 */
+	public final String getHandle() {
+		return this.getClass().getSimpleName();
+	}
+	
+	/**
 	 * @return The name of the argument (as printed in help string).
 	 */
 	public String getName() {
@@ -117,9 +124,15 @@ public abstract class RepoSuiteArgument {
 		this.stringValue = value;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "name " + (this.isRequired ? "(required) " : "")
-		        + (this.defaultValue != null ? "[default: " + this.defaultValue + "] " : "") + ": " + this.description;
+		return "RepoSuiteArgument [isRequired=" + this.isRequired + ", description=" + this.description + ", name="
+		        + this.name + ", defaultValue=" + this.defaultValue + ", stringValue=" + this.stringValue + "]";
 	}
+	
 }
