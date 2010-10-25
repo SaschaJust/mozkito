@@ -135,22 +135,23 @@ public class SubversionRepository extends Repository {
 		try {
 			
 			checkoutPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
-			Long revisionNumber = Long.parseLong(revision);
 			SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
 			        SVNWCUtil.createDefaultOptions(true));
 			
-			SVNRevision svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
+			SVNRevision svnRevision;
+			
+			try {
+				Long revisionNumber = Long.parseLong(revision);
+				svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
+			} catch (NumberFormatException e) {
+				svnRevision = SVNRevision.parse(revision.toUpperCase());
+			}
 			
 			// check out the svnurl recursively into the createDir visible from revision 0 to given revision string 
 			long checkout = updateClient.doCheckout(checkoutPath, workingDirectory, svnRevision, svnRevision,
-			        SVNDepth.FILES, false);
+			        SVNDepth.INFINITY, false);
 			
-			if (checkout != revisionNumber) {
-				// TODO handle error
-				return null;
-			} else {
-				return workingDirectory;
-			}
+			return workingDirectory;
 		} catch (SVNException e) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error(e.getMessage(), e);

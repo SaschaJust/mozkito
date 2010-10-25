@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
@@ -23,6 +24,52 @@ public class FileUtils {
 	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
 	public static final String fileSeparator = System.getProperty("file.separator");
 	public static final String lineSeparator = System.getProperty("line.separator");
+	
+	/**
+	 * Checks if the command maps to a valid accessible, executable file. If the
+	 * command is not absolute, a PATH traversal search for the command is done.
+	 * 
+	 * @param command
+	 *            the command string that shall be analyzed
+	 * @return returns the absolute path to the command, if found
+	 * @throws ExternalExecutableException
+	 */
+	public static String checkExecutable(String command) throws ExternalExecutableException {
+		assert (command != null);
+		if (command.startsWith(FileUtils.fileSeparator)
+		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
+			// We got an absolut path here
+			File executable = new File(command);
+			if (!executable.exists()) {
+				throw new ExternalExecutableException("File `" + command + "` does not exist.");
+			} else if (!executable.isFile()) {
+				if (executable.isDirectory()) {
+					throw new ExternalExecutableException("Command `" + command + "` is a directory.");
+				} else {
+					throw new ExternalExecutableException("Command `" + command + "` is not a file.");
+				}
+			} else if (!executable.canExecute()) {
+				throw new ExternalExecutableException("File `" + command + "` is not executable.");
+			}
+			return command;
+		} else {
+			// relative path
+			String pathVariable = System.getenv("PATH");
+			String[] paths = pathVariable.split(":");
+			File executable;
+			
+			for (String path : paths) {
+				executable = new File(path + FileUtils.fileSeparator + command);
+				if (executable.exists() && executable.isFile() && executable.canExecute()) {
+					return executable.getAbsolutePath();
+				}
+			}
+			
+			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
+			        + pathVariable);
+		}
+	}
 	
 	/**
 	 * Created a directory in parent directory with given name. If the directory

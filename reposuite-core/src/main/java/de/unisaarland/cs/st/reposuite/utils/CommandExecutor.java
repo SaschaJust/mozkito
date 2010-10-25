@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
@@ -66,10 +67,24 @@ public class CommandExecutor extends Thread {
 	 */
 	public static Tuple<Integer, List<String>> execute(String command, String[] arguments, File dir, InputStream input,
 	        Map<String, String> environment) {
+		assert (command != null);
+		assert ((arguments == null) || (arguments.length > 0));
+		
 		// merge command and arguments to one list
 		List<String> lineElements = new LinkedList<String>();
 		lineElements.add(command);
-		lineElements.addAll(Arrays.asList(arguments));
+		if (arguments != null) {
+			lineElements.addAll(Arrays.asList(arguments));
+		}
+		
+		try {
+			command = FileUtils.checkExecutable(command);
+		} catch (ExternalExecutableException e) {
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return new Tuple<Integer, List<String>>(-1, null);
+		}
 		
 		if (RepoSuiteSettings.logDebug()) {
 			Logger.debug("Executing: [command:" + command + "][" + Arrays.toString(arguments) + "][dir:"
