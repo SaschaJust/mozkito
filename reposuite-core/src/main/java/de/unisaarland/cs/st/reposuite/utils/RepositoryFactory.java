@@ -1,15 +1,12 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
-import de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository;
-import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
-import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
-import de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 public final class RepositoryFactory {
@@ -20,25 +17,25 @@ public final class RepositoryFactory {
 	private static Map<RepositoryType, Class<? extends Repository>> repositoryHandlers = new HashMap<RepositoryType, Class<? extends Repository>>();
 	
 	/**
-	 * static registration of known modules
+	 * static registration of all modules extending {@link Repository}
 	 */
 	static {
-		// this can be removed after adding classpath traversal search for classes implementing Repository
-		// requires addRepositoryHandler to become public to register repository connectors from settings
-		// class
-		
 		// ======== Repository handlers ========
-		// Subversion
-		addRepositoryHandler(RepositoryType.SUBVERSION, SubversionRepository.class);
-		
-		// Mercurial
-		addRepositoryHandler(RepositoryType.MERCURIAL, MercurialRepository.class);
-		
-		// Git
-		addRepositoryHandler(RepositoryType.GIT, GitRepository.class);
-		
-		// CVS
-		addRepositoryHandler(RepositoryType.CVS, CVSRepository.class);
+		try {
+			List<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Repository.class.getPackage(),
+			        Repository.class);
+			for (Class<?> klass : classesExtendingClass) {
+				addRepositoryHandler(
+				        (RepositoryType) klass.getMethod("getRepositoryType", null).invoke(
+				                klass.getConstructor(null).newInstance(null), null),
+				        (Class<? extends Repository>) klass);
+			}
+		} catch (Exception e) {
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException();
+		}
 	}
 	
 	/**
@@ -91,7 +88,8 @@ public final class RepositoryFactory {
 		Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
-			throw new UnregisteredRepositoryTypeException();
+			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
+			        + repositoryIdentifier.toString() + "`");
 		} else {
 			return repositoryClass;
 		}
@@ -103,6 +101,9 @@ public final class RepositoryFactory {
 	private RepositoryFactory() {
 	}
 	
+	/**
+	 * @return the simple class name
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
