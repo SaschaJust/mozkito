@@ -3,6 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.subversion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -16,9 +18,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
@@ -69,7 +73,11 @@ public class SubversionRepositoryTest {
 	
 	@Test
 	public void testAnnotate() {
-		
+		List<AnnotationEntry> annotate = repository.annotate("/dir_b/file_2_dir_a", "HEAD");
+		System.err.println(JavaUtils.collectionToString(annotate));
+		for (AnnotationEntry entry : annotate) {
+			entry.getLine();
+		}
 	}
 	
 	@Test
@@ -100,12 +108,32 @@ public class SubversionRepositoryTest {
 	
 	@Test
 	public void testCheckoutDir() {
+		File checkoutPath = repository.checkoutPath("/dir_a", "HEAD");
+		if (RepoSuiteSettings.logDebug()) {
+			Logger.debug("Child entries of checkout path: " + JavaUtils.arrayToString(checkoutPath.list()));
+		}
+		
+		File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
+		File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
+		File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
+		File dir_a_file_3 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_3_dir_a");
+		
+		assertFalse(dir_a.exists());
+		assertFalse(dir_b.exists());
+		assertFalse(file_1.exists());
+		assertTrue(dir_a_file_3.exists());
+		assertTrue(dir_a_file_3.isFile());
 		
 	}
 	
 	@Test
 	public void testCheckoutFile() {
-		
+		try {
+			repository.checkoutPath("/dir_b/file_2_dir_a", "HEAD");
+			fail("Checking out a file should cause a RuntimeException to be thrown.");
+		} catch (RuntimeException e) {
+			assertTrue(true);
+		}
 	}
 	
 	@Test
@@ -115,12 +143,12 @@ public class SubversionRepositoryTest {
 	
 	@Test
 	public void testGetFirstRevisionID() {
-		
+		assertEquals("0", repository.getFirstRevisionId());
 	}
 	
 	@Test
 	public void testGetLastRevisionID() {
-		
+		assertEquals("17", repository.getLastRevisionId());
 	}
 	
 	@Test
