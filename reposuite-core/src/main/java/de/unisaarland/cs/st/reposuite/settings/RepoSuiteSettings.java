@@ -23,6 +23,8 @@ public class RepoSuiteSettings {
 	private static final String defaultLogLevel = "warn";
 	private static LogLevel     logLevel        = LogLevel.valueOf(System.getProperty("log.level", defaultLogLevel)
 	                                                    .toUpperCase());
+	public static final String  reportThis      = "Please file a bug report with this error message here: "
+	                                                    + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
 	/**
 	 * @return the logLevel
