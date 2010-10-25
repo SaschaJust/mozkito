@@ -13,6 +13,9 @@ import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
@@ -21,58 +24,81 @@ import difflib.Delta;
  */
 public class CVSRepository extends Repository {
 	
+	private static final RepositoryType REPOSITORY_TYPE = RepositoryType.CVS;
+	
 	@Override
 	public List<AnnotationEntry> annotate(String filePath, String revision) {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public File checkoutPath(String relativeRepoPath, String revision) {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public Map<String, ChangeType> getChangedPaths(String revision) {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public String getFirstRevisionId() {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public String getLastRevisionId() {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
+	public RepositoryType getRepositoryType() {
+		return REPOSITORY_TYPE;
+	}
+	
+	@Override
 	public List<LogEntry> log(String fromRevision, String toRevision) {
-		// TODO Auto-generated method stub
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 		return null;
 	}
 	
 	@Override
 	public void setup(URI address) {
-		// TODO Auto-generated method stub
-		
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 	}
 	
 	@Override
 	public void setup(URI address, String username, String password) {
-		// TODO Auto-generated method stub
-		
+		if (RepoSuiteSettings.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
 	}
 	
 }
