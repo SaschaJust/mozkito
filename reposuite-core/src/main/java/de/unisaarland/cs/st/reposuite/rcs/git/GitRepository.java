@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.utils.CMDExecutor;
+import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -64,7 +64,7 @@ public class GitRepository extends Repository {
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		String firstRev = getFirstRevisionId();
 		String cmd = "git blame -lf " + revision + " -- " + filePath;
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -124,7 +124,7 @@ public class GitRepository extends Repository {
 	@Override
 	public File checkoutPath(String relativeRepoPath, String revision) {
 		String cmd = "git checkout " + revision;
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -150,7 +150,7 @@ public class GitRepository extends Repository {
 		
 		//get the old version
 		String cmd = baseCMD + baseRevision + ":" + filePath;
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -158,7 +158,7 @@ public class GitRepository extends Repository {
 		
 		//get the old version
 		cmd = baseCMD + revisedRevision + ":" + filePath;
-		response = CMDExecutor.execute(cmd, cloneDir);
+		response = CommandExecutor.execute(cmd, cloneDir);
 		
 		List<String> newContent = response.getSecond();
 		
@@ -174,7 +174,7 @@ public class GitRepository extends Repository {
 	@Override
 	public Map<String, ChangeType> getChangedPaths(String revision) {
 		String cmd = "git log --pretty=format:%H --name-status " + revision;
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -238,7 +238,7 @@ public class GitRepository extends Repository {
 	@Override
 	public String getFirstRevisionId() {
 		String cmd = "git log --pretty=format:%H";
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -260,7 +260,7 @@ public class GitRepository extends Repository {
 	@Override
 	public String getLastRevisionId() {
 		String cmd = "git rev-parse master";
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -285,7 +285,7 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		String cmd = "git log --pretty=fuller";
-		Tuple<Integer, List<String>> response = CMDExecutor.execute(cmd, cloneDir);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, cloneDir);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -310,7 +310,7 @@ public class GitRepository extends Repository {
 		cmd.append(" ");
 		cmd.append(gitName);
 		
-		Tuple<Integer, List<String>> returnValue = CMDExecutor.execute(cmd.toString(), cloneDir);
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), cloneDir);
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(gitName);
 			if (!cloneDir.exists()) {
@@ -349,7 +349,7 @@ public class GitRepository extends Repository {
 		cmd.append(" ");
 		cmd.append(gitName);
 		
-		Tuple<Integer, List<String>> returnValue = CMDExecutor.execute(cmd.toString(), cloneDir, password);
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), cloneDir, password);
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(gitName);
 			if (!cloneDir.exists()) {
