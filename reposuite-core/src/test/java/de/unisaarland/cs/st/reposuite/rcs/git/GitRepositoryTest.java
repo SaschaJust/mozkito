@@ -25,22 +25,24 @@ public class GitRepositoryTest {
 	public void setUp() throws Exception {
 		
 		//TODO replace this repo  and create an own repo on the fly 
-		uri = new URI("git://github.com/git/hello-world.git");
+		this.uri = new URI("git://github.com/git/hello-world.git");
+		this.repo = new GitRepository();
+		this.repo.setup(this.uri);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		if (cloneDir != null) {
-			File f = new File(cloneDir, ".git");
+		if (this.cloneDir != null) {
+			File f = new File(this.cloneDir, ".git");
 			FileUtils.forceDelete(f);
-			FileUtils.forceDelete(cloneDir);
+			FileUtils.forceDelete(this.cloneDir);
 		}
 	}
 	
 	@Test
 	public void testAnnotate() {
 		testClone();
-		List<AnnotationEntry> annotate = repo.annotate("python.py", "c18877690322dfc6ae3e37bb7f7085a24e94e887");
+		List<AnnotationEntry> annotate = this.repo.annotate("python.py", "c18877690322dfc6ae3e37bb7f7085a24e94e887");
 		assertEquals(2, annotate.size());
 		AnnotationEntry entry = annotate.get(0);
 		assertEquals("f554664a346629dc2b839f7292d06bad2db4aece", entry.getRevision());
@@ -52,7 +54,7 @@ public class GitRepositoryTest {
 		assertTrue(entry.hasAlternativePath());
 		assertEquals("hello.py", entry.getAlternativeFilePath());
 		
-		annotate = repo.annotate("focal.fc", "c18877690322dfc6ae3e37bb7f7085a24e94e887");
+		annotate = this.repo.annotate("focal.fc", "c18877690322dfc6ae3e37bb7f7085a24e94e887");
 		assertEquals(1, annotate.size());
 		entry = annotate.get(0);
 		assertEquals("9dc30dd27d47d1d3f5bbc0ebb92daf8b4a6c812c", entry.getRevision());
@@ -72,10 +74,8 @@ public class GitRepositoryTest {
 	
 	@Test
 	public void testClone() {
-		repo = new GitRepository();
-		repo.setup(uri);
-		cloneDir = repo.getCloneDir();
-		File DOT_GIT = new File(cloneDir, ".git");
+		this.cloneDir = this.repo.getCloneDir();
+		File DOT_GIT = new File(this.cloneDir, ".git");
 		assertTrue(DOT_GIT.exists());
 		assertTrue(DOT_GIT.isDirectory());
 	}
@@ -93,12 +93,12 @@ public class GitRepositoryTest {
 	@Test
 	public void testGetFirstRev() {
 		testClone();
-		assertEquals("f554664a346629dc2b839f7292d06bad2db4aece", repo.getFirstRevisionId());
+		assertEquals("f554664a346629dc2b839f7292d06bad2db4aece", this.repo.getFirstRevisionId());
 	}
 	
 	@Test
 	public void testGetLastRev() {
 		testClone();
-		assertEquals("3fa7c46d11b11d61f1cbadc6888be5d0eae21969", repo.getLastRevisionId());
+		assertEquals("3fa7c46d11b11d61f1cbadc6888be5d0eae21969", this.repo.getLastRevisionId());
 	}
 }

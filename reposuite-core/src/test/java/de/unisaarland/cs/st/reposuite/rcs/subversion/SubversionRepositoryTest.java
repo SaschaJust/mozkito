@@ -167,7 +167,7 @@ public class SubversionRepositoryTest {
 		Map<String, ChangeType> changedPaths = repository.getChangedPaths("17");
 		Map<String, ChangeType> paths = new HashMap<String, ChangeType>();
 		paths.put("/dir_b/file_2_dir_a", ChangeType.Modified);
-		paths.put("file_1", ChangeType.Added);
+		paths.put("/file_1", ChangeType.Added);
 		
 		assertEquals(paths.keySet().size(), changedPaths.keySet().size());
 		assertTrue(CollectionUtils.isEqualCollection(paths.keySet(), changedPaths.keySet()));
