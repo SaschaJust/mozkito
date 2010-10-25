@@ -283,7 +283,9 @@ public class SubversionRepository extends Repository {
 		
 		this.type = ProtocolType.valueOf(this.uri.toURL().getProtocol().toUpperCase());
 		if (this.type != null) {
-			Logger.info("Setting up in '" + this.type.name() + "' mode.");
+			if (RepoSuiteSettings.logInfo()) {
+				Logger.info("Setting up in '" + this.type.name() + "' mode.");
+			}
 			switch (this.type) {
 				case FILE:
 					if (RepoSuiteSettings.logDebug()) {
