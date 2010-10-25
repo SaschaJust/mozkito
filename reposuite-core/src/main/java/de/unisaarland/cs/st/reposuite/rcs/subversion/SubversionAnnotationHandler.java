@@ -22,6 +22,9 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	private final List<AnnotationEntry> list = new LinkedList<AnnotationEntry>();
 	
+	/**
+	 * @return the resulting list of {@link AnnotationEntry}s
+	 */
 	public List<AnnotationEntry> getResults() {
 		return this.list;
 	}
@@ -33,8 +36,7 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 */
 	@Override
 	public void handleEOF() {
-		// TODO Auto-generated method stub
-		
+		// nothing to do here		
 	}
 	
 	/*
@@ -46,8 +48,7 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 */
 	@Override
 	public void handleLine(Date date, long revision, String author, String line) throws SVNException {
-		AnnotationEntry annotationEntry = new AnnotationEntry(revision + "", author, new DateTime(date), line);
-		this.list.add(annotationEntry);
+		this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
 	}
 	
 	/*
@@ -61,7 +62,12 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	@Override
 	public void handleLine(Date date, long revision, String author, String line, Date mergedDate, long mergedRevision,
 	        String mergedAuthor, String mergedPath, int lineNumber) throws SVNException {
-		this.list.add(new AnnotationEntry(revision + "", author, new DateTime(mergedDate), line));
+		if (revision > mergedRevision) {
+			this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
+		} else {
+			this.list.add(new AnnotationEntry(mergedRevision + "", mergedAuthor, new DateTime(mergedDate), line,
+			        mergedPath));
+		}
 	}
 	
 	/*
@@ -73,6 +79,6 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 */
 	@Override
 	public boolean handleRevision(Date date, long revision, String author, File contents) throws SVNException {
-		return ((revision >= 0) && (author != null) && (date != null));
+		return false;
 	}
 }

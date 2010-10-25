@@ -42,23 +42,27 @@ import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * Subversion connector extending the {@link Repository} base class.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @see Repository
  */
 public class SubversionRepository extends Repository {
 	
-	private URI           uri;
-	private String        password;
-	private String        username;
-	private ProtocolType  type;
-	private SVNRepository repository;
-	private SVNURL        svnurl;
+	private static final RepositoryType REPOSITORY_TYPE = RepositoryType.SUBVERSION;
+	private String                      password;
+	private SVNRepository               repository;
+	private SVNURL                      svnurl;
+	private ProtocolType                type;
+	private URI                         uri;
+	private String                      username;
 	
 	/**
 	 * Instantiates a new subversion repository.
@@ -86,7 +90,7 @@ public class SubversionRepository extends Repository {
 			
 			// check out the svnurl recursively into the createDir visible from revision 0 to given revision string
 			SubversionAnnotationHandler annotateHandler = new SubversionAnnotationHandler();
-			logClient.doAnnotate(relativePath, svnRevision, svnRevision, svnRevision, annotateHandler);
+			logClient.doAnnotate(relativePath, svnRevision, buildRevision("0"), svnRevision, annotateHandler);
 			return annotateHandler.getResults();
 		} catch (SVNException e) {
 			if (RepoSuiteSettings.logError()) {
@@ -96,6 +100,15 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/**
+	 * Converts a given string to the corresponding SVNRevision.
+	 * 
+	 * @param revision
+	 *            the string representing an SVN revision. This is either a
+	 *            numeric of type long or a case insensitive version of the
+	 *            alias string versions. This may not be null.
+	 * @return the corresponding SVNRevision
+	 */
 	private SVNRevision buildRevision(String revision) {
 		assert (revision != null);
 		
@@ -107,6 +120,8 @@ public class SubversionRepository extends Repository {
 		} catch (NumberFormatException e) {
 			svnRevision = SVNRevision.parse(revision.toUpperCase());
 		}
+		
+		assert (svnRevision != null);
 		
 		return svnRevision;
 	}
@@ -190,14 +205,14 @@ public class SubversionRepository extends Repository {
 	@Override
 	public Map<String, ChangeType> getChangedPaths(String revision) {
 		assert (revision != null);
-		assert (revision.matches("[0-9]+"));
-		// TODO add support for HEAD, PREVIOUS, etc...
 		
-		Long revisionNumber = Long.parseLong(revision);
+		Long revisionNumber = buildRevision(revision).getNumber();
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
 		Collection<SVNLogEntry> logs;
+		
 		try {
 			logs = this.repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
+			
 			for (SVNLogEntry entry : logs) {
 				Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
 				for (Object o : changedPaths.keySet()) {
@@ -214,7 +229,11 @@ public class SubversionRepository extends Repository {
 						case 'R':
 							map.put(changedPaths.get(o).getPath(), ChangeType.Replaced);
 							break;
-						default: // TODO handle unsupported ChangeType 
+						default:
+							if (RepoSuiteSettings.logError()) {
+								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
+								        + RepoSuiteSettings.reportThis);
+							}
 					}
 				}
 			}
@@ -234,7 +253,7 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		return "0";
+		return "1";
 	}
 	
 	/*
@@ -254,6 +273,11 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	@Override
+	public RepositoryType getRepositoryType() {
+		return REPOSITORY_TYPE;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -263,13 +287,15 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<LogEntry> log(String fromRevision, String toRevision) {
-		Long revisionFromNumber = Long.parseLong(fromRevision);
-		Long revisionToNumber = Long.parseLong(toRevision);
+		SVNRevision fromSVNRevision = buildRevision(fromRevision);
+		SVNRevision toSVNRevision = buildRevision(toRevision);
+		
 		List<LogEntry> list = new LinkedList<LogEntry>();
 		
 		Collection<SVNLogEntry> logs;
 		try {
-			logs = this.repository.log(new String[] { "" }, null, revisionFromNumber, revisionToNumber, true, true);
+			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(),
+			        toSVNRevision.getNumber(), true, true);
 			LogEntry buff = null;
 			for (SVNLogEntry entry : logs) {
 				LogEntry current = new LogEntry(entry.getRevision() + "", buff, entry.getAuthor(), entry.getMessage(),
