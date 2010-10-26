@@ -23,15 +23,32 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  */
 public class CommandExecutor extends Thread {
 	
+	/**
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * 
+	 */
 	enum Task {
 		READER, WRITER;
 	}
 	
+	/**
+	 * @param commandLine
+	 * @param dir
+	 * @deprecated
+	 * @return
+	 */
 	@Deprecated
 	public static Tuple<Integer, List<String>> execute(String commandLine, File dir) {
 		return execute(commandLine, dir, null);
 	}
 	
+	/**
+	 * @param commandLine
+	 * @param dir
+	 * @param line
+	 * @deprecated
+	 * @return
+	 */
 	@Deprecated
 	public static Tuple<Integer, List<String>> execute(String commandLine, File dir, String line) {
 		assert (commandLine != null);

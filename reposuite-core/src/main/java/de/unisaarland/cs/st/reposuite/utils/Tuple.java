@@ -1,5 +1,11 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ * @param <K>
+ * @param <M>
+ */
 public class Tuple<K, M> {
 	
 	private K first;
@@ -17,6 +23,9 @@ public class Tuple<K, M> {
 		return this.first;
 	}
 	
+	/**
+	 * @return the simple class name
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

@@ -16,10 +16,18 @@ import org.apache.commons.collections.Predicate;
  */
 public class JavaUtils {
 	
+	/**
+	 * @param objects
+	 * @return
+	 */
 	public static String arrayToString(Object[] objects) {
 		return collectionToString(Arrays.asList(objects));
 	}
 	
+	/**
+	 * @param object
+	 * @return
+	 */
 	private static String checkDescent(Object object) {
 		if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
@@ -42,6 +50,10 @@ public class JavaUtils {
 		}
 	}
 	
+	/**
+	 * @param collection
+	 * @return
+	 */
 	public static String collectionToString(Collection<?> collection) {
 		StringBuilder builder = new StringBuilder();
 		
@@ -60,6 +72,10 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	/**
+	 * @param map
+	 * @return
+	 */
 	public static String mapToString(Map<?, ?> map) {
 		StringBuilder builder = new StringBuilder();
 		
@@ -84,6 +100,9 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	/**
+	 * @return the simple class name
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

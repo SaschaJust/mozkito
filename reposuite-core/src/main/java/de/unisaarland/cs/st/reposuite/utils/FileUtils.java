@@ -14,9 +14,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  * The Class FileUtils.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- */
-/**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
 public class FileUtils {
@@ -231,6 +228,10 @@ public class FileUtils {
 		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
 	}
 	
+	/**
+	 * @param baseDirectory
+	 * @return
+	 */
 	public static List<File> getRecursiveDirectories(File baseDirectory) {
 		List<File> list = new LinkedList<File>();
 		for (String subDirectoryPath : baseDirectory.list()) {

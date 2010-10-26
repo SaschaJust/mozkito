@@ -20,8 +20,8 @@ import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
- * Searches for class matching certain criteria in the classpath or the current
- * jar file
+ * Searches for classes matching certain criteria in the classpath or the
+ * current jar file.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 

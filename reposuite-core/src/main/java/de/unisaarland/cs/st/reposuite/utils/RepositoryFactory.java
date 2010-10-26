@@ -9,6 +9,11 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
+@SuppressWarnings("unchecked")
 public final class RepositoryFactory {
 	
 	/**
@@ -24,6 +29,7 @@ public final class RepositoryFactory {
 		try {
 			List<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Repository.class.getPackage(),
 			        Repository.class);
+			
 			for (Class<?> klass : classesExtendingClass) {
 				addRepositoryHandler(
 				        (RepositoryType) klass.getMethod("getRepositoryType", null).invoke(
