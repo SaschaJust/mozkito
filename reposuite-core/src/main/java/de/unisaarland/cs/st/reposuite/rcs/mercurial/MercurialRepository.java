@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.rcs.mercurial;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -61,9 +62,8 @@ public class MercurialRepository extends Repository {
 				Logger.error("filePath and revision must not be null. Abort.");
 			}
 		}
-		String cmd = "hg annotate -cfud -r" + revision + " " + filePath;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r",
+		        revision, filePath }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -133,9 +133,8 @@ public class MercurialRepository extends Repository {
 	 * Cache hashes.
 	 */
 	private void cacheHashes() {
-		String cmd = "hg log --template '{node}\n'";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log",
+		        "--template '{node}\n'" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			if (RepoSuiteSettings.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -165,16 +164,15 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		String cmd = "hg update -C " + revision;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
+		        new String[] { "update", "-C", revision }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		File file = new File(cloneDir, relativeRepoPath);
 		if (!file.exists()) {
 			if (RepoSuiteSettings.logError()) {
-				Logger.error("Could not get requested path using command `" + cmd + "`. Abort.");
+				Logger.error("Could not get requested path using command `hg update -C`. Abort.");
 			}
 			return null;
 		}
@@ -195,18 +193,15 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		String baseCMD = "hg cat -r";
-		
-		String cmd = baseCMD + baseRevision;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
+		        new String[] { "cat", "-r", baseRevision }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> original = response.getSecond();
 		
-		cmd = baseCMD + revisedRevision;
-		response = CommandExecutor.execute(cmd, new String[0], cloneDir, null, new HashMap<String, String>());
+		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision }, cloneDir, null,
+		        new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -230,7 +225,6 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		String cmd = "hg log --style minerlog -r" + revision + ":" + revision;
 		try {
 			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
@@ -240,8 +234,8 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
+		        "minerlog", "-r", revision, ":", revision }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -298,16 +292,15 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		String cmd = "hg log -r0 --template \"{node}\"";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
+		        "--template", "\"{node}\"" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
 			if (RepoSuiteSettings.logError()) {
-				Logger.error("Command `" + cmd + "` returned no output. Abort.");
+				Logger.error("Command `hg log -r0 --template \"{node}\"` returned no output. Abort.");
 			}
 			return null;
 		}
@@ -321,16 +314,15 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		String cmd = "hg log -rtip --template \"{node}\"";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
+		        "--template", "\"{node}\"" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
 			if (RepoSuiteSettings.logError()) {
-				Logger.error("Command `" + cmd + "` returned no output. Abort.");
+				Logger.error("Command `hg log -rtip --template \"{node}\"` returned no output. Abort.");
 			}
 			return null;
 		}
@@ -353,7 +345,6 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		
-		String cmd = "hg log --style minerlog -r" + toRevision + ":" + fromRevision;
 		try {
 			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
@@ -363,8 +354,8 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
+		        "minerlog", "-r", toRevision, ":", fromRevision }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -421,21 +412,15 @@ public class MercurialRepository extends Repository {
 		
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
-		StringBuilder cmd = new StringBuilder();
-		cmd.append("hg clone -U ");
-		cmd.append(uri);
-		cmd.append(" ");
-		cmd.append(hgName);
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), new String[0], cloneDir,
-		        null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
+		        new String[] { "clone", "-U", uri.toString(), hgName }, cloneDir, null, new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(hgName);
 			if (!cloneDir.exists()) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + hgName
 					        + "`");
-					Logger.error("Used command: " + cmd.toString());
 				}
 				return;
 			}
@@ -467,8 +452,10 @@ public class MercurialRepository extends Repository {
 		cmd.append(" ");
 		cmd.append(hgName);
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), new String[] { password },
-		        cloneDir, null, new HashMap<String, String>());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(password.getBytes());
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
+		        new String[] { "clone", "-U", uri.toString(), hgName }, cloneDir, inputStream,
+		        new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(hgName);
 			if (!cloneDir.exists()) {

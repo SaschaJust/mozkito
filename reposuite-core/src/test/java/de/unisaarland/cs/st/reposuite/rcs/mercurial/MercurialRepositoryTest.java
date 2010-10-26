@@ -95,11 +95,11 @@ public class MercurialRepositoryTest {
 				assertEquals("<?xml version=\"1.0\"?>", matcher2.group(5));
 			}
 			if (lineCounter == 9) {
-				assertEquals("   kim", matcher2.group(1));
-				assertEquals("e63a20871c7f", matcher2.group(2));
-				assertEquals("Tue Oct 19 15:24:30 2010 +0200", matcher2.group(3));
+				assertEquals("kim", matcher2.group(1));
+				assertEquals("d5156a110af8", matcher2.group(2));
+				assertEquals("Wed Oct 20 17:25:58 2010 +0200", matcher2.group(3));
 				assertEquals("reposuite-fixindchanges/pom.xml", matcher2.group(4));
-				assertEquals("<groupId>de.unisaarland.cs.st</groupId>", matcher2.group(5));
+				assertEquals("	<groupId>de.unisaarland.cs.st</groupId>", matcher2.group(5));
 			}
 		}
 	}

@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.git;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -42,7 +43,7 @@ public class GitRepository extends Repository {
 	private URI                       uri;
 	private File                      cloneDir;
 	private static Pattern            compile          = Pattern
-	                                                           .compile("\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+-[^ ]+)\\s+[0-9]+\\)\\s+(.*)");
+	                                                           .compile(".*\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+-[^ ]+)\\s+[0-9]+\\)\\s+(.*)");
 	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	/**
@@ -63,9 +64,8 @@ public class GitRepository extends Repository {
 	public List<AnnotationEntry> annotate(String filePath, String revision) {
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		String firstRev = getFirstRevisionId();
-		String cmd = "git blame -lf " + revision + " -- " + filePath;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "blame", "-lf", revision,
+		        "--", filePath }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -124,9 +124,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(String relativeRepoPath, String revision) {
-		String cmd = "git checkout " + revision;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
+		        cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -148,20 +147,18 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
-		String baseCMD = "git show ";
 		
 		//get the old version
-		String cmd = baseCMD + baseRevision + ":" + filePath;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
+		        baseRevision + ":" + filePath }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> oldContent = response.getSecond();
 		
 		//get the old version
-		cmd = baseCMD + revisedRevision + ":" + filePath;
-		response = CommandExecutor.execute(cmd, new String[0], cloneDir, null, new HashMap<String, String>());
+		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, cloneDir,
+		        null, new HashMap<String, String>());
 		
 		List<String> newContent = response.getSecond();
 		
@@ -176,9 +173,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public Map<String, ChangeType> getChangedPaths(String revision) {
-		String cmd = "git log --pretty=format:%H --name-status " + revision;
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
+		        "--pretty=format:%H", "--name-status", revision }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -241,15 +237,14 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		String cmd = "git log --pretty=format:%H";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
+		        "--pretty=format:%H" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
 			if (RepoSuiteSettings.logError()) {
-				Logger.error("Command `" + cmd + "` did not produc any output!");
+				Logger.error("Command ` git --pretty=format:%H` did not produc any output!");
 			}
 			return null;
 		}
@@ -264,15 +259,14 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		String cmd = "git rev-parse master";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-parse", "master" },
+		        cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
 			if (RepoSuiteSettings.logError()) {
-				Logger.error("Command `" + cmd + "` did not produc any output!");
+				Logger.error("Command `git rev-parse master` did not produc any output!");
 			}
 			return null;
 		}
@@ -290,9 +284,8 @@ public class GitRepository extends Repository {
 		if ((fromRevision == null) || (toRevision == null)) {
 			return null;
 		}
-		String cmd = "git log --pretty=fuller";
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(cmd, new String[0], cloneDir, null,
-		        new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
+		        new String[] { "log", "--pretty=fuller" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -311,21 +304,15 @@ public class GitRepository extends Repository {
 		
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
-		StringBuilder cmd = new StringBuilder();
-		cmd.append("git clone -n -q ");
-		cmd.append(uri);
-		cmd.append(" ");
-		cmd.append(gitName);
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), new String[0], cloneDir,
-		        null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
+		        uri.toString(), gitName }, cloneDir, null, new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(gitName);
 			if (!cloneDir.exists()) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + gitName
 					        + "`");
-					Logger.error("Used command: " + cmd.toString());
 				}
 				return;
 			}
@@ -357,15 +344,16 @@ public class GitRepository extends Repository {
 		cmd.append(" ");
 		cmd.append(gitName);
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute(cmd.toString(), new String[] { password },
-		        cloneDir, null, new HashMap<String, String>());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(password.getBytes());
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
+		        uri.toString(), gitName }, cloneDir, inputStream, new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(gitName);
 			if (!cloneDir.exists()) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + gitName
 					        + "`");
-					Logger.error("Used command: " + cmd.toString());
+					Logger.error("Used command: `git clone -n -q " + uri.toString() + " " + gitName + "`");
 				}
 				return;
 			}
