@@ -276,11 +276,6 @@ public class GitRepository extends Repository {
 		return response.getSecond().get(0).trim();
 	}
 	
-	@Override
-	public RepositoryType getRepositoryType() {
-		return REPOSITORY_TYPE;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

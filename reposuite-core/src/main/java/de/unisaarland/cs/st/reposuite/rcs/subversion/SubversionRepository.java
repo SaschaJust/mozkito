@@ -273,11 +273,6 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	@Override
-	public RepositoryType getRepositoryType() {
-		return REPOSITORY_TYPE;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

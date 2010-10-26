@@ -75,11 +75,6 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
-	public RepositoryType getRepositoryType() {
-		return REPOSITORY_TYPE;
-	}
-	
-	@Override
 	public List<LogEntry> log(String fromRevision, String toRevision) {
 		if (RepoSuiteSettings.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);

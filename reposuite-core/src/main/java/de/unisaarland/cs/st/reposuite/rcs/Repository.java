@@ -16,11 +16,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
- * The Class Repository.
+ * The Class Repository. Every repository connector that extends this class has
+ * to be named [Repotype]Repository. E.g. DarksRepository. Additionally it is
+ * mandatory to add a new enum constant in {@link RepositoryType}.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
- */
-/**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
@@ -103,7 +102,7 @@ public abstract class Repository {
 	 * to a file, the file handle will do so too.
 	 * 
 	 * @param relativeRepoPath
-	 *            the relative repo path
+	 *            the relative repository path
 	 * @param revision
 	 *            the revision
 	 * @return The file handle to the checked out, corresponding file or
@@ -141,7 +140,7 @@ public abstract class Repository {
 	public abstract String getFirstRevisionId();
 	
 	/**
-	 * determines the simple classname of the object.
+	 * Determines the simple class name of the object.
 	 * 
 	 * @return this.getClass().getSimpleName();
 	 */
@@ -156,7 +155,17 @@ public abstract class Repository {
 	 */
 	public abstract String getLastRevisionId();
 	
-	public abstract RepositoryType getRepositoryType();
+	/**
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * @return the {@link RepositoryType} of the connector class determined by
+	 *         naming convention. See the java-doc of {@link Repository} for
+	 *         details.
+	 */
+	public final RepositoryType getRepositoryType() {
+		return RepositoryType.valueOf(this.getClass().getSimpleName()
+		        .substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
+		        .toUpperCase());
+	}
 	
 	/**
 	 * Extract a log from the repository.
@@ -175,11 +184,11 @@ public abstract class Repository {
 	 * @param address
 	 *            the address the repository can be found
 	 * @throws MalformedURLException
-	 *             the malformed url exception
+	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
 	 *             the invalid protocol type
 	 * @throws InvalidRepositoryURI
-	 *             the invalid repository uri
+	 *             the invalid repository URI
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
@@ -196,11 +205,11 @@ public abstract class Repository {
 	 * @param password
 	 *            the password
 	 * @throws MalformedURLException
-	 *             the malformed url exception
+	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
 	 *             the invalid protocol type
 	 * @throws InvalidRepositoryURI
-	 *             the invalid repository uri
+	 *             the invalid repository URI
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */

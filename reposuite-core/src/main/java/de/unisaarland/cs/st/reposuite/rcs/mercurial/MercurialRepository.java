@@ -332,11 +332,6 @@ public class MercurialRepository extends Repository {
 		return lines.get(0).trim();
 	}
 	
-	@Override
-	public RepositoryType getRepositoryType() {
-		return REPOSITORY_TYPE;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
