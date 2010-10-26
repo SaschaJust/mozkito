@@ -33,8 +33,8 @@ public final class RepositoryFactory {
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addRepositoryHandler(
-				        (RepositoryType) klass.getMethod("getRepositoryType", null).invoke(
-				                klass.getConstructor(null).newInstance(null), null),
+				        (RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0]).invoke(
+				                klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
 				        (Class<? extends Repository>) klass);
 			}
 		} catch (InvocationTargetException e) {
