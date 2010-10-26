@@ -23,7 +23,6 @@ import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -40,13 +39,11 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	private URI                         uri;
-	private File                        cloneDir;
-	private static Pattern              compile          = Pattern
-	                                                             .compile("\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+-[^ ]+)\\s+[0-9]+\\)\\s+(.*)");
-	protected static SimpleDateFormat   gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-	
-	private static final RepositoryType REPOSITORY_TYPE  = RepositoryType.GIT;
+	private URI                       uri;
+	private File                      cloneDir;
+	private static Pattern            compile          = Pattern
+	                                                           .compile("\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+-[^ ]+)\\s+[0-9]+\\)\\s+(.*)");
+	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	/**
 	 * Instantiates a new git repository.

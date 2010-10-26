@@ -25,7 +25,6 @@ import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -41,13 +40,12 @@ import difflib.Patch;
  */
 public class MercurialRepository extends Repository {
 	
-	private static final RepositoryType REPOSITORY_TYPE      = RepositoryType.MERCURIAL;
-	protected static SimpleDateFormat   hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
-	protected static String             regex                = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
-	protected static SimpleDateFormat   hgAnnotateDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
-	protected List<String>              hashes               = new ArrayList<String>();
-	private URI                         uri;
-	private File                        cloneDir;
+	protected static SimpleDateFormat hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
+	protected static String           regex                = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
+	protected static SimpleDateFormat hgAnnotateDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
+	protected List<String>            hashes               = new ArrayList<String>();
+	private URI                       uri;
+	private File                      cloneDir;
 	
 	/*
 	 * (non-Javadoc)

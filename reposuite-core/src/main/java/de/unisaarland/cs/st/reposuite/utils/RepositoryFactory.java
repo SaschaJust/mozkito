@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,17 @@ public final class RepositoryFactory {
 				                klass.getConstructor(null).newInstance(null), null),
 				        (Class<? extends Repository>) klass);
 			}
+		} catch (InvocationTargetException e) {
+			if (RepoSuiteSettings.logError()) {
+				// check if someone missed to add a corresponding enum entry in RepositoryType
+				if (e.getCause() instanceof IllegalArgumentException) {
+					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
+					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+				} else {
+					Logger.error(e.getMessage(), e);
+				}
+			}
+			throw new RuntimeException();
 		} catch (Exception e) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error(e.getMessage(), e);

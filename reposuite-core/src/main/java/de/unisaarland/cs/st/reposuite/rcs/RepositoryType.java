@@ -1,9 +1,9 @@
 package de.unisaarland.cs.st.reposuite.rcs;
 
 public enum RepositoryType {
-	SUBVERSION, GIT, MERCURIAL, CVS;
+	SUBVERSION, GIT, MERCURIAL;
 	
-	public String getHandle() {
-		return this.getClass().getSimpleName();
+	public static String getHandle() {
+		return RepositoryType.class.getSimpleName();
 	}
 }

@@ -13,7 +13,6 @@ import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
@@ -23,8 +22,6 @@ import difflib.Delta;
  * 
  */
 public class CVSRepository extends Repository {
-	
-	private static final RepositoryType REPOSITORY_TYPE = RepositoryType.CVS;
 	
 	@Override
 	public List<AnnotationEntry> annotate(String filePath, String revision) {

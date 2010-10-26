@@ -42,7 +42,6 @@ import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.ProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -56,13 +55,12 @@ import difflib.Delta;
  */
 public class SubversionRepository extends Repository {
 	
-	private static final RepositoryType REPOSITORY_TYPE = RepositoryType.SUBVERSION;
-	private String                      password;
-	private SVNRepository               repository;
-	private SVNURL                      svnurl;
-	private ProtocolType                type;
-	private URI                         uri;
-	private String                      username;
+	private String        password;
+	private SVNRepository repository;
+	private SVNURL        svnurl;
+	private ProtocolType  type;
+	private URI           uri;
+	private String        username;
 	
 	/**
 	 * Instantiates a new subversion repository.
