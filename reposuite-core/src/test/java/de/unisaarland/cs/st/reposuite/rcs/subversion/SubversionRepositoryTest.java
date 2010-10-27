@@ -21,7 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,10 +42,20 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public class SubversionRepositoryTest {
 	
 	private static SubversionRepository repository;
+	private static File                 tmpDirectory;
 	
 	private static DateTime getDateFromSVNString(String timestamp) {
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 		return dtf.parseDateTime(timestamp);
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		try {
+			FileUtils.deleteDirectory(tmpDirectory);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Before
@@ -53,7 +63,7 @@ public class SubversionRepositoryTest {
 		if (repository == null) {
 			repository = new SubversionRepository();
 			URL url = SubversionRepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.svn");
-			File tmpDirectory = FileUtils.createRandomDir("repotest_svn", "");
+			tmpDirectory = FileUtils.createRandomDir("repotest_svn", "");
 			try {
 				Integer returnValue = 0;
 				FileUtils.forceDeleteOnExit(tmpDirectory);
@@ -77,11 +87,6 @@ public class SubversionRepositoryTest {
 				fail(e.getMessage());
 			}
 		}
-		
-	}
-	
-	@After
-	public void tearDown() {
 		
 	}
 	
@@ -129,7 +134,6 @@ public class SubversionRepositoryTest {
 		
 		assertTrue(dir_a_file_3.isFile());
 		assertTrue(dir_b_file_2.isFile());
-		
 	}
 	
 	@Test
