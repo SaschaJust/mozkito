@@ -101,4 +101,10 @@ public class GitRepositoryTest {
 		testClone();
 		assertEquals("3fa7c46d11b11d61f1cbadc6888be5d0eae21969", this.repo.getLastRevisionId());
 	}
+	
+	@Test
+	public void testSaschasAndererMegaRegex() {
+		String line = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
+		assertTrue(GitRepository.compile.matcher(line).matches());
+	}
 }
