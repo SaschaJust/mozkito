@@ -5,7 +5,6 @@ import java.util.Map;
 import org.hibernate.SessionFactory;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -22,26 +21,19 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		        isRequired));
 		addArgument(new StringArgument(settings, "dbPassword", "Password for database. Default: miner", "miner",
 		        isRequired));
-		addArgument(new EnumArgument(settings, "dbType", "Possible values: PSQL, MYSQL", "PSQL", isRequired,
-		        new String[] { "PSQL", "MYSQL" }));
+		addArgument(new EnumArgument(settings, "dbType", "Possible values: Postgresql, MySQL", "PostgreSQL",
+		        isRequired, new String[] { "PostgreSQL", "MySQL" }));
+		addArgument(new StringArgument(settings, "dbDriver", "Default: org.postgresql.Driver", "org.postgresql.Driver",
+		        isRequired));
 	}
 	
 	@Override
 	public SessionFactory getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
-		if (arguments.get("dbType").getValue().toString().equals("PSQL")) {
-			return HibernateUtil.getPSQLSessionFactory(arguments.get("dbHost").getValue().toString(),
-			        arguments.get("database").getValue().toString(), arguments.get("dbUser").getValue().toString(),
-			        arguments.get("dbPassword").getValue().toString());
-		} else if (arguments.get("dbType").getValue().toString().equals("MYSQL")) {
-			return HibernateUtil.getMYSQLSessionFactory(arguments.get("dbHost").getValue().toString(),
-			        arguments.get("database").getValue().toString(), arguments.get("dbUser").getValue().toString(),
-			        arguments.get("dbPassword").getValue().toString());
-		} else {
-			if (RepoSuiteSettings.logError()) {
-				Logger.error("Unsupported db type found! Abort!");
-			}
-			throw new RuntimeException();
-		}
+		
+		return HibernateUtil.createSessionFactory(arguments.get("dbHost").getValue().toString(),
+		        arguments.get("database").getValue().toString(), arguments.get("dbUser").getValue().toString(),
+		        arguments.get("dbPassword").getValue().toString(), arguments.get("dbType").getValue().toString(),
+		        arguments.get("dbDriver").getValue().toString());
 	}
 }
