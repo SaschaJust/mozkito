@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -129,12 +130,12 @@ public class RegexTest {
 	public void testFindAllPossibleMatches() {
 		Regex regex = new Regex("\\w+");
 		String text = " abc,de ";
-		List<String> find = regex.findAllPossibleMatches(text);
+		List<List<RegexGroup>> find = regex.findAllPossibleMatches(text);
 		String[] expected = new String[] { "abc", "ab", "a", "bc", "b", "c", "de", "d", "e" };
 		
 		assertEquals(expected.length, find.size());
 		for (int i = 0; i < expected.length; ++i) {
-			assertEquals(expected[i], find.get(i));
+			assertEquals(expected[i], find.get(i).get(0).getMatch());
 		}
 	}
 	
@@ -182,7 +183,34 @@ public class RegexTest {
 	 */
 	@Test
 	public void testMatches() {
-		fail("Not yet implemented"); // TODO
+		String test = "abbatabc";
+		Regex regex = new Regex("b+a");
+		
+		assertTrue(regex.matches(test));
+		assertEquals(new Integer(0), regex.getGroupCount());
+		assertTrue(regex.matched());
+		
+		List<String> lines = new ArrayList<String>();
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <?xml version=\"1.0\"?>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<parent>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 		<groupId>de.unisaarland.cs.st</groupId>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 		<artifactId>reposuite</artifactId>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 		<version>0.1-SNAPSHOT</version>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	</parent>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<modelVersion>4.0.0</modelVersion>");
+		lines.add("   kim d5156a110af8 Wed Oct 20 17:25:58 2010 +0200 reposuite-fixindchanges/pom.xml: 	<groupId>de.unisaarland.cs.st</groupId>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<artifactId>reposuite-fixindchanges</artifactId>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<packaging>jar</packaging>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<name>reposuite-fixindchanges</name>");
+		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: </project>");
+		String pattern = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
+		
+		regex = new Regex(pattern);
+		for (String line : lines) {
+			assertTrue(regex.matches(line));
+			assertEquals(new Integer(5), regex.getGroupCount());
+		}
 	}
 	
 	/**
@@ -253,36 +281,6 @@ public class RegexTest {
 		assertFalse(regex.matches("b"));
 		assertFalse(regex.matches("atb"));
 		
-	}
-	
-	/**
-	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#Regex(java.lang.String)}
-	 * .
-	 */
-	@Test
-	public void testRegexString() {
-		fail("Not yet implemented"); // TODO
-	}
-	
-	/**
-	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#Regex(java.lang.String, int)}
-	 * .
-	 */
-	@Test
-	public void testRegexStringInt() {
-		fail("Not yet implemented"); // TODO
-	}
-	
-	/**
-	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#setPattern(java.lang.String)}
-	 * .
-	 */
-	@Test
-	public void testSetPattern() {
-		fail("Not yet implemented"); // TODO
 	}
 	
 }

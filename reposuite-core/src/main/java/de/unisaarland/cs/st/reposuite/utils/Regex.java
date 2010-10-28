@@ -1,8 +1,11 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jregex.MatchIterator;
 import jregex.MatchResult;
@@ -13,6 +16,9 @@ import jregex.Replacer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
+ * This class provides regular expression support and as well interfaces as
+ * extends JRegex.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -80,11 +86,37 @@ public class Regex {
 		return true;
 	}
 	
+	/**
+	 * Reduces the pattern to find the longest substring of the pattern
+	 * (starting at the beginning that matches the text). If the specified
+	 * pattern already matches the text, the pattern is returned.
+	 * 
+	 * @param text
+	 *            to be checked against
+	 * @return the {@link String} representation of the matching pattern
+	 */
+	public static String findLongestMatchingPattern(String pattern, final String text) {
+		assert (text != null);
+		
+		Regex regex = new Regex(pattern);
+		
+		while (!regex.matches(text) && (pattern.length() > 0)) {
+			pattern = pattern.substring(0, pattern.length() - 1);
+			regex.setPattern(pattern);
+		}
+		
+		return pattern;
+	}
+	
 	private NamedPattern                 pattern;
 	
-	private List<RegexGroup>             matches;
+	private Matcher                      matcher;
+	private Replacer                     replacer;
+	private Map<String, Integer>         groupNames = new HashMap<String, Integer>();
 	
+	private final List<RegexGroup>       matches    = new LinkedList<RegexGroup>();
 	private final List<List<RegexGroup>> allMatches = new LinkedList<List<RegexGroup>>();
+	private Boolean                      matched;
 	
 	/**
 	 * @param namedPattern
@@ -102,6 +134,7 @@ public class Regex {
 		assert (pattern.length() > 0);
 		
 		this.pattern = new NamedPattern(pattern, flags);
+		reset();
 	}
 	
 	/*
@@ -139,17 +172,23 @@ public class Regex {
 	 */
 	public List<RegexGroup> find(final String text) {
 		assert (text != null);
+		reset();
 		
-		Matcher matcher = this.pattern.matcher(text);
-		if (matcher.find()) {
-			this.matches = new ArrayList<RegexGroup>(matcher.groupCount());
-			for (int i = 1; i < matcher.groupCount(); ++i) {
-				this.matches.add(new RegexGroup(this.pattern.toString(), text, matcher.group(i), i, this.pattern
+		this.matcher = this.pattern.matcher(text);
+		if (this.matcher.find()) {
+			this.matched = true;
+			
+			for (int i = 1; i < this.matcher.groupCount(); ++i) {
+				this.matches.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i, this.pattern
 				        .getGroupName(i)));
+				
+				if (this.pattern.getGroupName(i) != null) {
+					this.groupNames.put(this.pattern.getGroupName(i), i);
+				}
 			}
 		}
 		
-		return this.matches;
+		return (this.matches.size() > 0 ? this.matches : null);
 	}
 	
 	/**
@@ -162,18 +201,23 @@ public class Regex {
 	 */
 	public List<List<RegexGroup>> findAll(final String text) {
 		assert (text != null);
+		reset();
 		
-		Matcher matcher = this.pattern.matcher(text);
+		this.matcher = this.pattern.matcher(text);
+		MatchIterator findAll = this.matcher.findAll();
 		
-		MatchIterator findAll = matcher.findAll();
+		this.matched = findAll.hasMore();
 		
 		while (findAll.hasMore()) {
 			MatchResult match = findAll.nextMatch();
-			List<RegexGroup> matches = new ArrayList<RegexGroup>(matcher.groupCount());
+			List<RegexGroup> matches = new ArrayList<RegexGroup>(this.matcher.groupCount());
 			
 			for (int i = 1; i < match.groupCount(); ++i) {
 				matches.add(new RegexGroup(this.pattern.toString(), text, match.group(i), i, this.pattern
 				        .getGroupName(i)));
+				if (this.pattern.getGroupName(i) != null) {
+					this.groupNames.put(this.pattern.getGroupName(i), i);
+				}
 			}
 			this.allMatches.add(matches);
 		}
@@ -187,38 +231,50 @@ public class Regex {
 	 * 
 	 * @param text
 	 *            the text to be scanned
-	 * @return a list of all possible matches
+	 * @return a list of single element lists containing a {@link RegexGroup}
 	 */
-	public List<String> findAllPossibleMatches(final String text) {
-		Matcher matcher = this.pattern.matcher(text);
-		List<String> list = new LinkedList<String>();
+	public List<List<RegexGroup>> findAllPossibleMatches(final String text) {
+		assert (text != null);
+		reset();
 		
-		while (matcher.proceed()) {
-			list.add(matcher.toString());
+		this.matcher = this.pattern.matcher(text);
+		
+		while (this.matcher.proceed()) {
+			this.matched = true;
+			LinkedList<RegexGroup> candidates = new LinkedList<RegexGroup>();
+			candidates.add(new RegexGroup(getPattern(), text, this.matcher.toString(), 0, null));
+			this.allMatches.add(candidates);
 		}
 		
-		return list;
+		return this.allMatches;
 	}
 	
 	/**
-	 * Reduces the pattern to find the longest substring of the pattern starting
-	 * at the beginning that matches the text. If the specified pattern already
-	 * matches the text, the pattern is returned.
-	 * 
-	 * @param text
-	 *            to be checked against
-	 * @return the {@link String} representation of the matching pattern
+	 * @return the allMatches
 	 */
-	public String findLongestMatchingPattern(final String text) {
-		Regex regex = new Regex(this.pattern.toString());
-		String pattern = regex.getPattern();
-		
-		while (!regex.matches(text) && (pattern.length() > 0)) {
-			pattern = pattern.substring(0, pattern.length() - 1);
-			regex.setPattern(pattern);
-		}
-		
-		return pattern;
+	public List<List<RegexGroup>> getAllMatches() {
+		return this.allMatches;
+	}
+	
+	/**
+	 * @return the groupCount
+	 */
+	public Integer getGroupCount() {
+		return this.pattern.groupCount() - 1;
+	}
+	
+	/**
+	 * @return the groupNames
+	 */
+	public Set<String> getGroupNames() {
+		return this.groupNames.keySet();
+	}
+	
+	/**
+	 * @return the matches
+	 */
+	public List<RegexGroup> getMatches() {
+		return this.matches;
 	}
 	
 	/**
@@ -240,6 +296,10 @@ public class Regex {
 		return result;
 	}
 	
+	public Boolean matched() {
+		return this.matched;
+	}
+	
 	/**
 	 * Checks if the specified pattern matches the text (completely).
 	 * 
@@ -249,8 +309,12 @@ public class Regex {
 	 */
 	public boolean matches(final String text) {
 		assert (text != null);
+		reset();
 		
-		return this.pattern.matcher(text).matches();
+		this.matcher = this.pattern.matcher(text);
+		this.matched = this.matcher.matches();
+		
+		return this.matched;
 	}
 	
 	/**
@@ -265,21 +329,29 @@ public class Regex {
 	 */
 	public boolean prefixMatches(final String text) {
 		assert (text != null);
+		reset();
 		
 		Matcher matcher = this.pattern.matcher();
-		return matcher.matchesPrefix();
+		this.matched = matcher.matchesPrefix();
+		return this.matched;
 	}
 	
 	/**
-	 * Removes all matches in the text
+	 * Removes all matches in the text.
 	 * 
 	 * @param text
 	 *            the base text
 	 * @return the reduced string
 	 */
-	private String removeAll(final String text) {
-		Replacer replacer = this.pattern.replacer("");
-		return replacer.replace(text);
+	public String removeAll(final String text) {
+		assert (text != null);
+		reset();
+		
+		this.replacer = this.pattern.replacer("");
+		String returnString = this.replacer.replace(text);
+		this.matched = returnString.length() < text.length();
+		
+		return returnString;
 	}
 	
 	/**
@@ -291,8 +363,19 @@ public class Regex {
 	 * @return
 	 */
 	public String replaceAll(final String text, final String replacement) {
-		Replacer replacer = this.pattern.replacer(replacement);
-		return replacer.replace(text);
+		assert (text != null);
+		assert (replacement != null);
+		// we do not allow references/patterns in this method
+		assert (new Regex("(?<!\\\\)\\$|^\\$").find(replacement) == null);
+		// this is done to ensure matches are not replaced by themselves
+		assert ((find(text) == null) || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
+		
+		reset();
+		
+		this.replacer = this.pattern.replacer(replacement);
+		String returnString = this.replacer.replace(text);
+		this.matched = !returnString.equals(text);
+		return returnString;
 	}
 	
 	/**
@@ -309,8 +392,31 @@ public class Regex {
 	 * @return
 	 */
 	public String replaceAllWithPattern(final String text, final String replacement) {
-		Replacer replacer = this.pattern.replacer(replacement);
-		return replacer.replace(text);
+		assert (text != null);
+		assert (replacement != null);
+		// this is done to ensure matches are not replaced by themselves
+		assert ((find(text) == null) || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
+		// we do enforce references/patterns in this method
+		assert (new Regex("(?<!\\\\)\\$|^\\$").find(replacement) != null);
+		reset();
+		
+		this.replacer = this.pattern.replacer(replacement);
+		String returnString = this.replacer.replace(text);
+		this.matched = !returnString.equals(text);
+		
+		return returnString;
+	}
+	
+	/**
+	 * Resets storage to guarantee consistent getter outputs.
+	 */
+	private void reset() {
+		this.matcher = null;
+		this.replacer = null;
+		this.matches.clear();
+		this.allMatches.clear();
+		this.matched = null;
+		this.groupNames = new HashMap<String, Integer>();
 	}
 	
 	/**
@@ -323,6 +429,7 @@ public class Regex {
 		assert (checkRegex(pattern));
 		
 		this.pattern = new NamedPattern(pattern);
+		reset();
 	}
 	
 	/**
@@ -338,7 +445,9 @@ public class Regex {
 	 * @return a string array containing all tokens
 	 */
 	public String[] tokenize(final String text) {
-		return new RETokenizer(this.pattern, text).split();
+		String[] split = new RETokenizer(this.pattern, text).split();
+		this.matched = (split != null) && (split.length > 0);
+		return split;
 	}
 	
 	/*
