@@ -23,7 +23,7 @@ public class NamedPattern extends Pattern {
 	
 	public String getGroupName(final int index) {
 		assert (index > 0);
-		assert (index < this.counters);
+		assert (index < this.memregs);
 		
 		@SuppressWarnings ("unchecked") Set<String> keySet = this.namedGroupMap.keySet();
 		for (String groupName : keySet) {

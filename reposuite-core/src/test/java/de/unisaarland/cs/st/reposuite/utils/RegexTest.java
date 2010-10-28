@@ -83,6 +83,7 @@ public class RegexTest {
 		assertFalse(Regex.checkRegex("(?={test})"));
 		assertFalse(Regex.checkRegex("(?<={test})"));
 		
+		assertFalse(Regex.checkRegex("akrfnr(a+)sdf(?!bleh(blub)blah)bleh"));
 	}
 	
 	/**

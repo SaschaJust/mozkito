@@ -11,8 +11,13 @@ import jregex.MatchIterator;
 import jregex.MatchResult;
 import jregex.Matcher;
 import jregex.NamedPattern;
+import jregex.PatternSyntaxException;
 import jregex.RETokenizer;
 import jregex.Replacer;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
@@ -48,7 +53,6 @@ public class Regex {
 		// avoid captured positive look ahead
 		assert (pattern != null);
 		assert (pattern.length() > 0);
-		assert (checkRegex(pattern));
 		
 		if (RepoSuiteSettings.logDebug()) {
 			Logger.debug("Checking pattern: " + pattern);
@@ -66,22 +70,94 @@ public class Regex {
 		Regex beginMatch = new Regex("(?<!\\\\)\\(|^\\(");
 		Regex endMatch = new Regex("(?<!\\\\)\\)");
 		
-		int beginCount = beginMatch.findAll(patternWithoutCharacterClasses).size();
-		int endCount = endMatch.findAll(patternWithoutCharacterClasses).size();
+		List<List<RegexGroup>> allMatchingGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
+		List<List<RegexGroup>> allMatchingGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
+		
+		int beginCount = (allMatchingGroupsOpen != null ? allMatchingGroupsOpen.size() : 0);
+		int endCount = (allMatchingGroupsClosed != null ? allMatchingGroupsClosed.size() : 0);
 		
 		if (beginCount != endCount) {
+			if (beginCount > endCount) {
+				
+				if (RepoSuiteSettings.logDebug()) {
+					Logger.debug("Too many opening '(' parenthesis.");
+				}
+			} else {
+				if (RepoSuiteSettings.logDebug()) {
+					Logger.debug("Too many closing ')' parenthesis.");
+				}
+			}
 			return false;
 		}
 		
 		// check for empty matching groups
-		Regex emptyGroups = new Regex("\\((\\?<?[!=])?(\\{\\w+\\})?\\)");
-		List<RegexGroup> find = emptyGroups.find(patternWithoutCharacterClasses);
+		Regex emptyGroups = new Regex("(\\((\\?<?[!=])?(\\{\\w+\\})?\\))");
+		List<List<RegexGroup>> emptyGroupsList = emptyGroups.findAll(patternWithoutCharacterClasses);
 		
-		if (find != null) {
+		if (emptyGroupsList != null) {
+			
+			if (RepoSuiteSettings.logDebug()) {
+				Logger.debug("Empty matching groups: " + CollectionUtils.collect(emptyGroupsList, new Transformer() {
+					
+					@Override
+					public Object transform(final Object input) {
+						@SuppressWarnings ("unchecked") List<RegexGroup> list = (List<RegexGroup>) input;
+						
+						return list.get(0);
+					}
+				}));
+			}
 			return false;
 		}
 		
 		// check for closed character groups
+		beginMatch = new Regex("(?<!\\\\)\\[|^\\[");
+		endMatch = new Regex("(?<!\\\\)\\]");
+		
+		List<List<RegexGroup>> allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
+		List<List<RegexGroup>> allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
+		
+		beginCount = (allClosedCharGroupsOpen != null ? allClosedCharGroupsOpen.size() : 0);
+		endCount = (allClosedCharGroupsClosed != null ? allClosedCharGroupsClosed.size() : 0);
+		
+		if (beginCount != endCount) {
+			if (beginCount > endCount) {
+				
+				if (RepoSuiteSettings.logDebug()) {
+					Logger.debug("Too many opening '[' parenthesis.");
+				}
+			} else {
+				if (RepoSuiteSettings.logDebug()) {
+					Logger.debug("Too many closing ']' parenthesis.");
+				}
+			}
+			return false;
+		}
+		
+		// check for captured negative lookahead matching (must be avoided
+		// because this leads to strange behavior)
+		Regex regex = new Regex("(\\(\\?![^()]+\\([^)]*\\))");
+		List<List<RegexGroup>> findAll = regex.findAll(patternWithoutCharacterClasses);
+		
+		if (findAll != null) {
+			
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("Capturing negative lookahead groups is not supported. Affected groups: "
+				        + JavaUtils.collectionToString(findAll));
+			}
+			return false;
+		}
+		
+		try {
+			new NamedPattern(pattern);
+		} catch (PatternSyntaxException e) {
+			
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			
+			return false;
+		}
 		
 		return true;
 	}
@@ -100,12 +176,17 @@ public class Regex {
 		
 		Regex regex = new Regex(pattern);
 		
-		while (!regex.matches(text) && (pattern.length() > 0)) {
-			pattern = pattern.substring(0, pattern.length() - 1);
-			regex.setPattern(pattern);
+		while (!regex.matches(text) && (pattern.length() > 1)) {
+			
+			try {
+				pattern = pattern.substring(0, pattern.length() - 1);
+				regex.setPattern(pattern);
+			} catch (PatternSyntaxException e) {
+				
+			}
 		}
 		
-		return pattern;
+		return (regex.matched ? pattern : "");
 	}
 	
 	private NamedPattern                 pattern;
@@ -221,7 +302,8 @@ public class Regex {
 			}
 			this.allMatches.add(matches);
 		}
-		return this.allMatches;
+		
+		return (this.allMatches.size() == 0 ? null : this.allMatches);
 	}
 	
 	/**
@@ -423,7 +505,7 @@ public class Regex {
 	 * @param pattern
 	 *            the pattern to set
 	 */
-	public void setPattern(final String pattern) {
+	private void setPattern(final String pattern) {
 		assert (pattern != null);
 		assert (pattern.length() > 0);
 		assert (checkRegex(pattern));
