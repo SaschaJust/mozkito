@@ -10,3 +10,8 @@ syntax: regexp
 ^reposuite-.*/.settings
 syntax: regexp
 ^target$
+syntax: regexp
+^reposuite-.*/.metadata
+syntax: regexp
+^.metadata
+

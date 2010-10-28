@@ -151,6 +151,9 @@
 				<version>2.8</version>
 				<configuration>
 					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<workspace>${basedir}</workspace>
+					<workspaceCodeStylesURL>file://${basedir}/settings/reposuite-style.xml</workspaceCodeStylesURL>
 				</configuration>
 			</plugin>
 			<plugin>
