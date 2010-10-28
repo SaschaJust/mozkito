@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -28,6 +26,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -42,8 +41,8 @@ public class GitRepository extends Repository {
 	
 	private URI                       uri;
 	private File                      cloneDir;
-	protected static Pattern          compile          = Pattern
-	                                                           .compile(".*\\((.*)\\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\\s+[^ ]+\\s+[+-][0-9]{4})\\s+[^)]*\\)\\s+(.*)");
+	protected static Regex            regex            = new Regex(
+	                                                           ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
 	
 	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
@@ -56,13 +55,12 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<AnnotationEntry> annotate(String filePath, String revision) {
+	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		String firstRev = getFirstRevisionId();
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "blame", "-lf", revision,
@@ -87,18 +85,18 @@ public class GitRepository extends Repository {
 			String fileName = lineParts[1];
 			String author = "<unknown>";
 			DateTime date = new DateTime();
-			Matcher matcher = compile.matcher(line);
+			
 			String lineContent = "<unkown>";
-			if (matcher.matches()) {
-				author = matcher.group(1);
+			if (regex.matches(line)) {
+				author = regex.getGroup("author");
 				try {
-					date = new DateTime(gitLogDateFormat.parse(matcher.group(2)));
+					date = new DateTime(gitLogDateFormat.parse(regex.getGroup("date")));
 				} catch (ParseException e) {
 					if (RepoSuiteSettings.logError()) {
 						Logger.error(e.getMessage());
 					}
 				}
-				lineContent = matcher.group(3);
+				lineContent = regex.getGroup("codeline");
 			} else {
 				if (RepoSuiteSettings.logWarn()) {
 					Logger.error("Could not extract author and date info from log entry for revision `" + revision
@@ -118,13 +116,12 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
 	 */
 	@Override
-	public File checkoutPath(String relativeRepoPath, String revision) {
+	public File checkoutPath(final String relativeRepoPath, final String revision) {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
 		        this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
@@ -142,14 +139,13 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
+	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
 		
-		//get the old version
+		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
 		        baseRevision + ":" + filePath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
@@ -157,7 +153,7 @@ public class GitRepository extends Repository {
 		}
 		List<String> oldContent = response.getSecond();
 		
-		//get the old version
+		// get the old version
 		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath },
 		        this.cloneDir, null, new HashMap<String, String>());
 		
@@ -169,11 +165,10 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths()
 	 */
 	@Override
-	public Map<String, ChangeType> getChangedPaths(String revision) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		        "--pretty=format:%H", "--name-status", revision }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
@@ -181,7 +176,7 @@ public class GitRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		
-		//delete first line. Contains the SHA hash of the wanted transaction
+		// delete first line. Contains the SHA hash of the wanted transaction
 		if (lines.size() < 1) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Error while parsing GIT log to unveil changed paths for reviosion `" + revision
@@ -193,7 +188,7 @@ public class GitRepository extends Repository {
 		Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
 			if (line.trim().equals("")) {
-				//found the end of the log entry. 
+				// found the end of the log entry.
 				break;
 			}
 			line = line.replaceAll("\\s+", " ");
@@ -233,7 +228,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -255,7 +249,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
@@ -276,12 +269,11 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<LogEntry> log(String fromRevision, String toRevision) {
+	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		if ((fromRevision == null) || (toRevision == null)) {
 			return null;
 		}
@@ -295,13 +287,12 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(URI address) {
+	public void setup(final URI address) {
 		this.uri = address;
-		//clone  the remote repository
+		// clone the remote repository
 		
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
@@ -329,12 +320,11 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(URI address, String username, String password) {
+	public void setup(final URI address, final String username, final String password) {
 		
 		this.uri = Repository.encodeUsername(address, username);
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"

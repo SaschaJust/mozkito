@@ -339,6 +339,22 @@ public class Regex {
 	}
 	
 	/**
+	 * @param i
+	 * @return
+	 */
+	public String getGroup(final int i) {
+		return this.matcher.group(i);
+	}
+	
+	/**
+	 * @param name
+	 * @return
+	 */
+	public String getGroup(final String name) {
+		return this.matcher.group(name);
+	}
+	
+	/**
 	 * @return the groupCount
 	 */
 	public Integer getGroupCount() {
@@ -395,6 +411,9 @@ public class Regex {
 		
 		this.matcher = this.pattern.matcher(text);
 		this.matched = this.matcher.matches();
+		for (int i = 1; i < getGroupCount(); ++i) {
+			this.groupNames.put(this.pattern.getGroupName(i), i);
+		}
 		
 		return this.matched;
 	}

@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
@@ -38,7 +40,7 @@ public class CommandExecutor extends Thread {
 	 * @return
 	 */
 	@Deprecated
-	public static Tuple<Integer, List<String>> execute(String commandLine, File dir) {
+	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir) {
 		return execute(commandLine, dir, null);
 	}
 	
@@ -50,7 +52,7 @@ public class CommandExecutor extends Thread {
 	 * @return
 	 */
 	@Deprecated
-	public static Tuple<Integer, List<String>> execute(String commandLine, File dir, String line) {
+	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir, final String line) {
 		assert (commandLine != null);
 		
 		String[] split = commandLine.split(" ");
@@ -78,12 +80,13 @@ public class CommandExecutor extends Thread {
 	 * @param input
 	 *            optional {@link InputStream} that is piped to
 	 * @param environment
-	 *            additional changes to the process environment
+	 *            additional changes to the process environment. This is null in
+	 *            most scenarios.
 	 * @return a tuple with the program's exit code and a list of lines
 	 *         representing the output of the program
 	 */
-	public static Tuple<Integer, List<String>> execute(String command, String[] arguments, File dir, InputStream input,
-	        Map<String, String> environment) {
+	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
+	        final InputStream input, final Map<String, String> environment) {
 		assert (command != null);
 		assert ((arguments == null) || (arguments.length > 0));
 		
@@ -101,13 +104,6 @@ public class CommandExecutor extends Thread {
 				Logger.error(e.getMessage(), e);
 			}
 			return new Tuple<Integer, List<String>>(-1, null);
-		}
-		
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug("Executing: [command:" + command + "][" + Arrays.toString(arguments) + "][dir:"
-			        + (dir != null ? dir.getAbsolutePath() : "(null)") + "][input:"
-			        + (input != null ? "present" : "omitted") + "][environment:"
-			        + JavaUtils.mapToString(environment != null ? environment : System.getenv()) + "]");
 		}
 		
 		// create new ProcessBuilder
@@ -129,6 +125,20 @@ public class CommandExecutor extends Thread {
 			for (String environmentVariable : environment.keySet()) {
 				actualEnvironment.put(environmentVariable, environment.get(environmentVariable));
 			}
+		}
+		
+		if (RepoSuiteSettings.logDebug()) {
+			Logger.debug("Executing: [command:"
+			        + command
+			        + "][arguments:"
+			        + StringEscapeUtils.escapeJava(Arrays.toString(arguments))
+			        + "][workingdir:"
+			        + (dir != null ? dir.getAbsolutePath() : "(null)")
+			        + "][input:"
+			        + (input != null ? "present" : "omitted")
+			        + "][environment:"
+			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
+			                .getenv())) + "]");
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -184,7 +194,8 @@ public class CommandExecutor extends Thread {
 				}
 			}
 			
-			// wait for the process (this should return instantly if no error occurred
+			// wait for the process (this should return instantly if no error
+			// occurred
 			int waitFor = process.waitFor();
 			
 			return new Tuple<Integer, List<String>>(waitFor, readTask.getReadLines());
@@ -237,7 +248,8 @@ public class CommandExecutor extends Thread {
 	 * @param writer
 	 * @param pipe
 	 */
-	private CommandExecutor(Task task, BufferedReader reader, BufferedWriter writer, BufferedReader pipe) {
+	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
+	        final BufferedReader pipe) {
 		if (RepoSuiteSettings.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}
@@ -303,7 +315,6 @@ public class CommandExecutor extends Thread {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override

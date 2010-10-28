@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -30,6 +28,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -42,7 +41,8 @@ import difflib.Patch;
 public class MercurialRepository extends Repository {
 	
 	protected static SimpleDateFormat hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
-	protected static String           regex                = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
+	protected static String           pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static Regex            regex                = new Regex(pattern);
 	protected static SimpleDateFormat hgAnnotateDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
 	protected List<String>            hashes               = new ArrayList<String>();
 	private URI                       uri;
@@ -50,20 +50,19 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<AnnotationEntry> annotate(String filePath, String revision) {
+	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
 		if ((filePath == null) && (revision == null)) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("filePath and revision must not be null. Abort.");
 			}
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r",
-		        revision, filePath }, cloneDir, null, new HashMap<String, String>());
+		        revision, filePath }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -74,21 +73,20 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		Pattern pattern = Pattern.compile(regex);
+		
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		HashMap<String, String> hashCache = new HashMap<String, String>();
 		
 		for (String line : lines) {
-			Matcher matcher = pattern.matcher(line);
-			if (!matcher.matches()) {
+			if (!regex.matches(line)) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error("Found line in annotation that cannot be parsed. Abort");
 				}
 				return null;
 			}
-			String author = matcher.group(1);
-			String shortHash = matcher.group(2);
-			String date = matcher.group(3);
+			String author = regex.getGroup("author");
+			String shortHash = regex.getGroup("hash");
+			String date = regex.getGroup("date");
 			
 			DateTime timestamp;
 			try {
@@ -100,12 +98,12 @@ public class MercurialRepository extends Repository {
 				return null;
 			}
 			
-			String file = matcher.group(4);
-			String codeLine = matcher.group(5);
+			String file = regex.getGroup("file");
+			String codeLine = regex.getGroup("codeline");
 			
 			if (!hashCache.containsKey(shortHash)) {
 				boolean found = false;
-				for (String hash : hashes) {
+				for (String hash : this.hashes) {
 					if (hash.startsWith(shortHash)) {
 						hashCache.put(shortHash, hash);
 						found = true;
@@ -134,7 +132,7 @@ public class MercurialRepository extends Repository {
 	 */
 	private void cacheHashes() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log",
-		        "--template '{node}\n'" }, cloneDir, null, new HashMap<String, String>());
+		        "--template '{node}\n'" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			if (RepoSuiteSettings.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -145,19 +143,18 @@ public class MercurialRepository extends Repository {
 			if (line.trim().equals("")) {
 				continue;
 			}
-			hashes.add(line.trim());
+			this.hashes.add(line.trim());
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
 	 */
 	@Override
-	public File checkoutPath(String relativeRepoPath, String revision) {
+	public File checkoutPath(final String relativeRepoPath, final String revision) {
 		if ((relativeRepoPath == null) || (revision == null)) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Path and revision must not be null.");
@@ -165,11 +162,11 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-		        new String[] { "update", "-C", revision }, cloneDir, null, new HashMap<String, String>());
+		        new String[] { "update", "-C", revision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
-		File file = new File(cloneDir, relativeRepoPath);
+		File file = new File(this.cloneDir, relativeRepoPath);
 		if (!file.exists()) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Could not get requested path using command `hg update -C`. Abort.");
@@ -181,12 +178,11 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
+	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
 		if ((filePath == null) || (baseRevision == null) || (revisedRevision == null)) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Path and revisions must not be null. Abort.");
@@ -194,14 +190,14 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-		        new String[] { "cat", "-r", baseRevision }, cloneDir, null, new HashMap<String, String>());
+		        new String[] { "cat", "-r", baseRevision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> original = response.getSecond();
 		
-		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision }, cloneDir, null,
-		        new HashMap<String, String>());
+		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision }, this.cloneDir, null,
+		        null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -212,13 +208,12 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths(java.lang
 	 * .String)
 	 */
 	@Override
-	public Map<String, ChangeType> getChangedPaths(String revision) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		if (revision == null) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Revision must be null. Abort.");
@@ -226,7 +221,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		try {
-			writeLogStyle(cloneDir);
+			writeLogStyle(this.cloneDir);
 		} catch (IOException e1) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
@@ -235,7 +230,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", revision, ":", revision }, cloneDir, null, new HashMap<String, String>());
+		        "minerlog", "-r", revision, ":", revision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -282,18 +277,17 @@ public class MercurialRepository extends Repository {
 	}
 	
 	public File getCloneDir() {
-		return cloneDir;
+		return this.cloneDir;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
 	public String getFirstRevisionId() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
-		        "--template", "\"{node}\"" }, cloneDir, null, new HashMap<String, String>());
+		        "--template", "\"{node}\"" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -309,13 +303,12 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
 	public String getLastRevisionId() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
-		        "--template", "\"{node}\"" }, cloneDir, null, new HashMap<String, String>());
+		        "--template", "\"{node}\"" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -331,12 +324,11 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<LogEntry> log(String fromRevision, String toRevision) {
+	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		ArrayList<LogEntry> result = new ArrayList<LogEntry>();
 		if ((toRevision == null) || (fromRevision == null)) {
 			if (RepoSuiteSettings.logError()) {
@@ -346,7 +338,7 @@ public class MercurialRepository extends Repository {
 		}
 		
 		try {
-			writeLogStyle(cloneDir);
+			writeLogStyle(this.cloneDir);
 		} catch (IOException e1) {
 			if (RepoSuiteSettings.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
@@ -355,7 +347,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", toRevision, ":", fromRevision }, cloneDir, null, new HashMap<String, String>());
+		        "minerlog", "-r", toRevision, ":", fromRevision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -402,30 +394,29 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(URI address) {
-		uri = address;
-		//clone  the remote repository
+	public void setup(final URI address) {
+		this.uri = address;
+		// clone the remote repository
 		
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
 		
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
-		        new String[] { "clone", "-U", uri.toString(), hgName }, cloneDir, null, new HashMap<String, String>());
+		        new String[] { "clone", "-U", this.uri.toString(), hgName }, this.cloneDir, null, null);
 		if (returnValue.getFirst() == 0) {
-			cloneDir = new File(hgName);
-			if (!cloneDir.exists()) {
+			this.cloneDir = new File(hgName);
+			if (!this.cloneDir.exists()) {
 				if (RepoSuiteSettings.logError()) {
-					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + hgName
+					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `" + hgName
 					        + "`");
 				}
 				return;
 			}
 			try {
-				FileUtils.forceDeleteOnExit(cloneDir);
+				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error(e.getMessage());
@@ -437,37 +428,35 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(URI address, String username, String password) {
-		uri = Repository.encodeUsername(address, username);
+	public void setup(final URI address, final String username, final String password) {
+		this.uri = Repository.encodeUsername(address, username);
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
 		StringBuilder cmd = new StringBuilder();
 		cmd.append("hg clone -U ");
-		cmd.append(uri);
+		cmd.append(this.uri);
 		cmd.append(" ");
 		cmd.append(hgName);
 		
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(password.getBytes());
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
-		        new String[] { "clone", "-U", uri.toString(), hgName }, cloneDir, inputStream,
-		        new HashMap<String, String>());
+		        new String[] { "clone", "-U", this.uri.toString(), hgName }, this.cloneDir, inputStream, null);
 		if (returnValue.getFirst() == 0) {
-			cloneDir = new File(hgName);
-			if (!cloneDir.exists()) {
+			this.cloneDir = new File(hgName);
+			if (!this.cloneDir.exists()) {
 				if (RepoSuiteSettings.logError()) {
-					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + hgName
+					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `" + hgName
 					        + "`");
 					Logger.error("Used command: " + cmd.toString());
 				}
 				return;
 			}
 			try {
-				FileUtils.forceDeleteOnExit(cloneDir);
+				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error(e.getMessage());
@@ -477,7 +466,7 @@ public class MercurialRepository extends Repository {
 		cacheHashes();
 	}
 	
-	private void writeLogStyle(File dir) throws IOException {
+	private void writeLogStyle(final File dir) throws IOException {
 		File f = new File(dir + System.getProperty("file.separator") + "minerlog");
 		if (f.exists()) {
 			f.delete();

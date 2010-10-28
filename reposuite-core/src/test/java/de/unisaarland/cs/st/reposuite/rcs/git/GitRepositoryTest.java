@@ -24,7 +24,7 @@ public class GitRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 		
-		//TODO replace this repo  and create an own repo on the fly 
+		// TODO replace this repo and create an own repo on the fly
 		this.uri = new URI("git://github.com/git/hello-world.git");
 		this.repo = new GitRepository();
 		this.repo.setup(this.uri);
@@ -64,12 +64,12 @@ public class GitRepositoryTest {
 	
 	@Test
 	public void testCheckoutDir() {
-		//TODO implement test
+		// TODO implement test
 	}
 	
 	@Test
 	public void testCheckoutFile() {
-		//TODO implement test
+		// TODO implement test
 	}
 	
 	@Test
@@ -82,12 +82,12 @@ public class GitRepositoryTest {
 	
 	@Test
 	public void testCloneUsername() {
-		//TODO implements
+		// TODO implements
 	}
 	
 	@Test
 	public void testDiff() {
-		//TODO implement test
+		// TODO implement test
 	}
 	
 	@Test
@@ -105,6 +105,6 @@ public class GitRepositoryTest {
 	@Test
 	public void testSaschasAndererMegaRegex() {
 		String line = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
-		assertTrue(GitRepository.compile.matcher(line).matches());
+		assertTrue(GitRepository.regex.matches(line));
 	}
 }
