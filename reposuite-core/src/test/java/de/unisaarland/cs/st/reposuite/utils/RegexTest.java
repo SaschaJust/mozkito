@@ -84,6 +84,8 @@ public class RegexTest {
 		assertFalse(Regex.checkRegex("(?<={test})"));
 		
 		assertFalse(Regex.checkRegex("akrfnr(a+)sdf(?!bleh(blub)blah)bleh"));
+		assertFalse(Regex.checkRegex("({test}"));
+		assertFalse(Regex.checkRegex("({test})\\"));
 	}
 	
 	/**
@@ -147,7 +149,13 @@ public class RegexTest {
 	 */
 	@Test
 	public void testFindLongestMatchingPattern() {
-		fail("Not yet implemented"); // TODO
+		String pattern = "^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+:\\s.*(tinkabell+)\\w(?!bleh)";
+		String text = "sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">";
+		String match = Regex.findLongestMatchingPattern(pattern, text);
+		
+		assertTrue(new Regex("({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+.*")
+		        .matchesFull(text));
+		assertEquals("^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+", match);
 	}
 	
 	/**
@@ -161,25 +169,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#getPattern()}.
-	 */
-	@Test
-	public void testGetPattern() {
-		fail("Not yet implemented"); // TODO
-	}
-	
-	/**
-	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#getText()}.
-	 */
-	@Test
-	public void testGetText() {
-		fail("Not yet implemented"); // TODO
-	}
-	
-	/**
-	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#matches(java.lang.String)}
+	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#matchesFull(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -187,7 +177,7 @@ public class RegexTest {
 		String test = "abbatabc";
 		Regex regex = new Regex("b+a");
 		
-		assertTrue(regex.matches(test));
+		assertTrue(regex.matchesFull(test));
 		assertEquals(new Integer(0), regex.getGroupCount());
 		assertTrue(regex.matched());
 		
@@ -209,7 +199,7 @@ public class RegexTest {
 		
 		regex = new Regex(pattern);
 		for (String line : lines) {
-			assertTrue(regex.matches(line));
+			assertTrue(regex.matchesFull(line));
 			assertEquals(new Integer(5), regex.getGroupCount());
 		}
 	}
@@ -249,25 +239,25 @@ public class RegexTest {
 	@Test
 	public void testNegativeLookAhead() {
 		Regex regex = new Regex(".*b(?!a).*");
-		assertFalse(regex.matches("ba"));
-		assertTrue(regex.matches("b"));
-		assertTrue(regex.matches("bta"));
+		assertFalse(regex.matchesFull("ba"));
+		assertTrue(regex.matchesFull("b"));
+		assertTrue(regex.matchesFull("bta"));
 	}
 	
 	@Test
 	public void testNegativeLookBehind() {
 		Regex regex = new Regex(".*(?<!a)b.*");
-		assertFalse(regex.matches("ab"));
-		assertTrue(regex.matches("b"));
-		assertTrue(regex.matches("atb"));
+		assertFalse(regex.matchesFull("ab"));
+		assertTrue(regex.matchesFull("b"));
+		assertTrue(regex.matchesFull("atb"));
 	}
 	
 	@Test
 	public void testPositiveLookAhead() {
 		Regex regex = new Regex(".*b(?=a).*");
-		assertTrue(regex.matches("ba"));
-		assertFalse(regex.matches("b"));
-		assertFalse(regex.matches("bta"));
+		assertTrue(regex.matchesFull("ba"));
+		assertFalse(regex.matchesFull("b"));
+		assertFalse(regex.matchesFull("bta"));
 		
 		regex = new Regex("b(?=({test}a))");
 		List<RegexGroup> find = regex.find("ba");
@@ -278,9 +268,9 @@ public class RegexTest {
 	@Test
 	public void testPositiveLookBehind() {
 		Regex regex = new Regex(".*(?<=a)b.*");
-		assertTrue(regex.matches("ab"));
-		assertFalse(regex.matches("b"));
-		assertFalse(regex.matches("atb"));
+		assertTrue(regex.matchesFull("ab"));
+		assertFalse(regex.matchesFull("b"));
+		assertFalse(regex.matchesFull("atb"));
 		
 	}
 	

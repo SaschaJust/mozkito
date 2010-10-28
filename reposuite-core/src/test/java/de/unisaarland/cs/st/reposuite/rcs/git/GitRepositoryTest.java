@@ -105,6 +105,6 @@ public class GitRepositoryTest {
 	@Test
 	public void testSaschasAndererMegaRegex() {
 		String line = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
-		assertTrue(GitRepository.regex.matches(line));
+		assertTrue(GitRepository.regex.matchesFull(line));
 	}
 }

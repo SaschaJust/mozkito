@@ -87,7 +87,7 @@ public class GitRepository extends Repository {
 			DateTime date = new DateTime();
 			
 			String lineContent = "<unkown>";
-			if (regex.matches(line)) {
+			if (regex.matchesFull(line)) {
 				author = regex.getGroup("author");
 				try {
 					date = new DateTime(gitLogDateFormat.parse(regex.getGroup("date")));

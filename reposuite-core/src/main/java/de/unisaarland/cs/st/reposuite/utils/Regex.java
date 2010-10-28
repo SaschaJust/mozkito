@@ -17,6 +17,7 @@ import jregex.Replacer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
@@ -54,16 +55,16 @@ public class Regex {
 		assert (pattern != null);
 		assert (pattern.length() > 0);
 		
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug("Checking pattern: " + pattern);
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Checking pattern: " + pattern);
 		}
 		
 		// remove all character classes []
-		Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\]");
+		Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\][*+]?\\??");
 		String patternWithoutCharacterClasses = characterGroups.removeAll(pattern);
 		
-		if (RepoSuiteSettings.logDebug()) {
-			Logger.debug("Pattern without chracter classes: " + patternWithoutCharacterClasses);
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Pattern without character classes: " + patternWithoutCharacterClasses);
 		}
 		
 		// check for closed matching groups
@@ -92,7 +93,7 @@ public class Regex {
 		
 		// check for empty matching groups
 		Regex emptyGroups = new Regex("(\\((\\?<?[!=])?(\\{\\w+\\})?\\))");
-		List<List<RegexGroup>> emptyGroupsList = emptyGroups.findAll(patternWithoutCharacterClasses);
+		List<List<RegexGroup>> emptyGroupsList = emptyGroups.findAll(pattern);
 		
 		if (emptyGroupsList != null) {
 			
@@ -112,7 +113,8 @@ public class Regex {
 		
 		// check for closed character groups
 		beginMatch = new Regex("(?<!\\\\)\\[|^\\[");
-		endMatch = new Regex("(?<!\\\\)\\]");
+		endMatch = new Regex("(?<!\\\\)\\]"); // TODO remove trailing
+		                                      // multiplicators
 		
 		List<List<RegexGroup>> allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
 		List<List<RegexGroup>> allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
@@ -148,6 +150,15 @@ public class Regex {
 			return false;
 		}
 		
+		// check for \ at the end
+		if (pattern.endsWith("\\")) {
+			
+			if (RepoSuiteSettings.logError()) {
+				Logger.error("'\\' at the end of a regex is not supported.");
+			}
+			return false;
+		}
+		
 		try {
 			new NamedPattern(pattern);
 		} catch (PatternSyntaxException e) {
@@ -173,14 +184,25 @@ public class Regex {
 	 */
 	public static String findLongestMatchingPattern(String pattern, final String text) {
 		assert (text != null);
+		assert (pattern != null);
 		
-		Regex regex = new Regex(pattern);
+		Regex regex = new Regex("placeholder");
+		regex.setPattern(pattern);
+		Regex bsReplacer = new Regex("\\\\+$");
 		
-		while (!regex.matches(text) && (pattern.length() > 1)) {
+		while ((regex.find(text) == null) && (pattern.length() > 1)) {
 			
 			try {
 				pattern = pattern.substring(0, pattern.length() - 1);
-				regex.setPattern(pattern);
+				pattern = bsReplacer.removeAll(pattern);
+				
+				if (checkRegex(pattern)) {
+					regex.setPattern(pattern);
+				} else {
+					if (RepoSuiteSettings.logDebug()) {
+						Logger.debug("Skipping invalid pattern: " + pattern);
+					}
+				}
 			} catch (PatternSyntaxException e) {
 				
 			}
@@ -214,7 +236,12 @@ public class Regex {
 		assert (pattern != null);
 		assert (pattern.length() > 0);
 		
-		this.pattern = new NamedPattern(pattern, flags);
+		try {
+			this.pattern = new NamedPattern(pattern, flags);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println(StringEscapeUtils.escapeJava(pattern));
+		}
+		
 		reset();
 	}
 	
@@ -394,8 +421,23 @@ public class Regex {
 		return result;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Boolean matched() {
 		return this.matched;
+	}
+	
+	/**
+	 * @param text
+	 * @return
+	 */
+	public boolean matches(final String text) {
+		assert (text != null);
+		reset();
+		
+		find(text);
+		return (this.matches != null) && (this.matches.size() > 0);
 	}
 	
 	/**
@@ -405,7 +447,7 @@ public class Regex {
 	 *            the text to be matched
 	 * @return if there is a full match
 	 */
-	public boolean matches(final String text) {
+	public boolean matchesFull(final String text) {
 		assert (text != null);
 		reset();
 		
@@ -527,9 +569,12 @@ public class Regex {
 	private void setPattern(final String pattern) {
 		assert (pattern != null);
 		assert (pattern.length() > 0);
-		assert (checkRegex(pattern));
-		
-		this.pattern = new NamedPattern(pattern);
+		// assert (checkRegex(pattern));
+		try {
+			this.pattern = new NamedPattern(pattern);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println(StringEscapeUtils.escapeJava(pattern));
+		}
 		reset();
 	}
 	

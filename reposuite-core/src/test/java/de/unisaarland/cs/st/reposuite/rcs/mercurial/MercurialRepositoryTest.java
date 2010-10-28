@@ -84,7 +84,7 @@ public class MercurialRepositoryTest {
 		for (String s : lines) {
 			++lineCounter;
 			
-			assertTrue(regex.matches(s));
+			assertTrue(regex.matchesFull(s));
 			assertEquals(new Integer(5), regex.getGroupCount());
 			assertEquals(regex.getGroup(1), regex.getGroup("author"));
 			assertEquals(regex.getGroup(2), regex.getGroup("hash"));

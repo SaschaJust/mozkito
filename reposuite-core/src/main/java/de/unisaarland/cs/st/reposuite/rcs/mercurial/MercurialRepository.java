@@ -78,7 +78,7 @@ public class MercurialRepository extends Repository {
 		HashMap<String, String> hashCache = new HashMap<String, String>();
 		
 		for (String line : lines) {
-			if (!regex.matches(line)) {
+			if (!regex.matchesFull(line)) {
 				if (RepoSuiteSettings.logError()) {
 					Logger.error("Found line in annotation that cannot be parsed. Abort");
 				}
