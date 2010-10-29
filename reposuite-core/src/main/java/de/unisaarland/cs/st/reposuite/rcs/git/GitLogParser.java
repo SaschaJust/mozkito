@@ -8,9 +8,11 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * The Class GitLogParser.
@@ -20,6 +22,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 class GitLogParser {
 	
 	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+	protected static Regex            regex            = new Regex(
+	                                                           "^({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?");
 	
 	/**
 	 * Parses the.
@@ -29,12 +33,15 @@ class GitLogParser {
 	 * @return the list
 	 */
 	protected static List<LogEntry> parse(List<String> logMessage) {
-		
 		List<LogEntry> result = new ArrayList<LogEntry>();
+		if (logMessage == null) {
+			return result;
+		}
+		
 		int lineCounter = 0;
 		
 		String currentID = null;
-		String author = null;
+		Person author = null;
 		String date = null;
 		StringBuilder message = new StringBuilder();
 		
@@ -78,7 +85,19 @@ class GitLogParser {
 					}
 					return null;
 				}
-				author = authorParts[1].trim();
+				String username = null;
+				String fullname = null;
+				String email = null;
+				regex.find(authorParts[1].trim());
+				if (regex.getGroupNames().contains("lastname") && regex.getGroupNames().contains("name")) {
+					fullname = regex.getGroup("name") + " " + regex.getGroup("lastname");
+				} else if ((!regex.getGroupNames().contains("lastname")) && regex.getGroupNames().contains("name")) {
+					username = regex.getGroup("name");
+				}
+				if (regex.getGroupNames().contains("email")) {
+					email = regex.getGroup("email");
+				}
+				author = new Person(username, fullname, email);
 			} else if (line.startsWith("AuthorDate:")) {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
