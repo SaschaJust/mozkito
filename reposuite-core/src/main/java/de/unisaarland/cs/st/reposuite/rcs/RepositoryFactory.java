@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.utils;
+package de.unisaarland.cs.st.reposuite.rcs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -24,6 +24,10 @@ public class RCSFile implements Annotated {
 		this.changedNames.put(transaction, path);
 	}
 	
+	public void assignTransaction(final RCSTransaction transaction, final String pathName) {
+		this.changedNames.put(transaction, pathName);
+	}
+	
 	public String getLatestPath() {
 		return this.changedNames.get(new TreeSet<RCSTransaction>(this.changedNames.keySet()).last());
 	}

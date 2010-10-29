@@ -8,9 +8,9 @@ import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.RepositoryFactory;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

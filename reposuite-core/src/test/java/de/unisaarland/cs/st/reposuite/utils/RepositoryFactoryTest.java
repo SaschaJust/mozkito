@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository;
 import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;

@@ -15,11 +15,8 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 public class Person implements Annotated {
 	
 	private String                  username;
-	
 	private String                  fullname;
-	
 	private String                  email;
-	
 	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
 	
 	/**
@@ -33,6 +30,9 @@ public class Person implements Annotated {
 		this.email = email;
 	}
 	
+	/**
+	 * @param transaction
+	 */
 	public void assignTransaction(final RCSTransaction transaction) {
 		assert (transaction != null);
 		
