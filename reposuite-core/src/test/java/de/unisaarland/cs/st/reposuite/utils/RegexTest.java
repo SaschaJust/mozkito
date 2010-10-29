@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.reposuite.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,14 +52,8 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#analyzePattern(java.lang.String)}
-	 * .
+	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#checkRegex(String)}
 	 */
-	@Test
-	public void testAnalyzePattern() {
-		fail("Not yet implemented"); // TODO
-	}
-	
 	@Test
 	public void testCheckRegex() {
 		assertTrue(Regex.checkRegex("(a)"));
@@ -121,7 +114,34 @@ public class RegexTest {
 	 */
 	@Test
 	public void testFindAll() {
-		fail("Not yet implemented"); // TODO
+		String text = "";
+		
+		for (int i = 0; i < 10; ++i) {
+			text += "sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml";
+			text += FileUtils.lineSeparator;
+		}
+		
+		String pattern = "({test}[^\\s]+)";
+		
+		Regex regex = new Regex(pattern);
+		
+		List<List<RegexGroup>> findAll = regex.findAll(text);
+		assertTrue(findAll != null);
+		assertEquals(90, findAll.size());
+		
+		// System.err.println(JavaUtils.collectionToString(findAll));
+		System.err.println(findAll.get(8).get(0).getMatch());
+		for (int i = 0; i < 90; ++i) {
+			assertEquals(1, findAll.get(i).size());
+			System.err.println(i + " " + i % 9);
+			assertEquals("test", findAll.get(i).get(0).getName());
+			if (i % 9 == 3) {
+				assertEquals("Oct", findAll.get(i).get(0).getMatch());
+			}
+			if (i % 9 == 6) {
+				assertEquals("2010", findAll.get(i).get(0).getMatch());
+			}
+		}
 	}
 	
 	/**
@@ -164,7 +184,22 @@ public class RegexTest {
 	 */
 	@Test
 	public void testGetGroupCount() {
-		fail("Not yet implemented"); // TODO
+		Regex regex;
+		
+		regex = new Regex("({test}this)out(2groups)");
+		assertEquals(new Integer("2"), regex.getGroupCount());
+		
+		regex = new Regex("({test}this)out(?!2groups)");
+		assertEquals(new Integer("1"), regex.getGroupCount());
+		
+		regex = new Regex("(?<=this)out(2groups)");
+		assertEquals(new Integer("1"), regex.getGroupCount());
+		
+		regex = new Regex("(this)out(2groups)");
+		assertEquals(new Integer("2"), regex.getGroupCount());
+		
+		regex = new Regex("({test}this)out(groups){2}");
+		assertEquals(new Integer("2"), regex.getGroupCount());
 	}
 	
 	/**
@@ -175,7 +210,7 @@ public class RegexTest {
 	@Test
 	public void testMatches() {
 		String test = "abbatabc";
-		Regex regex = new Regex("b+a");
+		Regex regex = new Regex(".*b+a.*");
 		
 		assertTrue(regex.matchesFull(test));
 		assertEquals(new Integer(0), regex.getGroupCount());

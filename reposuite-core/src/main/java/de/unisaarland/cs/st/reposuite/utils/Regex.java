@@ -113,8 +113,8 @@ public class Regex {
 		
 		// check for closed character groups
 		beginMatch = new Regex("(?<!\\\\)\\[|^\\[");
-		endMatch = new Regex("(?<!\\\\)\\]"); // TODO remove trailing
-		                                      // multiplicators
+		endMatch = new Regex("(?<!\\\\)\\][*+]?\\??"); // TODO remove trailing
+		// multiplicators
 		
 		List<List<RegexGroup>> allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
 		List<List<RegexGroup>> allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
@@ -150,11 +150,14 @@ public class Regex {
 			return false;
 		}
 		
+		// check for captured lookbehind matching (must be avoided)
+		// TODO
+		
 		// check for \ at the end
 		if (pattern.endsWith("\\")) {
 			
-			if (RepoSuiteSettings.logError()) {
-				Logger.error("'\\' at the end of a regex is not supported.");
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("'\\' at the end of a regex is not supported.");
 			}
 			return false;
 		}
