@@ -9,10 +9,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
-import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
-import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;

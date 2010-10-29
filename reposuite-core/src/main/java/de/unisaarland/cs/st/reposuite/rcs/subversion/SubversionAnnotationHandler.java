@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 
-import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

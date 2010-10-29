@@ -25,9 +25,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.reposuite.rcs.AnnotationEntry;
-import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
-import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;

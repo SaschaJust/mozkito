@@ -3,6 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
@@ -11,21 +14,29 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  */
 public class Person implements Annotated {
 	
-	private String username;
+	private String                  username;
 	
-	private String fullname;
+	private String                  fullname;
 	
-	private String email;
+	private String                  email;
+	
+	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
 	
 	/**
 	 * @param username
 	 * @param fullname
 	 * @param email
 	 */
-	public Person(String username, String fullname, String email) {
+	public Person(final String username, final String fullname, final String email) {
 		this.username = username;
 		this.fullname = fullname;
 		this.email = email;
+	}
+	
+	public void assignTransaction(final RCSTransaction transaction) {
+		assert (transaction != null);
+		
+		this.transactions.add(transaction);
 	}
 	
 	/**
@@ -36,10 +47,31 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @return the firstCommit
+	 */
+	public RCSTransaction getFirstCommit() {
+		return this.transactions.first();
+	}
+	
+	/**
 	 * @return the fullname
 	 */
 	public String getFullname() {
 		return this.fullname;
+	}
+	
+	/**
+	 * @return the latestCommit
+	 */
+	public RCSTransaction getLatestCommit() {
+		return this.transactions.last();
+	}
+	
+	/**
+	 * @return the transactions
+	 */
+	public TreeSet<RCSTransaction> getTransactions() {
+		return this.transactions;
 	}
 	
 	/**
@@ -50,29 +82,11 @@ public class Person implements Annotated {
 	}
 	
 	/**
-	 * @param firstPerson
-	 * @param secondPerson
-	 * @return
-	 */
-	public Person merge(Person firstPerson, Person secondPerson) {
-		assert ((firstPerson.username == null) || (secondPerson.username == null) || firstPerson.username
-		        .equals(secondPerson.username));
-		assert ((firstPerson.fullname == null) || (secondPerson.fullname == null) || firstPerson.fullname
-		        .equals(secondPerson.fullname));
-		assert ((firstPerson.email == null) || (secondPerson.email == null) || firstPerson.email
-		        .equals(secondPerson.email));
-		
-		return new Person((firstPerson.username != null ? firstPerson.username : secondPerson.username),
-		        (firstPerson.fullname != null ? firstPerson.fullname : secondPerson.fullname),
-		        (firstPerson.email != null ? firstPerson.email : secondPerson.email));
-	}
-	
-	/**
 	 * @param email
 	 *            the email to set
 	 */
-	@SuppressWarnings("unused")
-	private void setEmail(String email) {
+	@SuppressWarnings ("unused")
+	private void setEmail(final String email) {
 		this.email = email;
 	}
 	
@@ -80,23 +94,30 @@ public class Person implements Annotated {
 	 * @param fullname
 	 *            the fullname to set
 	 */
-	@SuppressWarnings("unused")
-	private void setFullname(String fullname) {
+	@SuppressWarnings ("unused")
+	private void setFullname(final String fullname) {
 		this.fullname = fullname;
+	}
+	
+	/**
+	 * @param transactions
+	 */
+	@SuppressWarnings ("unused")
+	private void setTransaction(final Set<RCSTransaction> transactions) {
+		this.transactions = new TreeSet<RCSTransaction>(transactions);
 	}
 	
 	/**
 	 * @param username
 	 *            the username to set
 	 */
-	@SuppressWarnings("unused")
-	private void setUsername(String username) {
+	@SuppressWarnings ("unused")
+	private void setUsername(final String username) {
 		this.username = username;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

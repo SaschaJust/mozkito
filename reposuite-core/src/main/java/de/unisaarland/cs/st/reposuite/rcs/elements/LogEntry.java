@@ -1,6 +1,8 @@
-package de.unisaarland.cs.st.reposuite.rcs;
+package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import org.joda.time.DateTime;
+
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 
 /**
  * The Class LogEntry.
@@ -10,7 +12,7 @@ import org.joda.time.DateTime;
 public class LogEntry implements Comparable<LogEntry> {
 	
 	protected String   revision;
-	protected String   author;
+	protected Person   author;
 	protected String   message;
 	protected DateTime commitDate;
 	protected LogEntry previous;
@@ -29,7 +31,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @param dateTime
 	 *            the date time
 	 */
-	public LogEntry(String revision, LogEntry previous, String author, String message, DateTime dateTime) {
+	public LogEntry(final String revision, final LogEntry previous, final Person author, final String message,
+	        final DateTime dateTime) {
 		this.revision = revision;
 		this.author = author;
 		this.message = message;
@@ -39,11 +42,10 @@ public class LogEntry implements Comparable<LogEntry> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(LogEntry o) {
+	public int compareTo(final LogEntry o) {
 		return this.commitDate.compareTo(o.commitDate);
 	}
 	
@@ -52,7 +54,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * 
 	 * @return the author
 	 */
-	public String getAuthor() {
+	public Person getAuthor() {
 		return this.author;
 	}
 	
@@ -89,7 +91,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

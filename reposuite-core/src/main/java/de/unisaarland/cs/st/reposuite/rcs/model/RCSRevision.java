@@ -6,7 +6,7 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import javax.persistence.Entity;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

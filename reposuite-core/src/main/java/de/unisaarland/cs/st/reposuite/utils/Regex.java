@@ -80,12 +80,12 @@ public class Regex {
 		if (beginCount != endCount) {
 			if (beginCount > endCount) {
 				
-				if (RepoSuiteSettings.logDebug()) {
-					Logger.debug("Too many opening '(' parenthesis.");
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.warn("Too many opening '(' parenthesis.");
 				}
 			} else {
-				if (RepoSuiteSettings.logDebug()) {
-					Logger.debug("Too many closing ')' parenthesis.");
+				if (RepoSuiteSettings.logWarn()) {
+					Logger.warn("Too many closing ')' parenthesis.");
 				}
 			}
 			return false;
@@ -97,8 +97,8 @@ public class Regex {
 		
 		if (emptyGroupsList != null) {
 			
-			if (RepoSuiteSettings.logDebug()) {
-				Logger.debug("Empty matching groups: " + CollectionUtils.collect(emptyGroupsList, new Transformer() {
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("Empty matching groups: " + CollectionUtils.collect(emptyGroupsList, new Transformer() {
 					
 					@Override
 					public Object transform(final Object input) {
@@ -123,14 +123,11 @@ public class Regex {
 		endCount = (allClosedCharGroupsClosed != null ? allClosedCharGroupsClosed.size() : 0);
 		
 		if (beginCount != endCount) {
-			if (beginCount > endCount) {
-				
-				if (RepoSuiteSettings.logDebug()) {
-					Logger.debug("Too many opening '[' parenthesis.");
-				}
-			} else {
-				if (RepoSuiteSettings.logDebug()) {
-					Logger.debug("Too many closing ']' parenthesis.");
+			if (RepoSuiteSettings.logWarn()) {
+				if (beginCount > endCount) {
+					Logger.warn("Too many opening '[' parenthesis.");
+				} else {
+					Logger.warn("Too many closing ']' parenthesis.");
 				}
 			}
 			return false;
@@ -138,7 +135,8 @@ public class Regex {
 		
 		// check for captured negative lookahead matching (must be avoided
 		// because this leads to strange behavior)
-		Regex regex = new Regex("(\\(\\?![^()]+\\([^)]*\\))");
+		// and check for captured lookbehind groups in general
+		Regex regex = new Regex("(\\(\\?(<=|<!|!)[^()]+\\([^)]*\\))");
 		List<List<RegexGroup>> findAll = regex.findAll(patternWithoutCharacterClasses);
 		
 		if (findAll != null) {
@@ -150,8 +148,16 @@ public class Regex {
 			return false;
 		}
 		
-		// check for captured lookbehind matching (must be avoided)
-		// TODO
+		// check for named lookbehind/lookahead (must be avoided since not
+		// captured)
+		regex = new Regex("(\\(\\?(<=|<!|!|=)\\{[^}]\\}[^)]\\))");
+		findAll = regex.findAll(patternWithoutCharacterClasses);
+		if (findAll != null) {
+			
+			if (RepoSuiteSettings.logWarn()) {
+				Logger.warn("Naming of uncaptured group makes no sense: " + JavaUtils.collectionToString(findAll));
+			}
+		}
 		
 		// check for \ at the end
 		if (pattern.endsWith("\\")) {
@@ -164,7 +170,7 @@ public class Regex {
 		
 		try {
 			new NamedPattern(pattern);
-		} catch (PatternSyntaxException e) {
+		} catch (Exception e) {
 			
 			if (RepoSuiteSettings.logError()) {
 				Logger.error(e.getMessage(), e);

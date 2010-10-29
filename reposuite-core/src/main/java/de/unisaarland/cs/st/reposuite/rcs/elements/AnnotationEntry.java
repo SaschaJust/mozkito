@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.rcs;
+package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import org.joda.time.DateTime;
 

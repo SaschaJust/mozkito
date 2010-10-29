@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.reposuite.rcs.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;

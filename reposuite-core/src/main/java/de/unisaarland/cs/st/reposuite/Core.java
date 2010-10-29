@@ -3,9 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
-import de.unisaarland.cs.st.reposuite.utils.RepositoryFactory;
+import de.unisaarland.cs.st.reposuite.rcs.model.RepositoryAnalyzer;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author just
@@ -17,9 +17,15 @@ public class Core extends Thread {
 	public void run() {
 		
 		try {
-			RepositoryFactory.getRepositoryHandler(RepositoryType.GIT);
-		} catch (UnregisteredRepositoryTypeException e) {
-			e.printStackTrace();
+			RepositoryAnalyzer analyzer = new RepositoryAnalyzer();
+			analyzer.start();
+			analyzer.join();
+		} catch (InterruptedException e) {
+			if (RepoSuiteSettings.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			
+			throw new RuntimeException();
 		}
 	}
 }
