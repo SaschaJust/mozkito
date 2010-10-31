@@ -224,7 +224,7 @@ public class SubversionRepository extends Repository {
 							map.put(changedPaths.get(o).getPath(), ChangeType.Deleted);
 							break;
 						case 'R':
-							map.put(changedPaths.get(o).getPath(), ChangeType.Replaced);
+							map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
 							break;
 						default:
 							if (RepoSuiteSettings.logError()) {
@@ -250,6 +250,11 @@ public class SubversionRepository extends Repository {
 	@Override
 	public String getFirstRevisionId() {
 		return "1";
+	}
+	
+	@Override
+	public String getFormerPathName(final String revision, final String pathName) {
+		return null;
 	}
 	
 	/*

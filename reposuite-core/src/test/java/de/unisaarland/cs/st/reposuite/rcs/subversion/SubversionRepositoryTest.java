@@ -44,7 +44,7 @@ public class SubversionRepositoryTest {
 	private static SubversionRepository repository;
 	private static File                 tmpDirectory;
 	
-	private static DateTime getDateFromSVNString(String timestamp) {
+	private static DateTime getDateFromSVNString(final String timestamp) {
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 		return dtf.parseDateTime(timestamp);
 	}
@@ -196,7 +196,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 1 -- //
 		LogEntry entry = log.get(1);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:33:44 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("1", entry.getRevision());
@@ -204,7 +204,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 2 -- //
 		entry = log.get(2);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:35:15 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("2", entry.getRevision());
@@ -213,7 +213,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 3 -- //
 		entry = log.get(3);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:36:05 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("3", entry.getRevision());
@@ -221,7 +221,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 4 -- //
 		entry = log.get(4);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:36:46 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("4", entry.getRevision());
@@ -229,7 +229,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 5 -- //
 		entry = log.get(5);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:37:07 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("5", entry.getRevision());
@@ -237,7 +237,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 6 -- //
 		entry = log.get(6);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:40:19 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("6", entry.getRevision());
@@ -248,7 +248,7 @@ public class SubversionRepositoryTest {
 		
 		// -- Rev 17 -- //
 		entry = log.get(17);
-		assertEquals("just", entry.getAuthor());
+		assertEquals("just", entry.getAuthor().getUsername());
 		assertEquals(getDateFromSVNString("2010-10-22 16:53:06 +0200"),
 		        entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()));
 		assertEquals("17", entry.getRevision());

@@ -40,9 +40,9 @@ public abstract class Repository {
 	 * @return the URI with encoded user name. If the encoding fails, the
 	 *         original URI will be returned.
 	 */
-	public static URI encodeUsername(URI address, String username) {
-		//[scheme:][//authority][path][?query][#fragment]
-		//[user-info@]host[:port]
+	public static URI encodeUsername(final URI address, final String username) {
+		// [scheme:][//authority][path][?query][#fragment]
+		// [user-info@]host[:port]
 		
 		if (username == null) {
 			return address;
@@ -141,6 +141,18 @@ public abstract class Repository {
 	 * @return the first revision id
 	 */
 	public abstract String getFirstRevisionId();
+	
+	/**
+	 * Determines the former path name of the file/directory.
+	 * 
+	 * @param revision
+	 *            (not null)
+	 * @param pathName
+	 *            (not null)
+	 * @return Returns the former path name iff the file/directory was renamed.
+	 *         Null otherwise.
+	 */
+	public abstract String getFormerPathName(String revision, String pathName);
 	
 	/**
 	 * Determines the simple class name of the object.

@@ -18,6 +18,7 @@ public class Core extends Thread {
 		
 		try {
 			RepositoryAnalyzer analyzer = new RepositoryAnalyzer();
+			analyzer.setName(RepositoryAnalyzer.getHandle());
 			analyzer.start();
 			analyzer.join();
 		} catch (InterruptedException e) {

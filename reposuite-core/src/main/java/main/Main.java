@@ -19,6 +19,7 @@ public class Main {
 	public static void main(final String[] args) {
 		try {
 			Core core = new Core();
+			core.setName(core.getClass().getSimpleName());
 			core.start();
 			core.join();
 		} catch (InterruptedException e) {

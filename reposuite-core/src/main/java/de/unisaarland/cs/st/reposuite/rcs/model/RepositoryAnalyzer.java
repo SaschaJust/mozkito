@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -20,27 +19,52 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepositoryAnalyzer extends Thread {
 	
+	public static String getHandle() {
+		return RepositoryAnalyzer.class.getSimpleName();
+	}
+	
 	@Override
 	public void run() {
 		try {
-			Repository repository = RepositoryFactory.getRepositoryHandler(RepositoryType.SUBVERSION).newInstance();
+			
+			RepoSuiteSettings settings = new RepoSuiteSettings();
+			RepositoryArguments repoSettings = settings.setRepositoryArg(true);
+			settings.parseArguments();
+			
+			Repository repository = repoSettings.getValue();
+			
+			if (RepoSuiteSettings.logInfo()) {
+				Logger.info("Requesting logs from " + repository);
+			}
+			
 			List<LogEntry> logs = repository.log(repository.getFirstRevisionId(), "HEAD");
 			RCSTransaction previousRcsTransaction = null;
 			RCSFileManager fileManager = new RCSFileManager();
+			
+			if (RepoSuiteSettings.logInfo()) {
+				Logger.info("Parsing " + logs.size() + " transactions."
+				        + (logs.size() > 1000 ? " This might take a while." : ""));
+			}
 			
 			for (LogEntry entry : logs) {
 				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
 				        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
 				Map<String, ChangeType> changedPaths = repository.getChangedPaths(entry.getRevision());
 				for (String fileName : changedPaths.keySet()) {
-					// FIXME this will fail so badly
-					// we need oldFileName iff the file has been renamed
+					RCSFile file;
 					
-					RCSFile file = fileManager.getFile(fileName);
-					if (file == null) {
-						fileManager.addFile(new RCSFile(fileName, rcsTransaction));
-					} else if (changedPaths.get(fileName).equals(ChangeType.Modified)) {
+					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
+						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+						assert (file != null);
 						file.assignTransaction(rcsTransaction, fileName);
+						
+					} else {
+						file = fileManager.getFile(fileName);
+						
+						if (file == null) {
+							file = new RCSFile(fileName, rcsTransaction);
+							fileManager.addFile(file);
+						}
 					}
 					
 					rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),

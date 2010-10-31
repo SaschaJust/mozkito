@@ -37,19 +37,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param author
 	 * @param revisions
 	 */
-	public RCSTransaction(String id, String message, DateTime timestamp, Person author,
-	        RCSTransaction previousRcsTransaction) {
+	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
+	        final RCSTransaction previousRcsTransaction) {
 		assert (id != null);
 		assert (message != null);
 		assert (timestamp != null);
 		assert (author != null);
-		assert ((previousRcsTransaction == null) || (timestamp.compareTo(previousRcsTransaction.timestamp) >= 0));
 		
 		this.id = id;
 		this.message = message;
 		this.timestamp = timestamp;
 		this.author = author;
 		this.previousRCSRcsTransaction = previousRcsTransaction;
+		
+		assert ((previousRcsTransaction == null) || (this.compareTo(previousRcsTransaction) >= 0));
 	}
 	
 	/**
@@ -57,18 +58,19 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return
 	 */
 	@Transient
-	protected boolean addRevision(RCSRevision revision) {
+	protected boolean addRevision(final RCSRevision revision) {
 		assert (revision != null);
 		return this.revisions.add(revision);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(RCSTransaction transaction) {
-		if (this.equals(transaction)) {
+	public int compareTo(final RCSTransaction transaction) {
+		if (transaction == null) {
+			return 1;
+		} else if (this.equals(transaction)) {
 			return 0;
 		} else if (this.timestamp.equals(transaction.timestamp)) {
 			RCSTransaction currentTransaction = this;
@@ -91,7 +93,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			
 			return -1;
 		} else {
-			return this.timestamp.compareTo(transaction.timestamp);
+			return this.timestamp.isAfter(transaction.timestamp) ? 1 : -1;
 		}
 	}
 	
@@ -141,8 +143,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param author
 	 *            the author to set
 	 */
-	@SuppressWarnings("unused")
-	private void setAuthor(Person author) {
+	@SuppressWarnings ("unused")
+	private void setAuthor(final Person author) {
 		this.author = author;
 	}
 	
@@ -150,8 +152,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param id
 	 *            the id to set
 	 */
-	@SuppressWarnings("unused")
-	private void setId(String id) {
+	@SuppressWarnings ("unused")
+	private void setId(final String id) {
 		this.id = id;
 	}
 	
@@ -159,8 +161,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param message
 	 *            the message to set
 	 */
-	@SuppressWarnings("unused")
-	private void setMessage(String message) {
+	@SuppressWarnings ("unused")
+	private void setMessage(final String message) {
 		this.message = message;
 	}
 	
@@ -168,8 +170,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param previousRCSRcsTransaction
 	 *            the previousRCSRcsTransaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setPreviousRCSRcsTransaction(RCSTransaction previousRCSRcsTransaction) {
+	@SuppressWarnings ("unused")
+	private void setPreviousRCSRcsTransaction(final RCSTransaction previousRCSRcsTransaction) {
 		this.previousRCSRcsTransaction = previousRCSRcsTransaction;
 	}
 	
@@ -177,8 +179,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param revisions
 	 *            the revisions to set
 	 */
-	@SuppressWarnings("unused")
-	private void setRevisions(List<RCSRevision> revisions) {
+	@SuppressWarnings ("unused")
+	private void setRevisions(final List<RCSRevision> revisions) {
 		this.revisions = revisions;
 	}
 	
@@ -186,14 +188,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
-	@SuppressWarnings("unused")
-	private void setTimestamp(DateTime timestamp) {
+	@SuppressWarnings ("unused")
+	private void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

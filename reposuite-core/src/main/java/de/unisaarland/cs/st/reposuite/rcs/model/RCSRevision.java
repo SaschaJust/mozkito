@@ -20,12 +20,11 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	private ChangeType     changeType;
 	private RCSTransaction previousTransaction;
 	
-	public RCSRevision(RCSTransaction rcsTransaction, RCSFile rcsFile, ChangeType changeType,
-	        RCSTransaction previousRcsTransaction) {
+	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
+	        final RCSTransaction previousRcsTransaction) {
 		assert (rcsTransaction != null);
 		assert (rcsFile != null);
 		assert (changeType != null);
-		assert (previousRcsTransaction != null);
 		
 		this.transaction = rcsTransaction;
 		this.changedFile = rcsFile;
@@ -36,11 +35,10 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(RCSRevision rcsRevision) {
+	public int compareTo(final RCSRevision rcsRevision) {
 		assert (rcsRevision != null);
 		return this.transaction.compareTo(rcsRevision.transaction);
 	}
@@ -77,8 +75,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param changedFile
 	 *            the changedFile to set
 	 */
-	@SuppressWarnings("unused")
-	private void setChangedFile(RCSFile path) {
+	@SuppressWarnings ("unused")
+	private void setChangedFile(final RCSFile path) {
 		this.changedFile = path;
 	}
 	
@@ -86,8 +84,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param changeType
 	 *            the changeType to set
 	 */
-	@SuppressWarnings("unused")
-	private void setChangeType(ChangeType changeType) {
+	@SuppressWarnings ("unused")
+	private void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
@@ -95,8 +93,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param previousTransaction
 	 *            the previousTransaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setPreviousTransaction(RCSTransaction previousTransaction) {
+	@SuppressWarnings ("unused")
+	private void setPreviousTransaction(final RCSTransaction previousTransaction) {
 		this.previousTransaction = previousTransaction;
 	}
 	
@@ -104,14 +102,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param transaction
 	 *            the transaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setTransaction(RCSTransaction transaction) {
+	@SuppressWarnings ("unused")
+	private void setTransaction(final RCSTransaction transaction) {
 		this.transaction = transaction;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
