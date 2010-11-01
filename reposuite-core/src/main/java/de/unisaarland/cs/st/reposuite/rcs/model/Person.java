@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -25,9 +27,15 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	public Person(final String username, final String fullname, final String email) {
+		assert ((username != null) || (fullname != null) || (email != null));
+		
 		this.username = username;
 		this.fullname = fullname;
 		this.email = email;
+		
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
 	}
 	
 	/**
@@ -37,6 +45,46 @@ public class Person implements Annotated {
 		assert (transaction != null);
 		
 		this.transactions.add(transaction);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Person)) {
+			return false;
+		}
+		Person other = (Person) obj;
+		if (this.email == null) {
+			if (other.email != null) {
+				return false;
+			}
+		} else if (!this.email.equals(other.email)) {
+			return false;
+		}
+		if (this.fullname == null) {
+			if (other.fullname != null) {
+				return false;
+			}
+		} else if (!this.fullname.equals(other.fullname)) {
+			return false;
+		}
+		if (this.username == null) {
+			if (other.username != null) {
+				return false;
+			}
+		} else if (!this.username.equals(other.username)) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -60,6 +108,10 @@ public class Person implements Annotated {
 		return this.fullname;
 	}
 	
+	String getHandle() {
+		return Person.class.getSimpleName();
+	}
+	
 	/**
 	 * @return the latestCommit
 	 */
@@ -79,6 +131,20 @@ public class Person implements Annotated {
 	 */
 	public String getUsername() {
 		return this.username;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
+		result = prime * result + ((this.fullname == null) ? 0 : this.fullname.hashCode());
+		result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
+		return result;
 	}
 	
 	/**

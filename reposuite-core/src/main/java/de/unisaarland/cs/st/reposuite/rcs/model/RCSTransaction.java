@@ -50,6 +50,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		this.author = author;
 		this.previousRCSRcsTransaction = previousRcsTransaction;
 		
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
+		
 		assert ((previousRcsTransaction == null) || (this.compareTo(previousRcsTransaction) >= 0));
 	}
 	
@@ -102,6 +106,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	public Person getAuthor() {
 		return this.author;
+	}
+	
+	/**
+	 * @return the simple class name
+	 */
+	private String getHandle() {
+		return RCSTransaction.class.getSimpleName();
 	}
 	
 	/**

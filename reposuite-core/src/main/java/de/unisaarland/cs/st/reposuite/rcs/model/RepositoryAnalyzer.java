@@ -42,11 +42,21 @@ public class RepositoryAnalyzer extends Thread {
 			RCSFileManager fileManager = new RCSFileManager();
 			
 			if (RepoSuiteSettings.logInfo()) {
+				Logger.info("Analyzing repository for corruption.");
+			}
+			
+			repository.consistencyCheck(logs);
+			
+			if (RepoSuiteSettings.logInfo()) {
 				Logger.info("Parsing " + logs.size() + " transactions."
 				        + (logs.size() > 1000 ? " This might take a while." : ""));
 			}
 			
 			for (LogEntry entry : logs) {
+				
+				if (RepoSuiteSettings.logTrace()) {
+					Logger.trace("Analyzing revision: " + entry.getRevision());
+				}
 				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
 				        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
 				Map<String, ChangeType> changedPaths = repository.getChangedPaths(entry.getRevision());
@@ -55,9 +65,21 @@ public class RepositoryAnalyzer extends Thread {
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
 						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-						assert (file != null);
-						file.assignTransaction(rcsTransaction, fileName);
-						
+						if (file == null) {
+							
+							if (RepoSuiteSettings.logWarn()) {
+								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
+								        + changedPaths.get(fileName));
+							}
+							file = fileManager.getFile(fileName);
+							
+							if (file == null) {
+								file = new RCSFile(fileName, rcsTransaction);
+								fileManager.addFile(file);
+							}
+						} else {
+							file.assignTransaction(rcsTransaction, fileName);
+						}
 					} else {
 						file = fileManager.getFile(fileName);
 						

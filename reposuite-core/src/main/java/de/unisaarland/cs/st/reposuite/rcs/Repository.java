@@ -114,6 +114,11 @@ public abstract class Repository {
 	public abstract File checkoutPath(String relativeRepoPath, String revision);
 	
 	/**
+	 * Checks the repository for corruption.
+	 */
+	public abstract void consistencyCheck(final List<LogEntry> logEntries);
+	
+	/**
 	 * Diff the file in the repository specified by filePath.
 	 * 
 	 * @param filePath
@@ -198,6 +203,10 @@ public abstract class Repository {
 	 * 
 	 * @param address
 	 *            the address the repository can be found
+	 * @param startRevision
+	 *            first revision to take into account (may be null)
+	 * @param endRevision
+	 *            last revision to take into account (may be null)
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -207,14 +216,18 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
-	        UnsupportedProtocolType;
+	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
+	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
 	 * 
 	 * @param address
 	 *            the address
+	 * @param startRevision
+	 *            first revision to take into account (may be null)
+	 * @param endRevision
+	 *            last revision to take into account (may be null)
 	 * @param username
 	 *            the username
 	 * @param password
@@ -228,6 +241,6 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address, String username, String password) throws MalformedURLException,
-	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
+	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 }

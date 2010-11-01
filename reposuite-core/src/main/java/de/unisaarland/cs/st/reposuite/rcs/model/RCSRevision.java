@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -31,6 +33,10 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		this.changeType = changeType;
 		this.previousTransaction = previousRcsTransaction;
 		this.transaction.addRevision(this);
+		
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
 	}
 	
 	/*
@@ -55,6 +61,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	public ChangeType getChangeType() {
 		return this.changeType;
+	}
+	
+	/**
+	 * @return the simple class name
+	 */
+	private String getHandle() {
+		return RCSRevision.class.getSimpleName();
 	}
 	
 	/**

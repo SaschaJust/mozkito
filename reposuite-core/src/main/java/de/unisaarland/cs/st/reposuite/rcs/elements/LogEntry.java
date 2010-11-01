@@ -1,8 +1,11 @@
 package de.unisaarland.cs.st.reposuite.rcs.elements;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class LogEntry.
@@ -33,11 +36,20 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	public LogEntry(final String revision, final LogEntry previous, final Person author, final String message,
 	        final DateTime dateTime) {
+		assert (revision != null);
+		assert (author != null);
+		assert (message != null);
+		assert (dateTime != null);
+		
 		this.revision = revision;
 		this.author = author;
 		this.message = message;
 		this.previous = previous;
 		this.commitDate = dateTime;
+		
+		if (RepoSuiteSettings.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
 	}
 	
 	/*
@@ -95,8 +107,9 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	@Override
 	public String toString() {
-		return "LogEntry [revision=" + this.revision + ", author=" + this.author + ", message=" + this.message
-		        + ", commitDate=" + this.commitDate + ", previous=" + this.previous + "]";
+		return "LogEntry [revision=" + this.revision + ", author=" + this.author + ", message="
+		        + StringEscapeUtils.escapeJava(this.message) + ", commitDate=" + this.commitDate + ", previous="
+		        + (this.previous != null ? this.previous.revision : "(null)") + "]";
 	}
 	
 }
