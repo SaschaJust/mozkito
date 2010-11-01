@@ -6,6 +6,9 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.classic.Session;
+
+import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
@@ -31,6 +34,8 @@ public class RepositoryAnalyzer extends Thread {
 			
 			RepoSuiteSettings settings = new RepoSuiteSettings();
 			RepositoryArguments repoSettings = settings.setRepositoryArg(true);
+			// DatabaseArguments databaseSettings =
+			// settings.setDatabaseArgs(true);
 			LoggerArguments logSettings = settings.setLoggerArg(true);
 			new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface",
 			        "false", false);
@@ -38,6 +43,9 @@ public class RepositoryAnalyzer extends Thread {
 			
 			Repository repository = repoSettings.getValue();
 			logSettings.getValue();
+			// SessionFactory sessionFactory = databaseSettings.getValue();
+			// Session session = sessionFactory.openSession();
+			Session session = HibernateUtil.createSessionFactory().openSession();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting logs from " + repository);
@@ -98,6 +106,7 @@ public class RepositoryAnalyzer extends Thread {
 					rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),
 					        previousRcsTransaction));
 				}
+				session.saveOrUpdate(rcsTransaction);
 				
 				previousRcsTransaction = rcsTransaction;
 			}

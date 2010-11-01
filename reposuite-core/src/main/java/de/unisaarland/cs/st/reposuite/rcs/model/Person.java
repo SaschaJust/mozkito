@@ -6,6 +6,17 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
+
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -13,12 +24,31 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
+@Table (indexes = { @Index (name = "idx", columnNames = { "username", "fullname", "email" }) }, appliesTo = "Person")
 public class Person implements Annotated {
 	
+	/**
+	 * @return the simple class name
+	 */
+	@Transient
+	public static String getHandle() {
+		return Person.class.getSimpleName();
+	}
+	
+	private long                    generatedId;
 	private String                  email;
 	private String                  fullname;
 	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
-	private String                  username;
+	
+	private String                  username;                                     ;
+	
+	/**
+	 * Default constructor used by Hibernate
+	 */
+	@SuppressWarnings ("unused")
+	private Person() {
+	}
 	
 	/**
 	 * @param username
@@ -40,6 +70,7 @@ public class Person implements Annotated {
 	/**
 	 * @param transaction
 	 */
+	@Transient
 	public void assignTransaction(final RCSTransaction transaction) {
 		assert (transaction != null);
 		
@@ -89,6 +120,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the email
 	 */
+	@Column (unique = true)
 	public String getEmail() {
 		return this.email;
 	}
@@ -96,6 +128,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the firstCommit
 	 */
+	@Transient
 	public RCSTransaction getFirstCommit() {
 		return this.transactions.first();
 	}
@@ -107,13 +140,19 @@ public class Person implements Annotated {
 		return this.fullname;
 	}
 	
-	String getHandle() {
-		return Person.class.getSimpleName();
+	/**
+	 * @return the generatedId
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**
 	 * @return the latestCommit
 	 */
+	@Transient
 	public RCSTransaction getLatestCommit() {
 		return this.transactions.last();
 	}
@@ -128,6 +167,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the username
 	 */
+	@Column (unique = true)
 	public String getUsername() {
 		return this.username;
 	}
@@ -165,9 +205,19 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	@SuppressWarnings ("unused")
+	private void setGeneratedId(final long generatedId) {
+		this.generatedId = generatedId;
+	}
+	
+	/**
 	 * @param transactions
 	 */
 	@SuppressWarnings ("unused")
+	@ElementCollection
 	private void setTransaction(final Set<RCSTransaction> transactions) {
 		this.transactions = new TreeSet<RCSTransaction>(transactions);
 	}

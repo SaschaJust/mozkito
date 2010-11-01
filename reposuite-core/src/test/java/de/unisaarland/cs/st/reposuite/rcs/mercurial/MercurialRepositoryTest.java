@@ -37,7 +37,7 @@ public class MercurialRepositoryTest {
 	@Test
 	public void testClone() {
 		this.repo = new MercurialRepository();
-		this.repo.setup(this.uri);
+		this.repo.setup(this.uri, null, null);
 		this.cloneDir = this.repo.getCloneDir();
 		File DOT_HG = new File(this.cloneDir, ".hg");
 		assertTrue(DOT_HG.exists());

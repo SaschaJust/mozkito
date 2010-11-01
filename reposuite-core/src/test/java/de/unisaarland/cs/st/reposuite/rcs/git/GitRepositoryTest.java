@@ -27,7 +27,7 @@ public class GitRepositoryTest {
 		// TODO replace this repo and create an own repo on the fly
 		this.uri = new URI("git://github.com/git/hello-world.git");
 		this.repo = new GitRepository();
-		this.repo.setup(this.uri);
+		this.repo.setup(this.uri, null, null);
 	}
 	
 	@After

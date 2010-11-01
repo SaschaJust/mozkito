@@ -34,12 +34,12 @@ public class PersonManager {
 				}
 			});
 			if (Logger.logTrace()) {
-				Logger.trace("Serving known " + person.getHandle() + ": " + person);
+				Logger.trace("Serving known " + Person.getHandle() + ": " + person);
 			}
 		} else {
 			this.persons.add(person);
 			if (Logger.logTrace()) {
-				Logger.trace("Adding new " + person.getHandle() + ": " + person);
+				Logger.trace("Adding new " + Person.getHandle() + ": " + person);
 			}
 			
 		}
