@@ -18,7 +18,10 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.DefaultIntervalXYDataset;
 import org.jfree.data.xy.DefaultXYDataset;
@@ -237,11 +240,6 @@ public class SubversionRepository extends Repository {
 		
 		LogEntry previous = null;
 		
-		List<Double> revisions = new ArrayList<Double>(logEntries.size());
-		List<Double> times = new ArrayList<Double>(logEntries.size());
-		List<Double> files = new ArrayList<Double>(logEntries.size());
-		Map<String, Double> authors = new HashMap<String, Double>();
-		
 		for (LogEntry entry : logEntries) {
 			// check monotonic timestamp property
 			if (previous != null) {
@@ -249,31 +247,84 @@ public class SubversionRepository extends Repository {
 					System.out.println("Transaction " + entry.getRevision()
 					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
 					        + previous);
-					
 				}
 			}
-			// timestamp per revision
-			revisions.add(Double.parseDouble(entry.getRevision()));
-			times.add((double) entry.getDateTime().getMillis() / 1000);
 			
-			// files
-			Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
-			files.add((double) changedPaths.size());
-			
-			// commits
-			String author = (entry.getAuthor().getUsername() != null ? entry.getAuthor().getUsername() : entry
-			        .getAuthor().getFullname());
-			if (authors.containsKey(author)) {
-				authors.put(author, authors.get(author) + 1.0);
-			} else {
-				authors.put(author, 1.0);
-			}
 			previous = entry;
 		}
 		
-		// ========== timestamp per revision ==========
+		ChartFrame frame;
+		JFreeChart chart;
+		chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
+		frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+		
+		chart = createTimePerTransaction(logEntries);
+		frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+		
+		chart = createFileCountPerTransaction(logEntries);
+		frame = new ChartFrame("Histogram/Files per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	/**
+	 * @param entries
+	 * @return
+	 */
+	private JFreeChart createFileCountPerTransaction(final List<LogEntry> entries) {
+		List<Double> revisions = new ArrayList<Double>(entries.size());
+		List<Double> files = new ArrayList<Double>(entries.size());
+		int i = 0;
+		double[][] datapoints = new double[6][entries.size()];
+		
+		ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
+		BarRenderer.setDefaultShadowsVisible(false);
+		
+		for (LogEntry entry : entries) {
+			revisions.add(Double.parseDouble(entry.getRevision()));
+			Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
+			files.add((double) changedPaths.size());
+			
+			datapoints[0][i] = revisions.get(i);
+			datapoints[1][i] = revisions.get(i);
+			datapoints[2][i] = revisions.get(i);
+			datapoints[3][i] = files.get(i);
+			datapoints[4][i] = files.get(i);
+			datapoints[5][i] = files.get(i);
+			
+			++i;
+		}
+		
+		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
+		idataset.addSeries(new String("Files per revision"), datapoints);
+		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
+		        PlotOrientation.VERTICAL, true, false, false);
+		
+		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
+		
+		return chart;
+	}
+	
+	/**
+	 * @param entries
+	 * @return
+	 */
+	private JFreeChart createTimePerTransaction(final List<LogEntry> entries) {
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		double[][] datapoints = new double[2][logEntries.size()];
+		double[][] datapoints = new double[2][entries.size()];
+		
+		List<Double> revisions = new ArrayList<Double>(entries.size());
+		List<Double> times = new ArrayList<Double>(entries.size());
+		
+		for (LogEntry entry : entries) {
+			// timestamp per revision
+			revisions.add(Double.parseDouble(entry.getRevision()));
+			times.add((double) entry.getDateTime().getMillis() / (1000));
+		}
 		
 		for (int i = 0; i < revisions.size(); ++i) {
 			datapoints[0][i] = revisions.get(i);
@@ -283,51 +334,45 @@ public class SubversionRepository extends Repository {
 		}
 		
 		dataset.addSeries(new String("time per revision"), datapoints);
-		JFreeChart chart = ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions",
-		        dataset, PlotOrientation.VERTICAL, true, false, false);
-		ChartFrame frame = new ChartFrame("Scatterplot/Consistency Check", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		// ========== files per commit ==========
-		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
-		datapoints = new double[6][logEntries.size()];
-		
-		for (int i = 0; i < revisions.size(); ++i) {
-			datapoints[0][i] = revisions.get(i);
-			datapoints[1][i] = revisions.get(i);
-			datapoints[2][i] = revisions.get(i);
-		}
-		for (int i = 0; i < files.size(); ++i) {
-			datapoints[3][i] = files.get(i);
-			datapoints[4][i] = files.get(i);
-			datapoints[5][i] = files.get(i);
-		}
-		
-		idataset.addSeries(new String("files per revision"), datapoints);
-		System.err.println(idataset);
-		chart = ChartFactory.createHistogram("Files per revision", "files", "revisions", idataset,
+		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
 		        PlotOrientation.VERTICAL, true, false, false);
+	}
+	
+	/**
+	 * @param entries
+	 * @param threshold
+	 * @return
+	 */
+	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries, final double threshold) {
+		Map<String, Double> authors = new HashMap<String, Double>();
 		
-		frame = new ChartFrame("Histogram/Files per revision", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		// ========== commits per author ==========
-		DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
-		datapoints = new double[2][authors.keySet().size()];
-		
-		for (String key : authors.keySet()) {
-			if (authors.get(key) > logEntries.size() / 35) {
-				cdataset.addValue(authors.get(key), key, new String("authors"));
+		for (LogEntry entry : entries) {
+			// commits
+			String author = (entry.getAuthor().getUsername() != null ? entry.getAuthor().getUsername() : entry
+			        .getAuthor().getFullname());
+			if (authors.containsKey(author)) {
+				authors.put(author, authors.get(author) + 1.0);
+			} else {
+				authors.put(author, 1.0);
 			}
 		}
-		chart = ChartFactory.createBarChart("Commits per Author (threshold 1/35)", "history", "commits", cdataset,
-		        PlotOrientation.VERTICAL, true, false, false);
-		frame = new ChartFrame("Bar Char/Commits", chart);
-		frame.pack();
-		frame.setVisible(true);
 		
+		DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
+		
+		double others = 0.0d;
+		int otherCount = 0;
+		for (String key : authors.keySet()) {
+			if (authors.get(key) > entries.size() / 35) {
+				cdataset.addValue(authors.get(key), key, new String("authors"));
+			} else {
+				others += authors.get(key);
+				++otherCount;
+			}
+		}
+		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
+		
+		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
+		        "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/*
