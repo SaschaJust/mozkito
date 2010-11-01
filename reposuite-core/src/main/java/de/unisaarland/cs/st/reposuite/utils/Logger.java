@@ -13,7 +13,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  */
 public class Logger {
 	
-	private static LogLevel logLevel;
+	private static LogLevel logLevel = LogLevel.WARN;
 	
 	static {
 		if (RepoSuiteSettings.debug) {
@@ -253,7 +253,7 @@ public class Logger {
 	}
 	
 	public static void increaseLogLevel(final LogLevel logLevel) {
-		if (logLevel.compareTo(logLevel) < 0) {
+		if (Logger.logLevel.compareTo(logLevel) < 0) {
 			setLogLevel(logLevel);
 		}
 	}
@@ -404,7 +404,7 @@ public class Logger {
 	
 	public static void setLogLevel(final LogLevel logLevel) {
 		Logger.logLevel = logLevel;
-		if (logDebug()) {
+		if (logLevel.compareTo(LogLevel.DEBUG) >= 0) {
 			Logger.debug("Setting log level to " + logLevel.name());
 		}
 	}

@@ -22,7 +22,7 @@ public class RepoSuiteSettings {
 	public static final String             reportThis = "Please file a bug report with this error message here: "
 	                                                          + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
-	private Map<String, RepoSuiteArgument> arguments;
+	private Map<String, RepoSuiteArgument> arguments  = new HashMap<String, RepoSuiteArgument>();
 	
 	private Properties                     commandlineProps;
 	
@@ -41,6 +41,8 @@ public class RepoSuiteSettings {
 	 *         <code>False</code> otherwise.
 	 */
 	protected boolean addArgument(final RepoSuiteArgument argument) {
+		assert (argument != null);
+		
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
@@ -208,6 +210,18 @@ public class RepoSuiteSettings {
 	}
 	
 	/**
+	 * Add the settings set for logger.
+	 * 
+	 * @param isRequired
+	 *            Set to <code>true</code> if the database settings required.
+	 * @return
+	 * @throws DuplicateArgumentException
+	 */
+	public LoggerArguments setLoggerArg(final boolean required) {
+		return new LoggerArguments(this, required);
+	}
+	
+	/**
 	 * Add the repository argument set.
 	 * 
 	 * @param isRequired
@@ -221,6 +235,10 @@ public class RepoSuiteSettings {
 		return minerRepoArgSet;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

@@ -9,6 +9,8 @@ import java.util.Map;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
+import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -29,9 +31,13 @@ public class RepositoryAnalyzer extends Thread {
 			
 			RepoSuiteSettings settings = new RepoSuiteSettings();
 			RepositoryArguments repoSettings = settings.setRepositoryArg(true);
+			LoggerArguments logSettings = settings.setLoggerArg(true);
+			new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface",
+			        "false", false);
 			settings.parseArguments();
 			
 			Repository repository = repoSettings.getValue();
+			logSettings.getValue();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting logs from " + repository);

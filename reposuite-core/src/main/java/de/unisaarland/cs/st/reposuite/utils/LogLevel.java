@@ -5,7 +5,7 @@ package de.unisaarland.cs.st.reposuite.utils;
  * 
  */
 public enum LogLevel {
-	DEBUG, ERROR, INFO, OFF, TRACE, WARN;
+	OFF, ERROR, WARN, INFO, DEBUG, TRACE;
 	
 	/**
 	 * @return the simple class name

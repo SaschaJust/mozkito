@@ -17,8 +17,8 @@ public class EnumArgument extends RepoSuiteArgument {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
 	 */
-	public EnumArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, String[] possibleValues) {
+	public EnumArgument(final RepoSuiteSettings settings, final String name, final String description,
+	        final String defaultValue, final boolean isRequired, final String[] possibleValues) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.possibleValues = new HashSet<String>();
 		for (String s : possibleValues) {
@@ -43,9 +43,11 @@ public class EnumArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	protected void setStringValue(String value) {
+		value = value.toUpperCase();
+		
 		if (!this.possibleValues.contains(value)) {
 			StringBuilder ss = new StringBuilder();
-			ss.append("Value set for argument `");
+			ss.append("Value `" + value + "` set for argument `");
 			ss.append(getName());
 			ss.append("` is invalid.");
 			ss.append(System.getProperty("line.separator"));
