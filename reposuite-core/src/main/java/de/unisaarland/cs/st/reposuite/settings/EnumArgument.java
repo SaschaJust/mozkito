@@ -28,7 +28,6 @@ public class EnumArgument extends RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
@@ -38,7 +37,6 @@ public class EnumArgument extends RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#setStringValue
 	 * (java.lang.String)
@@ -58,7 +56,7 @@ public class EnumArgument extends RepoSuiteArgument {
 				ss.append(s);
 				ss.append(System.getProperty("line.separator"));
 			}
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(ss.toString());
 			}
 			System.exit(-1);

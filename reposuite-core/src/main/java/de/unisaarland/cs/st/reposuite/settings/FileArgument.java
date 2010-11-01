@@ -12,8 +12,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class FileArgument extends RepoSuiteArgument {
 	
-	private boolean overwrite = false;
 	private boolean mustExist = false;
+	private boolean overwrite = false;
 	
 	/**
 	 * Constructor for FileArgument. Besides the obvious and general
@@ -47,7 +47,6 @@ public class FileArgument extends RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
@@ -58,50 +57,50 @@ public class FileArgument extends RepoSuiteArgument {
 		File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` is a directory. Expected file. Abort.");
 			}
 			throw new RuntimeException();
 		}
 		if (file.exists() && (!this.overwrite)) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` exists already. Please remove file or choose different argument value.");
 			}
 			throw new RuntimeException();
 		} else if (file.exists() && (this.overwrite)) {
 			
-			if (RepoSuiteSettings.logDebug()) {
-				if (RepoSuiteSettings.logDebug()) {
+			if (Logger.logDebug()) {
+				if (Logger.logDebug()) {
 					Logger.debug("Attempt overwriting file `" + file.getAbsolutePath() + "` ...");
 				}
 			}
 			
 			if (!file.delete()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
 				}
 				throw new RuntimeException();
 			}
 			try {
 				if (!file.createNewFile()) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
 					throw new RuntimeException();
 				}
 			} catch (IOException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					Logger.error(e.getMessage());
 				}
 				
 			}
 		} else {
-			//file does not exist so far
+			// file does not exist so far
 			if (this.mustExist) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Specified file `" + file.getAbsolutePath() + "` for argument `" + getName()
 					        + "` must exist but does not exist. Abort.");
 				}
@@ -109,13 +108,13 @@ public class FileArgument extends RepoSuiteArgument {
 			} else {
 				try {
 					if (!file.createNewFile()) {
-						if (RepoSuiteSettings.logError()) {
+						if (Logger.logError()) {
 							Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 						}
 						throw new RuntimeException();
 					}
 				} catch (IOException e) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 						Logger.error(e.getMessage());
 					}

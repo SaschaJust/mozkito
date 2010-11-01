@@ -18,8 +18,8 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 public class GitRepositoryTest {
 	
 	private File          cloneDir;
-	private URI           uri;
 	private GitRepository repo;
+	private URI           uri;
 	
 	@Before
 	public void setUp() throws Exception {

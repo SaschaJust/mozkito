@@ -18,8 +18,8 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
 public class MercurialRepositoryTest {
 	
 	private File                cloneDir;
-	private URI                 uri;
 	private MercurialRepository repo;
+	private URI                 uri;
 	
 	@Before
 	public void setUp() throws Exception {

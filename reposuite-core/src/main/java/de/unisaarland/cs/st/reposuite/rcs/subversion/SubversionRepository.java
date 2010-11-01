@@ -65,21 +65,22 @@ import difflib.Delta;
  */
 public class SubversionRepository extends Repository {
 	
+	private SVNRevision   endRevision;
+	private boolean       initialized = false;
 	private String        password;
+	private PersonManager personManager;
 	private SVNRepository repository;
+	private SVNRevision   startRevision;
 	private SVNURL        svnurl;
 	private ProtocolType  type;
 	private URI           uri;
 	private String        username;
-	private SVNRevision   startRevision;
-	private SVNRevision   endRevision;
-	private PersonManager personManager;
-	private boolean       initialized = false;
 	
 	/**
 	 * Instantiates a new subversion repository.
 	 */
 	public SubversionRepository() {
+		super();
 	}
 	
 	/*
@@ -111,7 +112,7 @@ public class SubversionRepository extends Repository {
 			logClient.doAnnotate(relativePath, svnRevision, buildRevision("0"), svnRevision, annotateHandler);
 			return annotateHandler.getResults();
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -155,7 +156,7 @@ public class SubversionRepository extends Repository {
 			}
 		} catch (SVNException e) {
 			
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -163,13 +164,13 @@ public class SubversionRepository extends Repository {
 		
 		if (svnRevision.getNumber() < this.startRevision.getNumber()) {
 			
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + this.startRevision.getNumber()
 				        + ". Corrected to start revision.");
 			}
 			return this.startRevision;
 		} else if (svnRevision.getNumber() > this.endRevision.getNumber()) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + this.endRevision.getNumber()
 				        + ". Corrected to end revision.");
 			}
@@ -201,7 +202,7 @@ public class SubversionRepository extends Repository {
 		try {
 			FileUtils.forceDeleteOnExit(workingDirectory);
 		} catch (IOException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
@@ -221,7 +222,7 @@ public class SubversionRepository extends Repository {
 			
 			return workingDirectory;
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -357,7 +358,7 @@ public class SubversionRepository extends Repository {
 			return diffParser.getDeltas();
 			
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -401,7 +402,7 @@ public class SubversionRepository extends Repository {
 							map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
 							break;
 						default:
-							if (RepoSuiteSettings.logError()) {
+							if (Logger.logError()) {
 								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
 								        + RepoSuiteSettings.reportThis);
 							}
@@ -410,7 +411,7 @@ public class SubversionRepository extends Repository {
 			}
 			return map;
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -458,7 +459,7 @@ public class SubversionRepository extends Repository {
 			}
 			
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -482,7 +483,7 @@ public class SubversionRepository extends Repository {
 			        : this.repository.getLatestRevision() + "");
 		} catch (SVNException e) {
 			
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -522,7 +523,7 @@ public class SubversionRepository extends Repository {
 			}
 			return list;
 		} catch (SVNException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -559,50 +560,50 @@ public class SubversionRepository extends Repository {
 		
 		this.type = ProtocolType.valueOf(this.uri.toURL().getProtocol().toUpperCase());
 		if (this.type != null) {
-			if (RepoSuiteSettings.logInfo()) {
+			if (Logger.logInfo()) {
 				Logger.info("Setting up in '" + this.type.name() + "' mode.");
 			}
 			switch (this.type) {
 				case FILE:
-					if (RepoSuiteSettings.logDebug()) {
+					if (Logger.logDebug()) {
 						Logger.debug("Using valid mode " + this.type.name() + ".");
 					}
 					FSRepositoryFactory.setup();
-					if (RepoSuiteSettings.logTrace()) {
+					if (Logger.logTrace()) {
 						Logger.trace("Setup done for mode " + this.type.name() + ".");
 					}
 					break;
 				case HTTP:
 				case HTTPS:
-					if (RepoSuiteSettings.logDebug()) {
+					if (Logger.logDebug()) {
 						Logger.debug("Using valid mode " + this.type.name() + ".");
 					}
 					DAVRepositoryFactory.setup();
-					if (RepoSuiteSettings.logTrace()) {
+					if (Logger.logTrace()) {
 						Logger.trace("Setup done for mode " + this.type.name() + ".");
 					}
 					break;
 				case SSH:
-					if (RepoSuiteSettings.logDebug()) {
+					if (Logger.logDebug()) {
 						Logger.debug("Using valid mode " + this.type.name() + ".");
 					}
 					SVNRepositoryFactoryImpl.setup();
-					if (RepoSuiteSettings.logTrace()) {
+					if (Logger.logTrace()) {
 						Logger.trace("Setup done for mode " + this.type.name() + ".");
 					}
 					break;
 				default:
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
 					}
 					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + this.type.name());
 			}
 			try {
-				if (RepoSuiteSettings.logInfo()) {
+				if (Logger.logInfo()) {
 					Logger.info("Parsing URL: " + this.uri.toString());
 				}
 				this.svnurl = SVNURL.parseURIDecoded(this.uri.toString());
-				if (RepoSuiteSettings.logTrace()) {
+				if (Logger.logTrace()) {
 					Logger.trace("Done parsing URL: " + this.uri.toString() + " resulting in: "
 					        + this.svnurl.toString());
 				}
@@ -638,7 +639,7 @@ public class SubversionRepository extends Repository {
 				this.personManager = new PersonManager();
 				this.initialized = true;
 				
-				if (RepoSuiteSettings.logInfo()) {
+				if (Logger.logInfo()) {
 					Logger.info("Setup repository: " + this);
 				}
 				

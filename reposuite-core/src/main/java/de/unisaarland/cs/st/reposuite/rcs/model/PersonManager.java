@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -34,12 +33,12 @@ public class PersonManager {
 					return object.equals(searchTarget);
 				}
 			});
-			if (RepoSuiteSettings.logTrace()) {
+			if (Logger.logTrace()) {
 				Logger.trace("Serving known " + person.getHandle() + ": " + person);
 			}
 		} else {
 			this.persons.add(person);
-			if (RepoSuiteSettings.logTrace()) {
+			if (Logger.logTrace()) {
 				Logger.trace("Adding new " + person.getHandle() + ": " + person);
 			}
 			

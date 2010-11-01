@@ -22,7 +22,6 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -39,12 +38,12 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	private URI                       uri;
-	private File                      cloneDir;
+	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	protected static Regex            regex            = new Regex(
 	                                                           ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	private File                      cloneDir;
 	
-	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+	private URI                       uri;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -77,7 +76,7 @@ public class GitRepository extends Repository {
 			
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not parse git blame output!");
 				}
 				return null;
@@ -92,13 +91,13 @@ public class GitRepository extends Repository {
 				try {
 					date = new DateTime(gitLogDateFormat.parse(regex.getGroup("date")));
 				} catch (ParseException e) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error(e.getMessage());
 					}
 				}
 				lineContent = regex.getGroup("codeline");
 			} else {
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.error("Could not extract author and date info from log entry for revision `" + revision
 					        + "`");
 				}
@@ -129,12 +128,18 @@ public class GitRepository extends Repository {
 		}
 		File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
 			}
 			return null;
 		}
 		return result;
+	}
+	
+	@Override
+	public void consistencyCheck(final List<LogEntry> logEntries) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/*
@@ -178,7 +183,7 @@ public class GitRepository extends Repository {
 		
 		// delete first line. Contains the SHA hash of the wanted transaction
 		if (lines.size() < 1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Error while parsing GIT log to unveil changed paths for reviosion `" + revision
 				        + "`. Abort parsing.");
 			}
@@ -194,7 +199,7 @@ public class GitRepository extends Repository {
 			line = line.replaceAll("\\s+", " ");
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Error while parsing GIT log to unveil changed paths for reviosion `" + revision
 					        + "`. Abort parsing.");
 				}
@@ -238,13 +243,19 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Command ` git --pretty=format:%H` did not produc any output!");
 			}
 			return null;
 		}
 		List<String> lines = response.getSecond();
 		return lines.get(lines.size() - 1).trim();
+	}
+	
+	@Override
+	public String getFormerPathName(final String revision, final String pathName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/*
@@ -259,7 +270,7 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Command `git rev-parse master` did not produc any output!");
 			}
 			return null;
@@ -290,7 +301,7 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address) {
+	public void setup(final URI address, final String startRevision, final String endRevision) {
 		this.uri = address;
 		// clone the remote repository
 		
@@ -302,7 +313,7 @@ public class GitRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(gitName);
 			if (!this.cloneDir.exists()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `"
 					        + gitName + "`");
 				}
@@ -311,7 +322,7 @@ public class GitRepository extends Repository {
 			try {
 				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 			}
@@ -324,7 +335,8 @@ public class GitRepository extends Repository {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address, final String username, final String password) {
+	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
+	        final String password) {
 		
 		this.uri = Repository.encodeUsername(address, username);
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
@@ -341,7 +353,7 @@ public class GitRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(gitName);
 			if (!this.cloneDir.exists()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `"
 					        + gitName + "`");
 					Logger.error("Used command: `git clone -n -q " + this.uri.toString() + " " + gitName + "`");
@@ -351,7 +363,7 @@ public class GitRepository extends Repository {
 			try {
 				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 			}

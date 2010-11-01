@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.LoggerFactory;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -12,6 +13,15 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  */
 public class Logger {
 	
+	private static LogLevel logLevel;
+	
+	static {
+		if (RepoSuiteSettings.debug) {
+			increaseLogLevel(LogLevel.DEBUG);
+			Logger.debug("Debug logging enabled");
+		}
+	}
+	
 	/**
 	 * requests the logger for the calling instance and the
 	 * classname::methodname#linenumber tag and uses this information to log the
@@ -20,7 +30,7 @@ public class Logger {
 	 * @param message
 	 *            the string to be logged
 	 */
-	public static void debug(String message) {
+	public static void debug(final String message) {
 		debug(message, null, null, 3);
 	}
 	
@@ -36,7 +46,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void debug(String message, int offset) {
+	public static void debug(final String message, final int offset) {
 		debug(message, null, null, offset);
 	}
 	
@@ -50,7 +60,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void debug(String fmt, Object obj) {
+	public static void debug(final String fmt, final Object obj) {
 		debug(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -66,7 +76,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void debug(String fmt, Object obj1, Object obj2) {
+	public static void debug(final String fmt, final Object obj1, final Object obj2) {
 		debug(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -86,11 +96,11 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void debug(String message, Object[] arguments, Throwable t, int offset) {
+	private static void debug(final String message, final Object[] arguments, final Throwable t, final int offset) {
 		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
 		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
 		assert (offset > 2);
-		assert (RepoSuiteSettings.logDebug());
+		assert (logDebug());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
@@ -121,7 +131,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void debug(String message, Throwable t) {
+	public static void debug(final String message, final Throwable t) {
 		debug(message, null, t, 3);
 	}
 	
@@ -133,7 +143,7 @@ public class Logger {
 	 * @param message
 	 *            the string to be logged
 	 */
-	public static void error(String message) {
+	public static void error(final String message) {
 		error(message, null, null, 3);
 	}
 	
@@ -149,7 +159,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void error(String message, int offset) {
+	public static void error(final String message, final int offset) {
 		error(message, null, null, offset);
 	}
 	
@@ -163,7 +173,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void error(String fmt, Object obj) {
+	public static void error(final String fmt, final Object obj) {
 		error(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -179,7 +189,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void error(String fmt, Object obj1, Object obj2) {
+	public static void error(final String fmt, final Object obj1, final Object obj2) {
 		error(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -199,11 +209,11 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void error(String message, Object[] arguments, Throwable t, int offset) {
+	private static void error(final String message, final Object[] arguments, final Throwable t, final int offset) {
 		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
 		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
 		assert (offset > 2);
-		assert (RepoSuiteSettings.logError());
+		assert (logError());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
@@ -234,8 +244,18 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void error(String message, Throwable t) {
+	public static void error(final String message, final Throwable t) {
 		error(message, null, t, 3);
+	}
+	
+	public static Enum<LogLevel> getLogLevel() {
+		return logLevel;
+	}
+	
+	public static void increaseLogLevel(final LogLevel logLevel) {
+		if (logLevel.compareTo(logLevel) < 0) {
+			setLogLevel(logLevel);
+		}
 	}
 	
 	/**
@@ -246,7 +266,7 @@ public class Logger {
 	 * @param message
 	 *            the string to be logged
 	 */
-	public static void info(String message) {
+	public static void info(final String message) {
 		info(message, null, null, 3);
 	}
 	
@@ -262,7 +282,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void info(String message, int offset) {
+	public static void info(final String message, final int offset) {
 		info(message, null, null, offset);
 	}
 	
@@ -276,7 +296,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void info(String fmt, Object obj) {
+	public static void info(final String fmt, final Object obj) {
 		info(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -292,7 +312,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void info(String fmt, Object obj1, Object obj2) {
+	public static void info(final String fmt, final Object obj1, final Object obj2) {
 		info(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -312,11 +332,11 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void info(String message, Object[] arguments, Throwable t, int offset) {
+	private static void info(final String message, final Object[] arguments, final Throwable t, final int offset) {
 		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
 		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
 		assert (offset > 2);
-		assert (RepoSuiteSettings.logInfo());
+		assert (logInfo());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
@@ -347,8 +367,46 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void info(String message, Throwable t) {
+	public static void info(final String message, final Throwable t) {
 		info(message, null, t, 3);
+	}
+	
+	public static boolean logDebug() {
+		return logLevel.compareTo(LogLevel.DEBUG) >= 0;
+	}
+	
+	public static boolean logError() {
+		return logLevel.compareTo(LogLevel.ERROR) >= 0;
+	}
+	
+	public static boolean logInfo() {
+		return logLevel.compareTo(LogLevel.INFO) >= 0;
+	}
+	
+	public static boolean logTrace() {
+		return logLevel.compareTo(LogLevel.TRACE) >= 0;
+	}
+	
+	public static boolean logWarn() {
+		return logLevel.compareTo(LogLevel.WARN) >= 0;
+	}
+	
+	/**
+	 * Reads the logger specific configurations from the specified file.
+	 * 
+	 * @param fileName
+	 *            full path to the configuration file
+	 */
+	public static void readConfigiration(final String fileName) {
+		// FIXME this should be generalized
+		PropertyConfigurator.configure(fileName);
+	}
+	
+	public static void setLogLevel(final LogLevel logLevel) {
+		Logger.logLevel = logLevel;
+		if (logDebug()) {
+			Logger.debug("Setting log level to " + logLevel.name());
+		}
 	}
 	
 	/**
@@ -357,7 +415,7 @@ public class Logger {
 	 *         instance and the exact calling location (class, method, line
 	 *         number). Both entries are guaranteed to not be null
 	 */
-	private static Tuple<org.slf4j.Logger, String> tags(int offset) {
+	private static Tuple<org.slf4j.Logger, String> tags(final int offset) {
 		assert (offset > 1);
 		Throwable throwable = new Throwable();
 		assert (throwable != null);
@@ -388,7 +446,7 @@ public class Logger {
 	 * @param message
 	 *            the string to be logged
 	 */
-	public static void trace(String message) {
+	public static void trace(final String message) {
 		trace(message, null, null, 3);
 	}
 	
@@ -404,7 +462,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void trace(String message, int offset) {
+	public static void trace(final String message, final int offset) {
 		trace(message, null, null, offset);
 	}
 	
@@ -418,7 +476,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void trace(String fmt, Object obj) {
+	public static void trace(final String fmt, final Object obj) {
 		trace(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -434,7 +492,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void trace(String fmt, Object obj1, Object obj2) {
+	public static void trace(final String fmt, final Object obj1, final Object obj2) {
 		trace(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -454,11 +512,11 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void trace(String message, Object[] arguments, Throwable t, int offset) {
+	private static void trace(final String message, final Object[] arguments, final Throwable t, final int offset) {
 		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
 		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
 		assert (offset > 2);
-		assert (RepoSuiteSettings.logTrace());
+		assert (logTrace());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
@@ -489,7 +547,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void trace(String message, Throwable t) {
+	public static void trace(final String message, final Throwable t) {
 		trace(message, null, t, 3);
 	}
 	
@@ -501,7 +559,7 @@ public class Logger {
 	 * @param message
 	 *            the string to be logged
 	 */
-	public static void warn(String message) {
+	public static void warn(final String message) {
 		warn(message, null, null, 3);
 	}
 	
@@ -517,7 +575,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void warn(String message, int offset) {
+	public static void warn(final String message, final int offset) {
 		warn(message, null, null, offset);
 	}
 	
@@ -531,7 +589,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void warn(String fmt, Object obj) {
+	public static void warn(final String fmt, final Object obj) {
 		warn(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -547,7 +605,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void warn(String fmt, Object obj1, Object obj2) {
+	public static void warn(final String fmt, final Object obj1, final Object obj2) {
 		warn(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -567,11 +625,11 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void warn(String message, Object[] arguments, Throwable t, int offset) {
+	private static void warn(final String message, final Object[] arguments, final Throwable t, final int offset) {
 		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
 		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
 		assert (offset > 2);
-		assert (RepoSuiteSettings.logWarn());
+		assert (logWarn());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
@@ -602,7 +660,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void warn(String message, Throwable t) {
+	public static void warn(final String message, final Throwable t) {
 		warn(message, null, t, 3);
 	}
 	

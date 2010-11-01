@@ -4,7 +4,6 @@
 package main;
 
 import de.unisaarland.cs.st.reposuite.Core;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -23,7 +22,7 @@ public class Main {
 			core.start();
 			core.join();
 		} catch (InterruptedException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();

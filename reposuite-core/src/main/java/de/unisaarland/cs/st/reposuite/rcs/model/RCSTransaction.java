@@ -13,7 +13,6 @@ import javax.persistence.Transient;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -23,12 +22,12 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
+	private Person                  author;
 	private String                  id;
 	private String                  message;
-	private DateTime                timestamp;
-	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
-	private Person                  author;
 	private RCSTransaction          previousRCSRcsTransaction;
+	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
+	private DateTime                timestamp;
 	
 	/**
 	 * @param id
@@ -50,7 +49,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		this.author = author;
 		this.previousRCSRcsTransaction = previousRcsTransaction;
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 		
@@ -71,7 +70,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(final RCSTransaction transaction) {
+	@Override
+    public int compareTo(final RCSTransaction transaction) {
 		if (transaction == null) {
 			return 1;
 		} else if (this.equals(transaction)) {
@@ -84,7 +84,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isBefore(transaction.timestamp)) {
 					return -1;
 				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isAfter(transaction.timestamp)) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Found previous transaction with larger timestamp then current: "
 						        + this.toString() + " vs " + currentTransaction.previousRCSRcsTransaction.toString());
 					}

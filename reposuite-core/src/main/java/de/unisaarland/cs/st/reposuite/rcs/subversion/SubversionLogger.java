@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import org.tmatesoft.svn.util.SVNDebugLogAdapter;
 import org.tmatesoft.svn.util.SVNLogType;
 
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -21,42 +20,39 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.util.ISVNDebugLog#log(org.tmatesoft.svn.util.SVNLogType
 	 * , java.lang.String, byte[])
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, byte[] data) {
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace(message, 4);
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.util.ISVNDebugLog#log(org.tmatesoft.svn.util.SVNLogType
 	 * , java.lang.String, java.util.logging.Level)
 	 */
 	@Override
 	public void log(SVNLogType logType, String message, Level logLevel) {
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace(message, 4);
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.util.ISVNDebugLog#log(org.tmatesoft.svn.util.SVNLogType
 	 * , java.lang.Throwable, java.util.logging.Level)
 	 */
 	@Override
 	public void log(SVNLogType logType, Throwable th, Level logLevel) {
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace(th.getMessage(), 4);
 		}
 	}

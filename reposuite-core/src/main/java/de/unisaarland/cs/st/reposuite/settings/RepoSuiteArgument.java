@@ -6,10 +6,10 @@ package de.unisaarland.cs.st.reposuite.settings;
  */
 public abstract class RepoSuiteArgument {
 	
-	private boolean      isRequired;
-	private final String description;
-	private final String name;
 	private String       defaultValue;
+	private final String description;
+	private boolean      isRequired;
+	private final String name;
 	protected String     stringValue;
 	
 	/**
@@ -38,7 +38,6 @@ public abstract class RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -88,7 +87,6 @@ public abstract class RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -126,7 +124,6 @@ public abstract class RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

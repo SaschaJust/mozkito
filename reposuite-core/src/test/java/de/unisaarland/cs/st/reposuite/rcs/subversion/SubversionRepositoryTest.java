@@ -28,7 +28,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -67,7 +66,7 @@ public class SubversionRepositoryTest {
 			try {
 				Integer returnValue = 0;
 				FileUtils.forceDeleteOnExit(tmpDirectory);
-				if (RepoSuiteSettings.logDebug()) {
+				if (Logger.logDebug()) {
 					Logger.debug("Creating SVN repository at: " + tmpDirectory.getAbsolutePath());
 				}
 				Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin", new String[] { "create",
@@ -139,7 +138,7 @@ public class SubversionRepositoryTest {
 	@Test
 	public void testCheckoutDir() {
 		File checkoutPath = repository.checkoutPath("/dir_a", "HEAD");
-		if (RepoSuiteSettings.logDebug()) {
+		if (Logger.logDebug()) {
 			Logger.debug("Child entries of checkout path: " + JavaUtils.arrayToString(checkoutPath.list()));
 		}
 		

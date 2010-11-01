@@ -12,8 +12,8 @@ import org.junit.Test;
 
 public class RepositoryTest {
 	
-	//[scheme:][//authority][path][?query][#fragment]
-	//[user-info@]host[:port]
+	// [scheme:][//authority][path][?query][#fragment]
+	// [user-info@]host[:port]
 	
 	private URI originalNoUser;
 	private URI originalUser;

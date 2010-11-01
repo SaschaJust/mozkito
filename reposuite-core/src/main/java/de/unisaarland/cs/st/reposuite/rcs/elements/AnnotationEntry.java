@@ -2,16 +2,15 @@ package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class AnnotationEntry {
 	
-	private final String   revision;
 	private final String   alternativeFilePath;
-	private final String   username;
-	private final DateTime timestamp;
 	private final String   line;
+	private final String   revision;
+	private final DateTime timestamp;
+	private final String   username;
 	
 	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line) {
 		this(revision, username, timestamp, line, null);
@@ -25,7 +24,7 @@ public class AnnotationEntry {
 		this.timestamp = timestamp;
 		this.line = line;
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 	}

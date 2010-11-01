@@ -31,17 +31,15 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleEOF()
 	 */
 	@Override
 	public void handleEOF() {
-		// nothing to do here		
+		// nothing to do here
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date,
 	 * long, java.lang.String, java.lang.String)
@@ -53,7 +51,6 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date,
 	 * long, java.lang.String, java.lang.String, java.util.Date, long,
@@ -72,7 +69,6 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleRevision(java.util
 	 * .Date, long, java.lang.String, java.io.File)

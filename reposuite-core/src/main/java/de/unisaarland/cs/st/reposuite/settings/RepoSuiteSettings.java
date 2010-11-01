@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -19,67 +18,13 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepoSuiteSettings {
 	
-	public static final boolean debug           = (System.getProperty("debug") != null);
-	private static final String defaultLogLevel = "warn";
-	private static LogLevel     logLevel        = LogLevel.valueOf(System.getProperty("log.level", defaultLogLevel)
-	                                                    .toUpperCase());
-	public static final String  reportThis      = "Please file a bug report with this error message here: "
-	                                                    + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
-	
-	/**
-	 * @return the logLevel
-	 */
-	public static LogLevel getLogLevel() {
-		return logLevel;
-	}
-	
-	public static boolean logError() {
-		return RepoSuiteSettings.getLogLevel().compareTo(LogLevel.ERROR) >= 0;
-	}
-	
-	public static boolean logWarn() {
-		return RepoSuiteSettings.getLogLevel().compareTo(LogLevel.WARN) >= 0;
-	}
-	
-	public static void setLogLevel(LogLevel logLevel) {
-		RepoSuiteSettings.logLevel = logLevel;
-		if (logDebug()) {
-			Logger.debug("Setting log level to " + logLevel.name());
-		}
-	}
+	public static final boolean            debug      = (System.getProperty("debug") != null);
+	public static final String             reportThis = "Please file a bug report with this error message here: "
+	                                                          + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
 	private Map<String, RepoSuiteArgument> arguments;
 	
 	private Properties                     commandlineProps;
-	
-	static {
-		if (debug) {
-			increaseLogLevel(LogLevel.DEBUG);
-			Logger.debug("Debug logging enabled");
-		}
-	}
-	
-	public static void increaseLogLevel(LogLevel logLevel) {
-		if (RepoSuiteSettings.logLevel.compareTo(logLevel) < 0) {
-			setLogLevel(logLevel);
-		}
-	}
-	
-	public static boolean logDebug() {
-		return RepoSuiteSettings.getLogLevel().compareTo(LogLevel.DEBUG) >= 0;
-	}
-	
-	public static boolean logInfo() {
-		return RepoSuiteSettings.getLogLevel().compareTo(LogLevel.INFO) >= 0;
-	}
-	
-	public static boolean logTrace() {
-		return RepoSuiteSettings.getLogLevel().compareTo(LogLevel.TRACE) >= 0;
-	}
-	
-	public RepoSuiteSettings() {
-		this.arguments = new HashMap<String, RepoSuiteArgument>();;
-	}
 	
 	/**
 	 * adds an argument to the repo suite settings. Leave default value
@@ -95,7 +40,7 @@ public class RepoSuiteSettings {
 	 * @return <code>true</code> if the argument could be added.
 	 *         <code>False</code> otherwise.
 	 */
-	protected boolean addArgument(RepoSuiteArgument argument) {
+	protected boolean addArgument(final RepoSuiteArgument argument) {
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
@@ -110,7 +55,7 @@ public class RepoSuiteSettings {
 	 * @param argSet
 	 * @return <code>true</code> if all arguments in the set could be added.
 	 */
-	protected boolean addArgumentSet(RepoSuiteArgumentSet argSet) {
+	protected boolean addArgumentSet(final RepoSuiteArgumentSet argSet) {
 		
 		HashMap<String, RepoSuiteArgument> tmpArguments = new HashMap<String, RepoSuiteArgument>(this.arguments);
 		for (RepoSuiteArgument argument : argSet.getArguments().values()) {
@@ -179,13 +124,13 @@ public class RepoSuiteSettings {
 			boolean parseSettingFile = true;
 			File settingFile = new File(System.getProperty("repoSuiteSettings"));
 			if (!settingFile.exists()) {
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
 					        + "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
 					        + "` is a directory. Ignoring ...");
 				}
@@ -197,12 +142,12 @@ public class RepoSuiteSettings {
 				try {
 					System.getProperties().load(new FileInputStream(settingFile));
 				} catch (FileNotFoundException e) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error(e.getMessage());
 					}
 					throw new RuntimeException();
 				} catch (IOException e) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error(e.getMessage());
 					}
 					throw new RuntimeException();
@@ -239,7 +184,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 * @throws DuplicateArgumentException
 	 */
-	public DatabaseArguments setDatabaseArgs(boolean isRequired) {
+	public DatabaseArguments setDatabaseArgs(final boolean isRequired) {
 		DatabaseArguments minerDatabaseArguments = new DatabaseArguments(this, isRequired);
 		return minerDatabaseArguments;
 	}
@@ -254,7 +199,7 @@ public class RepoSuiteSettings {
 	 * @throws NoSuchFieldException
 	 *             If no argument with the specified name is registered.
 	 */
-	protected void setField(String argument, String value) throws NoSuchFieldException {
+	protected void setField(final String argument, final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
 			        + "The argument is not part of the current argument set.");
@@ -271,7 +216,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 * @throws DuplicateArgumentException
 	 */
-	public RepositoryArguments setRepositoryArg(boolean isRequired) {
+	public RepositoryArguments setRepositoryArg(final boolean isRequired) {
 		RepositoryArguments minerRepoArgSet = new RepositoryArguments(this, isRequired);
 		return minerRepoArgSet;
 	}
@@ -304,7 +249,7 @@ public class RepoSuiteSettings {
 	private boolean validateSettings() {
 		for (RepoSuiteArgument arg : this.arguments.values()) {
 			if (arg.isRequired() && (arg.getValue() == null)) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Required argument `" + arg.getName() + "` is not set.");
 				}
 				return false;

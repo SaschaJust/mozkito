@@ -19,8 +19,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-
 /**
  * This class provides regular expression support and as well interfaces as
  * extends JRegex.
@@ -55,7 +53,7 @@ public class Regex {
 		assert (pattern != null);
 		assert (pattern.length() > 0);
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Checking pattern: " + pattern);
 		}
 		
@@ -63,7 +61,7 @@ public class Regex {
 		Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\][*+]?\\??");
 		String patternWithoutCharacterClasses = characterGroups.removeAll(pattern);
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Pattern without character classes: " + patternWithoutCharacterClasses);
 		}
 		
@@ -80,11 +78,11 @@ public class Regex {
 		if (beginCount != endCount) {
 			if (beginCount > endCount) {
 				
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Too many opening '(' parenthesis.");
 				}
 			} else {
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Too many closing ')' parenthesis.");
 				}
 			}
@@ -97,7 +95,7 @@ public class Regex {
 		
 		if (emptyGroupsList != null) {
 			
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Empty matching groups: " + CollectionUtils.collect(emptyGroupsList, new Transformer() {
 					
 					@Override
@@ -123,7 +121,7 @@ public class Regex {
 		endCount = (allClosedCharGroupsClosed != null ? allClosedCharGroupsClosed.size() : 0);
 		
 		if (beginCount != endCount) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				if (beginCount > endCount) {
 					Logger.warn("Too many opening '[' parenthesis.");
 				} else {
@@ -141,7 +139,7 @@ public class Regex {
 		
 		if (findAll != null) {
 			
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Capturing negative lookahead groups is not supported. Affected groups: "
 				        + JavaUtils.collectionToString(findAll));
 			}
@@ -154,7 +152,7 @@ public class Regex {
 		findAll = regex.findAll(patternWithoutCharacterClasses);
 		if (findAll != null) {
 			
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Naming of uncaptured group makes no sense: " + JavaUtils.collectionToString(findAll));
 			}
 		}
@@ -162,7 +160,7 @@ public class Regex {
 		// check for \ at the end
 		if (pattern.endsWith("\\")) {
 			
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("'\\' at the end of a regex is not supported.");
 			}
 			return false;
@@ -172,7 +170,7 @@ public class Regex {
 			new NamedPattern(pattern);
 		} catch (Exception e) {
 			
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			
@@ -208,7 +206,7 @@ public class Regex {
 				if (checkRegex(pattern)) {
 					regex.setPattern(pattern);
 				} else {
-					if (RepoSuiteSettings.logDebug()) {
+					if (Logger.logDebug()) {
 						Logger.debug("Skipping invalid pattern: " + pattern);
 					}
 				}
@@ -220,15 +218,15 @@ public class Regex {
 		return (regex.matched ? pattern : "");
 	}
 	
-	private NamedPattern                 pattern;
+	private final List<List<RegexGroup>> allMatches = new LinkedList<List<RegexGroup>>();
 	
-	private Matcher                      matcher;
-	private Replacer                     replacer;
 	private Map<String, Integer>         groupNames = new HashMap<String, Integer>();
+	private Boolean                      matched;
+	private Matcher                      matcher;
 	
 	private final List<RegexGroup>       matches    = new LinkedList<RegexGroup>();
-	private final List<List<RegexGroup>> allMatches = new LinkedList<List<RegexGroup>>();
-	private Boolean                      matched;
+	private NamedPattern                 pattern;
+	private Replacer                     replacer;
 	
 	/**
 	 * @param namedPattern

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -26,7 +25,7 @@ public class RCSFile implements Annotated {
 	RCSFile(final String path, final RCSTransaction transaction) {
 		this.changedNames.put(transaction, path);
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 	}

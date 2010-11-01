@@ -9,14 +9,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import de.unisaarland.cs.st.reposuite.Core;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class HibernateUtil {
 	
-	private static SessionFactory sessionFactory;
 	private static Session        session;
+	private static SessionFactory sessionFactory;
 	
 	public static SessionFactory createSessionFactory() throws HibernateException {
 		if (sessionFactory == null) {
@@ -36,7 +35,7 @@ public class HibernateUtil {
 			try {
 				annotatedClasses = ClassFinder.getClassesExtendingClass(Core.class.getPackage(), Annotated.class);
 			} catch (Exception e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
 				throw new RuntimeException();

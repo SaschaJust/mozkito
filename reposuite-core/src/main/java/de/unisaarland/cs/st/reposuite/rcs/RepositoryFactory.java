@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings ("unchecked")
 public final class RepositoryFactory {
 	
 	/**
@@ -38,8 +38,9 @@ public final class RepositoryFactory {
 				        (Class<? extends Repository>) klass);
 			}
 		} catch (InvocationTargetException e) {
-			if (RepoSuiteSettings.logError()) {
-				// check if someone missed to add a corresponding enum entry in RepositoryType
+			if (Logger.logError()) {
+				// check if someone missed to add a corresponding enum entry in
+				// RepositoryType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
 					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
@@ -49,7 +50,7 @@ public final class RepositoryFactory {
 			}
 			throw new RuntimeException();
 		} catch (Exception e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
@@ -72,7 +73,7 @@ public final class RepositoryFactory {
 		assert (repositoryHandlers.get(repositoryIdentifier) == null);
 		
 		if (RepoSuiteSettings.debug) {
-			if (RepoSuiteSettings.logDebug()) {
+			if (Logger.logDebug()) {
 				Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 			}
 		}
@@ -99,7 +100,7 @@ public final class RepositoryFactory {
 		assert (repositoryIdentifier != null);
 		
 		if (RepoSuiteSettings.debug) {
-			if (RepoSuiteSettings.logDebug()) {
+			if (Logger.logDebug()) {
 				Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 			}
 		}

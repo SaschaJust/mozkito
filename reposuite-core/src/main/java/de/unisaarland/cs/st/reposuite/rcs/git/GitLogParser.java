@@ -8,7 +8,8 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -19,7 +20,9 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 class GitLogParser {
 	
-	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+	protected static SimpleDateFormat  gitLogDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+	
+	private static final PersonManager personManager    = new PersonManager();
 	
 	/**
 	 * Parses the.
@@ -28,7 +31,7 @@ class GitLogParser {
 	 *            List of strings corresponding to the lines of the log message.
 	 * @return the list
 	 */
-	protected static List<LogEntry> parse(List<String> logMessage) {
+	protected static List<LogEntry> parse(final List<String> logMessage) {
 		
 		List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
@@ -46,7 +49,7 @@ class GitLogParser {
 					try {
 						dateTime = new DateTime(gitLogDateFormat.parse(date));
 					} catch (ParseException e) {
-						if (RepoSuiteSettings.logError()) {
+						if (Logger.logError()) {
 							Logger.error("Encountered error while parsing GIT commit message date `" + date
 							        + "` of transaction `" + currentID + "`. Abort parsing.");
 						}
@@ -56,7 +59,10 @@ class GitLogParser {
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
 					}
-					result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
+					
+					// FIXME tmpfix. Please check.
+					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? new Person(
+					        author, null, null) : null)), message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
@@ -64,7 +70,7 @@ class GitLogParser {
 				}
 				String[] commitParts = line.split(" ");
 				if (commitParts.length != 2) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
 					}
 					return null;
@@ -73,7 +79,7 @@ class GitLogParser {
 			} else if (line.startsWith("Author:")) {
 				String[] authorParts = line.split(":");
 				if (authorParts.length != 2) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
 					}
 					return null;
@@ -82,7 +88,7 @@ class GitLogParser {
 			} else if (line.startsWith("AuthorDate:")) {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
 					}
 					return null;
@@ -98,7 +104,7 @@ class GitLogParser {
 			try {
 				dateTime = new DateTime(gitLogDateFormat.parse(date));
 			} catch (ParseException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Encountered error while parsing GIT commit message date `" + date
 					        + "` of transaction `" + currentID + "`. Abort parsing.");
 				}
@@ -108,7 +114,8 @@ class GitLogParser {
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
+			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? new Person(author,
+			        null, null) : null)), message.toString(), dateTime));
 		}
 		return result;
 	}

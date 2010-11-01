@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.RepositoryAnalyzer;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -22,7 +21,7 @@ public class Core extends Thread {
 			analyzer.start();
 			analyzer.join();
 		} catch (InterruptedException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			

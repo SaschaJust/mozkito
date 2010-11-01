@@ -29,7 +29,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -37,7 +37,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -51,7 +51,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -59,7 +59,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -67,7 +67,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getFirstRevisionId() {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -75,7 +75,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -83,7 +83,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getLastRevisionId() {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -91,7 +91,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;

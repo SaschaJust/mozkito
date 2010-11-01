@@ -14,7 +14,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
@@ -51,7 +50,7 @@ public abstract class Repository {
 		URI uri = address;
 		String authority = address.getAuthority();
 		if ((address.getUserInfo() == null) || (!address.getUserInfo().equals(username))) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.");
 			}
 			authority = username + "@" + address.getHost();
@@ -74,11 +73,11 @@ public abstract class Repository {
 			try {
 				uri = new URI(uriString.toString());
 			} catch (URISyntaxException e1) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
 					        + uriString.toString() + "`");
 				}
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
 				}
 				uri = address;

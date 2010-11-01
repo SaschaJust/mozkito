@@ -15,8 +15,8 @@ public class FileUtilsTest {
 	
 	private static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
-	File                  tmpDir;
 	File                  nameDir;
+	File                  tmpDir;
 	
 	@Test
 	public void exists() {

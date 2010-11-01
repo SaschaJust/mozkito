@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -17,10 +16,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
-	private RCSTransaction transaction;
 	private RCSFile        changedFile;
 	private ChangeType     changeType;
 	private RCSTransaction previousTransaction;
+	private RCSTransaction transaction;
 	
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
 	        final RCSTransaction previousRcsTransaction) {
@@ -34,7 +33,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		this.previousTransaction = previousRcsTransaction;
 		this.transaction.addRevision(this);
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 	}

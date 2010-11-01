@@ -33,7 +33,7 @@ public class RepositoryAnalyzer extends Thread {
 			
 			Repository repository = repoSettings.getValue();
 			
-			if (RepoSuiteSettings.logInfo()) {
+			if (Logger.logInfo()) {
 				Logger.info("Requesting logs from " + repository);
 			}
 			
@@ -41,20 +41,20 @@ public class RepositoryAnalyzer extends Thread {
 			RCSTransaction previousRcsTransaction = null;
 			RCSFileManager fileManager = new RCSFileManager();
 			
-			if (RepoSuiteSettings.logInfo()) {
+			if (Logger.logInfo()) {
 				Logger.info("Analyzing repository for corruption.");
 			}
 			
 			repository.consistencyCheck(logs);
 			
-			if (RepoSuiteSettings.logInfo()) {
+			if (Logger.logInfo()) {
 				Logger.info("Parsing " + logs.size() + " transactions."
 				        + (logs.size() > 1000 ? " This might take a while." : ""));
 			}
 			
 			for (LogEntry entry : logs) {
 				
-				if (RepoSuiteSettings.logTrace()) {
+				if (Logger.logTrace()) {
 					Logger.trace("Analyzing revision: " + entry.getRevision());
 				}
 				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
@@ -67,7 +67,7 @@ public class RepositoryAnalyzer extends Thread {
 						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
 						if (file == null) {
 							
-							if (RepoSuiteSettings.logWarn()) {
+							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
 								        + changedPaths.get(fileName));
 							}
@@ -97,7 +97,7 @@ public class RepositoryAnalyzer extends Thread {
 			}
 		} catch (Exception e) {
 			
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -16,10 +15,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class Person implements Annotated {
 	
-	private String                  username;
-	private String                  fullname;
 	private String                  email;
+	private String                  fullname;
 	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
+	private String                  username;
 	
 	/**
 	 * @param username
@@ -33,7 +32,7 @@ public class Person implements Annotated {
 		this.fullname = fullname;
 		this.email = email;
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 	}

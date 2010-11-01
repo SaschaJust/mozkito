@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -14,11 +13,11 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class LogEntry implements Comparable<LogEntry> {
 	
-	protected String   revision;
 	protected Person   author;
-	protected String   message;
 	protected DateTime commitDate;
+	protected String   message;
 	protected LogEntry previous;
+	protected String   revision;
 	
 	/**
 	 * Instantiates a new log entry.
@@ -47,7 +46,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.previous = previous;
 		this.commitDate = dateTime;
 		
-		if (RepoSuiteSettings.logTrace()) {
+		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 	}

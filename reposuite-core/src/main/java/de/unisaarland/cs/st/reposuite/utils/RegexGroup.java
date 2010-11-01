@@ -9,12 +9,12 @@ package de.unisaarland.cs.st.reposuite.utils;
  */
 public class RegexGroup {
 	
-	private final String pattern;
-	private final String text;
+	private final int    index;
 	private final String match;
 	private final String name;
+	private final String pattern;
 	
-	private final int    index;
+	private final String text;
 	
 	/**
 	 * @param match
