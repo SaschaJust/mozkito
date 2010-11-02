@@ -132,6 +132,7 @@ public class LogIterator implements Iterator<LogEntry> {
 		this.nextEntries = this.repository.log(
 		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
 		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
+		this.updatable = false;
 		
 		notifyAll();
 		
