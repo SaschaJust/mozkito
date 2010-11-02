@@ -31,6 +31,7 @@ public class RepositoryAnalyzer extends Thread {
 	
 	public RepositoryAnalyzer(final RepositoryReader reader, final RepoSuiteSettings settings) {
 		this.reader = reader;
+		this.repository = reader.getRepository();
 		this.settings = settings;
 	}
 	
@@ -58,18 +59,31 @@ public class RepositoryAnalyzer extends Thread {
 	
 	@Override
 	public void run() {
+		
+		if (Logger.logInfo()) {
+			Logger.info("Starting " + getHandle());
+		}
+		
 		this.repository = this.reader.getRepository();
 		
 		LogEntry entry;
 		
 		while ((entry = this.reader.getNext()) != null) {
 			
+			if (Logger.logInfo()) {
+				Logger.info("Adding " + entry + " to analysis.");
+			}
 			this.queue.add(entry);
 			this.entries.add(entry);
-			notify();
+			wake();
 		}
 		
-		this.repository.consistencyCheck(null, ((Boolean) this.settings.getSetting("headless").getValue() == false));
+		this.repository.consistencyCheck(this.entries,
+		        ((Boolean) this.settings.getSetting("headless").getValue() == false));
 		
+	}
+	
+	private synchronized void wake() {
+		notifyAll();
 	}
 }

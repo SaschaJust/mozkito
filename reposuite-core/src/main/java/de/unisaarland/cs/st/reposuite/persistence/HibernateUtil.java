@@ -42,6 +42,10 @@ public class HibernateUtil {
 			}
 			
 			for (Class<?> clazz : annotatedClasses) {
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Registering class " + clazz.getSimpleName() + " for persistence.	");
+				}
 				annotationConfiguration.addAnnotatedClass(clazz);
 			}
 			

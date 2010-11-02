@@ -32,6 +32,17 @@ public class RepositoryReader extends Thread {
 	}
 	
 	public synchronized LogEntry getNext() {
+		if (this.logIterator == null) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		
 		if (this.logIterator.hasNext()) {
 			return this.logIterator.next();
 		} else {
@@ -49,6 +60,9 @@ public class RepositoryReader extends Thread {
 	 */
 	@Override
 	public void run() {
+		if (Logger.logInfo()) {
+			Logger.info("Starting " + getHandle());
+		}
 		
 		if (Logger.logInfo()) {
 			Logger.info("Requesting logs from " + this.repository);
@@ -58,6 +72,15 @@ public class RepositoryReader extends Thread {
 		this.logIterator = this.repository.log(this.repository.getFirstRevisionId(),
 		        this.repository.getLastRevisionId(), 1000);
 		
+		if (Logger.logInfo()) {
+			Logger.info("Created iterator.");
+		}
+		wake();
+		
 		new RCSFileManager();
+	}
+	
+	private synchronized void wake() {
+		notifyAll();
 	}
 }

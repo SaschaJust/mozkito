@@ -68,13 +68,17 @@ public class RepositoryParser extends Thread {
 	 */
 	@Override
 	public void run() {
+		if (Logger.logInfo()) {
+			Logger.info("Starting " + getHandle());
+		}
+		
 		LogEntry entry;
 		RCSTransaction previousRcsTransaction = null;
 		this.fileManager = new RCSFileManager();
 		
 		while ((entry = this.analyzer.getNext()) != null) {
-			if (Logger.logTrace()) {
-				Logger.trace("Analyzing revision: " + entry.getRevision());
+			if (Logger.logInfo()) {
+				Logger.info("Parsing " + entry);
 			}
 			RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
 			        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
@@ -111,9 +115,13 @@ public class RepositoryParser extends Thread {
 				        previousRcsTransaction));
 			}
 			this.queue.add(rcsTransaction);
-			notify();
+			wake();
 		}
 		
+	}
+	
+	private synchronized void wake() {
+		notifyAll();
 	}
 	
 }
