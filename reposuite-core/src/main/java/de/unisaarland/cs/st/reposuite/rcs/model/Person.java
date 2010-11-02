@@ -27,7 +27,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 @Entity
-@Table (indexes = { @Index (name = "idx", columnNames = { "username", "fullname", "email" }) }, appliesTo = "Person")
+@javax.persistence.Table(name = "person")
+@Table(indexes = { @Index(name = "idx", columnNames = { "username", "fullname", "email" }) }, appliesTo = "person")
 public class Person implements Annotated {
 	
 	/**
@@ -48,7 +49,7 @@ public class Person implements Annotated {
 	/**
 	 * Default constructor used by Hibernate
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private Person() {
 	}
 	
@@ -76,11 +77,12 @@ public class Person implements Annotated {
 	public void assignTransaction(final RCSTransaction transaction) {
 		assert (transaction != null);
 		
-		this.transactions.add(transaction);
+		transactions.add(transaction);
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -95,25 +97,25 @@ public class Person implements Annotated {
 			return false;
 		}
 		Person other = (Person) obj;
-		if (this.email == null) {
+		if (email == null) {
 			if (other.email != null) {
 				return false;
 			}
-		} else if (!this.email.equals(other.email)) {
+		} else if (!email.equals(other.email)) {
 			return false;
 		}
-		if (this.fullname == null) {
+		if (fullname == null) {
 			if (other.fullname != null) {
 				return false;
 			}
-		} else if (!this.fullname.equals(other.fullname)) {
+		} else if (!fullname.equals(other.fullname)) {
 			return false;
 		}
-		if (this.username == null) {
+		if (username == null) {
 			if (other.username != null) {
 				return false;
 			}
-		} else if (!this.username.equals(other.username)) {
+		} else if (!username.equals(other.username)) {
 			return false;
 		}
 		return true;
@@ -122,9 +124,9 @@ public class Person implements Annotated {
 	/**
 	 * @return the email
 	 */
-	@Column (unique = true)
+	@Column(unique = true)
 	public String getEmail() {
-		return this.email;
+		return email;
 	}
 	
 	/**
@@ -132,23 +134,23 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public RCSTransaction getFirstCommit() {
-		return this.transactions.first();
+		return transactions.first();
 	}
 	
 	/**
 	 * @return the fullname
 	 */
 	public String getFullname() {
-		return this.fullname;
+		return fullname;
 	}
 	
 	/**
 	 * @return the generatedId
 	 */
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -156,36 +158,37 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public RCSTransaction getLatestCommit() {
-		return this.transactions.last();
+		return transactions.last();
 	}
 	
 	/**
 	 * @return the transactions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
-		return this.transactions;
+		return transactions;
 	}
 	
 	/**
 	 * @return the username
 	 */
-	@Column (unique = true)
+	@Column(unique = true)
 	public String getUsername() {
-		return this.username;
+		return username;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
-		result = prime * result + ((this.fullname == null) ? 0 : this.fullname.hashCode());
-		result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((fullname == null) ? 0 : fullname.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 	
@@ -193,7 +196,7 @@ public class Person implements Annotated {
 	 * @param email
 	 *            the email to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setEmail(final String email) {
 		this.email = email;
 	}
@@ -202,7 +205,7 @@ public class Person implements Annotated {
 	 * @param fullname
 	 *            the fullname to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setFullname(final String fullname) {
 		this.fullname = fullname;
 	}
@@ -211,7 +214,7 @@ public class Person implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
@@ -219,7 +222,7 @@ public class Person implements Annotated {
 	/**
 	 * @param transactions
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setTransactions(final Set<RCSTransaction> transactions) {
 		this.transactions = new TreeSet<RCSTransaction>(transactions);
 	}
@@ -228,18 +231,19 @@ public class Person implements Annotated {
 	 * @param username
 	 *            the username to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setUsername(final String username) {
 		this.username = username;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Person [username=" + this.username + ", fullname=" + this.fullname + ", email=" + this.email + "]";
+		return "Person [username=" + username + ", fullname=" + fullname + ", email=" + email + "]";
 	}
 	
 }

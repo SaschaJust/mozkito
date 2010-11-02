@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -22,6 +22,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 @Entity
+@Table(name = "rcsfile")
 public class RCSFile implements Annotated {
 	
 	/**
@@ -38,7 +39,7 @@ public class RCSFile implements Annotated {
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private RCSFile() {
 		
 	}
@@ -47,7 +48,7 @@ public class RCSFile implements Annotated {
 	 * @param path
 	 */
 	RCSFile(final String path, final RCSTransaction transaction) {
-		this.changedNames.put(transaction, path);
+		changedNames.put(transaction, path);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -60,26 +61,26 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction, final String pathName) {
-		this.changedNames.put(transaction, pathName);
+		changedNames.put(transaction, pathName);
 	}
 	
 	/**
 	 * @return the changedNames
 	 */
-	@SuppressWarnings ("unused")
-	@ElementCollection
+	@SuppressWarnings("unused")
+	@Transient
 	private Map<RCSTransaction, String> getChangedNames() {
-		return this.changedNames;
+		return changedNames;
 	}
 	
 	/**
 	 * @return the generatedId
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	@Id
 	@GeneratedValue
 	private long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -87,17 +88,17 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public String getLatestPath() {
-		return this.changedNames.get(new TreeSet<RCSTransaction>(this.changedNames.keySet()).last());
+		return changedNames.get(new TreeSet<RCSTransaction>(changedNames.keySet()).last());
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getPath(final RCSTransaction transaction) {
-		return this.changedNames.get(transaction);
+		return changedNames.get(transaction);
 	}
 	
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setChangedNames(final Map<RCSTransaction, String> changedNames) {
 		this.changedNames = changedNames;
 	}
@@ -106,18 +107,19 @@ public class RCSFile implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "RCSFile [changedNames=" + JavaUtils.collectionToString(this.changedNames.values()) + "]";
+		return "RCSFile [changedNames=" + JavaUtils.collectionToString(changedNames.values()) + "]";
 	}
 	
 }

@@ -26,10 +26,10 @@ public class HibernateUtil {
 		return sessionFactory;
 	}
 	
-	private static SessionFactory createSessionFactory(final Properties properties) {
+	protected static SessionFactory createSessionFactory(final Properties properties) {
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
-			annotationConfiguration.setProperties(properties);
+			annotationConfiguration.addProperties(properties);
 			List<Class<?>> annotatedClasses;
 			
 			try {
@@ -49,7 +49,7 @@ public class HibernateUtil {
 				annotationConfiguration.addAnnotatedClass(clazz);
 			}
 			
-			sessionFactory = annotationConfiguration.configure().buildSessionFactory();
+			sessionFactory = annotationConfiguration.buildSessionFactory();
 		}
 		return sessionFactory;
 	}

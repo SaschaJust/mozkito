@@ -3,9 +3,13 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -17,6 +21,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 @Entity
+@Table(name = "rcsrevision")
+@AssociationOverrides({
+        @AssociationOverride(name = "primaryKey.changedFile", joinColumns = @JoinColumn(name = "changedFile_id")),
+        @AssociationOverride(name = "primaryKey.transaction", joinColumns = @JoinColumn(name = "transaction_id")) })
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**
@@ -36,7 +44,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	/**
 	 * used by Hibernate to instantiate a {@link RCSRevision} object
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private RCSRevision() {
 		
 	}
@@ -47,12 +55,12 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		assert (rcsFile != null);
 		assert (changeType != null);
 		
-		this.transaction = rcsTransaction;
-		this.changedFile = rcsFile;
+		transaction = rcsTransaction;
+		changedFile = rcsFile;
 		this.changeType = changeType;
-		this.previousTransaction = previousRcsTransaction;
-		this.transaction.addRevision(this);
-		this.primaryKey = new RevisionPrimaryKey(this.changedFile, this.transaction);
+		previousTransaction = previousRcsTransaction;
+		transaction.addRevision(this);
+		primaryKey = new RevisionPrimaryKey(changedFile, transaction);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -61,13 +69,14 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
 	@Transient
 	public int compareTo(final RCSRevision rcsRevision) {
 		assert (rcsRevision != null);
-		return this.transaction.compareTo(rcsRevision.transaction);
+		return transaction.compareTo(rcsRevision.transaction);
 	}
 	
 	/**
@@ -75,14 +84,14 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Transient
 	public RCSFile getChangedFile() {
-		return this.changedFile;
+		return changedFile;
 	}
 	
 	/**
 	 * @return the changeType
 	 */
 	public ChangeType getChangeType() {
-		return this.changeType;
+		return changeType;
 	}
 	
 	/**
@@ -90,12 +99,12 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@ManyToOne
 	public RCSTransaction getPreviousTransaction() {
-		return this.previousTransaction;
+		return previousTransaction;
 	}
 	
 	@EmbeddedId
 	public RevisionPrimaryKey getPrimaryKey() {
-		return this.primaryKey;
+		return primaryKey;
 	}
 	
 	/**
@@ -103,14 +112,14 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Transient
 	public RCSTransaction getTransaction() {
-		return this.transaction;
+		return transaction;
 	}
 	
 	/**
 	 * @param changeType
 	 *            the changeType to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
@@ -119,24 +128,25 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param previousTransaction
 	 *            the previousTransaction to set
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setPreviousTransaction(final RCSTransaction previousTransaction) {
 		this.previousTransaction = previousTransaction;
 	}
 	
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setPrimaryKey(final RevisionPrimaryKey primaryKey) {
 		this.primaryKey = primaryKey;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "RCSRevision [transactionId=" + this.transaction.getId() + ", changedFile=" + this.changedFile
-		        + ", changeType=" + this.changeType + ", previousTransactionId="
-		        + (this.previousTransaction != null ? this.previousTransaction.getId() : "(null)") + "]";
+		return "RCSRevision [transactionId=" + transaction.getId() + ", changedFile=" + changedFile + ", changeType="
+		        + changeType + ", previousTransactionId="
+		        + (previousTransaction != null ? previousTransaction.getId() : "(null)") + "]";
 	}
 }
