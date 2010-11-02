@@ -9,6 +9,7 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
+import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -29,13 +30,15 @@ public class Core extends Thread {
 			LoggerArguments logSettings = settings.setLoggerArg(true);
 			new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface",
 			        "false", false);
+			new LongArgument(settings, "repository.cachesize",
+			        "determines the cache size (number of logs) that are prefetched during reading", "2000", true);
 			settings.parseArguments();
 			
 			Repository repository = repoSettings.getValue();
 			logSettings.getValue();
 			SessionFactory factory = databaseSettings.getValue();
 			
-			RepositoryReader reader = new RepositoryReader(repository);
+			RepositoryReader reader = new RepositoryReader(repository, settings);
 			reader.setName(RepositoryReader.getHandle());
 			
 			RepositoryAnalyzer analyzer = new RepositoryAnalyzer(reader, settings);

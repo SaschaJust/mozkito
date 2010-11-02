@@ -3,11 +3,10 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import java.util.Iterator;
-
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -23,12 +22,15 @@ public class RepositoryReader extends Thread {
 		return RepositoryReader.class.getSimpleName();
 	}
 	
-	private Iterator<LogEntry> logIterator;
+	private LogIterator             logIterator;
 	
-	private final Repository   repository;
+	private final Repository        repository;
 	
-	public RepositoryReader(final Repository repository) {
+	private final RepoSuiteSettings settings;
+	
+	public RepositoryReader(final Repository repository, final RepoSuiteSettings settings) {
 		this.repository = repository;
+		this.settings = settings;
 	}
 	
 	public synchronized LogEntry getNext() {
@@ -69,15 +71,18 @@ public class RepositoryReader extends Thread {
 		}
 		
 		this.repository.getTransactionCount();
-		this.logIterator = this.repository.log(this.repository.getFirstRevisionId(),
-		        this.repository.getLastRevisionId(), 1000);
+		long cacheSize = (Long) this.settings.getSetting("repository.cachesize").getValue();
+		this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
+		        this.repository.getLastRevisionId(), (int) cacheSize);
 		
 		if (Logger.logInfo()) {
 			Logger.info("Created iterator.");
 		}
 		wake();
 		
-		new RCSFileManager();
+		while (!this.logIterator.done()) {
+			this.logIterator.update();
+		}
 	}
 	
 	private synchronized void wake() {
