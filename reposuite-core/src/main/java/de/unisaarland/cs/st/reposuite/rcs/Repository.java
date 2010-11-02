@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
@@ -175,6 +177,16 @@ public abstract class Repository {
 	public abstract String getLastRevisionId();
 	
 	/**
+	 * Returns the relative transaction id to the given one. Result is bounded
+	 * by startRevision and endRevision.
+	 * 
+	 * @param transactionId
+	 * @param index
+	 * @return
+	 */
+	public abstract String getRelativeTransactionId(String transactionId, long index);
+	
+	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
 	 * @return the {@link RepositoryType} of the connector class determined by
 	 *         naming convention. See the java-doc of {@link Repository} for
@@ -187,6 +199,23 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * @return the total number of revisions in the repository
+	 */
+	public abstract long getTransactionCount();
+	
+	/**
+	 * Returns the transaction id string to the transaction determined by the
+	 * given index.
+	 * 
+	 * @param index
+	 *            Starts at 0
+	 * @return the corresponding transaction id (e.g. for reposuite
+	 *         {@link MercurialRepository#getTransactionId(long)} returns
+	 *         021e7e97724b for 3.
+	 */
+	public abstract String getTransactionId(long index);
+	
+	/**
 	 * Extract a log from the repository.
 	 * 
 	 * @param fromRevision
@@ -196,6 +225,8 @@ public abstract class Repository {
 	 * @return the list of log entries. The first entry is the newest log entry.
 	 */
 	public abstract List<LogEntry> log(String fromRevision, String toRevision);
+	
+	public abstract Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize);
 	
 	/**
 	 * Connect to repository at URI address.

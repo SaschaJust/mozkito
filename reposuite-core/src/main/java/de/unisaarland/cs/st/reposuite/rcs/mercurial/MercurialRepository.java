@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -336,6 +337,24 @@ public class MercurialRepository extends Repository {
 		return lines.get(0).trim();
 	}
 	
+	@Override
+	public String getRelativeTransactionId(final String transactionId, final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public long getTransactionCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public String getTransactionId(final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
@@ -406,6 +425,12 @@ public class MercurialRepository extends Repository {
 		}
 		return result;
 		
+	}
+	
+	@Override
+	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/*

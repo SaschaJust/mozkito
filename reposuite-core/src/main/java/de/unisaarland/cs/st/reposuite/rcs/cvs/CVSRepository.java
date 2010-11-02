@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,10 +91,34 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
+	public String getRelativeTransactionId(final String transactionId, final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public long getTransactionCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public String getTransactionId(final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
+		return null;
+	}
+	
+	@Override
+	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 	

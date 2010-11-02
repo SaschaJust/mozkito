@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.hibernate.classic.Session;
@@ -51,7 +51,10 @@ public class RepositoryAnalyzer extends Thread {
 				Logger.info("Requesting logs from " + repository);
 			}
 			
-			List<LogEntry> logs = repository.log(repository.getFirstRevisionId(), "HEAD");
+			repository.getTransactionCount();
+			Iterator<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getLastRevisionId(),
+			        1000);
+			
 			RCSTransaction previousRcsTransaction = null;
 			RCSFileManager fileManager = new RCSFileManager();
 			
@@ -59,15 +62,10 @@ public class RepositoryAnalyzer extends Thread {
 				Logger.info("Analyzing repository for corruption.");
 			}
 			
-			repository.consistencyCheck(logs);
+			// repository.consistencyCheck(logs);
 			
-			if (Logger.logInfo()) {
-				Logger.info("Parsing " + logs.size() + " transactions."
-				        + (logs.size() > 1000 ? " This might take a while." : ""));
-			}
-			
-			for (LogEntry entry : logs) {
-				
+			while (log.hasNext()) {
+				LogEntry entry = log.next();
 				if (Logger.logTrace()) {
 					Logger.trace("Analyzing revision: " + entry.getRevision());
 				}
@@ -110,6 +108,7 @@ public class RepositoryAnalyzer extends Thread {
 				
 				previousRcsTransaction = rcsTransaction;
 			}
+			
 		} catch (Exception e) {
 			
 			if (Logger.logError()) {

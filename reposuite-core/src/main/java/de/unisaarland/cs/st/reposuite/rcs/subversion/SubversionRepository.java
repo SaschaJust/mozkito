@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -537,6 +539,51 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getRelativeTransactionId
+	 * (java.lang.String, long)
+	 */
+	@Override
+	public String getRelativeTransactionId(final String transactionId, final long index) {
+		assert (transactionId != null);
+		
+		if (buildRevision(transactionId).getNumber() + index > buildRevision(getLastRevisionId()).getNumber()) {
+			return getLastRevisionId();
+		} else if (buildRevision(transactionId).getNumber() + index < buildRevision(getFirstRevisionId()).getNumber()) {
+			return getFirstRevisionId();
+		} else {
+			return (buildRevision(transactionId).getNumber() + index) + "";
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getTransactionCount()
+	 */
+	@Override
+	public long getTransactionCount() {
+		try {
+			return this.repository.getLatestRevision();
+		} catch (SVNException e) {
+			
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException();
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getTransactionId(long)
+	 */
+	@Override
+	public String getTransactionId(final long index) {
+		return (1 + index) + "";
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -573,6 +620,10 @@ public class SubversionRepository extends Repository {
 			}
 			throw new RuntimeException();
 		}
+	}
+	
+	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+		return new LogIterator(this, fromRevision, toRevision, cacheSize);
 	}
 	
 	/*
