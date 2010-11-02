@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -67,9 +68,10 @@ public class RepositoryAnalyzer extends Thread {
 		this.repository = this.reader.getRepository();
 		
 		LogEntry entry;
+		LogIterator iterator = this.reader.getIterator();
 		
-		while ((entry = this.reader.getNext()) != null) {
-			
+		while (iterator.hasNext()) {
+			entry = iterator.next();
 			if (Logger.logInfo()) {
 				Logger.info("Adding " + entry + " to analysis.");
 			}

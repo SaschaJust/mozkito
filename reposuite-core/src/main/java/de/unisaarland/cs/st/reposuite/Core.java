@@ -31,7 +31,7 @@ public class Core extends Thread {
 			new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface",
 			        "false", false);
 			new LongArgument(settings, "repository.cachesize",
-			        "determines the cache size (number of logs) that are prefetched during reading", "2000", true);
+			        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 			settings.parseArguments();
 			
 			Repository repository = repoSettings.getValue();

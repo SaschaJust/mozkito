@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -33,7 +32,7 @@ public class RepositoryReader extends Thread {
 		this.settings = settings;
 	}
 	
-	public synchronized LogEntry getNext() {
+	public synchronized LogIterator getIterator() {
 		if (this.logIterator == null) {
 			try {
 				wait();
@@ -45,11 +44,7 @@ public class RepositoryReader extends Thread {
 			}
 		}
 		
-		if (this.logIterator.hasNext()) {
-			return this.logIterator.next();
-		} else {
-			return null;
-		}
+		return this.logIterator;
 	}
 	
 	public Repository getRepository() {

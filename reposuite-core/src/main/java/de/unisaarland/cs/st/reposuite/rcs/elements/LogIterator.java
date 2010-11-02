@@ -126,7 +126,7 @@ public class LogIterator implements Iterator<LogEntry> {
 		}
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Fetching next " + this.cacheSize / 2 + "logs");
+			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
 		}
 		
 		this.nextEntries = this.repository.log(
