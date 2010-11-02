@@ -21,6 +21,14 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	private RCSTransaction previousTransaction;
 	private RCSTransaction transaction;
 	
+	/**
+	 * used by Hibernate to instantiate a {@link RCSRevision} object
+	 */
+	@SuppressWarnings ("unused")
+	private RCSRevision() {
+		
+	}
+	
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
 	        final RCSTransaction previousRcsTransaction) {
 		assert (rcsTransaction != null);

@@ -26,14 +26,14 @@ public class HibernateUtil {
 		return sessionFactory;
 	}
 	
-	private static SessionFactory createSessionFactory(Properties properties) {
+	private static SessionFactory createSessionFactory(final Properties properties) {
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 			annotationConfiguration.setProperties(properties);
 			List<Class<?>> annotatedClasses;
 			
 			try {
-				annotatedClasses = ClassFinder.getClassesExtendingClass(Core.class.getPackage(), Annotated.class);
+				annotatedClasses = ClassFinder.getClassesOfInterface(Core.class.getPackage(), Annotated.class);
 			} catch (Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -50,8 +50,8 @@ public class HibernateUtil {
 		return sessionFactory;
 	}
 	
-	public static SessionFactory createSessionFactory(String host, String database, String user, String password,
-	        String type, String driver) throws HibernateException {
+	public static SessionFactory createSessionFactory(final String host, final String database, final String user,
+	        final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
 			        + "?useUnicode=true&characterEncoding=UTF-8";
