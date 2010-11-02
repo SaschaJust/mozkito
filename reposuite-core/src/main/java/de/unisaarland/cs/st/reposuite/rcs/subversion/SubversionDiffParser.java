@@ -62,7 +62,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#createTempDirectory()
 	 */
 	@Override
@@ -73,7 +72,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#displayAddedDirectory(java
 	 * .lang.String, java.lang.String, java.lang.String)
@@ -86,7 +84,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#displayDeletedDirectory(java
 	 * .lang.String, java.lang.String, java.lang.String)
@@ -99,7 +96,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#displayFileDiff(java.lang
 	 * .String, java.io.File, java.io.File, java.lang.String, java.lang.String,
@@ -124,7 +120,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#displayPropDiff(java.lang
 	 * .String, org.tmatesoft.svn.core.SVNProperties,
@@ -146,7 +141,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#getEncoding()
 	 */
 	@Override
@@ -157,7 +151,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#getEOL()
 	 */
 	@Override
@@ -168,7 +161,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#init(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -180,7 +172,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#isDiffAdded()
 	 */
 	@Override
@@ -191,7 +182,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#isDiffCopied()
 	 */
 	@Override
@@ -202,7 +192,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#isDiffDeleted()
 	 */
 	@Override
@@ -213,7 +202,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#isDiffUnversioned()
 	 */
 	@Override
@@ -224,7 +212,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#isForcedBinaryDiff()
 	 */
 	@Override
@@ -235,7 +222,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setBasePath(java.io.File)
 	 */
@@ -247,7 +233,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffAdded(boolean)
 	 */
 	@Override
@@ -258,7 +243,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffCopied(boolean)
 	 */
 	@Override
@@ -269,7 +253,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffDeleted(boolean)
 	 */
 	@Override
@@ -280,7 +263,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffUnversioned(boolean)
 	 */
@@ -292,7 +274,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setEncoding(java.lang.String)
 	 */
@@ -304,7 +285,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setEOL(byte[])
 	 */
 	@Override
@@ -315,7 +295,6 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setForcedBinaryDiff(boolean)
 	 */

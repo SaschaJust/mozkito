@@ -14,12 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class GitRepositoryTest {
 	
 	private File          cloneDir;
-	private URI           uri;
 	private GitRepository repo;
+	private URI           uri;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -27,7 +28,7 @@ public class GitRepositoryTest {
 		// TODO replace this repo and create an own repo on the fly
 		uri = new URI("git://github.com/git/hello-world.git");
 		repo = new GitRepository();
-		repo.setup(uri);
+		repo.setup(uri, null, null);
 	}
 	
 	@After
@@ -88,6 +89,14 @@ public class GitRepositoryTest {
 	@Test
 	public void testDiff() {
 		// TODO implement test
+	}
+	
+	@Test
+	public void testFormerPathRegex() {
+		String line = "R100    hello.py        python.py";
+		List<RegexGroup> found = GitRepository.formerPathRegex.find(line);
+		assertEquals(1, found.size());
+		assertEquals("hello.py", GitRepository.formerPathRegex.getGroup("result"));
 	}
 	
 	@Test

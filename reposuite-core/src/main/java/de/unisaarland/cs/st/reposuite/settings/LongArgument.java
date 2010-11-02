@@ -25,7 +25,6 @@ public class LongArgument extends RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
@@ -36,7 +35,7 @@ public class LongArgument extends RepoSuiteArgument {
 		try {
 			return new Long(this.stringValue);
 		} catch (NumberFormatException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Value given for argument `" + getName()
 				        + "` could not be interpreted as a Long value. Abort!");
 			}

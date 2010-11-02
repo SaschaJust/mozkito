@@ -2,24 +2,31 @@ package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.utils.Logger;
+
 public class AnnotationEntry {
 	
-	private final String   revision;
 	private final String   alternativeFilePath;
-	private final String   username;
-	private final DateTime timestamp;
 	private final String   line;
+	private final String   revision;
+	private final DateTime timestamp;
+	private final String   username;
 	
-	public AnnotationEntry(String revision, String username, DateTime timestamp, String line) {
+	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line) {
 		this(revision, username, timestamp, line, null);
 	}
 	
-	public AnnotationEntry(String revision, String username, DateTime timestamp, String line, String alternativeFilePath) {
+	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line,
+	        final String alternativeFilePath) {
 		this.revision = revision;
 		this.alternativeFilePath = alternativeFilePath;
 		this.username = username;
 		this.timestamp = timestamp;
 		this.line = line;
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
 	}
 	
 	public String getAlternativeFilePath() {
@@ -62,7 +69,6 @@ public class AnnotationEntry {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

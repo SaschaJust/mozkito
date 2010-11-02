@@ -18,10 +18,12 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepositoryArguments extends RepoSuiteArgumentSet {
 	
+	private final StringArgument endRevision;
+	private final StringArgument passArg;
 	private final URIArgument    repoDirArg;
 	private final EnumArgument   repoTypeArg;
+	private final StringArgument startRevision;
 	private final StringArgument userArg;
-	private final StringArgument passArg;
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the
@@ -31,7 +33,7 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 * @param isRequired
 	 * @throws DuplicateArgumentException
 	 */
-	public RepositoryArguments(RepoSuiteSettings settings, boolean isRequired) {
+	public RepositoryArguments(final RepoSuiteSettings settings, final boolean isRequired) {
 		super();
 		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory",
 		        "Directory where the rcs repository is stored", null, true);
@@ -47,11 +49,12 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
 		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
 		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		this.startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
+		this.endRevision = new StringArgument(settings, "rcsStop", "Revision to stop at", "HEAD", false);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
@@ -60,10 +63,13 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		URI repositoryURI = this.repoDirArg.getValue();
 		String username = this.userArg.getValue();
 		String password = this.passArg.getValue();
+		String startRevision = this.startRevision.getValue();
+		String endRevision = this.endRevision.getValue();
+		
 		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("You provided username or password only. Ignoring set options.");
 			}
 			username = null;
@@ -74,43 +80,43 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
 			Repository repository = repositoryClass.newInstance();
 			if ((username != null) && (password != null)) {
-				repository.setup(repositoryURI);
+				repository.setup(repositoryURI, startRevision, endRevision);
 			} else {
-				repository.setup(repositoryURI, username, password);
+				repository.setup(repositoryURI, startRevision, endRevision, username, password);
 			}
 			return repository;
 		} catch (UnregisteredRepositoryTypeException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (InstantiationException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (IllegalAccessException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (MalformedURLException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (InvalidProtocolType e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (InvalidRepositoryURI e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();
 		} catch (UnsupportedProtocolType e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
 			throw new RuntimeException();

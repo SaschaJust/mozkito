@@ -1,7 +1,7 @@
 package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 public enum ChangeType {
-	Modified, Added, Deleted, Replaced;
+	Added, Deleted, Modified, Renamed;
 	
 	public String getHandle() {
 		return this.getClass().getSimpleName();

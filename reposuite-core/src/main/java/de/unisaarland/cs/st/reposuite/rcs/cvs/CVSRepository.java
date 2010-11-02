@@ -4,11 +4,16 @@
 package de.unisaarland.cs.st.reposuite.rcs.cvs;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
+import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
@@ -24,32 +29,38 @@ import difflib.Delta;
 public class CVSRepository extends Repository {
 	
 	@Override
-	public List<AnnotationEntry> annotate(String filePath, String revision) {
-		if (RepoSuiteSettings.logError()) {
+	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
 	}
 	
 	@Override
-	public File checkoutPath(String relativeRepoPath, String revision) {
-		if (RepoSuiteSettings.logError()) {
+	public File checkoutPath(final String relativeRepoPath, final String revision) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
 	}
 	
 	@Override
-	public Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision) {
-		if (RepoSuiteSettings.logError()) {
+	public void consistencyCheck(final List<LogEntry> logEntries) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
 	}
 	
 	@Override
-	public Map<String, ChangeType> getChangedPaths(String revision) {
-		if (RepoSuiteSettings.logError()) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -57,7 +68,15 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getFirstRevisionId() {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		return null;
+	}
+	
+	@Override
+	public String getFormerPathName(final String revision, final String pathName) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
@@ -65,32 +84,57 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public String getLastRevisionId() {
-		if (RepoSuiteSettings.logError()) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
 	}
 	
 	@Override
-	public List<LogEntry> log(String fromRevision, String toRevision) {
-		if (RepoSuiteSettings.logError()) {
+	public String getRelativeTransactionId(final String transactionId, final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public long getTransactionCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public String getTransactionId(final long index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<LogEntry> log(final String fromRevision, final String toRevision) {
+		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
 		return null;
 	}
 	
 	@Override
-	public void setup(URI address) {
-		if (RepoSuiteSettings.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
-		}
+	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	@Override
-	public void setup(URI address, String username, String password) {
-		if (RepoSuiteSettings.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
-		}
+	public void setup(final URI address, final String startRevision, final String endRevision)
+	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
+	        final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
+	        UnsupportedProtocolType {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

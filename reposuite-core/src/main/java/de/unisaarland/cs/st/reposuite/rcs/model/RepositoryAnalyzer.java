@@ -3,15 +3,19 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.hibernate.classic.Session;
+
+import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
+import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -20,38 +24,94 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepositoryAnalyzer extends Thread {
 	
+	public static String getHandle() {
+		return RepositoryAnalyzer.class.getSimpleName();
+	}
+	
 	@Override
 	public void run() {
 		try {
-			Repository repository = RepositoryFactory.getRepositoryHandler(RepositoryType.SUBVERSION).newInstance();
-			List<LogEntry> logs = repository.log(repository.getFirstRevisionId(), "HEAD");
+			
+			RepoSuiteSettings settings = new RepoSuiteSettings();
+			RepositoryArguments repoSettings = settings.setRepositoryArg(true);
+			// DatabaseArguments databaseSettings =
+			// settings.setDatabaseArgs(true);
+			LoggerArguments logSettings = settings.setLoggerArg(true);
+			new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface",
+			        "false", false);
+			settings.parseArguments();
+			
+			Repository repository = repoSettings.getValue();
+			logSettings.getValue();
+			// SessionFactory sessionFactory = databaseSettings.getValue();
+			// Session session = sessionFactory.openSession();
+			Session session = HibernateUtil.createSessionFactory().openSession();
+			
+			if (Logger.logInfo()) {
+				Logger.info("Requesting logs from " + repository);
+			}
+			
+			repository.getTransactionCount();
+			Iterator<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getLastRevisionId(),
+			        1000);
+			
 			RCSTransaction previousRcsTransaction = null;
 			RCSFileManager fileManager = new RCSFileManager();
 			
-			for (LogEntry entry : logs) {
+			if (Logger.logInfo()) {
+				Logger.info("Analyzing repository for corruption.");
+			}
+			
+			// repository.consistencyCheck(logs);
+			
+			while (log.hasNext()) {
+				LogEntry entry = log.next();
+				if (Logger.logTrace()) {
+					Logger.trace("Analyzing revision: " + entry.getRevision());
+				}
 				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
 				        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
 				Map<String, ChangeType> changedPaths = repository.getChangedPaths(entry.getRevision());
 				for (String fileName : changedPaths.keySet()) {
-					// FIXME this will fail so badly
-					// we need oldFileName iff the file has been renamed
+					RCSFile file;
 					
-					RCSFile file = fileManager.getFile(fileName);
-					if (file == null) {
-						fileManager.addFile(new RCSFile(fileName, rcsTransaction));
-					} else if (changedPaths.get(fileName).equals(ChangeType.Modified)) {
-						file.assignTransaction(rcsTransaction, fileName);
+					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
+						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+						if (file == null) {
+							
+							if (Logger.logWarn()) {
+								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
+								        + changedPaths.get(fileName));
+							}
+							file = fileManager.getFile(fileName);
+							
+							if (file == null) {
+								file = new RCSFile(fileName, rcsTransaction);
+								fileManager.addFile(file);
+							}
+						} else {
+							file.assignTransaction(rcsTransaction, fileName);
+						}
+					} else {
+						file = fileManager.getFile(fileName);
+						
+						if (file == null) {
+							file = new RCSFile(fileName, rcsTransaction);
+							fileManager.addFile(file);
+						}
 					}
 					
 					rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),
 					        previousRcsTransaction));
 				}
+				session.saveOrUpdate(rcsTransaction);
 				
 				previousRcsTransaction = rcsTransaction;
 			}
+			
 		} catch (Exception e) {
 			
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();

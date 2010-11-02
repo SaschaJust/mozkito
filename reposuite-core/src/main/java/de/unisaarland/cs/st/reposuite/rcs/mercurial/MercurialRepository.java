@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -44,13 +44,15 @@ public class MercurialRepository extends Repository {
 	protected static Regex            authorRegex          = new Regex(
 	                                                               "^({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?");
 	
-	protected static SimpleDateFormat hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
-	protected static Regex            regex                = new Regex(
-	                                                               "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$");
 	protected static SimpleDateFormat hgAnnotateDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
-	protected List<String>            hashes               = new ArrayList<String>();
-	private URI                       uri;
+	protected static SimpleDateFormat hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
+	protected static Regex            formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static String           pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static Regex            regex                = new Regex(pattern);
 	private File                      cloneDir;
+	protected List<String>            hashes               = new ArrayList<String>();
+	private final PersonManager       personManager        = new PersonManager();
+	private URI                       uri;
 	
 	/*
 	 * (non-Javadoc)
@@ -62,7 +64,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
 		if ((filePath == null) && (revision == null)) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("filePath and revision must not be null. Abort.");
 			}
 		}
@@ -73,7 +75,7 @@ public class MercurialRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Annotating file `" + filePath + "` in revision `" + revision + "` returned no output.");
 			}
 			return null;
@@ -84,7 +86,7 @@ public class MercurialRepository extends Repository {
 		
 		for (String line : lines) {
 			if (!regex.matchesFull(line)) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Found line in annotation that cannot be parsed. Abort");
 				}
 				return null;
@@ -97,7 +99,7 @@ public class MercurialRepository extends Repository {
 			try {
 				timestamp = new DateTime(hgAnnotateDateFormat.parseObject(date));
 			} catch (ParseException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 				return null;
@@ -116,7 +118,7 @@ public class MercurialRepository extends Repository {
 					}
 				}
 				if (!found) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Could not find a cached hash for short hash `" + shortHash + "`");
 					}
 				}
@@ -139,7 +141,7 @@ public class MercurialRepository extends Repository {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log",
 		        "--template '{node}\n'" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Could not cache hashes");
 			}
 			return;
@@ -162,7 +164,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
 		if ((relativeRepoPath == null) || (revision == null)) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Path and revision must not be null.");
 			}
 			return null;
@@ -174,12 +176,17 @@ public class MercurialRepository extends Repository {
 		}
 		File file = new File(cloneDir, relativeRepoPath);
 		if (!file.exists()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not get requested path using command `hg update -C`. Abort.");
 			}
 			return null;
 		}
 		return file;
+	}
+	
+	@Override
+	public void consistencyCheck(final List<LogEntry> logEntries) {
+		//Will be implemented in super class
 	}
 	
 	/*
@@ -191,7 +198,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
 		if ((filePath == null) || (baseRevision == null) || (revisedRevision == null)) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Path and revisions must not be null. Abort.");
 			}
 			return null;
@@ -222,7 +229,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		if (revision == null) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Revision must be null. Abort.");
 			}
 			return null;
@@ -230,7 +237,7 @@ public class MercurialRepository extends Repository {
 		try {
 			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
 				Logger.error(e1.getMessage());
 			}
@@ -243,7 +250,7 @@ public class MercurialRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() != 1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Log returned " + lines.size() + " lines. Only one line expected. Abort.");
 			}
 			return null;
@@ -251,7 +258,7 @@ public class MercurialRepository extends Repository {
 		String line = lines.get(0);
 		String[] lineParts = line.split("\\+~\\+");
 		if (lineParts.length < 7) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("hg log could not be parsed. Too less columns in logfile.");
 				return null;
 			}
@@ -301,12 +308,30 @@ public class MercurialRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Command `hg log -r0 --template \"{node}\"` returned no output. Abort.");
 			}
 			return null;
 		}
 		return lines.get(0).trim();
+	}
+	
+	@Override
+	public String getFormerPathName(final String revision, final String pathName) {
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision,
+		        "--template", "\"{file_copies%filecopy}\"" }, cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return null;
+		}
+		String result = null;
+		for (String line : response.getSecond()) {
+			if (line.trim().startsWith(pathName)) {
+				formerPathRegex.find(line);
+				result = formerPathRegex.getGroup("result").trim();
+				break;
+			}
+		}
+		return result;
 	}
 	
 	/*
@@ -323,12 +348,68 @@ public class MercurialRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Command `hg log -rtip --template \"{node}\"` returned no output. Abort.");
 			}
 			return null;
 		}
 		return lines.get(0).trim();
+	}
+	
+	@Override
+	public String getRelativeTransactionId(final String transactionId, final long index) {
+		if (index == 0) {
+			return transactionId;
+		} else if (index > 0) {
+			String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template=\"{node}\\n\"", "-l",
+			        String.valueOf(index + 1) };
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
+			if (response.getFirst() != 0) {
+				return null;
+			}
+			List<String> list = response.getSecond();
+			return list.get(list.size() - 1).trim();
+		} else {
+			String[] args = new String[] { "log", "-r", transactionId + ":0", "--template=\"{node}\\n\"", "-l",
+			        String.valueOf(index + 1) };
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
+			if (response.getFirst() != 0) {
+				return null;
+			}
+			List<String> list = response.getSecond();
+			return list.get(list.size() - 1).trim();
+		}
+	}
+	
+	@Override
+	public long getTransactionCount() {
+		
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
+		        "--template=\"{rev}\\n\"" }, cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return -1;
+		}
+		String rev = response.getSecond().get(0).trim();
+		Long result = Long.valueOf("-1");
+		try {
+			result = Long.valueOf(rev);
+			result += 1;
+		} catch (NumberFormatException e) {
+			if (Logger.logError()) {
+				Logger.error("Could not interpret revision cound " + rev + " as Long.");
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public String getTransactionId(final long index) {
+		String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return null;
+		}
+		return response.getSecond().get(0).trim();
 	}
 	
 	/*
@@ -341,7 +422,7 @@ public class MercurialRepository extends Repository {
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		ArrayList<LogEntry> result = new ArrayList<LogEntry>();
 		if ((toRevision == null) || (fromRevision == null)) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Cannot get log for null referenced revisions. Abort");
 			}
 			return null;
@@ -350,14 +431,14 @@ public class MercurialRepository extends Repository {
 		try {
 			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
 				Logger.error(e1.getMessage());
 			}
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", toRevision, ":", fromRevision }, cloneDir, null, null);
+		        "minerlog", "-r", fromRevision, ":", toRevision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -366,7 +447,7 @@ public class MercurialRepository extends Repository {
 		for (String line : lines) {
 			String[] lineParts = line.split("\\+~\\+");
 			if (lineParts.length < 7) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("hg log could not be parsed. Too less columns in logfile.");
 					return null;
 				}
@@ -402,7 +483,7 @@ public class MercurialRepository extends Repository {
 			try {
 				date = new DateTime(hgLogDateFormat.parse(lineParts[2]));
 			} catch (ParseException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 				return null;
@@ -412,7 +493,8 @@ public class MercurialRepository extends Repository {
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(revID, previous, author, lineParts[6], date));
+			result.add(new LogEntry(revID, previous, personManager.getPerson((author != null ? new Person("<unknown>",
+			        null, null) : null)), lineParts[6], date));
 		}
 		return result;
 		
@@ -424,7 +506,7 @@ public class MercurialRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address) {
+	public void setup(final URI address, final String startRevision, final String endRevision) {
 		uri = address;
 		// clone the remote repository
 		
@@ -436,7 +518,7 @@ public class MercurialRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(hgName);
 			if (!cloneDir.exists()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + hgName
 					        + "`");
 				}
@@ -445,7 +527,7 @@ public class MercurialRepository extends Repository {
 			try {
 				FileUtils.forceDeleteOnExit(cloneDir);
 			} catch (IOException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 			}
@@ -460,7 +542,8 @@ public class MercurialRepository extends Repository {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address, final String username, final String password) {
+	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
+	        final String password) {
 		uri = Repository.encodeUsername(address, username);
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		        + DateTimeUtils.currentTimeMillis();
@@ -476,7 +559,7 @@ public class MercurialRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			cloneDir = new File(hgName);
 			if (!cloneDir.exists()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + uri.toString() + "` to directory `" + hgName
 					        + "`");
 					Logger.error("Used command: " + cmd.toString());
@@ -486,7 +569,7 @@ public class MercurialRepository extends Repository {
 			try {
 				FileUtils.forceDeleteOnExit(cloneDir);
 			} catch (IOException e) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error(e.getMessage());
 				}
 			}

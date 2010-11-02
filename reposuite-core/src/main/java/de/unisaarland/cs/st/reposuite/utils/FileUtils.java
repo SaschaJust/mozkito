@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
  * The Class FileUtils.
@@ -18,9 +17,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
  */
 public class FileUtils {
 	
-	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
 	public static final String fileSeparator = System.getProperty("file.separator");
 	public static final String lineSeparator = System.getProperty("line.separator");
+	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
 	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the
@@ -82,14 +81,14 @@ public class FileUtils {
 	 */
 	public static File createDir(File parentDir, String name) {
 		if (!parentDir.isDirectory()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
 				        + parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
 			}
 			return null;
 		}
 		if ((!parentDir.canExecute()) || (!parentDir.canWrite())) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
 				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
@@ -99,14 +98,14 @@ public class FileUtils {
 		if (newDir.exists()) {
 			if (newDir.isDirectory()) {
 				
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
 					        + parentDir.getAbsolutePath()
 					        + "`. Reason: directory exists already. Returning existing directory.");
 				}
 				return newDir;
 			} else {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
 					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
@@ -114,13 +113,13 @@ public class FileUtils {
 			}
 		}
 		if (!newDir.mkdirs()) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
 				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
-			if (RepoSuiteSettings.logInfo()) {
+			if (Logger.logInfo()) {
 				Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
 			}
 			return newDir;
@@ -142,20 +141,20 @@ public class FileUtils {
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not delete random file `" + file.getAbsolutePath() + "`");
 				}
 				return null;
 			}
 			if (!file.mkdirs()) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Could not create random directory `" + file.getAbsolutePath() + "`");
 				}
 				return null;
 			}
 			return file;
 		} catch (IOException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("Could not create random file in `" + tmpDir.getAbsolutePath() + "`");
 			}
 			return null;

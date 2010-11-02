@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -15,32 +16,42 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 @Entity
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
-	private RCSTransaction transaction;
 	private RCSFile        changedFile;
 	private ChangeType     changeType;
 	private RCSTransaction previousTransaction;
+	private RCSTransaction transaction;
 	
-	public RCSRevision(RCSTransaction rcsTransaction, RCSFile rcsFile, ChangeType changeType,
-	        RCSTransaction previousRcsTransaction) {
+	/**
+	 * used by Hibernate to instantiate a {@link RCSRevision} object
+	 */
+	@SuppressWarnings ("unused")
+	private RCSRevision() {
+		
+	}
+	
+	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
+	        final RCSTransaction previousRcsTransaction) {
 		assert (rcsTransaction != null);
 		assert (rcsFile != null);
 		assert (changeType != null);
-		assert (previousRcsTransaction != null);
 		
 		this.transaction = rcsTransaction;
 		this.changedFile = rcsFile;
 		this.changeType = changeType;
 		this.previousTransaction = previousRcsTransaction;
 		this.transaction.addRevision(this);
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(RCSRevision rcsRevision) {
+	public int compareTo(final RCSRevision rcsRevision) {
 		assert (rcsRevision != null);
 		return this.transaction.compareTo(rcsRevision.transaction);
 	}
@@ -57,6 +68,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	public ChangeType getChangeType() {
 		return this.changeType;
+	}
+	
+	/**
+	 * @return the simple class name
+	 */
+	private String getHandle() {
+		return RCSRevision.class.getSimpleName();
 	}
 	
 	/**
@@ -77,8 +95,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param changedFile
 	 *            the changedFile to set
 	 */
-	@SuppressWarnings("unused")
-	private void setChangedFile(RCSFile path) {
+	@SuppressWarnings ("unused")
+	private void setChangedFile(final RCSFile path) {
 		this.changedFile = path;
 	}
 	
@@ -86,8 +104,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param changeType
 	 *            the changeType to set
 	 */
-	@SuppressWarnings("unused")
-	private void setChangeType(ChangeType changeType) {
+	@SuppressWarnings ("unused")
+	private void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
@@ -95,8 +113,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param previousTransaction
 	 *            the previousTransaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setPreviousTransaction(RCSTransaction previousTransaction) {
+	@SuppressWarnings ("unused")
+	private void setPreviousTransaction(final RCSTransaction previousTransaction) {
 		this.previousTransaction = previousTransaction;
 	}
 	
@@ -104,14 +122,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param transaction
 	 *            the transaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setTransaction(RCSTransaction transaction) {
+	@SuppressWarnings ("unused")
+	private void setTransaction(final RCSTransaction transaction) {
 		this.transaction = transaction;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

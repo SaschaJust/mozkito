@@ -14,32 +14,33 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class MercurialRepositoryTest {
 	
 	private File                cloneDir;
-	private URI                 uri;
 	private MercurialRepository repo;
+	private URI                 uri;
 	
 	@Before
 	public void setUp() throws Exception {
 		// TODO replace this repo and create an own repo on the fly
-		this.uri = new URI("file:///Users/kim/Projects/reposuite");
+		uri = new URI("file:///Users/kim/Projects/reposuite");
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		if (this.cloneDir != null) {
-			FileUtils.forceDelete(this.cloneDir);
+		if (cloneDir != null) {
+			FileUtils.forceDelete(cloneDir);
 		}
 	}
 	
 	@Test
 	public void testClone() {
-		this.repo = new MercurialRepository();
-		this.repo.setup(this.uri);
-		this.cloneDir = this.repo.getCloneDir();
-		File DOT_HG = new File(this.cloneDir, ".hg");
+		repo = new MercurialRepository();
+		repo.setup(uri, null, null);
+		cloneDir = repo.getCloneDir();
+		File DOT_HG = new File(cloneDir, ".hg");
 		assertTrue(DOT_HG.exists());
 		assertTrue(DOT_HG.isDirectory());
 	}
@@ -59,6 +60,16 @@ public class MercurialRepositoryTest {
 		// File DOT_HG = new File(cloneDir, ".hg");
 		// assertTrue(DOT_HG.exists());
 		// assertTrue(DOT_HG.isDirectory());
+	}
+	
+	@Test
+	public void testFormerPathRegex() {
+		String line = "reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CommandExecutor.java (reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java)";
+		List<RegexGroup> found = MercurialRepository.formerPathRegex.find(line);
+		assertTrue(MercurialRepository.formerPathRegex.matches(line));
+		assertEquals(1, found.size());
+		assertEquals("reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java",
+		        MercurialRepository.formerPathRegex.getGroup("result"));
 	}
 	
 	@Test

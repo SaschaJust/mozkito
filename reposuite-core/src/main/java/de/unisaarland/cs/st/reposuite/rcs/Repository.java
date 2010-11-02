@@ -4,9 +4,23 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.DefaultIntervalXYDataset;
+import org.jfree.data.xy.DefaultXYDataset;
 
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
@@ -14,7 +28,8 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
+import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
@@ -40,9 +55,9 @@ public abstract class Repository {
 	 * @return the URI with encoded user name. If the encoding fails, the
 	 *         original URI will be returned.
 	 */
-	public static URI encodeUsername(URI address, String username) {
-		//[scheme:][//authority][path][?query][#fragment]
-		//[user-info@]host[:port]
+	public static URI encodeUsername(final URI address, final String username) {
+		// [scheme:][//authority][path][?query][#fragment]
+		// [user-info@]host[:port]
 		
 		if (username == null) {
 			return address;
@@ -51,7 +66,7 @@ public abstract class Repository {
 		URI uri = address;
 		String authority = address.getAuthority();
 		if ((address.getUserInfo() == null) || (!address.getUserInfo().equals(username))) {
-			if (RepoSuiteSettings.logWarn()) {
+			if (Logger.logWarn()) {
 				Logger.warn("Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.");
 			}
 			authority = username + "@" + address.getHost();
@@ -74,11 +89,11 @@ public abstract class Repository {
 			try {
 				uri = new URI(uriString.toString());
 			} catch (URISyntaxException e1) {
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
 					        + uriString.toString() + "`");
 				}
-				if (RepoSuiteSettings.logWarn()) {
+				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
 				}
 				uri = address;
@@ -114,6 +129,150 @@ public abstract class Repository {
 	public abstract File checkoutPath(String relativeRepoPath, String revision);
 	
 	/**
+	 * Checks the repository for corruption.
+	 */
+	public void consistencyCheck(final List<LogEntry> logEntries) {
+		assert (logEntries != null);
+		assert (logEntries.size() > 0);
+		
+		LogEntry previous = null;
+		
+		for (LogEntry entry : logEntries) {
+			// check monotonic timestamp property
+			if (previous != null) {
+				if (entry.getDateTime().isBefore(previous.getDateTime())) {
+					System.out.println("Transaction " + entry.getRevision()
+					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
+					        + previous);
+				}
+			}
+			
+			previous = entry;
+		}
+		
+		ChartFrame frame;
+		JFreeChart chart;
+		chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
+		frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+		
+		chart = createTimePerTransaction(logEntries);
+		frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+		
+		chart = createFileCountPerTransaction(logEntries);
+		frame = new ChartFrame("Histogram/Files per transaction", chart);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	/**
+	 * @param entries
+	 * @return
+	 */
+	private JFreeChart createFileCountPerTransaction(final List<LogEntry> entries) {
+		List<Double> revisions = new ArrayList<Double>(entries.size());
+		List<Double> files = new ArrayList<Double>(entries.size());
+		int i = 0;
+		double[][] datapoints = new double[6][entries.size()];
+		
+		ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
+		BarRenderer.setDefaultShadowsVisible(false);
+		
+		for (LogEntry entry : entries) {
+			revisions.add(Double.parseDouble(entry.getRevision()));
+			Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
+			files.add((double) changedPaths.size());
+			
+			datapoints[0][i] = revisions.get(i);
+			datapoints[1][i] = revisions.get(i);
+			datapoints[2][i] = revisions.get(i);
+			datapoints[3][i] = files.get(i);
+			datapoints[4][i] = files.get(i);
+			datapoints[5][i] = files.get(i);
+			
+			++i;
+		}
+		
+		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
+		idataset.addSeries(new String("Files per revision"), datapoints);
+		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
+		        PlotOrientation.VERTICAL, true, false, false);
+		
+		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
+		
+		return chart;
+	}
+	
+	/**
+	 * @param entries
+	 * @return
+	 */
+	private JFreeChart createTimePerTransaction(final List<LogEntry> entries) {
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		double[][] datapoints = new double[2][entries.size()];
+		
+		List<Double> revisions = new ArrayList<Double>(entries.size());
+		List<Double> times = new ArrayList<Double>(entries.size());
+		
+		for (LogEntry entry : entries) {
+			// timestamp per revision
+			revisions.add(Double.parseDouble(entry.getRevision()));
+			times.add((double) entry.getDateTime().getMillis() / (1000));
+		}
+		
+		for (int i = 0; i < revisions.size(); ++i) {
+			datapoints[0][i] = revisions.get(i);
+		}
+		for (int i = 0; i < times.size(); ++i) {
+			datapoints[1][i] = times.get(i);
+		}
+		
+		dataset.addSeries(new String("time per revision"), datapoints);
+		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
+		        PlotOrientation.VERTICAL, true, false, false);
+	}
+	
+	/**
+	 * @param entries
+	 * @param threshold
+	 * @return
+	 */
+	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries, final double threshold) {
+		Map<String, Double> authors = new HashMap<String, Double>();
+		
+		for (LogEntry entry : entries) {
+			// commits
+			String author = (entry.getAuthor().getUsername() != null ? entry.getAuthor().getUsername() : entry
+			        .getAuthor().getFullname());
+			if (authors.containsKey(author)) {
+				authors.put(author, authors.get(author) + 1.0);
+			} else {
+				authors.put(author, 1.0);
+			}
+		}
+		
+		DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
+		
+		double others = 0.0d;
+		int otherCount = 0;
+		for (String key : authors.keySet()) {
+			if (authors.get(key) > entries.size() / 35) {
+				cdataset.addValue(authors.get(key), key, new String("authors"));
+			} else {
+				others += authors.get(key);
+				++otherCount;
+			}
+		}
+		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
+		
+		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
+		        "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
+	}
+	
+	/**
 	 * Diff the file in the repository specified by filePath.
 	 * 
 	 * @param filePath
@@ -143,6 +302,18 @@ public abstract class Repository {
 	public abstract String getFirstRevisionId();
 	
 	/**
+	 * Determines the former path name of the file/directory.
+	 * 
+	 * @param revision
+	 *            (not null)
+	 * @param pathName
+	 *            (not null)
+	 * @return Returns the former path name iff the file/directory was renamed.
+	 *         Null otherwise.
+	 */
+	public abstract String getFormerPathName(String revision, String pathName);
+	
+	/**
 	 * Determines the simple class name of the object.
 	 * 
 	 * @return this.getClass().getSimpleName();
@@ -159,6 +330,16 @@ public abstract class Repository {
 	public abstract String getLastRevisionId();
 	
 	/**
+	 * Returns the relative transaction id to the given one. Result is bounded
+	 * by startRevision and endRevision.
+	 * 
+	 * @param transactionId
+	 * @param index
+	 * @return
+	 */
+	public abstract String getRelativeTransactionId(String transactionId, long index);
+	
+	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
 	 * @return the {@link RepositoryType} of the connector class determined by
 	 *         naming convention. See the java-doc of {@link Repository} for
@@ -171,21 +352,59 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * @return the total number of revisions in the repository, -1 if error
+	 *         occured
+	 */
+	public abstract long getTransactionCount();
+	
+	/**
+	 * Returns the transaction id string to the transaction determined by the
+	 * given index.
+	 * 
+	 * @param index
+	 *            Starts at 0
+	 * @return the corresponding transaction id (e.g. for reposuite
+	 *         {@link MercurialRepository#getTransactionId(long)} returns
+	 *         021e7e97724b for 3.
+	 */
+	public abstract String getTransactionId(long index);
+	
+	/**
 	 * Extract a log from the repository.
 	 * 
 	 * @param fromRevision
 	 *            the from revision
 	 * @param toRevision
 	 *            the to revision
-	 * @return the list of log entries. The first entry is the newest log entry.
+	 * @return the list of log entries. The first entry is the oldest log entry.
 	 */
 	public abstract List<LogEntry> log(String fromRevision, String toRevision);
+	
+	/**
+	 * Extract a log from the repository spanning between two revisions.
+	 * 
+	 * @param fromRevision
+	 *            the from revision
+	 * @param toRevision
+	 *            the to revision
+	 * @param cacheSize
+	 *            the cache size
+	 * @return Iterator running from <code>fromRevisions</code> to
+	 *         <code>toRevision</code>
+	 */
+	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+		return new LogIterator(this, fromRevision, toRevision, cacheSize);
+	}
 	
 	/**
 	 * Connect to repository at URI address.
 	 * 
 	 * @param address
 	 *            the address the repository can be found
+	 * @param startRevision
+	 *            first revision to take into account (may be null)
+	 * @param endRevision
+	 *            last revision to take into account (may be null)
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -195,14 +414,18 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
-	        UnsupportedProtocolType;
+	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
+	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
 	 * 
 	 * @param address
 	 *            the address
+	 * @param startRevision
+	 *            first revision to take into account (may be null)
+	 * @param endRevision
+	 *            last revision to take into account (may be null)
 	 * @param username
 	 *            the username
 	 * @param password
@@ -216,6 +439,6 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address, String username, String password) throws MalformedURLException,
-	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
+	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 }

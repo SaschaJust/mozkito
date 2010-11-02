@@ -17,7 +17,6 @@ import java.util.jar.JarFile;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
  * Searches for classes matching certain criteria in the classpath or the
@@ -79,7 +78,8 @@ public class ClassFinder {
 	 */
 	public static Collection<Class<?>> getClassesFromCurrentClasspath(String packageName)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
-		// This will hold a list of directories matching the packageName. There may
+		// This will hold a list of directories matching the packageName. There
+		// may
 		// be more than one if a package is split over multiple jars/paths
 		ArrayList<File> directories = new ArrayList<File>();
 		
@@ -158,7 +158,8 @@ public class ClassFinder {
 		
 		Collection<Class<?>> classes = new LinkedList<Class<?>>();
 		
-		// determine the full qualified pathname string from the package name by replacing all '.' with OS file separators. 
+		// determine the full qualified pathname string from the package name by
+		// replacing all '.' with OS file separators.
 		String path = packageName.replaceAll("\\.", FileUtils.fileSeparator) + FileUtils.fileSeparator;
 		
 		JarFile currentFile = new JarFile(filePath);
@@ -221,7 +222,7 @@ public class ClassFinder {
 			Class<?> matchingClass = null;
 			
 			do {
-				if (RepoSuiteSettings.logTrace()) {
+				if (Logger.logTrace()) {
 					Logger.trace("Checking Class: " + aClass.getName());
 				}
 				
@@ -233,7 +234,7 @@ public class ClassFinder {
 				
 				for (int j = 0; j < classInterfaces.length; j++) {
 					if (classInterfaces[j] == theInterface) {
-						if (RepoSuiteSettings.logTrace()) {
+						if (Logger.logTrace()) {
 							Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
 							        + aClass.getName());
 						}
@@ -243,7 +244,7 @@ public class ClassFinder {
 				}
 				
 				if (matchingClass == null) {
-					if (RepoSuiteSettings.logTrace()) {
+					if (Logger.logTrace()) {
 						Logger.trace("Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
 						        + aClass.getName() + ", checking its superclasses");
 					}
@@ -257,14 +258,14 @@ public class ClassFinder {
 						}
 						// check for noarg constructor, required for
 						// reflective instantiation
-						if (RepoSuiteSettings.logTrace()) {
+						if (Logger.logTrace()) {
 							Logger.trace("Checking superclass : " + aClass.getName() + " for noarg constructor");
 						}
 						Constructor<?>[] cons = aClass.getConstructors();
 						for (int j = 0; j < cons.length; j++) {
 							if (cons[j].getTypeParameters().length == 0) {
 								// it will work
-								if (RepoSuiteSettings.logTrace()) {
+								if (Logger.logTrace()) {
 									Logger.trace("Superclass : " + aClass.getName() + " has a noarg constructor");
 								}
 								noargCons = true;
@@ -273,7 +274,7 @@ public class ClassFinder {
 					} while (!noargCons && !aClass.equals(Object.class));
 				} else {
 					// match
-					if (RepoSuiteSettings.logTrace()) {
+					if (Logger.logTrace()) {
 						Logger.trace("Adding Class: " + matchingClass);
 					}
 					classList.add(matchingClass);

@@ -4,16 +4,24 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -23,12 +31,29 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
+	/**
+	 * @return the simple class name
+	 */
+	@Transient
+	public static String getHandle() {
+		return RCSTransaction.class.getSimpleName();
+	}
+	
+	private Person                  author;
 	private String                  id;
 	private String                  message;
-	private DateTime                timestamp;
-	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
-	private Person                  author;
 	private RCSTransaction          previousRCSRcsTransaction;
+	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
+	
+	private DateTime                timestamp;
+	
+	/**
+	 * used by Hibernate to create RCSTransaction instance
+	 */
+	@SuppressWarnings ("unused")
+	private RCSTransaction() {
+		
+	}
 	
 	/**
 	 * @param id
@@ -37,19 +62,24 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param author
 	 * @param revisions
 	 */
-	public RCSTransaction(String id, String message, DateTime timestamp, Person author,
-	        RCSTransaction previousRcsTransaction) {
+	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
+	        final RCSTransaction previousRcsTransaction) {
 		assert (id != null);
 		assert (message != null);
 		assert (timestamp != null);
 		assert (author != null);
-		assert ((previousRcsTransaction == null) || (timestamp.compareTo(previousRcsTransaction.timestamp) >= 0));
 		
 		this.id = id;
 		this.message = message;
 		this.timestamp = timestamp;
 		this.author = author;
 		this.previousRCSRcsTransaction = previousRcsTransaction;
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Creating " + getHandle() + ": " + this);
+		}
+		
+		assert ((previousRcsTransaction == null) || (this.compareTo(previousRcsTransaction) >= 0));
 	}
 	
 	/**
@@ -57,18 +87,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return
 	 */
 	@Transient
-	protected boolean addRevision(RCSRevision revision) {
+	protected boolean addRevision(final RCSRevision revision) {
 		assert (revision != null);
 		return this.revisions.add(revision);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(RCSTransaction transaction) {
-		if (this.equals(transaction)) {
+	@Override
+	public int compareTo(final RCSTransaction transaction) {
+		if (transaction == null) {
+			return 1;
+		} else if (this.equals(transaction)) {
 			return 0;
 		} else if (this.timestamp.equals(transaction.timestamp)) {
 			RCSTransaction currentTransaction = this;
@@ -78,7 +110,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isBefore(transaction.timestamp)) {
 					return -1;
 				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isAfter(transaction.timestamp)) {
-					if (RepoSuiteSettings.logError()) {
+					if (Logger.logError()) {
 						Logger.error("Found previous transaction with larger timestamp then current: "
 						        + this.toString() + " vs " + currentTransaction.previousRCSRcsTransaction.toString());
 					}
@@ -91,7 +123,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			
 			return -1;
 		} else {
-			return this.timestamp.compareTo(transaction.timestamp);
+			return this.timestamp.isAfter(transaction.timestamp) ? 1 : -1;
 		}
 	}
 	
@@ -105,8 +137,16 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the id
 	 */
+	@Id
 	public String getId() {
 		return this.id;
+	}
+	
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "timestamp")
+	private Date getJavaTimestamp() {
+		return this.timestamp.toDate();
 	}
 	
 	/**
@@ -119,6 +159,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the previousRCSRcsTransaction
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSTransaction getPreviousRCSRcsTransaction() {
 		return this.previousRCSRcsTransaction;
 	}
@@ -126,6 +167,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the revisions
 	 */
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Collection<RCSRevision> getRevisions() {
 		return this.revisions;
 	}
@@ -133,6 +175,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the timestamp
 	 */
+	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
 	}
@@ -141,8 +184,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param author
 	 *            the author to set
 	 */
-	@SuppressWarnings("unused")
-	private void setAuthor(Person author) {
+	@SuppressWarnings ("unused")
+	private void setAuthor(final Person author) {
 		this.author = author;
 	}
 	
@@ -150,17 +193,22 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param id
 	 *            the id to set
 	 */
-	@SuppressWarnings("unused")
-	private void setId(String id) {
+	@SuppressWarnings ("unused")
+	private void setId(final String id) {
 		this.id = id;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setJavaTimestamp(final Date date) {
+		this.timestamp = new DateTime(date);
 	}
 	
 	/**
 	 * @param message
 	 *            the message to set
 	 */
-	@SuppressWarnings("unused")
-	private void setMessage(String message) {
+	@SuppressWarnings ("unused")
+	private void setMessage(final String message) {
 		this.message = message;
 	}
 	
@@ -168,8 +216,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param previousRCSRcsTransaction
 	 *            the previousRCSRcsTransaction to set
 	 */
-	@SuppressWarnings("unused")
-	private void setPreviousRCSRcsTransaction(RCSTransaction previousRCSRcsTransaction) {
+	@SuppressWarnings ("unused")
+	private void setPreviousRCSRcsTransaction(final RCSTransaction previousRCSRcsTransaction) {
 		this.previousRCSRcsTransaction = previousRCSRcsTransaction;
 	}
 	
@@ -177,8 +225,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param revisions
 	 *            the revisions to set
 	 */
-	@SuppressWarnings("unused")
-	private void setRevisions(List<RCSRevision> revisions) {
+	@SuppressWarnings ("unused")
+	private void setRevisions(final List<RCSRevision> revisions) {
 		this.revisions = revisions;
 	}
 	
@@ -186,14 +234,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
-	@SuppressWarnings("unused")
-	private void setTimestamp(DateTime timestamp) {
+	@SuppressWarnings ("unused")
+	private void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

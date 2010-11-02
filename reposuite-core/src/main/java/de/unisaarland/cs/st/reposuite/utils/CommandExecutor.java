@@ -16,7 +16,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
  * Command line process interaction wrapper class
@@ -100,7 +99,7 @@ public class CommandExecutor extends Thread {
 		try {
 			command = FileUtils.checkExecutable(command);
 		} catch (ExternalExecutableException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return new Tuple<Integer, List<String>>(-1, null);
@@ -127,7 +126,7 @@ public class CommandExecutor extends Thread {
 			}
 		}
 		
-		if (RepoSuiteSettings.logDebug()) {
+		if (Logger.logDebug()) {
 			Logger.debug("Executing: [command:"
 			        + command
 			        + "][arguments:"
@@ -200,7 +199,7 @@ public class CommandExecutor extends Thread {
 			
 			return new Tuple<Integer, List<String>>(waitFor, readTask.getReadLines());
 		} catch (Exception e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return new Tuple<Integer, List<String>>(-1, null);
@@ -250,7 +249,7 @@ public class CommandExecutor extends Thread {
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
 	        final BufferedReader pipe) {
-		if (RepoSuiteSettings.logDebug()) {
+		if (Logger.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}
 		this.task = task;
@@ -285,7 +284,7 @@ public class CommandExecutor extends Thread {
 	 * processed lines
 	 */
 	private void logLinesOnError() {
-		if (RepoSuiteSettings.logDebug()) {
+		if (Logger.logDebug()) {
 			Logger.debug(getHandle() + "[" + this.task.toString() + "] lines processed:");
 			for (String outputLine : this.getReadLines()) {
 				Logger.error("read<< " + outputLine);
@@ -306,7 +305,7 @@ public class CommandExecutor extends Thread {
 				this.readLines.add(line);
 			}
 		} catch (IOException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			this.error = true;
@@ -327,7 +326,7 @@ public class CommandExecutor extends Thread {
 				writing();
 				break;
 			default:
-				if (RepoSuiteSettings.logError()) {
+				if (Logger.logError()) {
 					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getHandle() + ".");
 				}
 		}
@@ -347,7 +346,7 @@ public class CommandExecutor extends Thread {
 			}
 			this.writer.flush();
 		} catch (IOException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			this.error = true;

@@ -33,7 +33,6 @@ public class URIArgument extends RepoSuiteArgument {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
@@ -45,7 +44,7 @@ public class URIArgument extends RepoSuiteArgument {
 		try {
 			return new URI(this.stringValue);
 		} catch (URISyntaxException e) {
-			if (RepoSuiteSettings.logError()) {
+			if (Logger.logError()) {
 				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `" + getName()
 				        + "`, the following error occurred: " + e.getMessage());
 			}

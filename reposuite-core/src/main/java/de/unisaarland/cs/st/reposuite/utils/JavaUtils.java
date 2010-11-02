@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.enums.EnumUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -20,7 +21,7 @@ public class JavaUtils {
 	 * @param objects
 	 * @return
 	 */
-	public static String arrayToString(Object[] objects) {
+	public static String arrayToString(final Object[] objects) {
 		return collectionToString(Arrays.asList(objects));
 	}
 	
@@ -28,11 +29,11 @@ public class JavaUtils {
 	 * @param object
 	 * @return
 	 */
-	private static String checkDescent(Object object) {
+	private static String checkDescent(final Object object) {
 		if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override
-			public boolean evaluate(Object object) {
+			public boolean evaluate(final Object object) {
 				return object.equals(Collection.class);
 			}
 		})) {
@@ -40,7 +41,7 @@ public class JavaUtils {
 		} else if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override
-			public boolean evaluate(Object object) {
+			public boolean evaluate(final Object object) {
 				return object.equals(Map.class);
 			}
 		})) {
@@ -54,7 +55,7 @@ public class JavaUtils {
 	 * @param collection
 	 * @return
 	 */
-	public static String collectionToString(Collection<?> collection) {
+	public static String collectionToString(final Collection<?> collection) {
 		StringBuilder builder = new StringBuilder();
 		
 		if (collection == null) {
@@ -72,11 +73,15 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	public static String enumToString(final Enum<?> e) {
+		return collectionToString(EnumUtils.getEnumList(e.getClass()));
+	}
+	
 	/**
 	 * @param map
 	 * @return
 	 */
-	public static String mapToString(Map<?, ?> map) {
+	public static String mapToString(final Map<?, ?> map) {
 		StringBuilder builder = new StringBuilder();
 		
 		if (map == null) {
