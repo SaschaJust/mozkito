@@ -184,11 +184,6 @@ public class MercurialRepository extends Repository {
 		return file;
 	}
 	
-	@Override
-	public void consistencyCheck(final List<LogEntry> logEntries) {
-		//Will be implemented in super class
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -9,6 +9,8 @@ import java.util.TreeSet;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -29,7 +31,9 @@ public class RCSFile implements Annotated {
 		return RCSFile.class.getSimpleName();
 	}
 	
-	private final Map<RCSTransaction, String> changedNames = new HashMap<RCSTransaction, String>();
+	private long                        generatedId;
+	
+	private Map<RCSTransaction, String> changedNames = new HashMap<RCSTransaction, String>();
 	
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance
@@ -69,6 +73,16 @@ public class RCSFile implements Annotated {
 	}
 	
 	/**
+	 * @return the generatedId
+	 */
+	@SuppressWarnings ("unused")
+	@Id
+	@GeneratedValue
+	private long getGeneratedId() {
+		return this.generatedId;
+	}
+	
+	/**
 	 * @return
 	 */
 	@Transient
@@ -81,6 +95,20 @@ public class RCSFile implements Annotated {
 	 */
 	public String getPath(final RCSTransaction transaction) {
 		return this.changedNames.get(transaction);
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setChangedNames(final Map<RCSTransaction, String> changedNames) {
+		this.changedNames = changedNames;
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	@SuppressWarnings ("unused")
+	private void setGeneratedId(final long generatedId) {
+		this.generatedId = generatedId;
 	}
 	
 	/*

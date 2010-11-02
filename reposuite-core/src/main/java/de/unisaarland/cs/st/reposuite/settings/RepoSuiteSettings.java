@@ -112,6 +112,14 @@ public class RepoSuiteSettings {
 	}
 	
 	/**
+	 * @param name
+	 * @return
+	 */
+	public RepoSuiteArgument getSetting(final String name) {
+		return this.arguments.get(name);
+	}
+	
+	/**
 	 * Calling this method, the specified setting file will be parsed (iff
 	 * option -DrepoSuiteSettings is set) before parsing given JavaVM arguments.
 	 * Options set in setting file will be overwritten by command line

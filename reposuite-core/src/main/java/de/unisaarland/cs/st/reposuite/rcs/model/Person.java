@@ -6,12 +6,14 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
@@ -160,7 +162,8 @@ public class Person implements Annotated {
 	/**
 	 * @return the transactions
 	 */
-	public TreeSet<RCSTransaction> getTransactions() {
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public Set<RCSTransaction> getTransactions() {
 		return this.transactions;
 	}
 	
@@ -217,8 +220,7 @@ public class Person implements Annotated {
 	 * @param transactions
 	 */
 	@SuppressWarnings ("unused")
-	@ElementCollection
-	private void setTransaction(final Set<RCSTransaction> transactions) {
+	private void setTransactions(final Set<RCSTransaction> transactions) {
 		this.transactions = new TreeSet<RCSTransaction>(transactions);
 	}
 	

@@ -130,6 +130,8 @@ public abstract class Repository {
 	
 	/**
 	 * Checks the repository for corruption.
+	 * 
+	 * @param withInterface
 	 */
 	public void consistencyCheck(final List<LogEntry> logEntries) {
 		assert (logEntries != null);

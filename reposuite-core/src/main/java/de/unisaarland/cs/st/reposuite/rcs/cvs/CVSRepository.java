@@ -45,12 +45,6 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
-	public void consistencyCheck(final List<LogEntry> logEntries) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
