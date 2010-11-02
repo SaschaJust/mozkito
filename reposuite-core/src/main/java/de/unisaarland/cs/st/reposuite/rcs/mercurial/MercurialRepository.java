@@ -180,7 +180,7 @@ public class MercurialRepository extends Repository {
 	}
 	
 	@Override
-	public void consistencyCheck(final List<LogEntry> logEntries) {
+	public void consistencyCheck(final List<LogEntry> logEntries, final boolean withInterface) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -116,8 +116,10 @@ public abstract class Repository {
 	
 	/**
 	 * Checks the repository for corruption.
+	 * 
+	 * @param withInterface
 	 */
-	public abstract void consistencyCheck(final List<LogEntry> logEntries);
+	public abstract void consistencyCheck(final List<LogEntry> logEntries, boolean withInterface);
 	
 	/**
 	 * Diff the file in the repository specified by filePath.

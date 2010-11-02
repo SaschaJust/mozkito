@@ -11,6 +11,12 @@ public class RCSFileManager {
 		this.currentFiles.put(file.getLatestPath(), file);
 	}
 	
+	public RCSFile createFile(final String path, final RCSTransaction transaction) {
+		RCSFile file = new RCSFile(path, transaction);
+		this.currentFiles.put(path, file);
+		return file;
+	}
+	
 	public RCSFile getFile(final String path) {
 		return this.currentFiles.get(path);
 	}

@@ -87,7 +87,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return
 	 */
 	@Transient
-	protected boolean addRevision(final RCSRevision revision) {
+	public boolean addRevision(final RCSRevision revision) {
 		assert (revision != null);
 		return this.revisions.add(revision);
 	}

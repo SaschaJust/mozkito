@@ -235,7 +235,7 @@ public class SubversionRepository extends Repository {
 	}
 	
 	@Override
-	public void consistencyCheck(final List<LogEntry> logEntries) {
+	public void consistencyCheck(final List<LogEntry> logEntries, final boolean withInterface) {
 		assert (this.initialized);
 		assert (logEntries != null);
 		assert (logEntries.size() > 0);
@@ -255,22 +255,24 @@ public class SubversionRepository extends Repository {
 			previous = entry;
 		}
 		
-		ChartFrame frame;
-		JFreeChart chart;
-		chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
-		frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		chart = createTimePerTransaction(logEntries);
-		frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		chart = createFileCountPerTransaction(logEntries);
-		frame = new ChartFrame("Histogram/Files per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
+		if (withInterface) {
+			ChartFrame frame;
+			JFreeChart chart;
+			chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
+			frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+			
+			chart = createTimePerTransaction(logEntries);
+			frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+			
+			chart = createFileCountPerTransaction(logEntries);
+			frame = new ChartFrame("Histogram/Files per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+		}
 	}
 	
 	/**
@@ -622,6 +624,7 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	@Override
 	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
 		return new LogIterator(this, fromRevision, toRevision, cacheSize);
 	}
