@@ -72,6 +72,7 @@ public class RCSFile implements Annotated {
 	@SuppressWarnings("unused")
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Map<RCSTransaction, String> getChangedNames() {
+		//FIXME Test if this annotation works.
 		return changedNames;
 	}
 	
