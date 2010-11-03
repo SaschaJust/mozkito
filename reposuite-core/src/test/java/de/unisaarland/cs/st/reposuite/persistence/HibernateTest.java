@@ -1,5 +1,8 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 import java.util.Properties;
 
 import org.hibernate.Session;
@@ -39,7 +42,7 @@ public class HibernateTest {
 		properties.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 		properties.put("hibernate.connection.username", "miner");
 		properties.put("hibernate.connection.password", "miner");
-		properties.put("hbm2ddl.auto", "create-drop");
+		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		
 		SessionFactory sessionFactory = HibernateUtil.createSessionFactory(properties);
 		Session session = sessionFactory.openSession();
@@ -47,10 +50,29 @@ public class HibernateTest {
 		Person person = new Person("kim", "", "");
 		RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, null);
 		RCSFile file = fileManager.createFile("test.java", rcsTransaction);
-		new RCSRevision(rcsTransaction, file, ChangeType.Added, null);
+		file.assignTransaction(rcsTransaction, "formerTest.java");
+		RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added, null);
 		Transaction transaction = session.beginTransaction();
 		rcsTransaction.save(session);
 		transaction.commit();
+		
+		@SuppressWarnings("unchecked") List<RCSFile> fileList = session.createCriteria(RCSFile.class).list();
+		assertEquals(1, fileList.size());
+		assertEquals(file, fileList.get(0));
+		
+		@SuppressWarnings("unchecked") List<Person> personList = session.createCriteria(Person.class).list();
+		assertEquals(1, personList.size());
+		assertEquals(person, personList.get(0));
+		
+		@SuppressWarnings("unchecked") List<RCSFile> revisionList = session.createCriteria(RCSRevision.class).list();
+		assertEquals(1, revisionList.size());
+		assertEquals(revision, revisionList.get(0));
+		
+		@SuppressWarnings("unchecked") List<RCSFile> transactionList = session.createCriteria(RCSTransaction.class)
+		        .list();
+		assertEquals(1, transactionList.size());
+		assertEquals(rcsTransaction, transactionList.get(0));
+		
 		session.close();
 		sessionFactory.close();
 	}
