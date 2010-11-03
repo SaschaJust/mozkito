@@ -39,7 +39,7 @@ public class HibernateTest {
 		properties.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 		properties.put("hibernate.connection.username", "miner");
 		properties.put("hibernate.connection.password", "miner");
-		properties.put("hbm2ddl.auto", "create");
+		properties.put("hbm2ddl.auto", "create-drop");
 		
 		SessionFactory sessionFactory = HibernateUtil.createSessionFactory(properties);
 		Session session = sessionFactory.openSession();
@@ -47,10 +47,11 @@ public class HibernateTest {
 		Person person = new Person("kim", "", "");
 		RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, null);
 		RCSFile file = fileManager.createFile("test.java", rcsTransaction);
-		RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added, null);
+		new RCSRevision(rcsTransaction, file, ChangeType.Added, null);
 		Transaction transaction = session.beginTransaction();
-		session.save(file);
-		session.save(rcsTransaction);
+		rcsTransaction.save(session);
 		transaction.commit();
+		session.close();
+		sessionFactory.close();
 	}
 }

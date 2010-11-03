@@ -21,20 +21,26 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
+ * method to write instances of this Object to database. The attached
+ * {@link RCSFile} will not be saved cascaded due to {@link RevisionPrimaryKey}.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 @Table(name = "rcstransaction")
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
+	 * Gets the handle.
+	 * 
 	 * @return the simple class name
 	 */
 	@Transient
@@ -51,7 +57,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private DateTime                timestamp;
 	
 	/**
-	 * used by Hibernate to create RCSTransaction instance
+	 * used by Hibernate to create RCSTransaction instance.
 	 */
 	@SuppressWarnings("unused")
 	private RCSTransaction() {
@@ -59,11 +65,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Instantiates a new rCS transaction.
+	 * 
 	 * @param id
+	 *            the id
 	 * @param message
+	 *            the message
 	 * @param timestamp
+	 *            the timestamp
 	 * @param author
-	 * @param revisions
+	 *            the author
+	 * @param previousRcsTransaction
+	 *            the previous rcs transaction
 	 */
 	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
 	        final RCSTransaction previousRcsTransaction) {
@@ -86,8 +99,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Adds the revision.
+	 * 
 	 * @param revision
-	 * @return
+	 *            the revision
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addRevision(final RCSRevision revision) {
@@ -132,6 +148,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the author.
+	 * 
 	 * @return the author
 	 */
 	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -140,6 +158,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the id.
+	 * 
 	 * @return the id
 	 */
 	@Id
@@ -147,6 +167,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return id;
 	}
 	
+	/**
+	 * Gets the java timestamp.
+	 * 
+	 * @return the java timestamp
+	 */
 	@SuppressWarnings("unused")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "timestamp")
@@ -155,6 +180,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the message.
+	 * 
 	 * @return the message
 	 */
 	public String getMessage() {
@@ -162,6 +189,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the previous rcs rcs transaction.
+	 * 
 	 * @return the previousRCSTransaction
 	 */
 	@OneToOne(fetch = FetchType.LAZY)
@@ -170,6 +199,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the revisions.
+	 * 
 	 * @return the revisions
 	 */
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "primaryKey.transaction", fetch = FetchType.LAZY)
@@ -178,6 +209,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Gets the timestamp.
+	 * 
 	 * @return the timestamp
 	 */
 	@Transient
@@ -186,6 +219,24 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Save this RCSTransaction using Hibernate. This method should used instead
+	 * of <code>Session.save(RCSTransaction)</code> since one has to save the
+	 * attached <code>RCSFiles</code> before.
+	 * 
+	 * @param session
+	 *            the session to be used to save the Objects
+	 */
+	public void save(Session session) {
+		session.beginTransaction();
+		for (RCSRevision rev : getRevisions()) {
+			session.saveOrUpdate(rev.getChangedFile());
+		}
+		session.saveOrUpdate(this);
+	}
+	
+	/**
+	 * Sets the author.
+	 * 
 	 * @param author
 	 *            the author to set
 	 */
@@ -195,6 +246,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Sets the id.
+	 * 
 	 * @param id
 	 *            the id to set
 	 */
@@ -203,12 +256,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		this.id = id;
 	}
 	
+	/**
+	 * Sets the java timestamp.
+	 * 
+	 * @param date
+	 *            the new java timestamp
+	 */
 	@SuppressWarnings("unused")
 	private void setJavaTimestamp(final Date date) {
 		timestamp = new DateTime(date);
 	}
 	
 	/**
+	 * Sets the message.
+	 * 
 	 * @param message
 	 *            the message to set
 	 */
@@ -218,6 +279,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Sets the previous rcs rcs transaction.
+	 * 
 	 * @param previousRCSRcsTransaction
 	 *            the previousRCSRcsTransaction to set
 	 */
@@ -227,6 +290,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Sets the revisions.
+	 * 
 	 * @param revisions
 	 *            the revisions to set
 	 */
@@ -236,6 +301,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * Sets the timestamp.
+	 * 
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
