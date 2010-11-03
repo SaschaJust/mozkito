@@ -18,21 +18,21 @@ public class DirectoryArgumentTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		dirName = tmpDir.getAbsolutePath() + System.getProperty("file.deparator") + "directoryargumenttestdir";
+		this.dirName = tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "directoryargumenttestdir";
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		if (dir != null) {
-			dir.delete();
+		if (this.dir != null) {
+			this.dir.delete();
 		}
 	}
 	
 	@Test
 	public void testRequiredExistsCreate() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", dir.getAbsolutePath(),
+		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
+		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, true);
 		try {
 			settings.parseArguments();
@@ -46,8 +46,8 @@ public class DirectoryArgumentTest {
 	@Test
 	public void testRequiredExistsNoCreate() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", dir.getAbsolutePath(),
+		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
+		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, false);
 		try {
 			settings.parseArguments();
@@ -61,11 +61,12 @@ public class DirectoryArgumentTest {
 	@Test
 	public void testRequiredNotExistsCreate() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", dirName, true, true);
+		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, true);
 		try {
 			settings.parseArguments();
 			arg.getValue().delete();
 		} catch (RuntimeException e) {
+			e.printStackTrace();
 			fail();
 		}
 		
@@ -74,7 +75,7 @@ public class DirectoryArgumentTest {
 	@Test
 	public void testRequiredNotExistsNoCreate() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
-		new DirectoryArgument(settings, "testArg", "test argument", dirName, true, false);
+		new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, false);
 		try {
 			settings.parseArguments();
 			fail();

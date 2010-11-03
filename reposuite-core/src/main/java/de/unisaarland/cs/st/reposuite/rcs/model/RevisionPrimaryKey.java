@@ -1,10 +1,13 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -46,12 +49,18 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 		}
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL })
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSFile getChangedFile() {
 		return this.changedFile;
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL })
+	@Override
+	@Transient
+	public Collection<Annotated> getSaveFirst() {
+		return null;
+	}
+	
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}

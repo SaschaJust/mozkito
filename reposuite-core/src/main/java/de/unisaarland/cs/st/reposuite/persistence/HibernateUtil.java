@@ -1,32 +1,32 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class HibernateUtil {
 	
-	private static Session        session;
-	private static SessionFactory sessionFactory;
+	private static SessionFactory             sessionFactory;
+	private static Map<Thread, HibernateUtil> instances = new HashMap<Thread, HibernateUtil>();
 	
-	public static SessionFactory createSessionFactory() throws HibernateException {
-		if (sessionFactory == null) {
-			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
-			Properties properties = annotationConfiguration.getProperties();
-			return createSessionFactory(properties);
-		}
-		return sessionFactory;
-	}
-	
-	protected static SessionFactory createSessionFactory(final Properties properties) {
+	protected static void createSessionFactory(final Properties properties) {
+		
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 			annotationConfiguration.addProperties(properties);
@@ -50,11 +50,15 @@ public class HibernateUtil {
 			}
 			
 			sessionFactory = annotationConfiguration.buildSessionFactory();
+		} else {
+			
+			if (Logger.logWarn()) {
+				Logger.warn("Session factory already exists. Skipping creating.");
+			}
 		}
-		return sessionFactory;
 	}
 	
-	public static SessionFactory createSessionFactory(final String host, final String database, final String user,
+	public static void createSessionFactory(final String host, final String database, final String user,
 	        final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
@@ -63,23 +67,92 @@ public class HibernateUtil {
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
 			properties.put("hibernate.hbm2ddl.auto", "update");
+			
 			properties.put("hibernate.connection.autocommit", "false");
 			properties.put("hibernate.show_sql", "false");
 			properties.put("hibernate.connection.driver_class", driver);
 			properties.put("hibernate.connection.username", user);
 			properties.put("hibernate.connection.password", password);
 			
-			return createSessionFactory(properties);
+			createSessionFactory(properties);
 		} catch (Throwable ex) {
 			throw new ExceptionInInitializerError(ex);
 		}
 	}
 	
+	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
+		if (sessionFactory == null) {
+			throw new UninitializedDatabaseException();
+		}
+		if (instances.containsKey(Thread.currentThread())) {
+			return instances.get(Thread.currentThread());
+		} else {
+			HibernateUtil util = new HibernateUtil();
+			instances.put(Thread.currentThread(), util);
+			return util;
+		}
+	}
+	
 	public static void shutdown() {
-		session.close();
-		sessionFactory.close();
-		session = null;
-		sessionFactory = null;
+		for (Thread thread : instances.keySet()) {
+			instances.get(thread).shutdownSession();
+		}
+		
+		if (sessionFactory != null) {
+			sessionFactory.close();
+			sessionFactory = null;
+		}
+	}
+	
+	private final Session session;
+	private Transaction   transaction;
+	
+	public HibernateUtil() {
+		assert (sessionFactory != null);
+		this.session = sessionFactory.openSession();
+	}
+	
+	public void beginTransaction() {
+		this.transaction = this.session.beginTransaction();
+	}
+	
+	public void commitTransaction() {
+		if ((this.transaction != null) && this.transaction.isActive()) {
+			try {
+				this.transaction.commit();
+			} catch (HibernateException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				this.transaction.rollback();
+			}
+		}
+	}
+	
+	public Criteria createCriteria(final Class<?> clazz) {
+		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
+			return this.session.createCriteria(clazz);
+		} else {
+			return null;
+		}
+	}
+	
+	public void saveOrUpdate(final Annotated object) {
+		Collection<Annotated> saveFirst = object.getSaveFirst();
+		if (saveFirst != null) {
+			
+			if (Logger.logError()) {
+				Logger.error(JavaUtils.collectionToString(saveFirst));
+			}
+			for (Annotated innerObject : saveFirst) {
+				this.session.saveOrUpdate(innerObject);
+			}
+		}
+		this.session.saveOrUpdate(object);
+	}
+	
+	private void shutdownSession() {
+		this.session.close();
 	}
 	
 }

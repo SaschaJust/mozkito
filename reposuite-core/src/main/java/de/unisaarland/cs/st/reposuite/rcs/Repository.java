@@ -133,7 +133,7 @@ public abstract class Repository {
 	 * 
 	 * @param withInterface
 	 */
-	public void consistencyCheck(final List<LogEntry> logEntries) {
+	public void consistencyCheck(final List<LogEntry> logEntries, final boolean withInterface) {
 		assert (logEntries != null);
 		assert (logEntries.size() > 0);
 		
@@ -152,22 +152,24 @@ public abstract class Repository {
 			previous = entry;
 		}
 		
-		ChartFrame frame;
-		JFreeChart chart;
-		chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
-		frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		chart = createTimePerTransaction(logEntries);
-		frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
-		
-		chart = createFileCountPerTransaction(logEntries);
-		frame = new ChartFrame("Histogram/Files per transaction", chart);
-		frame.pack();
-		frame.setVisible(true);
+		if (withInterface) {
+			ChartFrame frame;
+			JFreeChart chart;
+			chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
+			frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+			
+			chart = createTimePerTransaction(logEntries);
+			frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+			
+			chart = createFileCountPerTransaction(logEntries);
+			frame = new ChartFrame("Histogram/Files per transaction", chart);
+			frame.pack();
+			frame.setVisible(true);
+		}
 	}
 	
 	/**
