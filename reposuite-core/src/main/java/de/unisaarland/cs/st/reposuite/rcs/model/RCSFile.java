@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -68,7 +70,7 @@ public class RCSFile implements Annotated {
 	 * @return the changedNames
 	 */
 	@SuppressWarnings("unused")
-	@Transient
+	@ElementCollection(fetch = FetchType.LAZY)
 	private Map<RCSTransaction, String> getChangedNames() {
 		return changedNames;
 	}
