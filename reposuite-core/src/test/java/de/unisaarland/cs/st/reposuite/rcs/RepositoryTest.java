@@ -28,8 +28,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
-import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -51,34 +49,39 @@ public class RepositoryTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		try {
-			URL repoURL = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.mercurial");
-			File toDelete = new File(repoURL.toURI());
-			FileUtils.deleteDirectory(toDelete);
-			
-			for (Repository repository : repositories) {
-				if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-					continue;
-				} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
-					FileUtils.deleteDirectory(tmpDirectory);
-				} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
-					GitRepository gitRepo = (GitRepository) repository;
-					if (gitRepo.getCloneDir() != null) {
-						FileUtils.deleteDirectory(gitRepo.getCloneDir());
-					}
-				} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
-					MercurialRepository hgRepo = (MercurialRepository) repository;
-					if (hgRepo.getCloneDir() != null) {
-						FileUtils.deleteDirectory(hgRepo.getCloneDir());
-					}
-				}
-			}
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		}
+		// try {
+		// URL repoURL =
+		// RepositoryTest.class.getResource(System.getProperty("file.separator")
+		// + "repotest.mercurial");
+		// File toDelete = new File(repoURL.toURI());
+		// FileUtils.deleteDirectory(toDelete);
+		//
+		// for (Repository repository : repositories) {
+		// if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
+		// continue;
+		// } else if
+		// (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
+		// FileUtils.deleteDirectory(tmpDirectory);
+		// } else if (repository.getRepositoryType().equals(RepositoryType.GIT))
+		// {
+		// GitRepository gitRepo = (GitRepository) repository;
+		// if (gitRepo.getCloneDir() != null) {
+		// FileUtils.deleteDirectory(gitRepo.getCloneDir());
+		// }
+		// } else if
+		// (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
+		// MercurialRepository hgRepo = (MercurialRepository) repository;
+		// if (hgRepo.getCloneDir() != null) {
+		// FileUtils.deleteDirectory(hgRepo.getCloneDir());
+		// }
+		// }
+		// }
+		// } catch (Exception e) {
+		// if (Logger.logError()) {
+		// Logger.error(e.getMessage(), e);
+		// }
+		// fail();
+		// }
 	}
 	
 	@BeforeClass

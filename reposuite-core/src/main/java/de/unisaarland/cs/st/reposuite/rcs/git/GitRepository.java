@@ -304,7 +304,8 @@ public class GitRepository extends Repository {
 				return lines.get((int) index);
 			}
 		} else {
-			String[] args = new String[] { "log", "--reverse", "--pretty=format:%H", "-r", transactionId + "..head" };
+			String[] args = new String[] { "log", "--reverse", "--pretty=format:%H", "-r",
+			        transactionId + ".." + getHEAD() };
 			
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
