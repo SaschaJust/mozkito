@@ -8,10 +8,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 
@@ -180,6 +183,17 @@ public class FileUtils {
 		return createRandomDir(tmpDir, prefix, suffix);
 	}
 	
+	public static File createRandomFile() {
+		try {
+			return File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return null;
+		}
+	}
+	
 	/**
 	 * Delete directory.
 	 * 
@@ -254,6 +268,22 @@ public class FileUtils {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * List files. @see
+	 * {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @param extensions
+	 *            the extensions
+	 * @param recursive
+	 *            the recursive
+	 * @return the collection
+	 */
+	public static Collection<File> listFiles(final File directory, final String[] extensions, final boolean recursive) {
+		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
 	public static boolean unzip(final File zipFile, final File directory) {
