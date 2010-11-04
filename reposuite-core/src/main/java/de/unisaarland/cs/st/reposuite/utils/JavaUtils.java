@@ -17,6 +17,15 @@ import org.apache.commons.lang.enums.EnumUtils;
  */
 public class JavaUtils {
 	
+	public static boolean AnyNull(Object... objects) {
+		for (Object object : objects) {
+			if (object == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * @param objects
 	 * @return

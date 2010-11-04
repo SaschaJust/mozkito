@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -25,7 +24,7 @@ class GitLogParser {
 	
 	protected static DateTimeFormatter gitLogDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex             regex            = new Regex(
-	                                                            "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	                                                            "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex             messageRegex     = new Regex(".*$$\\s*git-svn-id:.*");
 	private static final PersonManager personManager    = new PersonManager();
 	
@@ -85,16 +84,14 @@ class GitLogParser {
 				String fullname = null;
 				String email = null;
 				regex.find(authorParts[1].trim());
-				Set<String> groupNames = regex.getGroupNames();
-				if (groupNames.contains("plain")) {
+				if (regex.getGroup("plain") != null) {
 					username = regex.getGroup("plain");
-				} else if (groupNames.contains("lastname") && groupNames.contains("name")
-				        && (regex.getGroup("lastname") != null)) {
+				} else if ((regex.getGroup("name") != null) && (regex.getGroup("lastname") != null)) {
 					fullname = regex.getGroup("name") + " " + regex.getGroup("lastname");
-				} else if (regex.getGroupNames().contains("name")) {
+				} else if (regex.getGroup("name") != null) {
 					username = regex.getGroup("name");
 				}
-				if (regex.getGroupNames().contains("email")) {
+				if (regex.getGroup("email") != null) {
 					email = regex.getGroup("email");
 				}
 				author = new Person(username, fullname, email);

@@ -20,7 +20,7 @@ public class GitLogParserTest {
 	}
 	
 	@Test
-	public void testAthorRegExp() {
+	public void testAuthorRegExp() {
 		String author1 = "Carsten Nielsen <heycarsten@gmail.com>";
 		Regex regex = GitLogParser.regex;
 		assertTrue(Regex.checkRegex(author1));
@@ -54,7 +54,8 @@ public class GitLogParserTest {
 		assertTrue(regex.matches(author4));
 		assertTrue(regex.find(author4) != null);
 		assertTrue(regex.find(author4).size() > 0);
-		assertEquals("tinogomes", regex.getGroup("name").trim());
+		assertEquals("tinogomes", regex.getGroup("plain").trim());
+		assertEquals(null, regex.getGroup("name"));
 		assertEquals(null, regex.getGroup("lastname"));
 		assertEquals(null, regex.getGroup("email"));
 		

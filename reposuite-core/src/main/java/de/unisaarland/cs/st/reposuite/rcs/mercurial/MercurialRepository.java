@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -513,17 +512,16 @@ public class MercurialRepository extends Repository {
 			String authorEmail = null;
 			
 			authorRegex.find(authorString);
-			Set<String> groupNames = authorRegex.getGroupNames();
+			authorRegex.getGroupNames();
 			
-			if (groupNames.contains("plain")) {
+			if (authorRegex.getGroup("plain") != null) {
 				authorUsername = authorRegex.getGroup("plain");
-			} else if (groupNames.contains("lastname") && groupNames.contains("name")
-			        && (authorRegex.getGroup("lastname") != null)) {
+			} else if ((authorRegex.getGroup("lastname") != null) && (authorRegex.getGroup("name") != null)) {
 				authorFullname = authorRegex.getGroup("name") + " " + authorRegex.getGroup("lastname");
-			} else if (authorRegex.getGroupNames().contains("name")) {
+			} else if (authorRegex.getGroup("name") != null) {
 				authorUsername = authorRegex.getGroup("name");
 			}
-			if (authorRegex.getGroupNames().contains("email")) {
+			if (authorRegex.getGroup("email") != null) {
 				authorEmail = authorRegex.getGroup("email");
 			}
 			Person author = new Person(authorUsername, authorFullname, authorEmail);

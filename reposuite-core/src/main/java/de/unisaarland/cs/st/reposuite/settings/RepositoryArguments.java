@@ -10,6 +10,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -35,8 +36,8 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	public RepositoryArguments(final RepoSuiteSettings settings, final boolean isRequired) {
 		super();
-		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory",
-		        "Directory where the rcs repository is stored", null, true);
+		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
+		        null, true);
 		RepositoryType[] rcsTypes = RepositoryType.values();
 		String[] argEnums = new String[rcsTypes.length];
 		StringBuilder ss = new StringBuilder();
@@ -46,27 +47,32 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			ss.append(rcsTypes[i].toString());
 			ss.append(" ");
 		}
-		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
-		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
-		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
-		this.startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
-		this.endRevision = new StringArgument(settings, "rcsStop", "Revision to stop at", "HEAD", false);
+		repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
+		userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
+		passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
+		endRevision = new StringArgument(settings, "rcsStop", "Revision to stop at", "HEAD", false);
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = this.repoDirArg.getValue();
-		String username = this.userArg.getValue();
-		String password = this.passArg.getValue();
+		URI repositoryURI = repoDirArg.getValue();
+		String username = userArg.getValue();
+		String password = passArg.getValue();
 		String startRevision = this.startRevision.getValue();
 		String endRevision = this.endRevision.getValue();
 		
-		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
+		if (JavaUtils.AnyNull(repositoryURI, username, password, startRevision, endRevision)) {
+			return null;
+		}
+		
+		RepositoryType rcsType = RepositoryType.valueOf(repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			if (Logger.logWarn()) {

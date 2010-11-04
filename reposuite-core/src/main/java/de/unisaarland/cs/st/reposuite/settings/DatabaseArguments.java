@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -30,6 +31,12 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 	@Override
 	public HibernateUtil getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
+		
+		if (JavaUtils.AnyNull(arguments.get("dbHost").getValue(), arguments.get("database").getValue(),
+		        arguments.get("dbUser").getValue(), arguments.get("dbPassword").getValue(), arguments.get("dbType")
+		                .getValue(), arguments.get("dbDriver").getValue())) {
+			return null;
+		}
 		
 		HibernateUtil.createSessionFactory(arguments.get("dbHost").getValue().toString(), arguments.get("database")
 		        .getValue().toString(), arguments.get("dbUser").getValue().toString(), arguments.get("dbPassword")
