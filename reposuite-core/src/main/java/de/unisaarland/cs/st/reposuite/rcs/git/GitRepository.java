@@ -7,8 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +15,8 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
@@ -39,13 +39,13 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	protected static SimpleDateFormat gitLogDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-	protected static Regex            regex            = new Regex(
+	protected static DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static Regex             regex           = new Regex(
 	                                                           ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
-	protected static Regex            formerPathRegex  = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	protected static Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
 	
-	private File                      cloneDir;
-	private URI                       uri;
+	private File                       cloneDir;
+	private URI                        uri;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -91,13 +91,7 @@ public class GitRepository extends Repository {
 			String lineContent = "<unkown>";
 			if (regex.matchesFull(line)) {
 				author = regex.getGroup("author");
-				try {
-					date = new DateTime(gitLogDateFormat.parse(regex.getGroup("date")));
-				} catch (ParseException e) {
-					if (Logger.logError()) {
-						Logger.error(e.getMessage());
-					}
-				}
+				date = new DateTime(dtf.parseDateTime(regex.getGroup("date")));
 				lineContent = regex.getGroup("codeline");
 			} else {
 				if (Logger.logWarn()) {
@@ -206,7 +200,7 @@ public class GitRepository extends Repository {
 				return null;
 			}
 			String type = lineParts[0];
-			String path = lineParts[1];
+			String path = "/" + lineParts[1];
 			if (type.equals("A")) {
 				result.put(path, ChangeType.Added);
 			} else if (type.equals("C")) {
@@ -227,7 +221,7 @@ public class GitRepository extends Repository {
 	 * 
 	 * @return the clone dir
 	 */
-	protected File getCloneDir() {
+	public File getCloneDir() {
 		return cloneDir;
 	}
 	

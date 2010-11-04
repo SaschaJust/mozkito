@@ -57,5 +57,14 @@ public class GitLogParserTest {
 		assertEquals("tinogomes", regex.getGroup("name").trim());
 		assertEquals(null, regex.getGroup("lastname"));
 		assertEquals(null, regex.getGroup("email"));
+		
+		String author5 = "just <just@b3cd8044-6b0a-409c-a07a-9925dc373c42>";
+		assertTrue(Regex.checkRegex(author5));
+		assertTrue(regex.matches(author5));
+		assertTrue(regex.find(author5) != null);
+		assertTrue(regex.find(author5).size() > 0);
+		assertEquals("just", regex.getGroup("name").trim());
+		assertEquals(null, regex.getGroup("lastname"));
+		assertEquals("just@b3cd8044-6b0a-409c-a07a-9925dc373c42", regex.getGroup("email"));
 	}
 }

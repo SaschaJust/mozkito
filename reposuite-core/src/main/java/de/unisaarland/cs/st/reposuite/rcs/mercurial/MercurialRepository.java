@@ -9,16 +9,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
@@ -41,18 +44,56 @@ import difflib.Patch;
  */
 public class MercurialRepository extends Repository {
 	
-	protected static Regex            authorRegex          = new Regex(
-	                                                               "^({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?");
+	protected static Regex             authorRegex          = new Regex(
+	                                                                "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
-	protected static SimpleDateFormat hgAnnotateDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
-	protected static SimpleDateFormat hgLogDateFormat      = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
-	protected static Regex            formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
-	protected static String           pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
-	protected static Regex            regex                = new Regex(pattern);
-	private File                      cloneDir;
-	protected List<String>            hashes               = new ArrayList<String>();
-	private final PersonManager       personManager        = new PersonManager();
-	private URI                       uri;
+	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	//	protected static DateTimeFormatter hgLogDateFormat      = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
+	
+	protected static Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static Regex             regex                = new Regex(pattern);
+	
+	protected static List<String> preFilterLines(List<String> lines) {
+		List<String> completeLines = new LinkedList<String>();
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 0; i < lines.size(); ++i) {
+			String line = lines.get(i);
+			if (line.endsWith("<br/>") && (lines.get(i + 1).split("\\+~\\+").length < 7)) {
+				stringBuilder.append(line);
+			} else {
+				if (stringBuilder.length() > 0) {
+					stringBuilder.append(line);
+					completeLines.add(stringBuilder.toString());
+					stringBuilder = new StringBuilder();
+				} else {
+					completeLines.add(line);
+				}
+			}
+		}
+		return completeLines;
+	}
+	
+	private static void writeLogStyle(final File dir) throws IOException {
+		File f = new File(dir + System.getProperty("file.separator") + "minerlog");
+		if (f.exists()) {
+			f.delete();
+		}
+		BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+		writer.write("changeset = \"{node}+~+{author}+~+{date|hgdate}+~+{file_adds}+~+{file_dels}+~+{file_mods}+~+{desc|addbreaks}\\n\"\n");
+		writer.write("file_add = \"{file_add};\"\n");
+		writer.write("file_del = \"{file_del};\"\n");
+		writer.write("file_mod = \"{file_mod};\"\n");
+		writer.close();
+		
+	}
+	
+	private File                cloneDir;
+	protected List<String>      hashes        = new ArrayList<String>();
+	
+	private final PersonManager personManager = new PersonManager();
+	
+	private URI                 uri;
 	
 	/*
 	 * (non-Javadoc)
@@ -96,14 +137,7 @@ public class MercurialRepository extends Repository {
 			String date = regex.getGroup("date");
 			
 			DateTime timestamp;
-			try {
-				timestamp = new DateTime(hgAnnotateDateFormat.parseObject(date));
-			} catch (ParseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-				return null;
-			}
+			timestamp = hgAnnotateDateFormat.parseDateTime(date);
 			
 			String file = regex.getGroup("file");
 			String codeLine = regex.getGroup("codeline");
@@ -138,8 +172,8 @@ public class MercurialRepository extends Repository {
 	 * Cache hashes.
 	 */
 	private void cacheHashes() {
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log",
-		        "--template '{node}\n'" }, cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
+		        "'{node}\n'" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -169,6 +203,7 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
+		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
 		        new String[] { "update", "-C", revision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
@@ -239,7 +274,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", revision, ":", revision }, cloneDir, null, null);
+		        "minerlog", "-r", revision + ":" + revision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -267,20 +302,26 @@ public class MercurialRepository extends Repository {
 			}
 			lineParts[6] = s.toString();
 		}
-		String[] addedPaths = lineParts[3].split(" ");
-		String[] deletedPaths = lineParts[4].split(" ");
-		String[] modifiedPaths = lineParts[5].split(" ");
+		String[] addedPaths = lineParts[3].split(";");
+		String[] deletedPaths = lineParts[4].split(";");
+		String[] modifiedPaths = lineParts[5].split(";");
 		
 		Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		
 		for (String addedPath : addedPaths) {
-			result.put(addedPath, ChangeType.Added);
+			if (!addedPath.trim().equals("")) {
+				result.put("/" + addedPath, ChangeType.Added);
+			}
 		}
 		for (String deletedPath : deletedPaths) {
-			result.put(deletedPath, ChangeType.Deleted);
+			if (!deletedPath.trim().equals("")) {
+				result.put("/" + deletedPath, ChangeType.Deleted);
+			}
 		}
 		for (String modifiedPath : modifiedPaths) {
-			result.put(modifiedPath, ChangeType.Modified);
+			if (!modifiedPath.trim().equals("")) {
+				result.put("/" + modifiedPath, ChangeType.Modified);
+			}
 		}
 		return result;
 	}
@@ -297,14 +338,14 @@ public class MercurialRepository extends Repository {
 	@Override
 	public String getFirstRevisionId() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
-		        "--template", "\"{node}\"" }, cloneDir, null, null);
+		        "--template", "{node}" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
 			if (Logger.logError()) {
-				Logger.error("Command `hg log -r0 --template \"{node}\"` returned no output. Abort.");
+				Logger.error("Command `hg log -r0 --template {node}` returned no output. Abort.");
 			}
 			return null;
 		}
@@ -329,6 +370,11 @@ public class MercurialRepository extends Repository {
 		return result;
 	}
 	
+	@Override
+	public String getHEAD() {
+		return "tip";
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -337,14 +383,14 @@ public class MercurialRepository extends Repository {
 	@Override
 	public String getLastRevisionId() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
-		        "--template", "\"{node}\"" }, cloneDir, null, null);
+		        "--template", "{node}" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
 			if (Logger.logError()) {
-				Logger.error("Command `hg log -rtip --template \"{node}\"` returned no output. Abort.");
+				Logger.error("Command `hg log -rtip --template {node}` returned no output. Abort.");
 			}
 			return null;
 		}
@@ -356,7 +402,7 @@ public class MercurialRepository extends Repository {
 		if (index == 0) {
 			return transactionId;
 		} else if (index > 0) {
-			String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template=\"{node}\\n\"", "-l",
+			String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template", "{node}\\n", "-l",
 			        String.valueOf(index + 1) };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
@@ -365,7 +411,7 @@ public class MercurialRepository extends Repository {
 			List<String> list = response.getSecond();
 			return list.get(list.size() - 1).trim();
 		} else {
-			String[] args = new String[] { "log", "-r", transactionId + ":0", "--template=\"{node}\\n\"", "-l",
+			String[] args = new String[] { "log", "-r", transactionId + ":0", "--template", "{node}\\n", "-l",
 			        String.valueOf(index + 1) };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
@@ -380,7 +426,7 @@ public class MercurialRepository extends Repository {
 	public long getTransactionCount() {
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-		        "--template=\"{rev}\\n\"" }, cloneDir, null, null);
+		        "--template", "{rev}\\n" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -433,11 +479,14 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", fromRevision, ":", toRevision }, cloneDir, null, null);
+		        "minerlog", "-r", fromRevision + ":" + toRevision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> lines = response.getSecond();
+		
+		//pre-filter lines. hg log might have some entries spanning multiple lines. 
+		lines = preFilterLines(lines);
 		
 		for (String line : lines) {
 			String[] lineParts = line.split("\\+~\\+");
@@ -464,32 +513,32 @@ public class MercurialRepository extends Repository {
 			String authorEmail = null;
 			
 			authorRegex.find(authorString);
-			if (regex.getGroupNames().contains("lastname") && regex.getGroupNames().contains("name")) {
-				authorFullname = regex.getGroup("name") + " " + regex.getGroup("lastname");
-			} else if ((!regex.getGroupNames().contains("lastname")) && regex.getGroupNames().contains("name")) {
-				authorUsername = regex.getGroup("name");
+			Set<String> groupNames = authorRegex.getGroupNames();
+			
+			if (groupNames.contains("plain")) {
+				authorUsername = authorRegex.getGroup("plain");
+			} else if (groupNames.contains("lastname") && groupNames.contains("name")
+			        && (authorRegex.getGroup("lastname") != null)) {
+				authorFullname = authorRegex.getGroup("name") + " " + authorRegex.getGroup("lastname");
+			} else if (authorRegex.getGroupNames().contains("name")) {
+				authorUsername = authorRegex.getGroup("name");
 			}
-			if (regex.getGroupNames().contains("email")) {
-				authorEmail = regex.getGroup("email");
+			if (authorRegex.getGroupNames().contains("email")) {
+				authorEmail = authorRegex.getGroup("email");
 			}
 			Person author = new Person(authorUsername, authorFullname, authorEmail);
 			
-			DateTime date;
-			try {
-				date = new DateTime(hgLogDateFormat.parse(lineParts[2]));
-			} catch (ParseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-				return null;
-			}
+			String[] dateString = lineParts[2].split(" ");
+			
+			DateTime date = new DateTime(Long.valueOf(dateString[0]).longValue() * 1000,
+			        DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
 			
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(revID, previous, personManager.getPerson((author != null ? new Person("<unknown>",
-			        null, null) : null)), lineParts[6], date));
+			result.add(new LogEntry(revID, previous, personManager.getPerson((author != null ? author : null)),
+			        lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator), date));
 		}
 		return result;
 		
@@ -519,6 +568,7 @@ public class MercurialRepository extends Repository {
 				}
 				return;
 			}
+			cacheHashes();
 			try {
 				FileUtils.forceDeleteOnExit(cloneDir);
 			} catch (IOException e) {
@@ -526,8 +576,8 @@ public class MercurialRepository extends Repository {
 					Logger.error(e.getMessage());
 				}
 			}
+			
 		}
-		cacheHashes();
 	}
 	
 	/*
@@ -568,21 +618,8 @@ public class MercurialRepository extends Repository {
 					Logger.error(e.getMessage());
 				}
 			}
+			cacheHashes();
 		}
-		cacheHashes();
-	}
-	
-	private void writeLogStyle(final File dir) throws IOException {
-		File f = new File(dir + System.getProperty("file.separator") + "minerlog");
-		if (f.exists()) {
-			f.delete();
-		}
-		BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-		writer.write("changeset = \"{node}+~+{author}+~+{date|isodate}+~+{file_adds}+~+{file_dels}+~+{file_mods}+~+{desc|addbreaks}\\n\"\n");
-		writer.write("file_add = \"{file_add};\"\n");
-		writer.write("file_del = \"{file_del};\"\n");
-		writer.write("file_mod = \"{file_mod};\"\n");
-		writer.close();
 		
 	}
 }

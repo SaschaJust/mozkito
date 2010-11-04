@@ -324,6 +324,10 @@ public abstract class Repository {
 		return this.getClass().getSimpleName();
 	}
 	
+	public String getHEAD() {
+		return "HEAD";
+	}
+	
 	/**
 	 * Gets the last revision of the repository.
 	 * 

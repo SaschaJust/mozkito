@@ -195,9 +195,32 @@ public class CommandExecutor extends Thread {
 			
 			// wait for the process (this should return instantly if no error
 			// occurred
-			int waitFor = process.waitFor();
-			
-			return new Tuple<Integer, List<String>>(waitFor, readTask.getReadLines());
+			int returnValue = process.waitFor();
+			List<String> lines = readTask.getReadLines();
+			if (returnValue != 0) {
+				if (Logger.logError()) {
+					StringBuilder stringBuilder = new StringBuilder();
+					stringBuilder.append("Executing: [command:");
+					stringBuilder.append(command);
+					stringBuilder.append("][arguments:");
+					stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
+					stringBuilder.append("][workingdir:");
+					stringBuilder.append((dir != null ? dir.getAbsolutePath() : "(null)"));
+					stringBuilder.append("][input:");
+					stringBuilder.append((input != null ? "present" : "omitted"));
+					stringBuilder.append("][environment:");
+					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils
+					        .mapToString(environment != null ? environment : System.getenv())));
+					stringBuilder.append("] failed with exitCode: ");
+					stringBuilder.append(returnValue + " with message: \n");
+					for (String line : lines) {
+						stringBuilder.append(line);
+						stringBuilder.append("\n");
+					}
+					Logger.error(stringBuilder.toString());
+				}
+			}
+			return new Tuple<Integer, List<String>>(returnValue, lines);
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -262,21 +285,21 @@ public class CommandExecutor extends Thread {
 	 * @return the read lines
 	 */
 	private List<String> getReadLines() {
-		return this.readLines;
+		return readLines;
 	}
 	
 	/**
 	 * @return the task
 	 */
 	private Task getTask() {
-		return this.task;
+		return task;
 	}
 	
 	/**
 	 * @return the wrote lines
 	 */
 	private List<String> getWroteLines() {
-		return this.wroteLines;
+		return wroteLines;
 	}
 	
 	/**
@@ -285,11 +308,11 @@ public class CommandExecutor extends Thread {
 	 */
 	private void logLinesOnError() {
 		if (Logger.logDebug()) {
-			Logger.debug(getHandle() + "[" + this.task.toString() + "] lines processed:");
-			for (String outputLine : this.getReadLines()) {
+			Logger.debug(getHandle() + "[" + task.toString() + "] lines processed:");
+			for (String outputLine : getReadLines()) {
 				Logger.error("read<< " + outputLine);
 			}
-			for (String outputLine : this.getWroteLines()) {
+			for (String outputLine : getWroteLines()) {
 				Logger.error("wrote<< " + outputLine);
 			}
 		}
@@ -301,24 +324,25 @@ public class CommandExecutor extends Thread {
 	private void reading() {
 		String line;
 		try {
-			while ((line = this.reader.readLine()) != null) {
-				this.readLines.add(line);
+			while ((line = reader.readLine()) != null) {
+				readLines.add(line);
 			}
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			this.error = true;
+			error = true;
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
-		switch (this.task) {
+		switch (task) {
 			case READER:
 				reading();
 				break;
@@ -327,7 +351,7 @@ public class CommandExecutor extends Thread {
 				break;
 			default:
 				if (Logger.logError()) {
-					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getHandle() + ".");
+					Logger.error("Unsupported task " + task + " for " + CommandExecutor.getHandle() + ".");
 				}
 		}
 	}
@@ -339,17 +363,17 @@ public class CommandExecutor extends Thread {
 		String line;
 		
 		try {
-			while ((line = this.pipe.readLine()) != null) {
-				this.wroteLines.add(line);
-				this.writer.write(line);
-				this.writer.write(FileUtils.lineSeparator);
+			while ((line = pipe.readLine()) != null) {
+				wroteLines.add(line);
+				writer.write(line);
+				writer.write(FileUtils.lineSeparator);
 			}
-			this.writer.flush();
+			writer.flush();
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			this.error = true;
+			error = true;
 		}
 	}
 }

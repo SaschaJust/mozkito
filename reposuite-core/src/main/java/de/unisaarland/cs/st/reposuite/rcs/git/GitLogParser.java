@@ -1,11 +1,13 @@
 package de.unisaarland.cs.st.reposuite.rcs.git;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
@@ -21,9 +23,10 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 class GitLogParser {
 	
-	protected static SimpleDateFormat  gitLogDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+	protected static DateTimeFormatter gitLogDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex             regex            = new Regex(
-	                                                            "^({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?");
+	                                                            "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	protected static Regex             messageRegex     = new Regex(".*$$\\s*git-svn-id:.*");
 	private static final PersonManager personManager    = new PersonManager();
 	
 	/**
@@ -42,32 +45,24 @@ class GitLogParser {
 		String currentID = null;
 		Person author = null;
 		String date = null;
+		boolean append = true;
 		StringBuilder message = new StringBuilder();
-		
 		for (String line : logMessage) {
 			++lineCounter;
 			if (line.startsWith("commit")) {
 				if (currentID != null) {
 					DateTime dateTime = new DateTime();
-					try {
-						dateTime = new DateTime(gitLogDateFormat.parse(date));
-					} catch (ParseException e) {
-						if (Logger.logError()) {
-							Logger.error("Encountered error while parsing GIT commit message date `" + date
-							        + "` of transaction `" + currentID + "`. Abort parsing.");
-						}
-						return null;
-					}
+					dateTime = gitLogDateFormat.parseDateTime(date);
 					LogEntry previous = null;
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
 					}
-					
-					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? new Person(
-					        "<unknown>", null, null) : null)), message.toString(), dateTime));
+					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author
+					        : null)), message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
+					append = true;
 					message = new StringBuilder();
 				}
 				String[] commitParts = line.split(" ");
@@ -90,9 +85,13 @@ class GitLogParser {
 				String fullname = null;
 				String email = null;
 				regex.find(authorParts[1].trim());
-				if (regex.getGroupNames().contains("lastname") && regex.getGroupNames().contains("name")) {
+				Set<String> groupNames = regex.getGroupNames();
+				if (groupNames.contains("plain")) {
+					username = regex.getGroup("plain");
+				} else if (groupNames.contains("lastname") && groupNames.contains("name")
+				        && (regex.getGroup("lastname") != null)) {
 					fullname = regex.getGroup("name") + " " + regex.getGroup("lastname");
-				} else if ((!regex.getGroupNames().contains("lastname")) && regex.getGroupNames().contains("name")) {
+				} else if (regex.getGroupNames().contains("name")) {
 					username = regex.getGroup("name");
 				}
 				if (regex.getGroupNames().contains("email")) {
@@ -109,28 +108,33 @@ class GitLogParser {
 				}
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {
-				message.append(line.trim());
-				message.append(FileUtils.lineSeparator);
+				if (line.trim().startsWith("git-svn-id")) {
+					String tmpString = message.toString();
+					tmpString = tmpString.substring(0, tmpString.length() - 2);
+					message = new StringBuilder();
+					message.append(tmpString);
+					append = false;
+				}
+				if (append) {
+					message.append(line.trim());
+					if (message.length() > 0) {
+						message.append(FileUtils.lineSeparator);
+					}
+				}
+				
 			}
 		}
 		if (currentID != null) {
 			DateTime dateTime;
-			try {
-				dateTime = new DateTime(gitLogDateFormat.parse(date));
-			} catch (ParseException e) {
-				if (Logger.logError()) {
-					Logger.error("Encountered error while parsing GIT commit message date `" + date
-					        + "` of transaction `" + currentID + "`. Abort parsing.");
-				}
-				return null;
-			}
+			dateTime = gitLogDateFormat.parseDateTime(date);
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? new Person(
-			        "<unknown>", null, null) : null)), message.toString(), dateTime));
+			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author : null)),
+			        message.toString(), dateTime));
 		}
+		Collections.reverse(result);
 		return result;
 	}
 }

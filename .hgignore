@@ -14,4 +14,4 @@ syntax: regexp
 ^reposuite-.*/.metadata
 syntax: regexp
 ^.metadata
-
+reposuite-.*/bin/*

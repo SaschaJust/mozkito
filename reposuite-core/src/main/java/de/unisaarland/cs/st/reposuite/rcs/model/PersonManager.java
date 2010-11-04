@@ -21,12 +21,12 @@ public class PersonManager {
 	
 	public Person getPerson(Person person) {
 		if (person == null) {
-			person = new Person("<<server>>", null, null);
+			person = new Person("<unknown>", null, null);
 		}
 		
-		if (this.persons.contains(person)) {
+		if (persons.contains(person)) {
 			final Person searchTarget = person;
-			person = (Person) CollectionUtils.find(this.persons, new Predicate() {
+			person = (Person) CollectionUtils.find(persons, new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -37,7 +37,7 @@ public class PersonManager {
 				Logger.trace("Serving known " + Person.getHandle() + ": " + person);
 			}
 		} else {
-			this.persons.add(person);
+			persons.add(person);
 			if (Logger.logTrace()) {
 				Logger.trace("Adding new " + Person.getHandle() + ": " + person);
 			}

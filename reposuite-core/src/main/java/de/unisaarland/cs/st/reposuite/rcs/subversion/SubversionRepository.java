@@ -201,7 +201,7 @@ public class SubversionRepository extends Repository {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
-			throw new RuntimeException();
+			return null;
 		}
 		
 		SVNURL checkoutPath;
@@ -221,7 +221,7 @@ public class SubversionRepository extends Repository {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
+			return null;
 		}
 	}
 	
@@ -463,6 +463,7 @@ public class SubversionRepository extends Repository {
 			        true, true);
 			LogEntry buff = null;
 			for (SVNLogEntry entry : logs) {
+				
 				LogEntry current = new LogEntry(entry.getRevision() + "", buff, personManager.getPerson((entry
 				        .getAuthor() != null ? new Person(entry.getAuthor(), null, null) : null)), entry.getMessage(),
 				        new DateTime(entry.getDate()));
