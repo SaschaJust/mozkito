@@ -9,4 +9,8 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
  */
 public enum TrackerType {
 	BUGZILLA, ISSUEZILLA, JIRA, SOURCEFORGE;
+	
+	public static String getHandle() {
+		return TrackerType.class.getSimpleName();
+	}
 }

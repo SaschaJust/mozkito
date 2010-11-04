@@ -35,7 +35,7 @@ public class Core extends Thread {
 			
 			if (Logger.logError()) {
 				Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
-				        + ". Message: " + e.getMessage(), e);
+						+ ". Message: " + e.getMessage(), e);
 			}
 			this.core.shutdown();
 		}
@@ -43,6 +43,11 @@ public class Core extends Thread {
 	
 	private final ThreadGroup                 threads    = new CoreThreadGroup(this, Core.class.getSimpleName());
 	private final ArrayList<RepositoryThread> threadList = new ArrayList<RepositoryThread>();
+	
+	/**
+	 * 
+	 */
+	public Core() {}
 	
 	/*
 	 * (non-Javadoc)
@@ -55,9 +60,12 @@ public class Core extends Thread {
 		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
 		LoggerArguments logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		        false);
+				false);
 		new LongArgument(settings, "repository.cachesize",
-		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
+		        false);
+
 		settings.parseArguments();
 		
 		Repository repository = repoSettings.getValue();
@@ -69,10 +77,9 @@ public class Core extends Thread {
 		this.threadList.add(analyzer);
 		RepositoryParser parser = new RepositoryParser(this.threads, analyzer);
 		this.threadList.add(parser);
+		HibernateUtil hibernateUtil = databaseSettings.getValue();
 		
-		if (databaseSettings != null) {
-			HibernateUtil hibernateUtil = databaseSettings.getValue();
-			
+		if (hibernateUtil != null) {
 			RepositoryPersister persister = new RepositoryPersister(this.threads, parser, hibernateUtil);
 			this.threadList.add(persister);
 		}

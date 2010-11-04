@@ -30,9 +30,10 @@ public class RepositoryAnalyzer extends RepositoryThread {
 	private final Queue<LogEntry>   queue    = new LinkedBlockingQueue<LogEntry>();
 	private final RepoSuiteSettings settings;
 	private final boolean           shutdown = false;
+	private boolean                 analyze;
 	
 	public RepositoryAnalyzer(final ThreadGroup threadGroup, final RepositoryReader reader,
-	        final RepoSuiteSettings settings) {
+			final RepoSuiteSettings settings) {
 		super(threadGroup, getHandle());
 		
 		this.reader = reader;
@@ -65,6 +66,9 @@ public class RepositoryAnalyzer extends RepositoryThread {
 	@Override
 	public void run() {
 		if (!this.shutdown) {
+			this.analyze = (this.settings.getSetting("repository.analyze") != null)
+			        && (this.settings.getSetting("repository.analyze").getValue() != null)
+			        && (Boolean) this.settings.getSetting("repository.analyze").getValue();
 			if (Logger.logInfo()) {
 				Logger.info("Starting " + getHandle());
 			}
@@ -77,17 +81,21 @@ public class RepositoryAnalyzer extends RepositoryThread {
 			while (!this.shutdown && iterator.hasNext()) {
 				entry = iterator.next();
 				
-				if (Logger.logDebug()) {
-					Logger.debug("Adding " + entry + " to analysis.");
+				if (this.analyze) {
+					if (Logger.logDebug()) {
+						Logger.debug("Adding " + entry + " to analysis.");
+					}
+					this.entries.add(entry);
 				}
+				
 				this.queue.add(entry);
-				this.entries.add(entry);
+				
 				wake();
 			}
 			
 			if (!this.shutdown) {
 				this.repository.consistencyCheck(this.entries, ((Boolean) this.settings.getSetting("headless")
-				        .getValue() == false));
+						.getValue() == false));
 			}
 		}
 	}

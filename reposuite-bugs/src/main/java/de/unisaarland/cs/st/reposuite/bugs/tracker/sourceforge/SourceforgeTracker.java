@@ -15,13 +15,15 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
  */
 public class SourceforgeTracker extends Tracker {
 	
-	public SourceforgeTracker(final URI uri, final URL url, final FilenameFilter filter) {
-		super(uri, url, filter);
-		// TODO Auto-generated constructor stub
+	@Override
+	public void parse() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
-	public void parse() {
+	public void setup(final URI uri, final URL url, final FilenameFilter filter, final String username,
+	        final String password, final String startAt, final String stopAt) {
 		// TODO Auto-generated method stub
 		
 	}
