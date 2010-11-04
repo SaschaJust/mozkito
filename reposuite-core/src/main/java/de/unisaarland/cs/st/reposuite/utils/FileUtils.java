@@ -1,11 +1,17 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 
@@ -241,6 +247,43 @@ public class FileUtils {
 			}
 		}
 		return list;
+	}
+	
+	public static boolean unzip(File zipFile, File directory) {
+		try {
+			int BUFFER = 2048;
+			BufferedOutputStream dest = null;
+			FileInputStream fis = new FileInputStream(zipFile);
+			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
+					continue;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("Extracting: " + entry);
+				}
+				int count;
+				byte data[] = new byte[BUFFER];
+				// write the files to the disk
+				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				        + FileUtils.fileSeparator + entry.getName()));
+				dest = new BufferedOutputStream(fos, BUFFER);
+				while ((count = zis.read(data, 0, BUFFER)) != -1) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				dest.close();
+			}
+			zis.close();
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	/**

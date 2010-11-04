@@ -19,7 +19,9 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
@@ -37,14 +39,52 @@ public class RepositoryTest {
 	// [scheme:][//authority][path][?query][#fragment]
 	// [user-info@]host[:port]
 	
+	@BeforeClass
+	public static void beforeClass() {
+		//unzip mercurial repo
+		try {
+			URL zipURL = RepositoryTest.class.getResource(System.getProperty("file.separator")
+			        + "repotest.mercurial.zip");
+			if (zipURL == null) {
+				fail();
+			}
+			File baseDir = new File((new URL(zipURL.toString().substring(0,
+			        zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+			if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
+				fail();
+			}
+			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			fail();
+		}
+	}
+	
 	private static DateTime getDateFromString(final String timestamp) {
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 		return dtf.parseDateTime(timestamp);
 	}
 	
-	private URI              originalNoUser;
-	private URI              originalUser;
-	private static File      tmpDirectory;
+	private URI         originalNoUser;
+	private URI         originalUser;
+	
+	private static File tmpDirectory;
+	
+	@AfterClass
+	public static void afterClass() {
+		try {
+			URL repoURL = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.mercurial");
+			File toDelete = new File(repoURL.toURI());
+			FileUtils.deleteDirectory(toDelete);
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			fail();
+		}
+	}
 	
 	private List<Repository> repositories = new LinkedList<Repository>();
 	
@@ -53,7 +93,6 @@ public class RepositoryTest {
 		originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
 		originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
 		for (RepositoryType type : RepositoryType.values()) {
-			//TODO enable CVS tests
 			if (type.equals(RepositoryType.CVS)) {
 				continue;
 			}
@@ -113,6 +152,11 @@ public class RepositoryTest {
 				}
 			}
 		}
+	}
+	
+	@Test
+	public void testAnnotate() {
+		//TODO
 	}
 	
 	@Test
@@ -176,6 +220,11 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	public void testDiff() {
+		// TODO implement test
+	}
+	
+	@Test
 	public void testDifferentUsername() {
 		URI encoded = Repository.encodeUsername(originalUser, "kim");
 		assertFalse(encoded.equals(originalUser));
@@ -236,7 +285,6 @@ public class RepositoryTest {
 	
 	@Test
 	public void testGetLastRevisionID() {
-		//FIXME
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
 				
@@ -388,7 +436,7 @@ public class RepositoryTest {
 	
 	@Test
 	public void testRenameEdit() {
-		
+		//TODO
 	}
 	
 	@Test

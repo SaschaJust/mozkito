@@ -3,8 +3,6 @@ package de.unisaarland.cs.st.reposuite.rcs.mercurial;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,48 +17,16 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class MercurialRepositoryTest {
 	
-	private File                cloneDir;
-	private MercurialRepository repo;
-	private URI                 uri;
-	
 	@Before
 	public void setUp() throws Exception {
-		// TODO replace this repo and create an own repo on the fly
-		uri = new URI("file:///Users/kim/Projects/reposuite");
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		if (cloneDir != null) {
-			FileUtils.forceDelete(cloneDir);
-		}
 	}
 	
 	@Test
 	public void testClone() {
-		repo = new MercurialRepository();
-		repo.setup(uri, null, null);
-		cloneDir = repo.getCloneDir();
-		File DOT_HG = new File(cloneDir, ".hg");
-		assertTrue(DOT_HG.exists());
-		assertTrue(DOT_HG.isDirectory());
-	}
-	
-	@Test
-	public void testCloneUsername() {
-		// TODO implement
-		// repo = new MercurialRepository();
-		// try {
-		// repo.setup(new URI("https://hg.st.cs.uni-saarland.de/hg/reposuite"),
-		// "kim", "");
-		// } catch (URISyntaxException e) {
-		// e.printStackTrace();
-		// fail();
-		// }
-		// cloneDir = repo.getCloneDir();
-		// File DOT_HG = new File(cloneDir, ".hg");
-		// assertTrue(DOT_HG.exists());
-		// assertTrue(DOT_HG.isDirectory());
 	}
 	
 	@Test
