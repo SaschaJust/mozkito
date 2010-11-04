@@ -41,8 +41,8 @@ public class RepositoryTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		//unzip mercurial repo
 		try {
+			//UNZIP mercurial repo
 			URL zipURL = RepositoryTest.class.getResource(System.getProperty("file.separator")
 			        + "repotest.mercurial.zip");
 			if (zipURL == null) {
@@ -54,12 +54,21 @@ public class RepositoryTest {
 				fail();
 			}
 			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
+			//UNZIP END
+			//UNZIP git repo
+			zipURL = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.git.zip");
+			if (zipURL == null) {
+				fail();
+			}
+			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
+			//UNZIP END
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			fail();
 		}
+		
 	}
 	
 	private static DateTime getDateFromString(final String timestamp) {
