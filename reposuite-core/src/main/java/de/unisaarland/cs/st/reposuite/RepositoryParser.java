@@ -20,7 +20,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryParser extends Thread {
+public class RepositoryParser extends RepositoryThread {
 	
 	/**
 	 * @return the simple class name
@@ -33,12 +33,14 @@ public class RepositoryParser extends Thread {
 	private final RepositoryAnalyzer    analyzer;
 	private RCSFileManager              fileManager;
 	
-	private final Queue<RCSTransaction> queue = new LinkedBlockingQueue<RCSTransaction>();
+	private final Queue<RCSTransaction> queue    = new LinkedBlockingQueue<RCSTransaction>();
+	private final boolean               shutdown = false;
 	
 	/**
 	 * @param reader
 	 */
-	public RepositoryParser(final RepositoryAnalyzer analyzer) {
+	public RepositoryParser(final ThreadGroup threadGroup, final RepositoryAnalyzer analyzer) {
+		super(threadGroup, getHandle());
 		this.analyzer = analyzer;
 		this.repository = analyzer.getRepository();
 	}
@@ -68,60 +70,57 @@ public class RepositoryParser extends Thread {
 	 */
 	@Override
 	public void run() {
-		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
-		}
-		
-		LogEntry entry;
-		RCSTransaction previousRcsTransaction = null;
-		this.fileManager = new RCSFileManager();
-		
-		while ((entry = this.analyzer.getNext()) != null) {
+		if (!this.shutdown) {
 			if (Logger.logInfo()) {
-				Logger.info("Parsing " + entry);
+				Logger.info("Starting " + getHandle());
 			}
-			RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
-			        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
-			Map<String, ChangeType> changedPaths = this.repository.getChangedPaths(entry.getRevision());
-			for (String fileName : changedPaths.keySet()) {
-				RCSFile file;
-				
-				if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-					file = this.fileManager
-					        .getFile(this.repository.getFormerPathName(rcsTransaction.getId(), fileName));
-					if (file == null) {
-						
-						if (Logger.logWarn()) {
-							Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-							        + changedPaths.get(fileName));
+			
+			LogEntry entry;
+			RCSTransaction previousRcsTransaction = null;
+			this.fileManager = new RCSFileManager();
+			
+			while (!this.shutdown && ((entry = this.analyzer.getNext()) != null)) {
+				if (Logger.logDebug()) {
+					Logger.debug("Parsing " + entry);
+				}
+				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
+				        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
+				Map<String, ChangeType> changedPaths = this.repository.getChangedPaths(entry.getRevision());
+				for (String fileName : changedPaths.keySet()) {
+					RCSFile file;
+					
+					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
+						file = this.fileManager.getFile(this.repository.getFormerPathName(rcsTransaction.getId(),
+						        fileName));
+						if (file == null) {
+							
+							if (Logger.logWarn()) {
+								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
+								        + changedPaths.get(fileName));
+							}
+							file = this.fileManager.getFile(fileName);
+							
+							if (file == null) {
+								file = this.fileManager.createFile(fileName, rcsTransaction);
+							}
+						} else {
+							file.assignTransaction(rcsTransaction, fileName);
 						}
+					} else {
 						file = this.fileManager.getFile(fileName);
 						
 						if (file == null) {
 							file = this.fileManager.createFile(fileName, rcsTransaction);
 						}
-					} else {
-						file.assignTransaction(rcsTransaction, fileName);
 					}
-				} else {
-					file = this.fileManager.getFile(fileName);
 					
-					if (file == null) {
-						file = this.fileManager.createFile(fileName, rcsTransaction);
-					}
+					rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),
+					        previousRcsTransaction));
 				}
-				
-				rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),
-				        previousRcsTransaction));
+				this.queue.add(rcsTransaction);
+				wake();
 			}
-			this.queue.add(rcsTransaction);
-			wake();
 		}
 		
 	}
-	
-	private synchronized void wake() {
-		notifyAll();
-	}
-	
 }

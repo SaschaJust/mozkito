@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryReader extends Thread {
+public class RepositoryReader extends RepositoryThread {
 	
 	/**
 	 * @return the simple class name
@@ -26,8 +26,10 @@ public class RepositoryReader extends Thread {
 	private final Repository        repository;
 	
 	private final RepoSuiteSettings settings;
+	private final boolean           shutdown = false;
 	
-	public RepositoryReader(final Repository repository, final RepoSuiteSettings settings) {
+	public RepositoryReader(final ThreadGroup threadGroup, final Repository repository, final RepoSuiteSettings settings) {
+		super(threadGroup, getHandle());
 		this.repository = repository;
 		this.settings = settings;
 	}
@@ -57,30 +59,28 @@ public class RepositoryReader extends Thread {
 	 */
 	@Override
 	public void run() {
-		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
+		if (!this.shutdown) {
+			if (Logger.logInfo()) {
+				Logger.info("Starting " + getHandle());
+			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("Requesting logs from " + this.repository);
+			}
+			
+			this.repository.getTransactionCount();
+			long cacheSize = (Long) this.settings.getSetting("repository.cachesize").getValue();
+			this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
+			        this.repository.getLastRevisionId(), (int) cacheSize);
+			
+			if (Logger.logInfo()) {
+				Logger.info("Created iterator.");
+			}
+			wake();
+			
+			while (!this.shutdown && !this.logIterator.done()) {
+				this.logIterator.update();
+			}
 		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("Requesting logs from " + this.repository);
-		}
-		
-		this.repository.getTransactionCount();
-		long cacheSize = (Long) this.settings.getSetting("repository.cachesize").getValue();
-		this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
-		        this.repository.getLastRevisionId(), (int) cacheSize);
-		
-		if (Logger.logInfo()) {
-			Logger.info("Created iterator.");
-		}
-		wake();
-		
-		while (!this.logIterator.done()) {
-			this.logIterator.update();
-		}
-	}
-	
-	private synchronized void wake() {
-		notifyAll();
 	}
 }

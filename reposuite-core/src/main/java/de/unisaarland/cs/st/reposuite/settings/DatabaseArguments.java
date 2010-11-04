@@ -2,9 +2,9 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.util.Map;
 
-import org.hibernate.SessionFactory;
-
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
  */
 public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
-	protected DatabaseArguments(RepoSuiteSettings settings, boolean isRequired) {
+	protected DatabaseArguments(final RepoSuiteSettings settings, final boolean isRequired) {
 		super();
 		addArgument(new StringArgument(settings, "database", "Name of the database", null, isRequired));
 		addArgument(new StringArgument(settings, "dbUser", "User name for database. Default: miner", "miner",
@@ -28,12 +28,22 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 	}
 	
 	@Override
-	public SessionFactory getValue() {
+	public HibernateUtil getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
 		
-		return HibernateUtil.createSessionFactory(arguments.get("dbHost").getValue().toString(),
-		        arguments.get("database").getValue().toString(), arguments.get("dbUser").getValue().toString(),
-		        arguments.get("dbPassword").getValue().toString(), arguments.get("dbType").getValue().toString(),
-		        arguments.get("dbDriver").getValue().toString());
+		HibernateUtil.createSessionFactory(arguments.get("dbHost").getValue().toString(), arguments.get("database")
+		        .getValue().toString(), arguments.get("dbUser").getValue().toString(), arguments.get("dbPassword")
+		        .getValue().toString(), arguments.get("dbType").getValue().toString(), arguments.get("dbDriver")
+		        .getValue().toString());
+		try {
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
+			return hibernateUtil;
+		} catch (UninitializedDatabaseException e) {
+			
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 }

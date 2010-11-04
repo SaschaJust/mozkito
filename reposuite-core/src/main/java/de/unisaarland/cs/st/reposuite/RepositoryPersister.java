@@ -3,8 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import org.hibernate.Session;
-
+import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -12,7 +11,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryPersister extends Thread {
+public class RepositoryPersister extends RepositoryThread {
 	
 	/**
 	 * @return the simple class name
@@ -23,11 +22,15 @@ public class RepositoryPersister extends Thread {
 	
 	private final RepositoryParser parser;
 	
-	private final Session          hibernateSession;
+	private final HibernateUtil    hibernateUtil;
 	
-	public RepositoryPersister(final RepositoryParser parser, final Session hibernateSession) {
+	private final boolean          shutdown = false;
+	
+	public RepositoryPersister(final ThreadGroup threadGroup, final RepositoryParser parser,
+	        final HibernateUtil hibernateUtil) {
+		super(threadGroup, getHandle());
 		this.parser = parser;
-		this.hibernateSession = hibernateSession;
+		this.hibernateUtil = hibernateUtil;
 	}
 	
 	/*
@@ -36,19 +39,27 @@ public class RepositoryPersister extends Thread {
 	 */
 	@Override
 	public void run() {
-		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
-		}
-		
-		RCSTransaction currentTransaction;
-		
-		while ((currentTransaction = this.parser.getNext()) != null) {
-			
+		if (!this.shutdown) {
 			if (Logger.logInfo()) {
-				Logger.info("Saving " + currentTransaction);
+				Logger.info("Starting " + getHandle());
 			}
-			this.hibernateSession.saveOrUpdate(currentTransaction);
+			this.hibernateUtil.beginTransaction();
+			RCSTransaction currentTransaction;
+			int i = 0;
+			while (!this.shutdown && ((currentTransaction = this.parser.getNext()) != null)) {
+				
+				if (Logger.logError()) {
+					Logger.error("Saving " + currentTransaction);
+				}
+				
+				if (++i % 1000 == 0) {
+					this.hibernateUtil.commitTransaction();
+					this.hibernateUtil.beginTransaction();
+				}
+				this.hibernateUtil.saveOrUpdate(currentTransaction);
+			}
+			this.hibernateUtil.commitTransaction();
+			
 		}
 	}
-	
 }
