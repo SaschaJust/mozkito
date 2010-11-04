@@ -84,7 +84,6 @@ public class RepositoryTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			
 			originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
 			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
 			

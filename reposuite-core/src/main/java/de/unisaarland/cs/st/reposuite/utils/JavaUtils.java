@@ -17,7 +17,7 @@ import org.apache.commons.lang.enums.EnumUtils;
  */
 public class JavaUtils {
 	
-	public static boolean AnyNull(Object... objects) {
+	public static boolean AnyNull(final Object... objects) {
 		for (Object object : objects) {
 			if (object == null) {
 				return true;
@@ -82,10 +82,14 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	public static String[] enumToArray(final Enum<?> e) {
+		return (String[]) EnumUtils.getEnumList(e.getClass()).toArray();
+	}
+	
 	public static String enumToString(final Enum<?> e) {
 		return collectionToString(EnumUtils.getEnumList(e.getClass()));
 	}
-	
+
 	/**
 	 * @param map
 	 * @return

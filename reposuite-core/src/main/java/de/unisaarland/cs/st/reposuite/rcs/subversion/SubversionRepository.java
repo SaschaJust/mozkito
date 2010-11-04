@@ -370,7 +370,6 @@ public class SubversionRepository extends Repository {
 								String copyPath = logEntryPath.getCopyPath().substring(1) + "/";
 								return copyPath
 								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
-								
 							}
 					}
 					

@@ -1,12 +1,7 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
-import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
-import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
-import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
@@ -36,8 +31,8 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	public RepositoryArguments(final RepoSuiteSettings settings, final boolean isRequired) {
 		super();
-		repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
-		        null, true);
+		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
+				null, isRequired);
 		RepositoryType[] rcsTypes = RepositoryType.values();
 		String[] argEnums = new String[rcsTypes.length];
 		StringBuilder ss = new StringBuilder();
@@ -47,11 +42,11 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			ss.append(rcsTypes[i].toString());
 			ss.append(" ");
 		}
-		repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
-		userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
-		passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
-		startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
-		endRevision = new StringArgument(settings, "rcsStop", "Revision to stop at", "HEAD", false);
+		this.repoTypeArg = new EnumArgument(settings, "rcsType", ss.toString(), null, isRequired, argEnums);
+		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
+		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
+		this.startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
+		this.endRevision = new StringArgument(settings, "rcsStop", "Revision to stop at", "HEAD", false);
 	}
 	
 	/*
@@ -62,17 +57,17 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = repoDirArg.getValue();
-		String username = userArg.getValue();
-		String password = passArg.getValue();
+		URI repositoryURI = this.repoDirArg.getValue();
+		String username = this.userArg.getValue();
+		String password = this.passArg.getValue();
 		String startRevision = this.startRevision.getValue();
 		String endRevision = this.endRevision.getValue();
 		
-		if (JavaUtils.AnyNull(repositoryURI, username, password, startRevision, endRevision)) {
+		if (JavaUtils.AnyNull(repositoryURI, this.repoTypeArg.getValue())) {
 			return null;
 		}
 		
-		RepositoryType rcsType = RepositoryType.valueOf(repoTypeArg.getValue());
+		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			if (Logger.logWarn()) {
@@ -85,45 +80,17 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		try {
 			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
 			Repository repository = repositoryClass.newInstance();
+
 			if ((username != null) && (password != null)) {
 				repository.setup(repositoryURI, startRevision, endRevision);
 			} else {
 				repository.setup(repositoryURI, startRevision, endRevision, username, password);
 			}
+
 			return repository;
-		} catch (UnregisteredRepositoryTypeException e) {
+		} catch (Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (InstantiationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (IllegalAccessException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (MalformedURLException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (InvalidProtocolType e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (InvalidRepositoryURI e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			throw new RuntimeException();
-		} catch (UnsupportedProtocolType e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
+				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
 		}
