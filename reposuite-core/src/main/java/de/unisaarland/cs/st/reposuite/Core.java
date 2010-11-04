@@ -52,7 +52,7 @@ public class Core extends Thread {
 	public void run() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
 		RepositoryArguments repoSettings = settings.setRepositoryArg(true);
-		DatabaseArguments databaseSettings = settings.setDatabaseArgs(true);
+		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
 		LoggerArguments logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		        false);
@@ -62,7 +62,6 @@ public class Core extends Thread {
 		
 		Repository repository = repoSettings.getValue();
 		logSettings.getValue();
-		HibernateUtil hibernateUtil = databaseSettings.getValue();
 		
 		RepositoryReader reader = new RepositoryReader(this.threads, repository, settings);
 		this.threadList.add(reader);
@@ -70,16 +69,13 @@ public class Core extends Thread {
 		this.threadList.add(analyzer);
 		RepositoryParser parser = new RepositoryParser(this.threads, analyzer);
 		this.threadList.add(parser);
-		RepositoryPersister persister = new RepositoryPersister(this.threads, parser, hibernateUtil);
-		this.threadList.add(persister);
-		// RepositoryThread t = new RepositoryThread(this.threads, "test") {
-		//
-		// @Override
-		// public void run() {
-		// throw new RuntimeException();
-		// }
-		// };
-		// this.threadList.add(t);
+		
+		if (databaseSettings != null) {
+			HibernateUtil hibernateUtil = databaseSettings.getValue();
+			
+			RepositoryPersister persister = new RepositoryPersister(this.threads, parser, hibernateUtil);
+			this.threadList.add(persister);
+		}
 		
 		for (Thread thread : this.threadList) {
 			thread.start();

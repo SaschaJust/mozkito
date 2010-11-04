@@ -85,7 +85,7 @@ public class CommandExecutor extends Thread {
 	 *         representing the output of the program
 	 */
 	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
-	        final InputStream input, final Map<String, String> environment) {
+			final InputStream input, final Map<String, String> environment) {
 		assert (command != null);
 		assert ((arguments == null) || (arguments.length > 0));
 		
@@ -128,16 +128,16 @@ public class CommandExecutor extends Thread {
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Executing: [command:"
-			        + command
-			        + "][arguments:"
-			        + StringEscapeUtils.escapeJava(Arrays.toString(arguments))
-			        + "][workingdir:"
-			        + (dir != null ? dir.getAbsolutePath() : "(null)")
-			        + "][input:"
-			        + (input != null ? "present" : "omitted")
-			        + "][environment:"
-			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
-			                .getenv())) + "]");
+					+ command
+					+ "][arguments:"
+					+ StringEscapeUtils.escapeJava(Arrays.toString(arguments))
+					+ "][workingdir:"
+					+ (dir != null ? dir.getAbsolutePath() : "(null)")
+					+ "][input:"
+					+ (input != null ? "present" : "omitted")
+					+ "][environment:"
+					+ StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
+							.getenv())) + "]");
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -174,11 +174,15 @@ public class CommandExecutor extends Thread {
 				writeTask.start();
 			}
 			
-			// wait for threads to finish
-			readTask.join(3000);
 			if (writeTask != null) {
-				writeTask.join(3000);
+				writeTask.join();
 			}
+
+			int returnValue = process.waitFor();
+			
+			// wait for threads to finish
+			readTask.join(10);
+			
 			
 			writer.close();
 			reader.close();
@@ -186,21 +190,14 @@ public class CommandExecutor extends Thread {
 				pipe.close();
 			}
 			
-			if (readTask.error || ((writeTask != null) && writeTask.error)) {
-				readTask.logLinesOnError();
-				if (writeTask != null) {
-					writeTask.logLinesOnError();
-				}
-			}
-			
 			// wait for the process (this should return instantly if no error
 			// occurred
-			int returnValue = process.waitFor();
+			
 			List<String> lines = readTask.getReadLines();
-			if (returnValue != 0) {
+			if ((returnValue != 0) || readTask.error || ((writeTask != null) && writeTask.error)) {
 				if (Logger.logError()) {
 					StringBuilder stringBuilder = new StringBuilder();
-					stringBuilder.append("Executing: [command:");
+					stringBuilder.append("Executed: [command:");
 					stringBuilder.append(command);
 					stringBuilder.append("][arguments:");
 					stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
@@ -210,14 +207,13 @@ public class CommandExecutor extends Thread {
 					stringBuilder.append((input != null ? "present" : "omitted"));
 					stringBuilder.append("][environment:");
 					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils
-					        .mapToString(environment != null ? environment : System.getenv())));
+							.mapToString(environment != null ? environment : System.getenv())));
 					stringBuilder.append("] failed with exitCode: ");
-					stringBuilder.append(returnValue + " with message: \n");
-					for (String line : lines) {
-						stringBuilder.append(line);
-						stringBuilder.append("\n");
+					stringBuilder.append(returnValue);
+					readTask.logLinesOnError();
+					if (writeTask != null) {
+						writeTask.logLinesOnError();
 					}
-					Logger.error(stringBuilder.toString());
 				}
 			}
 			return new Tuple<Integer, List<String>>(returnValue, lines);
@@ -271,7 +267,7 @@ public class CommandExecutor extends Thread {
 	 * @param pipe
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
-	        final BufferedReader pipe) {
+			final BufferedReader pipe) {
 		if (Logger.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}
@@ -285,21 +281,21 @@ public class CommandExecutor extends Thread {
 	 * @return the read lines
 	 */
 	private List<String> getReadLines() {
-		return readLines;
+		return this.readLines;
 	}
 	
 	/**
 	 * @return the task
 	 */
 	private Task getTask() {
-		return task;
+		return this.task;
 	}
 	
 	/**
 	 * @return the wrote lines
 	 */
 	private List<String> getWroteLines() {
-		return wroteLines;
+		return this.wroteLines;
 	}
 	
 	/**
@@ -308,7 +304,7 @@ public class CommandExecutor extends Thread {
 	 */
 	private void logLinesOnError() {
 		if (Logger.logDebug()) {
-			Logger.debug(getHandle() + "[" + task.toString() + "] lines processed:");
+			Logger.debug(getHandle() + "[" + this.task.toString() + "] lines processed:");
 			for (String outputLine : getReadLines()) {
 				Logger.error("read<< " + outputLine);
 			}
@@ -324,25 +320,24 @@ public class CommandExecutor extends Thread {
 	private void reading() {
 		String line;
 		try {
-			while ((line = reader.readLine()) != null) {
-				readLines.add(line);
+			while ((line = this.reader.readLine()) != null) {
+				this.readLines.add(line);
 			}
 		} catch (IOException e) {
+			this.error = true;
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			error = true;
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
-		switch (task) {
+		switch (this.task) {
 			case READER:
 				reading();
 				break;
@@ -351,7 +346,7 @@ public class CommandExecutor extends Thread {
 				break;
 			default:
 				if (Logger.logError()) {
-					Logger.error("Unsupported task " + task + " for " + CommandExecutor.getHandle() + ".");
+					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getHandle() + ".");
 				}
 		}
 	}
@@ -363,17 +358,18 @@ public class CommandExecutor extends Thread {
 		String line;
 		
 		try {
-			while ((line = pipe.readLine()) != null) {
-				wroteLines.add(line);
-				writer.write(line);
-				writer.write(FileUtils.lineSeparator);
+			while ((line = this.pipe.readLine()) != null) {
+				this.wroteLines.add(line);
+				this.writer.write(line);
+				this.writer.write(FileUtils.lineSeparator);
 			}
-			writer.flush();
+			this.writer.flush();
+			this.writer.close();
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			error = true;
+			this.error = true;
 		}
 	}
 }
