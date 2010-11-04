@@ -36,11 +36,11 @@ public class FileUtils {
 	 * @return returns the absolute path to the command, if found
 	 * @throws ExternalExecutableException
 	 */
-	public static String checkExecutable(String command) throws ExternalExecutableException {
+	public static String checkExecutable(final String command) throws ExternalExecutableException {
 		assert (command != null);
 		if (command.startsWith(FileUtils.fileSeparator)
-		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
-		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
+				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
 			// We got an absolut path here
 			File executable = new File(command);
 			if (!executable.exists()) {
@@ -69,7 +69,7 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-			        + pathVariable);
+					+ pathVariable);
 		}
 	}
 	
@@ -85,18 +85,18 @@ public class FileUtils {
 	 * @return the file handle corresponding to the requested new directory if
 	 *         existed or created. <code>null</code> otherwise.
 	 */
-	public static File createDir(File parentDir, String name) {
+	public static File createDir(final File parentDir, final String name) {
 		if (!parentDir.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				        + parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
+						+ parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
 			}
 			return null;
 		}
 		if ((!parentDir.canExecute()) || (!parentDir.canWrite())) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		}
@@ -106,14 +106,14 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-					        + parentDir.getAbsolutePath()
-					        + "`. Reason: directory exists already. Returning existing directory.");
+							+ parentDir.getAbsolutePath()
+							+ "`. Reason: directory exists already. Returning existing directory.");
 				}
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+							+ parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -121,7 +121,7 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
@@ -143,7 +143,7 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(File parentDir, String prefix, String suffix) {
+	public static File createRandomDir(final File parentDir, final String prefix, final String suffix) {
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
@@ -176,7 +176,7 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(String prefix, String suffix) {
+	public static File createRandomDir(final String prefix, final String suffix) {
 		return createRandomDir(tmpDir, prefix, suffix);
 	}
 	
@@ -189,7 +189,7 @@ public class FileUtils {
 	 *             Signals that an I/O exception has occurred.
 	 * @see {@link org.apache.commons.io.FileUtils#deleteDirectory(File)}
 	 */
-	public static void deleteDirectory(File directory) throws IOException {
+	public static void deleteDirectory(final File directory) throws IOException {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
 	}
 	
@@ -200,7 +200,7 @@ public class FileUtils {
 	 *            the file
 	 * @return the list
 	 */
-	public static List<String> fileToLines(File file) {
+	public static List<String> fileToLines(final File file) {
 		List<String> lines = new LinkedList<String>();
 		String line = "";
 		try {
@@ -223,7 +223,7 @@ public class FileUtils {
 	 *             Signals that an I/O exception has occurred.
 	 * @see {@link org.apache.commons.io.FileUtils#forceDelete(File)}
 	 */
-	public static void forceDelete(File file) throws IOException {
+	public static void forceDelete(final File file) throws IOException {
 		org.apache.commons.io.FileUtils.forceDelete(file);
 	}
 	
@@ -236,15 +236,15 @@ public class FileUtils {
 	 *             Signals that an I/O exception has occurred.
 	 * @see {@link org.apache.commons.io.FileUtils#forceDeleteOnExit(File)}
 	 */
-	public static void forceDeleteOnExit(File file) throws IOException {
-		// org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
+	public static void forceDeleteOnExit(final File file) throws IOException {
+		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
 	}
 	
 	/**
 	 * @param baseDirectory
 	 * @return
 	 */
-	public static List<File> getRecursiveDirectories(File baseDirectory) {
+	public static List<File> getRecursiveDirectories(final File baseDirectory) {
 		List<File> list = new LinkedList<File>();
 		for (String subDirectoryPath : baseDirectory.list()) {
 			File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator + subDirectoryPath);
@@ -256,7 +256,7 @@ public class FileUtils {
 		return list;
 	}
 	
-	public static boolean unzip(File zipFile, File directory) {
+	public static boolean unzip(final File zipFile, final File directory) {
 		try {
 			int BUFFER = 2048;
 			BufferedOutputStream dest = null;
@@ -275,7 +275,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-				        + FileUtils.fileSeparator + entry.getName()));
+						+ FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);
