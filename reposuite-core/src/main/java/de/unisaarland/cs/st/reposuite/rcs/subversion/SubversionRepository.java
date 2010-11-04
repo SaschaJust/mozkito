@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
+import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
@@ -50,6 +52,8 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
 
 /**
  * Subversion connector extending the {@link Repository} base class.
@@ -79,7 +83,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
@@ -177,7 +180,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
@@ -227,7 +229,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -254,21 +255,31 @@ public class SubversionRepository extends Repository {
 			return diffParser.getDeltas();
 			
 		} catch (SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			// try to checkout file in first revision
+			String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
+			String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+			File parentDir = checkoutPath(parentPath, baseRevision);
+			if ((parentDir == null) || (!parentDir.exists())) {
+				// checkout failed too. Return null
+				return null;
 			}
-			throw new RuntimeException();
+			File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
+			if (!checkedOutFile.exists()) {
+				return null;
+			}
+			List<String> lines = FileUtils.fileToLines(checkedOutFile);
+			Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
+			return patch.getDeltas();
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths(java.lang
 	 * .String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		assert (initialized);
@@ -317,7 +328,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -340,19 +350,30 @@ public class SubversionRepository extends Repository {
 		Long revisionNumber = buildRevision(revision).getNumber();
 		
 		try {
-			@SuppressWarnings("unchecked") Collection<SVNLogEntry> logs = repository.log(new String[] { "" }, null,
+			@SuppressWarnings ("unchecked") Collection<SVNLogEntry> logs = repository.log(new String[] { "" }, null,
 			        revisionNumber, revisionNumber, true, true);
 			
 			for (SVNLogEntry entry : logs) {
-				@SuppressWarnings("unchecked") Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
+				@SuppressWarnings ("unchecked") Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
 				for (Object o : changedPaths.keySet()) {
-					switch (changedPaths.get(o).getType()) {
+					SVNLogEntryPath logEntryPath = changedPaths.get(o);
+					switch (logEntryPath.getType()) {
 						case 'R':
-							if (changedPaths.get(o).getPath().equals(pathName)) {
-								assert (changedPaths.get(o).getCopyPath() != null);
-								return changedPaths.get(o).getCopyPath();
+						case 'A':
+							if (logEntryPath.getCopyPath() == null) {
+								continue;
+							}
+							if (logEntryPath.getPath().equals(pathName)) {
+								return logEntryPath.getCopyPath();
+							} else if (logEntryPath.getKind().equals(SVNNodeKind.DIR)
+							        && pathName.startsWith(logEntryPath.getPath().substring(1))) {
+								String copyPath = logEntryPath.getCopyPath().substring(1) + "/";
+								return copyPath
+								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
+								
 							}
 					}
+					
 				}
 			}
 			
@@ -368,7 +389,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
@@ -391,7 +411,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getRelativeTransactionId
 	 * (java.lang.String, long)
@@ -411,7 +430,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getTransactionCount()
 	 */
 	@Override
@@ -429,7 +447,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getTransactionId(long)
 	 */
 	@Override
@@ -439,11 +456,10 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		assert (initialized);
@@ -486,7 +502,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
@@ -497,7 +512,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -609,7 +623,6 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

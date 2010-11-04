@@ -56,7 +56,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
@@ -112,7 +111,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
@@ -136,7 +134,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -151,11 +148,13 @@ public class GitRepository extends Repository {
 		}
 		List<String> oldContent = response.getSecond();
 		
-		// get the old version
+		// get the new version
+		List<String> newContent = new ArrayList<String>(0);
 		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, cloneDir,
 		        null, new HashMap<String, String>());
-		
-		List<String> newContent = response.getSecond();
+		if (response.getFirst() == 0) {
+			newContent = response.getSecond();
+		}
 		
 		Patch patch = DiffUtils.diff(oldContent, newContent);
 		return patch.getDeltas();
@@ -163,7 +162,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths()
 	 */
 	@Override
@@ -227,7 +225,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -272,7 +269,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
@@ -296,7 +292,7 @@ public class GitRepository extends Repository {
 		if (index == 0) {
 			return transactionId;
 		} else if (index < 0) {
-			String[] args = new String[] { "log", "--pretty=format:'%H'", "-r", transactionId };
+			String[] args = new String[] { "log", "--pretty=format:%H", "-r", transactionId };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
@@ -308,17 +304,17 @@ public class GitRepository extends Repository {
 				return lines.get((int) index);
 			}
 		} else {
-			//git log --reverse --pretty=format:'%H' -r cfd84dce121959f590b61e8896e9980f51f42477^..head
-			String[] args = new String[] { "log", "--reverse", "--pretty=format:'%H'", "-r", transactionId + "^..head" };
+			String[] args = new String[] { "log", "--reverse", "--pretty=format:%H", "-r", transactionId + "..head" };
+			
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
 			List<String> lines = response.getSecond();
-			if (lines.size() < index) {
+			if (lines.size() < (index - 1)) {
 				return lines.get(lines.size() - 1);
 			} else {
-				return lines.get((int) index);
+				return lines.get((int) index - 1);
 			}
 		}
 	}
@@ -345,7 +341,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -364,7 +359,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
@@ -398,7 +392,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */

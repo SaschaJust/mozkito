@@ -47,7 +47,8 @@ public class MercurialRepository extends Repository {
 	                                                                "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
 	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
-	//	protected static DateTimeFormatter hgLogDateFormat      = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
+	// protected static DateTimeFormatter hgLogDateFormat =
+	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
 	protected static Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
 	protected static String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
@@ -96,7 +97,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
@@ -183,13 +183,12 @@ public class MercurialRepository extends Repository {
 			if (line.trim().equals("")) {
 				continue;
 			}
-			hashes.add(line.trim());
+			hashes.add(line.trim().replaceAll("'", ""));
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
@@ -220,7 +219,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -232,25 +230,25 @@ public class MercurialRepository extends Repository {
 			}
 			return null;
 		}
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-		        new String[] { "cat", "-r", baseRevision }, cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision,
+		        filePath }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> original = response.getSecond();
-		
-		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision }, cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return null;
+		List<String> revised = new ArrayList<String>(0);
+		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath }, cloneDir,
+		        null, null);
+		if (response.getFirst() == 0) {
+			revised = response.getSecond();
 		}
-		List<String> revised = response.getSecond();
+		
 		Patch patch = DiffUtils.diff(original, revised);
 		return patch.getDeltas();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths(java.lang
 	 * .String)
@@ -331,7 +329,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -354,7 +351,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision,
-		        "--template", "\"{file_copies%filecopy}\"" }, cloneDir, null, null);
+		        "--template", "{file_copies%filecopy}" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -376,7 +373,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
@@ -454,7 +450,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -484,7 +479,8 @@ public class MercurialRepository extends Repository {
 		}
 		List<String> lines = response.getSecond();
 		
-		//pre-filter lines. hg log might have some entries spanning multiple lines. 
+		// pre-filter lines. hg log might have some entries spanning multiple
+		// lines.
 		lines = preFilterLines(lines);
 		
 		for (String line : lines) {
@@ -544,7 +540,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
@@ -580,7 +575,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */

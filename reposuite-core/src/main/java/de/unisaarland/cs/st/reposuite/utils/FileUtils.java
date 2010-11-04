@@ -193,6 +193,13 @@ public class FileUtils {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
 	}
 	
+	/**
+	 * File to lines.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the list
+	 */
 	public static List<String> fileToLines(File file) {
 		List<String> lines = new LinkedList<String>();
 		String line = "";
