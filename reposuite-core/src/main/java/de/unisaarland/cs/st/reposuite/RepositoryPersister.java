@@ -34,26 +34,28 @@ public class RepositoryPersister extends RepoSuiteThread implements RepoSuiteSin
 	@Override
 	public void connectInput(final RepoSuitePostFilterThread<RCSTransaction> postFilterThread) {
 		this.inPostFilter = postFilterThread;
+		this.knownThreads.add(postFilterThread);
 		
 		if (Logger.logInfo()) {
 			Logger.info("[" + getHandle() + "] Linking input connector to: " + postFilterThread.getHandle());
 		}
 		
-		if (this.inPostFilter.hasOutputConnector() && !this.inPostFilter.isOutputConnected()) {
-			this.inPostFilter.connectOutput(this);
+		if (postFilterThread.hasOutputConnector() && !postFilterThread.isOutputConnected()) {
+			postFilterThread.connectOutput(this);
 		}
 	}
 	
 	@Override
 	public void connectInput(final RepoSuiteTransformerThread<?, RCSTransaction> transformerThread) {
 		this.inTransformer = transformerThread;
+		this.knownThreads.add(transformerThread);
 		
 		if (Logger.logInfo()) {
 			Logger.info("[" + getHandle() + "] Linking input connector to: " + transformerThread.getHandle());
 		}
 		
-		if (this.inPostFilter.hasOutputConnector() && !this.inPostFilter.isOutputConnected()) {
-			this.inPostFilter.connectOutput(this);
+		if (transformerThread.hasOutputConnector() && !transformerThread.isOutputConnected()) {
+			transformerThread.connectOutput(this);
 		}
 	}
 	

@@ -24,7 +24,7 @@ class GitLogParser {
 	
 	protected static DateTimeFormatter gitLogDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex             regex            = new Regex(
-	                                                            "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex             messageRegex     = new Regex(".*$$\\s*git-svn-id:.*");
 	private static final PersonManager personManager    = new PersonManager();
 	
@@ -57,7 +57,7 @@ class GitLogParser {
 						previous = result.get(result.size() - 1);
 					}
 					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author
-					        : null)), message.toString(), dateTime));
+							: null)), message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
@@ -107,9 +107,14 @@ class GitLogParser {
 			} else if (line.startsWith(" ")) {
 				if (line.trim().startsWith("git-svn-id")) {
 					String tmpString = message.toString();
-					tmpString = tmpString.substring(0, tmpString.length() - 2);
-					message = new StringBuilder();
-					message.append(tmpString);
+					if (tmpString.length() > 2) {
+						tmpString = tmpString.substring(0, tmpString.length() - 2);
+						message = new StringBuilder();
+						message.append(tmpString);
+					} else {
+						message = new StringBuilder();
+						
+					}
 					append = false;
 				}
 				if (append) {
@@ -129,7 +134,7 @@ class GitLogParser {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author : null)),
-			        message.toString(), dateTime));
+					message.toString(), dateTime));
 		}
 		Collections.reverse(result);
 		return result;

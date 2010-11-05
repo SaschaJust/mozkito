@@ -59,10 +59,10 @@ public class HibernateUtil {
 	}
 	
 	public static void createSessionFactory(final String host, final String database, final String user,
-	        final String password, final String type, final String driver) throws HibernateException {
+			final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			        + "?useUnicode=true&characterEncoding=UTF-8";
+			+ "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
@@ -141,8 +141,8 @@ public class HibernateUtil {
 		Collection<Annotated> saveFirst = object.getSaveFirst();
 		if (saveFirst != null) {
 			
-			if (Logger.logError()) {
-				Logger.error(JavaUtils.collectionToString(saveFirst));
+			if (Logger.logDebug()) {
+				Logger.debug(JavaUtils.collectionToString(saveFirst));
 			}
 			for (Annotated innerObject : saveFirst) {
 				this.session.saveOrUpdate(innerObject);
