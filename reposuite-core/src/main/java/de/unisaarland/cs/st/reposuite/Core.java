@@ -3,8 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import java.util.ArrayList;
-
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -19,30 +17,9 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author just
  * 
  */
-public class Core extends Thread {
+public class Core extends Thread implements RepoSuiteToolchain {
 	
-	protected static class CoreThreadGroup extends ThreadGroup {
-		
-		private final Core core;
-		
-		public CoreThreadGroup(final Core core, final String name) {
-			super(name);
-			this.core = core;
-		}
-		
-		@Override
-		public void uncaughtException(final Thread t, final Throwable e) {
-			
-			if (Logger.logError()) {
-				Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
-						+ ". Message: " + e.getMessage(), e);
-			}
-			this.core.shutdown();
-		}
-	}
-	
-	private final ThreadGroup                 threads    = new CoreThreadGroup(this, Core.class.getSimpleName());
-	private final ArrayList<RepositoryThread> threadList = new ArrayList<RepositoryThread>();
+	private final RepoSuiteThreadGroup threads = new RepoSuiteThreadGroup(Core.class.getSimpleName());
 	
 	/**
 	 * 
@@ -55,40 +32,13 @@ public class Core extends Thread {
 	 */
 	@Override
 	public void run() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
-		RepositoryArguments repoSettings = settings.setRepositoryArg(true);
-		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
-		LoggerArguments logSettings = settings.setLoggerArg(true);
-		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-				false);
-		new LongArgument(settings, "repository.cachesize",
-				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
-		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		        false);
-
-		settings.parseArguments();
+		setup();
 		
-		Repository repository = repoSettings.getValue();
-		logSettings.getValue();
-		
-		RepositoryReader reader = new RepositoryReader(this.threads, repository, settings);
-		this.threadList.add(reader);
-		RepositoryAnalyzer analyzer = new RepositoryAnalyzer(this.threads, reader, settings);
-		this.threadList.add(analyzer);
-		RepositoryParser parser = new RepositoryParser(this.threads, analyzer);
-		this.threadList.add(parser);
-		HibernateUtil hibernateUtil = databaseSettings.getValue();
-		
-		if (hibernateUtil != null) {
-			RepositoryPersister persister = new RepositoryPersister(this.threads, parser, hibernateUtil);
-			this.threadList.add(persister);
-		}
-		
-		for (Thread thread : this.threadList) {
+		for (Thread thread : this.threads.getThreads()) {
 			thread.start();
 		}
 		
-		for (Thread thread : this.threadList) {
+		for (Thread thread : this.threads.getThreads()) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -99,7 +49,43 @@ public class Core extends Thread {
 				throw new RuntimeException();
 			}
 		}
+	}
+	
+	@Override
+	public void setup() {
+		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositoryArguments repoSettings = settings.setRepositoryArg(true);
+		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
+		LoggerArguments logSettings = settings.setLoggerArg(true);
+		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
+				false);
+		new LongArgument(settings, "repository.cachesize",
+				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
+				false);
 		
+		settings.parseArguments();
+		
+		Repository repository = repoSettings.getValue();
+		logSettings.getValue();
+		
+		RepositoryReader reader = new RepositoryReader(this.threads, repository, settings);
+		
+		RepositoryAnalyzer analyzer = new RepositoryAnalyzer(this.threads, repository, settings);
+		analyzer.connectInput(reader);
+		
+		RepositoryParser parser = new RepositoryParser(this.threads, repository, settings);
+		parser.connectInput(analyzer);
+		
+		HibernateUtil hibernateUtil = databaseSettings.getValue();
+		
+		if (hibernateUtil != null) {
+			RepositoryPersister persister = new RepositoryPersister(this.threads, hibernateUtil, settings);
+			persister.connectInput(parser);
+		} else {
+			RepositoryVoidSink voidSink = new RepositoryVoidSink(this.threads);
+			voidSink.connectInput(parser);
+		}
 	}
 	
 	/**
@@ -110,8 +96,6 @@ public class Core extends Thread {
 			Logger.error("Terminating " + this.threads.activeCount() + " threads.");
 		}
 		
-		for (RepositoryThread thread : this.threadList) {
-			thread.shutdown();
-		}
+		this.threads.shutdown();
 	}
 }

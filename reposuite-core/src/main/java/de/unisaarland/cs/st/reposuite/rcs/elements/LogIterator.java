@@ -23,10 +23,9 @@ public class LogIterator implements Iterator<LogEntry> {
 	private boolean          done         = false;
 	private final int        cacheSize;
 	private List<LogEntry>   nextEntries;
-	private boolean          updatable;
 	
 	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
-	        final int cacheSize) {
+			final int cacheSize) {
 		assert (repository != null);
 		assert (cacheSize != 0);
 		
@@ -56,7 +55,7 @@ public class LogIterator implements Iterator<LogEntry> {
 		assert (!this.currentEntries.isEmpty());
 	}
 	
-	public synchronized boolean done() {
+	public boolean done() {
 		return this.done;
 	}
 	
@@ -66,7 +65,7 @@ public class LogIterator implements Iterator<LogEntry> {
 	}
 	
 	@Override
-	public synchronized LogEntry next() {
+	public LogEntry next() {
 		if (this.done) {
 			return null;
 		} else {
@@ -74,7 +73,7 @@ public class LogIterator implements Iterator<LogEntry> {
 			this.currentIndex++;
 			
 			if (entry.getRevision().equals(this.endRevision)
-			        || entry.getRevision().equals(this.repository.getLastRevisionId())) {
+					|| entry.getRevision().equals(this.repository.getLastRevisionId())) {
 				this.done = true;
 			} else {
 				
@@ -83,22 +82,10 @@ public class LogIterator implements Iterator<LogEntry> {
 						this.done = true;
 						return null;
 					} else {
-						if (this.updatable) {
-							try {
-								wait();
-							} catch (InterruptedException e) {
-								
-								if (Logger.logError()) {
-									Logger.error(e.getMessage(), e);
-								}
-							}
-						}
-						
 						this.currentEntries = this.nextEntries;
 						this.nextEntries = null;
 						this.currentIndex = 0;
-						this.updatable = true;
-						notifyAll();
+						update();
 					}
 				}
 			}
@@ -109,33 +96,17 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		next();
 	}
 	
-	public synchronized void update() {
-		if (!this.updatable) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-			}
-		}
-		
+	public void update() {
 		if (Logger.logDebug()) {
 			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
 		}
 		
 		this.nextEntries = this.repository.log(
-		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
-		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
-		this.updatable = false;
-		
-		notifyAll();
-		
+				this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
+				this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
 	}
 	
 }

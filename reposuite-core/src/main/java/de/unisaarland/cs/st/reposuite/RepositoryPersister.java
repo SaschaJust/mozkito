@@ -5,32 +5,76 @@ package de.unisaarland.cs.st.reposuite;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryPersister extends RepositoryThread {
+public class RepositoryPersister extends RepoSuiteThread implements RepoSuiteSinkThread<RCSTransaction> {
 	
-	/**
-	 * @return the simple class name
-	 */
-	public static String getHandle() {
-		return RepositoryPersister.class.getSimpleName();
-	}
-	
-	private final RepositoryParser parser;
 	
 	private final HibernateUtil    hibernateUtil;
 	
-	private final boolean          shutdown = false;
+	private RepoSuitePostFilterThread<RCSTransaction>     inPostFilter;
 	
-	public RepositoryPersister(final ThreadGroup threadGroup, final RepositoryParser parser,
-	        final HibernateUtil hibernateUtil) {
-		super(threadGroup, getHandle());
-		this.parser = parser;
+	private RepoSuiteTransformerThread<?, RCSTransaction> inTransformer;
+	
+	@SuppressWarnings ("unused")
+	private final RepoSuiteSettings                       settings;
+	
+	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final HibernateUtil hibernateUtil,
+			final RepoSuiteSettings settings) {
+		super(threadGroup, RepositoryPersister.class.getSimpleName());
 		this.hibernateUtil = hibernateUtil;
+		this.settings = settings;
+	}
+	
+	@Override
+	public void connectInput(final RepoSuitePostFilterThread<RCSTransaction> postFilterThread) {
+		this.inPostFilter = postFilterThread;
+		
+		if (Logger.logInfo()) {
+			Logger.info("[" + getHandle() + "] Linking input connector to: " + postFilterThread.getHandle());
+		}
+		
+		if (this.inPostFilter.hasOutputConnector() && !this.inPostFilter.isOutputConnected()) {
+			this.inPostFilter.connectOutput(this);
+		}
+	}
+	
+	@Override
+	public void connectInput(final RepoSuiteTransformerThread<?, RCSTransaction> transformerThread) {
+		this.inTransformer = transformerThread;
+		
+		if (Logger.logInfo()) {
+			Logger.info("[" + getHandle() + "] Linking input connector to: " + transformerThread.getHandle());
+		}
+		
+		if (this.inPostFilter.hasOutputConnector() && !this.inPostFilter.isOutputConnected()) {
+			this.inPostFilter.connectOutput(this);
+		}
+	}
+	
+	@Override
+	public boolean hasInputConnector() {
+		return true;
+	}
+	
+	@Override
+	public boolean hasOutputConnector() {
+		return false;
+	}
+	
+	@Override
+	public boolean isInputConnected() {
+		return (this.inPostFilter != null) || (this.inTransformer != null);
+	}
+	
+	@Override
+	public boolean isOutputConnected() {
+		return true;
 	}
 	
 	/*
@@ -39,27 +83,34 @@ public class RepositoryPersister extends RepositoryThread {
 	 */
 	@Override
 	public void run() {
-		if (!this.shutdown) {
-			if (Logger.logInfo()) {
-				Logger.info("Starting " + getHandle());
-			}
-			this.hibernateUtil.beginTransaction();
-			RCSTransaction currentTransaction;
-			int i = 0;
-			while (!this.shutdown && ((currentTransaction = this.parser.getNext()) != null)) {
-				
-				if (Logger.logError()) {
-					Logger.error("Saving " + currentTransaction);
-				}
-				
-				if (++i % 1000 == 0) {
-					this.hibernateUtil.commitTransaction();
-					this.hibernateUtil.beginTransaction();
-				}
-				this.hibernateUtil.saveOrUpdate(currentTransaction);
-			}
-			this.hibernateUtil.commitTransaction();
-			
+		if (!checkConnections()) {
+			return;
 		}
+		
+		if (!checkNotShutdown()) {
+			return;
+		}
+		
+		if (Logger.logInfo()) {
+			Logger.info("Starting " + getHandle());
+		}
+		this.hibernateUtil.beginTransaction();
+		RCSTransaction currentTransaction;
+		int i = 0;
+		while (!isShutdown()
+				&& ((currentTransaction = (this.inPostFilter != null ? this.inPostFilter.getNext()
+						: this.inTransformer.getNext())) != null)) {
+			
+			if (Logger.logTrace()) {
+				Logger.trace("Saving " + currentTransaction);
+			}
+			
+			if (++i % 1000 == 0) {
+				this.hibernateUtil.commitTransaction();
+				this.hibernateUtil.beginTransaction();
+			}
+			this.hibernateUtil.saveOrUpdate(currentTransaction);
+		}
+		this.hibernateUtil.commitTransaction();
 	}
 }

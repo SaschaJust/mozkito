@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/reposuite-core/src/main/java/main/Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/tmp/reposuite_core.log"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-core"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=warn -DrcsType=SUBVERSION -DminerRCSDirectory=file:///Users/just/Documents/University/msa_ss10/project/svn_repo_2010-05-14"/>
+</launchConfiguration>
