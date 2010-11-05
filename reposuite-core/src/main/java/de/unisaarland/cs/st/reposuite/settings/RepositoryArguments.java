@@ -34,8 +34,8 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 		this.repoDirArg = new URIArgument(settings, "minerRCSDirectory", "Directory where the rcs repository is stored",
 				null, isRequired);
 		this.repoTypeArg = new EnumArgument(settings, "rcsType", "Type of the repository. Possible values: "
-		        + JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
-		        JavaUtils.enumToArray(RepositoryType.SUBVERSION));
+				+ JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
+				JavaUtils.enumToArray(RepositoryType.SUBVERSION));
 		this.userArg = new StringArgument(settings, "rcsUser", "Username to access repository", null, false);
 		this.passArg = new StringArgument(settings, "rcsPassword", "Password to access repository", null, false);
 		this.startRevision = new StringArgument(settings, "rcsStart", "Revision to start with", null, false);
@@ -74,7 +74,7 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
 			Repository repository = repositoryClass.newInstance();
 			
-			if ((username != null) && (password != null)) {
+			if ((username == null) && (password == null)) {
 				repository.setup(repositoryURI, startRevision, endRevision);
 			} else {
 				repository.setup(repositoryURI, startRevision, endRevision, username, password);
