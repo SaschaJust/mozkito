@@ -32,7 +32,7 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 		addArgument(new StringArgument(settings, "tracker.baseUrl", "Base url of the tracker", null, isRequired));
 		addArgument(new ListArgument(settings, "tracker.pattern",
 				"The filename pattern the bugs have to match to be accepted", "*", isRequired));
-		addArgument(new EnumArgument(settings, "tracker.pattern",
+		addArgument(new EnumArgument(settings, "tracker.type",
 				"The filename pattern the bugs have to match to be accepted", null, isRequired,
 				JavaUtils.enumToArray(TrackerType.BUGZILLA)));
 		addArgument(new StringArgument(settings, "tracker.user", "Username to access tracker", null, false));

@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.enums.EnumUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -83,13 +82,19 @@ public class JavaUtils {
 	}
 	
 	public static String[] enumToArray(final Enum<?> e) {
-		return (String[]) EnumUtils.getEnumList(e.getClass()).toArray();
+		String[] retval = new String [e.getDeclaringClass().getEnumConstants().length];
+		
+		for (int i = 0; i<retval.length; ++i) {
+			retval[i] = e.getDeclaringClass().getEnumConstants()[i].toString();
+		}
+		return retval;
 	}
 	
 	public static String enumToString(final Enum<?> e) {
-		return collectionToString(EnumUtils.getEnumList(e.getClass()));
+		Object[] enumConstants = e.getDeclaringClass().getEnumConstants();
+		return arrayToString(enumConstants);
 	}
-
+	
 	/**
 	 * @param map
 	 * @return
