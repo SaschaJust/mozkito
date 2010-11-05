@@ -83,6 +83,15 @@ public abstract class Tracker {
 	 */
 	public abstract void parse();
 	
+	/**
+	 * @param uri
+	 * @param url
+	 * @param filter
+	 * @param username
+	 * @param password
+	 * @param startAt
+	 * @param stopAt
+	 */
 	public abstract void setup(final URI uri, final URL url, final FilenameFilter filter, final String username,
 			final String password, final String startAt, final String stopAt);
 	

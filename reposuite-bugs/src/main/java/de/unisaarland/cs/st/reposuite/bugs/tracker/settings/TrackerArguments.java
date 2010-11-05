@@ -46,7 +46,7 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public Object getValue() {
+	public Tracker getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("tracker.uri").getValue(), arguments.get("tracker.baseUrl").getValue(), arguments.get("tracker.pattern").getValue(), arguments.get("tracker.type").getValue())) {
@@ -54,7 +54,7 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 		}
 		
 		// TODO check for username ^ password != null
-
+		
 		TrackerType trackerType = TrackerType.valueOf(arguments.get("tracker.type").getValue().toString().toUpperCase());
 		try {
 			Class<? extends Tracker> trackerHandler = TrackerFactory.getTrackerHandler(trackerType);
