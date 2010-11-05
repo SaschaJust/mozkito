@@ -45,6 +45,7 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
+		<module>reposuite-bugs</module>
 		<module>reposuite-core</module>
 		<module>reposuite-tracker</module>
 		<module>reposuite-mapping</module>
