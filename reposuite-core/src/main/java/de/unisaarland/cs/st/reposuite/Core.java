@@ -11,7 +11,6 @@ import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author just
@@ -19,12 +18,13 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class Core extends Thread implements RepoSuiteToolchain {
 	
-	private final RepoSuiteThreadGroup threads = new RepoSuiteThreadGroup(Core.class.getSimpleName());
+	private final RepoSuiteThreadPool threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName());
 	
 	/**
 	 * 
 	 */
-	public Core() {}
+	public Core() {
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -34,21 +34,7 @@ public class Core extends Thread implements RepoSuiteToolchain {
 	public void run() {
 		setup();
 		
-		for (Thread thread : this.threads.getThreads()) {
-			thread.start();
-		}
-		
-		for (Thread thread : this.threads.getThreads()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				throw new RuntimeException();
-			}
-		}
+		this.threadPool.execute();
 	}
 	
 	@Override
@@ -58,44 +44,32 @@ public class Core extends Thread implements RepoSuiteToolchain {
 		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
 		LoggerArguments logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-				false);
-		new LongArgument(settings, "repository.cachesize",
-				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		        false);
+		new LongArgument(settings, "cache.size",
+		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-				false);
+		        false);
 		
 		settings.parseArguments();
 		
 		Repository repository = repoSettings.getValue();
 		logSettings.getValue();
 		
-		RepositoryReader reader = new RepositoryReader(this.threads, repository, settings);
-		
-		RepositoryAnalyzer analyzer = new RepositoryAnalyzer(this.threads, repository, settings);
-		analyzer.connectInput(reader);
-		
-		RepositoryParser parser = new RepositoryParser(this.threads, repository, settings);
-		parser.connectInput(analyzer);
+		new RepositoryReader(this.threadPool.getThreadGroup(), settings, repository);
+		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), settings, repository);
+		new RepositoryParser(this.threadPool.getThreadGroup(), settings, repository);
 		
 		HibernateUtil hibernateUtil = databaseSettings.getValue();
 		
 		if (hibernateUtil != null) {
-			RepositoryPersister persister = new RepositoryPersister(this.threads, hibernateUtil, settings);
-			persister.connectInput(parser);
+			new RepositoryPersister(this.threadPool.getThreadGroup(), settings, hibernateUtil);
 		} else {
-			RepositoryVoidSink voidSink = new RepositoryVoidSink(this.threads);
-			voidSink.connectInput(parser);
+			new RepositoryVoidSink(this.threadPool.getThreadGroup(), settings);
 		}
 	}
 	
-	/**
-	 * 
-	 */
+	@Override
 	public void shutdown() {
-		if (Logger.logError()) {
-			Logger.error("Terminating " + this.threads.activeCount() + " threads.");
-		}
-		
-		this.threads.shutdown();
+		this.threadPool.shutdown();
 	}
 }

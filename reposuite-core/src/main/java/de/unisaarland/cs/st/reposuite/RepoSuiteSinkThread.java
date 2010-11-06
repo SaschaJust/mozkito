@@ -3,14 +3,27 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
-public interface RepoSuiteSinkThread<T> extends RepoSuiteGeneralThread {
+public class RepoSuiteSinkThread<T> extends RepoSuiteThread<T, T> {
 	
-	public void connectInput(RepoSuitePostFilterThread<T> thread);
+	public RepoSuiteSinkThread(final RepoSuiteThreadGroup threadGroup, final String name,
+	        final RepoSuiteSettings settings) {
+		super(threadGroup, name, settings);
+	}
 	
-	public void connectInput(RepoSuiteTransformerThread<?, T> thread);
+	@Override
+	public boolean hasInputConnector() {
+		return true;
+	}
+	
+	@Override
+	public boolean hasOutputConnector() {
+		return false;
+	}
+	
 }

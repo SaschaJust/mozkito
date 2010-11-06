@@ -10,29 +10,29 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class RepoSuiteThreadGroup extends ThreadGroup {
 	
-	private final Collection<RepoSuiteThread> threads = new LinkedList<RepoSuiteThread>();
+	private final Collection<RepoSuiteThread<?, ?>> threads = new LinkedList<RepoSuiteThread<?, ?>>();
 	
 	public RepoSuiteThreadGroup(final String name) {
 		super(name);
 	}
 	
-	public void addThread(final RepoSuiteThread thread) {
+	public void addThread(final RepoSuiteThread<?, ?> thread) {
 		this.getThreads().add(thread);
 	}
 	
 	/**
 	 * @return the threads
 	 */
-	public final  Collection<RepoSuiteThread> getThreads() {
+	public final Collection<RepoSuiteThread<?, ?>> getThreads() {
 		return this.threads;
 	}
 	
 	public void shutdown() {
-		for (RepoSuiteThread thread : this.getThreads()) {
+		for (RepoSuiteThread<?, ?> thread : this.getThreads()) {
 			thread.shutdown();
 		}
 	}
@@ -42,7 +42,7 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 		
 		if (Logger.logError()) {
 			Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
-					+ ". Message: " + e.getMessage(), e);
+			        + ". Message: " + e.getMessage(), e);
 			Logger.error("Shutting down.");
 		}
 		shutdown();
