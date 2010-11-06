@@ -7,25 +7,16 @@ import de.unisaarland.cs.st.reposuite.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
+public class TrackerVoidSink extends RepoSuiteSinkThread<BugReport> {
 	
-	private final HibernateUtil hibernateUtil;
-	
-	/**
-	 * @param threadGroup
-	 * @param hibernateUtil
-	 */
-	public TrackerPersister(final RepoSuiteThreadGroup threadGroup, final TrackerSettings settings,
-	        final HibernateUtil hibernateUtil) {
-		super(threadGroup, TrackerPersister.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+	public TrackerVoidSink(final RepoSuiteThreadGroup threadGroup, final TrackerSettings settings) {
+		super(threadGroup, TrackerVoidSink.class.getSimpleName(), settings);
 	}
 	
 	@Override
@@ -44,9 +35,8 @@ public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
 			
 			while (!isShutdown() && ((bugReport = this.inputStorage.read()) != null)) {
 				if (Logger.logDebug()) {
-					Logger.debug("Storing " + bugReport.getId() + ".");
+					Logger.debug("Void sinking " + bugReport.getId() + ".");
 				}
-				this.hibernateUtil.saveOrUpdate(bugReport);
 			}
 			
 		} catch (Exception e) {
@@ -56,4 +46,5 @@ public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
 			shutdown();
 		}
 	}
+	
 }

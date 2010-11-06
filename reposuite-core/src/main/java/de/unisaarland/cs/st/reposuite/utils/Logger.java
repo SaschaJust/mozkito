@@ -397,7 +397,7 @@ public class Logger {
 	 * @param fileName
 	 *            full path to the configuration file
 	 */
-	public static void readConfigiration(final String fileName) {
+	public static void readConfiguration(final String fileName) {
 		// FIXME this should be generalized
 		PropertyConfigurator.configure(fileName);
 	}

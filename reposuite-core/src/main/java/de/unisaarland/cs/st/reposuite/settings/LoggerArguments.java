@@ -38,7 +38,7 @@ public class LoggerArguments extends RepoSuiteArgumentSet {
 	@Override
 	public Boolean getValue() {
 		if (this.logConfig.getValue() != null) {
-			Logger.readConfigiration(this.logConfig.getValue().getAbsolutePath());
+			Logger.readConfiguration(this.logConfig.getValue().getAbsolutePath());
 		}
 		
 		if (this.logLevel.getValue() != null) {

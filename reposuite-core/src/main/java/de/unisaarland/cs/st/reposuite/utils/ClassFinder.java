@@ -27,20 +27,20 @@ import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException
  */
 public class ClassFinder {
 	
-	public static List<Class<?>> getClassesExtendingClass(Package pakkage, Class<?> superClass)
+	public static List<Class<?>> getClassesExtendingClass(final Package pakkage, final Class<?> superClass)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		assert (pakkage != null);
 		assert (superClass != null);
 		
-		String classPath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		Collection<Class<?>> discoveredClasses = null;
+		String classPath = Class.forName(new Throwable().getStackTrace()[1].getClassName()).getProtectionDomain()
+		        .getCodeSource().getLocation().getPath();
+		Collection<Class<?>> discoveredClasses = new LinkedList<Class<?>>();
 		String thePackage = pakkage.getName();
 		
 		if (classPath.endsWith(".jar")) {
-			discoveredClasses = getClassesInCurrentJarFile(thePackage);
-		} else {
-			discoveredClasses = getClassesFromCurrentClasspath(thePackage);
+			discoveredClasses.addAll(getClassesInCurrentJarFile(thePackage));
 		}
+		discoveredClasses.addAll(getClassesFromCurrentClasspath(thePackage));
 		
 		List<Class<?>> classList = new LinkedList<Class<?>>();
 		for (Class<?> discovered : discoveredClasses) {
@@ -76,19 +76,16 @@ public class ClassFinder {
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesFromCurrentClasspath(String packageName)
+	public static Collection<Class<?>> getClassesFromCurrentClasspath(final String packageName)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		// This will hold a list of directories matching the packageName. There
 		// may
 		// be more than one if a package is split over multiple jars/paths
 		ArrayList<File> directories = new ArrayList<File>();
 		
-		String filePath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		// String filePath =
+		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		String path = packageName.replaceAll("\\.", FileUtils.fileSeparator);
-		
-		if (filePath.endsWith(".jar")) {
-			throw new WrongClassSearchMethodException();
-		}
 		
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -148,13 +145,9 @@ public class ClassFinder {
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesInCurrentJarFile(String packageName) throws ClassNotFoundException,
-	        WrongClassSearchMethodException, IOException {
+	public static Collection<Class<?>> getClassesInCurrentJarFile(final String packageName)
+	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		String filePath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		
-		if (!filePath.endsWith(".jar")) {
-			throw new WrongClassSearchMethodException();
-		}
 		
 		Collection<Class<?>> classes = new LinkedList<Class<?>>();
 		
@@ -201,7 +194,7 @@ public class ClassFinder {
 	 * @throws IOException
 	 * @throws WrongClassSearchMethodException
 	 */
-	public static List<Class<?>> getClassesOfInterface(Package pakkage, Class<?> theInterface)
+	public static List<Class<?>> getClassesOfInterface(final Package pakkage, final Class<?> theInterface)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		assert (pakkage != null);
 		assert (theInterface != null);
@@ -232,8 +225,8 @@ public class ClassFinder {
 				
 				Class<?>[] classInterfaces = aClass.getInterfaces();
 				
-				for (int j = 0; j < classInterfaces.length; j++) {
-					if (classInterfaces[j] == theInterface) {
+				for (Class<?> classInterface : classInterfaces) {
+					if (classInterface == theInterface) {
 						if (Logger.logTrace()) {
 							Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
 							        + aClass.getName());
@@ -262,8 +255,8 @@ public class ClassFinder {
 							Logger.trace("Checking superclass : " + aClass.getName() + " for noarg constructor");
 						}
 						Constructor<?>[] cons = aClass.getConstructors();
-						for (int j = 0; j < cons.length; j++) {
-							if (cons[j].getTypeParameters().length == 0) {
+						for (Constructor<?> con : cons) {
+							if (con.getTypeParameters().length == 0) {
 								// it will work
 								if (Logger.logTrace()) {
 									Logger.trace("Superclass : " + aClass.getName() + " has a noarg constructor");
