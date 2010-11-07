@@ -47,7 +47,7 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@Override
-	public DocumentIterator fetch() {
+	public DocumentIterator iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
