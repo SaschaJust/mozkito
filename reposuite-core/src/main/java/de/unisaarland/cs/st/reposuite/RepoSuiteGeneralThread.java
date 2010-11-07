@@ -30,7 +30,7 @@ public interface RepoSuiteGeneralThread<K, V> {
 	/**
 	 * @param thread
 	 *            may not be null
-	 * @return
+	 * @return true on success
 	 */
 	public boolean connectOutput(RepoSuiteGeneralThread<V, ?> thread);
 	

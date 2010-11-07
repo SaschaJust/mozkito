@@ -55,7 +55,9 @@ public class RepoSuiteThreadPool {
 	 * @param filterSet
 	 * @param transformerSet
 	 * @param sinkSet
-	 * @return
+	 * @return a {@link List} of {@link Tuple} containing a
+	 *         {@link RepoSuiteThread} and a {@link Type} which suffices to
+	 *         classify the corresponding {@link RepoSuiteThread}.
 	 */
 	@SuppressWarnings ("unchecked")
 	private LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> buildGraph(final Type source,
