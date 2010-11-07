@@ -40,12 +40,12 @@ public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<String, 
 			
 			Tuple<String, Document> rawReport = null;
 			
-			while (!isShutdown() && ((rawReport = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (this.tracker.checkXML(rawReport.getSecond())) {
 					if (Logger.logDebug()) {
 						Logger.debug("Report " + rawReport.getFirst() + " passed XML check.");
 					}
-					this.outputStorage.write(rawReport);
+					write(rawReport);
 				} else {
 					if (Logger.logWarn()) {
 						Logger.warn("Skipping report " + rawReport.getFirst() + " due to errors in raw string.");

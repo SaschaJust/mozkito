@@ -40,12 +40,12 @@ public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Stri
 			
 			Tuple<String, String> rawReport = null;
 			
-			while (!isShutdown() && ((rawReport = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Converting " + rawReport + " to XML.");
 				}
-				this.outputStorage.write(new Tuple<String, Document>(rawReport.getFirst(), this.tracker
-				        .createDocument(rawReport.getSecond())));
+				write(new Tuple<String, Document>(rawReport.getFirst(), this.tracker.createDocument(rawReport
+				        .getSecond())));
 			}
 			
 		} catch (Exception e) {

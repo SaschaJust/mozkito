@@ -56,10 +56,14 @@ public class Bugs extends Thread implements RepoSuiteToolchain {
 		logSettings.getValue();
 		
 		new TrackerReader(this.threadPool.getThreadGroup(), settings, tracker);
-		new TrackerRAWChecker(this.threadPool.getThreadGroup(), settings, tracker);
-		new TrackerXMLTransformer(this.threadPool.getThreadGroup(), settings, tracker);
-		new TrackerXMLChecker(this.threadPool.getThreadGroup(), settings, tracker);
-		new TrackerParser(this.threadPool.getThreadGroup(), settings, tracker);
+		// new TrackerRAWChecker(this.threadPool.getThreadGroup(), settings,
+		// tracker);
+		// new TrackerXMLTransformer(this.threadPool.getThreadGroup(), settings,
+		// tracker);
+		// new TrackerXMLChecker(this.threadPool.getThreadGroup(), settings,
+		// tracker);
+		// new TrackerParser(this.threadPool.getThreadGroup(), settings,
+		// tracker);
 		
 		if (databaseArguments.getValue() != null) {
 			HibernateUtil hibernateUtil;

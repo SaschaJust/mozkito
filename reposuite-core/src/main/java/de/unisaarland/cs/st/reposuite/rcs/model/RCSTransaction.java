@@ -23,6 +23,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 
@@ -316,8 +317,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Override
 	public String toString() {
-		return "RCSTransaction [id=" + this.id + ", message=" + this.message + ", timestamp=" + this.timestamp
-		        + ", revisionCount=" + this.revisions.size() + ", author=" + this.author + "]";
+		return "RCSTransaction [id=" + this.id + ", message=" + StringEscapeUtils.escapeJava(this.message)
+		        + ", timestamp=" + this.timestamp + ", revisionCount=" + this.revisions.size() + ", author="
+		        + this.author + "]";
 	}
 	
 }

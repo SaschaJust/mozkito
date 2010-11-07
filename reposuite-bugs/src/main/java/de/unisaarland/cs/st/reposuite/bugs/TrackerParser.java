@@ -44,11 +44,11 @@ public class TrackerParser extends RepoSuiteTransformerThread<Tuple<String, Docu
 			
 			Tuple<String, Document> rawReport = null;
 			
-			while (!isShutdown() && ((rawReport = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing " + rawReport.getFirst() + ".");
 				}
-				this.outputStorage.write(this.tracker.parse(rawReport.getSecond()));
+				write(this.tracker.parse(rawReport.getSecond()));
 			}
 			
 		} catch (Exception e) {

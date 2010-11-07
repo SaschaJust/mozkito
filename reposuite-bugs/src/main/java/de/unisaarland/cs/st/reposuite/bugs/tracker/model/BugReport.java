@@ -11,6 +11,8 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 
@@ -36,7 +38,66 @@ public class BugReport implements Annotated {
 	private Status                    status;
 	private Type                      type;
 	private DateTime                  creatingTimestamp;
+	private DateTime                  lastFetch;
 	private byte[]                    hash;
+	
+	public BugReport(final long id, final Person assignedTo, final String category, final SortedSet<Comment> comments,
+	        final String description, final Severity severity, final Priority priority, final Resolution resolution,
+	        final Person submitter, final String subject, final Person resolver,
+	        final SortedSet<HistoryElement> history, final Status status, final Type type,
+	        final DateTime creatingTimestamp, final DateTime lastFetch, final byte[] hash) {
+		super();
+		Preconditions.checkArgument(id > 0, "[BugReport] `id` should be > 0, but is `%s`.", id);
+		Preconditions.checkNotNull(comments, "[BugReport] `comments` should not be null.");
+		Preconditions.checkNotNull(description, "[BugReport] `description` should not be null.");
+		Preconditions.checkNotNull(severity, "[BugReport] `severity` should not be null.");
+		Preconditions.checkNotNull(priority, "[BugReport] `priority` should not be null.");
+		Preconditions.checkNotNull(resolution, "[BugReport] `resolution` should not be null.");
+		Preconditions.checkNotNull(submitter, "[BugReport] `submitter` should not be null.");
+		Preconditions.checkNotNull(subject, "[BugReport] `subject` should not be null.");
+		Preconditions.checkNotNull(history, "[BugReport] `history` should not be null.");
+		Preconditions.checkNotNull(status, "[BugReport] `status` should not be null.");
+		Preconditions.checkNotNull(type, "[BugReport] `type` should not be null.");
+		Preconditions.checkNotNull(creatingTimestamp, "[BugReport] `creatingTimestamp` should not be null.");
+		Preconditions.checkNotNull(lastFetch, "[BugReport] `lastFetch` should not be null.");
+		Preconditions.checkArgument(hash.length == 33, "[BugReport] `hash.length` should be equal to `33`, but is: %s",
+		        hash.length);
+		
+		this.id = id;
+		this.assignedTo = assignedTo;
+		this.category = category;
+		this.comments = comments;
+		this.description = description;
+		this.severity = severity;
+		this.priority = priority;
+		this.resolution = resolution;
+		this.submitter = submitter;
+		this.subject = subject;
+		this.resolver = resolver;
+		this.history = history;
+		this.status = status;
+		this.type = type;
+		this.creatingTimestamp = creatingTimestamp;
+		this.lastFetch = lastFetch;
+		this.hash = hash;
+	}
+	
+	public void addComment(final Comment comment) {
+		Preconditions.checkNotNull(comment, "[addComment] `comment` should not be null.");
+		Preconditions.checkNotNull(this.comments, "[addComment] `comments` should not be null.");
+		
+		this.comments.add(comment);
+	}
+	
+	/**
+	 * @param element
+	 */
+	public void addElementToHistory(final HistoryElement element) {
+		Preconditions.checkNotNull(element, "[addElementToHistory] `element` should not be null.");
+		Preconditions.checkNotNull(this.history, "[addElementToHistory] `history` should not be null.");
+		
+		this.history.add(element);
+	}
 	
 	/**
 	 * @return the assignedTo
@@ -92,6 +153,13 @@ public class BugReport implements Annotated {
 	 */
 	public long getId() {
 		return this.id;
+	}
+	
+	/**
+	 * @return the lastFetch
+	 */
+	public DateTime getLastFetch() {
+		return this.lastFetch;
 	}
 	
 	/**
@@ -229,6 +297,14 @@ public class BugReport implements Annotated {
 	 */
 	public void setId(final long id) {
 		this.id = id;
+	}
+	
+	/**
+	 * @param lastFetch
+	 *            the lastFetch to set
+	 */
+	public void setLastFetch(final DateTime lastFetch) {
+		this.lastFetch = lastFetch;
 	}
 	
 	/**

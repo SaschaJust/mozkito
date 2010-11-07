@@ -421,6 +421,15 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RepoSuiteThread [Class=" + getHandle() + ", threadGroup=" + this.threadGroup.getName() + "]";
+	}
+	
 	/**
 	 * Writes a chunk to the output storage. Make sure to call this only if
 	 * {@link RepoSuiteThread#hasOutputConnector()} is true.

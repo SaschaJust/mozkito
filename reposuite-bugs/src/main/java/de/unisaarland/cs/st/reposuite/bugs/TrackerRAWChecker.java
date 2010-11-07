@@ -38,12 +38,12 @@ public class TrackerRAWChecker extends RepoSuiteFilterThread<Tuple<String, Strin
 			
 			Tuple<String, String> rawReport = null;
 			
-			while (!isShutdown() && ((rawReport = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (this.tracker.checkRAW(rawReport.getSecond())) {
 					if (Logger.logDebug()) {
 						Logger.debug("RAW report " + rawReport.getFirst() + " passed analysis.");
 					}
-					this.outputStorage.write(rawReport);
+					write(rawReport);
 				} else {
 					if (Logger.logWarn()) {
 						Logger.warn("Skipping report " + rawReport.getFirst() + " due to errors in raw string.");

@@ -53,7 +53,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<String, String>> 
 				}
 				URI newURI = this.tracker.getLinkFromId(bugId);
 				Tuple<String, String> source = this.tracker.fetchSource(newURI);
-				this.outputStorage.write(new Tuple<String, String>(bugId, source.getSecond()));
+				write(new Tuple<String, String>(bugId, source.getSecond()));
 			}
 			
 		} catch (Exception e) {

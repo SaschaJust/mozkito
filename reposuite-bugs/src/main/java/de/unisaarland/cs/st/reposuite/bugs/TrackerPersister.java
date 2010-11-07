@@ -42,7 +42,7 @@ public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
 			
 			BugReport bugReport;
 			
-			while (!isShutdown() && ((bugReport = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((bugReport = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + bugReport.getId() + ".");
 				}

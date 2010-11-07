@@ -60,25 +60,37 @@ public class RepoSuiteThreadPool {
 	 *         classify the corresponding {@link RepoSuiteThread}.
 	 */
 	@SuppressWarnings ("unchecked")
-	private LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> buildGraph(final Type source,
-	        Set<Type> filterSet, Set<Tuple<Type, Type>> transformerSet, Set<Type> sinkSet) {
-		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> list = new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>>();
+	private LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> buildGraph(final Type source,
+	        Set<Tuple<Type, Type>> filterSet, Set<Tuple<Type, Type>> transformerSet, Set<Tuple<Type, Type>> sinkSet) {
+		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> list = new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>>();
 		
-		if (filterSet.contains(source)) {
-			filterSet = new HashSet<Type>(filterSet);
-			filterSet.remove(source);
-			
-			LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> graph = buildGraph(source, filterSet,
-			        transformerSet, sinkSet);
-			if (graph != null) {
-				list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>(
-				        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteFilterThread.class, source));
-				list.addAll(graph);
-				return list;
-			} else {
-				filterSet.add(source);
+		HashSet<Tuple<Type, Type>> validFilter = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(filterSet,
+		        new Predicate() {
+			        
+			        @Override
+			        public boolean evaluate(final Object object) {
+				        Tuple<Type, Type> element = (Tuple<Type, Type>) object;
+				        return (element.getFirst().equals(source));
+			        }
+		        }));
+		if (!validFilter.isEmpty()) {
+			for (Tuple<Type, Type> tuple : validFilter) {
+				Type newSource = tuple.getSecond();
+				filterSet = new HashSet<Tuple<Type, Type>>(filterSet);
+				filterSet.remove(tuple);
+				
+				LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> graph = buildGraph(
+				        newSource, filterSet, transformerSet, sinkSet);
+				
+				if (graph != null) {
+					list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>(
+					        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteFilterThread.class, tuple));
+					list.addAll(graph);
+					return list;
+				} else {
+					filterSet.add(tuple);
+				}
 			}
-			
 		}
 		
 		HashSet<Tuple<Type, Type>> validTransformer = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(
@@ -96,11 +108,11 @@ public class RepoSuiteThreadPool {
 				transformerSet = new HashSet<Tuple<Type, Type>>(transformerSet);
 				transformerSet.remove(tuple);
 				
-				LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> graph = buildGraph(newSource,
-				        filterSet, transformerSet, sinkSet);
+				LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> graph = buildGraph(
+				        newSource, filterSet, transformerSet, sinkSet);
 				
 				if (graph != null) {
-					list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>(
+					list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>(
 					        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteTransformerThread.class, tuple));
 					list.addAll(graph);
 					return list;
@@ -110,25 +122,37 @@ public class RepoSuiteThreadPool {
 			}
 		}
 		
-		if (sinkSet.contains(source)) {
-			sinkSet = new HashSet<Type>(sinkSet);
-			sinkSet.remove(source);
-			
-			LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> graph = buildGraph(source, filterSet,
-			        transformerSet, sinkSet);
-			if (graph != null) {
-				list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>(
-				        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteSinkThread.class, source));
-				list.addAll(graph);
-				return list;
-			} else {
-				sinkSet.add(source);
+		HashSet<Tuple<Type, Type>> validSink = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(sinkSet,
+		        new Predicate() {
+			        
+			        @Override
+			        public boolean evaluate(final Object object) {
+				        Tuple<Type, Type> element = (Tuple<Type, Type>) object;
+				        return (element.getFirst().equals(source));
+			        }
+		        }));
+		if (!validSink.isEmpty()) {
+			for (Tuple<Type, Type> tuple : validSink) {
+				Type newSource = tuple.getSecond();
+				sinkSet = new HashSet<Tuple<Type, Type>>(sinkSet);
+				sinkSet.remove(tuple);
+				
+				LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> graph = buildGraph(
+				        newSource, filterSet, transformerSet, sinkSet);
+				
+				if (graph != null) {
+					list.add(new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>(
+					        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteSinkThread.class, tuple));
+					list.addAll(graph);
+					return list;
+				} else {
+					sinkSet.add(tuple);
+				}
 			}
-			
 		}
 		
 		if (filterSet.isEmpty() && transformerSet.isEmpty() && sinkSet.isEmpty()) {
-			return new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>>();
+			return new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>>();
 		} else {
 			return null;
 		}
@@ -141,28 +165,29 @@ public class RepoSuiteThreadPool {
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private void connectThreads() {
-		Map<Type, List<RepoSuiteSourceThread<?>>> sourceThreads = new HashMap<Type, List<RepoSuiteSourceThread<?>>>();
-		Map<Type, List<RepoSuiteFilterThread<?>>> filterThreads = new HashMap<Type, List<RepoSuiteFilterThread<?>>>();
+		Map<Tuple<Type, Type>, List<RepoSuiteSourceThread<?>>> sourceThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteSourceThread<?>>>();
+		Map<Tuple<Type, Type>, List<RepoSuiteFilterThread<?>>> filterThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteFilterThread<?>>>();
 		Map<Tuple<Type, Type>, List<RepoSuiteTransformerThread<?, ?>>> transformerThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteTransformerThread<?, ?>>>();
-		Map<Type, List<RepoSuiteSinkThread<?>>> sinkThreads = new HashMap<Type, List<RepoSuiteSinkThread<?>>>();
+		Map<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>> sinkThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>>();
 		Tuple<Type, Type> tuple;
 		
 		for (RepoSuiteThread<?, ?> thread : this.threads.getThreads()) {
 			if (thread instanceof RepoSuiteSourceThread) {
 				RepoSuiteSourceThread<?> sourceThread = (RepoSuiteSourceThread<?>) thread;
-				Type c = getInputClassType(sourceThread);
-				if (!sourceThreads.containsKey(c)) {
-					sourceThreads.put(c, new LinkedList<RepoSuiteSourceThread<?>>());
+				Type c = getOutputClassType(sourceThread);
+				tuple = new Tuple<Type, Type>(c, c);
+				if (!sourceThreads.containsKey(tuple)) {
+					sourceThreads.put(tuple, new LinkedList<RepoSuiteSourceThread<?>>());
 				}
-				sourceThreads.get(c).add(sourceThread);
+				sourceThreads.get(tuple).add(sourceThread);
 			} else if (thread instanceof RepoSuiteFilterThread) {
 				RepoSuiteFilterThread<?> filterThread = (RepoSuiteFilterThread<?>) thread;
 				Type c = getInputClassType(filterThread);
-				
-				if (!filterThreads.containsKey(c)) {
-					filterThreads.put(c, new LinkedList<RepoSuiteFilterThread<?>>());
+				tuple = new Tuple<Type, Type>(c, c);
+				if (!filterThreads.containsKey(tuple)) {
+					filterThreads.put(tuple, new LinkedList<RepoSuiteFilterThread<?>>());
 				}
-				filterThreads.get(c).add(filterThread);
+				filterThreads.get(tuple).add(filterThread);
 			} else if (thread instanceof RepoSuiteTransformerThread) {
 				RepoSuiteTransformerThread<?, ?> transformerThread = (RepoSuiteTransformerThread<?, ?>) thread;
 				tuple = new Tuple<Type, Type>(getInputClassType(transformerThread),
@@ -174,10 +199,11 @@ public class RepoSuiteThreadPool {
 			} else if (thread instanceof RepoSuiteSinkThread) {
 				RepoSuiteSinkThread<?> sinkThread = (RepoSuiteSinkThread<?>) thread;
 				Type c = getInputClassType(sinkThread);
-				if (!sinkThreads.containsKey(c)) {
-					sinkThreads.put(c, new LinkedList<RepoSuiteSinkThread<?>>());
+				tuple = new Tuple<Type, Type>(c, c);
+				if (!sinkThreads.containsKey(tuple)) {
+					sinkThreads.put(tuple, new LinkedList<RepoSuiteSinkThread<?>>());
 				}
-				sinkThreads.get(c).add(sinkThread);
+				sinkThreads.get(tuple).add(sinkThread);
 			}
 		}
 		
@@ -204,39 +230,49 @@ public class RepoSuiteThreadPool {
 		}
 		
 		// BUILD GRAPH
-		Type source = sourceThreads.keySet().iterator().next();
-		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> graph = new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>>();
-		Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object> sourceTuple = new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>(
+		Tuple<Type, Type> source = sourceThreads.keySet().iterator().next();
+		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> graph = new LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>>();
+		Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>> sourceTuple = new Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>(
 		        (Class<? extends RepoSuiteThread<?, ?>>) RepoSuiteSourceThread.class, source);
 		graph.add(sourceTuple);
-		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> build = buildGraph(source,
-		        filterThreads.keySet(), transformerThreads.keySet(), sinkThreads.keySet());
-		graph.addAll(build);
-		System.err.println(graph);
-		
-		LinkedList<? extends RepoSuiteThread<?, ?>> previousList = null;
-		LinkedList<? extends RepoSuiteThread<?, ?>> currentList = null;
-		for (Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object> element : graph) {
-			if (element.getFirst().equals(RepoSuiteSourceThread.class)) {
-				currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) sourceThreads.get(element.getSecond());
-			} else if (element.getFirst().equals(RepoSuiteFilterThread.class)) {
-				currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) filterThreads.get(element.getSecond());
-			} else if (element.getFirst().equals(RepoSuiteTransformerThread.class)) {
-				currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) transformerThreads.get(element.getSecond());
-			} else if (element.getFirst().equals(RepoSuiteSinkThread.class)) {
-				currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) sinkThreads.get(element.getSecond());
-			}
-			if (previousList != null) {
-				for (RepoSuiteThread<?, ?> current : currentList) {
-					for (RepoSuiteThread<?, ?> previous : previousList) {
-						current.connectInput((RepoSuiteGeneralThread) previous);
+		LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>>> build = buildGraph(
+		        source.getSecond(), filterThreads.keySet(), transformerThreads.keySet(), sinkThreads.keySet());
+		if (build != null) {
+			graph.addAll(build);
+			
+			LinkedList<? extends RepoSuiteThread<?, ?>> previousList = null;
+			LinkedList<? extends RepoSuiteThread<?, ?>> currentList = null;
+			for (Tuple<Class<? extends RepoSuiteThread<?, ?>>, Tuple<Type, Type>> element : graph) {
+				if (element.getFirst().equals(RepoSuiteSourceThread.class)) {
+					currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) sourceThreads.get(element.getSecond());
+				} else if (element.getFirst().equals(RepoSuiteFilterThread.class)) {
+					currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) filterThreads.get(element.getSecond());
+				} else if (element.getFirst().equals(RepoSuiteTransformerThread.class)) {
+					currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) transformerThreads.get(element
+					        .getSecond());
+				} else if (element.getFirst().equals(RepoSuiteSinkThread.class)) {
+					currentList = (LinkedList<? extends RepoSuiteThread<?, ?>>) sinkThreads.get(element.getSecond());
+				}
+				if (previousList != null) {
+					for (RepoSuiteThread<?, ?> current : currentList) {
+						for (RepoSuiteThread<?, ?> previous : previousList) {
+							current.connectInput((RepoSuiteGeneralThread) previous);
+						}
 					}
 				}
+				
+				previousList = currentList;
 			}
-			
-			previousList = currentList;
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Could not connect threads: ");
+				Logger.error("Sources: " + JavaUtils.mapToString(sourceThreads));
+				Logger.error("Filters: " + JavaUtils.mapToString(filterThreads));
+				Logger.error("Transformers: " + JavaUtils.mapToString(transformerThreads));
+				Logger.error("Sinks: " + JavaUtils.mapToString(sinkThreads));
+			}
+			throw new RuntimeException();
 		}
-		
 	}
 	
 	/**
