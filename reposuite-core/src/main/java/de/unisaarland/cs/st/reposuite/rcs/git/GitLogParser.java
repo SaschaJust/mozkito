@@ -8,6 +8,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.common.base.Preconditions;
+
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
@@ -29,15 +31,16 @@ class GitLogParser {
 	private static final PersonManager personManager    = new PersonManager();
 	
 	/**
-	 * Parses the.
+	 * Parses the list of log messages.
 	 * 
-	 * @param logMessage
+	 * @param logMessages
 	 *            List of strings corresponding to the lines of the log message.
 	 *            (not null)
-	 * @return the list
+	 * @return the list of parsed log entries representing the logMessages
 	 */
-	protected static List<LogEntry> parse(final List<String> logMessage) {
-		assert (logMessage != null);
+	protected static List<LogEntry> parse(final List<String> logMessages) {
+		assert (logMessages != null);
+		Preconditions.checkNotNull(logMessages);
 		List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
 		
@@ -46,7 +49,7 @@ class GitLogParser {
 		String date = null;
 		boolean append = true;
 		StringBuilder message = new StringBuilder();
-		for (String line : logMessage) {
+		for (String line : logMessages) {
 			++lineCounter;
 			if (line.startsWith("commit")) {
 				if (currentID != null) {
