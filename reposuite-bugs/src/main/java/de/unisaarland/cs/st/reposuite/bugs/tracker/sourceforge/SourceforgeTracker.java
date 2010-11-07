@@ -54,11 +54,11 @@ public class SourceforgeTracker extends Tracker {
 	
 	@Override
 	public Document fetch(final String id) {
-		List<NameValuePair> params = URLEncodedUtils.parse(this.uri, "UTF-8");
+		List<NameValuePair> params = URLEncodedUtils.parse(this.linkUri, "UTF-8");
 		params.add(new BasicNameValuePair("atid", id));
 		try {
-			URI bugURI = URIUtils.createURI(this.uri.getScheme(), this.uri.getHost(), this.uri.getPort(),
-			        this.uri.getPath(), URLEncodedUtils.format(params, "UTF-8"), this.uri.getFragment());
+			URI bugURI = URIUtils.createURI(this.linkUri.getScheme(), this.linkUri.getHost(), this.linkUri.getPort(),
+			        this.linkUri.getPath(), URLEncodedUtils.format(params, "UTF-8"), this.linkUri.getFragment());
 			Tuple<String, String> bugReportString = fetchSource(bugURI);
 			StringReader dataStream = new StringReader(bugReportString.getSecond());
 			

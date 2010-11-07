@@ -6,12 +6,10 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -23,18 +21,22 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
+import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * {@link Tracker} is the super class all BTS classes have to extend. The
+ * {@link Tracker} handles all mining/parsing/analyzing of a {@link BugReport}.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Tracker {
 	
@@ -48,13 +50,14 @@ public abstract class Tracker {
 	                                                .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
-	protected FilenameFilter    filter;
-	protected URI               uri;
+	protected String            pattern;
+	protected URI               linkUri;
 	protected String            username;
 	protected String            password;
-	protected String            startAt;
-	protected String            stopAt;
+	protected Long              startAt;
+	protected Long              stopAt;
 	protected boolean           initialized = false;
+	private URI                 overviewURI;
 	
 	/**
 	 * 
@@ -63,23 +66,68 @@ public abstract class Tracker {
 		
 	}
 	
-	public abstract boolean checkRAW(String rawString);
-	
-	public abstract boolean checkXML(Document second);
-	
-	public abstract Document createDocument(String second);
+	/**
+	 * The method takes a string containing one bug report and analyzes its
+	 * content. If this method returns false, the report will be dropped from
+	 * the corresponding {@link RepoSuiteToolchain}. Applications are broken
+	 * documents, etc...
+	 * 
+	 * @param rawString
+	 *            the bug report without further processing
+	 * @return true if no error occurred
+	 */
+	public abstract boolean checkRAW(String rawReport);
 	
 	/**
-	 * @return
+	 * The method takes a XML document representing a bug report and checks this
+	 * document for consistency, i.e. if all required nodes are available or if
+	 * the document matches a given XML scheme. If this method returns false,
+	 * the report will be dropped from the corresponding
+	 * {@link RepoSuiteToolchain}. Applications are broken documents or
+	 * unsupported versions.
+	 * 
+	 * @param xmlReport
+	 *            the XML document representing a bug report
+	 * @return true if no error occurred
+	 */
+	public abstract boolean checkXML(Document xmlReport);
+	
+	/**
+	 * The method takes a bug report in raw format and creates the corresponding
+	 * XML document.
+	 * 
+	 * @param rawReport
+	 *            the raw bug report
+	 * @return the bug report as XML document
+	 */
+	public abstract Document createDocument(String rawReport);
+	
+	/**
+	 * The method creates a {@link DocumentIterator} to which provides all XML
+	 * documents for the bug reports under subject.
+	 * 
+	 * @return the created {@link DocumentIterator}
 	 */
 	public abstract DocumentIterator fetch();
 	
 	/**
+	 * The method takes a bug report id and fetches the content in a string.
+	 * 
 	 * @param id
-	 * @return
+	 *            the bug id under subject
+	 * @return the content of the bug report
 	 */
-	public abstract Document fetch(final String id);
+	public abstract String fetch(final long id);
 	
+	/**
+	 * This is method takes a {@link URI} and fetches the content to a string.
+	 * 
+	 * @param linkUri
+	 *            the linkUri to the bug report
+	 * @return a {@link Tuple} containing first the content type of the document
+	 *         and second the content itself.
+	 * @throws UnsupportedProtocolException
+	 */
 	public Tuple<String, String> fetchSource(final URI uri) throws UnsupportedProtocolException {
 		assert (isInitialized());
 		
@@ -116,39 +164,70 @@ public abstract class Tracker {
 		return null;
 	}
 	
-	public URI getLinkFromId(final String bugId) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * @return the simple class name of the current tracker instance
+	 */
+	private String getHandle() {
+		return this.getClass().getSimpleName();
 	}
 	
-	public synchronized String getNextId() {
-		// TODO Auto-generated method stub
-		return RandomUtils.nextInt() + "";
+	/**
+	 * Creates an {@link URI} that corresponds to the given bugId. This method
+	 * is used to create {@link URI}s for the {@link Tracker#fetchSource(URI)}
+	 * method.
+	 * 
+	 * @param bugId
+	 *            the id of the bug an URI shall be created to
+	 * @return the URI to the bug report.
+	 */
+	public abstract URI getLinkFromId(final long bugId);
+	
+	/**
+	 * this method should be synchronized
+	 * 
+	 * @return the next id that hasn't been requested.
+	 */
+	public abstract Long getNextId();
+	
+	/**
+	 * @return the overviewURI
+	 */
+	public URI getOverviewURI() {
+		return this.overviewURI;
 	}
 	
+	/**
+	 * This method returns the tracker type, determined by
+	 * <code>TrackerType.valueOf(this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().length() - Tracker.class.getSimpleName().length()).toUpperCase());</code>
+	 * 
+	 * @return the type of the tracker
+	 */
 	public TrackerType getTrackerType() {
 		return this.type;
 	}
 	
 	/**
-	 * @return the uri
+	 * @return the linkUri
 	 */
 	public URI getUri() {
-		return this.uri;
+		return this.linkUri;
 	}
 	
 	/**
-	 * @return
+	 * @return true if the setup method had been called
 	 */
 	protected boolean isInitialized() {
 		return this.initialized;
 	}
 	
 	/**
+	 * This method is used to fetch persistent reports from the database
+	 * 
 	 * @param id
-	 * @return
+	 *            the id of the bug report
+	 * @return the {@link BugReport}
 	 */
-	public BugReport loadReport(final String id) {
+	public BugReport loadReport(final Long id) {
 		Criteria criteria;
 		try {
 			criteria = HibernateUtil.getInstance().createCriteria(BugReport.class);
@@ -168,47 +247,60 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * This method mines and parses a bug tracker. If {@link Tracker#parse(URI)}
-	 * is given a <code>file://</code>, all files in the specified directory
-	 * (uri) are parsed that match the given filter. Otherwise the data is
-	 * fetched directly from the the corresponding URI.
+	 * This method parses a XML document representing a bug report.
 	 */
 	public abstract BugReport parse(Document document);
 	
 	/**
-	 * @param uri
-	 * @param baseUrl
-	 * @param new filter
+	 * sets up the current tracker
+	 * 
+	 * @param linkUri
+	 *            The {@link URI} to be appended by the pattern filled with the
+	 *            bug id. If pattern is null, this is a direct link to a site
+	 *            composing all reports in one document.
+	 * @param overviewURI
+	 *            The {@link URI} to an overview site where all bug ids can be
+	 *            found. May be null.
+	 * @param pattern
+	 *            The pattern to be appended to the {@link URI} when fetching
+	 *            bug reports. May be null.
 	 * @param username
+	 *            The username to be used to login to a bug tracking system. May
+	 *            be null iff password is null.
 	 * @param password
+	 *            The password to be used to login to a bug tracking system. May
+	 *            be null iff username is null.
 	 * @param startAt
+	 *            The first bug id to be mined. May be null.
 	 * @param stopAt
+	 *            The last bug id to be mined. May be null.
 	 */
-	public void setup(final URI uri, final String baseUrl, final String filter, final String username,
-	        final String password, final String startAt, final String stopAt) {
-		this.uri = uri;
-		this.baseURL = baseUrl;
-		this.filter = new FilenameFilter() {
-			
-			@Override
-			public boolean accept(final File dir, final String name) {
-				Regex regex = new Regex(filter);
-				return regex.matches(name);
-			}
-		};
-		this.username = username;
-		this.password = password;
-		this.startAt = startAt;
-		this.stopAt = stopAt;
+	public void setup(final URI linkURI, final URI overviewURI, final String pattern, final String username,
+	        final String password, final Long startAt, final Long stopAt) {
+		Preconditions.checkNotNull(this.linkUri, "[setup] `linkUri` should not be null.");
+		Preconditions.checkArgument((username == null) == (password == null),
+		        "[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
+		        username, password);
+		Preconditions.checkArgument(((startAt == null) || ((startAt != null) && (startAt > 0))),
+		        "[setup] `startAt` must be null or > 0, but is: %s", startAt);
+		Preconditions.checkArgument(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
+		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
-		this.initialized = true;
+		if (!this.initialized) {
+			this.linkUri = linkURI;
+			this.overviewURI = overviewURI;
+			this.pattern = pattern;
+			this.username = username;
+			this.password = password;
+			this.startAt = startAt;
+			this.stopAt = stopAt;
+			
+			this.initialized = true;
+		} else {
+			if (Logger.logWarn()) {
+				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
+			}
+		}
 	}
 	
-	/**
-	 * @param uri
-	 *            the uri to set
-	 */
-	public void setUri(final URI uri) {
-		this.uri = uri;
-	}
 }

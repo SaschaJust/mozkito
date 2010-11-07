@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends RepoSuiteSourceThread<Tuple<String, String>> {
+public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 	
 	private final Tracker tracker;
 	
@@ -45,7 +45,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<String, String>> 
 				Logger.info("Starting " + getHandle());
 			}
 			
-			String bugId = null;
+			Long bugId = null;
 			
 			while (!isShutdown() && ((bugId = this.tracker.getNextId()) != null)) {
 				if (Logger.logDebug()) {
@@ -53,7 +53,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<String, String>> 
 				}
 				URI newURI = this.tracker.getLinkFromId(bugId);
 				Tuple<String, String> source = this.tracker.fetchSource(newURI);
-				write(new Tuple<String, String>(bugId, source.getSecond()));
+				write(new Tuple<Long, String>(bugId, source.getSecond()));
 			}
 			
 		} catch (Exception e) {

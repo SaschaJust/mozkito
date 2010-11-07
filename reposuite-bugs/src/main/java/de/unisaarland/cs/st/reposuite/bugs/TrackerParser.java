@@ -17,7 +17,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerParser extends RepoSuiteTransformerThread<Tuple<String, Document>, BugReport> {
+public class TrackerParser extends RepoSuiteTransformerThread<Tuple<Long, Document>, BugReport> {
 	
 	private final Tracker tracker;
 	
@@ -42,7 +42,7 @@ public class TrackerParser extends RepoSuiteTransformerThread<Tuple<String, Docu
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<String, Document> rawReport = null;
+			Tuple<Long, Document> rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {

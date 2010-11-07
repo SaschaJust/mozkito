@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<String, Document>, Tuple<String, Document>> {
+public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<Long, Document>, Tuple<Long, Document>> {
 	
 	private final Tracker tracker;
 	
@@ -38,7 +38,7 @@ public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<String, 
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<String, Document> rawReport = null;
+			Tuple<Long, Document> rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (this.tracker.checkXML(rawReport.getSecond())) {

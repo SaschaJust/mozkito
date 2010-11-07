@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerRAWChecker extends RepoSuiteFilterThread<Tuple<String, String>> {
+public class TrackerRAWChecker extends RepoSuiteFilterThread<Tuple<Long, String>> {
 	
 	private final Tracker tracker;
 	
@@ -36,7 +36,7 @@ public class TrackerRAWChecker extends RepoSuiteFilterThread<Tuple<String, Strin
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<String, String> rawReport = null;
+			Tuple<Long, String> rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (this.tracker.checkRAW(rawReport.getSecond())) {
