@@ -16,6 +16,10 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
+ * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage,
+ * parses the data and stores the produced {@link RCSTransaction} in the output
+ * storage.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -25,6 +29,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 	private RCSFileManager   fileManager;
 	
 	/**
+	 * @see RepoSuiteTransformerThread
 	 * @param threadGroup
 	 * @param settings
 	 * @param repository
@@ -53,7 +58,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 		RCSTransaction previousRcsTransaction = null;
 		this.fileManager = new RCSFileManager();
 		try {
-			while (!isShutdown() && ((entry = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((entry = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing " + entry);
 				}
@@ -92,9 +97,9 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 					        previousRcsTransaction));
 				}
 				if (Logger.logTrace()) {
-					Logger.trace("filling queue [" + this.outputStorage.size() + "]");
+					Logger.trace("filling queue [" + outputSize() + "]");
 				}
-				this.outputStorage.write(rcsTransaction);
+				write(rcsTransaction);
 			}
 		} catch (InterruptedException e) {
 			

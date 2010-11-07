@@ -13,7 +13,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 
 /**
- * @author just
+ * {@link Core} is the standard {@link RepoSuiteToolchain} to mine a repository.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class Core extends Thread implements RepoSuiteToolchain {

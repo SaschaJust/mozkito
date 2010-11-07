@@ -1,103 +1,137 @@
 package de.unisaarland.cs.st.reposuite;
 
+/**
+ * Specification of a thread in the {@link RepoSuiteToolchain}.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ * @param <K>
+ * @param <V>
+ */
 public interface RepoSuiteGeneralThread<K, V> {
 	
 	/**
-	 * @return
+	 * @return true if there are no glitches found in the connector setup.
 	 */
 	public boolean checkConnections();
 	
 	/**
-	 * @return
+	 * @return true if the thread hasn't been shutdown.
 	 */
 	public boolean checkNotShutdown();
 	
 	/**
 	 * @param thread
-	 * @return
+	 *            may not be null
+	 * @return true on success
 	 */
 	public boolean connectInput(RepoSuiteGeneralThread<?, K> thread);
 	
 	/**
 	 * @param thread
+	 *            may not be null
 	 * @return
 	 */
 	public boolean connectOutput(RepoSuiteGeneralThread<V, ?> thread);
 	
 	/**
 	 * @param thread
+	 *            may not be null
 	 */
 	public void disconnectInput(RepoSuiteGeneralThread<?, K> thread);
 	
 	/**
 	 * @param thread
+	 *            may not be null
 	 */
 	public void disconnectOutput(RepoSuiteGeneralThread<V, ?> thread);
 	
 	/**
-	 * @return
+	 * @return the simple class name of the actual instance
 	 */
 	public String getHandle();
 	
 	/**
-	 * @return
+	 * @return the input storage of the instance. Can be null.
 	 */
 	public RepoSuiteDataStorage<K> getInputStorage();
 	
 	/**
-	 * @return
+	 * @return the output storage of the instance. Can be null.
 	 */
 	public RepoSuiteDataStorage<V> getOutputStorage();
 	
 	/**
-	 * @return
+	 * @return true if the object has an input connector-false otherwise
 	 */
 	public boolean hasInputConnector();
 	
 	/**
-	 * @return
+	 * @return true if the object has an output connector-false otherwise
 	 */
 	public boolean hasOutputConnector();
 	
 	/**
-	 * @return
+	 * @return true if there are any writer threads connected to the input
+	 *         source of this object. Will also be true if the object doesn't
+	 *         have any input connectors.
 	 */
 	public boolean isInputConnected();
 	
 	/**
 	 * @param thread
-	 * @return
+	 *            may not be null
+	 * @return true if the object is connected to the given thread. This will
+	 *         explicitly return false if there are no input connectors on this
+	 *         object.
 	 */
 	public boolean isInputConnected(RepoSuiteGeneralThread<?, K> thread);
 	
 	/**
-	 * @return
+	 * @return true if there are any reader threads connected to the output sink
+	 *         of this object. Will also be true if the object doens't have any
+	 *         output connectors.
 	 */
 	public boolean isOutputConnected();
 	
 	/**
 	 * @param thread
-	 * @return
+	 *            may not be null
+	 * @return true, if the object is connected to the given thread-false
+	 *         otherwise. This will explicitly return false if there are no
+	 *         output connectors in this object.
 	 */
 	public boolean isOutputConnected(RepoSuiteGeneralThread<V, ?> thread);
 	
 	/**
-	 * @return
+	 * @return true if {@link RepoSuiteGeneralThread#shutdown()} has already
+	 *         been called on this object; false otherwise. The shutdown method
+	 *         can also be called internally, after an error occured.
 	 */
 	public boolean isShutdown();
 	
 	/**
+	 * Sets the input storage of the object. In case
+	 * {@link RepoSuiteGeneralThread#hasInputConnector()} returns false, this
+	 * method won't do anything.
+	 * 
 	 * @param storage
+	 *            may not be null
 	 */
 	public void setInputStorage(final RepoSuiteDataStorage<K> storage);
 	
 	/**
+	 * Sets the output storage of the object. In case
+	 * {@link RepoSuiteGeneralThread#hasOutputConnector()} returns false, this
+	 * method won't do anything.
+	 * 
 	 * @param storage
+	 *            may not be null
 	 */
 	public void setOutputStorage(final RepoSuiteDataStorage<V> storage);
 	
 	/**
-	 * 
+	 * shuts down the current thread
 	 */
 	public void shutdown();
 }

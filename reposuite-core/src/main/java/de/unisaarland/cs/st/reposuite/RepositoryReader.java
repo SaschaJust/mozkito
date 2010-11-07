@@ -10,6 +10,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
+ * The {@link RepositoryReader} reads data from a given {@link Repository} and
+ * outputs {@link LogEntry} chunks.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -19,6 +22,7 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 	private final Repository repository;
 	
 	/**
+	 * @see RepoSuiteSourceThread
 	 * @param threadGroup
 	 * @param settings
 	 * @param repository
@@ -27,24 +31,6 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 	        final Repository repository) {
 		super(threadGroup, RepositoryReader.class.getSimpleName(), settings);
 		this.repository = repository;
-	}
-	
-	/**
-	 * @return
-	 */
-	public synchronized LogIterator getIterator() {
-		if (this.logIterator == null) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-			}
-		}
-		
-		return this.logIterator;
 	}
 	
 	/*
@@ -63,7 +49,7 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 		}
 		
 		this.repository.getTransactionCount();
-		long cacheSize = (Long) this.settings.getSetting("cache.size").getValue();
+		long cacheSize = (Long) this.getSettings().getSetting("cache.size").getValue();
 		this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
 		        this.repository.getLastRevisionId(), (int) cacheSize);
 		
@@ -74,10 +60,10 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 		try {
 			while (!isShutdown() && this.logIterator.hasNext()) {
 				if (Logger.logTrace()) {
-					Logger.trace("filling queue [" + this.outputStorage.size() + "]");
+					Logger.trace("filling queue [" + outputSize() + "]");
 				}
 				
-				this.outputStorage.write(this.logIterator.next());
+				write(this.logIterator.next());
 				
 			}
 		} catch (InterruptedException e) {

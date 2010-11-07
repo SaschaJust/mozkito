@@ -6,6 +6,14 @@ package de.unisaarland.cs.st.reposuite;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
+ * {@link RepoSuiteFilterThread}s can be used for two things:
+ * <ol>
+ * <li>filtering elements out in a tool chain</li>
+ * <li>analyzing elements in a tool chain (equals null filtering)</li>
+ * </ol>
+ * Implementations of {@link RepoSuiteFilterThread}s must have as well input as
+ * output connectors.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */

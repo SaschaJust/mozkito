@@ -12,6 +12,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
+ * The {@link RepositoryAnalyzer} is a null filter, i.e. it does not modify the
+ * data, but analyzes it and prints warnings/errors to the STDOUT.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -44,16 +47,16 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 			return;
 		}
 		
-		this.analyze = (this.settings.getSetting("repository.analyze") != null)
-		        && (this.settings.getSetting("repository.analyze").getValue() != null)
-		        && (Boolean) this.settings.getSetting("repository.analyze").getValue();
+		this.analyze = (this.getSettings().getSetting("repository.analyze") != null)
+		        && (this.getSettings().getSetting("repository.analyze").getValue() != null)
+		        && (Boolean) this.getSettings().getSetting("repository.analyze").getValue();
 		if (Logger.logInfo()) {
 			Logger.info("Starting " + getHandle());
 		}
 		
 		LogEntry entry;
 		try {
-			while (!isShutdown() && ((entry = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((entry = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Adding " + entry + " to analysis.");
 				}
@@ -62,14 +65,14 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 				}
 				
 				if (Logger.logTrace()) {
-					Logger.trace("filling queue [" + this.outputStorage.size() + "]");
+					Logger.trace("filling queue [" + outputSize() + "]");
 				}
-				this.outputStorage.write(entry);
+				write(entry);
 				
 			}
 			
-			if (!this.shutdown && this.analyze) {
-				this.repository.consistencyCheck(this.entries, ((Boolean) this.settings.getSetting("headless")
+			if (!isShutdown() && this.analyze) {
+				this.repository.consistencyCheck(this.entries, ((Boolean) this.getSettings().getSetting("headless")
 				        .getValue() == false));
 			}
 		} catch (InterruptedException e) {

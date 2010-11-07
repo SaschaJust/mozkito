@@ -29,6 +29,10 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<String, String>> 
 		this.tracker = tracker;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		try {

@@ -20,15 +20,15 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
+ * The thread pool manages all threads of the tool chain. Since all
+ * {@link RepoSuiteThread}s have to register themselves in the
+ * {@link RepoSuiteThreadGroup} which is owned by the
+ * {@link RepoSuiteThreadPool}, the thread pool has control over all threads of
+ * the tool chain. Additionally, this class automatically generates a connected
+ * graph for the registered threads. See the corresponding methods for details.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
- *         The thread pool manages all threads of the tool chain. Since all
- *         {@link RepoSuiteThread}s have to register themselves in the
- *         {@link RepoSuiteThreadGroup} which is owned by the
- *         {@link RepoSuiteThreadPool}, the thread pool has control over all
- *         threads of the tool chain. Additionally, this class automatically
- *         generates a connected graph for the registered threads. See the
- *         corresponding methods for details.
  */
 public class RepoSuiteThreadPool {
 	

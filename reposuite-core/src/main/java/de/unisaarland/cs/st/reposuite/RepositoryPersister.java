@@ -9,6 +9,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
+ * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous
+ * node and dumps the data to the database.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -17,6 +20,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	private final HibernateUtil hibernateUtil;
 	
 	/**
+	 * @see RepoSuiteSinkThread
 	 * @param threadGroup
 	 * @param settings
 	 * @param hibernateUtil
@@ -48,7 +52,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 		RCSTransaction currentTransaction;
 		int i = 0;
 		try {
-			while (!isShutdown() && ((currentTransaction = this.inputStorage.read()) != null)) {
+			while (!isShutdown() && ((currentTransaction = read()) != null)) {
 				
 				if (Logger.logTrace()) {
 					Logger.trace("Saving " + currentTransaction);
