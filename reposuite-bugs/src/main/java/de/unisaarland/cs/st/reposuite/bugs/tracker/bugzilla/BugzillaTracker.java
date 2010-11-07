@@ -36,13 +36,26 @@ public class BugzillaTracker extends Tracker {
 	}
 	
 	@Override
-	public DocumentIterator fetch() {
+	public String fetch(final Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
+	public URI getLinkFromId(final Long bugId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public Document fetch(final String id) {
+	public Long getNextId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public DocumentIterator iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -54,9 +67,10 @@ public class BugzillaTracker extends Tracker {
 	}
 	
 	@Override
-	public void setup(final URI uri, final String baseUrl, final String filter, final String username,
-	        final String password, final String startAt, final String stopAt) {
+	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
+	        final String password, final Long startAt, final Long stopAt) {
 		// TODO Auto-generated method stub
-		super.setup(uri, baseUrl, filter, username, password, startAt, stopAt);
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 	}
+	
 }

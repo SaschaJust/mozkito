@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -30,6 +31,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
@@ -41,13 +43,13 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public abstract class Tracker {
 	
 	protected final TrackerType type        = TrackerType.valueOf(this
-	                                                .getClass()
-	                                                .getSimpleName()
-	                                                .substring(
-	                                                        0,
-	                                                        this.getClass().getSimpleName().length()
-	                                                                - Tracker.class.getSimpleName().length())
-	                                                .toUpperCase());
+			.getClass()
+			.getSimpleName()
+			.substring(
+					0,
+					this.getClass().getSimpleName().length()
+					- Tracker.class.getSimpleName().length())
+					.toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -58,6 +60,9 @@ public abstract class Tracker {
 	protected Long              stopAt;
 	protected boolean           initialized = false;
 	private URI                 overviewURI;
+	
+	public static String        bugIdPlaceholder = "<BUGID>";
+	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
 	
 	/**
 	 * 
@@ -102,13 +107,6 @@ public abstract class Tracker {
 	 */
 	public abstract Document createDocument(String rawReport);
 	
-	/**
-	 * The method creates a {@link DocumentIterator} to which provides all XML
-	 * documents for the bug reports under subject.
-	 * 
-	 * @return the created {@link DocumentIterator}
-	 */
-	public abstract DocumentIterator fetch();
 	
 	/**
 	 * The method takes a bug report id and fetches the content in a string.
@@ -128,6 +126,7 @@ public abstract class Tracker {
 	 *         and second the content itself.
 	 * @throws UnsupportedProtocolException
 	 */
+	
 	public Tuple<String, String> fetchSource(final URI uri) throws UnsupportedProtocolException {
 		assert (isInitialized());
 		
@@ -137,6 +136,7 @@ public abstract class Tracker {
 				HttpGet request = new HttpGet(uri);
 				HttpResponse response = httpClient.execute(request);
 				HttpEntity entity = response.getEntity();
+				
 				return new Tuple<String, String>(response.getProtocolVersion().toString(), entity.toString());
 			} else if (uri.getScheme().equals("file")) {
 				StringBuilder builder = new StringBuilder();
@@ -147,7 +147,8 @@ public abstract class Tracker {
 					builder.append(FileUtils.lineSeparator);
 				}
 				reader.close();
-				// TODO fix type determination
+				
+				// FIXME fix type determination
 				return new Tuple<String, String>("XHTML", builder.toString());
 			} else {
 				throw new UnsupportedProtocolException(uri.getScheme());
@@ -169,8 +170,8 @@ public abstract class Tracker {
 	 */
 	private String getHandle() {
 		return this.getClass().getSimpleName();
+		
 	}
-	
 	/**
 	 * Creates an {@link URI} that corresponds to the given bugId. This method
 	 * is used to create {@link URI}s for the {@link Tracker#fetchSource(URI)}
@@ -181,6 +182,17 @@ public abstract class Tracker {
 	 * @return the URI to the bug report.
 	 */
 	public abstract URI getLinkFromId(final Long bugId);
+	
+	public URI getLinkFromId(final String bugId) {
+		try {
+			return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString(), "210"));
+		} catch (URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return null;
+		}
+	}
 	
 	/**
 	 * this method should be synchronized
@@ -219,6 +231,14 @@ public abstract class Tracker {
 	protected boolean isInitialized() {
 		return this.initialized;
 	}
+	
+	/**
+	 * The method creates a {@link DocumentIterator} to which provides all XML
+	 * documents for the bug reports under subject.
+	 * 
+	 * @return
+	 */
+	public abstract DocumentIterator iterator();
 	
 	/**
 	 * This method is used to fetch persistent reports from the database
@@ -275,16 +295,17 @@ public abstract class Tracker {
 	 * @param stopAt
 	 *            The last bug id to be mined. May be null.
 	 */
+
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) {
+			final String password, final Long startAt, final Long stopAt) {
 		Preconditions.checkNotNull(fetchURI, "[setup] `fetchURI` should not be null.");
 		Preconditions.checkArgument((username == null) == (password == null),
-		        "[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
-		        username, password);
+				"[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
+				username, password);
 		Preconditions.checkArgument(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		        "[setup] `startAt` must be null or > 0, but is: %s", startAt);
+				"[setup] `startAt` must be null or > 0, but is: %s", startAt);
 		Preconditions.checkArgument(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+				"[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
@@ -294,7 +315,6 @@ public abstract class Tracker {
 			this.password = password;
 			this.startAt = startAt;
 			this.stopAt = stopAt;
-			
 			this.initialized = true;
 		} else {
 			if (Logger.logWarn()) {
