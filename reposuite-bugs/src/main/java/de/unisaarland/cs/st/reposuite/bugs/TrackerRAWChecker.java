@@ -50,6 +50,7 @@ public class TrackerRAWChecker extends RepoSuiteFilterThread<Tuple<Long, String>
 					}
 				}
 			}
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

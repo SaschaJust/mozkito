@@ -48,7 +48,7 @@ public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
 				}
 				this.hibernateUtil.saveOrUpdate(bugReport);
 			}
-			
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

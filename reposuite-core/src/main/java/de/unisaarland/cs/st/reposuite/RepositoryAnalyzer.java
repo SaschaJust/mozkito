@@ -75,6 +75,7 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 				this.repository.consistencyCheck(this.entries, ((Boolean) this.getSettings().getSetting("headless")
 				        .getValue() == false));
 			}
+			finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {

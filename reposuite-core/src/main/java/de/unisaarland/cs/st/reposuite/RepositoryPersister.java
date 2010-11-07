@@ -65,6 +65,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 				this.hibernateUtil.saveOrUpdate(currentTransaction);
 			}
 			this.hibernateUtil.commitTransaction();
+			finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {

@@ -50,7 +50,7 @@ public class TrackerParser extends RepoSuiteTransformerThread<Tuple<Long, Docume
 				}
 				write(this.tracker.parse(rawReport.getSecond()));
 			}
-			
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

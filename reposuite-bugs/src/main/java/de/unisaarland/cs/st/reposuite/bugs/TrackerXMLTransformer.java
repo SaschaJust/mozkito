@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<String, String>, Tuple<String, Document>> {
+public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Long, String>, Tuple<Long, Document>> {
 	
 	private final Tracker tracker;
 	
@@ -38,16 +38,16 @@ public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Stri
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<String, String> rawReport = null;
+			Tuple<Long, String> rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Converting " + rawReport + " to XML.");
 				}
-				write(new Tuple<String, Document>(rawReport.getFirst(), this.tracker.createDocument(rawReport
-				        .getSecond())));
+				write(new Tuple<Long, Document>(rawReport.getFirst(),
+				        this.tracker.createDocument(rawReport.getSecond())));
 			}
-			
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

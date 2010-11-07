@@ -5,15 +5,15 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerVoidSink extends RepoSuiteSinkThread<Tuple<String, String>> {
+public class TrackerVoidSink extends RepoSuiteSinkThread<BugReport> {
 	
 	public TrackerVoidSink(final RepoSuiteThreadGroup threadGroup, final TrackerSettings settings) {
 		super(threadGroup, TrackerVoidSink.class.getSimpleName(), settings);
@@ -38,7 +38,7 @@ public class TrackerVoidSink extends RepoSuiteSinkThread<Tuple<String, String>> 
 					Logger.debug("Void sinking " + bugReport + ".");
 				}
 			}
-			
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

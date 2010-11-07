@@ -47,6 +47,12 @@ public interface RepoSuiteGeneralThread<K, V> {
 	public void disconnectOutput(RepoSuiteGeneralThread<V, ?> thread);
 	
 	/**
+	 * this method does the same as shutdown, but does not shutdown the other
+	 * threads in the chain.
+	 */
+	public void finish();
+	
+	/**
 	 * @return the simple class name of the actual instance
 	 */
 	public String getHandle();

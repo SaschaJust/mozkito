@@ -315,7 +315,8 @@ public class RepoSuiteThreadPool {
 	@SuppressWarnings ("rawtypes")
 	private Type getOutputClassType(final RepoSuiteThread thread) {
 		ParameterizedType type = (ParameterizedType) thread.getClass().getGenericSuperclass();
-		return type.getActualTypeArguments()[1];
+		return (type.getActualTypeArguments().length > 1 ? type.getActualTypeArguments()[1] : type
+		        .getActualTypeArguments()[0]);
 	}
 	
 	/**

@@ -60,7 +60,8 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 			Class<? extends Tracker> trackerHandler = TrackerFactory.getTrackerHandler(trackerType);
 			Tracker tracker = trackerHandler.newInstance();
 			
-			URI fetchURIArg = (URI) (arguments.get("fetchURI") != null ? arguments.get("fetchURI").getValue() : null);
+			URI fetchURIArg = (URI) (arguments.get("tracker.fetchURI") != null ? arguments.get("tracker.fetchURI")
+			        .getValue() : null);
 			URI overviewURIArg = (URI) (arguments.get("tracker.overviewURI") != null ? arguments.get(
 			        "tracker.overviewURI").getValue() : null);
 			

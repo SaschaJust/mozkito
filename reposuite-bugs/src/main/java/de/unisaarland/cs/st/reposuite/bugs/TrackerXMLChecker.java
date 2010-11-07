@@ -5,8 +5,8 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import org.dom4j.Document;
 
+import de.unisaarland.cs.st.reposuite.RepoSuiteFilterThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
-import de.unisaarland.cs.st.reposuite.RepoSuiteTransformerThread;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<Long, Document>, Tuple<Long, Document>> {
+public class TrackerXMLChecker extends RepoSuiteFilterThread<Tuple<Long, Document>> {
 	
 	private final Tracker tracker;
 	
@@ -52,6 +52,7 @@ public class TrackerXMLChecker extends RepoSuiteTransformerThread<Tuple<Long, Do
 					}
 				}
 			}
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

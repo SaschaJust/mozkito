@@ -56,6 +56,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 				write(new Tuple<Long, String>(bugId, source.getSecond()));
 			}
 			
+			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -63,5 +64,4 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 			shutdown();
 		}
 	}
-	
 }

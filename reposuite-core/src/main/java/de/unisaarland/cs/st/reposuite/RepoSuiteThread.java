@@ -204,9 +204,11 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	public final void disconnectInput(final RepoSuiteGeneralThread<?, K> thread) {
 		assert (thread != null);
 		
-		if (this.inputThreads.contains(thread)) {
-			this.inputThreads.remove(thread);
-			this.inputStorage.unregisterInput(thread);
+		if (hasInputConnector()) {
+			if (this.inputThreads.contains(thread)) {
+				this.inputThreads.remove(thread);
+				this.inputStorage.unregisterInput(thread);
+			}
 		}
 	}
 	
@@ -220,10 +222,30 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	public final void disconnectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
 		assert (thread != null);
 		
-		if (this.outputThreads.contains(thread)) {
-			this.outputThreads.remove(thread);
-			this.outputStorage.unregisterOutput(thread);
+		if (hasOutputConnector()) {
+			if (this.outputThreads.contains(thread)) {
+				this.outputThreads.remove(thread);
+				this.outputStorage.unregisterOutput(thread);
+			}
 		}
+	}
+	
+	@Override
+	public void finish() {
+		
+		if (Logger.logInfo()) {
+			Logger.info("All done. Disconnecting from data storages.");
+		}
+		
+		for (RepoSuiteGeneralThread<V, ?> thread : this.outputThreads) {
+			thread.disconnectInput(this);
+		}
+		
+		for (RepoSuiteGeneralThread<?, K> thread : this.inputThreads) {
+			thread.disconnectOutput(this);
+		}
+		
+		setShutdown(true);
 	}
 	
 	/*

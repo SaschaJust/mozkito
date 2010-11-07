@@ -66,6 +66,8 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 				write(this.logIterator.next());
 				
 			}
+			
+			finish();
 		} catch (InterruptedException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);

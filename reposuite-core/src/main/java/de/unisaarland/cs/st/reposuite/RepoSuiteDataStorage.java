@@ -110,6 +110,7 @@ public class RepoSuiteDataStorage<E> {
 		
 		if (this.writers.contains(writerThread)) {
 			this.writers.remove(writerThread);
+			notifyAll();
 		}
 	}
 	
@@ -126,6 +127,7 @@ public class RepoSuiteDataStorage<E> {
 		
 		if (this.readers.contains(readerThread)) {
 			this.readers.remove(readerThread);
+			notifyAll();
 		}
 	}
 	

@@ -7,7 +7,10 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/tmp/reposuite_bugs.log"/>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-bugs"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dtracker.uri=file:///Documents/University/msa_ss10/project/jedit_reports -Dtracker.pattern=sourceforgeIssueReport_group_id=588_atid=100588aid=* -ea -Dlog.level=debug -Dtracker.baseUrl=http://sourceforge.net/tracker/?func=detail&amp;aid=3101808&amp;group_id=588 -Dtracker.type=sourceforge"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dtracker.fetchURI=file:///Documents/University/msa_ss10/project/jedit_reports -Dtracker.pattern=sourceforgeIssueReport_group_id=588_atid=100588aid=* -ea -Dlog.level=debug -Dtracker.overviewURI=http://sourceforge.net/tracker/?func=detail&amp;aid=3101808&amp;group_id=588 -Dtracker.type=sourceforge"/>
 </launchConfiguration>

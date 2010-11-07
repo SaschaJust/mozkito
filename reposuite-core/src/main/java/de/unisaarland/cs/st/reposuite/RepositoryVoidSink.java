@@ -44,6 +44,8 @@ public class RepositoryVoidSink extends RepoSuiteSinkThread<RCSTransaction> {
 				}
 				
 			}
+			
+			finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {

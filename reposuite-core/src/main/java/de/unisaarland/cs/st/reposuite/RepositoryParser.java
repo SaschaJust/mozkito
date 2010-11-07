@@ -101,6 +101,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 				}
 				write(rcsTransaction);
 			}
+			finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {

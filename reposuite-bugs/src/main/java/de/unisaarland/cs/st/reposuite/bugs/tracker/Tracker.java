@@ -51,7 +51,7 @@ public abstract class Tracker {
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
-	protected URI               linkUri;
+	protected URI               fetchURI;
 	protected String            username;
 	protected String            password;
 	protected Long              startAt;
@@ -122,8 +122,8 @@ public abstract class Tracker {
 	/**
 	 * This is method takes a {@link URI} and fetches the content to a string.
 	 * 
-	 * @param linkUri
-	 *            the linkUri to the bug report
+	 * @param fetchURI
+	 *            the fetchURI to the bug report
 	 * @return a {@link Tuple} containing first the content type of the document
 	 *         and second the content itself.
 	 * @throws UnsupportedProtocolException
@@ -207,10 +207,10 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * @return the linkUri
+	 * @return the fetchURI
 	 */
 	public URI getUri() {
-		return this.linkUri;
+		return this.fetchURI;
 	}
 	
 	/**
@@ -254,7 +254,7 @@ public abstract class Tracker {
 	/**
 	 * sets up the current tracker
 	 * 
-	 * @param linkUri
+	 * @param fetchURI
 	 *            The {@link URI} to be appended by the pattern filled with the
 	 *            bug id. If pattern is null, this is a direct link to a site
 	 *            composing all reports in one document.
@@ -275,9 +275,9 @@ public abstract class Tracker {
 	 * @param stopAt
 	 *            The last bug id to be mined. May be null.
 	 */
-	public void setup(final URI linkURI, final URI overviewURI, final String pattern, final String username,
+	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
 	        final String password, final Long startAt, final Long stopAt) {
-		Preconditions.checkNotNull(this.linkUri, "[setup] `linkUri` should not be null.");
+		Preconditions.checkNotNull(fetchURI, "[setup] `fetchURI` should not be null.");
 		Preconditions.checkArgument((username == null) == (password == null),
 		        "[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
 		        username, password);
@@ -287,7 +287,7 @@ public abstract class Tracker {
 		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
-			this.linkUri = linkURI;
+			this.fetchURI = fetchURI;
 			this.overviewURI = overviewURI;
 			this.pattern = pattern;
 			this.username = username;
