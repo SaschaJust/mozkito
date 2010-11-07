@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -39,13 +40,13 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public abstract class Tracker {
 	
 	protected final TrackerType type        = TrackerType.valueOf(this
-	                                                .getClass()
-	                                                .getSimpleName()
-	                                                .substring(
-	                                                        0,
-	                                                        this.getClass().getSimpleName().length()
-	                                                                - Tracker.class.getSimpleName().length())
-	                                                .toUpperCase());
+			.getClass()
+			.getSimpleName()
+			.substring(
+					0,
+					this.getClass().getSimpleName().length()
+					- Tracker.class.getSimpleName().length())
+					.toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected FilenameFilter    filter;
@@ -55,6 +56,9 @@ public abstract class Tracker {
 	protected String            startAt;
 	protected String            stopAt;
 	protected boolean           initialized = false;
+	
+	public static String        bugIdPlaceholder = "<BUGID>";
+	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
 	
 	/**
 	 * 
@@ -69,17 +73,6 @@ public abstract class Tracker {
 	
 	public abstract Document createDocument(String second);
 	
-	/**
-	 * @return
-	 */
-	public abstract DocumentIterator fetch();
-	
-	/**
-	 * @param id
-	 * @return
-	 */
-	public abstract Document fetch(final String id);
-	
 	public Tuple<String, String> fetchSource(final URI uri) throws UnsupportedProtocolException {
 		assert (isInitialized());
 		
@@ -89,6 +82,7 @@ public abstract class Tracker {
 				HttpGet request = new HttpGet(uri);
 				HttpResponse response = httpClient.execute(request);
 				HttpEntity entity = response.getEntity();
+				
 				return new Tuple<String, String>(response.getProtocolVersion().toString(), entity.toString());
 			} else if (uri.getScheme().equals("file")) {
 				StringBuilder builder = new StringBuilder();
@@ -99,7 +93,8 @@ public abstract class Tracker {
 					builder.append(FileUtils.lineSeparator);
 				}
 				reader.close();
-				// TODO fix type determination
+				
+				// FIXME fix type determination
 				return new Tuple<String, String>("XHTML", builder.toString());
 			} else {
 				throw new UnsupportedProtocolException(uri.getScheme());
@@ -116,9 +111,16 @@ public abstract class Tracker {
 		return null;
 	}
 	
+	
 	public URI getLinkFromId(final String bugId) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new URI(Tracker.bugIdRegex.replaceAll(this.uri.toString(), "210"));
+		} catch (URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 	
 	public synchronized String getNextId() {
@@ -143,6 +145,11 @@ public abstract class Tracker {
 	protected boolean isInitialized() {
 		return this.initialized;
 	}
+	
+	/**
+	 * @return
+	 */
+	public abstract DocumentIterator iterator();
 	
 	/**
 	 * @param id
@@ -185,7 +192,7 @@ public abstract class Tracker {
 	 * @param stopAt
 	 */
 	public void setup(final URI uri, final String baseUrl, final String filter, final String username,
-	        final String password, final String startAt, final String stopAt) {
+			final String password, final String startAt, final String stopAt) {
 		this.uri = uri;
 		this.baseURL = baseUrl;
 		this.filter = new FilenameFilter() {

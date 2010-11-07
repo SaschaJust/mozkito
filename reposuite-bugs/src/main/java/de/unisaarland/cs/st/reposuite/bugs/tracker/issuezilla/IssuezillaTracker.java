@@ -36,13 +36,7 @@ public class IssuezillaTracker extends Tracker {
 	}
 	
 	@Override
-	public DocumentIterator fetch() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Document fetch(final String id) {
+	public DocumentIterator iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}

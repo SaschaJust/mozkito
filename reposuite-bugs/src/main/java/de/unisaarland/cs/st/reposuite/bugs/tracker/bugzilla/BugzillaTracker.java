@@ -36,16 +36,11 @@ public class BugzillaTracker extends Tracker {
 	}
 	
 	@Override
-	public DocumentIterator fetch() {
+	public DocumentIterator iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
-	public Document fetch(final String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	@Override
 	public BugReport parse(final Document document) {
