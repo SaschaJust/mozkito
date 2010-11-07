@@ -16,10 +16,16 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	
 	private final Collection<RepoSuiteThread<?, ?>> threads = new LinkedList<RepoSuiteThread<?, ?>>();
 	
+	/**
+	 * @param name
+	 */
 	public RepoSuiteThreadGroup(final String name) {
 		super(name);
 	}
 	
+	/**
+	 * @param thread
+	 */
 	public void addThread(final RepoSuiteThread<?, ?> thread) {
 		this.getThreads().add(thread);
 	}
@@ -31,12 +37,20 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 		return this.threads;
 	}
 	
+	/**
+	 * 
+	 */
 	public void shutdown() {
 		for (RepoSuiteThread<?, ?> thread : this.getThreads()) {
 			thread.shutdown();
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread,
+	 * java.lang.Throwable)
+	 */
 	@Override
 	public void uncaughtException(final Thread t, final Throwable e) {
 		

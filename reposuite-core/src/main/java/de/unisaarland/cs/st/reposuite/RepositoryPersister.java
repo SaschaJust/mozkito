@@ -16,6 +16,11 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	
 	private final HibernateUtil hibernateUtil;
 	
+	/**
+	 * @param threadGroup
+	 * @param settings
+	 * @param hibernateUtil
+	 */
 	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final HibernateUtil hibernateUtil) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);

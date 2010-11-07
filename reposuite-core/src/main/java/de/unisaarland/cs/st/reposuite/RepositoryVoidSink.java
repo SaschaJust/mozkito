@@ -15,12 +15,16 @@ public class RepositoryVoidSink extends RepoSuiteSinkThread<RCSTransaction> {
 	
 	/**
 	 * @param threadGroup
-	 * @param name
+	 * @param settings
 	 */
 	public RepositoryVoidSink(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
 		super(threadGroup, RepositoryVoidSink.class.getSimpleName(), settings);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		if (!checkConnections() || !checkNotShutdown()) {

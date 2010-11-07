@@ -26,6 +26,11 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	protected RepoSuiteDataStorage<V>                  outputStorage;
 	protected final RepoSuiteSettings                  settings;
 	
+	/**
+	 * @param threadGroup
+	 * @param name
+	 * @param settings
+	 */
 	public RepoSuiteThread(final RepoSuiteThreadGroup threadGroup, final String name, final RepoSuiteSettings settings) {
 		super(threadGroup, name);
 		threadGroup.addThread(this);
@@ -38,6 +43,11 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		        ((Long) settings.getSetting("cache.size").getValue()).intValue());
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#checkConnections()
+	 */
 	@Override
 	public final boolean checkConnections() {
 		boolean retval = true;
@@ -73,6 +83,11 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		return retval;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#checkNotShutdown()
+	 */
 	@Override
 	public final boolean checkNotShutdown() {
 		if (isShutdown()) {
@@ -84,6 +99,12 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		return !isShutdown();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectInput(de
+	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public final boolean connectInput(final RepoSuiteGeneralThread<?, K> thread) {
 		if (hasInputConnector()) {
@@ -104,6 +125,12 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectOutput(de
+	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public final boolean connectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
 		if (hasOutputConnector()) {
@@ -124,6 +151,12 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectInput
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public void disconnectInput(final RepoSuiteGeneralThread<?, K> thread) {
 		if (this.inputThreads.contains(thread)) {
@@ -132,6 +165,12 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectOutput
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public void disconnectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
 		if (this.outputThreads.contains(thread)) {
@@ -140,61 +179,121 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getHandle()
+	 */
 	@Override
 	public final String getHandle() {
 		return this.getClass().getSimpleName();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getInputStorage()
+	 */
 	@Override
 	public final RepoSuiteDataStorage<K> getInputStorage() {
 		return this.inputStorage;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getOutputStorage()
+	 */
 	@Override
 	public final RepoSuiteDataStorage<V> getOutputStorage() {
 		return this.outputStorage;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected()
+	 */
 	@Override
 	public final boolean isInputConnected() {
 		return !hasInputConnector() || (this.inputThreads.size() > 0);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public final boolean isInputConnected(final RepoSuiteGeneralThread<?, K> thread) {
 		return this.inputThreads.contains(thread);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected()
+	 */
 	@Override
 	public final boolean isOutputConnected() {
 		return !hasOutputConnector() || (this.outputThreads.size() > 0);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
 	@Override
 	public final boolean isOutputConnected(final RepoSuiteGeneralThread<V, ?> thread) {
 		return (this.outputThreads.contains(thread));
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isShutdown()
+	 */
 	public final synchronized boolean isShutdown() {
 		return this.shutdown;
 	}
 	
+	/**
+	 * @return
+	 * @throws InterruptedException
+	 */
 	protected final K read() throws InterruptedException {
 		return this.inputStorage.read();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setInputStorage
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
+	 */
 	@Override
 	public final void setInputStorage(final RepoSuiteDataStorage<K> storage) {
 		this.inputStorage = storage;
 		storage.registerOutput(this);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setOutputStorage
+	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
+	 */
 	@Override
 	public final void setOutputStorage(final RepoSuiteDataStorage<V> storage) {
 		this.outputStorage = storage;
 		storage.registerInput(this);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#shutdown()
+	 */
 	@Override
 	public final void shutdown() {
 		if (!this.shutdown) {
@@ -218,11 +317,10 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 	}
 	
-	// @Override
-	// public synchronized void wake() {
-	// notifyAll();
-	// }
-	
+	/**
+	 * @param data
+	 * @throws InterruptedException
+	 */
 	protected final void write(final V data) throws InterruptedException {
 		this.outputStorage.write(data);
 	}

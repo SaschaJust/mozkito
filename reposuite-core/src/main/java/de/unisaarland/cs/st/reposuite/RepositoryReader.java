@@ -18,12 +18,20 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 	private LogIterator      logIterator;
 	private final Repository repository;
 	
+	/**
+	 * @param threadGroup
+	 * @param settings
+	 * @param repository
+	 */
 	public RepositoryReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final Repository repository) {
 		super(threadGroup, RepositoryReader.class.getSimpleName(), settings);
 		this.repository = repository;
 	}
 	
+	/**
+	 * @return
+	 */
 	public synchronized LogIterator getIterator() {
 		if (this.logIterator == null) {
 			try {

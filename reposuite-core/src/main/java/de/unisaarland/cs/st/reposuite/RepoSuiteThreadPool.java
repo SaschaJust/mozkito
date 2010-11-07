@@ -22,15 +22,41 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
+ *         The thread pool manages all threads of the tool chain. Since all
+ *         {@link RepoSuiteThread}s have to register themselves in the
+ *         {@link RepoSuiteThreadGroup} which is owned by the
+ *         {@link RepoSuiteThreadPool}, the thread pool has control over all
+ *         threads of the tool chain. Additionally, this class automatically
+ *         generates a connected graph for the registered threads. See the
+ *         corresponding methods for details.
  */
 public class RepoSuiteThreadPool {
 	
 	private final RepoSuiteThreadGroup threads;
 	
+	/**
+	 * {@link RepoSuiteThreadPool} constructor. Initializes the
+	 * {@link RepoSuiteThreadGroup};
+	 * 
+	 * @param name
+	 *            the name of the {@link RepoSuiteThreadGroup}
+	 */
 	public RepoSuiteThreadPool(final String name) {
 		this.threads = new RepoSuiteThreadGroup(name);
 	}
 	
+	/**
+	 * This method builds a graph consisting of nodes mapping a
+	 * {@link RepoSuiteThread} class, e.g. {@link RepoSuiteSourceThread}, to a
+	 * type determining the input output connectors of the corresponding
+	 * threads.
+	 * 
+	 * @param source
+	 * @param filterSet
+	 * @param transformerSet
+	 * @param sinkSet
+	 * @return
+	 */
 	@SuppressWarnings ("unchecked")
 	private LinkedList<Tuple<Class<? extends RepoSuiteThread<?, ?>>, Object>> buildGraph(final Type source,
 	        Set<Type> filterSet, Set<Tuple<Type, Type>> transformerSet, Set<Type> sinkSet) {
@@ -107,6 +133,10 @@ public class RepoSuiteThreadPool {
 		
 	}
 	
+	/**
+	 * this method is responsible for connecting the threads according to the
+	 * computed graph.
+	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private void connectThreads() {
 		Map<Type, List<RepoSuiteSourceThread<?>>> sourceThreads = new HashMap<Type, List<RepoSuiteSourceThread<?>>>();
@@ -207,6 +237,10 @@ public class RepoSuiteThreadPool {
 		
 	}
 	
+	/**
+	 * this method invokes the graph builder (which builds the graph and
+	 * connects the threads) and starts all threads afterwards.
+	 */
 	public void execute() {
 		connectThreads();
 		
@@ -227,23 +261,34 @@ public class RepoSuiteThreadPool {
 		}
 	}
 	
+	/**
+	 * @param thread
+	 * @return the type of the input chunks of the given thread
+	 */
 	private Type getInputClassType(final RepoSuiteThread<?, ?> thread) {
 		ParameterizedType type = (ParameterizedType) thread.getClass().getGenericSuperclass();
 		return type.getActualTypeArguments()[0];
 	}
 	
+	/**
+	 * @param thread
+	 * @return the type of the output chunks of the given thread
+	 */
 	private Type getOutputClassType(final RepoSuiteThread<?, ?> thread) {
 		ParameterizedType type = (ParameterizedType) thread.getClass().getGenericSuperclass();
 		return type.getActualTypeArguments()[1];
 	}
 	
 	/**
-	 * @return
+	 * @return the inner thread group
 	 */
 	public RepoSuiteThreadGroup getThreadGroup() {
 		return this.threads;
 	}
 	
+	/**
+	 * shuts down all threads
+	 */
 	public void shutdown() {
 		if (Logger.logError()) {
 			Logger.error("Terminating " + this.threads.activeCount() + " threads.");

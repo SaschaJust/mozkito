@@ -30,6 +30,10 @@ public class Core extends Thread implements RepoSuiteToolchain {
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		setup();
@@ -37,6 +41,10 @@ public class Core extends Thread implements RepoSuiteToolchain {
 		this.threadPool.execute();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteToolchain#setup()
+	 */
 	@Override
 	public void setup() {
 		RepoSuiteSettings settings = new RepoSuiteSettings();
@@ -68,6 +76,10 @@ public class Core extends Thread implements RepoSuiteToolchain {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteToolchain#shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		this.threadPool.shutdown();

@@ -22,12 +22,21 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 	private boolean              analyze;
 	private final Repository     repository;
 	
+	/**
+	 * @param threadGroup
+	 * @param settings
+	 * @param repository
+	 */
 	public RepositoryAnalyzer(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final Repository repository) {
 		super(threadGroup, RepositoryAnalyzer.class.getSimpleName(), settings);
 		this.repository = repository;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		

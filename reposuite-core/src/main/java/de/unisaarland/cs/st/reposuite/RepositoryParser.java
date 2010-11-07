@@ -25,7 +25,9 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 	private RCSFileManager   fileManager;
 	
 	/**
-	 * @param reader
+	 * @param threadGroup
+	 * @param settings
+	 * @param repository
 	 */
 	public RepositoryParser(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final Repository repository) {

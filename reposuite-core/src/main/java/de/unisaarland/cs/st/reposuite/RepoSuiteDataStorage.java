@@ -21,11 +21,18 @@ public class RepoSuiteDataStorage<E> {
 	private final List<RepoSuiteGeneralThread<E, ?>> readers = new LinkedList<RepoSuiteGeneralThread<E, ?>>();
 	private final int                                cacheSize;
 	
+	/**
+	 * @param cacheSize
+	 */
 	public RepoSuiteDataStorage(final int cacheSize) {
 		this.cacheSize = cacheSize;
 		this.queue = new ArrayBlockingQueue<E>(this.cacheSize);
 	}
 	
+	/**
+	 * @return
+	 * @throws InterruptedException
+	 */
 	public synchronized E read() throws InterruptedException {
 		if (this.queue.size() > 0) {
 			E poll = this.queue.poll();
@@ -49,30 +56,49 @@ public class RepoSuiteDataStorage<E> {
 		return null;
 	}
 	
+	/**
+	 * @param writerThread
+	 */
 	public synchronized void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
 		this.writers.add(writerThread);
 	}
 	
+	/**
+	 * @param readerThread
+	 */
 	public synchronized void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
 		this.readers.add(readerThread);
 	}
 	
+	/**
+	 * @return
+	 */
 	public synchronized int size() {
 		return this.queue.size();
 	}
 	
+	/**
+	 * @param writerThread
+	 */
 	public synchronized void unregisterInput(final RepoSuiteGeneralThread<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
 			this.writers.remove(writerThread);
 		}
 	}
 	
+	/**
+	 * @param readerThread
+	 */
 	public synchronized void unregisterOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			this.readers.remove(readerThread);
 		}
 	}
 	
+	/**
+	 * @param data
+	 * @throws InterruptedException
+	 */
 	public synchronized void write(final E data) throws InterruptedException {
 		if (this.readers.isEmpty()) {
 			if (Logger.logWarn()) {
