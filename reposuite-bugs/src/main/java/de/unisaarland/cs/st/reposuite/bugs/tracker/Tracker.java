@@ -117,7 +117,7 @@ public abstract class Tracker {
 	 *            the bug id under subject
 	 * @return the content of the bug report
 	 */
-	public abstract String fetch(final long id);
+	public abstract String fetch(final Long id);
 	
 	/**
 	 * This is method takes a {@link URI} and fetches the content to a string.
@@ -180,7 +180,7 @@ public abstract class Tracker {
 	 *            the id of the bug an URI shall be created to
 	 * @return the URI to the bug report.
 	 */
-	public abstract URI getLinkFromId(final long bugId);
+	public abstract URI getLinkFromId(final Long bugId);
 	
 	/**
 	 * this method should be synchronized
