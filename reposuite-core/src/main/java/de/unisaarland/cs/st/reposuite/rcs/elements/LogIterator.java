@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -25,9 +26,9 @@ public class LogIterator implements Iterator<LogEntry> {
 	private List<LogEntry>   nextEntries;
 	
 	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
-			final int cacheSize) {
-		assert (repository != null);
-		assert (cacheSize != 0);
+	        final int cacheSize) {
+		Preconditions.checkNotNull(repository);
+		Preconditions.checkNotEquals(cacheSize, 0);
 		
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
@@ -51,8 +52,8 @@ public class LogIterator implements Iterator<LogEntry> {
 		String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, cacheSize - 1);
 		this.nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
 		
-		assert (this.currentEntries != null);
-		assert (!this.currentEntries.isEmpty());
+		Preconditions.checkNotNull(this.currentEntries);
+		Preconditions.checkArgument(!this.currentEntries.isEmpty());
 	}
 	
 	public boolean done() {
@@ -73,7 +74,7 @@ public class LogIterator implements Iterator<LogEntry> {
 			this.currentIndex++;
 			
 			if (entry.getRevision().equals(this.endRevision)
-					|| entry.getRevision().equals(this.repository.getLastRevisionId())) {
+			        || entry.getRevision().equals(this.repository.getLastRevisionId())) {
 				this.done = true;
 			} else {
 				
@@ -105,8 +106,8 @@ public class LogIterator implements Iterator<LogEntry> {
 		}
 		
 		this.nextEntries = this.repository.log(
-				this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
-				this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
+		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
+		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
 	}
 	
 }

@@ -50,8 +50,8 @@ public class Regex {
 	 */
 	public static boolean checkRegex(final String pattern) {
 		// avoid captured positive look ahead
-		assert (pattern != null);
-		assert (pattern.length() > 0);
+		Preconditions.checkNotNull(pattern);
+		Preconditions.checkGreater(pattern.length(), 0);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Checking pattern: " + pattern);
@@ -190,8 +190,8 @@ public class Regex {
 	 * @return the {@link String} representation of the matching pattern
 	 */
 	public static String findLongestMatchingPattern(String pattern, final String text) {
-		assert (text != null);
-		assert (pattern != null);
+		Preconditions.checkNotNull(text);
+		Preconditions.checkNotNull(pattern);
 		
 		Regex regex = new Regex("placeholder");
 		regex.setPattern(pattern);
@@ -240,8 +240,8 @@ public class Regex {
 	 * @param flags
 	 */
 	public Regex(final String pattern, final int flags) {
-		assert (pattern != null);
-		assert (pattern.length() > 0);
+		Preconditions.checkNotNull(pattern);
+		Preconditions.checkGreater(pattern.length(), 0);
 		
 		try {
 			this.pattern = new NamedPattern(pattern, flags);
@@ -286,7 +286,7 @@ public class Regex {
 	 * @return a {@link List} of {@link RegexGroup} representing the matches.
 	 */
 	public List<RegexGroup> find(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -315,7 +315,7 @@ public class Regex {
 	 * @return a {@link List} of {@link List}s of {@link RegexGroup}
 	 */
 	public List<List<RegexGroup>> findAll(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -350,7 +350,7 @@ public class Regex {
 	 * @return a list of single element lists containing a {@link RegexGroup}
 	 */
 	public List<List<RegexGroup>> findAllPossibleMatches(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -440,7 +440,7 @@ public class Regex {
 	 * @return
 	 */
 	public boolean matches(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		find(text);
@@ -455,7 +455,7 @@ public class Regex {
 	 * @return if there is a full match
 	 */
 	public boolean matchesFull(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -478,7 +478,7 @@ public class Regex {
 	 * @return if the text is a prefix of a matching string
 	 */
 	public boolean prefixMatches(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		Matcher matcher = this.pattern.matcher();
@@ -494,7 +494,7 @@ public class Regex {
 	 * @return the reduced string
 	 */
 	public String removeAll(final String text) {
-		assert (text != null);
+		Preconditions.checkNotNull(text);
 		reset();
 		
 		this.replacer = this.pattern.replacer("");
@@ -513,12 +513,13 @@ public class Regex {
 	 * @return
 	 */
 	public String replaceAll(final String text, final String replacement) {
-		assert (text != null);
-		assert (replacement != null);
+		Preconditions.checkNotNull(text);
+		Preconditions.checkNotNull(replacement);
 		// we do not allow references/patterns in this method
-		assert (new Regex("(?<!\\\\)\\$|^\\$").find(replacement) == null);
+		Preconditions.checkNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement), null);
 		// this is done to ensure matches are not replaced by themselves
-		assert ((find(text) == null) || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
+		Preconditions.checkArgument((find(text) == null)
+		        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
 		
 		reset();
 		
@@ -542,12 +543,13 @@ public class Regex {
 	 * @return
 	 */
 	public String replaceAllWithPattern(final String text, final String replacement) {
-		assert (text != null);
-		assert (replacement != null);
+		Preconditions.checkNotNull(text);
+		Preconditions.checkNotNull(replacement);
 		// this is done to ensure matches are not replaced by themselves
-		assert ((find(text) == null) || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
+		Preconditions.checkArgument((find(text) == null)
+		        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
 		// we do enforce references/patterns in this method
-		assert (new Regex("(?<!\\\\)\\$|^\\$").find(replacement) != null);
+		Preconditions.checkNotNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement));
 		reset();
 		
 		this.replacer = this.pattern.replacer(replacement);
@@ -574,9 +576,8 @@ public class Regex {
 	 *            the pattern to set
 	 */
 	private void setPattern(final String pattern) {
-		assert (pattern != null);
-		assert (pattern.length() > 0);
-		// assert (checkRegex(pattern));
+		Preconditions.checkNotNull(pattern);
+		Preconditions.checkGreater(pattern.length(), 0);
 		try {
 			this.pattern = new NamedPattern(pattern);
 		} catch (ArrayIndexOutOfBoundsException e) {

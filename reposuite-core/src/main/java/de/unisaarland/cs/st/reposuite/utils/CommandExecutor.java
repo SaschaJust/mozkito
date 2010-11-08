@@ -52,7 +52,7 @@ public class CommandExecutor extends Thread {
 	 */
 	@Deprecated
 	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir, final String line) {
-		assert (commandLine != null);
+		Preconditions.checkNotNull(commandLine);
 		
 		String[] split = commandLine.split(" ");
 		String[] arguments = new String[split.length - 1];
@@ -86,8 +86,8 @@ public class CommandExecutor extends Thread {
 	 */
 	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
 	        final InputStream input, final Map<String, String> environment) {
-		assert (command != null);
-		assert ((arguments == null) || (arguments.length > 0));
+		Preconditions.checkNotNull(command);
+		Preconditions.checkArgument((arguments == null) || (arguments.length > 0));
 		
 		// merge command and arguments to one list
 		List<String> lineElements = new LinkedList<String>();
@@ -280,21 +280,21 @@ public class CommandExecutor extends Thread {
 	 * @return the read lines
 	 */
 	private List<String> getReadLines() {
-		return readLines;
+		return this.readLines;
 	}
 	
 	/**
 	 * @return the task
 	 */
 	private Task getTask() {
-		return task;
+		return this.task;
 	}
 	
 	/**
 	 * @return the wrote lines
 	 */
 	private List<String> getWroteLines() {
-		return wroteLines;
+		return this.wroteLines;
 	}
 	
 	/**
@@ -303,7 +303,7 @@ public class CommandExecutor extends Thread {
 	 */
 	private void logLinesOnError() {
 		if (Logger.logError()) {
-			Logger.error(getHandle() + "[" + task.toString() + "] lines processed:");
+			Logger.error(getHandle() + "[" + this.task.toString() + "] lines processed:");
 			for (String outputLine : getReadLines()) {
 				Logger.error("read<< " + outputLine);
 			}
@@ -319,11 +319,11 @@ public class CommandExecutor extends Thread {
 	private void reading() {
 		String line;
 		try {
-			while ((line = reader.readLine()) != null) {
-				readLines.add(line);
+			while ((line = this.reader.readLine()) != null) {
+				this.readLines.add(line);
 			}
 		} catch (IOException e) {
-			error = true;
+			this.error = true;
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -336,7 +336,7 @@ public class CommandExecutor extends Thread {
 	 */
 	@Override
 	public void run() {
-		switch (task) {
+		switch (this.task) {
 			case READER:
 				reading();
 				break;
@@ -345,7 +345,7 @@ public class CommandExecutor extends Thread {
 				break;
 			default:
 				if (Logger.logError()) {
-					Logger.error("Unsupported task " + task + " for " + CommandExecutor.getHandle() + ".");
+					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getHandle() + ".");
 				}
 		}
 	}
@@ -357,18 +357,18 @@ public class CommandExecutor extends Thread {
 		String line;
 		
 		try {
-			while ((line = pipe.readLine()) != null) {
-				wroteLines.add(line);
-				writer.write(line);
-				writer.write(FileUtils.lineSeparator);
+			while ((line = this.pipe.readLine()) != null) {
+				this.wroteLines.add(line);
+				this.writer.write(line);
+				this.writer.write(FileUtils.lineSeparator);
 			}
-			writer.flush();
-			writer.close();
+			this.writer.flush();
+			this.writer.close();
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			error = true;
+			this.error = true;
 		}
 	}
 }

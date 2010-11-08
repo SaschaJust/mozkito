@@ -9,6 +9,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeExcep
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -66,11 +67,11 @@ public final class RepositoryFactory {
 	 * @param repositoryClass
 	 *            class object implementing {@link Repository}, not null
 	 */
-	private static void addRepositoryHandler(RepositoryType repositoryIdentifier,
-	        Class<? extends Repository> repositoryClass) {
-		assert (repositoryIdentifier != null);
-		assert (repositoryClass != null);
-		assert (repositoryHandlers.get(repositoryIdentifier) == null);
+	private static void addRepositoryHandler(final RepositoryType repositoryIdentifier,
+	        final Class<? extends Repository> repositoryClass) {
+		Preconditions.checkNotNull(repositoryIdentifier);
+		Preconditions.checkNotNull(repositoryClass);
+		Preconditions.checkNull(repositoryHandlers.get(repositoryIdentifier));
 		
 		if (RepoSuiteSettings.debug) {
 			if (Logger.logDebug()) {
@@ -80,8 +81,8 @@ public final class RepositoryFactory {
 		
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
 		
-		assert (repositoryHandlers.get(repositoryIdentifier) != null);
-		assert (repositoryHandlers.get(repositoryIdentifier) == repositoryClass);
+		Preconditions.checkNotNull(repositoryHandlers.get(repositoryIdentifier));
+		Preconditions.checkEquals(repositoryHandlers.get(repositoryIdentifier), repositoryClass);
 	}
 	
 	/**
@@ -95,9 +96,9 @@ public final class RepositoryFactory {
 	 *             if no matching repository class object could be found in the
 	 *             registry
 	 */
-	public static Class<? extends Repository> getRepositoryHandler(RepositoryType repositoryIdentifier)
+	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier)
 	        throws UnregisteredRepositoryTypeException {
-		assert (repositoryIdentifier != null);
+		Preconditions.checkNotNull(repositoryIdentifier);
 		
 		if (RepoSuiteSettings.debug) {
 			if (Logger.logDebug()) {

@@ -22,6 +22,7 @@ import org.hibernate.annotations.Table;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -60,7 +61,7 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	public Person(final String username, final String fullname, final String email) {
-		assert ((username != null) || (fullname != null) || (email != null));
+		Preconditions.checkArgument((username != null) || (fullname != null) || (email != null));
 		
 		this.username = username;
 		this.fullname = fullname;
@@ -76,7 +77,7 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction) {
-		assert (transaction != null);
+		Preconditions.checkNotNull(transaction);
 		
 		this.transactions.add(transaction);
 	}

@@ -19,6 +19,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 public class HibernateUtil {
 	
@@ -59,10 +60,10 @@ public class HibernateUtil {
 	}
 	
 	public static void createSessionFactory(final String host, final String database, final String user,
-			final String password, final String type, final String driver) throws HibernateException {
+	        final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			+ "?useUnicode=true&characterEncoding=UTF-8";
+			        + "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
@@ -108,7 +109,7 @@ public class HibernateUtil {
 	private Transaction   transaction;
 	
 	public HibernateUtil() {
-		assert (sessionFactory != null);
+		Preconditions.checkNotNull(sessionFactory);
 		this.session = sessionFactory.openSession();
 	}
 	

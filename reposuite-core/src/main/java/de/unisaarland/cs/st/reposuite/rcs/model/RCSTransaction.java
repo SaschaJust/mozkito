@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
@@ -83,10 +84,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
 	        final RCSTransaction previousRcsTransaction) {
-		assert (id != null);
-		assert (message != null);
-		assert (timestamp != null);
-		assert (author != null);
+		Preconditions.checkNotNull(id);
+		Preconditions.checkNotNull(message);
+		Preconditions.checkNotNull(timestamp);
+		Preconditions.checkNotNull(author);
 		
 		this.id = id;
 		this.message = message;
@@ -98,7 +99,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 		
-		assert ((previousRcsTransaction == null) || (compareTo(previousRcsTransaction) >= 0));
+		Preconditions.checkArgument((previousRcsTransaction == null) || (compareTo(previousRcsTransaction) >= 0));
 	}
 	
 	/**
@@ -110,7 +111,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public boolean addRevision(final RCSRevision revision) {
-		assert (revision != null);
+		Preconditions.checkNotNull(revision);
 		return this.revisions.add(revision);
 	}
 	

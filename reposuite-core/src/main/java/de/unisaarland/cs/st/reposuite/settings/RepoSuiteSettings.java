@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -41,7 +42,7 @@ public class RepoSuiteSettings {
 	 *         <code>False</code> otherwise.
 	 */
 	protected boolean addArgument(final RepoSuiteArgument argument) {
-		assert (argument != null);
+		Preconditions.checkNotNull(argument);
 		
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;

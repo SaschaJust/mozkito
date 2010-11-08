@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -24,9 +25,9 @@ public class PersonManager {
 			person = new Person("<unknown>", null, null);
 		}
 		
-		if (persons.contains(person)) {
+		if (this.persons.contains(person)) {
 			final Person searchTarget = person;
-			person = (Person) CollectionUtils.find(persons, new Predicate() {
+			person = (Person) CollectionUtils.find(this.persons, new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -37,13 +38,13 @@ public class PersonManager {
 				Logger.trace("Serving known " + Person.getHandle() + ": " + person);
 			}
 		} else {
-			persons.add(person);
+			this.persons.add(person);
 			if (Logger.logTrace()) {
 				Logger.trace("Adding new " + Person.getHandle() + ": " + person);
 			}
 			
 		}
-		assert (person != null);
+		Preconditions.checkNotNull(person);
 		return person;
 	}
 }

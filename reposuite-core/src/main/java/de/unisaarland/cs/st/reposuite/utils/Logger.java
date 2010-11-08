@@ -97,15 +97,17 @@ public class Logger {
 	 *            determines the offset in the stacktrace
 	 */
 	private static void debug(final String message, final Object[] arguments, final Throwable t, final int offset) {
-		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
-		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
-		assert (offset > 2);
-		assert (logDebug());
+		Preconditions.checkArgument(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		        || (arguments == null));
+		Preconditions.checkArgument(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
+		        || ((arguments == null) && (t == null)));
+		Preconditions.checkGreater(offset, 2);
+		Preconditions.checkArgument(logDebug());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		assert (ret.getFirst() != null);
-		assert (ret.getSecond() != null);
+		Preconditions.checkNotNull(ret.getFirst());
+		Preconditions.checkNotNull(ret.getSecond());
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -210,15 +212,17 @@ public class Logger {
 	 *            determines the offset in the stacktrace
 	 */
 	private static void error(final String message, final Object[] arguments, final Throwable t, final int offset) {
-		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
-		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
-		assert (offset > 2);
-		assert (logError());
+		Preconditions.checkArgument(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		        || (arguments == null));
+		Preconditions.checkArgument(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
+		        || ((arguments == null) && (t == null)));
+		Preconditions.checkGreater(offset, 2);
+		Preconditions.checkArgument(logError());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		assert (ret.getFirst() != null);
-		assert (ret.getSecond() != null);
+		Preconditions.checkNotNull(ret.getFirst());
+		Preconditions.checkNotNull(ret.getSecond());
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -333,15 +337,17 @@ public class Logger {
 	 *            determines the offset in the stacktrace
 	 */
 	private static void info(final String message, final Object[] arguments, final Throwable t, final int offset) {
-		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
-		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
-		assert (offset > 2);
-		assert (logInfo());
+		Preconditions.checkArgument(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		        || (arguments == null));
+		Preconditions.checkArgument(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
+		        || ((arguments == null) && (t == null)));
+		Preconditions.checkGreater(offset, 2);
+		Preconditions.checkArgument(logInfo());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		assert (ret.getFirst() != null);
-		assert (ret.getSecond() != null);
+		Preconditions.checkNotNull(ret.getFirst());
+		Preconditions.checkNotNull(ret.getSecond());
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -416,12 +422,12 @@ public class Logger {
 	 *         number). Both entries are guaranteed to not be null
 	 */
 	private static Tuple<org.slf4j.Logger, String> tags(final int offset) {
-		assert (offset > 1);
+		Preconditions.checkGreater(offset, 1);
 		Throwable throwable = new Throwable();
-		assert (throwable != null);
+		Preconditions.checkNotNull(throwable);
 		
 		throwable.fillInStackTrace();
-		assert (throwable.getStackTrace().length > offset);
+		Preconditions.checkGreater(throwable.getStackTrace().length, offset);
 		
 		Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
 		String methodName = throwable.getStackTrace()[offset].getMethodName();
@@ -429,11 +435,11 @@ public class Logger {
 		
 		org.slf4j.Logger logger = LoggerFactory.getLogger(className);
 		
-		assert (lineNumber != null);
-		assert (lineNumber > 0);
-		assert (methodName != null);
-		assert (className != null);
-		assert (logger != null);
+		Preconditions.checkNotNull(lineNumber);
+		Preconditions.checkGreater(lineNumber, 0);
+		Preconditions.checkNotNull(methodName);
+		Preconditions.checkNotNull(className);
+		Preconditions.checkNotNull(logger);
 		
 		return new Tuple<org.slf4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
 	}
@@ -513,15 +519,17 @@ public class Logger {
 	 *            determines the offset in the stacktrace
 	 */
 	private static void trace(final String message, final Object[] arguments, final Throwable t, final int offset) {
-		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
-		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
-		assert (offset > 2);
-		assert (logTrace());
+		Preconditions.checkArgument(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		        || (arguments == null));
+		Preconditions.checkArgument(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
+		        || ((arguments == null) && (t == null)));
+		Preconditions.checkGreater(offset, 2);
+		Preconditions.checkArgument(logTrace());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		assert (ret.getFirst() != null);
-		assert (ret.getSecond() != null);
+		Preconditions.checkNotNull(ret.getFirst());
+		Preconditions.checkNotNull(ret.getSecond());
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -626,15 +634,17 @@ public class Logger {
 	 *            determines the offset in the stacktrace
 	 */
 	private static void warn(final String message, final Object[] arguments, final Throwable t, final int offset) {
-		assert (((arguments != null) && (arguments.length <= 2) && (arguments.length > 0)) || (arguments == null));
-		assert (((arguments != null) && (t == null)) || ((t != null) && (arguments == null)) || ((arguments == null) && (t == null)));
-		assert (offset > 2);
-		assert (logWarn());
+		Preconditions.checkArgument(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		        || (arguments == null));
+		Preconditions.checkArgument(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
+		        || ((arguments == null) && (t == null)));
+		Preconditions.checkGreater(offset, 2);
+		Preconditions.checkArgument(logWarn());
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		assert (ret.getFirst() != null);
-		assert (ret.getSecond() != null);
+		Preconditions.checkNotNull(ret.getFirst());
+		Preconditions.checkNotNull(ret.getSecond());
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {

@@ -6,11 +6,10 @@ package de.unisaarland.cs.st.reposuite;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.google.common.base.Preconditions;
-
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * {@link RepoSuiteThread}s are the edges of a {@link RepoSuiteToolchain} graph,
@@ -52,9 +51,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	public RepoSuiteThread(final RepoSuiteThreadGroup threadGroup, final String name, final RepoSuiteSettings settings) {
 		super(threadGroup, name);
-		assert (threadGroup != null);
-		assert (name != null);
-		assert (settings != null);
+		Preconditions.checkNotNull(threadGroup);
+		Preconditions.checkNotNull(name);
+		Preconditions.checkNotNull(settings);
 		
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
@@ -78,11 +77,21 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 		setShutdown(false);
 		
-		assert (hasInputConnector() == (this.inputStorage != null));
-		assert (hasOutputConnector() == (this.outputStorage != null));
-		assert (!this.shutdown);
-		assert (settings != null);
-		assert (threadGroup != null);
+		Preconditions
+		        .checkEquals(
+		                hasInputConnector(),
+		                this.inputStorage != null,
+		                "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+		                hasInputConnector(), this.inputStorage != null);
+		Preconditions
+		        .checkEquals(
+		                hasInputConnector(),
+		                this.inputStorage != null,
+		                "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+		                hasOutputConnector(), this.outputStorage != null);
+		Preconditions.checkArgument(!this.shutdown, "`shutdown` must not be set after constructor.");
+		Preconditions.checkNotNull(settings, "`settings` must not be null.");
+		Preconditions.checkNotNull(threadGroup, "`threadGroup` must not be null.");
 	}
 	
 	/*
@@ -148,7 +157,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final boolean connectInput(final RepoSuiteGeneralThread<?, K> thread) {
-		assert (thread != null);
+		Preconditions.checkNotNull(thread);
 		
 		if (hasInputConnector()) {
 			this.inputThreads.add(thread);
@@ -176,7 +185,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final boolean connectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
-		assert (thread != null);
+		Preconditions.checkNotNull(thread);
 		
 		if (hasOutputConnector()) {
 			this.outputThreads.add(thread);
@@ -204,7 +213,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final void disconnectInput(final RepoSuiteGeneralThread<?, K> thread) {
-		assert (thread != null);
+		Preconditions.checkNotNull(thread);
 		
 		if (hasInputConnector()) {
 			if (this.inputThreads.contains(thread)) {
@@ -222,7 +231,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final void disconnectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
-		assert (thread != null);
+		Preconditions.checkNotNull(thread);
 		
 		if (hasOutputConnector()) {
 			if (this.outputThreads.contains(thread)) {
@@ -294,9 +303,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @return the size of the input storage
 	 */
 	protected final int inputSize() {
-		assert (this.inputStorage != null);
-		assert (this.inputStorage != null);
-		assert (hasInputConnector());
+		Preconditions.checkNotNull(this.inputStorage);
+		Preconditions.checkNotNull(this.inputStorage);
+		Preconditions.checkArgument(hasInputConnector());
 		
 		return this.inputStorage.size();
 	}
@@ -359,9 +368,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @return the size of the output storage
 	 */
 	protected final int outputSize() {
-		assert (this.outputStorage != null);
-		assert (this.outputStorage != null);
-		assert (hasOutputConnector());
+		Preconditions.checkNotNull(this.outputStorage);
+		Preconditions.checkNotNull(this.outputStorage);
+		Preconditions.checkArgument(hasOutputConnector());
 		
 		return this.outputStorage.size();
 	}
@@ -384,7 +393,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final void setInputStorage(final RepoSuiteDataStorage<K> storage) {
-		assert (storage != null);
+		Preconditions.checkNotNull(storage);
 		
 		if (hasInputConnector()) {
 			this.inputStorage = storage;
@@ -400,7 +409,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	@Override
 	public final void setOutputStorage(final RepoSuiteDataStorage<V> storage) {
-		assert (storage != null);
+		Preconditions.checkNotNull(storage);
 		
 		if (hasOutputConnector()) {
 			this.outputStorage = storage;

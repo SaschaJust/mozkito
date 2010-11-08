@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -54,9 +55,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
 	        final RCSTransaction previousRcsTransaction) {
-		assert (rcsTransaction != null);
-		assert (rcsFile != null);
-		assert (changeType != null);
+		Preconditions.checkNotNull(rcsTransaction);
+		Preconditions.checkNotNull(rcsFile);
+		Preconditions.checkNotNull(changeType);
 		
 		this.transaction = rcsTransaction;
 		this.changedFile = rcsFile;
@@ -77,7 +78,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Override
 	@Transient
 	public int compareTo(final RCSRevision rcsRevision) {
-		assert (rcsRevision != null);
+		Preconditions.checkNotNull(rcsRevision);
 		return this.transaction.compareTo(rcsRevision.transaction);
 	}
 	

@@ -51,6 +51,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -89,18 +90,18 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		assert (this.initialized);
-		assert (filePath != null);
-		assert (revision != null);
-		assert (filePath.length() > 0);
-		assert (revision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(filePath);
+		Preconditions.checkNotNull(revision);
+		Preconditions.checkGreater(filePath.length(), 0);;
+		Preconditions.checkGreater(revision.length(), 0);;
 		
 		SVNURL relativePath;
 		try {
 			
 			relativePath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
 			SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
-					SVNWCUtil.createDefaultOptions(true));
+			        SVNWCUtil.createDefaultOptions(true));
 			
 			SVNRevision svnRevision = buildRevision(revision);
 			
@@ -128,9 +129,9 @@ public class SubversionRepository extends Repository {
 	 * @return the corresponding SVNRevision
 	 */
 	private SVNRevision buildRevision(final String revision) {
-		assert (this.initialized);
-		assert (revision != null);
-		assert (revision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(revision);
+		Preconditions.checkGreater(revision.length(), 0);;
 		
 		SVNRevision svnRevision;
 		
@@ -141,7 +142,7 @@ public class SubversionRepository extends Repository {
 			svnRevision = SVNRevision.parse(revision.toUpperCase());
 		}
 		
-		assert (svnRevision != null);
+		Preconditions.checkNotNull(svnRevision);
 		
 		try {
 			if (svnRevision.getNumber() < 0) {
@@ -164,13 +165,13 @@ public class SubversionRepository extends Repository {
 			
 			if (Logger.logWarn()) {
 				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + this.startRevision.getNumber()
-						+ ". Corrected to start revision.");
+				        + ". Corrected to start revision.");
 			}
 			return this.startRevision;
 		} else if (svnRevision.getNumber() > this.endRevision.getNumber()) {
 			if (Logger.logWarn()) {
 				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + this.endRevision.getNumber()
-						+ ". Corrected to end revision.");
+				        + ". Corrected to end revision.");
 			}
 			return this.endRevision;
 		} else {
@@ -186,16 +187,16 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		assert (this.initialized);
-		assert (relativeRepoPath != null);
-		assert (revision != null);
-		assert (relativeRepoPath.length() > 0);
-		assert (revision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(relativeRepoPath);
+		Preconditions.checkNotNull(revision);
+		Preconditions.checkGreater(relativeRepoPath.length(), 0);;
+		Preconditions.checkGreater(revision.length(), 0);;
 		
 		File workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
-				"reposuite_clone_" + DateTimeUtils.currentTimeMillis());
+		        "reposuite_clone_" + DateTimeUtils.currentTimeMillis());
 		
-		assert (workingDirectory != null);
+		Preconditions.checkNotNull(workingDirectory);
 		
 		try {
 			FileUtils.forceDeleteOnExit(workingDirectory);
@@ -211,7 +212,7 @@ public class SubversionRepository extends Repository {
 			
 			checkoutPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
 			SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
-					SVNWCUtil.createDefaultOptions(true));
+			        SVNWCUtil.createDefaultOptions(true));
 			
 			SVNRevision svnRevision = buildRevision(revision);
 			// check out the svnurl recursively into the createDir visible from
@@ -234,28 +235,28 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		assert (this.initialized);
-		assert (filePath != null);
-		assert (filePath.length() > 0);
-		assert (baseRevision != null);
-		assert (revisedRevision != null);
-		assert (baseRevision.length() > 0);
-		assert (revisedRevision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(filePath);
+		Preconditions.checkGreater(filePath.length(), 0);;
+		Preconditions.checkNotNull(baseRevision);
+		Preconditions.checkNotNull(revisedRevision);
+		Preconditions.checkGreater(baseRevision.length(), 0);;
+		Preconditions.checkGreater(revisedRevision.length(), 0);;
 		
 		try {
 			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
 			SVNRevision fromRevision = buildRevision(baseRevision);
 			SVNRevision toRevision = buildRevision(revisedRevision);
 			SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
-					SVNWCUtil.createDefaultOptions(true));
+			        SVNWCUtil.createDefaultOptions(true));
 			diffClient.getDiffGenerator().setDiffDeleted(true);
 			SubversionDiffParser diffParser = new SubversionDiffParser();
 			diffClient.setDiffGenerator(diffParser);
 			
 			diffClient.doDiff(repoPath, toRevision, fromRevision, toRevision, SVNDepth.FILES, false,
-					new NullOutputStream());
+			        new NullOutputStream());
 			
-			//delete tmp diff files
+			// delete tmp diff files
 			File pwd = new File(System.getProperty("user.dir"));
 			for (File file : FileUtils.listFiles(pwd, null, false)) {
 				if (file.getName().startsWith(".diff.")) {
@@ -293,9 +294,9 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		assert (this.initialized);
-		assert (revision != null);
-		assert (revision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(revision);
+		Preconditions.checkGreater(revision.length(), 0);;
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
@@ -323,7 +324,7 @@ public class SubversionRepository extends Repository {
 						default:
 							if (Logger.logError()) {
 								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
-										+ RepoSuiteSettings.reportThis);
+								        + RepoSuiteSettings.reportThis);
 							}
 					}
 				}
@@ -343,26 +344,26 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		assert (this.initialized);
-		assert (this.startRevision != null);
-		assert (this.startRevision.getNumber() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(this.startRevision);
+		Preconditions.checkGreater(this.startRevision.getNumber(), 0l);;
 		
 		return this.startRevision.toString();
 	}
 	
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
-		assert (this.initialized);
-		assert (revision != null);
-		assert (revision.length() > 0);
-		assert (pathName != null);
-		assert (pathName.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(revision);
+		Preconditions.checkGreater(revision.length(), 0);;
+		Preconditions.checkNotNull(pathName);
+		Preconditions.checkGreater(pathName.length(), 0);;
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		
 		try {
-			@SuppressWarnings ("unchecked") Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null,
-					revisionNumber, revisionNumber, true, true);
+			@SuppressWarnings ("unchecked") Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" },
+			        null, revisionNumber, revisionNumber, true, true);
 			
 			for (SVNLogEntry entry : logs) {
 				@SuppressWarnings ("unchecked") Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
@@ -377,10 +378,10 @@ public class SubversionRepository extends Repository {
 							if (logEntryPath.getPath().equals(pathName)) {
 								return logEntryPath.getCopyPath();
 							} else if (logEntryPath.getKind().equals(SVNNodeKind.DIR)
-									&& pathName.startsWith(logEntryPath.getPath().substring(1))) {
+							        && pathName.startsWith(logEntryPath.getPath().substring(1))) {
 								String copyPath = logEntryPath.getCopyPath().substring(1) + "/";
 								return copyPath
-								+ pathName.substring(logEntryPath.getPath().length(), pathName.length());
+								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
 							}
 					}
 					
@@ -403,13 +404,13 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		assert (this.initialized);
-		assert (this.endRevision != null);
-		assert (this.endRevision.getNumber() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(this.endRevision);
+		Preconditions.checkGreater(this.endRevision.getNumber(), 0l);;
 		
 		try {
-			return (this.repository.getLatestRevision() > this.endRevision.getNumber() ? this.endRevision.toString() : this.repository
-					.getLatestRevision() + "");
+			return (this.repository.getLatestRevision() > this.endRevision.getNumber() ? this.endRevision.toString()
+			        : this.repository.getLatestRevision() + "");
 		} catch (SVNException e) {
 			
 			if (Logger.logError()) {
@@ -427,7 +428,7 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId, final long index) {
-		assert (transactionId != null);
+		Preconditions.checkNotNull(transactionId);
 		
 		if (buildRevision(transactionId).getNumber() + index > buildRevision(getLastRevisionId()).getNumber()) {
 			return getLastRevisionId();
@@ -472,11 +473,11 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
-		assert (this.initialized);
-		assert (fromRevision != null);
-		assert (toRevision != null);
-		assert (fromRevision.length() > 0);
-		assert (toRevision.length() > 0);
+		Preconditions.checkArgument(this.initialized);
+		Preconditions.checkNotNull(fromRevision);
+		Preconditions.checkNotNull(toRevision);
+		Preconditions.checkGreater(fromRevision.length(), 0);;
+		Preconditions.checkGreater(toRevision.length(), 0);;
 		
 		SVNRevision fromSVNRevision = buildRevision(fromRevision);
 		SVNRevision toSVNRevision = buildRevision(toRevision);
@@ -485,14 +486,14 @@ public class SubversionRepository extends Repository {
 		
 		Collection<SVNLogEntry> logs;
 		try {
-			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(), toSVNRevision.getNumber(),
-					true, true);
+			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(),
+			        toSVNRevision.getNumber(), true, true);
 			LogEntry buff = null;
 			for (SVNLogEntry entry : logs) {
 				
 				LogEntry current = new LogEntry(entry.getRevision() + "", buff, this.personManager.getPerson((entry
-						.getAuthor() != null ? new Person(entry.getAuthor(), null, null) : null)), entry.getMessage(),
-						new DateTime(entry.getDate()));
+				        .getAuthor() != null ? new Person(entry.getAuthor(), null, null) : null)), entry.getMessage(),
+				        new DateTime(entry.getDate()));
 				list.add(current);
 				buff = current;
 			}
@@ -516,7 +517,7 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision)
-	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
+	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
 		setup(address, startRevision, endRevision, null, null);
 	}
 	
@@ -527,9 +528,9 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
-			final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
-			UnsupportedProtocolType {
-		assert (address != null);
+	        final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
+	        UnsupportedProtocolType {
+		Preconditions.checkNotNull(address);
 		this.uri = address;
 		this.username = username;
 		this.password = password;
@@ -584,12 +585,13 @@ public class SubversionRepository extends Repository {
 				}
 				this.svnurl = SVNURL.parseURIDecoded(this.uri.toString());
 				if (Logger.logTrace()) {
-					Logger.trace("Done parsing URL: " + this.uri.toString() + " resulting in: " + this.svnurl.toString());
+					Logger.trace("Done parsing URL: " + this.uri.toString() + " resulting in: "
+					        + this.svnurl.toString());
 				}
 				
 				if (this.username != null) {
 					ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
-							this.password);
+					        this.password);
 					this.repository.setAuthenticationManager(authManager);
 				}
 				
@@ -597,7 +599,7 @@ public class SubversionRepository extends Repository {
 				
 				this.startRevision = (startRevision != null ? SVNRevision.parse(startRevision) : SVNRevision.create(1));
 				this.endRevision = (endRevision != null ? SVNRevision.parse(endRevision) : SVNRevision
-						.create(this.repository.getLatestRevision()));
+				        .create(this.repository.getLatestRevision()));
 				
 				if (this.startRevision.getNumber() < 0) {
 					if (this.startRevision.equals(SVNRevision.PREVIOUS)) {
@@ -637,9 +639,10 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String toString() {
-		return "SubversionRepository [password=" + (this.password != null ? this.password.replaceAll(".", "*") : "(unset)")
-		+ ", svnurl=" + this.svnurl + ", type=" + this.type + ", uri=" + this.uri + ", username="
-		+ (this.username != null ? this.username : "(unset)") + ", startRevision=" + this.startRevision + ", endRevision="
-		+ this.endRevision + "]";
+		return "SubversionRepository [password="
+		        + (this.password != null ? this.password.replaceAll(".", "*") : "(unset)") + ", svnurl=" + this.svnurl
+		        + ", type=" + this.type + ", uri=" + this.uri + ", username="
+		        + (this.username != null ? this.username : "(unset)") + ", startRevision=" + this.startRevision
+		        + ", endRevision=" + this.endRevision + "]";
 	}
 }

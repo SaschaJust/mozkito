@@ -8,13 +8,12 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.google.common.base.Preconditions;
-
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -26,7 +25,7 @@ class GitLogParser {
 	
 	protected static DateTimeFormatter gitLogDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex             regex            = new Regex(
-	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	                                                            "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex             messageRegex     = new Regex(".*$$\\s*git-svn-id:.*");
 	private static final PersonManager personManager    = new PersonManager();
 	
@@ -39,7 +38,7 @@ class GitLogParser {
 	 * @return the list of parsed log entries representing the logMessages
 	 */
 	protected static List<LogEntry> parse(final List<String> logMessages) {
-		assert (logMessages != null);
+		Preconditions.checkNotNull(logMessages);
 		Preconditions.checkNotNull(logMessages);
 		List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
@@ -60,7 +59,7 @@ class GitLogParser {
 						previous = result.get(result.size() - 1);
 					}
 					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author
-							: null)), message.toString(), dateTime));
+					        : null)), message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
@@ -137,7 +136,7 @@ class GitLogParser {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author : null)),
-					message.toString(), dateTime));
+			        message.toString(), dateTime));
 		}
 		Collections.reverse(result);
 		return result;
