@@ -28,6 +28,7 @@ public class Bugs extends Thread implements RepoSuiteToolchain {
 	 * 
 	 */
 	public Bugs() {
+		
 	}
 	
 	/*

@@ -12,11 +12,10 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Severity implements Annotated {
-	STUB;
+	ENHANCEMENT, TRIVIAL, MINOR, NORMAL, MAJOR, CRITICAL, BLOCKER;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

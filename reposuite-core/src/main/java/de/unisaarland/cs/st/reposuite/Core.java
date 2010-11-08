@@ -11,6 +11,7 @@ import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
+import de.unisaarland.cs.st.reposuite.utils.Preconditions;
 
 /**
  * {@link Core} is the standard {@link RepoSuiteToolchain} to mine a repository.

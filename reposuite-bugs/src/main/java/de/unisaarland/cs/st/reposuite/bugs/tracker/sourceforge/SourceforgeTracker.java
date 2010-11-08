@@ -245,7 +245,7 @@ public class SourceforgeTracker extends Tracker {
 		}
 		
 		for (long i = this.startAt; i <= this.stopAt; ++i) {
-			addSuspect(i);
+			addBugId(i);
 		}
 		
 		this.initialized = true;

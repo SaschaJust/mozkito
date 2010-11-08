@@ -65,7 +65,7 @@ public abstract class Tracker {
 	protected Long              stopAt;
 	protected boolean           initialized      = false;
 	private URI                 overviewURI;
-	private BlockingQueue<Long> suspects         = new LinkedBlockingQueue<Long>();
+	private BlockingQueue<Long> bugIds         = new LinkedBlockingQueue<Long>();
 	protected PersonManager     personManager    = new PersonManager();
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
@@ -78,8 +78,8 @@ public abstract class Tracker {
 		
 	}
 	
-	public void addSuspect(final Long id) {
-		this.suspects.add(id);
+	public void addBugId(final Long id) {
+		this.bugIds.add(id);
 	}
 	
 	/**
@@ -209,8 +209,8 @@ public abstract class Tracker {
 	 * @return the next id that hasn't been requested.
 	 */
 	public final synchronized Long getNextId() {
-		if (!this.suspects.isEmpty()) {
-			return this.suspects.poll();
+		if (!this.bugIds.isEmpty()) {
+			return this.bugIds.poll();
 		} else {
 			return null;
 		}
@@ -331,9 +331,9 @@ public abstract class Tracker {
 			}
 		}
 		
-		this.suspects = new LinkedBlockingDeque<Long>();
+		this.bugIds = new LinkedBlockingDeque<Long>();
 		
-		// TODO when this method ends, suspects must be filled
+		// TODO when this method ends, bugIds must be filled
 	}
 	
 }

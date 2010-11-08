@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Status implements Annotated {
-	STUB;
+	UNCONFIRMED, NEW, ASSIGNED, REOPENED, RESOLVED, VERIFIED, CLOSED;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {

@@ -12,11 +12,10 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Type implements Annotated {
-	STUB;
+	BUG, RFE, TASK;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
