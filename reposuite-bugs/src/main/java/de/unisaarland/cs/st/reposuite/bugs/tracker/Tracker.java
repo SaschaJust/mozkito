@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -65,7 +66,7 @@ public abstract class Tracker {
 	protected Long              stopAt;
 	protected boolean           initialized      = false;
 	private URI                 overviewURI;
-	private BlockingQueue<Long> bugIds         = new LinkedBlockingQueue<Long>();
+	private BlockingQueue<Long> bugIds           = new LinkedBlockingQueue<Long>();
 	protected PersonManager     personManager    = new PersonManager();
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
@@ -137,8 +138,14 @@ public abstract class Tracker {
 				HttpGet request = new HttpGet(uri);
 				HttpResponse response = httpClient.execute(request);
 				HttpEntity entity = response.getEntity();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+				String line;
+				StringBuilder content = new StringBuilder();
+				while ((line = reader.readLine()) != null) {
+					content.append(line);
+				}
 				
-				return new Tuple<String, String>(response.getProtocolVersion().toString(), entity.toString());
+				return new Tuple<String, String>(response.getProtocolVersion().toString(), content.toString());
 			} else if (uri.getScheme().equals("file")) {
 				StringBuilder builder = new StringBuilder();
 				File file = new File(uri.getPath());

@@ -39,11 +39,11 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final Comment o) {
-		if (o == null) {
+	public int compareTo(final Comment object) {
+		if (object == null) {
 			return 1;
 		} else {
-			return this.timestamp.compareTo(o.timestamp);
+			return this.timestamp.compareTo(object.timestamp);
 		}
 	}
 	
@@ -52,17 +52,17 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
+	public boolean equals(final Object object) {
+		if (this == object) {
 			return true;
 		}
-		if (obj == null) {
+		if (object == null) {
 			return false;
 		}
-		if (!(obj instanceof Comment)) {
+		if (!(object instanceof Comment)) {
 			return false;
 		}
-		Comment other = (Comment) obj;
+		Comment other = (Comment) object;
 		if (this.author == null) {
 			if (other.author != null) {
 				return false;
