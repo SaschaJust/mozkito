@@ -52,7 +52,7 @@ public class CommandExecutor extends Thread {
 	 */
 	@Deprecated
 	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir, final String line) {
-		Preconditions.checkNotNull(commandLine);
+		Condition.notNull(commandLine);
 		
 		String[] split = commandLine.split(" ");
 		String[] arguments = new String[split.length - 1];
@@ -86,8 +86,8 @@ public class CommandExecutor extends Thread {
 	 */
 	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
 	        final InputStream input, final Map<String, String> environment) {
-		Preconditions.checkNotNull(command);
-		Preconditions.checkArgument((arguments == null) || (arguments.length > 0));
+		Condition.notNull(command);
+		Condition.check((arguments == null) || (arguments.length > 0));
 		
 		// merge command and arguments to one list
 		List<String> lineElements = new LinkedList<String>();

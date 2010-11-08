@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -42,7 +42,7 @@ public class RepoSuiteSettings {
 	 *         <code>False</code> otherwise.
 	 */
 	protected boolean addArgument(final RepoSuiteArgument argument) {
-		Preconditions.checkNotNull(argument);
+		Condition.notNull(argument);
 		
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;

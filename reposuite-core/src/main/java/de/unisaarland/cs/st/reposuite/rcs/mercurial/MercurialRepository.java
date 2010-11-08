@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.Delta;
@@ -67,8 +67,8 @@ public class MercurialRepository extends Repository {
 	 * @return the list
 	 */
 	protected static List<String> preFilterLines(final List<String> lines) {
-		Preconditions.checkNotNull(lines);
-		Preconditions.checkNotNull(lines);
+		Condition.notNull(lines);
+		Condition.notNull(lines);
 		List<String> completeLines = new LinkedList<String>();
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < lines.size(); ++i) {
@@ -98,8 +98,8 @@ public class MercurialRepository extends Repository {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private static void writeLogStyle(final File dir) throws IOException {
-		Preconditions.checkNotNull(dir);
-		Preconditions.checkNotNull(dir, "Cannot write content to NULL file");
+		Condition.notNull(dir);
+		Condition.notNull(dir, "Cannot write content to NULL file");
 		File f = new File(dir + System.getProperty("file.separator") + "minerlog");
 		if (f.exists()) {
 			f.delete();
@@ -130,10 +130,10 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		Preconditions.checkNotNull(filePath);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkNotNull(filePath, "Annotation of null path not possible");
-		Preconditions.checkNotNull(revision, "Annotation requires revision");
+		Condition.notNull(filePath);
+		Condition.notNull(revision);
+		Condition.notNull(filePath, "Annotation of null path not possible");
+		Condition.notNull(revision, "Annotation requires revision");
 		if ((filePath == null) || (revision == null)) {
 			if (Logger.logError()) {
 				Logger.error("filePath and revision must not be null. Abort.");
@@ -226,10 +226,10 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		Preconditions.checkNotNull(relativeRepoPath);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkNotNull(relativeRepoPath, "Cannot check out NULL path");
-		Preconditions.checkNotNull(revision, "Checking ut requries revision");
+		Condition.notNull(relativeRepoPath);
+		Condition.notNull(revision);
+		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
+		Condition.notNull(revision, "Checking ut requries revision");
 		
 		if ((relativeRepoPath == null) || (revision == null)) {
 			if (Logger.logError()) {
@@ -260,12 +260,12 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		Preconditions.checkNotNull(filePath);
-		Preconditions.checkNotNull(baseRevision);
-		Preconditions.checkNotNull(revisedRevision);
-		Preconditions.checkNotNull(filePath, "Cannot diff NULL path");
-		Preconditions.checkNotNull(baseRevision, "cannot compare to NULL revision");
-		Preconditions.checkNotNull(revisedRevision, "cannot compare to NULL revision");
+		Condition.notNull(filePath);
+		Condition.notNull(baseRevision);
+		Condition.notNull(revisedRevision);
+		Condition.notNull(filePath, "Cannot diff NULL path");
+		Condition.notNull(baseRevision, "cannot compare to NULL revision");
+		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
 		
 		if ((filePath == null) || (baseRevision == null) || (revisedRevision == null)) {
 			if (Logger.logError()) {
@@ -298,8 +298,8 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkNotNull(revision, "Cannot get changed paths for null revision");
+		Condition.notNull(revision);
+		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
 		if (revision == null) {
 			if (Logger.logError()) {
@@ -411,10 +411,10 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkNotNull(pathName);
-		Preconditions.checkNotNull(revision, "Cannot get former path name of null revision");
-		Preconditions.checkNotNull(pathName, "Cannot get former path name for null path");
+		Condition.notNull(revision);
+		Condition.notNull(pathName);
+		Condition.notNull(revision, "Cannot get former path name of null revision");
+		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision,
 		        "--template", "{file_copies%filecopy}" }, this.cloneDir, null, null);
@@ -474,8 +474,8 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId, final long index) {
-		Preconditions.checkNotNull(transactionId);
-		Preconditions.checkNotNull(transactionId, "Cannot get relative revision to null revision");
+		Condition.notNull(transactionId);
+		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
 		
 		if (index == 0) {
 			return transactionId;
@@ -531,8 +531,8 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getTransactionId(final long index) {
-		Preconditions.checkGreaterOrEqual(index, 0l);
-		Preconditions.checkArgument(index >= 0, "Cannot get transaction id for revision number smaller than zero.");
+		Condition.greaterOrEqual(index, 0l);
+		Condition.check(index >= 0, "Cannot get transaction id for revision number smaller than zero.");
 		
 		String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
@@ -549,10 +549,10 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
-		Preconditions.checkNotNull(fromRevision);
-		Preconditions.checkNotNull(toRevision);
-		Preconditions.checkNotNull(fromRevision, "Cannot get log info for NULL revision");
-		Preconditions.checkNotNull(toRevision, "Cannot get log info for NULL revision");
+		Condition.notNull(fromRevision);
+		Condition.notNull(toRevision);
+		Condition.notNull(fromRevision, "Cannot get log info for NULL revision");
+		Condition.notNull(toRevision, "Cannot get log info for NULL revision");
 		
 		ArrayList<LogEntry> result = new ArrayList<LogEntry>();
 		if ((toRevision == null) || (fromRevision == null)) {
@@ -643,7 +643,7 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision) {
-		Preconditions.checkNotNull(address);
+		Condition.notNull(address);
 		
 		this.uri = address;
 		// clone the remote repository
@@ -692,12 +692,12 @@ public class MercurialRepository extends Repository {
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
 	        final String password) {
-		Preconditions.checkNotNull(address);
-		Preconditions.checkNotNull(username);
-		Preconditions.checkNotNull(password);
-		Preconditions.checkNotNull(address);
-		Preconditions.checkNotNull(username);
-		Preconditions.checkNotNull(password);
+		Condition.notNull(address);
+		Condition.notNull(username);
+		Condition.notNull(password);
+		Condition.notNull(address);
+		Condition.notNull(username);
+		Condition.notNull(password);
 		
 		this.uri = Repository.encodeUsername(address, username);
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"

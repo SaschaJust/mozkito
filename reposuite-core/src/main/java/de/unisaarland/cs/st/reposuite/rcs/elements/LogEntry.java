@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * The Class LogEntry.
@@ -36,10 +36,10 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	public LogEntry(final String revision, final LogEntry previous, final Person author, final String message,
 	        final DateTime dateTime) {
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkNotNull(author);
-		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(dateTime);
+		Condition.notNull(revision);
+		Condition.notNull(author);
+		Condition.notNull(message);
+		Condition.notNull(dateTime);
 		
 		this.revision = revision;
 		this.author = author;

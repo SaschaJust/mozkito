@@ -51,7 +51,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -90,11 +90,11 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(filePath);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkGreater(filePath.length(), 0);;
-		Preconditions.checkGreater(revision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(filePath);
+		Condition.notNull(revision);
+		Condition.greater(filePath.length(), 0);;
+		Condition.greater(revision.length(), 0);;
 		
 		SVNURL relativePath;
 		try {
@@ -129,9 +129,9 @@ public class SubversionRepository extends Repository {
 	 * @return the corresponding SVNRevision
 	 */
 	private SVNRevision buildRevision(final String revision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkGreater(revision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(revision);
+		Condition.greater(revision.length(), 0);;
 		
 		SVNRevision svnRevision;
 		
@@ -142,7 +142,7 @@ public class SubversionRepository extends Repository {
 			svnRevision = SVNRevision.parse(revision.toUpperCase());
 		}
 		
-		Preconditions.checkNotNull(svnRevision);
+		Condition.notNull(svnRevision);
 		
 		try {
 			if (svnRevision.getNumber() < 0) {
@@ -187,16 +187,16 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(relativeRepoPath);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkGreater(relativeRepoPath.length(), 0);;
-		Preconditions.checkGreater(revision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(relativeRepoPath);
+		Condition.notNull(revision);
+		Condition.greater(relativeRepoPath.length(), 0);;
+		Condition.greater(revision.length(), 0);;
 		
 		File workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
 		        "reposuite_clone_" + DateTimeUtils.currentTimeMillis());
 		
-		Preconditions.checkNotNull(workingDirectory);
+		Condition.notNull(workingDirectory);
 		
 		try {
 			FileUtils.forceDeleteOnExit(workingDirectory);
@@ -235,13 +235,13 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(filePath);
-		Preconditions.checkGreater(filePath.length(), 0);;
-		Preconditions.checkNotNull(baseRevision);
-		Preconditions.checkNotNull(revisedRevision);
-		Preconditions.checkGreater(baseRevision.length(), 0);;
-		Preconditions.checkGreater(revisedRevision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(filePath);
+		Condition.greater(filePath.length(), 0);;
+		Condition.notNull(baseRevision);
+		Condition.notNull(revisedRevision);
+		Condition.greater(baseRevision.length(), 0);;
+		Condition.greater(revisedRevision.length(), 0);;
 		
 		try {
 			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
@@ -294,9 +294,9 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkGreater(revision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(revision);
+		Condition.greater(revision.length(), 0);;
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
@@ -344,20 +344,20 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(this.startRevision);
-		Preconditions.checkGreater(this.startRevision.getNumber(), 0l);;
+		Condition.check(this.initialized);
+		Condition.notNull(this.startRevision);
+		Condition.greater(this.startRevision.getNumber(), 0l);;
 		
 		return this.startRevision.toString();
 	}
 	
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(revision);
-		Preconditions.checkGreater(revision.length(), 0);;
-		Preconditions.checkNotNull(pathName);
-		Preconditions.checkGreater(pathName.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(revision);
+		Condition.greater(revision.length(), 0);;
+		Condition.notNull(pathName);
+		Condition.greater(pathName.length(), 0);;
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		
@@ -404,9 +404,9 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(this.endRevision);
-		Preconditions.checkGreater(this.endRevision.getNumber(), 0l);;
+		Condition.check(this.initialized);
+		Condition.notNull(this.endRevision);
+		Condition.greater(this.endRevision.getNumber(), 0l);;
 		
 		try {
 			return (this.repository.getLatestRevision() > this.endRevision.getNumber() ? this.endRevision.toString()
@@ -428,7 +428,7 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId, final long index) {
-		Preconditions.checkNotNull(transactionId);
+		Condition.notNull(transactionId);
 		
 		if (buildRevision(transactionId).getNumber() + index > buildRevision(getLastRevisionId()).getNumber()) {
 			return getLastRevisionId();
@@ -473,11 +473,11 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
-		Preconditions.checkArgument(this.initialized);
-		Preconditions.checkNotNull(fromRevision);
-		Preconditions.checkNotNull(toRevision);
-		Preconditions.checkGreater(fromRevision.length(), 0);;
-		Preconditions.checkGreater(toRevision.length(), 0);;
+		Condition.check(this.initialized);
+		Condition.notNull(fromRevision);
+		Condition.notNull(toRevision);
+		Condition.greater(fromRevision.length(), 0);;
+		Condition.greater(toRevision.length(), 0);;
 		
 		SVNRevision fromSVNRevision = buildRevision(fromRevision);
 		SVNRevision toSVNRevision = buildRevision(toRevision);
@@ -530,7 +530,7 @@ public class SubversionRepository extends Repository {
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
 	        final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
 	        UnsupportedProtocolType {
-		Preconditions.checkNotNull(address);
+		Condition.notNull(address);
 		this.uri = address;
 		this.username = username;
 		this.password = password;

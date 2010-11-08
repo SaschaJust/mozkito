@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeExcep
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -69,9 +69,9 @@ public final class RepositoryFactory {
 	 */
 	private static void addRepositoryHandler(final RepositoryType repositoryIdentifier,
 	        final Class<? extends Repository> repositoryClass) {
-		Preconditions.checkNotNull(repositoryIdentifier);
-		Preconditions.checkNotNull(repositoryClass);
-		Preconditions.checkNull(repositoryHandlers.get(repositoryIdentifier));
+		Condition.notNull(repositoryIdentifier);
+		Condition.notNull(repositoryClass);
+		Condition.isNull(repositoryHandlers.get(repositoryIdentifier));
 		
 		if (RepoSuiteSettings.debug) {
 			if (Logger.logDebug()) {
@@ -81,8 +81,8 @@ public final class RepositoryFactory {
 		
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
 		
-		Preconditions.checkNotNull(repositoryHandlers.get(repositoryIdentifier));
-		Preconditions.checkEquals(repositoryHandlers.get(repositoryIdentifier), repositoryClass);
+		Condition.notNull(repositoryHandlers.get(repositoryIdentifier));
+		Condition.equals(repositoryHandlers.get(repositoryIdentifier), repositoryClass);
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public final class RepositoryFactory {
 	 */
 	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier)
 	        throws UnregisteredRepositoryTypeException {
-		Preconditions.checkNotNull(repositoryIdentifier);
+		Condition.notNull(repositoryIdentifier);
 		
 		if (RepoSuiteSettings.debug) {
 			if (Logger.logDebug()) {

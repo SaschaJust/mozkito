@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -65,8 +65,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		Preconditions.checkNotNull(filePath, "Annotation of null path not possible");
-		Preconditions.checkNotNull(revision, "Annotation requires revision");
+		Condition.notNull(filePath, "Annotation of null path not possible");
+		Condition.notNull(revision, "Annotation requires revision");
 		
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		String firstRev = getFirstRevisionId();
@@ -123,8 +123,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		Preconditions.checkNotNull(relativeRepoPath, "Cannot check out NULL path");
-		Preconditions.checkNotNull(revision, "Checking ut requries revision");
+		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
+		Condition.notNull(revision, "Checking ut requries revision");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
 		        this.cloneDir, null, new HashMap<String, String>());
@@ -148,9 +148,9 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		Preconditions.checkNotNull(filePath, "Cannot diff NULL path");
-		Preconditions.checkNotNull(baseRevision, "cannot compare to NULL revision");
-		Preconditions.checkNotNull(revisedRevision, "cannot compare to NULL revision");
+		Condition.notNull(filePath, "Cannot diff NULL path");
+		Condition.notNull(baseRevision, "cannot compare to NULL revision");
+		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
 		
 		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
@@ -178,7 +178,7 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		Preconditions.checkNotNull(revision, "Cannot get changed paths for null revision");
+		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		        "--pretty=format:%H", "--name-status", revision }, this.cloneDir, null, new HashMap<String, String>());
@@ -265,8 +265,8 @@ public class GitRepository extends Repository {
 	
 	@Override
 	public String getFormerPathName(final String revision, final String pathName) {
-		Preconditions.checkNotNull(revision, "Cannot get former path name of null revision");
-		Preconditions.checkNotNull(pathName, "Cannot get former path name for null path");
+		Condition.notNull(revision, "Cannot get former path name of null revision");
+		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		String[] args = new String[] { "log", "-r", revision + "^.." + revision, "-M", "-C", "--name-status",
 		        "--diff-filter=R,C" };
@@ -315,7 +315,7 @@ public class GitRepository extends Repository {
 	
 	@Override
 	public String getRelativeTransactionId(final String transactionId, final long index) {
-		Preconditions.checkNotNull(transactionId, "Cannot get relative revision to null revision");
+		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
 		
 		if (index == 0) {
 			return transactionId;
@@ -360,8 +360,8 @@ public class GitRepository extends Repository {
 	
 	@Override
 	public String getTransactionId(final long index) {
-		Preconditions
-		        .checkGreaterOrEqual(index, 0l, "Cannot get transaction id for revision number smaller than zero.");
+		Condition
+		        .greaterOrEqual(index, 0l, "Cannot get transaction id for revision number smaller than zero.");
 		
 		String[] args = new String[] { "log", "--pretty=format:'%H'", "--reverse" };
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
@@ -378,8 +378,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
-		Preconditions.checkNotNull(fromRevision, "Cannot get log info for NULL revision");
-		Preconditions.checkNotNull(toRevision, "Cannot get log info for NULL revision");
+		Condition.notNull(fromRevision, "Cannot get log info for NULL revision");
+		Condition.notNull(toRevision, "Cannot get log info for NULL revision");
 		
 		if ((fromRevision == null) || (toRevision == null)) {
 			return null;
@@ -398,7 +398,7 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision) {
-		Preconditions.checkNotNull(address);
+		Condition.notNull(address);
 		
 		this.uri = address;
 		// clone the remote repository
@@ -446,9 +446,9 @@ public class GitRepository extends Repository {
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
 	        final String password) {
-		Preconditions.checkNotNull(address);
-		Preconditions.checkNotNull(username);
-		Preconditions.checkNotNull(password);
+		Condition.notNull(address);
+		Condition.notNull(username);
+		Condition.notNull(password);
 		
 		this.uri = Repository.encodeUsername(address, username);
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"

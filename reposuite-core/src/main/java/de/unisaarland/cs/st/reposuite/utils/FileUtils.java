@@ -40,7 +40,7 @@ public class FileUtils {
 	 * @throws ExternalExecutableException
 	 */
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
-		Preconditions.checkNotNull(command);
+		Condition.notNull(command);
 		if (command.startsWith(FileUtils.fileSeparator)
 				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
 						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {

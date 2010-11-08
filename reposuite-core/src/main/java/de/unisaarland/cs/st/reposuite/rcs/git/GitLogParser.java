@@ -13,7 +13,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -38,8 +38,8 @@ class GitLogParser {
 	 * @return the list of parsed log entries representing the logMessages
 	 */
 	protected static List<LogEntry> parse(final List<String> logMessages) {
-		Preconditions.checkNotNull(logMessages);
-		Preconditions.checkNotNull(logMessages);
+		Condition.notNull(logMessages);
+		Condition.notNull(logMessages);
 		List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
 		

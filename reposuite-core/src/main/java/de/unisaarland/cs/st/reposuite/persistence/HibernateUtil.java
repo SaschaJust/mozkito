@@ -19,7 +19,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 public class HibernateUtil {
 	
@@ -109,7 +109,7 @@ public class HibernateUtil {
 	private Transaction   transaction;
 	
 	public HibernateUtil() {
-		Preconditions.checkNotNull(sessionFactory);
+		Condition.notNull(sessionFactory);
 		this.session = sessionFactory.openSession();
 	}
 	

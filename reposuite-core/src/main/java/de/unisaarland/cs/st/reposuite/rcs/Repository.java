@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import difflib.Delta;
 
 /**
@@ -140,8 +140,8 @@ public abstract class Repository {
 	 * @param withInterface
 	 */
 	public void consistencyCheck(final List<LogEntry> logEntries, final boolean withInterface) {
-		Preconditions.checkNotNull(logEntries);
-		Preconditions.checkGreater(logEntries.size(), 0);
+		Condition.notNull(logEntries);
+		Condition.greater(logEntries.size(), 0);
 		
 		LogEntry previous = null;
 		

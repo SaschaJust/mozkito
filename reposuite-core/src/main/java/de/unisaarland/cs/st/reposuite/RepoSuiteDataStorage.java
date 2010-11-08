@@ -9,7 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * The {@link RepoSuiteDataStorage} elements are the node of a
@@ -74,7 +74,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public synchronized void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
-		Preconditions.checkNotNull(writerThread);
+		Condition.notNull(writerThread);
 		
 		this.writers.add(writerThread);
 	}
@@ -86,7 +86,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public synchronized void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
-		Preconditions.checkNotNull(readerThread);
+		Condition.notNull(readerThread);
 		
 		this.readers.add(readerThread);
 	}
@@ -107,7 +107,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public synchronized void unregisterInput(final RepoSuiteGeneralThread<?, E> writerThread) {
-		Preconditions.checkNotNull(writerThread);
+		Condition.notNull(writerThread);
 		
 		if (this.writers.contains(writerThread)) {
 			this.writers.remove(writerThread);
@@ -124,7 +124,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public synchronized void unregisterOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
-		Preconditions.checkNotNull(readerThread);
+		Condition.notNull(readerThread);
 		
 		if (this.readers.contains(readerThread)) {
 			this.readers.remove(readerThread);
@@ -140,7 +140,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @throws InterruptedException
 	 */
 	public synchronized void write(final E data) throws InterruptedException {
-		Preconditions.checkNotNull(data);
+		Condition.notNull(data);
 		
 		if (this.readers.isEmpty()) {
 			if (Logger.logWarn()) {

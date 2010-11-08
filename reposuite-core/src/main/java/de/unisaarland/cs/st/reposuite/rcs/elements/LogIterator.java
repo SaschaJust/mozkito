@@ -8,7 +8,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Preconditions;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -27,8 +27,8 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
 	        final int cacheSize) {
-		Preconditions.checkNotNull(repository);
-		Preconditions.checkNotEquals(cacheSize, 0);
+		Condition.notNull(repository);
+		Condition.notEquals(cacheSize, 0);
 		
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
@@ -52,8 +52,8 @@ public class LogIterator implements Iterator<LogEntry> {
 		String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, cacheSize - 1);
 		this.nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
 		
-		Preconditions.checkNotNull(this.currentEntries);
-		Preconditions.checkArgument(!this.currentEntries.isEmpty());
+		Condition.notNull(this.currentEntries);
+		Condition.check(!this.currentEntries.isEmpty());
 	}
 	
 	public boolean done() {

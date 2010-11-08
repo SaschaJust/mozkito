@@ -29,8 +29,8 @@ public class ClassFinder {
 	
 	public static List<Class<?>> getClassesExtendingClass(final Package pakkage, final Class<?> superClass)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
-		Preconditions.checkNotNull(pakkage);
-		Preconditions.checkNotNull(superClass);
+		Condition.notNull(pakkage);
+		Condition.notNull(superClass);
 		
 		String classPath = Class.forName(new Throwable().getStackTrace()[1].getClassName()).getProtectionDomain()
 		        .getCodeSource().getLocation().getPath();
@@ -196,8 +196,8 @@ public class ClassFinder {
 	 */
 	public static List<Class<?>> getClassesOfInterface(final Package pakkage, final Class<?> theInterface)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
-		Preconditions.checkNotNull(pakkage);
-		Preconditions.checkNotNull(theInterface);
+		Condition.notNull(pakkage);
+		Condition.notNull(theInterface);
 		
 		String classPath = ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		Collection<Class<?>> discoveredClasses = null;
