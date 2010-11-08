@@ -3,11 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.bugzilla;
 
-import java.net.URI;
+import org.jdom.Document;
 
-import org.dom4j.Document;
-
-import de.unisaarland.cs.st.reposuite.bugs.tracker.DocumentIterator;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 
@@ -18,59 +15,27 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 public class BugzillaTracker extends Tracker {
 	
 	@Override
-	public boolean checkRAW(final String rawString) {
+	public boolean checkRAW(final String rawReport) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
-	public boolean checkXML(final Document second) {
+	public boolean checkXML(final Document xmlReport) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
-	public Document createDocument(final String second) {
+	public org.jdom.Document createDocument(final String rawReport) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public String fetch(final Long id) {
+	public BugReport parse(final org.jdom.Document document) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	
-	@Override
-	public URI getLinkFromId(final Long bugId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Long getNextId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public DocumentIterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public BugReport parse(final Document document) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) {
-		// TODO Auto-generated method stub
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 	}
 	
 }

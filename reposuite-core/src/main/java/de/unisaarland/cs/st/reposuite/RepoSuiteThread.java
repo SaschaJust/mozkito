@@ -6,6 +6,8 @@ package de.unisaarland.cs.st.reposuite;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import com.google.common.base.Preconditions;
+
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -461,9 +463,10 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @throws InterruptedException
 	 */
 	protected final void write(final V data) throws InterruptedException {
-		assert (data != null);
-		assert (this.outputStorage != null);
-		assert (hasOutputConnector());
+		Preconditions.checkNotNull(data, "[write] `data` should not be null.");
+		Preconditions.checkNotNull(this.outputStorage, "[write] `outputStorage` should not be null.");
+		Preconditions.checkArgument(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
+		        hasOutputConnector());
 		
 		this.outputStorage.write(data);
 	}

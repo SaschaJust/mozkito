@@ -7,9 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 
-import org.dom4j.Document;
-
-import de.unisaarland.cs.st.reposuite.bugs.tracker.DocumentIterator;
+import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -23,80 +21,28 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public class JiraTracker extends Tracker {
 	
-	private File overalXML = null;
+	private File overalXML;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#checkRAW(java.lang
-	 * .String)
-	 */
 	@Override
-	public boolean checkRAW(final String rawString) {
+	public boolean checkRAW(final String rawReport) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#checkXML(org.dom4j
-	 * .Document)
-	 */
 	@Override
-	public boolean checkXML(final Document second) {
+	public boolean checkXML(final org.jdom.Document xmlReport) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#createDocument(java
-	 * .lang.String)
-	 */
 	@Override
-	public Document createDocument(final String second) {
+	public org.jdom.Document createDocument(final String rawReport) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public String fetch(final Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public URI getLinkFromId(final Long bugId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Long getNextId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#fetch()
-	 */
-	@Override
-	public DocumentIterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#parse(org.dom4j.Document
-	 * )
-	 */
-	@Override
-	public BugReport parse(final Document document) {
+	public BugReport parse(final org.jdom.Document document) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -115,7 +61,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt) {
+	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 		if (!Tracker.bugIdRegex.matches(fetchURI.toString())) {
@@ -124,7 +70,7 @@ public class JiraTracker extends Tracker {
 				if (!fetchSource.getFirst().equals("XML")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-								+ fetchSource.getFirst());
+						        + fetchSource.getFirst());
 					}
 					return;
 				}

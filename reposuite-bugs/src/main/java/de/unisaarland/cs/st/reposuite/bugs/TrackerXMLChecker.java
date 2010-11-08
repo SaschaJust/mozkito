@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import org.dom4j.Document;
+import org.jdom.Document;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteFilterThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
@@ -48,7 +48,7 @@ public class TrackerXMLChecker extends RepoSuiteFilterThread<Tuple<Long, Documen
 					write(rawReport);
 				} else {
 					if (Logger.logWarn()) {
-						Logger.warn("Skipping report " + rawReport.getFirst() + " due to errors in raw string.");
+						Logger.warn("Skipping report " + rawReport.getFirst() + " due to errors in XML document.");
 					}
 				}
 			}

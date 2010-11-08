@@ -1,0 +1,596 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!-- Create Server: sfs-web-8 --> 
+<!--
+  ~ SourceForge.net: Find and Build Open Source Software
+  ~ Copyright (c) 1999-2010 SourceForge, Inc. All rights reserved.
+  --> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+    <head> 
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+            <meta name="description" content="Get jregex - regular expressions for Java at SourceForge.net. Fast, secure and free downloads from the largest Open Source applications and software directory. jregex - a regular expression library for Java. Main features include 
+perl5.6 syntax, Unicode support, high performance, some advanced experimental functionality." /> 
+        <meta name="keywords" content="Open Source, Development, Community, Source Code, Downloads, Software, jregex - regular expressions for Java, Software Development" /> 
+                        <title>SourceForge.net: jregex - regular expressions for Java: Detail: 538725 - RFE:Allow '^' if not 1st char in a class</title>        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/style.php?secure=0&amp;1287953072" media="all" /> 
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/global.php?secure=0&amp;1287953072" media="all" /> 
+        
+                       <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/phoneix/table.php?secure=0&amp;1287953072" media="all" /> 
+                <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/phoneix/forms.css?secure=0&amp;1287953072" media="all" /> 
+                    <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/droppy.php?secure=0&amp;1287953072" media="all" /> 
+                                        <!--   --> 
+        <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery-1.3.2.min.js"></script> 
+        <script type="text/javascript"> 
+            
+                jQuery.noConflict();
+                jQuery(function() {
+                    jQuery("button[name=search]").closest('form').submit(function() {
+                        jQuery(this).find("input[name=words][type=text]").each(function() {
+                            if (jQuery(this).val().search(/enter keyword/i) >= 0) {
+                                jQuery(this).val(jQuery(this).val().replace(/enter keyword/i, ''));
+                            }
+                        });
+                    });
+                    jQuery(".search input[name=words]").focus(function() {
+                        jQuery(this).val(jQuery(this).val().replace(/enter keyword/i, ""));
+                    });
+                });
+            
+        </script> 
+ 
+        <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery.cookie.js"></script> 
+                        <script type='text/javascript'> 
+          jQuery(function() {
+            jQuery('#fad19 p, .project_summary .downloadbar, .vertical_widget, .horizontal_widget').wrap('<div class="sc"><div class="l1"><div class="l2"><div class="l3"><div class="l4"></div></div></div></div></div>');
+          });
+        </script> 
+                <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery.droppy.js"></script> 
+        <script type='text/javascript'> 
+            jQuery(function(){
+                jQuery('.b-hornav > li:last-child').addClass('last');
+                jQuery('.b-hornav > li').each(function() {
+                    jQuery('li[class!=disabled]', this).eq(0).addClass('first');
+                });
+                jQuery('.b-hornav').droppy({speed:0, delay:0});
+            });
+        </script> 
+                <script type="text/javascript" src="http://static.sourceforge.net/include/c_jquerytabs.js"></script> 
+ 
+        <script type="text/javascript"> 
+        
+            jQuery(function(){
+                jQuery('.vertical_widget_content ul.tab, #container2 ul.tab, #container3 ul.tab, #container4 ul.tab').tabs({ selected: 0 });
+            });
+        
+        </script> 
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/include/jquery/jquery.tabs.css?secure=0&amp;1287953072" media="all" /> 
+            
+                                <script type="text/javascript" src="http://static.sourceforge.net/include/js/preferences.js"></script> 
+            <script type="text/javascript"> 
+                            var sf_proj_home = 'http://sourceforge.net/projects/jregex';
+                        var jsonly = document.createElement('link');
+            jsonly.setAttribute('rel', 'stylesheet');
+            jsonly.setAttribute('type', 'text/css');
+            jsonly.setAttribute('href', 'http://static.sourceforge.net/css/phoneix/jsonly.css?secure=0&amp;1287953072');
+            document.getElementsByTagName('head')[0].appendChild(jsonly);
+                    </script> 
+                                                                            <script type="text/javascript" src="http://static.sourceforge.net/include/c_jqueryform.js?secure=0&amp;1287953072"></script> 
+        <!-- DoubleClick Random Number --> 
+    <script language="JavaScript" type="text/javascript">var dfp_ord=Math.random()*10000000000000000; var dfp_tile = 1; var dfp_ptile = 1;</script> 
+    <!-- End DoubleClick Random Number --> 
+    <!-- After META tags --> 
+                <script type="text/javascript" src="http://static.sourceforge.net/include/js/tracker_mod.js"></script> 
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/tracker_mod.css" media="screen" title="SFx_tracker_mod" /> 
+                        <link href="http://static.sourceforge.net/css/phoneix/facebox.css" media="screen" rel="stylesheet" type="text/css"/> 
+        <script type="text/javascript" src="http://static.sourceforge.net/include/c_modal.js"></script> 
+                    
+        <script type="text/javascript" src="http://static.sourceforge.net/sfx.js"></script> 
+        
+            <script type="text/javascript"> 
+                        var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-32013-6'], ['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            })();
+        </script> 
+        
+    <!-- Begin comScore Tag --> 
+    <script> 
+        document.write(unescape("%3Cscript src='" + (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js' %3E%3C/script%3E"));
+    </script> 
+    <script> 
+        COMSCORE.beacon({
+            c1:2,
+            c2:6035546,
+            c3:"",
+            c4:"",
+            c5:"",
+            c6:"",
+            c15:""
+        });
+    </script> 
+    <noscript> 
+        <img src="http://b.scorecardresearch.com/p?c1=2&c2=6035546&c3=&c4=&c5=&c6=&c15=&cj=1" />
+    </noscript> 
+    <!-- End comScore Tag --> 
+    
+    </head> 
+ 
+    <body id="c2" class="short-head"> 
+<!--[if IE 7]><div id="ie7only"><![endif]--> 
+<!--[if IE 6]><div id="ie6only"><![endif]--> 
+<!--[if IE]><div id="ieonly"><![endif]--> 
+ 
+            
+        <div id="doc3" class="view_artifact"> 
+            <div id="hd"> 
+                <div class="yui-b"> 
+                    <p id="metaNav"><a href="/account/registration/" title="Get a SourceForge.net account">Register</a> <a href="https://sourceforge.net/account/login.php" title="Log in">Log&nbsp;In</a></p> 
+                    <a href="/" id="logo">Find and develop open source software</a> 
+                    <ul class="jump"> 
+                                    <li><a href="#content">Jump to main content</a></li> 
+                                                                    <li><a href="#projectnav">Jump to project navigation</a></li> 
+                                    <li><a href="/project/showfiles.php?group_id=39578#downloads">Jump to downloads for jregex - regular expressions for Java</a></li> 
+                                                                </ul> 
+                                        <div class="yui-gc"> 
+                        <div class="yui-u first"> 
+                            <ul id="nav"> 
+                                <li class="first"><a href="/directory/" title="Find free open source software">Find Software</a></li> 
+                                <li><a href="/develop/" title="Learn more about the actively developed projects on SourceForge">Develop</a></li> 
+                                <li><a href="/register/" title="Start your very own project!">Create Project</a></li> 
+                                <li><a href="/blog/">Blog</a></li> 
+                                <li><a href="http://p.sf.net/sourceforge/getsupport">Site Support</a></li> 
+                                <li class="last"><a href="/about">About</a></li> 
+                            </ul> 
+                        </div> 
+                        <div class="yui-u"> 
+                            <div class="search"> 
+                                <form action="/search/" method="get" name="searchform"> 
+                                    <input type="hidden" name="type_of_search" value="soft" /> 
+                                    <input type="text" class="text clear hint" id="words" name="words" value="enter keyword" /> 
+                                    <span class="yui-button yui-push-button default"> 
+                                        <span class="first-child"> 
+                                            <button type="submit" name="search" value="Search">Search</button> 
+                                        </span> 
+                                    </span> 
+                                </form> 
+                            </div> 
+                        </div> 
+                    </div> 
+                                    </div> 
+            </div> 
+            <div id="bd" class="inner-bd"> 
+<div id="doc4" class="yui-t6"> 
+                  <div id="breadcrumbs"> 
+                            <a href="/">SourceForge.net</a> 
+ &gt; <a href="/search/?" >Projects</a> 
+ &gt; <a href="/projects/jregex/" >jregex - regular expressions for Java</a> 
+ &gt; <a href="/tracker/?group_id=39578" >Tracker</a> 
+ &gt; <a href="/tracker/?group_id=39578&amp;atid=425599" >Bugs</a> 
+ &gt; <a href="/tracker/?func=detail&amp;aid=538725&amp;group_id=39578&amp;atid=425599"  class="selected">View</a> 
+                    </div> 
+                <!-- begin content --> 
+                                    <a name="projectnav"></a> 
+                <div id="project_nav_container"> 
+                    <div class="b-proj__side"> 
+                        
+                        
+ 
+                        
+ 
+                        
+ 
+                        <!-- AddThis Button BEGIN --> 
+                        <a class="button button-share" onclick="return addthis_sendto()" onmouseout="addthis_close()" onmouseover="return addthis_open(this, '', '[URL]', '[TITLE]')" href="http://www.addthis.com/bookmark.php?v=250"><span>Share</span></a> 
+                        <script type="text/javascript"> 
+                        var addthis_options = 'email, stumbleupon, reddit, slashdot, more';
+                        var addthis_exclude = 'print';
+                        var addthis_config = {"data_track_clickback":true};
+                        </script> 
+                        <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=sfnet"></script> 
+                        <!-- AddThis Button END --> 
+ 
+                        <span class="award-bar"></span> 
+                    </div> 
+                    <h1> 
+                        <a href="/projects/jregex/">jregex - regular expressions for Java</a> 
+                                            </h1> 
+                                    <div class="firstwave"> 
+                        <ul class="b-hornav"> 
+                            <li id="menu_consume_summary"><a href="/projects/jregex"><span><span>Summary</span></span></a></li> 
+<li id="menu_consume_files"><a href="/projects/jregex/files"><span><span>Files</span></span></a></li> 
+<li id="menu_project_support"><a href="/projects/jregex/support"><span><span>Support</span></span></a></li> 
+<li id="menu_project_develop"><a href="/projects/jregex/develop"><span><span>Develop</span></span></a> 
+<ul> 
+<li id="menu_project_website"><a href="http://jregex.sourceforge.net">Web Site</a></li> 
+<li id="menu_project_screenshots"><a href="/project/screenshots.php?group_id=39578">Screenshots</a></li> 
+<li id="menu_project_news"><a href="/news/?group_id=39578">News</a></li> 
+<li id="menu_stats"><a href="/project/stats/?group_id=39578&amp;ugn=jregex">Project Statistics</a></li> 
+<li id="menu_download_stats_dist"><a href="/downloads/jregex/stats_timeline">Download Stats (Beta)</a></li> 
+</ul> 
+</li> 
+<li id="menu_hostedapps" class="disabled tier" style="display: none;"><a href="/hostedapp/?group_id=39578"><span><span>Hosted&nbsp;Apps</span></span></a></li> 
+<li id="menu_tracker" class="selected tier"><a href="/tracker/?group_id=39578"><span><span>Tracker</span></span></a> 
+<ul> 
+<li id="menu_tracker_425599"><a href="/tracker/?group_id=39578&amp;atid=425599">Bugs</a></li> 
+<li id="menu_tracker_425602"><a href="/tracker/?group_id=39578&amp;atid=425602">Feature Requests</a></li> 
+<li id="menu_tracker_425601"><a href="/tracker/?group_id=39578&amp;atid=425601">Patches</a></li> 
+<li id="menu_tracker_425600"><a href="/tracker/?group_id=39578&amp;atid=425600">Support Requests</a></li> 
+<li id="menu_tracker_stats" class="tools"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=tracker">Statistics for Trackers</a></li> 
+<li id="menu_tracker_reports" class="disabled" style="display: none;"><a href="/tracker/reporting/?group_id=39578">Reporting for Trackers</a></li> 
+<li id="menu_tracker_search"><a href="/search/?group_id=39578&amp;type_of_search=artifact">Search Trackers</a></li> 
+</ul> 
+</li> 
+<li id="menu_mail"><a href="/mail/?group_id=39578"><span><span>Mailing&nbsp;Lists</span></span></a> 
+<ul> 
+<li id="menu_mlist_jregex-user"><a href="/mailarchive/forum.php?forum_name=jregex-user">jregex-user</a></li> 
+<li id="menu_mail_search" class="tools"><a href="/search/?group_id=39578&amp;type_of_search=mlists">Search Mail Lists</a></li> 
+</ul> 
+</li> 
+<li id="menu_forums"><a href="/projects/jregex/forums"><span><span>Forums</span></span></a> 
+<ul> 
+<li id="menu_forum_122690"><a href="/projects/jregex/forums/forum/122690">Help</a></li> 
+<li id="menu_forum_122689"><a href="/projects/jregex/forums/forum/122689">Open Discussion</a></li> 
+<li id="menu_forums_stats" class="tools"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=forum">Statistics for Forums</a></li> 
+<li id="menu_forums_search"><a href="/search/?group_id=39578&amp;type_of_search=forums">Search Forums</a></li> 
+</ul> 
+</li> 
+<li id="menu_code"><a href="/scm/?type=cvs&amp;group_id=39578"><span><span>Code</span></span></a> 
+<ul> 
+<li id="menu_git_about" class="disabled" style="display: none;"><a href="/scm/?type=git&amp;group_id=39578">Git</a></li> 
+<li id="menu_git_browse" class="disabled" style="display: none;"><a href="http://jregex.git.sourceforge.net/">Git Browse</a></li> 
+<li id="menu_git_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=git">Git Statistics</a></li> 
+<li id="menu_hg_about" class="disabled" style="display: none;"><a href="/scm/?type=hg&amp;group_id=39578">Mercurial</a></li> 
+<li id="menu_hg_browse" class="disabled" style="display: none;"><a href="http://jregex.hg.sourceforge.net/hgweb/jregex/">Mercurial Browse</a></li> 
+<li id="menu_hg_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=hg">Mercurial Statistics</a></li> 
+<li id="menu_bzr_about" class="disabled" style="display: none;"><a href="/scm/?type=bzr&amp;group_id=39578">Bazaar</a></li> 
+<li id="menu_bzr_browse" class="disabled" style="display: none;"><a href="http://jregex.bzr.sourceforge.net/bzr/jregex/">Bazaar Browse</a></li> 
+<li id="menu_bzr_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=bzr">Bazaar Statistics</a></li> 
+<li id="menu_cvs_about"><a href="/scm/?type=cvs&amp;group_id=39578">CVS</a></li> 
+<li id="menu_cvs_browse"><a href="http://jregex.cvs.sourceforge.net/jregex/">CVS Browse</a></li> 
+<li id="menu_cvs_stats"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=cvs">CVS Statistics</a></li> 
+<li id="menu_svn_about" class="disabled" style="display: none;"><a href="/scm/?type=svn&amp;group_id=39578">SVN</a></li> 
+<li id="menu_svn_browse" class="disabled" style="display: none;"><a href="http://jregex.svn.sourceforge.net/viewvc/jregex/">SVN Browse</a></li> 
+<li id="menu_svn_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=39578&amp;ugn=jregex&amp;type=svn">SVN Statistics</a></li> 
+</ul> 
+</li> 
+<li id="menu_newadmin" class="disabled tier" style="display: none;"><a href="/project/admin/?group_id=39578"><span><span>Project&nbsp;Admin</span></span></a> 
+<ul> 
+<li id="menu_userperms" class="disabled" style="display: none;"><a href="/project/admin/project_membership.php?group_id=39578">Membership</a></li> 
+<li id="menu_features" class="disabled" style="display: none;"><a href="/project/admin/features.php?group_id=39578">Feature Settings</a></li> 
+<li id="menu_editgroupinfo" class="disabled" style="display: none;"><a href="/project/admin/public_info.php?group_id=39578">Project Settings</a></li> 
+<li id="menu_file_manager" class="disabled" style="display: none;"><a href="/project/admin/explorer.php?group_id=39578">File Manager</a></li> 
+<li id="menu_file_manager_dist" class="disabled" style="display: none;"><a href="/downloads/jregex/">File Manager (Beta)</a></li> 
+<li id="menu_stats_admin" class="disabled" style="display: none;"><a href="/project/admin/stats.php?group_id=39578">Analytics</a></li> 
+</ul> 
+</li> 
+ 
+                        </ul> 
+                    </div> 
+                                </div> 
+                <div style="clear: both;"></div> 
+                                    <div class="subset"> 
+                    <ul> 
+                        <li id="menu_add" class="begin tier"><a href="/tracker/?func=add&amp;group_id=39578&amp;atid=425599"><span><span>Add&nbsp;new</span></span></a></li> 
+<li id="menu_browse" class="selected tier"><a href="/tracker/?func=browse&amp;group_id=39578&amp;atid=425599"><span><span>Browse</span></span></a></li> 
+<li id="menu_reporting" class="disabled tier" style="display: none;"><a href="/tracker/reporting/?group_id=39578&amp;atid=425599"><span><span>Reporting</span></span></a></li> 
+<li id="menu_admin" class="disabled tier" style="display: none;"><a href="/tracker/admin/?group_id=39578"><span><span>Admin</span></span></a></li> 
+ 
+                    </ul> 
+                    </div> 
+                    <div style="clear: both;"></div> 
+                                            
+            <a name="content"></a> 
+                
+<script type="text/javascript"> 
+    <!--
+    
+    jQuery(document).ready(function() {
+        jQuery('.titlebar.toggle').append('<small class="arwd"></small>');
+        jQuery('.titlebar.toggle').toggle(
+            function () {
+                jQuery(this).find('small').removeClass('arwd').addClass('arwu');
+                jQuery(this).addClass('press');
+                jQuery(this).next('.hide').removeClass('hide').addClass('show').show();
+                jQuery.cookie(jQuery(this).attr('id')+'_expanded', 1, {path: '/', expires: 30});
+            }, 
+            function () {
+                jQuery(this).find('small').removeClass('arwu').addClass('arwd');
+                jQuery(this).removeClass('press');
+                jQuery(this).next('.show').removeClass('show').addClass('hide').hide();
+                jQuery.cookie(jQuery(this).attr('id')+'_expanded', '', {path: '/', expires: -1});
+            }
+        );
+ 
+        if (jQuery.cookie('commentbar_expanded')) { jQuery('#commentbar').click(); }
+        if (jQuery.cookie('filebar_expanded')) { jQuery('#filebar').click(); }
+        if (jQuery.cookie('changebar_expanded')) { jQuery('#changebar').click(); }
+        if (jQuery.cookie('assocbar_expanded')) { jQuery('#assocbar').click(); }
+        
+ 
+            });
+    //-->
+</script><h3 style="position: relative">Tracker: <!-- google_ad_section_start -->Bugs<!-- google_ad_section_end --> 
+	<small style="position: absolute; top: 0; right: 0;"> 
+		<form action="#" method="post" name="tracker_monitor"> 
+			<input type="hidden" name="group_id" value="39578"> 
+			<input type="hidden" name="atid" value="425599"> 
+			<input type="hidden" name="func" value="monitor"> 
+			<input type="hidden" name="artifact_id" value="538725"> 
+			<input type="submit" name="submit" id="tracker_monitor_submit" value="Monitor"> 
+		</form> 
+	</small> 
+</h3> 
+<div id="yui-main"> 
+    <div class="yui-gc box"> 
+        <div class="yui-u first"> 
+            <span class="p5 box" style="float: left; padding: .2em .6em; font-size: 85%; margin: -.1em 1em 0 -.5em" title="Priority level - 5"><strong style="opacity: .5">5</strong></span> 
+            <span><strong>RFE:Allow &#039;^&#039; if not 1st char in a class - ID: 538725</strong></span> 
+        </div> 
+        <div class="yui-u" style="text-align: right; font-size: 85%; color: #555"> 
+            Last Update: Settings changed ( <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> )
+        </div> 
+    </div> 
+    <div class="yui-g box" style="padding-top: 1em; background: #f5f5f5"> 
+        <label>Details:</label> 
+            <p><!-- google_ad_section_start -->Currently, &#039;^&#039; is not accepted if it&#039;s not the first character of a <br /> 
+character class. I believe that if it&#039;s escaped, it works (not 100% <br /> 
+sure). I suggest that if &#039;^&#039; is not the first character of a character <br /> 
+class, it&#039;s considered to be a regular character, part of the <br /> 
+class.<br />
+<br />
+Alexander Maryanovsky.<!-- google_ad_section_end --></p> 
+        <hr noshade="noshade" class="divider" /> 
+        <div class="yui-u first"> 
+            <label>Submitted:</label> 
+                <p>Alexander Maryanovsky ( <a href="/users/sasha-m/" title="Alexander Maryanovsky">sasha-m</a>  ) - 2002-04-03 13:45:35 UTC</p> 
+            <label>Priority:</label> 
+                <p>5</p> 
+            <label>Status:</label> 
+                <p>Closed</p> 
+            <label>Resolution:</label> 
+                <p>Fixed</p> 
+        </div> 
+        <div class="yui-u"> 
+            <label>Assigned:</label> 
+                <p>Nobody/Anonymous</p> 
+            <label>Category:</label> 
+                <p><!-- google_ad_section_start -->None<!-- google_ad_section_end --></p> 
+            <label>Group:</label> 
+                <p>None</p> 
+            <label>Visibility:</label> 
+                <p>Public</p> 
+        </div> 
+    </div> 
+    <br /> 
+ 
+    <script type="text/javascript"> 
+    <!--
+    
+    var showhidden = false;
+ 
+    jQuery(document).ready(function() {
+    	
+    	        
+ 
+        jQuery('#remove_comment_form').ajaxForm();
+ 
+		if(!jQuery.browser.msie || parseInt(jQuery.browser.version) != 6)
+		{
+			jQuery('.showhiddenlink').hide();
+ 
+			if(jQuery('.artifact_comment.hide').size() > 0)
+				jQuery('.show_hidden').show();
+ 
+			jQuery('.show_hidden').click(function () {
+				if(!showhidden)
+				{
+					jQuery('.artifact_comment.hide').fadeIn(1000);
+					jQuery('.show_hidden').attr('value', 'Hide Hidden Comments');
+					showhidden = true;
+				}
+				else
+				{
+					jQuery('.artifact_comment.hide').fadeOut(1000);
+					jQuery('.show_hidden').attr('value', 'Show Hidden Comments');
+					showhidden = false;
+				}
+			});
+		}
+    });
+    
+    //-->
+</script> 
+ 
+<h4 class="titlebar toggle" id="commentbar">Comments </h4> 
+<div class="hide"> 
+  <script type='text/javascript'> 
+    SFX.tracker_mod.set_settings(425599, 538725, 39578);
+  </script> 
+    <div id="comment_ajax_feedback"></div> 
+    <form action="/tracker/index.php" method="post" class="commentbox" style="margin: 1em 1em 1em"> 
+        <input type="hidden" name="group_id" value="39578" /> 
+        <input type="hidden" name="atid" value="425599" /> 
+        <input type="hidden" name="func" value="postaddcomment" /> 
+        <input type="hidden" name="artifact_id" value="538725" /> 
+            </form> 
+ 
+    <div id = "comment_table_container" style="display: none"> 
+            <table class="comments"> 
+        <thead></thead> 
+        <tfoot></tfoot> 
+        <tbody> 
+	          </tbody> 
+        </table> 
+        	</div> 
+    
+            <h3 class="info" id="no_comments_message"><small>No follow-up comments have been posted.</small></h3> 
+        </div> 
+    
+<h4 class="titlebar toggle" id="filebar">Attached File</h4> 
+<div class="hide"> 
+        <h3 class="info"><small>No Files Currently Attached</small></h3> 
+    </form> 
+</div> 
+    <h4 class="titlebar toggle" id="changebar">Changes ( 5 )</h4> 
+<div class="hide"> 
+    
+<table width="100%" border="1" cellspacing="2" cellpadding="1" class="track"> 
+<thead> 
+<tr bgcolor="#ffffff"> 
+<th align=middle><font color="#000000"><b>Field<b></font></th> 
+<th align=middle><font color="#000000"><b>Old Value<b></font></th> 
+<th align=middle><font color="#000000"><b>Date<b></font></th> 
+<th align=middle><font color="#000000"><b>By<b></font></th> 
+</tr></thead> 
+ 
+    <tfoot></tfoot> 
+    <tbody> 
+            <tr> 
+            <td> 
+                status_id
+            </td> 
+            <td> 
+                Open
+            </td> 
+            <td> 
+                2002-05-29 11:32:12 UTC
+            </td> 
+            <td> 
+                <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> 
+            </td> 
+        </tr> 
+            <tr class="even"> 
+            <td> 
+                close_date
+            </td> 
+            <td> 
+                -
+            </td> 
+            <td> 
+                2002-05-29 11:32:12 UTC
+            </td> 
+            <td> 
+                <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> 
+            </td> 
+        </tr> 
+            <tr> 
+            <td> 
+                resolution_id
+            </td> 
+            <td> 
+                Accepted
+            </td> 
+            <td> 
+                2002-05-29 11:30:39 UTC
+            </td> 
+            <td> 
+                <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> 
+            </td> 
+        </tr> 
+            <tr class="even"> 
+            <td> 
+                resolution_id
+            </td> 
+            <td> 
+                Postponed
+            </td> 
+            <td> 
+                2002-05-07 17:26:25 UTC
+            </td> 
+            <td> 
+                <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> 
+            </td> 
+        </tr> 
+            <tr> 
+            <td> 
+                resolution_id
+            </td> 
+            <td> 
+                None
+            </td> 
+            <td> 
+                2002-04-03 15:51:53 UTC
+            </td> 
+            <td> 
+                <a href="/users/samokhodkin/" title="Sergey A. Samokhodkin">samokhodkin</a> 
+            </td> 
+        </tr> 
+        </tbody> 
+    </table> 
+</div> 
+</div> 
+<br style="clear: both" /> 
+<br /> 
+ 
+            </div> 
+        </div> 
+ 
+        <div id="ft"> 
+            <div class="yui-b"> 
+                <p class="sinfo"> 
+                                </p> 
+ 
+                <div class="cols clearfix"> 
+                    <div class="col"> 
+                        <h4>About SourceForge</h4> 
+                        <ul> 
+                            <li><a href="/about">About SourceForge</a></li> 
+                            <li><a href="/support">Contact Us</a></li> 
+                            <li><a href="http://geek.net/careers/">Jobs @ Geeknet</a></li> 
+                            <li><a href="http://geek.net/advertising/">Advertising</a></li> 
+                        </ul> 
+                    </div> 
+                    <div class="col"> 
+                        <h4>Find Software</h4> 
+                        <ul> 
+                            <li><a href="/search/?">Find Software</a></li> 
+                            <li><a href="/top/topalltime.php?type=downloads">Most Popular Overall</a></li> 
+                            <li><a href="/top/mostactive.php">Most Active Overall</a></li> 
+                        </ul> 
+                    </div> 
+                    <div class="col"> 
+                        <h4>Develop Software</h4> 
+                        <ul> 
+                            <li><a href="/register/">Create Project</a></li> 
+                            <li><a href="/people/">Project Help Wanted</a></li> 
+                            <li><a href="/new/new_projects.php">New Projects</a></li> 
+                        </ul> 
+                    </div> 
+                    <div class="col"> 
+                        <h4>Community</h4> 
+                        <ul> 
+                            <li><a href="/blog/">The Blog</a></li> 
+                            <li><a href="http://twitter.com/sourceforge" rel="nofollow">@sourceforge on Twitter</a></li> 
+                        </ul> 
+                    </div> 
+                    <div class="col"> 
+                        <h4>Help</h4> 
+                        <ul> 
+                            <li><a href="/apps/trac/sourceforge/wiki/WikiStart">Site Documentation</a></li> 
+                            <li><a href="/apps/trac/sourceforge/wiki/Support">Submit Support Requests</a></li> 
+                            <li><a href="/apps/wordpress/sourceforge/">Site Outages</a></li> 
+                        </ul> 
+                    </div> 
+                </div> 
+ 
+                <p class="copyright">&copy; 2010 <a title="Network which provides and promotes Open Source software downloads, development, discussion and news." href="http://geek.net">Geeknet, Inc.</a> <a href="http://p.sf.net/sourceforge/terms">Terms of Use</a> <a href="http://p.sf.net/sourceforge/privacy">Privacy Policy</a></p> 
+ 
+            </div> 
+        </div> 
+<!--[if IE]></div><![endif]--> 
+<!--[if IE 6]></div><![endif]--> 
+<!--[if IE 7]></div><![endif]--> 
+ 
+    <!-- Collective tag --> 
+    <img src="//b.collective-media.net/seg/cm/cm_aa_gn1" width="1" height="1" /> 
+    <!-- End Collective tag --> 
+ 
+ 
+ 
+ 
+    </body> 
+</html> 
+ 

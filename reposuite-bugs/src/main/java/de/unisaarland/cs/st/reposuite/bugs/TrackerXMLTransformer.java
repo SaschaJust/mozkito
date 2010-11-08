@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import org.dom4j.Document;
+import org.jdom.Document;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.RepoSuiteTransformerThread;
@@ -42,7 +42,7 @@ public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Long
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {
-					Logger.debug("Converting " + rawReport + " to XML.");
+					Logger.debug("Converting " + rawReport.getFirst() + " to XML.");
 				}
 				write(new Tuple<Long, Document>(rawReport.getFirst(),
 				        this.tracker.createDocument(rawReport.getSecond())));

@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import org.dom4j.Document;
+import org.jdom.Document;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.RepoSuiteTransformerThread;

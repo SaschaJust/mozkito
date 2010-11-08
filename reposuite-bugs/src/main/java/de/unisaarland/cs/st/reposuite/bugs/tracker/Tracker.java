@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,18 +20,20 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.dom4j.Document;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.jdom.Document;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
+import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
@@ -42,14 +47,14 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType type        = TrackerType.valueOf(this
-			.getClass()
-			.getSimpleName()
-			.substring(
-					0,
-					this.getClass().getSimpleName().length()
-					- Tracker.class.getSimpleName().length())
-					.toUpperCase());
+	protected final TrackerType type             = TrackerType.valueOf(this
+	                                                     .getClass()
+	                                                     .getSimpleName()
+	                                                     .substring(
+	                                                             0,
+	                                                             this.getClass().getSimpleName().length()
+	                                                                     - Tracker.class.getSimpleName().length())
+	                                                     .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -58,8 +63,10 @@ public abstract class Tracker {
 	protected String            password;
 	protected Long              startAt;
 	protected Long              stopAt;
-	protected boolean           initialized = false;
+	protected boolean           initialized      = false;
 	private URI                 overviewURI;
+	private BlockingQueue<Long> suspects         = new LinkedBlockingQueue<Long>();
+	protected PersonManager     personManager    = new PersonManager();
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
 	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
@@ -69,6 +76,10 @@ public abstract class Tracker {
 	 */
 	public Tracker() {
 		
+	}
+	
+	public void addSuspect(final Long id) {
+		this.suspects.add(id);
 	}
 	
 	/**
@@ -107,16 +118,6 @@ public abstract class Tracker {
 	 */
 	public abstract Document createDocument(String rawReport);
 	
-	
-	/**
-	 * The method takes a bug report id and fetches the content in a string.
-	 * 
-	 * @param id
-	 *            the bug id under subject
-	 * @return the content of the bug report
-	 */
-	public abstract String fetch(final Long id);
-	
 	/**
 	 * This is method takes a {@link URI} and fetches the content to a string.
 	 * 
@@ -140,16 +141,25 @@ public abstract class Tracker {
 				return new Tuple<String, String>(response.getProtocolVersion().toString(), entity.toString());
 			} else if (uri.getScheme().equals("file")) {
 				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(new FileReader(new File(uri.getPath())));
-				String line;
-				while ((line = reader.readLine()) != null) {
-					builder.append(line);
-					builder.append(FileUtils.lineSeparator);
+				File file = new File(uri.getPath());
+				if (file.exists() && file.isFile() && file.canRead()) {
+					BufferedReader reader = new BufferedReader(new FileReader(file));
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+						builder.append(FileUtils.lineSeparator);
+					}
+					reader.close();
+					
+					// FIXME fix type determination
+					return new Tuple<String, String>("XHTML", builder.toString());
+				} else {
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Dropping: " + file.getAbsolutePath());
+					}
+					return null;
 				}
-				reader.close();
-				
-				// FIXME fix type determination
-				return new Tuple<String, String>("XHTML", builder.toString());
 			} else {
 				throw new UnsupportedProtocolException(uri.getScheme());
 			}
@@ -168,10 +178,11 @@ public abstract class Tracker {
 	/**
 	 * @return the simple class name of the current tracker instance
 	 */
-	private String getHandle() {
+	public String getHandle() {
 		return this.getClass().getSimpleName();
 		
 	}
+	
 	/**
 	 * Creates an {@link URI} that corresponds to the given bugId. This method
 	 * is used to create {@link URI}s for the {@link Tracker#fetchSource(URI)}
@@ -181,11 +192,9 @@ public abstract class Tracker {
 	 *            the id of the bug an URI shall be created to
 	 * @return the URI to the bug report.
 	 */
-	public abstract URI getLinkFromId(final Long bugId);
-	
-	public URI getLinkFromId(final String bugId) {
+	public URI getLinkFromId(final Long bugId) {
 		try {
-			return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString(), "210"));
+			return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
 		} catch (URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -199,7 +208,13 @@ public abstract class Tracker {
 	 * 
 	 * @return the next id that hasn't been requested.
 	 */
-	public abstract Long getNextId();
+	public final synchronized Long getNextId() {
+		if (!this.suspects.isEmpty()) {
+			return this.suspects.poll();
+		} else {
+			return null;
+		}
+	}
 	
 	/**
 	 * @return the overviewURI
@@ -233,14 +248,6 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * The method creates a {@link DocumentIterator} to which provides all XML
-	 * documents for the bug reports under subject.
-	 * 
-	 * @return
-	 */
-	public abstract DocumentIterator iterator();
-	
-	/**
 	 * This method is used to fetch persistent reports from the database
 	 * 
 	 * @param id
@@ -272,7 +279,8 @@ public abstract class Tracker {
 	public abstract BugReport parse(Document document);
 	
 	/**
-	 * sets up the current tracker
+	 * sets up the current tracker and fills the queue with the corresponding
+	 * bug report ids
 	 * 
 	 * @param fetchURI
 	 *            The {@link URI} to be appended by the pattern filled with the
@@ -294,18 +302,19 @@ public abstract class Tracker {
 	 *            The first bug id to be mined. May be null.
 	 * @param stopAt
 	 *            The last bug id to be mined. May be null.
+	 * @throws InvalidParameterException
 	 */
-
+	
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt) {
+	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		Preconditions.checkNotNull(fetchURI, "[setup] `fetchURI` should not be null.");
 		Preconditions.checkArgument((username == null) == (password == null),
-				"[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
-				username, password);
+		        "[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
+		        username, password);
 		Preconditions.checkArgument(((startAt == null) || ((startAt != null) && (startAt > 0))),
-				"[setup] `startAt` must be null or > 0, but is: %s", startAt);
+		        "[setup] `startAt` must be null or > 0, but is: %s", startAt);
 		Preconditions.checkArgument(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-				"[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
@@ -321,6 +330,10 @@ public abstract class Tracker {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
 			}
 		}
+		
+		this.suspects = new LinkedBlockingDeque<Long>();
+		
+		// TODO when this method ends, suspects must be filled
 	}
 	
 }

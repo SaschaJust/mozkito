@@ -53,7 +53,18 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 				}
 				URI newURI = this.tracker.getLinkFromId(bugId);
 				Tuple<String, String> source = this.tracker.fetchSource(newURI);
-				write(new Tuple<Long, String>(bugId, source.getSecond()));
+				if (source == null) {
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping: " + bugId + ". Fetch returned null.");
+					}
+				} else {
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Providing " + bugId + ".");
+					}
+					write(new Tuple<Long, String>(bugId, source.getSecond()));
+				}
 			}
 			
 			finish();

@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Priority implements Annotated {
-	;
+	STUB;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {

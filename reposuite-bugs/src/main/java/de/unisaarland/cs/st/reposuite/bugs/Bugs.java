@@ -38,6 +38,10 @@ public class Bugs extends Thread implements RepoSuiteToolchain {
 	public void run() {
 		setup();
 		this.threadPool.execute();
+		
+		if (Logger.logInfo()) {
+			Logger.info("Terminating.");
+		}
 	}
 	
 	@Override

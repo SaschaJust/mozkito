@@ -5,6 +5,7 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -15,6 +16,7 @@ import com.google.common.base.Preconditions;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -23,7 +25,9 @@ import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 public class BugReport implements Annotated {
 	
 	private long                      id;
+	
 	private Person                    assignedTo;
+	
 	private String                    category;
 	private SortedSet<Comment>        comments = new TreeSet<Comment>();
 	private String                    description;
@@ -39,7 +43,11 @@ public class BugReport implements Annotated {
 	private Type                      type;
 	private DateTime                  creatingTimestamp;
 	private DateTime                  lastFetch;
-	private byte[]                    hash;
+	private byte[]                    hash     = new byte[33];
+	
+	public BugReport() {
+		super();
+	}
 	
 	public BugReport(final long id, final Person assignedTo, final String category, final SortedSet<Comment> comments,
 	        final String description, final Severity severity, final Priority priority, final Resolution resolution,
@@ -55,7 +63,6 @@ public class BugReport implements Annotated {
 		Preconditions.checkNotNull(resolution, "[BugReport] `resolution` should not be null.");
 		Preconditions.checkNotNull(submitter, "[BugReport] `submitter` should not be null.");
 		Preconditions.checkNotNull(subject, "[BugReport] `subject` should not be null.");
-		Preconditions.checkNotNull(history, "[BugReport] `history` should not be null.");
 		Preconditions.checkNotNull(status, "[BugReport] `status` should not be null.");
 		Preconditions.checkNotNull(type, "[BugReport] `type` should not be null.");
 		Preconditions.checkNotNull(creatingTimestamp, "[BugReport] `creatingTimestamp` should not be null.");
@@ -249,6 +256,10 @@ public class BugReport implements Annotated {
 	 */
 	public void setCategory(final String category) {
 		this.category = category;
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Setting category " + category);
+		}
 	}
 	
 	/**
@@ -377,6 +388,38 @@ public class BugReport implements Annotated {
 	 */
 	public void setType(final Type type) {
 		this.type = type;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
+		        + ", comments=" + (this.comments != null ? toString(this.comments, maxLen) : null) + ", description="
+		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
+		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+		        + ", submitter=" + this.submitter + ", subject="
+		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
+		        + "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
+		        + ", creatingTimestamp=" + this.creatingTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
+		        + new String(this.hash) + "]";
+	}
+	
+	private String toString(final Collection<?> collection, final int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && (i < maxLen); i++) {
+			if (i > 0) {
+				builder.append(", ");
+			}
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }
