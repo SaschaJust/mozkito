@@ -82,9 +82,9 @@ public class JavaUtils {
 	}
 	
 	public static String[] enumToArray(final Enum<?> e) {
-		String[] retval = new String [e.getDeclaringClass().getEnumConstants().length];
+		String[] retval = new String[e.getDeclaringClass().getEnumConstants().length];
 		
-		for (int i = 0; i<retval.length; ++i) {
+		for (int i = 0; i < retval.length; ++i) {
 			retval[i] = e.getDeclaringClass().getEnumConstants()[i].toString();
 		}
 		return retval;

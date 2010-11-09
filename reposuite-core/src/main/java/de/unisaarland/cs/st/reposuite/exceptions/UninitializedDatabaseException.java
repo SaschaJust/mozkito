@@ -18,7 +18,6 @@ public class UninitializedDatabaseException extends Exception {
 	 * 
 	 */
 	public UninitializedDatabaseException() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**

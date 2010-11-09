@@ -4,30 +4,42 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.joda.time.DateTime;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import com.google.common.base.Preconditions;
+import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
 public class BugReport implements Annotated {
 	
 	private long                      id;
-	
 	private Person                    assignedTo;
-	
 	private String                    category;
 	private SortedSet<Comment>        comments = new TreeSet<Comment>();
 	private String                    description;
@@ -41,7 +53,7 @@ public class BugReport implements Annotated {
 	private SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
 	private Status                    status;
 	private Type                      type;
-	private DateTime                  creatingTimestamp;
+	private DateTime                  creationTimestamp;
 	private DateTime                  lastFetch;
 	private byte[]                    hash     = new byte[33];
 	
@@ -55,20 +67,19 @@ public class BugReport implements Annotated {
 	        final SortedSet<HistoryElement> history, final Status status, final Type type,
 	        final DateTime creatingTimestamp, final DateTime lastFetch, final byte[] hash) {
 		super();
-		Preconditions.checkArgument(id > 0, "[BugReport] `id` should be > 0, but is `%s`.", id);
-		Preconditions.checkNotNull(comments, "[BugReport] `comments` should not be null.");
-		Preconditions.checkNotNull(description, "[BugReport] `description` should not be null.");
-		Preconditions.checkNotNull(severity, "[BugReport] `severity` should not be null.");
-		Preconditions.checkNotNull(priority, "[BugReport] `priority` should not be null.");
-		Preconditions.checkNotNull(resolution, "[BugReport] `resolution` should not be null.");
-		Preconditions.checkNotNull(submitter, "[BugReport] `submitter` should not be null.");
-		Preconditions.checkNotNull(subject, "[BugReport] `subject` should not be null.");
-		Preconditions.checkNotNull(status, "[BugReport] `status` should not be null.");
-		Preconditions.checkNotNull(type, "[BugReport] `type` should not be null.");
-		Preconditions.checkNotNull(creatingTimestamp, "[BugReport] `creatingTimestamp` should not be null.");
-		Preconditions.checkNotNull(lastFetch, "[BugReport] `lastFetch` should not be null.");
-		Preconditions.checkArgument(hash.length == 33, "[BugReport] `hash.length` should be equal to `33`, but is: %s",
-		        hash.length);
+		Condition.greater(id, 0l);
+		Condition.notNull(comments);
+		Condition.notNull(description);
+		Condition.notNull(severity);
+		Condition.notNull(priority);
+		Condition.notNull(resolution);
+		Condition.notNull(submitter);
+		Condition.notNull(subject);
+		Condition.notNull(status);
+		Condition.notNull(type);
+		Condition.notNull(creatingTimestamp);
+		Condition.notNull(lastFetch);
+		Condition.equals(hash.length, 33);
 		
 		this.id = id;
 		this.assignedTo = assignedTo;
@@ -84,14 +95,15 @@ public class BugReport implements Annotated {
 		this.history = history;
 		this.status = status;
 		this.type = type;
-		this.creatingTimestamp = creatingTimestamp;
+		this.creationTimestamp = creatingTimestamp;
 		this.lastFetch = lastFetch;
 		this.hash = hash;
 	}
 	
+	@Transient
 	public void addComment(final Comment comment) {
-		Preconditions.checkNotNull(comment, "[addComment] `comment` should not be null.");
-		Preconditions.checkNotNull(this.comments, "[addComment] `comments` should not be null.");
+		Condition.notNull(comment);
+		Condition.notNull(this.comments);
 		
 		this.comments.add(comment);
 	}
@@ -99,9 +111,10 @@ public class BugReport implements Annotated {
 	/**
 	 * @param element
 	 */
+	@Transient
 	public void addElementToHistory(final HistoryElement element) {
-		Preconditions.checkNotNull(element, "[addElementToHistory] `element` should not be null.");
-		Preconditions.checkNotNull(this.history, "[addElementToHistory] `history` should not be null.");
+		Condition.notNull(element);
+		Condition.notNull(this.history);
 		
 		this.history.add(element);
 	}
@@ -109,6 +122,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the assignedTo
 	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getAssignedTo() {
 		return this.assignedTo;
 	}
@@ -116,6 +130,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the category
 	 */
+	@Basic
 	public String getCategory() {
 		return this.category;
 	}
@@ -123,20 +138,30 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the comments
 	 */
+	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
 		return this.comments;
 	}
 	
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "creationTimestamp")
+	private Date getCreationJavaTimetamp() {
+		return this.creationTimestamp.toDate();
+	}
+	
 	/**
-	 * @return the creatingTimestamp
+	 * @return the creationTimestamp
 	 */
-	public DateTime getCreatingTimestamp() {
-		return this.creatingTimestamp;
+	@Transient
+	public DateTime getCreationTimestamp() {
+		return this.creationTimestamp;
 	}
 	
 	/**
 	 * @return the description
 	 */
+	@Basic
 	public String getDescription() {
 		return this.description;
 	}
@@ -144,6 +169,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the hash
 	 */
+	@Basic
 	public byte[] getHash() {
 		return this.hash;
 	}
@@ -151,6 +177,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the history
 	 */
+	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<HistoryElement> getHistory() {
 		return this.history;
 	}
@@ -158,6 +185,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the id
 	 */
+	@Id
 	public long getId() {
 		return this.id;
 	}
@@ -165,13 +193,22 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the lastFetch
 	 */
+	@Transient
 	public DateTime getLastFetch() {
 		return this.lastFetch;
+	}
+	
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "lastFetch")
+	private Date getLastFetchJava() {
+		return this.lastFetch.toDate();
 	}
 	
 	/**
 	 * @return the priority
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public Priority getPriority() {
 		return this.priority;
 	}
@@ -179,6 +216,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the resolution
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public Resolution getResolution() {
 		return this.resolution;
 	}
@@ -186,6 +224,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the resolver
 	 */
+	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getResolver() {
 		return this.resolver;
 	}
@@ -195,6 +234,7 @@ public class BugReport implements Annotated {
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
 	 */
 	@Override
+	@Transient
 	public Collection<Annotated> getSaveFirst() {
 		// TODO Auto-generated method stub
 		return null;
@@ -203,6 +243,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the severity
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public Severity getSeverity() {
 		return this.severity;
 	}
@@ -210,6 +251,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the siblings
 	 */
+	@ManyToMany
 	public Set<BugReport> getSiblings() {
 		return this.siblings;
 	}
@@ -217,6 +259,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the status
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public Status getStatus() {
 		return this.status;
 	}
@@ -224,6 +267,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the subject
 	 */
+	@Basic
 	public String getSubject() {
 		return this.subject;
 	}
@@ -231,6 +275,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the submitter
 	 */
+	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getSubmitter() {
 		return this.submitter;
 	}
@@ -238,6 +283,7 @@ public class BugReport implements Annotated {
 	/**
 	 * @return the type
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public Type getType() {
 		return this.type;
 	}
@@ -271,11 +317,19 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
-	 * @param creatingTimestamp
-	 *            the creatingTimestamp to set
+	 * @param creationTimestamp
 	 */
-	public void setCreatingTimestamp(final DateTime creatingTimestamp) {
-		this.creatingTimestamp = creatingTimestamp;
+	@SuppressWarnings ("unused")
+	private void setCreationJavaTimestamp(final Date creationTimestamp) {
+		this.creationTimestamp = new DateTime(creationTimestamp);
+	}
+	
+	/**
+	 * @param creationTimestamp
+	 *            the creationTimestamp to set
+	 */
+	public void setCreationTimestamp(final DateTime creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 	}
 	
 	/**
@@ -316,6 +370,11 @@ public class BugReport implements Annotated {
 	 */
 	public void setLastFetch(final DateTime lastFetch) {
 		this.lastFetch = lastFetch;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setLastFetchJava(final Date lastFetch) {
+		this.lastFetch = new DateTime(lastFetch);
 	}
 	
 	/**
@@ -395,31 +454,17 @@ public class BugReport implements Annotated {
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
+	@Transient
 	public String toString() {
-		final int maxLen = 10;
 		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
-		        + ", comments=" + (this.comments != null ? toString(this.comments, maxLen) : null) + ", description="
+		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
 		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
 		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
 		        + ", submitter=" + this.submitter + ", subject="
 		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
 		        + "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
-		        + ", creatingTimestamp=" + this.creatingTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
+		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
 		        + new String(this.hash) + "]";
-	}
-	
-	private String toString(final Collection<?> collection, final int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && (i < maxLen); i++) {
-			if (i > 0) {
-				builder.append(", ");
-			}
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
 	}
 	
 }

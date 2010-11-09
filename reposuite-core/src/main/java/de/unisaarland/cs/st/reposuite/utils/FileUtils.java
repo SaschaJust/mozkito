@@ -42,8 +42,8 @@ public class FileUtils {
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
 		Condition.notNull(command);
 		if (command.startsWith(FileUtils.fileSeparator)
-				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
-						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
+		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
 			// We got an absolut path here
 			File executable = new File(command);
 			if (!executable.exists()) {
@@ -72,7 +72,7 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-					+ pathVariable);
+			        + pathVariable);
 		}
 	}
 	
@@ -92,14 +92,14 @@ public class FileUtils {
 		if (!parentDir.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
+				        + parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
 			}
 			return null;
 		}
 		if ((!parentDir.canExecute()) || (!parentDir.canWrite())) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		}
@@ -109,14 +109,14 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath()
-							+ "`. Reason: directory exists already. Returning existing directory.");
+					        + parentDir.getAbsolutePath()
+					        + "`. Reason: directory exists already. Returning existing directory.");
 				}
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -124,7 +124,7 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
@@ -271,6 +271,23 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @param baseDirectory
+	 * @return
+	 */
+	public static List<File> getRecursiveFiles(final File baseDirectory) {
+		List<File> list = new LinkedList<File>();
+		for (String subDirectoryPath : baseDirectory.list()) {
+			File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator + subDirectoryPath);
+			if (subDirectory.isDirectory() && subDirectory.canExecute() && subDirectory.canRead()) {
+				list.addAll(getRecursiveDirectories(subDirectory));
+			} else if (subDirectory.isFile() && subDirectory.canRead()) {
+				list.add(subDirectory);
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * List files. @see
 	 * {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 * 
@@ -305,7 +322,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-						+ FileUtils.fileSeparator + entry.getName()));
+				        + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);

@@ -3,10 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.exceptions;
 
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class UnsupportedProtocolException extends Exception {
 	
@@ -20,7 +19,6 @@ public class UnsupportedProtocolException extends Exception {
 	 */
 	public UnsupportedProtocolException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -28,7 +26,6 @@ public class UnsupportedProtocolException extends Exception {
 	 */
 	public UnsupportedProtocolException(final String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -37,7 +34,6 @@ public class UnsupportedProtocolException extends Exception {
 	 */
 	public UnsupportedProtocolException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -45,7 +41,6 @@ public class UnsupportedProtocolException extends Exception {
 	 */
 	public UnsupportedProtocolException(final Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

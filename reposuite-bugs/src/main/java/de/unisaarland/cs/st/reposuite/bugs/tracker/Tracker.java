@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -26,8 +28,6 @@ import org.hibernate.criterion.Restrictions;
 import org.jdom.Document;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Preconditions;
-
 import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
@@ -35,6 +35,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
@@ -76,7 +77,13 @@ public abstract class Tracker {
 	 * 
 	 */
 	public Tracker() {
-		
+		Condition.check(!this.initialized);
+		Condition.notNull(this.bugIds);
+		Condition.notNull(this.personManager);
+		Condition.notNull(bugIdPlaceholder);
+		Condition.greater(bugIdPlaceholder.length(), 0);
+		Condition.notNull(bugIdRegex);
+		Condition.greater(bugIdRegex.getPattern().length(), 0);
 	}
 	
 	public void addBugId(final Long id) {
@@ -93,7 +100,17 @@ public abstract class Tracker {
 	 *            the bug report without further processing
 	 * @return true if no error occurred
 	 */
-	public abstract boolean checkRAW(String rawReport);
+	public boolean checkRAW(final RawReport rawReport) {
+		Condition.notNull(rawReport);
+		
+		boolean retval = true;
+		retval &= rawReport.getContent().contains("<digest>");
+		retval &= rawReport.getContent().contains("</digest>");
+		
+		retval &= rawReport.getContent().contains("<fetchstamp>");
+		retval &= rawReport.getContent().contains("</fetchstamp>");
+		return retval;
+	}
 	
 	/**
 	 * The method takes a XML document representing a bug report and checks this
@@ -107,7 +124,11 @@ public abstract class Tracker {
 	 *            the XML document representing a bug report
 	 * @return true if no error occurred
 	 */
-	public abstract boolean checkXML(Document xmlReport);
+	public boolean checkXML(final Document xmlReport) {
+		Condition.notNull(xmlReport);
+		
+		return xmlReport.getRootElement() != null;
+	}
 	
 	/**
 	 * The method takes a bug report in raw format and creates the corresponding
@@ -117,7 +138,7 @@ public abstract class Tracker {
 	 *            the raw bug report
 	 * @return the bug report as XML document
 	 */
-	public abstract Document createDocument(String rawReport);
+	public abstract XmlReport createDocument(RawReport rawReport);
 	
 	/**
 	 * This is method takes a {@link URI} and fetches the content to a string.
@@ -129,10 +150,12 @@ public abstract class Tracker {
 	 * @throws UnsupportedProtocolException
 	 */
 	
-	public Tuple<String, String> fetchSource(final URI uri) throws UnsupportedProtocolException {
-		assert (isInitialized());
-		
+	public RawReport fetchSource(final URI uri) throws UnsupportedProtocolException {
+		Condition.check(isInitialized());
+		String rawReport = null;
 		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			StringBuilder content = new StringBuilder();
 			if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
 				HttpClient httpClient = new DefaultHttpClient();
 				HttpGet request = new HttpGet(uri);
@@ -140,12 +163,11 @@ public abstract class Tracker {
 				HttpEntity entity = response.getEntity();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
 				String line;
-				StringBuilder content = new StringBuilder();
+				
 				while ((line = reader.readLine()) != null) {
 					content.append(line);
 				}
-				
-				return new Tuple<String, String>(response.getProtocolVersion().toString(), content.toString());
+				rawReport = content.toString();
 			} else if (uri.getScheme().equals("file")) {
 				StringBuilder builder = new StringBuilder();
 				File file = new File(uri.getPath());
@@ -157,9 +179,7 @@ public abstract class Tracker {
 						builder.append(FileUtils.lineSeparator);
 					}
 					reader.close();
-					
-					// FIXME fix type determination
-					return new Tuple<String, String>("XHTML", builder.toString());
+					rawReport = builder.toString();
 				} else {
 					
 					if (Logger.logWarn()) {
@@ -170,6 +190,20 @@ public abstract class Tracker {
 			} else {
 				throw new UnsupportedProtocolException(uri.getScheme());
 			}
+			
+			if (rawReport != null) {
+				content = new StringBuilder(rawReport);
+				content.append(FileUtils.lineSeparator);
+				content.append("<digest>");
+				content.append(md.digest(rawReport.getBytes()));
+				content.append("</digest>");
+				content.append(FileUtils.lineSeparator);
+				content.append("<fetchstamp>");
+				content.append(new DateTime().toString());
+				content.append("</fetchstamp>");
+				// TODO FIXME
+				return new RawReport(0, md.digest(rawReport.getBytes()), new DateTime(), "xhtml", rawReport);
+			}
 		} catch (ClientProtocolException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -178,8 +212,14 @@ public abstract class Tracker {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
+		} catch (NoSuchAlgorithmException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
+		
 		return null;
+		
 	}
 	
 	/**
@@ -314,13 +354,13 @@ public abstract class Tracker {
 	
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
 	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
-		Preconditions.checkNotNull(fetchURI, "[setup] `fetchURI` should not be null.");
-		Preconditions.checkArgument((username == null) == (password == null),
-		        "[setup] Either username and password are set or none at all. username = `%s`, password = `%s`",
-		        username, password);
-		Preconditions.checkArgument(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		        "[setup] `startAt` must be null or > 0, but is: %s", startAt);
-		Preconditions.checkArgument(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
+		Condition.notNull(fetchURI);
+		Condition.check((username == null) == (password == null),
+		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
+		        password);
+		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
+		        "`startAt` must be null or > 0, but is: %s", startAt);
+		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
 		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {

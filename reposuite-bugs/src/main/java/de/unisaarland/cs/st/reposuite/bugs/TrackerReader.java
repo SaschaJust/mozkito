@@ -7,16 +7,16 @@ import java.net.URI;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
+public class TrackerReader extends RepoSuiteSourceThread<RawReport> {
 	
 	private final Tracker tracker;
 	
@@ -52,7 +52,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 					Logger.debug("Fetching " + bugId + ".");
 				}
 				URI newURI = this.tracker.getLinkFromId(bugId);
-				Tuple<String, String> source = this.tracker.fetchSource(newURI);
+				RawReport source = this.tracker.fetchSource(newURI);
 				if (source == null) {
 					
 					if (Logger.logWarn()) {
@@ -63,7 +63,7 @@ public class TrackerReader extends RepoSuiteSourceThread<Tuple<Long, String>> {
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + bugId + ".");
 					}
-					write(new Tuple<Long, String>(bugId, source.getSecond()));
+					write(source);
 				}
 			}
 			

@@ -5,15 +5,28 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
 public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	
 	private Field     field;
@@ -23,6 +36,14 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	private BugReport bugReport;
 	
 	/**
+	 * used by hibernate
+	 */
+	@SuppressWarnings ("unused")
+	private HistoryElement() {
+		
+	}
+	
+	/**
 	 * @param field
 	 * @param oldValue
 	 * @param newValue
@@ -30,6 +51,12 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	public HistoryElement(final BugReport bugReport, final Field field, final Object oldValue, final Object newValue,
 	        final DateTime timestamp) {
+		Condition.notNull(bugReport);
+		Condition.notNull(field);
+		Condition.notNull(oldValue);
+		Condition.notNull(newValue);
+		Condition.notNull(timestamp);
+		
 		this.bugReport = bugReport;
 		this.field = field;
 		this.oldValue = oldValue;
@@ -41,18 +68,20 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Transient
 	@Override
-	public int compareTo(final HistoryElement o) {
-		if (o == null) {
+	public int compareTo(final HistoryElement object) {
+		if (object == null) {
 			return 1;
 		} else {
-			return this.timestamp.compareTo(o.timestamp);
+			return this.timestamp.compareTo(object.timestamp);
 		}
 	}
 	
 	/**
 	 * @return the bugReport
 	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public BugReport getBugReport() {
 		return this.bugReport;
 	}
@@ -60,13 +89,25 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the field
 	 */
+	@Basic
 	public Field getField() {
 		return this.field;
 	}
 	
 	/**
+	 * @return
+	 */
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "timestamp")
+	private Date getJavaTimestamp() {
+		return this.timestamp.toDate();
+	}
+	
+	/**
 	 * @return the newValue
 	 */
+	@Basic
 	public Object getNewValue() {
 		return this.newValue;
 	}
@@ -74,6 +115,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the oldValue
 	 */
+	@Basic
 	public Object getOldValue() {
 		return this.oldValue;
 	}
@@ -83,14 +125,15 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
 	 */
 	@Override
+	@Transient
 	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	/**
 	 * @return the timestamp
 	 */
+	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
 	}
@@ -109,6 +152,11 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	public void setField(final Field field) {
 		this.field = field;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setJavaTimestamp(final Date timestamp) {
+		this.timestamp = new DateTime(timestamp);
 	}
 	
 	/**

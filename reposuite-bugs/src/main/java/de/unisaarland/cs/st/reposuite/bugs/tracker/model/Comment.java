@@ -4,16 +4,30 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.util.Collection;
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
 public class Comment implements Annotated, Comparable<Comment> {
 	
 	private long      id;
@@ -22,11 +36,25 @@ public class Comment implements Annotated, Comparable<Comment> {
 	private String    message;
 	private BugReport bugReport;
 	
+	/**
+	 * 
+	 */
+	@SuppressWarnings ("unused")
+	private Comment() {
+		
+	}
+	
+	/**
+	 * @param bugReport
+	 * @param author
+	 * @param timestamp
+	 * @param message
+	 */
 	public Comment(final BugReport bugReport, final Person author, final DateTime timestamp, final String message) {
-		assert (bugReport != null);
-		assert (author != null);
-		assert (timestamp != null);
-		assert (message != null);
+		Condition.notNull(bugReport);
+		Condition.notNull(author);
+		Condition.notNull(timestamp);
+		Condition.notNull(message);
 		
 		this.bugReport = bugReport;
 		this.author = author;
@@ -90,6 +118,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the author
 	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getAuthor() {
 		return this.author;
 	}
@@ -97,6 +126,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the bugReport
 	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public BugReport getBugReport() {
 		return this.bugReport;
 	}
@@ -104,13 +134,25 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the id
 	 */
+	@Id
 	public long getId() {
 		return this.id;
 	}
 	
 	/**
+	 * @return
+	 */
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "timestamp")
+	private Date getJavaTimestamp() {
+		return this.timestamp.toDate();
+	}
+	
+	/**
 	 * @return the message
 	 */
+	@Basic
 	public String getMessage() {
 		return this.message;
 	}
@@ -120,6 +162,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
 	 */
 	@Override
+	@Transient
 	public Collection<Annotated> getSaveFirst() {
 		// TODO Auto-generated method stub
 		return null;
@@ -128,6 +171,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the timestamp
 	 */
+	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
 	}
@@ -137,6 +181,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
+	@Transient
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -168,6 +213,11 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	public void setId(final long id) {
 		this.id = id;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setJavaTimestamp(final Date timestamp) {
+		this.timestamp = new DateTime(timestamp);
 	}
 	
 	/**

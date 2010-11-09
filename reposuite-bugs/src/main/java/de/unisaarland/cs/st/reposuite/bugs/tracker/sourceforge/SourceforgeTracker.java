@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.sourceforge;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -20,9 +21,12 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -35,41 +39,36 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class SourceforgeTracker extends Tracker {
 	
-	private static Regex submittedRegex = new Regex(
-	                                            "({fullname}[^(]+)\\(\\s*({username}[^\\s]+)\\s*\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2})");
-	private static Regex subjectRegex   = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
-	
-	public static DateTime parseDate(final String s) {
-		DateTime d = null;
-		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
-		d = dtf.parseDateTime(s);
-		return d;
-	}
+	private static Regex submittedRegex     = new Regex(
+	                                                "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
+	private final Regex  timestampRegexZone = new Regex("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} ([:alpha:]{3,4})");
+	private final Regex  timestampRegexLong = new Regex("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+	private final Regex  subjectRegex       = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
 	
 	@Override
-	public boolean checkRAW(final String rawReport) {
-		boolean retValue = true;
-		// TODO check length
-		retValue &= rawReport.length() > 1000;
+	public boolean checkRAW(final RawReport rawReport) {
+		boolean retValue = super.checkRAW(rawReport);
 		
-		// TODO check for md5
-		// TODO check for timestamp
-		return true;
+		retValue &= rawReport.getContent().length() > 1000;
+		
+		return retValue;
 	}
 	
 	@Override
 	public boolean checkXML(final Document xmlReport) {
-		return true;
+		boolean retValue = super.checkXML(xmlReport);
+		
+		return retValue;
 	}
 	
 	@Override
-	public Document createDocument(final String rawReport) {
-		BufferedReader reader = new BufferedReader(new StringReader(rawReport));
+	public XmlReport createDocument(final RawReport rawReport) {
+		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
 			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 			Document document = saxBuilder.build(reader);
 			reader.close();
-			return document;
+			return new XmlReport(rawReport, document);
 		} catch (TransformerFactoryConfigurationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,6 +81,34 @@ public class SourceforgeTracker extends Tracker {
 		}
 		
 		return null;
+	}
+	
+	public void getIdsFromURI(final URI uri) {
+		if (uri.getScheme().equals("file")) {
+			Regex regex = new Regex(".*" + this.pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
+			File baseDir = new File(uri.getPath());
+			
+			if (baseDir.exists() && baseDir.isDirectory() && baseDir.canExecute() && baseDir.canRead()) {
+				List<File> files = FileUtils.getRecursiveFiles(baseDir);
+				
+				for (File file : files) {
+					if (regex.find(file.getAbsolutePath()) != null) {
+						addBugId(Long.parseLong(regex.getGroup("bugid")));
+					}
+				}
+			} else if (baseDir.exists() && baseDir.isFile() && baseDir.canRead()) {
+				if (regex.find(baseDir.getAbsolutePath()) != null) {
+					addBugId(Long.parseLong(regex.getGroup("bugid")));
+				}
+			} else {
+				
+				if (Logger.logError()) {
+					Logger.error("Overview URI not valid: " + uri);
+				}
+			}
+		} else {
+			
+		}
 	};
 	
 	@SuppressWarnings ("unchecked")
@@ -104,7 +131,7 @@ public class SourceforgeTracker extends Tracker {
 				System.err.println(JavaUtils.collectionToString(find));
 				bugReport.setSubmitter(this.personManager.getPerson(new Person(find.get(1).getMatch().trim(), find
 				        .get(0).getMatch().trim(), null)));
-				bugReport.setCreatingTimestamp(parseDate(find.get(2).getMatch().trim()));
+				bugReport.setCreationTimestamp(parseDate(find.get(2).getMatch().trim()));
 			} else if (fieldName.equals("Status")) {
 				// TODO status
 			} else if (fieldName.equals("Resolution")) {
@@ -127,7 +154,7 @@ public class SourceforgeTracker extends Tracker {
 			if (Logger.logDebug()) {
 				Logger.debug("Found field: subject, value: " + n.getValue());
 			}
-			List<RegexGroup> find = subjectRegex.find(n.getValue());
+			List<RegexGroup> find = this.subjectRegex.find(n.getValue());
 			bugReport.setSubject(find.get(0).getMatch());
 			bugReport.setId(Long.parseLong(find.get(1).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
@@ -154,9 +181,10 @@ public class SourceforgeTracker extends Tracker {
 						if (el3.getAttribute("title") != null) {
 							senderName = FileUtils.lineSeparator + "Name: " + el3.getAttributeValue("title");
 						}
+						String span = e1.getValue() + senderName + FileUtils.lineSeparator + e2.getValue();
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Found comment from " + senderName);
+							Logger.debug("Found comment from " + senderName + FileUtils.lineSeparator + span);
 						}
 						// StructuralElement c =
 						// StructuralElementParser.get(Comment.class, span);
@@ -227,25 +255,54 @@ public class SourceforgeTracker extends Tracker {
 		return bugReport;
 	}
 	
+	public DateTime parseDate(final String s) {
+		List<RegexGroup> find = this.timestampRegexZone.find(s);
+		DateTime d;
+		
+		if (find != null) {
+			// with time zone abbreviation
+			String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(find.get(1).getMatch());
+			String timestampWithoutZone = s.substring(0, s.length() - find.get(1).getMatch().length());
+			System.out.println("Found timezone: " + find.get(1).getMatch() + " mapped to " + offset);
+			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss z");
+			d = dtf.parseDateTime(timestampWithoutZone + offset);
+		} else if ((find = this.timestampRegexLong.find(s)) != null) {
+			// without
+			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+			d = dtf.parseDateTime(s);
+		} else {
+			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+			d = dtf.parseDateTime(s);
+		}
+		
+		if (d == null) {
+			
+			if (Logger.logError()) {
+				Logger.error("Could not parse date: " + s);
+			}
+			System.exit(1);
+		}
+		return d;
+	}
+	
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
 	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 		
 		if (overviewURI != null) {
-			if (Logger.logWarn()) {
-				Logger.warn(getHandle() + "does not support overviewURIs.");
+			getIdsFromURI(overviewURI);
+		} else {
+			if (startAt == null) {
+				this.startAt = 1l;
 			}
-		}
-		if (startAt == null) {
-			this.startAt = 1l;
-		}
-		if (stopAt == null) {
-			throw new InvalidParameterException("stopAt must not be null");
-		}
-		
-		for (long i = this.startAt; i <= this.stopAt; ++i) {
-			addBugId(i);
+			if (stopAt == null) {
+				throw new InvalidParameterException("stopAt must not be null");
+			}
+			
+			for (long i = this.startAt; i <= this.stopAt; ++i) {
+				addBugId(i);
+			}
 		}
 		
 		this.initialized = true;

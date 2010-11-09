@@ -3,20 +3,19 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import org.jdom.Document;
-
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.RepoSuiteTransformerThread;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Long, String>, Tuple<Long, Document>> {
+public class TrackerXMLTransformer extends RepoSuiteTransformerThread<RawReport, XmlReport> {
 	
 	private final Tracker tracker;
 	
@@ -38,14 +37,13 @@ public class TrackerXMLTransformer extends RepoSuiteTransformerThread<Tuple<Long
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<Long, String> rawReport = null;
+			RawReport rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
 				if (Logger.logDebug()) {
-					Logger.debug("Converting " + rawReport.getFirst() + " to XML.");
+					Logger.debug("Converting " + rawReport + " to XML.");
 				}
-				write(new Tuple<Long, Document>(rawReport.getFirst(),
-				        this.tracker.createDocument(rawReport.getSecond())));
+				write(this.tracker.createDocument(rawReport));
 			}
 			finish();
 		} catch (Exception e) {

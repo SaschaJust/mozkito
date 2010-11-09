@@ -111,8 +111,8 @@ public class Regex {
 		
 		// check for closed character groups
 		beginMatch = new Regex("(?<!\\\\)\\[|^\\[");
-		endMatch = new Regex("(?<!\\\\)\\][*+]?\\??"); // TODO remove trailing
-		// multiplicators
+		endMatch = new Regex("(?<!\\\\)\\][*+]?\\??");
+		// TODO remove trailing multiplicators
 		
 		List<List<RegexGroup>> allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
 		List<List<RegexGroup>> allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);

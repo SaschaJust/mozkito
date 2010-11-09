@@ -33,7 +33,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -41,7 +41,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -57,7 +57,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -73,7 +73,7 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -81,25 +81,31 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
 	public String getRelativeTransactionId(final String transactionId, final long index) {
-		// TODO Auto-generated method stub
-		return null;
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 	}
 	
 	@Override
 	public long getTransactionCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 	}
 	
 	@Override
 	public String getTransactionId(final long index) {
-		// TODO Auto-generated method stub
-		return null;
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 	}
 	
 	@Override
@@ -107,19 +113,24 @@ public class CVSRepository extends Repository {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
 		}
-		return null;
+		throw new RuntimeException();
 	}
 	
 	@Override
 	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
-		// TODO Auto-generated method stub
-		return null;
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 	}
 	
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision)
 	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
-		// TODO Auto-generated method stub
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 		
 	}
 	
@@ -127,7 +138,10 @@ public class CVSRepository extends Repository {
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
 	        final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
 	        UnsupportedProtocolType {
-		// TODO Auto-generated method stub
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepoSuiteSettings.reportThis);
+		}
+		throw new RuntimeException();
 		
 	}
 	

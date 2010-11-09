@@ -404,7 +404,6 @@ public class Logger {
 	 *            full path to the configuration file
 	 */
 	public static void readConfiguration(final String fileName) {
-		// FIXME this should be generalized
 		PropertyConfigurator.configure(fileName);
 	}
 	
@@ -674,6 +673,9 @@ public class Logger {
 		warn(message, null, t, 3);
 	}
 	
+	/**
+	 * @return the simple class name of the instance
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

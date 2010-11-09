@@ -3,10 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.exceptions;
 
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class PoolLimitExceededException extends Exception {
 	
@@ -19,7 +18,6 @@ public class PoolLimitExceededException extends Exception {
 	 * 
 	 */
 	public PoolLimitExceededException() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -27,7 +25,6 @@ public class PoolLimitExceededException extends Exception {
 	 */
 	public PoolLimitExceededException(final String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -36,7 +33,6 @@ public class PoolLimitExceededException extends Exception {
 	 */
 	public PoolLimitExceededException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -44,7 +40,6 @@ public class PoolLimitExceededException extends Exception {
 	 */
 	public PoolLimitExceededException(final Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

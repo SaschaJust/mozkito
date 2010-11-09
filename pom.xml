@@ -217,7 +217,7 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
-						<phase>pre-install</phase>
+						<phase>package</phase>
 					</execution>
 				</executions>
 				<configuration>
@@ -252,7 +252,7 @@
 				<executions>
 					<execution>
 						<id>attach-sources</id>
-						<phase>pre-install</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
