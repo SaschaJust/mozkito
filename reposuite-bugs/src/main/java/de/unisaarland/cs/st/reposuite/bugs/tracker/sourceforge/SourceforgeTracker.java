@@ -55,7 +55,7 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@Override
-	public boolean checkXML(final Document xmlReport) {
+	public boolean checkXML(final XmlReport xmlReport) {
 		boolean retValue = super.checkXML(xmlReport);
 		
 		return retValue;
@@ -243,11 +243,11 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@Override
-	public BugReport parse(final Document document) {
+	public BugReport parse(final XmlReport xmlReport) {
 		// System.err.println(document);
 		// Content content = document.getContent(1);
 		// Element element = content.getDocument().getRootElement();
-		Element element = document.getRootElement();
+		Element element = xmlReport.getDocument().getRootElement();
 		BugReport bugReport = new BugReport();
 		hangle(bugReport, element, null);
 		// System.err.println(bugReport);

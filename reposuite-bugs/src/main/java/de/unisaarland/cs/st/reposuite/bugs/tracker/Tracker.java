@@ -25,7 +25,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.jdom.Document;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
@@ -124,10 +123,10 @@ public abstract class Tracker {
 	 *            the XML document representing a bug report
 	 * @return true if no error occurred
 	 */
-	public boolean checkXML(final Document xmlReport) {
+	public boolean checkXML(final XmlReport xmlReport) {
 		Condition.notNull(xmlReport);
 		
-		return xmlReport.getRootElement() != null;
+		return xmlReport.getDocument().getRootElement() != null;
 	}
 	
 	/**
@@ -323,7 +322,7 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public abstract BugReport parse(Document document);
+	public abstract BugReport parse(XmlReport rawReport);
 	
 	/**
 	 * sets up the current tracker and fills the queue with the corresponding

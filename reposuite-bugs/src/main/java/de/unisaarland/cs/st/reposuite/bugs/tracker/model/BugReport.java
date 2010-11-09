@@ -55,49 +55,16 @@ public class BugReport implements Annotated {
 	private Type                      type;
 	private DateTime                  creationTimestamp;
 	private DateTime                  lastFetch;
+	private String                    version;
+	private String                    summary;
+	private String                    observedBehavior;
+	private String                    expectedBehavior;
+	private String                    stepsToReproduce;
+	
 	private byte[]                    hash     = new byte[33];
 	
 	public BugReport() {
 		super();
-	}
-	
-	public BugReport(final long id, final Person assignedTo, final String category, final SortedSet<Comment> comments,
-	        final String description, final Severity severity, final Priority priority, final Resolution resolution,
-	        final Person submitter, final String subject, final Person resolver,
-	        final SortedSet<HistoryElement> history, final Status status, final Type type,
-	        final DateTime creatingTimestamp, final DateTime lastFetch, final byte[] hash) {
-		super();
-		Condition.greater(id, 0l);
-		Condition.notNull(comments);
-		Condition.notNull(description);
-		Condition.notNull(severity);
-		Condition.notNull(priority);
-		Condition.notNull(resolution);
-		Condition.notNull(submitter);
-		Condition.notNull(subject);
-		Condition.notNull(status);
-		Condition.notNull(type);
-		Condition.notNull(creatingTimestamp);
-		Condition.notNull(lastFetch);
-		Condition.equals(hash.length, 33);
-		
-		this.id = id;
-		this.assignedTo = assignedTo;
-		this.category = category;
-		this.comments = comments;
-		this.description = description;
-		this.severity = severity;
-		this.priority = priority;
-		this.resolution = resolution;
-		this.submitter = submitter;
-		this.subject = subject;
-		this.resolver = resolver;
-		this.history = history;
-		this.status = status;
-		this.type = type;
-		this.creationTimestamp = creatingTimestamp;
-		this.lastFetch = lastFetch;
-		this.hash = hash;
 	}
 	
 	@Transient
@@ -167,6 +134,13 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @return the expectedBehavior
+	 */
+	public String getExpectedBehavior() {
+		return this.expectedBehavior;
+	}
+	
+	/**
 	 * @return the hash
 	 */
 	@Basic
@@ -203,6 +177,13 @@ public class BugReport implements Annotated {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return this.lastFetch.toDate();
+	}
+	
+	/**
+	 * @return the observedBehavior
+	 */
+	public String getObservedBehavior() {
+		return this.observedBehavior;
 	}
 	
 	/**
@@ -265,6 +246,13 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @return the stepsToReproduce
+	 */
+	public String getStepsToReproduce() {
+		return this.stepsToReproduce;
+	}
+	
+	/**
 	 * @return the subject
 	 */
 	@Basic
@@ -281,11 +269,25 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @return the summary
+	 */
+	public String getSummary() {
+		return this.summary;
+	}
+	
+	/**
 	 * @return the type
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Type getType() {
 		return this.type;
+	}
+	
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return this.version;
 	}
 	
 	/**
@@ -341,6 +343,14 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @param expectedBehavior
+	 *            the expectedBehavior to set
+	 */
+	public void setExpectedBehavior(final String expectedBehavior) {
+		this.expectedBehavior = expectedBehavior;
+	}
+	
+	/**
 	 * @param hash
 	 *            the hash to set
 	 */
@@ -375,6 +385,14 @@ public class BugReport implements Annotated {
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		this.lastFetch = new DateTime(lastFetch);
+	}
+	
+	/**
+	 * @param observedBehavior
+	 *            the observedBehavior to set
+	 */
+	public void setObservedBehavior(final String observedBehavior) {
+		this.observedBehavior = observedBehavior;
 	}
 	
 	/**
@@ -426,6 +444,14 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @param stepsToReproduce
+	 *            the stepsToReproduce to set
+	 */
+	public void setStepsToReproduce(final String stepsToReproduce) {
+		this.stepsToReproduce = stepsToReproduce;
+	}
+	
+	/**
 	 * @param subject
 	 *            the subject to set
 	 */
@@ -442,11 +468,27 @@ public class BugReport implements Annotated {
 	}
 	
 	/**
+	 * @param summary
+	 *            the summary to set
+	 */
+	public void setSummary(final String summary) {
+		this.summary = summary;
+	}
+	
+	/**
 	 * @param type
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
 		this.type = type;
+	}
+	
+	/**
+	 * @param version
+	 *            the version to set
+	 */
+	public void setVersion(final String version) {
+		this.version = version;
 	}
 	
 	/*

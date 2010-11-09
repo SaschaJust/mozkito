@@ -3,20 +3,18 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import org.jdom.Document;
-
 import de.unisaarland.cs.st.reposuite.RepoSuiteFilterThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerXMLChecker extends RepoSuiteFilterThread<Tuple<Long, Document>> {
+public class TrackerXMLChecker extends RepoSuiteFilterThread<XmlReport> {
 	
 	private final Tracker tracker;
 	
@@ -38,17 +36,17 @@ public class TrackerXMLChecker extends RepoSuiteFilterThread<Tuple<Long, Documen
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Tuple<Long, Document> rawReport = null;
+			XmlReport rawReport = null;
 			
 			while (!isShutdown() && ((rawReport = read()) != null)) {
-				if (this.tracker.checkXML(rawReport.getSecond())) {
+				if (this.tracker.checkXML(rawReport)) {
 					if (Logger.logDebug()) {
-						Logger.debug("Report " + rawReport.getFirst() + " passed XML check.");
+						Logger.debug("Report " + rawReport + " passed XML check.");
 					}
 					write(rawReport);
 				} else {
 					if (Logger.logWarn()) {
-						Logger.warn("Skipping report " + rawReport.getFirst() + " due to errors in XML document.");
+						Logger.warn("Skipping report " + rawReport + " due to errors in XML document.");
 					}
 				}
 			}
