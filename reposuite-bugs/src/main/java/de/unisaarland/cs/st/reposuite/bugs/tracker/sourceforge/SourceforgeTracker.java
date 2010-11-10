@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -112,7 +112,7 @@ public class SourceforgeTracker extends Tracker {
 	};
 	
 	@SuppressWarnings ("unchecked")
-	private void handleDivElement(final BugReport bugReport, Element e, final Element n) {
+	private void handleDivElement(final Report bugReport, Element e, final Element n) {
 		if (e.getName().equals("label")) {
 			
 			String fieldName = e.getValue().replaceFirst(":.*", "");
@@ -223,7 +223,7 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@SuppressWarnings ("unchecked")
-	private void hangle(final BugReport bugReport, final Element e, final Element n) {
+	private void hangle(final Report bugReport, final Element e, final Element n) {
 		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e
 		        .getAttributeValue("class").startsWith("yui-g")))
 		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container") || e
@@ -243,12 +243,12 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@Override
-	public BugReport parse(final XmlReport xmlReport) {
+	public Report parse(final XmlReport xmlReport) {
 		// System.err.println(document);
 		// Content content = document.getContent(1);
 		// Element element = content.getDocument().getRootElement();
 		Element element = xmlReport.getDocument().getRootElement();
-		BugReport bugReport = new BugReport();
+		Report bugReport = new Report();
 		hangle(bugReport, element, null);
 		// System.err.println(bugReport);
 		

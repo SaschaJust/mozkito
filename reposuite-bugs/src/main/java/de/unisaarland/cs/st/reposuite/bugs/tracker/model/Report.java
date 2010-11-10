@@ -20,6 +20,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -36,7 +37,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 @Entity
-public class BugReport implements Annotated {
+@Table (name = "report")
+public class Report implements Annotated {
 	
 	private long                      id;
 	private Person                    assignedTo;
@@ -48,7 +50,7 @@ public class BugReport implements Annotated {
 	private Resolution                resolution;
 	private Person                    submitter;
 	private String                    subject;
-	private Set<BugReport>            siblings = new HashSet<BugReport>();
+	private Set<Report>            siblings = new HashSet<Report>();
 	private Person                    resolver;
 	private SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
 	private Status                    status;
@@ -63,15 +65,15 @@ public class BugReport implements Annotated {
 	
 	private byte[]                    hash     = new byte[33];
 	
-	public BugReport() {
+	public Report() {
 		super();
 	}
+	
 	
 	@Transient
 	public void addComment(final Comment comment) {
 		Condition.notNull(comment);
 		Condition.notNull(this.comments);
-		
 		this.comments.add(comment);
 	}
 	
@@ -82,7 +84,6 @@ public class BugReport implements Annotated {
 	public void addElementToHistory(final HistoryElement element) {
 		Condition.notNull(element);
 		Condition.notNull(this.history);
-		
 		this.history.add(element);
 	}
 	
@@ -233,7 +234,7 @@ public class BugReport implements Annotated {
 	 * @return the siblings
 	 */
 	@ManyToMany
-	public Set<BugReport> getSiblings() {
+	public Set<Report> getSiblings() {
 		return this.siblings;
 	}
 	
@@ -431,7 +432,7 @@ public class BugReport implements Annotated {
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final Set<BugReport> siblings) {
+	public void setSiblings(final Set<Report> siblings) {
 		this.siblings = siblings;
 	}
 	
@@ -499,14 +500,14 @@ public class BugReport implements Annotated {
 	@Transient
 	public String toString() {
 		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
-		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
-		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
-		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
-		        + ", submitter=" + this.submitter + ", subject="
-		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
-		        + "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
-		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
-		        + new String(this.hash) + "]";
+		+ ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
+		+ this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
+		+ "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+		+ ", submitter=" + this.submitter + ", subject="
+		+ this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
+		+ "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
+		+ ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
+		+ new String(this.hash) + "]";
 	}
 	
 }

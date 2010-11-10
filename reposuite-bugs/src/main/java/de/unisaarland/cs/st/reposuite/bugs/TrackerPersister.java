@@ -5,7 +5,7 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
+public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 	
 	private final HibernateUtil hibernateUtil;
 	
@@ -40,7 +40,7 @@ public class TrackerPersister extends RepoSuiteSinkThread<BugReport> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			BugReport bugReport;
+			Report bugReport;
 			
 			while (!isShutdown() && ((bugReport = read()) != null)) {
 				if (Logger.logDebug()) {

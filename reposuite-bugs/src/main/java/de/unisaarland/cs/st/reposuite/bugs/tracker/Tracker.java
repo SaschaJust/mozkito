@@ -30,7 +30,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.BugReport;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
@@ -42,20 +42,20 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * {@link Tracker} is the super class all BTS classes have to extend. The
- * {@link Tracker} handles all mining/parsing/analyzing of a {@link BugReport}.
+ * {@link Tracker} handles all mining/parsing/analyzing of a {@link Report}.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Tracker {
 	
 	protected final TrackerType type             = TrackerType.valueOf(this
-	                                                     .getClass()
-	                                                     .getSimpleName()
-	                                                     .substring(
-	                                                             0,
-	                                                             this.getClass().getSimpleName().length()
-	                                                                     - Tracker.class.getSimpleName().length())
-	                                                     .toUpperCase());
+			.getClass()
+			.getSimpleName()
+			.substring(
+					0,
+					this.getClass().getSimpleName().length()
+					- Tracker.class.getSimpleName().length())
+					.toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -71,7 +71,7 @@ public abstract class Tracker {
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
 	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
-	
+
 	/**
 	 * 
 	 */
@@ -298,17 +298,17 @@ public abstract class Tracker {
 	 * 
 	 * @param id
 	 *            the id of the bug report
-	 * @return the {@link BugReport}
+	 * @return the {@link Report}
 	 */
-	public BugReport loadReport(final Long id) {
+	public Report loadReport(final Long id) {
 		Criteria criteria;
 		try {
-			criteria = HibernateUtil.getInstance().createCriteria(BugReport.class);
+			criteria = HibernateUtil.getInstance().createCriteria(Report.class);
 			criteria.add(Restrictions.eq("id", id));
-			@SuppressWarnings ("unchecked") List<BugReport> list = criteria.list();
+			@SuppressWarnings ("unchecked") List<Report> list = criteria.list();
 			
 			if (list.size() > 0) {
-				BugReport bugReport = list.get(0);
+				Report bugReport = list.get(0);
 				return bugReport;
 			}
 		} catch (UninitializedDatabaseException e) {
@@ -322,7 +322,7 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public abstract BugReport parse(XmlReport rawReport);
+	public abstract Report parse(XmlReport rawReport);
 	
 	/**
 	 * sets up the current tracker and fills the queue with the corresponding
@@ -352,15 +352,15 @@ public abstract class Tracker {
 	 */
 	
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
+			final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		Condition.notNull(fetchURI);
 		Condition.check((username == null) == (password == null),
-		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
-		        password);
+				"Either username and password are set or none at all. username = `%s`, password = `%s`", username,
+				password);
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		        "`startAt` must be null or > 0, but is: %s", startAt);
+				"`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+				"[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;

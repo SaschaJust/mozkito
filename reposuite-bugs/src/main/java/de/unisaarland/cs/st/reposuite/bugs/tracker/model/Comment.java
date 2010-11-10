@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -28,13 +29,14 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
  * 
  */
 @Entity
+@Table (name = "comment")
 public class Comment implements Annotated, Comparable<Comment> {
 	
 	private long      id;
 	private DateTime  timestamp;
 	private Person    author;
 	private String    message;
-	private BugReport bugReport;
+	private Report bugReport;
 	
 	/**
 	 * 
@@ -50,7 +52,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param timestamp
 	 * @param message
 	 */
-	public Comment(final BugReport bugReport, final Person author, final DateTime timestamp, final String message) {
+	public Comment(final Report bugReport, final Person author, final DateTime timestamp, final String message) {
 		Condition.notNull(bugReport);
 		Condition.notNull(author);
 		Condition.notNull(timestamp);
@@ -127,7 +129,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @return the bugReport
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public BugReport getBugReport() {
+	public Report getBugReport() {
 		return this.bugReport;
 	}
 	
@@ -203,7 +205,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param bugReport
 	 *            the bugReport to set
 	 */
-	public void setBugReport(final BugReport bugReport) {
+	public void setBugReport(final Report bugReport) {
 		this.bugReport = bugReport;
 	}
 	

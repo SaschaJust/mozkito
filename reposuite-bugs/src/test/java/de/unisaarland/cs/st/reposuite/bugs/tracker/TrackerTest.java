@@ -29,6 +29,6 @@ public class TrackerTest {
 		assertTrue(Tracker.bugIdRegex.matches(url));
 		String result = Tracker.bugIdRegex.replaceAll(url, "210");
 		assertEquals("http://jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-210/JAXEN-210.xml", result);
-		
 	}
+
 }

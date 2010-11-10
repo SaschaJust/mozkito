@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -27,13 +28,14 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
  * 
  */
 @Entity
+@Table (name = "history_element")
 public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	
 	private Field     field;
 	private Object    oldValue;
 	private Object    newValue;
 	private DateTime  timestamp;
-	private BugReport bugReport;
+	private Report bugReport;
 	
 	/**
 	 * used by hibernate
@@ -49,8 +51,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param newValue
 	 * @param timestamp
 	 */
-	public HistoryElement(final BugReport bugReport, final Field field, final Object oldValue, final Object newValue,
-	        final DateTime timestamp) {
+	public HistoryElement(final Report bugReport, final Field field, final Object oldValue, final Object newValue,
+			final DateTime timestamp) {
 		Condition.notNull(bugReport);
 		Condition.notNull(field);
 		Condition.notNull(oldValue);
@@ -82,7 +84,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the bugReport
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public BugReport getBugReport() {
+	public Report getBugReport() {
 		return this.bugReport;
 	}
 	
@@ -142,7 +144,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param bugReport
 	 *            the bugReport to set
 	 */
-	public void setBugReport(final BugReport bugReport) {
+	public void setBugReport(final Report bugReport) {
 		this.bugReport = bugReport;
 	}
 	
