@@ -38,15 +38,12 @@ public class JiraTrackerTest {
 	}
 	
 	@Test
-	public void testOverallIdFilter(){
+	public void testOverallIdFilter() {
 		JiraTracker tracker = new JiraTracker();
 		try {
-			tracker.setup(
-					new URI("http://jira.codehaus.org/si/jira.issueviews:issue-xml/"),
-					new URI(
-					"file:///Users/kim/Downloads/JAXEN_JIRA.xml"),
-					"JAXEN-" + Tracker.bugIdPlaceholder + "/JAXEN-" + Tracker.bugIdPlaceholder + ".xml", null, null,
-					new Long(1l), new Long(1000l));
+			tracker.setup(new URI("http://jira.codehaus.org/si/jira.issueviews:issue-xml/"), new URI(
+			"file:///Users/kim/Downloads/JAXEN_JIRA.xml"), "JAXEN-" + Tracker.bugIdPlaceholder + "/JAXEN-"
+			+ Tracker.bugIdPlaceholder + ".xml", null, null, new Long(1l), new Long(1000l));
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

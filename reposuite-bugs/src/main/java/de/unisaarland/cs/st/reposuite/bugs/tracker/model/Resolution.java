@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Resolution implements Annotated {
-	UNKNOWN, UNRESOLVED, DUPLICATE, FIXED, INVALID, WONT_FIX, WORKS_FOR_ME;
+	UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID, WONT_FIX, WORKS_FOR_ME;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {

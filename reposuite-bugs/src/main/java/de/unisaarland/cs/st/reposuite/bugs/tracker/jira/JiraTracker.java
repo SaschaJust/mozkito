@@ -166,7 +166,7 @@ public class JiraTracker extends Tracker {
 		Condition.notNull(rawReport);
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
-		JiraXMLHandler.handleRoot(bugReport, itemElement);
+		JiraXMLHandler.handleRoot(bugReport, itemElement, this.personManager);
 		return bugReport;
 	}
 	

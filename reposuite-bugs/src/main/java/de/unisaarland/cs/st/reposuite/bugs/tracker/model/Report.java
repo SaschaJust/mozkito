@@ -56,13 +56,15 @@ public class Report implements Annotated {
 	private Status                    status;
 	private Type                      type;
 	private DateTime                  creationTimestamp;
+	private DateTime                  resolutionTimestamp;
+	private DateTime                  lastUpdateTimestamp;
 	private DateTime                  lastFetch;
 	private String                    version;
 	private String                    summary;
 	private String                    observedBehavior;
 	private String                    expectedBehavior;
 	private String                    stepsToReproduce;
-	
+	private String                    component;
 	private byte[]                    hash     = new byte[33];
 	
 	public Report() {
@@ -180,6 +182,10 @@ public class Report implements Annotated {
 		return this.lastFetch.toDate();
 	}
 	
+	public DateTime getLastUpdateTimestamp() {
+		return this.lastUpdateTimestamp;
+	}
+	
 	/**
 	 * @return the observedBehavior
 	 */
@@ -201,6 +207,10 @@ public class Report implements Annotated {
 	@Enumerated (EnumType.ORDINAL)
 	public Resolution getResolution() {
 		return this.resolution;
+	}
+	
+	public DateTime getResolutionTimestamp() {
+		return this.resolutionTimestamp;
 	}
 	
 	/**
@@ -388,6 +398,10 @@ public class Report implements Annotated {
 		this.lastFetch = new DateTime(lastFetch);
 	}
 	
+	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
+		this.lastUpdateTimestamp = lastUpdateTimestamp;
+	}
+	
 	/**
 	 * @param observedBehavior
 	 *            the observedBehavior to set
@@ -410,6 +424,10 @@ public class Report implements Annotated {
 	 */
 	public void setResolution(final Resolution resolution) {
 		this.resolution = resolution;
+	}
+	
+	public void setResolutionTimestamp(final DateTime resolutionTimestamp) {
+		this.resolutionTimestamp = resolutionTimestamp;
 	}
 	
 	/**
@@ -468,6 +486,7 @@ public class Report implements Annotated {
 		this.submitter = submitter;
 	}
 	
+	
 	/**
 	 * @param summary
 	 *            the summary to set
@@ -475,6 +494,7 @@ public class Report implements Annotated {
 	public void setSummary(final String summary) {
 		this.summary = summary;
 	}
+	
 	
 	/**
 	 * @param type
@@ -484,6 +504,7 @@ public class Report implements Annotated {
 		this.type = type;
 	}
 	
+	
 	/**
 	 * @param version
 	 *            the version to set
@@ -491,6 +512,7 @@ public class Report implements Annotated {
 	public void setVersion(final String version) {
 		this.version = version;
 	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -509,5 +531,15 @@ public class Report implements Annotated {
 		+ ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
 		+ new String(this.hash) + "]";
 	}
+
+
+	public void setComponent(String component) {
+	    this.component = component;
+    }
+
+
+	public String getComponent() {
+	    return component;
+    }
 	
 }
