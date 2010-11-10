@@ -6,10 +6,10 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,9 +20,9 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import org.joda.time.DateTime;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -48,10 +48,10 @@ public class JiraTracker extends Tracker {
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	                                               "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	"<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
 	private static Regex errorRegex        = new Regex(
-	                                               "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	"<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
@@ -114,43 +114,39 @@ public class JiraTracker extends Tracker {
 			if (idToFetch == null) {
 				return super.fetchSource(uri);
 			}
-			XMLReader parser;
 			try {
-				parser = XMLReaderFactory.createXMLReader();
-				SubReportExtractor handler = new SubReportExtractor(idToFetch);
-				parser.setContentHandler(handler);
-				InputSource inputSource = new InputSource(new FileInputStream(this.overalXML));
-				parser.parse(inputSource);
-				String result = handler.getReportString();
-				if (result == null) {
-					return super.fetchSource(uri);
-				}
-				try {
-					MessageDigest md = MessageDigest.getInstance("MD5");
-					return new RawReport(idToFetch, new RawContent(uri, md.digest(result.getBytes()), new DateTime(),
-					        "xhtml", result));
-				} catch (NoSuchAlgorithmException e) {
-					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
-					}
-				}
-				return null;
+				SAXBuilder parser = new SAXBuilder();
+				Document document = parser.build(this.overalXML);
+				Element element = SubReportExtractor.extract(document.getRootElement(), idToFetch);
+				Element rss = new Element("rss");
+				rss.setAttribute("version", "0.92");
+				Element channel = new Element("channel");
+				channel.addContent(element);
+				rss.addContent(channel);
+				document = new Document(rss);
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				XMLOutputter outputter = new XMLOutputter();
+				StringWriter sw = new StringWriter();
+				outputter.output(document, sw);
 				
-			} catch (SAXException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return super.fetchSource(uri);
-			} catch (FileNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return super.fetchSource(uri);
+				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
+						new DateTime(),
+						"xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
-				return super.fetchSource(uri);
+				return null;
+			} catch (JDOMException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
+			} catch (NoSuchAlgorithmException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
 			}
 		}
 	}
@@ -186,7 +182,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
+			final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");
@@ -208,10 +204,10 @@ public class JiraTracker extends Tracker {
 					}
 					return;
 				}
-				if (!rawReport.getFormat().equals("XML")) {
+				if (!rawReport.getFormat().toLowerCase().equals("xhtml")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-						        + rawReport.getFormat());
+								+ rawReport.getFormat());
 					}
 					return;
 				}
