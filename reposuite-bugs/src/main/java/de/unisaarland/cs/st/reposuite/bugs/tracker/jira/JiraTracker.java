@@ -167,6 +167,7 @@ public class JiraTracker extends Tracker {
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
 		JiraXMLHandler.handleRoot(bugReport, itemElement, this.personManager);
+		bugReport.setLastFetch(rawReport.getFetchTime());
 		return bugReport;
 	}
 	

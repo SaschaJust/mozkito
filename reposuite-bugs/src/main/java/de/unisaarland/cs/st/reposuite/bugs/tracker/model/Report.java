@@ -50,7 +50,7 @@ public class Report implements Annotated {
 	private Resolution                resolution;
 	private Person                    submitter;
 	private String                    subject;
-	private Set<Report>            siblings = new HashSet<Report>();
+	private Set<Report>               siblings = new HashSet<Report>();
 	private Person                    resolver;
 	private SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
 	private Status                    status;
@@ -111,6 +111,10 @@ public class Report implements Annotated {
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
 		return this.comments;
+	}
+	
+	public String getComponent() {
+		return this.component;
 	}
 	
 	@SuppressWarnings ("unused")
@@ -329,6 +333,10 @@ public class Report implements Annotated {
 		this.comments = comments;
 	}
 	
+	public void setComponent(final String component) {
+		this.component = component;
+	}
+	
 	/**
 	 * @param creationTimestamp
 	 */
@@ -470,6 +478,7 @@ public class Report implements Annotated {
 		this.stepsToReproduce = stepsToReproduce;
 	}
 	
+	
 	/**
 	 * @param subject
 	 *            the subject to set
@@ -477,6 +486,7 @@ public class Report implements Annotated {
 	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
+	
 	
 	/**
 	 * @param submitter
@@ -531,15 +541,5 @@ public class Report implements Annotated {
 		+ ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
 		+ new String(this.hash) + "]";
 	}
-
-
-	public void setComponent(String component) {
-	    this.component = component;
-    }
-
-
-	public String getComponent() {
-	    return component;
-    }
 	
 }

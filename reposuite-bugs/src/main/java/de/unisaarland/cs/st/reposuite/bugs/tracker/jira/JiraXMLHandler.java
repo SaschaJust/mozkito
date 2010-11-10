@@ -138,7 +138,7 @@ public class JiraXMLHandler {
 				
 			} else if (element.getName().equals("assignee")) {
 				String username = element.getAttributeValue("username");
-				if ((username != null) && (username.equals("-1"))) {
+				if ((username != null) && (!username.equals("-1"))) {
 					String name = element.getText();
 					if (name.equals(username)) {
 						report.setAssignedTo(personManager.getPerson(new Person(username, null, null)));
@@ -148,7 +148,7 @@ public class JiraXMLHandler {
 				}
 			} else if (element.getName().equals("reporter")) {
 				String username = element.getAttributeValue("username");
-				if ((username != null) && (username.equals("-1"))) {
+				if ((username != null) && (!username.equals("-1"))) {
 					String name = element.getText();
 					if (name.equals(username)) {
 						report.setSubmitter(personManager.getPerson(new Person(username, null, null)));
