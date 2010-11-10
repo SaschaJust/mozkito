@@ -38,7 +38,6 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * {@link Tracker} is the super class all BTS classes have to extend. The
@@ -49,13 +48,13 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public abstract class Tracker {
 	
 	protected final TrackerType type             = TrackerType.valueOf(this
-			.getClass()
-			.getSimpleName()
-			.substring(
-					0,
-					this.getClass().getSimpleName().length()
-					- Tracker.class.getSimpleName().length())
-					.toUpperCase());
+	                                                     .getClass()
+	                                                     .getSimpleName()
+	                                                     .substring(
+	                                                             0,
+	                                                             this.getClass().getSimpleName().length()
+	                                                                     - Tracker.class.getSimpleName().length())
+	                                                     .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -71,7 +70,8 @@ public abstract class Tracker {
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
 	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
-
+	private static Regex        digitRegex       = new Regex("({bugid}\\d+)");
+	
 	/**
 	 * 
 	 */
@@ -140,16 +140,11 @@ public abstract class Tracker {
 	public abstract XmlReport createDocument(RawReport rawReport);
 	
 	/**
-	 * This is method takes a {@link URI} and fetches the content to a string.
-	 * 
-	 * @param fetchURI
-	 *            the fetchURI to the bug report
-	 * @return a {@link Tuple} containing first the content type of the document
-	 *         and second the content itself.
+	 * @param uri
+	 * @return
 	 * @throws UnsupportedProtocolException
 	 */
-	
-	public RawReport fetchSource(final URI uri) throws UnsupportedProtocolException {
+	public RawContent fetch(final URI uri) throws UnsupportedProtocolException {
 		Condition.check(isInitialized());
 		String rawReport = null;
 		try {
@@ -193,15 +188,10 @@ public abstract class Tracker {
 			if (rawReport != null) {
 				content = new StringBuilder(rawReport);
 				content.append(FileUtils.lineSeparator);
-				content.append("<digest>");
-				content.append(md.digest(rawReport.getBytes()));
-				content.append("</digest>");
-				content.append(FileUtils.lineSeparator);
-				content.append("<fetchstamp>");
-				content.append(new DateTime().toString());
-				content.append("</fetchstamp>");
-				// TODO FIXME
-				return new RawReport(0, md.digest(rawReport.getBytes()), new DateTime(), "xhtml", rawReport);
+				
+				md.digest(rawReport.getBytes());
+				
+				return new RawContent(uri, md.digest(rawReport.getBytes()), new DateTime(), "xhtml", rawReport);
 			}
 		} catch (ClientProtocolException e) {
 			if (Logger.logError()) {
@@ -219,6 +209,19 @@ public abstract class Tracker {
 		
 		return null;
 		
+	}
+	
+	/**
+	 * This is method takes a {@link URI} and fetches the content to a string.
+	 * 
+	 * @param fetchURI
+	 *            the fetchURI to the bug report
+	 * @return a {@link RawReport}
+	 * @throws UnsupportedProtocolException
+	 */
+	
+	public RawReport fetchSource(final URI uri) throws UnsupportedProtocolException {
+		return new RawReport(reverseURI(uri), fetch(uri));
 	}
 	
 	/**
@@ -324,6 +327,21 @@ public abstract class Tracker {
 	 */
 	public abstract Report parse(XmlReport rawReport);
 	
+	protected Long reverseURI(final URI uri) {
+		// pattern = /bleh/<BUGID>3-blub/<BUGID>_3.xml
+		String[] split = this.pattern.split(Tracker.bugIdPlaceholder);
+		String uriString = uri.toString();
+		
+		String tmpURI = uriString.substring(this.fetchURI.toString().length() + split[0].length(), uriString.length());
+		String bugid = tmpURI.substring(0, tmpURI.indexOf(split[1]));
+		
+		try {
+			return new Long(bugid);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+	
 	/**
 	 * sets up the current tracker and fills the queue with the corresponding
 	 * bug report ids
@@ -352,15 +370,15 @@ public abstract class Tracker {
 	 */
 	
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
+	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		Condition.notNull(fetchURI);
 		Condition.check((username == null) == (password == null),
-				"Either username and password are set or none at all. username = `%s`, password = `%s`", username,
-				password);
+		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
+		        password);
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
-				"`startAt` must be null or > 0, but is: %s", startAt);
+		        "`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-				"[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;

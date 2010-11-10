@@ -13,7 +13,6 @@ import java.io.StringReader;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -29,6 +28,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.RawContent;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
@@ -37,7 +37,6 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 /**
  * The Class JiraTracker.
@@ -46,17 +45,13 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class JiraTracker extends Tracker {
 	
-	private File overalXML;
+	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	"<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	                                               "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
-	private static Regex errorRegex = new Regex(
-	"<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
-	
-	private static Regex digitRegex        = new Regex("^({bugid}\\d+).*");
-	
-	
+	private static Regex errorRegex        = new Regex(
+	                                               "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
@@ -66,7 +61,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
-		if(!super.checkRAW(rawReport)){
+		if (!super.checkRAW(rawReport)) {
 			return false;
 		}
 		if (doesNotExistRegex.matches(rawReport.getContent())) {
@@ -102,8 +97,6 @@ public class JiraTracker extends Tracker {
 		return null;
 	}
 	
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -134,7 +127,8 @@ public class JiraTracker extends Tracker {
 				}
 				try {
 					MessageDigest md = MessageDigest.getInstance("MD5");
-					return new RawReport(idToFetch, md.digest(result.getBytes()), new DateTime(), "xhtml", result);
+					return new RawReport(idToFetch, new RawContent(uri, md.digest(result.getBytes()), new DateTime(),
+					        "xhtml", result));
 				} catch (NoSuchAlgorithmException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
@@ -171,20 +165,6 @@ public class JiraTracker extends Tracker {
 		return bugReport;
 	}
 	
-	private Long reverseURI(final URI uri) {
-		int index = this.fetchURI.toString().indexOf(Tracker.bugIdPlaceholder);
-		String subURI = uri.toString().substring(index, uri.toString().length());
-		List<RegexGroup> groups = digitRegex.find(subURI);
-		if (groups.size() < 1) {
-			return null;
-		}
-		try {
-			return new Long(groups.get(0).getMatch());
-		} catch (NumberFormatException e) {
-			return null;
-		}
-	}
-	
 	/*
 	 * The given uri can either point to an overall XML or an pattern string
 	 * that contains one or multiple {@link
@@ -206,7 +186,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
+	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");
@@ -221,17 +201,17 @@ public class JiraTracker extends Tracker {
 				Logger.debug("Reading overview XML to extract possible report IDs ... ");
 			}
 			try {
-				RawReport rawReport = this.fetchSource(overviewURI);
+				RawContent rawReport = this.fetch(overviewURI);
 				if (rawReport == null) {
 					if (Logger.logError()) {
 						Logger.error("Could not fetch overview URL.");
 					}
 					return;
 				}
-				if (!rawReport.getFormat().equals("XHTML")) {
+				if (!rawReport.getFormat().equals("XML")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-								+ rawReport.getFormat());
+						        + rawReport.getFormat());
 					}
 					return;
 				}
