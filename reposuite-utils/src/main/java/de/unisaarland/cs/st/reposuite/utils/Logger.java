@@ -3,8 +3,6 @@ package de.unisaarland.cs.st.reposuite.utils;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.LoggerFactory;
 
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-
 /**
  * Logger class to instrument SLF4J
  * 
@@ -14,13 +12,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 public class Logger {
 	
 	private static LogLevel logLevel = LogLevel.WARN;
-	
-	static {
-		if (RepoSuiteSettings.debug) {
-			increaseLogLevel(LogLevel.DEBUG);
-			Logger.debug("Debug logging enabled");
-		}
-	}
 	
 	/**
 	 * requests the logger for the calling instance and the

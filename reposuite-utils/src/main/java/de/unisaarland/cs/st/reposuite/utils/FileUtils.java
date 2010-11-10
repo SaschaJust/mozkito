@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
+import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
 
 /**
  * The Class FileUtils.
@@ -29,6 +30,16 @@ public class FileUtils {
 	public static final String fileSeparator = System.getProperty("file.separator");
 	public static final String lineSeparator = System.getProperty("line.separator");
 	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
+	
+	public static final int    EXECUTABLE    = 1;
+	
+	public static final int    WRITABLE      = 2;
+	
+	public static final int    READABLE      = 4;
+	
+	public static final int    FILE          = 8;
+	public static final int    DIRECTORY     = 16;
+	public static final int    EXISTING      = 32;
 	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the
@@ -205,6 +216,40 @@ public class FileUtils {
 	 */
 	public static void deleteDirectory(final File directory) throws IOException {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
+	}
+	
+	/**
+	 * @param file
+	 * @param permissions
+	 * @throws FilePermissionException
+	 */
+	public static void ensureFilePermissions(final File file, int permissions) throws FilePermissionException {
+		Condition.notNull(file);
+		Condition.lessOrEqual(permissions, 32);
+		
+		if (((permissions &= EXISTING) != 0) && !file.exists()) {
+			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
+		}
+		
+		if (((permissions &= READABLE) != 0) && !file.canRead()) {
+			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not readable.");
+		}
+		
+		if (((permissions &= EXECUTABLE) != 0) && !file.canExecute()) {
+			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not executable.");
+		}
+		
+		if (((permissions &= WRITABLE) != 0) && !file.canWrite()) {
+			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not writable.");
+		}
+		
+		if (((permissions &= FILE) != 0) && !file.isFile()) {
+			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a file.");
+		}
+		
+		if (((permissions &= DIRECTORY) != 0) && !file.isDirectory()) {
+			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
+		}
 	}
 	
 	/**

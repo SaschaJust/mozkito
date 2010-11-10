@@ -16,9 +16,9 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-		    <version>4.0.3</version>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-utils</artifactId>
+			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>

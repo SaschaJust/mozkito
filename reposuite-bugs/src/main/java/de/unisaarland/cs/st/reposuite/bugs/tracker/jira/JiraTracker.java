@@ -27,15 +27,17 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.RawContent;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -104,7 +106,7 @@ public class JiraTracker extends Tracker {
 	 * net.URI)
 	 */
 	@Override
-	public RawReport fetchSource(final URI uri) throws UnsupportedProtocolException {
+	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
 		if (this.overalXML == null) {
 			// fetch source from net
 			return super.fetchSource(uri);
@@ -201,23 +203,23 @@ public class JiraTracker extends Tracker {
 				Logger.debug("Reading overview XML to extract possible report IDs ... ");
 			}
 			try {
-				RawContent rawReport = this.fetch(overviewURI);
-				if (rawReport == null) {
+				RawContent rawContent = IOUtils.fetch(overviewURI);
+				if (rawContent == null) {
 					if (Logger.logError()) {
 						Logger.error("Could not fetch overview URL.");
 					}
 					return;
 				}
-				if (!rawReport.getFormat().equals("XML")) {
+				if (!rawContent.getFormat().equals("XML")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-						        + rawReport.getFormat());
+						        + rawContent.getFormat());
 					}
 					return;
 				}
 				this.overalXML = FileUtils.createRandomFile();
 				FileOutputStream writer = new FileOutputStream(this.overalXML);
-				writer.write(rawReport.getContent().getBytes());
+				writer.write(rawContent.getContent().getBytes());
 				writer.flush();
 				writer.close();
 				

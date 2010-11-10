@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
@@ -26,6 +25,8 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
+import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
@@ -153,14 +154,16 @@ public class JiraTrackerTest {
 			assertEquals("Expression.getText() returns invalid XPath query strings", report.getSummary());
 			assertEquals(Type.BUG, report.getType());
 			assertEquals("1.1", report.getVersion());
-			
-		} catch (UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		} catch (InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (FetchException e) {
+			e.printStackTrace();
+			fail();
+		} catch (UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		}

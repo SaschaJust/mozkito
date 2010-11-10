@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
 import java.util.Arrays;
 
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.RawContent;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -13,7 +14,8 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
  */
 public class RawReport extends RawContent {
 	
-	private final long id;
+	private static final long serialVersionUID = -4448381593266361762L;
+	private final long        id;
 	
 	/**
 	 * @param id
@@ -24,11 +26,31 @@ public class RawReport extends RawContent {
 	public RawReport(final long id, final RawContent rawContent) {
 		super(rawContent.getUri(), rawContent.getMd5(), rawContent.getFetchTime(), rawContent.getFormat(), rawContent
 		        .getContent());
-		
 		Condition.greater(id, 0l);
 		Condition.notNull(rawContent);
 		
 		this.id = id;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final RawContent arg0) {
+		if (arg0 == null) {
+			return 1;
+		} else if (arg0 instanceof RawReport) {
+			if (this.id > ((RawReport) arg0).id) {
+				return 1;
+			} else if (this.id < ((RawReport) arg0).id) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else {
+			return super.compareTo(arg0);
+		}
 	}
 	
 	/**

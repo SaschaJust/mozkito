@@ -54,6 +54,7 @@
 		<module>reposuite-ppa</module>
 		<module>reposuite-genealogies</module>
 		<module>reposuite-untangling</module>
+		<module>reposuite-utils</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>

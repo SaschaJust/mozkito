@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.bugs.exceptions;
+package de.unisaarland.cs.st.reposuite.exceptions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -10,15 +10,14 @@ package de.unisaarland.cs.st.reposuite.bugs.exceptions;
 public class UnsupportedProtocolException extends Exception {
 	
 	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2560762830938974228L;
+     * 
+     */
+	private static final long serialVersionUID = -5086626803073351561L;
 	
 	/**
 	 * 
 	 */
 	public UnsupportedProtocolException() {
-		super();
 	}
 	
 	/**

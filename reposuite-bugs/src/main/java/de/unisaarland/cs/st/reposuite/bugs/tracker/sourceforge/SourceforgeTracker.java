@@ -85,6 +85,7 @@ public class SourceforgeTracker extends Tracker {
 	
 	public void getIdsFromURI(final URI uri) {
 		if (uri.getScheme().equals("file")) {
+			// FIXME this will fail on ?+*
 			Regex regex = new Regex(".*" + this.pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
 			File baseDir = new File(uri.getPath());
 			

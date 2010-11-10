@@ -1,26 +1,26 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.bugs.tracker;
+package de.unisaarland.cs.st.reposuite.utils;
 
 import java.net.URI;
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
-
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RawContent {
+public class RawContent implements Comparable<RawContent>, Storable {
 	
-	private final byte[]   md5;
-	private final DateTime fetchTime;
-	private final String   format;
-	private final String   content;
-	private final URI      uri;
+	private static final long serialVersionUID = -8090298340304255338L;
+	private final byte[]      md5;
+	private final DateTime    fetchTime;
+	private final String      format;
+	private final String      content;
+	private final URI         uri;
 	
 	/**
 	 * @param md5
@@ -54,6 +54,15 @@ public class RawContent {
 		this.content = content;
 	}
 	
+	@Override
+	public int compareTo(final RawContent arg0) {
+		if (arg0 == null) {
+			return 1;
+		} else {
+			return this.fetchTime.compareTo(arg0.getFetchTime());
+		}
+	}
+	
 	/**
 	 * @return the content
 	 */
@@ -68,6 +77,12 @@ public class RawContent {
 		return this.fetchTime;
 	}
 	
+	@Override
+	public String getFilename() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/**
 	 * @return the format
 	 */
@@ -80,6 +95,10 @@ public class RawContent {
 	 */
 	public byte[] getMd5() {
 		return this.md5;
+	}
+	
+	public long getSize() {
+		return this.content.length();
 	}
 	
 	/**
@@ -103,7 +122,8 @@ public class RawContent {
 		builder.append(", format=");
 		builder.append(this.format);
 		builder.append(", content=");
-		builder.append(this.content.length() > 10 ? this.content.substring(0, 10) : this.content);
+		builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10 ? this.content
+		        .substring(0, 10) : this.content)));
 		builder.append("]");
 		return builder.toString();
 	}

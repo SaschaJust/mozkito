@@ -3,39 +3,27 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
@@ -70,7 +58,6 @@ public abstract class Tracker {
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
 	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
-	private static Regex        digitRegex       = new Regex("({bugid}\\d+)");
 	
 	/**
 	 * 
@@ -140,88 +127,17 @@ public abstract class Tracker {
 	public abstract XmlReport createDocument(RawReport rawReport);
 	
 	/**
-	 * @param uri
-	 * @return
-	 * @throws UnsupportedProtocolException
-	 */
-	public RawContent fetch(final URI uri) throws UnsupportedProtocolException {
-		Condition.check(isInitialized());
-		String rawReport = null;
-		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			StringBuilder content = new StringBuilder();
-			if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpGet request = new HttpGet(uri);
-				HttpResponse response = httpClient.execute(request);
-				HttpEntity entity = response.getEntity();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String line;
-				
-				while ((line = reader.readLine()) != null) {
-					content.append(line);
-				}
-				rawReport = content.toString();
-			} else if (uri.getScheme().equals("file")) {
-				StringBuilder builder = new StringBuilder();
-				File file = new File(uri.getPath());
-				if (file.exists() && file.isFile() && file.canRead()) {
-					BufferedReader reader = new BufferedReader(new FileReader(file));
-					String line;
-					while ((line = reader.readLine()) != null) {
-						builder.append(line);
-						builder.append(FileUtils.lineSeparator);
-					}
-					reader.close();
-					rawReport = builder.toString();
-				} else {
-					
-					if (Logger.logWarn()) {
-						Logger.warn("Dropping: " + file.getAbsolutePath());
-					}
-					return null;
-				}
-			} else {
-				throw new UnsupportedProtocolException(uri.getScheme());
-			}
-			
-			if (rawReport != null) {
-				content = new StringBuilder(rawReport);
-				content.append(FileUtils.lineSeparator);
-				
-				md.digest(rawReport.getBytes());
-				
-				return new RawContent(uri, md.digest(rawReport.getBytes()), new DateTime(), "xhtml", rawReport);
-			}
-		} catch (ClientProtocolException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (NoSuchAlgorithmException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		
-		return null;
-		
-	}
-	
-	/**
 	 * This is method takes a {@link URI} and fetches the content to a string.
 	 * 
 	 * @param fetchURI
 	 *            the fetchURI to the bug report
 	 * @return a {@link RawReport}
 	 * @throws UnsupportedProtocolException
+	 * @throws FetchException
 	 */
 	
-	public RawReport fetchSource(final URI uri) throws UnsupportedProtocolException {
-		return new RawReport(reverseURI(uri), fetch(uri));
+	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
+		return new RawReport(reverseURI(uri), IOUtils.fetch(uri));
 	}
 	
 	/**
