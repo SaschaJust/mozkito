@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Priority implements Annotated {
-	VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
+	UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {

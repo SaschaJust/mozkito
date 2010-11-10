@@ -15,7 +15,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  */
 @Table (name = "annotated")
 public enum Type implements Annotated {
-	BUG, RFE, TASK;
+	BUG, RFE, TASK, TEST, OTHER;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {
