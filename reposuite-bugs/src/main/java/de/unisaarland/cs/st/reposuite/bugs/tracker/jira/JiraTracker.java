@@ -51,10 +51,10 @@ public class JiraTracker extends Tracker {
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	                                               "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	"<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
 	private static Regex errorRegex        = new Regex(
-	                                               "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	"<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
@@ -137,7 +137,7 @@ public class JiraTracker extends Tracker {
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
 		Condition.notNull(uri);
 		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder));
-
+		
 		if (this.overalXML == null) {
 			// fetch source from net
 			return super.fetchSource(uri);
@@ -163,7 +163,7 @@ public class JiraTracker extends Tracker {
 				outputter.output(document, sw);
 				
 				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
-				        new DateTime(), "xhtml", sw.getBuffer().toString()));
+						new DateTime(), "xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -196,6 +196,7 @@ public class JiraTracker extends Tracker {
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
 		JiraXMLHandler.handleRoot(bugReport, itemElement, this.personManager);
 		bugReport.setLastFetch(rawReport.getFetchTime());
+		bugReport.setHash(rawReport.getMd5());
 		return bugReport;
 	}
 	
@@ -220,8 +221,8 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	        throws InvalidParameterException {
+			final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");
@@ -246,7 +247,7 @@ public class JiraTracker extends Tracker {
 				if (!rawContent.getFormat().toLowerCase().equals("xhtml")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-						        + rawContent.getFormat());
+								+ rawContent.getFormat());
 					}
 					return;
 				}

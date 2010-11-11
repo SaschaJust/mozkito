@@ -16,9 +16,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
@@ -40,9 +37,7 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 public class SourceforgeTracker extends Tracker {
 	
 	private static Regex submittedRegex     = new Regex(
-	                                                "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
-	private final Regex  timestampRegexZone = new Regex("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} ([:alpha:]{3,4})");
-	private final Regex  timestampRegexLong = new Regex("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+	"({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
 	private final Regex  subjectRegex       = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
 	
 	@Override
@@ -131,8 +126,8 @@ public class SourceforgeTracker extends Tracker {
 				List<RegexGroup> find = submittedRegex.find(fieldValue);
 				System.err.println(JavaUtils.collectionToString(find));
 				bugReport.setSubmitter(this.personManager.getPerson(new Person(find.get(1).getMatch().trim(), find
-				        .get(0).getMatch().trim(), null)));
-				bugReport.setCreationTimestamp(parseDate(find.get(2).getMatch().trim()));
+						.get(0).getMatch().trim(), null)));
+				bugReport.setCreationTimestamp(DateTimeUtils.parseDate(find.get(2).getMatch().trim()));
 			} else if (fieldName.equals("Status")) {
 				// TODO status
 			} else if (fieldName.equals("Resolution")) {
@@ -226,9 +221,9 @@ public class SourceforgeTracker extends Tracker {
 	@SuppressWarnings ("unchecked")
 	private void hangle(final Report bugReport, final Element e, final Element n) {
 		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e
-		        .getAttributeValue("class").startsWith("yui-g")))
-		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container") || e
-		                .getAttributeValue("id").equals("commentbar")))) {
+				.getAttributeValue("class").startsWith("yui-g")))
+				|| ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container") || e
+						.getAttributeValue("id").equals("commentbar")))) {
 			handleDivElement(bugReport, e, n);
 		} else {
 			List<Element> el = e.getChildren();
@@ -256,40 +251,12 @@ public class SourceforgeTracker extends Tracker {
 		return bugReport;
 	}
 	
-	public DateTime parseDate(final String s) {
-		List<RegexGroup> find = this.timestampRegexZone.find(s);
-		DateTime d;
-		
-		if (find != null) {
-			// with time zone abbreviation
-			String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(find.get(1).getMatch());
-			String timestampWithoutZone = s.substring(0, s.length() - find.get(1).getMatch().length());
-			System.out.println("Found timezone: " + find.get(1).getMatch() + " mapped to " + offset);
-			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss z");
-			d = dtf.parseDateTime(timestampWithoutZone + offset);
-		} else if ((find = this.timestampRegexLong.find(s)) != null) {
-			// without
-			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-			d = dtf.parseDateTime(s);
-		} else {
-			DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
-			d = dtf.parseDateTime(s);
-		}
-		
-		if (d == null) {
-			
-			if (Logger.logError()) {
-				Logger.error("Could not parse date: " + s);
-			}
-			System.exit(1);
-		}
-		return d;
-	}
+	
 	
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt, final String cacheDir)
-	        throws InvalidParameterException {
+			final String password, final Long startAt, final Long stopAt, final String cacheDir)
+	throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		if (overviewURI != null) {

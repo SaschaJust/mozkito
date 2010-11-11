@@ -42,7 +42,11 @@ public class JiraXMLHandler {
 	
 	@SuppressWarnings ("unchecked")
 	public static void handleRoot(final Report report, final Element root, final PersonManager personManager) {
+		Condition.notNull(report);
+		Condition.notNull(root);
+		Condition.notNull(personManager);
 		Condition.equals(root.getName(), "item");
+
 		List<Element> children = root.getChildren();
 		for (Element element : children) {
 			if (element.getName().equals("title")) {
