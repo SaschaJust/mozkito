@@ -37,7 +37,7 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 *            not null, 0 &lt; <code>content.length</code>
 	 */
 	public RawContent(final URI uri, final byte[] md5, final DateTime fetchTime, final String format,
-	        final String content) {
+			final String content) {
 		super();
 		Condition.notNull(uri);
 		Condition.notNull(md5);
@@ -45,7 +45,7 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		Condition.notNull(fetchTime);
 		Condition.notNull(format);
 		Condition.greater(format.length(), 2);
-		Condition.less(format.length(), 6);
+		Condition.less(format.length(), 9);
 		Condition.notNull(content);
 		Condition.greater(content.length(), 0);
 		
@@ -135,7 +135,7 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		builder.append(this.format);
 		builder.append(", content=");
 		builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10 ? this.content
-		        .substring(0, 10) : this.content)));
+				.substring(0, 10) : this.content)));
 		builder.append("]");
 		return builder.toString();
 	}
