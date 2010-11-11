@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.persistence;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -17,9 +16,9 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 public class HibernateUtil {
 	
@@ -31,7 +30,7 @@ public class HibernateUtil {
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 			annotationConfiguration.addProperties(properties);
-			List<Class<?>> annotatedClasses;
+			Collection<Class<?>> annotatedClasses;
 			
 			try {
 				annotatedClasses = ClassFinder.getClassesOfInterface(Core.class.getPackage(), Annotated.class);

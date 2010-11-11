@@ -27,19 +27,23 @@ import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
  */
 public class FileUtils {
 	
-	public static final String fileSeparator = System.getProperty("file.separator");
-	public static final String lineSeparator = System.getProperty("line.separator");
-	public static final File   tmpDir        = org.apache.commons.io.FileUtils.getTempDirectory();
+	public static final String fileSeparator   = System.getProperty("file.separator");
+	public static final String lineSeparator   = System.getProperty("line.separator");
+	public static final String pathSeparator   = System.getProperty("path.separator");
+	public static final File   tmpDir          = org.apache.commons.io.FileUtils.getTempDirectory();
 	
-	public static final int    EXECUTABLE    = 1;
+	public static final int    EXECUTABLE      = 1;
 	
-	public static final int    WRITABLE      = 2;
+	public static final int    WRITABLE        = 2;
 	
-	public static final int    READABLE      = 4;
+	public static final int    READABLE        = 4;
 	
-	public static final int    FILE          = 8;
-	public static final int    DIRECTORY     = 16;
-	public static final int    EXISTING      = 32;
+	public static final int    FILE            = 8;
+	public static final int    DIRECTORY       = 16;
+	public static final int    EXISTING        = 32;
+	public static final int    ACCESSIBLE_DIR  = EXISTING + DIRECTORY + READABLE + EXECUTABLE;
+	public static final int    READABLE_FILE   = EXISTING + FILE + READABLE;
+	public static final int    EXECUTABLE_FILE = EXISTING + FILE + EXECUTABLE;
 	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the
@@ -225,7 +229,7 @@ public class FileUtils {
 	 */
 	public static void ensureFilePermissions(final File file, int permissions) throws FilePermissionException {
 		Condition.notNull(file);
-		Condition.lessOrEqual(permissions, 32);
+		Condition.lessOrEqual(permissions, 64);
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");

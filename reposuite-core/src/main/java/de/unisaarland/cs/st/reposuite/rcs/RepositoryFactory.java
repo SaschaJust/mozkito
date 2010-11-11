@@ -1,15 +1,15 @@
 package de.unisaarland.cs.st.reposuite.rcs;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -29,8 +29,8 @@ public final class RepositoryFactory {
 	static {
 		// ======== Repository handlers ========
 		try {
-			List<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Repository.class.getPackage(),
-			        Repository.class);
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
+			        Repository.class.getPackage(), Repository.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addRepositoryHandler(

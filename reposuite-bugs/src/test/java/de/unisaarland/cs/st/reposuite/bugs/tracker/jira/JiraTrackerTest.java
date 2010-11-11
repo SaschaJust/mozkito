@@ -54,7 +54,8 @@ public class JiraTrackerTest {
 		
 		try {
 			
-			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l));
+			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
+			        null);
 			
 			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
 			XmlReport xmlReport = tracker.createDocument(rawReport);
@@ -160,7 +161,8 @@ public class JiraTrackerTest {
 		JiraTracker tracker = new JiraTracker();
 		
 		try {
-			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l));
+			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
+			        null);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -176,7 +178,7 @@ public class JiraTrackerTest {
 		
 		try {
 			
-			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(1l), new Long(1000l));
+			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(1l), new Long(1000l), null);
 			
 			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
 			XmlReport xmlReport = tracker.createDocument(rawReport);

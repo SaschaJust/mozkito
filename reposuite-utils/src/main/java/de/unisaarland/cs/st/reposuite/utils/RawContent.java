@@ -77,12 +77,6 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		return this.fetchTime;
 	}
 	
-	@Override
-	public String getFilename() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	/**
 	 * @return the format
 	 */

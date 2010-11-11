@@ -4,8 +4,8 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnregisteredTrackerTypeException;
@@ -30,8 +30,8 @@ public class TrackerFactory {
 	static {
 		// ======== Tracker handlers ========
 		try {
-			List<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Tracker.class.getPackage(),
-			        Tracker.class);
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
+			        Tracker.class.getPackage(), Tracker.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addTrackerHandler(

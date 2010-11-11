@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -18,13 +19,18 @@ import de.unisaarland.cs.st.reposuite.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
+import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
+import de.unisaarland.cs.st.reposuite.exceptions.LoadingException;
+import de.unisaarland.cs.st.reposuite.exceptions.StoringException;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -55,6 +61,7 @@ public abstract class Tracker {
 	private URI                 overviewURI;
 	private BlockingQueue<Long> bugIds           = new LinkedBlockingQueue<Long>();
 	protected PersonManager     personManager    = new PersonManager();
+	protected File              cacheDir;
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
 	public static Regex         bugIdRegex       = new Regex("({bugid}<BUGID>)");
@@ -140,6 +147,11 @@ public abstract class Tracker {
 		return new RawReport(reverseURI(uri), IOUtils.fetch(uri));
 	}
 	
+	public File getFileForContent(final long id) {
+		return new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + getHandle() + "_"
+		        + this.fetchURI.getHost() + "_content_" + id);
+	}
+	
 	/**
 	 * @return the simple class name of the current tracker instance
 	 */
@@ -210,6 +222,25 @@ public abstract class Tracker {
 	 */
 	protected boolean isInitialized() {
 		return this.initialized;
+	}
+	
+	/**
+	 * @param id
+	 * @return
+	 */
+	public RawContent loadContent(final long id) {
+		try {
+			return (RawContent) IOUtils.load(getFileForContent(id));
+		} catch (LoadingException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -286,7 +317,8 @@ public abstract class Tracker {
 	 */
 	
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
+	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	        throws InvalidParameterException {
 		Condition.notNull(fetchURI);
 		Condition.check((username == null) == (password == null),
 		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
@@ -305,6 +337,14 @@ public abstract class Tracker {
 			this.startAt = startAt;
 			this.stopAt = stopAt;
 			this.initialized = true;
+			if (cacheDirPath != null) {
+				this.cacheDir = new File(cacheDirPath);
+				try {
+					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.ACCESSIBLE_DIR);
+				} catch (FilePermissionException e) {
+					throw new InvalidParameterException("The cache directory is not valid. " + e.getMessage(), e);
+				}
+			}
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
@@ -314,6 +354,32 @@ public abstract class Tracker {
 		this.bugIds = new LinkedBlockingDeque<Long>();
 		
 		// TODO when this method ends, bugIds must be filled
+	}
+	
+	/**
+	 * @param content
+	 * @return
+	 */
+	public boolean writeContentToFile(final RawContent content, final String fileName) {
+		Condition.notNull(content);
+		Condition.notNull(fileName);
+		Condition.greater(fileName.length(), 0);
+		Condition.notNull(this.cacheDir);
+		Condition.check(isInitialized());
+		
+		try {
+			IOUtils.store(content, this.cacheDir, fileName, true);
+			return true;
+		} catch (StoringException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		return false;
 	}
 	
 }

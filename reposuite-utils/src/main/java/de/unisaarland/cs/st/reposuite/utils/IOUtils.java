@@ -257,7 +257,7 @@ public class IOUtils {
 	 * @throws StoringException
 	 * @throws FilePermissionException
 	 */
-	public static void store(final Storable object, final File directory, final boolean overwrite)
+	public static void store(final Storable object, final File directory, final String fileName, final boolean overwrite)
 	        throws StoringException, FilePermissionException {
 		Condition.notNull(object);
 		Condition.notNull(directory);
@@ -265,7 +265,7 @@ public class IOUtils {
 		FileUtils.ensureFilePermissions(directory, FileUtils.EXISTING + FileUtils.DIRECTORY + FileUtils.READABLE
 		        + FileUtils.EXECUTABLE + FileUtils.WRITABLE);
 		
-		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + object.getFilename();
+		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
 		File file = new File(path);
 		
 		FileUtils.ensureFilePermissions(file, FileUtils.WRITABLE);
@@ -278,15 +278,15 @@ public class IOUtils {
 		ObjectOutputStream oos = null;
 		
 		try {
-			fout = new FileOutputStream(directory.getAbsolutePath() + FileUtils.fileSeparator + object.getFilename());
+			fout = new FileOutputStream(directory.getAbsolutePath() + FileUtils.fileSeparator + fileName);
 			oos = new ObjectOutputStream(fout);
 			oos.writeObject(object);
 			oos.close();
 		} catch (FileNotFoundException e) {
-			throw new StoringException("Could not create file `" + object.getFilename() + "`.", e);
+			throw new StoringException("Could not create file `" + fileName + "`.", e);
 		} catch (IOException e) {
-			throw new StoringException(e.getClass().getSimpleName() + " occurred when trying to write `"
-			        + object.getFilename() + "`.", e);
+			throw new StoringException(e.getClass().getSimpleName() + " occurred when trying to write `" + fileName
+			        + "`.", e);
 		} finally {
 			if (oos != null) {
 				try {

@@ -13,6 +13,10 @@ public class Logger {
 	
 	private static LogLevel logLevel = LogLevel.WARN;
 	
+	static {
+		setLogLevel(LogLevel.valueOf(System.getProperty("log.level", "WARN").toUpperCase()));
+	}
+	
 	/**
 	 * requests the logger for the calling instance and the
 	 * classname::methodname#linenumber tag and uses this information to log the

@@ -39,6 +39,7 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 		addArgument(new StringArgument(settings, "tracker.password", "Password to access tracker", null, false));
 		addArgument(new LongArgument(settings, "tracker.start", "BugID to start with", null, false));
 		addArgument(new LongArgument(settings, "tracker.stop", "BugID to stop at", null, false));
+		addArgument(new StringArgument(settings, "tracker.cachedir", "Cache directory to store raw data", null, false));
 	}
 	
 	/*
@@ -75,8 +76,11 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 			        : null);
 			Long stopArg = (Long) (arguments.get("tracker.stop") != null ? arguments.get("tracker.stop").getValue()
 			        : null);
+			String cacheDirArg = (String) (arguments.get("tracker.cachedir") != null ? arguments
+			        .get("tracker.cachedir").getValue() : null);
 			
-			tracker.setup(fetchURIArg, overviewURIArg, patternArg, usernameArg, passwordArg, startArg, stopArg);
+			tracker.setup(fetchURIArg, overviewURIArg, patternArg, usernameArg, passwordArg, startArg, stopArg,
+			        cacheDirArg);
 			return tracker;
 		} catch (Exception e) {
 			if (Logger.logError()) {

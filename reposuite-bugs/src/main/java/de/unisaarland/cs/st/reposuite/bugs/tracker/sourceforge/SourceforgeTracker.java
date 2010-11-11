@@ -288,8 +288,9 @@ public class SourceforgeTracker extends Tracker {
 	
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt) throws InvalidParameterException {
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt);
+	        final String password, final Long startAt, final Long stopAt, final String cacheDir)
+	        throws InvalidParameterException {
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		if (overviewURI != null) {
 			getIdsFromURI(overviewURI);
