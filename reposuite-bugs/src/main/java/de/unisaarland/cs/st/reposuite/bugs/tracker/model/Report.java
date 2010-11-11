@@ -40,7 +40,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Table (name = "report")
 public class Report implements Annotated {
 	
-	private long                      id;
+	private long                      id       = -1l;
 	private Person                    assignedTo;
 	private String                    category;
 	private SortedSet<Comment>        comments = new TreeSet<Comment>();
@@ -50,7 +50,7 @@ public class Report implements Annotated {
 	private Resolution                resolution;
 	private Person                    submitter;
 	private String                    subject;
-	private Set<Report>               siblings = new HashSet<Report>();
+	private Set<Long>                 siblings = new HashSet<Long>();
 	private Person                    resolver;
 	private SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
 	private Status                    status;
@@ -65,12 +65,12 @@ public class Report implements Annotated {
 	private String                    expectedBehavior;
 	private String                    stepsToReproduce;
 	private String                    component;
+	private String                    product;
 	private byte[]                    hash     = new byte[33];
 	
 	public Report() {
 		super();
 	}
-	
 	
 	@Transient
 	public void addComment(final Comment comment) {
@@ -87,6 +87,20 @@ public class Report implements Annotated {
 		Condition.notNull(element);
 		Condition.notNull(this.history);
 		this.history.add(element);
+	}
+
+	@Transient
+	public void addHistoryElement(final HistoryElement historyElement) {
+		Condition.notNull(historyElement);
+		Condition.notNull(this.history);
+		this.history.add(historyElement);
+	}
+	
+	@Transient
+	public void addSibling(final Long sibling) {
+		Condition.notNull(sibling);
+		Condition.notNull(this.siblings);
+		this.siblings.add(sibling);
 	}
 	
 	/**
@@ -205,6 +219,10 @@ public class Report implements Annotated {
 		return this.priority;
 	}
 	
+	public String getProduct() {
+		return this.product;
+	}
+	
 	/**
 	 * @return the resolution
 	 */
@@ -247,8 +265,7 @@ public class Report implements Annotated {
 	/**
 	 * @return the siblings
 	 */
-	@ManyToMany
-	public Set<Report> getSiblings() {
+	public Set<Long> getSiblings() {
 		return this.siblings;
 	}
 	
@@ -426,6 +443,10 @@ public class Report implements Annotated {
 		this.priority = priority;
 	}
 	
+	public void setProduct(final String product) {
+		this.product = product;
+	}
+	
 	/**
 	 * @param resolution
 	 *            the resolution to set
@@ -458,9 +479,10 @@ public class Report implements Annotated {
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final Set<Report> siblings) {
+	public void setSiblings(final Set<Long> siblings) {
 		this.siblings = siblings;
 	}
+	
 	
 	/**
 	 * @param status
@@ -469,6 +491,7 @@ public class Report implements Annotated {
 	public void setStatus(final Status status) {
 		this.status = status;
 	}
+	
 	
 	/**
 	 * @param stepsToReproduce
@@ -514,7 +537,6 @@ public class Report implements Annotated {
 		this.type = type;
 	}
 	
-	
 	/**
 	 * @param version
 	 *            the version to set
@@ -522,7 +544,6 @@ public class Report implements Annotated {
 	public void setVersion(final String version) {
 		this.version = version;
 	}
-	
 	
 	/*
 	 * (non-Javadoc)

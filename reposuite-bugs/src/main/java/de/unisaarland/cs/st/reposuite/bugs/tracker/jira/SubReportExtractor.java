@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class SubReportExtractor {
 	
 	public static Element extract(final Element element, final Long idToSearch) {
+		Condition.notNull(element);
+		Condition.notNull(idToSearch);
+
 		if (element.getName().equals("rss")) {
 			return extract(element.getChild("channel"), idToSearch);
 		} else if (element.getName().equals("channel")) {
