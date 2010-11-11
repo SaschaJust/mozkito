@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -63,6 +64,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
+		Condition.notNull(rawReport);
 		if (!super.checkRAW(rawReport)) {
 			return false;
 		}
@@ -76,7 +78,33 @@ public class JiraTracker extends Tracker {
 	}
 	
 	@Override
+	public boolean checkXML(final XmlReport xmlReport) {
+		if (!super.checkXML(xmlReport)) {
+			return false;
+		}
+		if (!xmlReport.getDocument().getRootElement().getName().equals("rss")) {
+			return false;
+		}
+		if (xmlReport.getDocument().getRootElement().getChildren("channel").size() != 1) {
+			return false;
+		}
+		@SuppressWarnings ("unchecked")
+		List<Element> items = xmlReport.getDocument().getRootElement().getChildren("channel");
+		if (items.get(0).getChildren("item").size() != 1) {
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#createDocument(de
+	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
+	 */
+	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
+		Condition.notNull(rawReport);
 		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
 			SAXBuilder saxBuilder = new SAXBuilder();
@@ -107,6 +135,9 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
+		Condition.notNull(uri);
+		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder));
+
 		if (this.overalXML == null) {
 			// fetch source from net
 			return super.fetchSource(uri);
@@ -152,6 +183,12 @@ public class JiraTracker extends Tracker {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#parse(de.unisaarland
+	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 */
 	@Override
 	public Report parse(final XmlReport rawReport) {
 		Condition.notNull(rawReport);
