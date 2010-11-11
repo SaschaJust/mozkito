@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -28,6 +29,7 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  * 
  */
 public class BugzillaTracker extends Tracker {
+	
 	
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
@@ -94,6 +96,26 @@ public class BugzillaTracker extends Tracker {
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("bug");
 		BugzillaXMLParser.handleRoot(bugReport, itemElement, this.personManager);
 		bugReport.setLastFetch(rawReport.getFetchTime());
+		bugReport.setHash(rawReport.getMd5());
+		
+		String uriString = rawReport.getUri().toString().replace("show_bug.cgi", "show_activity.cgi");
+		
+		try {
+			URI historyUri = new URI(uriString);
+			BugzillaXMLParser.handleHistory(historyUri, bugReport, this.personManager);
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				if (bugReport.getId() == -1) {
+					Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
+				} else {
+					Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId() + "`. Used uri =`"
+							+ uriString + "`.");
+				}
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		
+		
 		return bugReport;
 	}
 	
