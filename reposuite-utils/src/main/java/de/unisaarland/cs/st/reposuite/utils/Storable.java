@@ -11,4 +11,9 @@ import java.io.Serializable;
  */
 public interface Storable extends Serializable {
 	
+	public boolean cached();
+	
+	public String getFilename();
+	
+	public void setCached(final String filename);
 }

@@ -21,6 +21,8 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	private final String      format;
 	private final String      content;
 	private final URI         uri;
+	private String            filename;
+	private boolean           cached;
 	
 	/**
 	 * @param md5
@@ -55,6 +57,11 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	}
 	
 	@Override
+	public boolean cached() {
+		return this.cached;
+	}
+	
+	@Override
 	public int compareTo(final RawContent arg0) {
 		if (arg0 == null) {
 			return 1;
@@ -75,6 +82,11 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 */
 	public DateTime getFetchTime() {
 		return this.fetchTime;
+	}
+	
+	@Override
+	public String getFilename() {
+		return this.filename;
 	}
 	
 	/**
@@ -100,6 +112,12 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 */
 	public URI getUri() {
 		return this.uri;
+	}
+	
+	@Override
+	public void setCached(final String filename) {
+		this.filename = filename;
+		this.cached = true;
 	}
 	
 	/*

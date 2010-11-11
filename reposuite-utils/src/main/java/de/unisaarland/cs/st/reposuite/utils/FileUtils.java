@@ -2,11 +2,9 @@ package de.unisaarland.cs.st.reposuite.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -27,23 +25,25 @@ import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
  */
 public class FileUtils {
 	
-	public static final String fileSeparator   = System.getProperty("file.separator");
-	public static final String lineSeparator   = System.getProperty("line.separator");
-	public static final String pathSeparator   = System.getProperty("path.separator");
-	public static final File   tmpDir          = org.apache.commons.io.FileUtils.getTempDirectory();
+	public static final String fileSeparator     = System.getProperty("file.separator");
+	public static final String lineSeparator     = System.getProperty("line.separator");
+	public static final String pathSeparator     = System.getProperty("path.separator");
+	public static final File   tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
 	
-	public static final int    EXECUTABLE      = 1;
+	private static int         MAX_PERM          = 0;
 	
-	public static final int    WRITABLE        = 2;
-	
-	public static final int    READABLE        = 4;
-	
-	public static final int    FILE            = 8;
-	public static final int    DIRECTORY       = 16;
-	public static final int    EXISTING        = 32;
-	public static final int    ACCESSIBLE_DIR  = EXISTING + DIRECTORY + READABLE + EXECUTABLE;
-	public static final int    READABLE_FILE   = EXISTING + FILE + READABLE;
-	public static final int    EXECUTABLE_FILE = EXISTING + FILE + EXECUTABLE;
+	public static final int    EXECUTABLE        = (int) Math.pow(2, MAX_PERM++);
+	public static final int    WRITABLE          = (int) Math.pow(2, MAX_PERM++);
+	public static final int    READABLE          = (int) Math.pow(2, MAX_PERM++);
+	public static final int    FILE              = (int) Math.pow(2, MAX_PERM++);
+	public static final int    DIRECTORY         = (int) Math.pow(2, MAX_PERM++);
+	public static final int    EXISTING          = (int) Math.pow(2, MAX_PERM++);
+	public static final int    ACCESSIBLE_DIR    = EXISTING | DIRECTORY | READABLE | EXECUTABLE;
+	public static final int    WRITABLE_DIR      = ACCESSIBLE_DIR | WRITABLE;
+	public static final int    READABLE_FILE     = EXISTING | FILE | READABLE;
+	public static final int    WRITABLE_FILE     = FILE | WRITABLE;
+	public static final int    OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
+	public static final int    EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
 	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the
@@ -104,20 +104,15 @@ public class FileUtils {
 	 *         existed or created. <code>null</code> otherwise.
 	 */
 	public static File createDir(final File parentDir, final String name) {
-		if (!parentDir.isDirectory()) {
+		try {
+			ensureFilePermissions(parentDir, WRITABLE_DIR);
+		} catch (FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				        + parentDir.getAbsolutePath() + "`. Reason: parent directory is not a directory.");
+				Logger.error(e.getMessage(), e);
 			}
 			return null;
 		}
-		if ((!parentDir.canExecute()) || (!parentDir.canWrite())) {
-			if (Logger.logError()) {
-				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
-			}
-			return null;
-		}
+		
 		File newDir = new File(parentDir.getAbsolutePath() + System.getProperty("file.separator") + name);
 		if (newDir.exists()) {
 			if (newDir.isDirectory()) {
@@ -198,6 +193,11 @@ public class FileUtils {
 		return createRandomDir(tmpDir, prefix, suffix);
 	}
 	
+	/**
+	 * Creates a new temporary file
+	 * 
+	 * @return
+	 */
 	public static File createRandomFile() {
 		try {
 			return File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
@@ -229,7 +229,7 @@ public class FileUtils {
 	 */
 	public static void ensureFilePermissions(final File file, int permissions) throws FilePermissionException {
 		Condition.notNull(file);
-		Condition.lessOrEqual(permissions, 64);
+		Condition.less(permissions, getMAX_PERM());
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
@@ -264,17 +264,11 @@ public class FileUtils {
 	 * @return the list
 	 */
 	public static List<String> fileToLines(final File file) {
-		List<String> lines = new LinkedList<String>();
-		String line = "";
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(file));
-			while ((line = in.readLine()) != null) {
-				lines.add(line);
-			}
+			return org.apache.commons.io.FileUtils.readLines(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}
-		return lines;
 	}
 	
 	/**
@@ -304,6 +298,13 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @return 2 to the power of MAX_PERM
+	 */
+	public static final int getMAX_PERM() {
+		return (int) Math.pow(2, MAX_PERM);
+	}
+	
+	/**
 	 * @param baseDirectory
 	 * @return
 	 */
@@ -314,23 +315,6 @@ public class FileUtils {
 			if (subDirectory.isDirectory() && subDirectory.canExecute() && subDirectory.canRead()) {
 				list.add(subDirectory);
 				list.addAll(getRecursiveDirectories(subDirectory));
-			}
-		}
-		return list;
-	}
-	
-	/**
-	 * @param baseDirectory
-	 * @return
-	 */
-	public static List<File> getRecursiveFiles(final File baseDirectory) {
-		List<File> list = new LinkedList<File>();
-		for (String subDirectoryPath : baseDirectory.list()) {
-			File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator + subDirectoryPath);
-			if (subDirectory.isDirectory() && subDirectory.canExecute() && subDirectory.canRead()) {
-				list.addAll(getRecursiveDirectories(subDirectory));
-			} else if (subDirectory.isFile() && subDirectory.canRead()) {
-				list.add(subDirectory);
 			}
 		}
 		return list;
@@ -352,8 +336,23 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
+	/**
+	 * Unzips a given file to the specified directory
+	 * 
+	 * @param zipFile
+	 *            the zip compressed file, not null
+	 * @param directory
+	 *            the target directory, not null
+	 * @return true on success, false otherwise
+	 */
 	public static boolean unzip(final File zipFile, final File directory) {
+		Condition.notNull(zipFile);
+		Condition.notNull(directory);
+		
 		try {
+			ensureFilePermissions(zipFile, READABLE_FILE);
+			ensureFilePermissions(directory, WRITABLE_DIR);
+			
 			int BUFFER = 2048;
 			BufferedOutputStream dest = null;
 			FileInputStream fis = new FileInputStream(zipFile);
@@ -381,6 +380,11 @@ public class FileUtils {
 			}
 			zis.close();
 		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

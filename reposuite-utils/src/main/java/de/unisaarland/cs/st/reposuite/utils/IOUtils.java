@@ -92,7 +92,7 @@ public class IOUtils {
 			StringBuilder builder = new StringBuilder();
 			File file = new File(uri.getPath());
 			
-			FileUtils.ensureFilePermissions(file, FileUtils.EXISTING + FileUtils.FILE + FileUtils.READABLE);
+			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
 			
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
@@ -220,7 +220,7 @@ public class IOUtils {
 		
 		Storable object;
 		
-		FileUtils.ensureFilePermissions(file, FileUtils.EXISTING + FileUtils.FILE + FileUtils.READABLE);
+		FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
 		
 		FileInputStream fin;
 		ObjectInputStream ois = null;
@@ -229,6 +229,7 @@ public class IOUtils {
 			fin = new FileInputStream(file);
 			ois = new ObjectInputStream(fin);
 			object = (Storable) ois.readObject();
+			object.setCached(file.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			throw new LoadingException("File `" + file.getAbsolutePath()
 			        + "` could not be found when trying to load object.");
@@ -262,24 +263,28 @@ public class IOUtils {
 		Condition.notNull(object);
 		Condition.notNull(directory);
 		
-		FileUtils.ensureFilePermissions(directory, FileUtils.EXISTING + FileUtils.DIRECTORY + FileUtils.READABLE
-		        + FileUtils.EXECUTABLE + FileUtils.WRITABLE);
+		FileUtils.ensureFilePermissions(directory, FileUtils.ACCESSIBLE_DIR | FileUtils.WRITABLE);
 		
 		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
 		File file = new File(path);
 		
 		FileUtils.ensureFilePermissions(file, FileUtils.WRITABLE);
 		
-		if (!overwrite && file.exists()) {
-			throw new StoringException("File `" + path + "` already exists.");
+		if (!overwrite) {
+			if (file.exists()) {
+				throw new StoringException("File `" + path + "` already exists.");
+			}
+		} else {
+			FileUtils.ensureFilePermissions(file, FileUtils.OVERWRITABLE_FILE);
 		}
 		
 		FileOutputStream fout;
 		ObjectOutputStream oos = null;
 		
 		try {
-			fout = new FileOutputStream(directory.getAbsolutePath() + FileUtils.fileSeparator + fileName);
+			fout = new FileOutputStream(file);
 			oos = new ObjectOutputStream(fout);
+			object.setCached(file.getAbsolutePath());
 			oos.writeObject(object);
 			oos.close();
 		} catch (FileNotFoundException e) {

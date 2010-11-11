@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -90,7 +91,7 @@ public class SourceforgeTracker extends Tracker {
 			File baseDir = new File(uri.getPath());
 			
 			if (baseDir.exists() && baseDir.isDirectory() && baseDir.canExecute() && baseDir.canRead()) {
-				List<File> files = FileUtils.getRecursiveFiles(baseDir);
+				Collection<File> files = FileUtils.listFiles(baseDir, null, true);
 				
 				for (File file : files) {
 					if (regex.find(file.getAbsolutePath()) != null) {
