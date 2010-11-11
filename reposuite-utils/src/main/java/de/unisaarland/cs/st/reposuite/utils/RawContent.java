@@ -45,7 +45,6 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		Condition.notNull(fetchTime);
 		Condition.notNull(format);
 		Condition.greater(format.length(), 2);
-		Condition.less(format.length(), 9);
 		Condition.notNull(content);
 		Condition.greater(content.length(), 0);
 		
