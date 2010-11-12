@@ -32,7 +32,7 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 @Table (name = "comment")
 public class Comment implements Annotated, Comparable<Comment> {
 	
-	private long     id;
+	private long     id = -1;
 	private DateTime timestamp;
 	private Person   author;
 	private String   message;
@@ -75,7 +75,15 @@ public class Comment implements Annotated, Comparable<Comment> {
 		if (object == null) {
 			return 1;
 		} else {
-			return this.timestamp.compareTo(object.timestamp);
+			if (this.id == object.id) {
+				return this.timestamp.compareTo(object.timestamp);
+			} else {
+				if (this.id > object.id) {
+					return 1;
+				} else {
+					return -1;
+				}
+			}
 		}
 	}
 	
@@ -168,7 +176,6 @@ public class Comment implements Annotated, Comparable<Comment> {
 	@Override
 	@Transient
 	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -238,6 +245,27 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Comment [id=");
+		builder.append(this.id);
+		builder.append(", timestamp=");
+		builder.append(this.timestamp);
+		builder.append(", author=");
+		builder.append(this.author);
+		builder.append(", message=");
+		builder.append(this.message.length() > 10 ? this.message.substring(0, 10) : this.message);
+		builder.append(", bugReport=");
+		builder.append(this.bugReport.getId());
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }
