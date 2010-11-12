@@ -201,7 +201,14 @@ public class GitRepository extends Repository {
 			}
 			return null;
 		}
-		lines.remove(0);
+		String removed = lines.remove(0);
+		if ((!revision.toUpperCase().equals("HEAD")) && (!removed.trim().equals(revision))) {
+			if (Logger.logError()) {
+				Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
+						+ "`: wrong revision outputed. Abort parsing.");
+			}
+			return null;
+		}
 		Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
 			if (line.trim().equals("")) {
@@ -211,12 +218,12 @@ public class GitRepository extends Repository {
 			line = line.replaceAll("\\s+", " ");
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (Logger.logError()) {
-					Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
+				if (Logger.logWarn()) {
+					Logger.warn("Error while parsing GIT log to unveil changed paths for revision `" + revision
 							+ "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
 							+ line);
 				}
-				return null;
+				return new HashMap<String, ChangeType>();
 			}
 			String type = lineParts[0];
 			String path = "/" + lineParts[1];
