@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -88,7 +90,7 @@ public class Report implements Annotated {
 		Condition.notNull(this.history);
 		this.history.add(element);
 	}
-
+	
 	@Transient
 	public void addHistoryElement(final HistoryElement historyElement) {
 		Condition.notNull(historyElement);
@@ -483,7 +485,6 @@ public class Report implements Annotated {
 		this.siblings = siblings;
 	}
 	
-	
 	/**
 	 * @param status
 	 *            the status to set
@@ -491,7 +492,6 @@ public class Report implements Annotated {
 	public void setStatus(final Status status) {
 		this.status = status;
 	}
-	
 	
 	/**
 	 * @param stepsToReproduce
@@ -501,7 +501,6 @@ public class Report implements Annotated {
 		this.stepsToReproduce = stepsToReproduce;
 	}
 	
-	
 	/**
 	 * @param subject
 	 *            the subject to set
@@ -509,7 +508,6 @@ public class Report implements Annotated {
 	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
-	
 	
 	/**
 	 * @param submitter
@@ -519,7 +517,6 @@ public class Report implements Annotated {
 		this.submitter = submitter;
 	}
 	
-	
 	/**
 	 * @param summary
 	 *            the summary to set
@@ -527,7 +524,6 @@ public class Report implements Annotated {
 	public void setSummary(final String summary) {
 		this.summary = summary;
 	}
-	
 	
 	/**
 	 * @param type
@@ -552,15 +548,21 @@ public class Report implements Annotated {
 	@Override
 	@Transient
 	public String toString() {
+		String hash;
+		try {
+			hash = JavaUtils.byteArrayToHexString(this.hash);
+		} catch (UnsupportedEncodingException e) {
+			hash = "encoding failed";
+		}
 		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
-		+ ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
-		+ this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
-		+ "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
-		+ ", submitter=" + this.submitter + ", subject="
-		+ this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
-		+ "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
-		+ ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash="
-		+ new String(this.hash) + "]";
+		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
+		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
+		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+		        + ", submitter=" + this.submitter + ", subject="
+		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
+		        + "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
+		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
+		        + "]";
 	}
 	
 }
