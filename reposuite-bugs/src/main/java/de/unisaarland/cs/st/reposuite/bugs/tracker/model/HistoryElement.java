@@ -25,6 +25,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
@@ -39,6 +40,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	private Map<Field, Tuple<Object, Object>> changedValues = new HashMap<Field, Tuple<Object, Object>>();
 	private DateTime                          timestamp;
 	private Report                            bugReport;
+	
 	private Person                            author;
 	
 	/**
@@ -63,8 +65,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		
 		if ((field != null) || (oldValue != null) || (newValue != null)) {
 			Condition.notNull(field);
-			Condition.notNull(oldValue);
-			Condition.notNull(newValue);
 		}
 		
 		this.setAuthor(author);
@@ -206,6 +206,27 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("HistoryElement [field=");
+		builder.append(this.field);
+		builder.append(", changedValues=");
+		builder.append(JavaUtils.mapToString(this.changedValues));
+		builder.append(", timestamp=");
+		builder.append(this.timestamp);
+		builder.append(", bugReport=");
+		builder.append(this.bugReport.getId());
+		builder.append(", author=");
+		builder.append(this.author);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

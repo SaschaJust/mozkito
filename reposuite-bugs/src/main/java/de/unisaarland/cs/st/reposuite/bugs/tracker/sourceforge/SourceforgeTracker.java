@@ -7,9 +7,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -26,9 +31,12 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Severity;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
@@ -44,9 +52,128 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class SourceforgeTracker extends Tracker {
 	
-	private static Regex submittedRegex = new Regex(
-	                                            "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
-	private final Regex  subjectRegex   = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
+	private static Regex              submittedRegex = new Regex(
+	                                                         "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
+	
+	private static Map<String, Field> fieldMap       = new HashMap<String, Field>() {
+		                                                 
+		                                                 private static final long serialVersionUID = 1L;
+		                                                 
+		                                                 {
+			                                                 try {
+				                                                 put("close_date",
+				                                                         Report.class
+				                                                                 .getDeclaredField("resolutionTimestamp"));
+				                                                 put("resolution_id",
+				                                                         Report.class.getDeclaredField("resolution"));
+				                                                 put("status_id",
+				                                                         Report.class.getDeclaredField("status"));
+			                                                 } catch (Exception e) {
+				                                                 if (Logger.logError()) {
+					                                                 Logger.error(
+					                                                         "No such field in "
+					                                                                 + Report.class.getSimpleName()
+					                                                                 + ": " + e.getMessage(), e);
+				                                                 }
+			                                                 }
+		                                                 }
+	                                                 };
+	
+	private static Priority buildPriority(final String value) {
+		// 1..9;
+		// UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
+		int priority = Integer.parseInt(value);
+		switch (priority) {
+			case 1:
+			case 2:
+				return Priority.VERY_LOW;
+			case 3:
+			case 4:
+				return Priority.LOW;
+			case 5:
+				return Priority.NORMAL;
+			case 6:
+			case 7:
+				return Priority.HIGH;
+			case 8:
+			case 9:
+				return Priority.VERY_HIGH;
+			default:
+				return Priority.UNKNOWN;
+		}
+	}
+	
+	private static Resolution buildResolution(final String value) {
+		// from: ACCEPTED, DUPLICATE, FIXED, INVALID, LATER, NONE,
+		// OUT_OF_DATE, POSTPONED, REJECTED, REMIND, WONT_FIX,
+		// WORKS_FOR_ME;
+		// to: UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID,
+		// WONT_FIX, WORKS_FOR_ME;
+		if (value.equalsIgnoreCase("ACCEPTED")) {
+			return Resolution.UNRESOLVED;
+		} else if (value.equalsIgnoreCase("DUPLICATE")) {
+			return Resolution.DUPLICATE;
+		} else if (value.equalsIgnoreCase("FIXED")) {
+			return Resolution.RESOLVED;
+		} else if (value.equalsIgnoreCase("INVALID")) {
+			return Resolution.INVALID;
+		} else if (value.equalsIgnoreCase("LATER")) {
+			return Resolution.UNRESOLVED;
+		} else if (value.equalsIgnoreCase("NONE")) {
+			return Resolution.UNRESOLVED;
+		} else if (value.equalsIgnoreCase("OUT_OF_DATE")) {
+			return Resolution.UNKNOWN;
+		} else if (value.equalsIgnoreCase("POSTPONED")) {
+			return Resolution.UNRESOLVED;
+		} else if (value.equalsIgnoreCase("REJECTED")) {
+			return Resolution.INVALID;
+		} else if (value.equalsIgnoreCase("REMIND")) {
+			return Resolution.UNRESOLVED;
+		} else if (value.equalsIgnoreCase("WONT_FIX")) {
+			return Resolution.WONT_FIX;
+		} else if (value.equalsIgnoreCase("WORKS_FOR_ME")) {
+			return Resolution.WORKS_FOR_ME;
+		} else {
+			return Resolution.UNKNOWN;
+		}
+	}
+	
+	private static Severity buildSeverity(final String value) {
+		return Severity.UNKNOWN;
+	}
+	
+	private static Status buildStatus(final String value) {
+		// from: CLOSED, DELETED, OPEN, PENDING
+		// to: UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS,
+		// REOPENED, RESOLVED, VERIFIED, CLOSED
+		if (value.equalsIgnoreCase("CLOSED")) {
+			return Status.CLOSED;
+		} else if (value.equalsIgnoreCase("DELETED")) {
+			return Status.CLOSED;
+		} else if (value.equalsIgnoreCase("OPEN")) {
+			return Status.NEW;
+		} else if (value.equalsIgnoreCase("PENDING")) {
+			return Status.IN_PROGRESS;
+		} else {
+			return Status.UNKNOWN;
+		}
+	}
+	
+	private static Type buildType(final String value) {
+		if (value.equalsIgnoreCase("BUG")) {
+			return Type.BUG;
+		} else if (value.equalsIgnoreCase("RFE")) {
+			return Type.RFE;
+		} else if (value.equalsIgnoreCase("TASK")) {
+			return Type.TASK;
+		} else if (value.equalsIgnoreCase("TEST")) {
+			return Type.TEST;
+		} else {
+			return Type.OTHER;
+		}
+	}
+	
+	private final Regex subjectRegex = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
 	
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
@@ -136,53 +263,9 @@ public class SourceforgeTracker extends Tracker {
 				        .get(1).getMatch().trim(), null)));
 				bugReport.setCreationTimestamp(DateTimeUtils.parseDate(find.get(3).getMatch().trim()));
 			} else if (fieldName.equals("Status")) {
-				// from: CLOSED, DELETED, OPEN, PENDING
-				// to: UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS,
-				// REOPENED, RESOLVED, VERIFIED, CLOSED
-				if (fieldValue.equalsIgnoreCase("CLOSED")) {
-					bugReport.setStatus(Status.CLOSED);
-				} else if (fieldValue.equalsIgnoreCase("DELETED")) {
-					bugReport.setStatus(Status.CLOSED);
-				} else if (fieldValue.equalsIgnoreCase("OPEN")) {
-					bugReport.setStatus(Status.NEW);
-				} else if (fieldValue.equalsIgnoreCase("PENDING")) {
-					bugReport.setStatus(Status.IN_PROGRESS);
-				} else {
-					bugReport.setStatus(Status.UNKNOWN);
-				}
+				bugReport.setStatus(buildStatus(fieldValue));
 			} else if (fieldName.equals("Resolution")) {
-				// from: ACCEPTED, DUPLICATE, FIXED, INVALID, LATER, NONE,
-				// OUT_OF_DATE, POSTPONED, REJECTED, REMIND, WONT_FIX,
-				// WORKS_FOR_ME;
-				// to: UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID,
-				// WONT_FIX, WORKS_FOR_ME;
-				if (fieldValue.equalsIgnoreCase("ACCEPTED")) {
-					bugReport.setStatus(Status.CLOSED);
-				} else if (fieldValue.equalsIgnoreCase("DUPLICATE")) {
-					bugReport.setResolution(Resolution.DUPLICATE);
-				} else if (fieldValue.equalsIgnoreCase("FIXED")) {
-					bugReport.setResolution(Resolution.RESOLVED);
-				} else if (fieldValue.equalsIgnoreCase("INVALID")) {
-					bugReport.setResolution(Resolution.INVALID);
-				} else if (fieldValue.equalsIgnoreCase("LATER")) {
-					bugReport.setResolution(Resolution.UNRESOLVED);
-				} else if (fieldValue.equalsIgnoreCase("NONE")) {
-					bugReport.setResolution(Resolution.UNRESOLVED);
-				} else if (fieldValue.equalsIgnoreCase("OUT_OF_DATE")) {
-					bugReport.setResolution(Resolution.UNKNOWN);
-				} else if (fieldValue.equalsIgnoreCase("POSTPONED")) {
-					bugReport.setResolution(Resolution.UNRESOLVED);
-				} else if (fieldValue.equalsIgnoreCase("REJECTED")) {
-					bugReport.setResolution(Resolution.INVALID);
-				} else if (fieldValue.equalsIgnoreCase("REMIND")) {
-					bugReport.setResolution(Resolution.UNRESOLVED);
-				} else if (fieldValue.equalsIgnoreCase("WONT_FIX")) {
-					bugReport.setResolution(Resolution.WONT_FIX);
-				} else if (fieldValue.equalsIgnoreCase("WORKS_FOR_ME")) {
-					bugReport.setResolution(Resolution.WORKS_FOR_ME);
-				} else {
-					bugReport.setResolution(Resolution.UNKNOWN);
-				}
+				bugReport.setResolution(buildResolution(fieldValue));
 			} else if (fieldName.equalsIgnoreCase("Assigned")) {
 				bugReport.setAssignedTo(this.personManager.getPerson(new Person(null, fieldValue, null)));
 			} else if (fieldName.equalsIgnoreCase("Group")) {
@@ -190,33 +273,7 @@ public class SourceforgeTracker extends Tracker {
 			} else if (fieldName.equalsIgnoreCase("Details")) {
 				bugReport.setDescription(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Priority")) {
-				// 1..9;
-				// UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
-				int priority = Integer.parseInt(fieldValue);
-				switch (priority) {
-					case 1:
-					case 2:
-						bugReport.setPriority(Priority.VERY_LOW);
-						break;
-					case 3:
-					case 4:
-						bugReport.setPriority(Priority.LOW);
-						break;
-					case 5:
-						bugReport.setPriority(Priority.NORMAL);
-						break;
-					case 6:
-					case 7:
-						bugReport.setPriority(Priority.HIGH);
-						break;
-					case 8:
-					case 9:
-						bugReport.setPriority(Priority.VERY_HIGH);
-						break;
-					default:
-						bugReport.setPriority(Priority.UNKNOWN);
-						break;
-				}
+				bugReport.setPriority(buildPriority(fieldValue));
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("Unhandled field `" + fieldName + "` with value: `" + fieldValue + "`");
@@ -273,13 +330,94 @@ public class SourceforgeTracker extends Tracker {
 					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
 					String commentBody = e2.getContent(6).getValue().trim();
 					Comment comment = new Comment(bugReport, commentAuthor, commentTimestamp, commentBody);
-					System.err.println(comment);
 					if (Logger.logDebug()) {
 						Logger.debug("Found comment: " + comment);
 					}
 				}
 			}
-			
+		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("changebar")) {
+			int i = e.getParentElement().indexOf(e);
+			for (; i < e.getParentElement().getContent().size(); ++i) {
+				if (e.getParentElement().getContent().get(i) instanceof Element) {
+					if (((Element) e.getParentElement().getContent().get(i)).getName().equals("div")) {
+						break;
+					}
+				}
+			}
+			Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
+			Element body = tabular.getChild("tbody", tabular.getNamespace());
+			List<Element> tableRows = body.getChildren("tr", body.getNamespace());
+			for (Element tableRow : tableRows) {
+				Element fieldElement = ((Element) tableRow.getChildren().get(0));
+				Element oldValueElement = ((Element) tableRow.getChildren().get(1));
+				Element datetimeElement = ((Element) tableRow.getChildren().get(2));
+				Element authorElement = (Element) ((Element) tableRow.getChildren().get(3)).getContent().get(0);
+				
+				Field field = null;
+				field = fieldMap.get(fieldElement.getValue().toLowerCase().trim());
+				if (field == null) {
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Field not found: " + fieldElement.getValue().toLowerCase().trim());
+					}
+					return;
+				}
+				History history = bugReport.getHistory().get(field);
+				
+				Object newValue = null;
+				if (history.isEmpty()) {
+					// take actual value
+					Method method = null;
+					try {
+						method = Report.class.getMethod("get" + Character.toUpperCase(field.getName().charAt(0))
+						        + field.getName().substring(1), new Class<?>[0]);
+					} catch (SecurityException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (NoSuchMethodException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						newValue = method.invoke(bugReport, new Object[0]);
+					} catch (IllegalArgumentException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} else {
+					// take this
+					newValue = history.last().getNewValue(field);
+				}
+				
+				Object oldValue = null;
+				
+				if (field.getName().equalsIgnoreCase("PRIORITY")) {
+					oldValue = buildPriority(oldValueElement.getValue());
+				} else if (field.getName().equalsIgnoreCase("RESOLUTION")) {
+					oldValue = buildResolution(oldValueElement.getValue());
+				} else if (field.getName().equalsIgnoreCase("SEVERITY")) {
+					oldValue = buildSeverity(oldValueElement.getValue());
+				} else if (field.getName().equalsIgnoreCase("STATUS")) {
+					oldValue = buildStatus(oldValueElement.getValue());
+				} else if (field.getName().equalsIgnoreCase("TYPE")) {
+					oldValue = buildType(oldValueElement.getValue());
+				} else {
+					oldValue = oldValueElement.getValue();
+				}
+				
+				String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
+				String authorUsername = authorElement != null ? authorElement.getValue() : null;
+				
+				bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(authorUsername,
+				        authorFullname, null)), bugReport, field, oldValue, newValue, DateTimeUtils
+				        .parseDate(datetimeElement.getValue())));
+			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
 			// e = (Element) (e.getChildren() != null ? e.getChildren().get(0) :
 			// null);
@@ -309,8 +447,9 @@ public class SourceforgeTracker extends Tracker {
 	private void hangle(final Report bugReport, final Element e, final Element n) {
 		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e
 		        .getAttributeValue("class").startsWith("yui-g")))
-		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container") || e
-		                .getAttributeValue("id").equals("commentbar")))) {
+		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container")
+		                || e.getAttributeValue("id").equals("commentbar") || e.getAttributeValue("id").equals(
+		                "changebar")))) {
 			handleDivElement(bugReport, e, n);
 		} else {
 			List<Element> el = e.getChildren();
@@ -341,7 +480,6 @@ public class SourceforgeTracker extends Tracker {
 			comment.setId(i--);
 		}
 		bugReport.setType(Type.BUG);
-		System.err.println(bugReport);
 		
 		return bugReport;
 	}

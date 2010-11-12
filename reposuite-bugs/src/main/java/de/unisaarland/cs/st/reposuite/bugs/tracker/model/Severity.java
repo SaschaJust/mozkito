@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Severity implements Annotated {
-	ENHANCEMENT, TRIVIAL, MINOR, NORMAL, MAJOR, CRITICAL, BLOCKER;
+	UNKNOWN, ENHANCEMENT, TRIVIAL, MINOR, NORMAL, MAJOR, CRITICAL, BLOCKER;
 	
 	@Override
 	public Collection<Annotated> getSaveFirst() {
