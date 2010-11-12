@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,6 +17,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -38,17 +38,80 @@ public class JiraXMLParser {
 	
 	protected static Regex             idRegex        = new Regex("^[^-]+-({bugid}\\d+)");
 	protected static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
+	protected static DateTimeFormatter dateTimeHistoryFormat = DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
 	protected static Namespace         namespace      = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Element getElement(final Element root, final Namespace namespace, final String tag, final String attribute, final String value){
 		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
-			if (child.getAttribute(attribute).equals(value)) {
+			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
 				return child;
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
 				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+	}
+	
+	protected static Priority getPriority(final String prioString) {
+		if (prioString.equals("Blocker")) {
+			return Priority.VERY_HIGH;
+		} else if (prioString.equals("Critical")) {
+			return Priority.HIGH;
+		} else if (prioString.equals("Major")) {
+			return Priority.NORMAL;
+		} else if (prioString.equals("Minor")) {
+			return Priority.LOW;
+		} else if (prioString.equals("Trivial")) {
+			return Priority.VERY_LOW;
+		} else {
+			return Priority.UNKNOWN;
+		}
+	}
+	
+	protected static Resolution getResolution(final String resString) {
+		if (resString.equals("Won't Fix")) {
+			return Resolution.WONT_FIX;
+		} else if (resString.equals("Duplicate")) {
+			return Resolution.DUPLICATE;
+		} else if (resString.equals("Incomplete")) {
+			return Resolution.UNRESOLVED;
+		} else if (resString.equals("Cannot Reproduce")) {
+			return Resolution.WORKS_FOR_ME;
+		} else if (resString.equals("Not A Bug")) {
+			return Resolution.INVALID;
+		} else if (resString.equals("Unresolved")) {
+			return Resolution.UNRESOLVED;
+		} else if (resString.equals("Fixed")) {
+			return Resolution.RESOLVED;
+		} else {
+			return Resolution.UNKNOWN;
+		}
+	}
+	
+	protected static Status getStatus(final String statusString) {
+		if (statusString.equals("Open")) {
+			return Status.VERIFIED;
+		} else if (statusString.equals("In Progress")) {
+			return Status.IN_PROGRESS;
+		} else if (statusString.equals("Reopened")) {
+			return Status.REOPENED;
+		} else if (statusString.equals("Resolved")) {
+			return Status.CLOSED;
+		} else if (statusString.equals("Closed")) {
+			return Status.CLOSED;
+		} else if (statusString.equals("Iteration")) {
+			return Status.IN_PROGRESS;
+		} else if (statusString.equals("Submitted")) {
+			return Status.NEW;
+		} else if (statusString.equals("Analysis")) {
+			return Status.NEW;
+		} else if (statusString.equals("Patch Pending")) {
+			return Status.IN_PROGRESS;
+		} else if (statusString.equals("With Customer")) {
+			return Status.IN_PROGRESS;
+		} else {
+			return Status.UNKNOWN;
+		}
 	}
 	
 	private static void handleComments(final List<Element> comments, final Report report,
@@ -66,35 +129,37 @@ public class JiraXMLParser {
 	
 	@SuppressWarnings ("unchecked")
 	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	throws UnsupportedProtocolException, FetchException, JDOMException, IOException {
+	throws UnsupportedProtocolException, JDOMException, IOException, SecurityException,
+	NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
 		Condition.notNull(personManager);
 		
-		RawContent rawContent = IOUtils.fetch(historyUri);
-		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
-		SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-		Document document = saxBuilder.build(reader);
-		reader.close();
-		
-		Element rootElement = document.getRootElement();
-		if (!rootElement.getName().equals("html")) {
-			if (Logger.logError()) {
-				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-						+ rootElement.getName() + ">.");
+		try{
+			RawContent rawContent = IOUtils.fetch(historyUri);
+			BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
+			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+			Document document = saxBuilder.build(reader);
+			reader.close();
+			
+			Element rootElement = document.getRootElement();
+			if (!rootElement.getName().equals("html")) {
+				if (Logger.logError()) {
+					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
+							+ rootElement.getName() + ">.");
+				}
+				return;
 			}
-			return;
-		}
-		
-		Element body = rootElement.getChild("body", namespace);
-		if (body == null) {
-			if (Logger.logError()) {
-				Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
+			
+			Element body = rootElement.getChild("body", namespace);
+			if (body == null) {
+				if (Logger.logError()) {
+					Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
+				}
+				return;
 			}
-			return;
-		}
-		
-		try {
+			
+			
 			Element nextElem = getElement(body, namespace, "div", "id", "main-content");
 			nextElem = getElement(nextElem, namespace, "div", "class", "active-area");
 			nextElem = getElement(nextElem, namespace, "div", "id", "primary");
@@ -110,19 +175,69 @@ public class JiraXMLParser {
 					for (Element actionContainer : actionContainers) {
 						Person author = null;
 						DateTime timestamp = null;
-						Field field = null;
 						String oldValue = null;
 						String newValue = null;
-						List<Element> valueContainers = actionContainer.getChildren("div", namespace);
 						
-						Element actionDetails = getElement(actionContainer, namespace, "div", "class", "actionDetails");
+						
+						Element actionDetails = getElement(actionContainer, namespace, "div", "class", "action-details");
 						Element actionDetailsA = getElement(actionDetails, namespace, "a", "class",
 						"user-hover user-avatar");
+						String email = actionDetailsA.getAttributeValue("rel");
+						String fullname = actionDetailsA.getText();
+						author = personManager.getPerson(new Person(null, fullname, email));
+						
 						Element date = getElement(actionDetails, namespace, "span", "class", "date");
+						String dateString = date.getText();
+						if (dateString != null) {
+							timestamp = dateTimeHistoryFormat.parseDateTime(dateString);
+						}
 						
-						Element actionBody = getElement(actionContainer, namespace, "div", "class", "actionbody");
+						Element actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
+						Element table = actionBody.getChild("table", namespace);
+						if (table == null) {
+							if (Logger.logError()) {
+								Logger.error("Error while parsing jira history. HTML structure unknown: could not find table in actionBody");
+							}
+							return;
+						}
 						
+						Element tbody = table.getChild("tbody", namespace);
+						if (tbody == null) {
+							if (Logger.logError()) {
+								Logger.error("Error while parsing jira history. HTML structure unknown: could not find tbody in actionBody");
+							}
+							return;
+						}
 						
+						List<Element> trs = tbody.getChildren("tr", namespace);
+						HistoryElement hElement = new HistoryElement(author, report, null, null, null, timestamp);
+						
+						for (Element tr : trs) {
+							if (tr == null) {
+								if (Logger.logError()) {
+									Logger.error("Error while parsing jira history. HTML structure unknown: could not find tr in actionBody");
+								}
+								return;
+							}
+							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText().trim();
+							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
+							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
+							
+							
+							if(fieldString.equals("Status")){
+								hElement.addChangedValue(Report.class.getDeclaredField("status"), getStatus(oldValue),
+										getStatus(newValue));
+							}else if(fieldString.equals("Resolution")){
+								hElement.addChangedValue(Report.class.getDeclaredField("resolution"),
+										getResolution(oldValue), getResolution(newValue));
+							} else if (fieldString.equals("Priority")) {
+								hElement.addChangedValue(Report.class.getDeclaredField("priority"),
+										getPriority(oldValue), getPriority(newValue));
+							}
+						}
+						if (hElement.getChangedValues().keySet().size() > 0) {
+							report.addHistoryElement(hElement);
+						}
 					}
 				}
 			}
@@ -132,12 +247,46 @@ public class JiraXMLParser {
 				Logger.error("Error while parsing jira history. HTML structure unknown: " + e.getMessage(), e);
 			}
 			return;
+		} catch (FetchException e){
+			if (Logger.logError()) {
+				Logger.error("Error while fetching jira history. URL not found: " + e.getMessage(), e);
+			}
+			return;
 		}
 		
 	}
 	
-	private static void handleIssueLinks(final List children, final Report report, final PersonManager personManager) {
-		// TODO Auto-generated method stub
+	@SuppressWarnings ("unchecked")
+	private static void handleIssueLinks(final List<Element> elements, final Report report,
+			final PersonManager personManager) {
+		Condition.notNull(elements);
+		Condition.notNull(report);
+		Condition.notNull(personManager);
+		
+		for(Element issueLinkType : elements){
+			if(issueLinkType.getName().equals("issuelinktype")){
+				List<Element> links = issueLinkType.getChildren();
+				for(Element link : links){
+					if(link.getName().equals("inwardlinks") || link.getName().equals("outwardlinks")){
+						List<Element> issueLinks = link.getChildren("issuelink");
+						for(Element issueLink : issueLinks){
+							Element issueKey = issueLink.getChild("issuekey");
+							if(issueKey != null){
+								List<RegexGroup> groups= idRegex.find(issueKey.getText());
+								if ((groups == null) || (groups.size() != 2)) {
+									if (Logger.logError()) {
+										Logger.error("Error while parsing Jira report " + issueKey.getText()
+												+ ". Cannot determine report id. Abort!");
+									}
+									return;
+								}
+								report.addSibling(new Long(groups.get(1).getMatch()).longValue());
+							}
+						}
+					}
+				}
+			}
+		}
 		
 	}
 	
@@ -183,64 +332,13 @@ public class JiraXMLParser {
 				}
 			} else if (element.getName().equals("priority")) {
 				String prioString = element.getText();
-				if (prioString.equals("Blocker")) {
-					report.setPriority(Priority.VERY_HIGH);
-				} else if (prioString.equals("Critical")) {
-					report.setPriority(Priority.HIGH);
-				} else if (prioString.equals("Major")) {
-					report.setPriority(Priority.NORMAL);
-				} else if (prioString.equals("Minor")) {
-					report.setPriority(Priority.LOW);
-				} else if (prioString.equals("Trivial")) {
-					report.setPriority(Priority.VERY_LOW);
-				} else {
-					report.setPriority(Priority.UNKNOWN);
-				}
+				report.setPriority(getPriority(prioString));
 			} else if (element.getName().equals("status")) {
 				String statusString = element.getText();
-				if (statusString.equals("Open")) {
-					report.setStatus(Status.VERIFIED);
-				} else if (statusString.equals("In Progress")) {
-					report.setStatus(Status.IN_PROGRESS);
-				} else if (statusString.equals("Reopened")) {
-					report.setStatus(Status.REOPENED);
-				} else if (statusString.equals("Resolved")) {
-					report.setStatus(Status.CLOSED);
-				} else if (statusString.equals("Closed")) {
-					report.setStatus(Status.CLOSED);
-				} else if (statusString.equals("Iteration")) {
-					report.setStatus(Status.IN_PROGRESS);
-				} else if (statusString.equals("Submitted")) {
-					report.setStatus(Status.NEW);
-				} else if (statusString.equals("Analysis")) {
-					report.setStatus(Status.NEW);
-				} else if (statusString.equals("Patch Pending")) {
-					report.setStatus(Status.IN_PROGRESS);
-				} else if (statusString.equals("With Customer")) {
-					report.setStatus(Status.IN_PROGRESS);
-				} else {
-					report.setStatus(Status.UNKNOWN);
-				}
+				report.setStatus(getStatus(statusString));
 			} else if (element.getName().equals("resolution")) {
 				String resString = element.getText();
-				if (resString.equals("Won't Fix")) {
-					report.setResolution(Resolution.WONT_FIX);
-				} else if (resString.equals("Duplicate")) {
-					report.setResolution(Resolution.DUPLICATE);
-				} else if (resString.equals("Incomplete")) {
-					report.setResolution(Resolution.UNRESOLVED);
-				} else if (resString.equals("Cannot Reproduce")) {
-					report.setResolution(Resolution.WORKS_FOR_ME);
-				} else if (resString.equals("Not A Bug")) {
-					report.setResolution(Resolution.INVALID);
-				} else if (resString.equals("Unresolved")) {
-					report.setResolution(Resolution.UNRESOLVED);
-				} else if (resString.equals("Fixed")) {
-					report.setResolution(Resolution.RESOLVED);
-				} else {
-					report.setResolution(Resolution.UNKNOWN);
-				}
-				
+				report.setResolution(getResolution(resString));
 			} else if (element.getName().equals("assignee")) {
 				String username = element.getAttributeValue("username");
 				if ((username != null) && (!username.equals("-1"))) {
@@ -274,7 +372,7 @@ public class JiraXMLParser {
 			} else if (element.getName().equals("comments")) {
 				handleComments(element.getChildren("comment"), report, personManager);
 			} else if (element.getName().equals("issuelinks")) {
-				handleIssueLinks(element.getChildren("issuelinks"), report, personManager);
+				handleIssueLinks(element.getChildren(), report, personManager);
 			} else if (element.getName().equals("resolved")) {
 				DateTime dateTime = dateTimeFormat.parseDateTime(element.getText());
 				if (dateTime != null) {
