@@ -28,7 +28,7 @@ public class JiraXMLHandler {
 	// TODO subTasks
 	
 	private static void handleComments(final List<Element> comments, final Report report,
-	        final PersonManager personManager) {
+			final PersonManager personManager) {
 		for (Element comment : comments) {
 			Person author = personManager.getPerson(new Person(comment.getAttributeValue("author"), null, null));
 			DateTime commentDate = dateTimeFormat.parseDateTime(comment.getAttributeValue("created"));
@@ -58,7 +58,7 @@ public class JiraXMLHandler {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-						        + ". Cannot determine report id. Abort!");
+								+ ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
@@ -104,7 +104,7 @@ public class JiraXMLHandler {
 				} else if (statusString.equals("Reopened")) {
 					report.setStatus(Status.REOPENED);
 				} else if (statusString.equals("Resolved")) {
-					report.setStatus(Status.RESOLVED);
+					report.setStatus(Status.CLOSED);
 				} else if (statusString.equals("Closed")) {
 					report.setStatus(Status.CLOSED);
 				} else if (statusString.equals("Iteration")) {

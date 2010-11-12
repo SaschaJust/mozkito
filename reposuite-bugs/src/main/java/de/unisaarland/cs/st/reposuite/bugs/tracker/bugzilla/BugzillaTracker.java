@@ -99,22 +99,26 @@ public class BugzillaTracker extends Tracker {
 		bugReport.setHash(rawReport.getMd5());
 		
 		String uriString = rawReport.getUri().toString().replace("show_bug.cgi", "show_activity.cgi");
-		
-		try {
-			URI historyUri = new URI(uriString);
-			BugzillaXMLParser.handleHistory(historyUri, bugReport, this.personManager);
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				if (bugReport.getId() == -1) {
-					Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
-				} else {
-					Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId() + "`. Used uri =`"
-							+ uriString + "`.");
+		if (uriString.equals(rawReport.getUri().toString())) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not fetch bugzilla report history: could not create neccessary url.");
+			}
+		} else {
+			try {
+				URI historyUri = new URI(uriString);
+				BugzillaXMLParser.handleHistory(historyUri, bugReport, this.personManager);
+			} catch (Exception e) {
+				if (Logger.logError()) {
+					if (bugReport.getId() == -1) {
+						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
+					} else {
+						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId() + "`. Used uri =`"
+								+ uriString + "`.");
+					}
+					Logger.error(e.getMessage(), e);
 				}
-				Logger.error(e.getMessage(), e);
 			}
 		}
-		
 		
 		return bugReport;
 	}

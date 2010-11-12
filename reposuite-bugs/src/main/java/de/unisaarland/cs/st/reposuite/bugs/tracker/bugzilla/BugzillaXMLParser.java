@@ -11,6 +11,7 @@ import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -39,14 +40,12 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 public class BugzillaXMLParser {
 	
 	protected static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static Namespace         namespace      = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
+	protected static Regex             siblingRegex   = new Regex("bug\\s+({sibling}\\d+)");
 	
-	private static Regex siblingRegex = new Regex("bug\\s+({sibling}\\d+})");
-	// setHistory
-	// setResolutionTimestamp
-	// setResolver
-	
-	private static Priority getPriority(final String priorityString) {
+	protected static Priority getPriority(final String string) {
+		String priorityString = string.toUpperCase();
 		if(priorityString.equals("P1")){
 			return Priority.VERY_HIGH;
 		}else if(priorityString.equals("P2")){
@@ -62,7 +61,8 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	private static Resolution getResolution(final String resString) {
+	protected static Resolution getResolution(final String string) {
+		String resString = string.toUpperCase();
 		if (resString.equals("FIXED")) {
 			return Resolution.RESOLVED;
 		} else if (resString.equals("INVALID")) {
@@ -86,7 +86,8 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	private static Severity getSeverity(final String serverityString) {
+	protected static Severity getSeverity(final String string) {
+		String serverityString = string.toLowerCase();
 		if(serverityString.equals("blocker")){
 			return Severity.BLOCKER;
 		}else if(serverityString.equals("critical")){
@@ -109,7 +110,8 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	private static Status getStatus(final String statusString) {
+	protected static Status getStatus(final String string) {
+		String statusString = string.toUpperCase();
 		if (statusString.equals("UNCONFIRMED")) {
 			return Status.UNCONFIRMED;
 		} else if (statusString.equals("NEW")) {
@@ -119,7 +121,7 @@ public class BugzillaXMLParser {
 		} else if (statusString.equals("REOPENED")) {
 			return Status.REOPENED;
 		} else if (statusString.equals("RESOLVED")) {
-			return Status.RESOLVED;
+			return Status.CLOSED;
 		} else if (statusString.equals("VERIFIED")) {
 			return Status.VERIFIED;
 		} else if (statusString.equals("CLOSED")) {
@@ -151,7 +153,7 @@ public class BugzillaXMLParser {
 			return;
 		}
 		
-		Element body = rootElement.getChild("body");
+		Element body = rootElement.getChild("body", namespace);
 		if (body == null) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
@@ -162,7 +164,7 @@ public class BugzillaXMLParser {
 		for (Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
 					&& (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
-				Element table = bodyChild.getChild("table");
+				Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing bugzilla report history. No <table> tag found.");
@@ -170,7 +172,7 @@ public class BugzillaXMLParser {
 					return;
 				}
 				
-				Element tbody = table.getChild("tbody");
+				Element tbody = table.getChild("tbody", namespace);
 				if (tbody == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing bugzilla report history. No <tbody> tag found.");
@@ -178,61 +180,113 @@ public class BugzillaXMLParser {
 					return;
 				}
 				
-				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr"));
+				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr",
+						namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
+				
+				int rowspan = 0;
+				HistoryElement hElement = null;
+				Person historyAuthor = null;
+				DateTime dateTime = null;
 				for (Element tr : trs) {
-					@SuppressWarnings ("unchecked") List<Element> tds = tr.getChildren("tds");
-					if (tds.size() < 5) {
+					int whatIndex = 2;
+					@SuppressWarnings ("unchecked") List<Element> tds = tr.getChildren("td", namespace);
+					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
 									+ tds.size());
 						}
 						return;
+					} else if (tds.size() < 3) {
+						if (Logger.logError()) {
+							Logger.error("Error while parsing bugzilla report history. Expected at least 3 table columns, found :"
+									+ tds.size());
+						}
+						return;
 					}
-					String username = tds.get(0).getText().trim();
-					DateTime dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
-					String what = tds.get(2).getText().trim().toLowerCase();
-					String removed = tds.get(3).getText().trim();
-					String added = tds.get(4).getText().trim();
+					if (rowspan == 0) {
+						String username = tds.get(0).getText().trim();
+						String rowspanString = tds.get(0).getAttributeValue("rowspan");
+						if (rowspanString != null) {
+							rowspan = Integer.valueOf(rowspanString).intValue() - 1;
+						}
+						historyAuthor = personManager.getPerson(new Person(username, null, null));
+						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
+						hElement = new HistoryElement(historyAuthor, report, null, null,
+								null, dateTime);
+						report.addHistoryElement(hElement);
+					} else {
+						--rowspan;
+						whatIndex -= 2;
+					}
+					
+					
+					String what = tds.get(whatIndex).getText().trim().toLowerCase();
+					String removed = tds.get(++whatIndex).getText().trim();
+					String added = tds.get(++whatIndex).getText().trim();
 					
 					Field field = null;
 					if(what.equals("priority")){
-						field = Report.class.getField("priority");
-						report.addHistoryElement(new HistoryElement(report, field, getPriority(removed),
-						        getPriority(added), dateTime));
+						field = Report.class.getDeclaredField("priority");
+						hElement.addChangedValue(field, getPriority(removed), getPriority(added));
+						continue;
 					}else if(what.equals("summary")){
-						field = Report.class.getField("summary");
+						field = Report.class.getDeclaredField("summary");
+						hElement.addChangedValue(field, removed, added);
+						continue;
 					}else if(what.equals("resolution")){
-						field = Report.class.getField("resolution");
+						field = Report.class.getDeclaredField("resolution");
+						hElement.addChangedValue(field, getResolution(removed), getResolution(added));
+						// set report resolution date and resolver
+						if (getResolution(added).equals(Resolution.RESOLVED)) {
+							report.setResolver(historyAuthor);
+							report.setResolutionTimestamp(dateTime);
+						}
+						continue;
 					}else if(what.equals("assignee")){
-						field = Report.class.getField("assignedTo");
+						field = Report.class.getDeclaredField("assignedTo");
+						Person oldValue = personManager.getPerson(new Person(removed, null, null));
+						Person newValue = personManager.getPerson(new Person(added, null, null));
+						hElement.addChangedValue(field, oldValue, newValue);
+						continue;
 					}else if(what.equals("target milestone")){
 						
 					}else if(what.equals("cc")){
 						
 					}else if(what.equals("component")){
-						field = Report.class.getField("component");
+						field = Report.class.getDeclaredField("component");
+						hElement.addChangedValue(field, removed, added);
+						continue;
 					}else if(what.equals("summary")){
-						field = Report.class.getField("summary");
+						field = Report.class.getDeclaredField("summary");
+						hElement.addChangedValue(field, removed, added);
+						continue;
 					}else if(what.equals("severity")){
-						field = Report.class.getField("severity");
+						field = Report.class.getDeclaredField("severity");
+						hElement.addChangedValue(field, getSeverity(removed), getSeverity(added));
+						continue;
 					}else if(what.equals("blocks")){
-						
+						// TODO how shall I do that?
 					}else if(what.equals("depends on")){
-						
+						// TODO how shall I do that?
 					}else if(what.equals("status")){
-						field = Report.class.getField("status");
+						field = Report.class.getDeclaredField("status");
+						hElement.addChangedValue(field, getStatus(removed), getStatus(added));
+						continue;
 					}else if(what.equals("product")){
-						field = Report.class.getField("product");
+						field = Report.class.getDeclaredField("product");
+						hElement.addChangedValue(field, removed, added);
+						continue;
 					}else if(what.equals("category")){
-						field = Report.class.getField("category");
+						field = Report.class.getDeclaredField("category");
+						hElement.addChangedValue(field, removed, added);
+						continue;
 					}
 				}
 			}
 		}
-		
 	}
 	
 	private static void handleLongDesc(final Report report, final Element rootElement, final PersonManager personManager) {
@@ -273,26 +327,29 @@ public class BugzillaXMLParser {
 			message = thetext.getText().trim();
 		}
 		
-		if ((timestamp != null) && (timestamp.isEqual(report.getCreationTimestamp()))) {
-			report.setDescription(message);
-		}
-		
 		if (!message.equals("")) {
 			List<List<RegexGroup>> groupsList = siblingRegex.findAll(message);
-			for (List<RegexGroup> groups : groupsList) {
-				if (groups.size() != 0) {
-					try {
-						Long sibling = new Long(groups.get(0).getMatch());
-						report.addSibling(sibling);
-					} catch (NumberFormatException e) {
-						
+			if (groupsList != null) {
+				for (List<RegexGroup> groups : groupsList) {
+					for (RegexGroup group : groups) {
+						if (group.getName().equals("sibling")) {
+							try {
+								Long sibling = new Long(group.getMatch());
+								report.addSibling(sibling);
+							} catch (NumberFormatException e) {
+								
+							}
+						}
 					}
 				}
 			}
 		}
 		
-		Comment comment = new Comment(report, author, timestamp, message);
-		report.addComment(comment);
+		if (report.getDescription() == null) {
+			report.setDescription(message);
+		} else {
+			report.addComment(new Comment(report, author, timestamp, message));
+		}
 	}
 	
 	public static void handleRoot(final Report report, final Element rootElement, final PersonManager personManager) {
@@ -327,7 +384,7 @@ public class BugzillaXMLParser {
 				}
 			} else if (element.getName().equals("short_desc")) {
 				report.setSubject(element.getText().trim());
-			} else if (element.getName().equals("creation_ts")) {
+			} else if (element.getName().equals("delta_ts")) {
 				DateTime modificationTime = dateTimeFormat.parseDateTime(element.getText().trim());
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {

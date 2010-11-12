@@ -6,6 +6,8 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -21,7 +23,9 @@ import javax.persistence.Transient;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -32,10 +36,10 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	
 	private Field     field;
-	private Object    oldValue;
-	private Object    newValue;
+	private Map<Field, Tuple<Object, Object>> changedValues = new HashMap<Field, Tuple<Object, Object>>();
 	private DateTime  timestamp;
-	private Report bugReport;
+	private Report   bugReport;
+	private Person   author;
 	
 	/**
 	 * used by hibernate
@@ -51,19 +55,46 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param newValue
 	 * @param timestamp
 	 */
-	public HistoryElement(final Report bugReport, final Field field, final Object oldValue, final Object newValue,
+	public HistoryElement(final Person author, final Report bugReport, final Field field, final Object oldValue,
+			final Object newValue,
 			final DateTime timestamp) {
+		Condition.notNull(author);
 		Condition.notNull(bugReport);
-		Condition.notNull(field);
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
 		Condition.notNull(timestamp);
 		
+		if ((field != null) || (oldValue != null) || (newValue != null)) {
+			Condition.notNull(field);
+			Condition.notNull(oldValue);
+			Condition.notNull(newValue);
+		}
+		
+		this.setAuthor(author);
 		this.bugReport = bugReport;
 		this.field = field;
-		this.oldValue = oldValue;
-		this.newValue = newValue;
+		if ((field != null) || (oldValue != null) || (newValue != null)) {
+			this.getChangedValues().put(field, new Tuple<Object, Object>(oldValue, newValue));
+		}
 		this.timestamp = timestamp;
+	}
+	
+	/**
+	 * Adds the changed value.
+	 * 
+	 * @param field
+	 *            the field
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
+	 * @return true, if successful
+	 */
+	@Transient
+	public boolean addChangedValue(final Field field, final Object oldValue, final Object newValue){
+		if (this.getChangedValues().containsKey(field)) {
+			return false;
+		}
+		this.changedValues.put(field, new Tuple<Object, Object>(oldValue, newValue));
+		return true;
 	}
 	
 	/*
@@ -80,6 +111,11 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		}
 	}
 	
+	@ManyToOne
+	public Person getAuthor() {
+		return this.author;
+	}
+	
 	/**
 	 * @return the bugReport
 	 */
@@ -87,6 +123,12 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public Report getBugReport() {
 		return this.bugReport;
 	}
+	
+	public Map<Field, Tuple<Object, Object>> getChangedValues() {
+		return this.changedValues;
+	}
+	
+	
 	
 	/**
 	 * @return the field
@@ -106,22 +148,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.timestamp.toDate();
 	}
 	
-	/**
-	 * @return the newValue
-	 */
-	@Basic
-	public Object getNewValue() {
-		return this.newValue;
-	}
-	
-	/**
-	 * @return the oldValue
-	 */
-	@Basic
-	public Object getOldValue() {
-		return this.oldValue;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
@@ -132,6 +158,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return null;
 	}
 	
+	
 	/**
 	 * @return the timestamp
 	 */
@@ -140,12 +167,22 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.timestamp;
 	}
 	
+	public void setAuthor(final Person author) {
+		this.author = author;
+	}
+	
+	
+	
 	/**
 	 * @param bugReport
 	 *            the bugReport to set
 	 */
 	public void setBugReport(final Report bugReport) {
 		this.bugReport = bugReport;
+	}
+	
+	public void setChangedValues(final Map<Field, Tuple<Object, Object>> changedValues) {
+		this.changedValues = changedValues;
 	}
 	
 	/**
@@ -162,27 +199,12 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
-	 * @param newValue
-	 *            the newValue to set
-	 */
-	public void setNewValue(final Object newValue) {
-		this.newValue = newValue;
-	}
-	
-	/**
-	 * @param oldValue
-	 *            the oldValue to set
-	 */
-	public void setOldValue(final Object oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
+	
 	
 }
