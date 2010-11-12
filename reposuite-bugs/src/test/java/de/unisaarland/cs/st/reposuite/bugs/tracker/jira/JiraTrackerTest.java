@@ -35,10 +35,10 @@ public class JiraTrackerTest {
 	
 	private static final URL overViewUrl = JiraTrackerTest.class
 	.getResource(FileUtils.fileSeparator + "JAXEN_JIRA.xml");
-	private static URL       url177      = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JAXEN-177.xml");
+	private static URL       url177      = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-177.xml");
 	private static String    baseURL     = url177.toString();
-	private static String    baseDirURL  = baseURL.substring(0, url177.toString().lastIndexOf("JAXEN-177.xml"));
-	private static String    pattern     = "JAXEN-" + Tracker.bugIdPlaceholder + ".xml";
+	private static String    baseDirURL  = baseURL.substring(0, url177.toString().lastIndexOf("JIRA-177.xml"));
+	private static String    pattern     = "JIRA-" + Tracker.bugIdPlaceholder + ".xml";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -287,13 +287,40 @@ public class JiraTrackerTest {
 	@Test
 	public void testParseHistory(){
 		Report report = new Report();
-		URL       url      = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JRA-9551_history.html");
+		URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
 		try {
 			JiraXMLParser.handleHistory(url.toURI(), report, new PersonManager());
+			SortedSet<HistoryElement> history = report.getHistory();
+			assertEquals(1, history.size());
+			assertEquals(2, history.first().getChangedValues().keySet().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
 	
+	@Test
+	public void testParseLinks() {
+		JiraTracker tracker = new JiraTracker();
+		
+		try {
+			
+			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(1l), new Long(10000l), null);
+			
+			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(9551l));
+			XmlReport xmlReport = tracker.createDocument(rawReport);
+			Report report = tracker.parse(xmlReport);
+			
+			assertEquals(9551, report.getId());
+			assertEquals(null, report.getAssignedTo());
+			assertEquals(null, report.getCategory());
+			SortedSet<Comment> comments = report.getComments();
+			assertEquals(12, comments.size());
+			assertEquals(2, report.getSiblings().size());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
 }
