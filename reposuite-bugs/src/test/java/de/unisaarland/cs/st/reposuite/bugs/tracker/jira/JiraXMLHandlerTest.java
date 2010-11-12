@@ -25,7 +25,7 @@ public class JiraXMLHandlerTest {
 	@Test
 	public void testDateFormat() {
 		String dateString = "Fri, 5 Nov 2010 08:24:16 -0500";
-		DateTime time = JiraXMLHandler.dateTimeFormat.parseDateTime(dateString);
+		DateTime time = JiraXMLParser.dateTimeFormat.parseDateTime(dateString);
 		assertTrue(time != null);
 		assertEquals(DateTimeConstants.FRIDAY, time.getDayOfWeek());
 		assertEquals(DateTimeConstants.NOVEMBER, time.getMonthOfYear());
