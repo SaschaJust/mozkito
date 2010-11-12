@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -15,6 +16,10 @@ import org.apache.commons.collections.Predicate;
  * 
  */
 public class JavaUtils {
+	
+	private static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
+	        (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
+	        (byte) 'e', (byte) 'f'            };
 	
 	public static boolean AnyNull(final Object... objects) {
 		for (Object object : objects) {
@@ -31,6 +36,18 @@ public class JavaUtils {
 	 */
 	public static String arrayToString(final Object[] objects) {
 		return collectionToString(Arrays.asList(objects));
+	}
+	
+	public static String byteArrayToHexString(final byte[] raw) throws UnsupportedEncodingException {
+		byte[] hex = new byte[2 * raw.length];
+		int index = 0;
+		
+		for (byte b : raw) {
+			int v = b & 0xFF;
+			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+		}
+		return new String(hex, "ASCII");
 	}
 	
 	/**
