@@ -25,6 +25,22 @@ import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException
  */
 public class ClassFinder {
 	
+	/**
+	 * This class loads all classes in the specified package that can be found
+	 * in the classpath and checks if they are derived from the supplied super
+	 * class. If this is the case, they are added to a collection which will be
+	 * returned at the end of the method.
+	 * 
+	 * @param pakkage
+	 *            the package where the traversal search takes place
+	 *            (recursive), not null
+	 * @param superClass
+	 *            the class all returned classes have to be derived from
+	 * @return a collection of classes matching the above conditions
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
+	 */
 	public static Collection<Class<?>> getClassesExtendingClass(final Package pakkage, final Class<?> superClass)
 	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
 		Condition.notNull(pakkage);
@@ -72,7 +88,7 @@ public class ClassFinder {
 	
 	/**
 	 * Finds all classes in the current classpath that are contained in the
-	 * given package (from packageName)
+	 * given package (from packageName). Only .class files are inspected!
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
@@ -289,7 +305,10 @@ public class ClassFinder {
 		return classList;
 	}
 	
-	public String getHandle() {
-		return this.getClass().getSimpleName();
+	/**
+	 * @return
+	 */
+	public static String getHandle() {
+		return ClassFinder.class.getSimpleName();
 	}
 }
