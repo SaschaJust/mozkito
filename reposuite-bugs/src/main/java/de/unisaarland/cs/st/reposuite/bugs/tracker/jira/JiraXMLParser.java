@@ -1,8 +1,18 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -13,19 +23,33 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
+import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
-public class JiraXMLHandler {
+public class JiraXMLParser {
 	
 	protected static Regex             idRegex        = new Regex("^[^-]+-({bugid}\\d+)");
 	protected static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
+	protected static Namespace         namespace      = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
-	// TODO subTasks
+	protected static Element getElement(final Element root, final Namespace namespace, final String tag, final String attribute, final String value){
+		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
+		for (Element child : children) {
+			if (child.getAttribute(attribute).equals(value)) {
+				return child;
+			}
+		}
+		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
+				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+	}
 	
 	private static void handleComments(final List<Element> comments, final Report report,
 			final PersonManager personManager) {
@@ -38,6 +62,83 @@ public class JiraXMLHandler {
 			}
 			report.addComment(new Comment(report, author, commentDate, commentText));
 		}
+	}
+	
+	@SuppressWarnings ("unchecked")
+	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
+	throws UnsupportedProtocolException, FetchException, JDOMException, IOException {
+		Condition.notNull(historyUri);
+		Condition.notNull(report);
+		Condition.notNull(personManager);
+		
+		RawContent rawContent = IOUtils.fetch(historyUri);
+		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
+		SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+		Document document = saxBuilder.build(reader);
+		reader.close();
+		
+		Element rootElement = document.getRootElement();
+		if (!rootElement.getName().equals("html")) {
+			if (Logger.logError()) {
+				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
+						+ rootElement.getName() + ">.");
+			}
+			return;
+		}
+		
+		Element body = rootElement.getChild("body", namespace);
+		if (body == null) {
+			if (Logger.logError()) {
+				Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
+			}
+			return;
+		}
+		
+		try {
+			Element nextElem = getElement(body, namespace, "div", "id", "main-content");
+			nextElem = getElement(nextElem, namespace, "div", "class", "active-area");
+			nextElem = getElement(nextElem, namespace, "div", "id", "primary");
+			nextElem = getElement(nextElem, namespace, "div", "class", "content");
+			nextElem = getElement(nextElem, namespace, "div", "id", "activitymodule");
+			nextElem = getElement(nextElem, namespace, "div", "class", "mod-content");
+			nextElem = getElement(nextElem, namespace, "div", "id", "issue_actions_container");
+			
+			List<Element> changeHistoryItems = nextElem.getChildren("div", namespace);
+			for (Element changeHistoryItem : changeHistoryItems) {
+				if (changeHistoryItem.getAttributeValue("class").equals("issue-data-block")) {
+					List<Element> actionContainers = changeHistoryItem.getChildren("div", namespace);
+					for (Element actionContainer : actionContainers) {
+						Person author = null;
+						DateTime timestamp = null;
+						Field field = null;
+						String oldValue = null;
+						String newValue = null;
+						List<Element> valueContainers = actionContainer.getChildren("div", namespace);
+						
+						Element actionDetails = getElement(actionContainer, namespace, "div", "class", "actionDetails");
+						Element actionDetailsA = getElement(actionDetails, namespace, "a", "class",
+						"user-hover user-avatar");
+						Element date = getElement(actionDetails, namespace, "span", "class", "date");
+						
+						Element actionBody = getElement(actionContainer, namespace, "div", "class", "actionbody");
+						
+						
+					}
+				}
+			}
+			
+		} catch (NoSuchElementException e) {
+			if (Logger.logError()) {
+				Logger.error("Error while parsing jira history. HTML structure unknown: " + e.getMessage(), e);
+			}
+			return;
+		}
+		
+	}
+	
+	private static void handleIssueLinks(final List children, final Report report, final PersonManager personManager) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@SuppressWarnings ("unchecked")
@@ -172,8 +273,8 @@ public class JiraXMLHandler {
 				}
 			} else if (element.getName().equals("comments")) {
 				handleComments(element.getChildren("comment"), report, personManager);
-			} else if (element.getName().equals("subtask")) {
-				// TODO I could not find an example yet
+			} else if (element.getName().equals("issuelinks")) {
+				handleIssueLinks(element.getChildren("issuelinks"), report, personManager);
 			} else if (element.getName().equals("resolved")) {
 				DateTime dateTime = dateTimeFormat.parseDateTime(element.getText());
 				if (dateTime != null) {

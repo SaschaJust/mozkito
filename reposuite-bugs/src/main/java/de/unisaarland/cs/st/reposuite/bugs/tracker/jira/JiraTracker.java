@@ -48,6 +48,15 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 public class JiraTracker extends Tracker {
 	
+	protected static String getHistoryURL(final URI uri) {
+		String xmlUrl = uri.toString();
+		int index = xmlUrl.lastIndexOf("/");
+		String suffix = xmlUrl.substring(index, xmlUrl.length());
+		String historyUrl = xmlUrl.replace("si/jira.issueviews:issue-xml/", "browse/");
+		return historyUrl.replace(suffix,
+		"?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+	}
+	
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
@@ -194,9 +203,32 @@ public class JiraTracker extends Tracker {
 		Condition.notNull(rawReport);
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
-		JiraXMLHandler.handleRoot(bugReport, itemElement, this.personManager);
+		JiraXMLParser.handleRoot(bugReport, itemElement, this.personManager);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
+		
+		// parse history
+		String historyUrl = getHistoryURL(rawReport.getUri());
+		if (historyUrl.equals(rawReport.getUri().toString())) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not fetch jira report history: could not create neccessary url.");
+			}
+		} else {
+			try {
+				URI historyUri = new URI(historyUrl);
+				JiraXMLParser.handleHistory(historyUri, bugReport, this.personManager);
+			} catch (Exception e) {
+				if (Logger.logError()) {
+					if (bugReport.getId() == -1) {
+						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
+					} else {
+						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
+								+ "`. Used uri =`" + historyUrl + "`.");
+					}
+					Logger.error(e.getMessage(), e);
+				}
+			}
+		}
 		return bugReport;
 	}
 	

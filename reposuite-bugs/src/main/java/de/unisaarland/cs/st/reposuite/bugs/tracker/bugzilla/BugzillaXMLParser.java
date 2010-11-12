@@ -431,9 +431,17 @@ public class BugzillaXMLParser {
 			} else if (element.getName().equals("long_desc")) {
 				handleLongDesc(report,element,personManager);
 			} else if (element.getName().equals("blocked")) {
-				// TODO implement
+				try {
+					report.addSibling(new Long(element.getText()));
+				} catch (NumberFormatException e) {
+					
+				}
 			} else if (element.getName().equals("dependson")) {
-				// TODO implement
+				try {
+					report.addSibling(new Long(element.getText()));
+				} catch (NumberFormatException e) {
+					
+				}
 			}
 		}
 	}
