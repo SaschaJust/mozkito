@@ -42,33 +42,33 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Table (name = "report")
 public class Report implements Annotated {
 	
-	private long                      id       = -1l;
-	private Person                    assignedTo;
-	private String                    category;
-	private SortedSet<Comment>        comments = new TreeSet<Comment>();
-	private String                    description;
-	private Severity                  severity;
-	private Priority                  priority;
-	private Resolution                resolution;
-	private Person                    submitter;
-	private String                    subject;
-	private Set<Long>                 siblings = new HashSet<Long>();
-	private Person                    resolver;
-	private SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
-	private Status                    status;
-	private Type                      type;
-	private DateTime                  creationTimestamp;
-	private DateTime                  resolutionTimestamp;
-	private DateTime                  lastUpdateTimestamp;
-	private DateTime                  lastFetch;
-	private String                    version;
-	private String                    summary;
-	private String                    observedBehavior;
-	private String                    expectedBehavior;
-	private String                    stepsToReproduce;
-	private String                    component;
-	private String                    product;
-	private byte[]                    hash     = new byte[33];
+	private long               id       = -1l;
+	private Person             assignedTo;
+	private String             category;
+	private SortedSet<Comment> comments = new TreeSet<Comment>();
+	private String             description;
+	private Severity           severity;
+	private Priority           priority;
+	private Resolution         resolution;
+	private Person             submitter;
+	private String             subject;
+	private Set<Long>          siblings = new HashSet<Long>();
+	private Person             resolver;
+	private History            history  = new History();
+	private Status             status;
+	private Type               type;
+	private DateTime           creationTimestamp;
+	private DateTime           resolutionTimestamp;
+	private DateTime           lastUpdateTimestamp;
+	private DateTime           lastFetch;
+	private String             version;
+	private String             summary;
+	private String             observedBehavior;
+	private String             expectedBehavior;
+	private String             stepsToReproduce;
+	private String             component;
+	private String             product;
+	private byte[]             hash     = new byte[33];
 	
 	public Report() {
 		super();
@@ -79,16 +79,6 @@ public class Report implements Annotated {
 		Condition.notNull(comment);
 		Condition.notNull(this.comments);
 		this.comments.add(comment);
-	}
-	
-	/**
-	 * @param element
-	 */
-	@Transient
-	public void addElementToHistory(final HistoryElement element) {
-		Condition.notNull(element);
-		Condition.notNull(this.history);
-		this.history.add(element);
 	}
 	
 	@Transient
@@ -175,7 +165,7 @@ public class Report implements Annotated {
 	 * @return the history
 	 */
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public SortedSet<HistoryElement> getHistory() {
+	public History getHistory() {
 		return this.history;
 	}
 	
@@ -400,7 +390,7 @@ public class Report implements Annotated {
 	 * @param history
 	 *            the history to set
 	 */
-	public void setHistory(final SortedSet<HistoryElement> history) {
+	public void setHistory(final History history) {
 		this.history = history;
 	}
 	

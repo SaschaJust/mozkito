@@ -35,11 +35,11 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 @Table (name = "history_element")
 public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	
-	private Field     field;
+	private Field                             field;
 	private Map<Field, Tuple<Object, Object>> changedValues = new HashMap<Field, Tuple<Object, Object>>();
-	private DateTime  timestamp;
-	private Report   bugReport;
-	private Person   author;
+	private DateTime                          timestamp;
+	private Report                            bugReport;
+	private Person                            author;
 	
 	/**
 	 * used by hibernate
@@ -56,8 +56,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param timestamp
 	 */
 	public HistoryElement(final Person author, final Report bugReport, final Field field, final Object oldValue,
-			final Object newValue,
-			final DateTime timestamp) {
+	        final Object newValue, final DateTime timestamp) {
 		Condition.notNull(author);
 		Condition.notNull(bugReport);
 		Condition.notNull(timestamp);
@@ -89,7 +88,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addChangedValue(final Field field, final Object oldValue, final Object newValue){
+	public boolean addChangedValue(final Field field, final Object oldValue, final Object newValue) {
 		if (this.getChangedValues().containsKey(field)) {
 			return false;
 		}
@@ -128,8 +127,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.changedValues;
 	}
 	
-	
-	
 	/**
 	 * @return the field
 	 */
@@ -148,6 +145,14 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.timestamp.toDate();
 	}
 	
+	public Object getNewValue(final Field field) {
+		return this.changedValues.get(field).getSecond();
+	}
+	
+	public Object getOldValue(final Field field) {
+		return this.changedValues.get(field).getFirst();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
@@ -157,7 +162,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public Collection<Annotated> getSaveFirst() {
 		return null;
 	}
-	
 	
 	/**
 	 * @return the timestamp
@@ -170,8 +174,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public void setAuthor(final Person author) {
 		this.author = author;
 	}
-	
-	
 	
 	/**
 	 * @param bugReport
@@ -205,6 +207,5 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
-	
 	
 }
