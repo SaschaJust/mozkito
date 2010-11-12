@@ -12,5 +12,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-bugs"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dtracker.fetchURI=file:///Users/just/Documents/University/msa_ss10/project/jedit_reports -Dtracker.overviewURI=file:///Users/just/Documents/University/msa_ss10/project/jedit_reports -Dtracker.pattern=/sourceforgeIssueReport_group_id=588_atid=100588aid=&lt;BUGID&gt;.xhtml -ea -Dlog.level=debug -Dtracker.type=sourceforge -Dcache.size=10"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dtracker.fetchURI=file:///Users/just/Documents/University/msa_ss10/project/jedit_reports -Dtracker.overviewURI=file:///Users/just/Documents/University/msa_ss10/project/jedit_reports -Dtracker.pattern=/sourceforgeIssueReport_group_id=588_atid=100588aid=&lt;BUGID&gt;.xhtml -ea -Dlog.level=warn -Dtracker.type=sourceforge -Dcache.size=10"/>
 </launchConfiguration>

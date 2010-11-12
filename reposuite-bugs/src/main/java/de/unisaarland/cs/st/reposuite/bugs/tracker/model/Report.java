@@ -552,7 +552,7 @@ public class Report implements Annotated {
 		try {
 			hash = JavaUtils.byteArrayToHexString(this.hash);
 		} catch (UnsupportedEncodingException e) {
-			hash = "encoding failed";
+			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
 		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
