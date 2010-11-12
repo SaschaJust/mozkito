@@ -170,9 +170,9 @@ public class Regex {
 			new NamedPattern(pattern);
 		} catch (Exception e) {
 			
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
+			// if (Logger.logError()) {
+			// Logger.error(e.getMessage(), e);
+			// }
 			
 			return false;
 		}
@@ -197,7 +197,7 @@ public class Regex {
 		regex.setPattern(pattern);
 		Regex bsReplacer = new Regex("\\\\+$");
 		
-		while ((regex.find(text) == null) && (pattern.length() > 1)) {
+		while ((regex.find(text) == null) && (pattern.length() > 2)) {
 			
 			try {
 				pattern = pattern.substring(0, pattern.length() - 1);
@@ -293,7 +293,7 @@ public class Regex {
 		if (this.matcher.find()) {
 			this.matched = true;
 			
-			for (int i = 1; i < this.matcher.groupCount(); ++i) {
+			for (int i = 0; i < this.matcher.groupCount(); ++i) {
 				this.matches.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i, this.pattern
 				        .getGroupName(i)));
 				

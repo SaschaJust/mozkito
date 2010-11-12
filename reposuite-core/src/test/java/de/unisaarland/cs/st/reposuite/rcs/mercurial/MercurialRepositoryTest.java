@@ -41,7 +41,7 @@ public class MercurialRepositoryTest {
 		String line = "reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CommandExecutor.java (reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java)";
 		List<RegexGroup> found = MercurialRepository.formerPathRegex.find(line);
 		assertTrue(MercurialRepository.formerPathRegex.matches(line));
-		assertEquals(1, found.size());
+		assertEquals(2, found.size());
 		assertEquals("reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java",
 		        MercurialRepository.formerPathRegex.getGroup("result"));
 	}

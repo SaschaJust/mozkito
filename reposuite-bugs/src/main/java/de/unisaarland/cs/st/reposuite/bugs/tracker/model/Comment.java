@@ -32,11 +32,11 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 @Table (name = "comment")
 public class Comment implements Annotated, Comparable<Comment> {
 	
-	private long      id;
-	private DateTime  timestamp;
-	private Person    author;
-	private String    message;
-	private Report bugReport;
+	private long     id;
+	private DateTime timestamp;
+	private Person   author;
+	private String   message;
+	private Report   bugReport;
 	
 	/**
 	 * 
@@ -62,6 +62,8 @@ public class Comment implements Annotated, Comparable<Comment> {
 		this.author = author;
 		this.timestamp = timestamp;
 		this.message = message;
+		
+		bugReport.addComment(this);
 	}
 	
 	/*

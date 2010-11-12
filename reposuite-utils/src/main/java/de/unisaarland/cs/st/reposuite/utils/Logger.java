@@ -15,6 +15,7 @@ public class Logger {
 	
 	static {
 		setLogLevel(LogLevel.valueOf(System.getProperty("log.level", "WARN").toUpperCase()));
+		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(getLogLevel().toString()));
 	}
 	
 	/**

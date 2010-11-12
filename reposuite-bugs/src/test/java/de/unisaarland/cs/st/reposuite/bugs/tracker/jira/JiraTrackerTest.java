@@ -152,8 +152,8 @@ public class JiraTrackerTest {
 		String s = "[JAXEN-210] Jaxen does not cope well with numeric types other than Double";
 		assertTrue(JiraIDExtractor.idRegex.matches(s));
 		List<RegexGroup> find = JiraIDExtractor.idRegex.find(s);
-		assertEquals(1, find.size());
-		assertEquals(find.get(0).getMatch(), "210");
+		assertEquals(2, find.size());
+		assertEquals(find.get(1).getMatch(), "210");
 	}
 	
 	@Test

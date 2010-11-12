@@ -92,19 +92,19 @@ public class RegexTest {
 		String text = "blehbbbblubblahh";
 		List<RegexGroup> find = regex.find(text);
 		
-		assertEquals(2, find.size());
+		assertEquals(3, find.size());
 		
-		assertEquals(1, find.get(0).getIndex());
-		assertEquals("bbbblub", find.get(0).getMatch());
-		assertEquals("", find.get(0).getName());
-		assertEquals(regex.getPattern(), find.get(0).getPattern());
-		assertEquals(text, find.get(0).getText());
-		
-		assertEquals(2, find.get(1).getIndex());
-		assertEquals("hh", find.get(1).getMatch());
+		assertEquals(1, find.get(1).getIndex());
+		assertEquals("bbbblub", find.get(1).getMatch());
 		assertEquals("", find.get(1).getName());
 		assertEquals(regex.getPattern(), find.get(1).getPattern());
 		assertEquals(text, find.get(1).getText());
+		
+		assertEquals(2, find.get(2).getIndex());
+		assertEquals("hh", find.get(2).getMatch());
+		assertEquals("", find.get(2).getName());
+		assertEquals(regex.getPattern(), find.get(2).getPattern());
+		assertEquals(text, find.get(2).getText());
 	}
 	
 	/**
@@ -250,25 +250,25 @@ public class RegexTest {
 		String text = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
 		List<RegexGroup> find = regex.find(text);
 		
-		assertEquals(3, find.size());
+		assertEquals(4, find.size());
 		
-		assertEquals(1, find.get(0).getIndex());
-		assertEquals("2007", find.get(0).getMatch());
-		assertEquals("year", find.get(0).getName());
-		assertEquals(regex.getPattern(), find.get(0).getPattern());
-		assertEquals(text, find.get(0).getText());
-		
-		assertEquals(2, find.get(1).getIndex());
-		assertEquals("11", find.get(1).getMatch());
-		assertEquals("month", find.get(1).getName());
+		assertEquals(1, find.get(1).getIndex());
+		assertEquals("2007", find.get(1).getMatch());
+		assertEquals("year", find.get(1).getName());
 		assertEquals(regex.getPattern(), find.get(1).getPattern());
 		assertEquals(text, find.get(1).getText());
 		
-		assertEquals(3, find.get(2).getIndex());
-		assertEquals("20", find.get(2).getMatch());
-		assertEquals("day", find.get(2).getName());
+		assertEquals(2, find.get(2).getIndex());
+		assertEquals("11", find.get(2).getMatch());
+		assertEquals("month", find.get(2).getName());
 		assertEquals(regex.getPattern(), find.get(2).getPattern());
 		assertEquals(text, find.get(2).getText());
+		
+		assertEquals(3, find.get(3).getIndex());
+		assertEquals("20", find.get(3).getMatch());
+		assertEquals("day", find.get(3).getName());
+		assertEquals(regex.getPattern(), find.get(3).getPattern());
+		assertEquals(text, find.get(3).getText());
 	}
 	
 	@Test
@@ -296,8 +296,8 @@ public class RegexTest {
 		
 		regex = new Regex("b(?=({test}a))");
 		List<RegexGroup> find = regex.find("ba");
-		assertEquals(1, find.size());
-		assertEquals("a", find.get(0).getMatch());
+		assertEquals(2, find.size());
+		assertEquals("a", find.get(1).getMatch());
 	}
 	
 	@Test

@@ -22,13 +22,13 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class JiraXMLHandler {
 	
-	protected static Regex idRegex = new Regex("^[^-]+-({bugid}\\d+)");
+	protected static Regex             idRegex        = new Regex("^[^-]+-({bugid}\\d+)");
 	protected static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
 	
 	// TODO subTasks
 	
 	private static void handleComments(final List<Element> comments, final Report report,
-			final PersonManager personManager) {
+	        final PersonManager personManager) {
 		for (Element comment : comments) {
 			Person author = personManager.getPerson(new Person(comment.getAttributeValue("author"), null, null));
 			DateTime commentDate = dateTimeFormat.parseDateTime(comment.getAttributeValue("created"));
@@ -46,7 +46,7 @@ public class JiraXMLHandler {
 		Condition.notNull(root);
 		Condition.notNull(personManager);
 		Condition.equals(root.getName(), "item");
-
+		
 		List<Element> children = root.getChildren();
 		for (Element element : children) {
 			if (element.getName().equals("title")) {
@@ -55,28 +55,28 @@ public class JiraXMLHandler {
 				report.setDescription(element.getText());
 			} else if (element.getName().equals("key")) {
 				List<RegexGroup> groups = idRegex.find(element.getText());
-				if ((groups == null) || (groups.size() != 1)) {
+				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-								+ ". Cannot determine report id. Abort!");
+						        + ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
-				report.setId(new Long(groups.get(0).getMatch()).longValue());
+				report.setId(new Long(groups.get(1).getMatch()).longValue());
 			} else if (element.getName().equals("summary")) {
 				report.setSummary(element.getText());
 			} else if (element.getName().equals("type")) {
 				String typeString = element.getText();
-				try{
+				try {
 					Type type = Type.valueOf(typeString.toUpperCase());
 					report.setType(type);
-				}catch(IllegalArgumentException e){
+				} catch (IllegalArgumentException e) {
 					if (typeString.equals("Improvement") || typeString.equals("New Feature")) {
 						report.setType(Type.RFE);
-					}else if(typeString.equals("Sub-Task")){
+					} else if (typeString.equals("Sub-Task")) {
 						// FIXME get the type of the parent report
 						report.setType(Type.OTHER);
-					}else{
+					} else {
 						report.setType(Type.OTHER);
 					}
 				}
@@ -117,26 +117,26 @@ public class JiraXMLHandler {
 					report.setStatus(Status.IN_PROGRESS);
 				} else if (statusString.equals("With Customer")) {
 					report.setStatus(Status.IN_PROGRESS);
-				}else {
+				} else {
 					report.setStatus(Status.UNKNOWN);
 				}
 			} else if (element.getName().equals("resolution")) {
 				String resString = element.getText();
 				if (resString.equals("Won't Fix")) {
 					report.setResolution(Resolution.WONT_FIX);
-				}else if(resString.equals("Duplicate")){
+				} else if (resString.equals("Duplicate")) {
 					report.setResolution(Resolution.DUPLICATE);
-				}else if(resString.equals("Incomplete")){
+				} else if (resString.equals("Incomplete")) {
 					report.setResolution(Resolution.UNRESOLVED);
-				}else if(resString.equals("Cannot Reproduce")){
+				} else if (resString.equals("Cannot Reproduce")) {
 					report.setResolution(Resolution.WORKS_FOR_ME);
-				}else if(resString.equals("Not A Bug")){
+				} else if (resString.equals("Not A Bug")) {
 					report.setResolution(Resolution.INVALID);
-				}else if(resString.equals("Unresolved")){
+				} else if (resString.equals("Unresolved")) {
 					report.setResolution(Resolution.UNRESOLVED);
-				}else if(resString.equals("Fixed")){
+				} else if (resString.equals("Fixed")) {
 					report.setResolution(Resolution.RESOLVED);
-				}else {
+				} else {
 					report.setResolution(Resolution.UNKNOWN);
 				}
 				

@@ -97,11 +97,6 @@ public abstract class Tracker {
 		Condition.notNull(rawReport);
 		
 		boolean retval = true;
-		retval &= rawReport.getContent().contains("<digest>");
-		retval &= rawReport.getContent().contains("</digest>");
-		
-		retval &= rawReport.getContent().contains("<fetchstamp>");
-		retval &= rawReport.getContent().contains("</fetchstamp>");
 		return retval;
 	}
 	

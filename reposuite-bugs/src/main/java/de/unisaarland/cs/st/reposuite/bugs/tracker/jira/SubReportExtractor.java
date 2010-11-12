@@ -12,7 +12,7 @@ public class SubReportExtractor {
 	public static Element extract(final Element element, final Long idToSearch) {
 		Condition.notNull(element);
 		Condition.notNull(idToSearch);
-
+		
 		if (element.getName().equals("rss")) {
 			return extract(element.getChild("channel"), idToSearch);
 		} else if (element.getName().equals("channel")) {
@@ -27,7 +27,7 @@ public class SubReportExtractor {
 			if (element.getChild("title") != null) {
 				String title = element.getChild("title").getText().trim();
 				List<RegexGroup> groups = JiraIDExtractor.idRegex.find(title);
-				if ((groups.size() == 1) && (groups.get(0).getMatch().equals(idToSearch.toString()))) {
+				if ((groups.size() == 2) && (groups.get(1).getMatch().equals(idToSearch.toString()))) {
 					return element;
 				}
 			}

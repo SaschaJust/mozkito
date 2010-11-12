@@ -26,7 +26,7 @@ public class GitRepositoryTest {
 	public void testFormerPathRegex() {
 		String line = "R100    hello.py        python.py";
 		List<RegexGroup> found = GitRepository.formerPathRegex.find(line);
-		assertEquals(1, found.size());
+		assertEquals(2, found.size());
 		assertEquals("hello.py", GitRepository.formerPathRegex.getGroup("result"));
 	}
 	
