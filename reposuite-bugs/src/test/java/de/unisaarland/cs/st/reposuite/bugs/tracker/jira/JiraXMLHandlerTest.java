@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 
 public class JiraXMLHandlerTest {
 	
@@ -25,7 +25,7 @@ public class JiraXMLHandlerTest {
 	@Test
 	public void testDateFormat() {
 		String dateString = "Fri, 5 Nov 2010 08:24:16 -0500";
-		DateTime time = JiraXMLParser.dateTimeFormat.parseDateTime(dateString);
+		DateTime time = DateTimeUtils.parseDate(dateString, JiraXMLParser.dateTimeFormatRegex);
 		assertTrue(time != null);
 		assertEquals(DateTimeConstants.FRIDAY, time.getDayOfWeek());
 		assertEquals(DateTimeConstants.NOVEMBER, time.getMonthOfYear());

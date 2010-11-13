@@ -5,15 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -23,11 +22,14 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 class GitLogParser {
 	
-	protected static DateTimeFormatter gitLogDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
-	protected static Regex             regex            = new Regex(
-	                                                            "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
-	protected static Regex             messageRegex     = new Regex(".*$$\\s*git-svn-id:.*");
-	private static final PersonManager personManager    = new PersonManager();
+	// protected static DateTimeFormatter gitLogDateFormat =
+	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
+	protected static Regex             gitLogDateFormatRegex = new Regex(
+	                                                                 "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
+	protected static Regex             regex                 = new Regex(
+	                                                                 "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	protected static Regex             messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
+	private static final PersonManager personManager         = new PersonManager();
 	
 	/**
 	 * Parses the list of log messages.
@@ -53,7 +55,7 @@ class GitLogParser {
 			if (line.startsWith("commit")) {
 				if (currentID != null) {
 					DateTime dateTime = new DateTime();
-					dateTime = gitLogDateFormat.parseDateTime(date);
+					dateTime = DateTimeUtils.parseDate(date, gitLogDateFormatRegex);
 					LogEntry previous = null;
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
@@ -130,7 +132,7 @@ class GitLogParser {
 		}
 		if (currentID != null) {
 			DateTime dateTime;
-			dateTime = gitLogDateFormat.parseDateTime(date);
+			dateTime = DateTimeUtils.parseDate(date, gitLogDateFormatRegex);
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);

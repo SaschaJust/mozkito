@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -18,7 +19,11 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateTimeUtils {
 	
 	private static final Regex               timestampRegex = new Regex(
-	                                                                "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}\\s+[A-Za-z]{3,4})?");
+	                                                                "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?(({z}\\s+[A-Za-z]{3,4})|({Z}[+-]\\d{4}))?");
+	
+	static {
+		DateTimeZone.setDefault(DateTimeZone.UTC);
+	}
 	
 	/**
 	 * @see <a
@@ -157,6 +162,10 @@ public class DateTimeUtils {
 		                                                        }
 	                                                        };
 	
+	public static DateTime parseDate(final String dateTimeString) {
+		return parseDate(dateTimeString, timestampRegex);
+	}
+	
 	/**
 	 * Parses the date in form `yyyy-MM-dd HH:mm:ss Z` where Z can also be
 	 * represented as non-offset. Z and :ss do not have to be present.
@@ -165,14 +174,16 @@ public class DateTimeUtils {
 	 *            the datetime string, not null
 	 * @return the date time
 	 */
-	public static DateTime parseDate(final String dateTimeString) {
+	public static DateTime parseDate(final String dateTimeString, final Regex pattern) {
 		Condition.notNull(dateTimeString);
-		Condition.greaterOrEqual(dateTimeString.length(), "yyyy-MM-dd HH:mm".length());
+		Condition.notNull(pattern);
+		// Condition.greaterOrEqual(dateTimeString.length(),
+		// "yyyy-MM-dd HH:mm".length());
 		
 		List<RegexGroup> find;
 		DateTime d = null;
 		
-		if ((find = timestampRegex.find(dateTimeString)) != null) {
+		if ((find = pattern.find(dateTimeString)) != null) {
 			// with time zone abbreviation
 			if (Logger.logTrace()) {
 				Logger.trace("Parsing date `" + find.get(0).getMatch() + "` with: "
@@ -182,16 +193,22 @@ public class DateTimeUtils {
 			StringBuilder dateBuilder = new StringBuilder();
 			for (RegexGroup group : find) {
 				if (!group.getName().equals("") && (group.getMatch() != null)) {
-					patternBuilder.append(group.getName());
-					patternBuilder.append(" ");
-					if (group.getName().equals("Z")) {
+					if (group.getName().equals("z")) {
 						String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(group.getMatch().trim());
+						patternBuilder.append("Z");
 						dateBuilder.append(offset);
 					} else {
-						dateBuilder.append(group.getMatch());
+						patternBuilder.append(group.getName());
+						dateBuilder.append(group.getMatch().trim());
 					}
+					patternBuilder.append(" ");
 					dateBuilder.append(" ");
 				}
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace("GOT: " + dateTimeString + ", formatted to: " + dateBuilder.toString() + ", pattern: "
+				        + patternBuilder.toString());
 			}
 			
 			DateTimeFormatter dtf = DateTimeFormat.forPattern(patternBuilder.toString());

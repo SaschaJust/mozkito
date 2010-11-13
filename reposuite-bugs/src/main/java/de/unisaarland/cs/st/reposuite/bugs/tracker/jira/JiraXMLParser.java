@@ -13,8 +13,6 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
@@ -28,6 +26,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
@@ -36,12 +35,19 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class JiraXMLParser {
 	
-	protected static Regex             idRegex        = new Regex("^[^-]+-({bugid}\\d+)");
-	protected static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
-	protected static DateTimeFormatter dateTimeHistoryFormat = DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
-	protected static Namespace         namespace      = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
+	protected static Regex       idRegex                    = new Regex("^[^-]+-({bugid}\\d+)");
+	// protected static DateTimeFormatter dateTimeFormat =
+	// DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
+	// protected static DateTimeFormatter dateTimeHistoryFormat =
+	// DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
+	protected static final Regex dateTimeFormatRegex        = new Regex(
+	                                                                "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
+	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
+	                                                                "({dd}[0-3]\\d)/({MMM}[0-2]\\d)/({yy}\\d{2})\\s+({hh}[0-1]\\d):({mm}[0-5]\\d)\\s([AaPp][Mm])");
+	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
-	protected static Element getElement(final Element root, final Namespace namespace, final String tag, final String attribute, final String value){
+	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
+	        final String attribute, final String value) {
 		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
@@ -49,7 +55,7 @@ public class JiraXMLParser {
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
-				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+		        + value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
 	}
 	
 	protected static Priority getPriority(final String prioString) {
@@ -115,10 +121,10 @@ public class JiraXMLParser {
 	}
 	
 	private static void handleComments(final List<Element> comments, final Report report,
-			final PersonManager personManager) {
+	        final PersonManager personManager) {
 		for (Element comment : comments) {
 			Person author = personManager.getPerson(new Person(comment.getAttributeValue("author"), null, null));
-			DateTime commentDate = dateTimeFormat.parseDateTime(comment.getAttributeValue("created"));
+			DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"), dateTimeFormatRegex);
 			String commentText = comment.getText();
 			if ((report.getResolutionTimestamp() != null) && (report.getResolutionTimestamp().isEqual(commentDate))) {
 				report.setResolver(author);
@@ -129,13 +135,12 @@ public class JiraXMLParser {
 	
 	@SuppressWarnings ("unchecked")
 	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	throws UnsupportedProtocolException, JDOMException, IOException, SecurityException,
-	NoSuchFieldException {
+	        throws UnsupportedProtocolException, JDOMException, IOException, SecurityException, NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
 		Condition.notNull(personManager);
 		
-		try{
+		try {
 			RawContent rawContent = IOUtils.fetch(historyUri);
 			BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
@@ -146,7 +151,7 @@ public class JiraXMLParser {
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-							+ rootElement.getName() + ">.");
+					        + rootElement.getName() + ">.");
 				}
 				return;
 			}
@@ -158,7 +163,6 @@ public class JiraXMLParser {
 				}
 				return;
 			}
-			
 			
 			Element nextElem = getElement(body, namespace, "div", "id", "main-content");
 			nextElem = getElement(nextElem, namespace, "div", "class", "active-area");
@@ -178,10 +182,9 @@ public class JiraXMLParser {
 						String oldValue = null;
 						String newValue = null;
 						
-						
 						Element actionDetails = getElement(actionContainer, namespace, "div", "class", "action-details");
 						Element actionDetailsA = getElement(actionDetails, namespace, "a", "class",
-						"user-hover user-avatar");
+						        "user-hover user-avatar");
 						String email = actionDetailsA.getAttributeValue("rel");
 						String fullname = actionDetailsA.getText();
 						author = personManager.getPerson(new Person(null, fullname, email));
@@ -189,7 +192,7 @@ public class JiraXMLParser {
 						Element date = getElement(actionDetails, namespace, "span", "class", "date");
 						String dateString = date.getText();
 						if (dateString != null) {
-							timestamp = dateTimeHistoryFormat.parseDateTime(dateString);
+							timestamp = DateTimeUtils.parseDate(dateString, dateTimeHistoryFormatRegex);
 						}
 						
 						Element actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
@@ -219,20 +222,20 @@ public class JiraXMLParser {
 								}
 								return;
 							}
-							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText().trim();
+							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText()
+							        .trim();
 							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
 							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
 							
-							
-							if(fieldString.equals("Status")){
+							if (fieldString.equals("Status")) {
 								hElement.addChangedValue(Report.class.getDeclaredField("status"), getStatus(oldValue),
-										getStatus(newValue));
-							}else if(fieldString.equals("Resolution")){
+								        getStatus(newValue));
+							} else if (fieldString.equals("Resolution")) {
 								hElement.addChangedValue(Report.class.getDeclaredField("resolution"),
-										getResolution(oldValue), getResolution(newValue));
+								        getResolution(oldValue), getResolution(newValue));
 							} else if (fieldString.equals("Priority")) {
 								hElement.addChangedValue(Report.class.getDeclaredField("priority"),
-										getPriority(oldValue), getPriority(newValue));
+								        getPriority(oldValue), getPriority(newValue));
 							}
 						}
 						if (hElement.getChangedValues().keySet().size() > 0) {
@@ -247,7 +250,7 @@ public class JiraXMLParser {
 				Logger.error("Error while parsing jira history. HTML structure unknown: " + e.getMessage(), e);
 			}
 			return;
-		} catch (FetchException e){
+		} catch (FetchException e) {
 			if (Logger.logError()) {
 				Logger.error("Error while fetching jira history. URL not found: " + e.getMessage(), e);
 			}
@@ -258,25 +261,25 @@ public class JiraXMLParser {
 	
 	@SuppressWarnings ("unchecked")
 	private static void handleIssueLinks(final List<Element> elements, final Report report,
-			final PersonManager personManager) {
+	        final PersonManager personManager) {
 		Condition.notNull(elements);
 		Condition.notNull(report);
 		Condition.notNull(personManager);
 		
-		for(Element issueLinkType : elements){
-			if(issueLinkType.getName().equals("issuelinktype")){
+		for (Element issueLinkType : elements) {
+			if (issueLinkType.getName().equals("issuelinktype")) {
 				List<Element> links = issueLinkType.getChildren();
-				for(Element link : links){
-					if(link.getName().equals("inwardlinks") || link.getName().equals("outwardlinks")){
+				for (Element link : links) {
+					if (link.getName().equals("inwardlinks") || link.getName().equals("outwardlinks")) {
 						List<Element> issueLinks = link.getChildren("issuelink");
-						for(Element issueLink : issueLinks){
+						for (Element issueLink : issueLinks) {
 							Element issueKey = issueLink.getChild("issuekey");
-							if(issueKey != null){
-								List<RegexGroup> groups= idRegex.find(issueKey.getText());
+							if (issueKey != null) {
+								List<RegexGroup> groups = idRegex.find(issueKey.getText());
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
-												+ ". Cannot determine report id. Abort!");
+										        + ". Cannot determine report id. Abort!");
 									}
 									return;
 								}
@@ -308,7 +311,7 @@ public class JiraXMLParser {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-								+ ". Cannot determine report id. Abort!");
+						        + ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
@@ -360,12 +363,12 @@ public class JiraXMLParser {
 					}
 				}
 			} else if (element.getName().equals("created")) {
-				DateTime dateTime = dateTimeFormat.parseDateTime(element.getText());
+				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setCreationTimestamp(dateTime);
 				}
 			} else if (element.getName().equals("updated")) {
-				DateTime dateTime = dateTimeFormat.parseDateTime(element.getText());
+				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setLastUpdateTimestamp(dateTime);
 				}
@@ -374,7 +377,7 @@ public class JiraXMLParser {
 			} else if (element.getName().equals("issuelinks")) {
 				handleIssueLinks(element.getChildren(), report, personManager);
 			} else if (element.getName().equals("resolved")) {
-				DateTime dateTime = dateTimeFormat.parseDateTime(element.getText());
+				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setResolutionTimestamp(dateTime);
 				}

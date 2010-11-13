@@ -57,6 +57,15 @@ public class Regex {
 			Logger.trace("Checking pattern: " + pattern);
 		}
 		
+		if (pattern.matches(".*\\[:[a-zA-Z]+:\\].*")) {
+			
+			if (Logger.logWarn()) {
+				Logger.warn(Regex.class.getSimpleName()
+				        + "does not support posix character classes like: [:alpha:], [:punct:], etc...");
+			}
+			return false;
+		}
+		
 		// remove all character classes []
 		Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\][*+]?\\??");
 		String patternWithoutCharacterClasses = characterGroups.removeAll(pattern);

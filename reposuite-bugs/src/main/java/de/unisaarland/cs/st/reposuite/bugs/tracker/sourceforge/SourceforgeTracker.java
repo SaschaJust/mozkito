@@ -318,11 +318,26 @@ public class SourceforgeTracker extends Tracker {
 					// .println("================================================================================");
 					// System.err.println(e2.getValue());
 					Element commenter = e1.getChild("a", e1.getNamespace());
+					System.err.println(">>>" + bugReport.getId());
+					String commenterUsername;
+					String commenterFullname;
 					
-					String commenterUsername = commenter.getContent(0) != null ? commenter.getContent(0).getValue()
-					        .trim() : null;
-					String commenterFullname = ((((commenter.getAttributes() != null) && (commenter.getAttributes()
-					        .size() > 2))) ? ((Attribute) commenter.getAttributes().get(2)).getValue() : null);
+					if (commenter == null) {
+						commenterUsername = "nobody";
+						commenterFullname = "Nobody/Anonymous";
+					} else {
+						if (commenter.getContent(0) != null) {
+							commenterUsername = commenter.getContent(0).getValue().trim();
+						} else {
+							commenterUsername = null;
+						}
+						if ((commenter.getAttributes() != null) && (commenter.getAttributes().size() > 2)) {
+							commenterFullname = ((Attribute) commenter.getAttributes().get(2)).getValue();
+						} else {
+							commenterFullname = null;
+						}
+					}
+					
 					Person commentAuthor = this.personManager.getPerson(new Person(commenterFullname,
 					        commenterUsername, null));
 					String datetime = e1.getContent(0).getValue().trim();
@@ -346,77 +361,79 @@ public class SourceforgeTracker extends Tracker {
 			}
 			Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
 			Element body = tabular.getChild("tbody", tabular.getNamespace());
-			List<Element> tableRows = body.getChildren("tr", body.getNamespace());
-			for (Element tableRow : tableRows) {
-				Element fieldElement = ((Element) tableRow.getChildren().get(0));
-				Element oldValueElement = ((Element) tableRow.getChildren().get(1));
-				Element datetimeElement = ((Element) tableRow.getChildren().get(2));
-				Element authorElement = (Element) ((Element) tableRow.getChildren().get(3)).getContent().get(0);
-				
-				Field field = null;
-				field = fieldMap.get(fieldElement.getValue().toLowerCase().trim());
-				if (field == null) {
+			if (body != null) {
+				List<Element> tableRows = body.getChildren("tr", body.getNamespace());
+				for (Element tableRow : tableRows) {
+					Element fieldElement = ((Element) tableRow.getChildren().get(0));
+					Element oldValueElement = ((Element) tableRow.getChildren().get(1));
+					Element datetimeElement = ((Element) tableRow.getChildren().get(2));
+					Element authorElement = (Element) ((Element) tableRow.getChildren().get(3)).getContent().get(0);
 					
-					if (Logger.logWarn()) {
-						Logger.warn("Field not found: " + fieldElement.getValue().toLowerCase().trim());
+					Field field = null;
+					field = fieldMap.get(fieldElement.getValue().toLowerCase().trim());
+					if (field == null) {
+						
+						if (Logger.logWarn()) {
+							Logger.warn("Field not found: " + fieldElement.getValue().toLowerCase().trim());
+						}
+						return;
 					}
-					return;
-				}
-				History history = bugReport.getHistory().get(field);
-				
-				Object newValue = null;
-				if (history.isEmpty()) {
-					// take actual value
-					Method method = null;
-					try {
-						method = Report.class.getMethod("get" + Character.toUpperCase(field.getName().charAt(0))
-						        + field.getName().substring(1), new Class<?>[0]);
-					} catch (SecurityException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					History history = bugReport.getHistory().get(field);
+					
+					Object newValue = null;
+					if (history.isEmpty()) {
+						// take actual value
+						Method method = null;
+						try {
+							method = Report.class.getMethod("get" + Character.toUpperCase(field.getName().charAt(0))
+							        + field.getName().substring(1), new Class<?>[0]);
+						} catch (SecurityException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (NoSuchMethodException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							newValue = method.invoke(bugReport, new Object[0]);
+						} catch (IllegalArgumentException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IllegalAccessException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InvocationTargetException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					} else {
+						// take this
+						newValue = history.last().getNewValue(field);
 					}
-					try {
-						newValue = method.invoke(bugReport, new Object[0]);
-					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					
+					Object oldValue = null;
+					
+					if (field.getName().equalsIgnoreCase("PRIORITY")) {
+						oldValue = buildPriority(oldValueElement.getValue());
+					} else if (field.getName().equalsIgnoreCase("RESOLUTION")) {
+						oldValue = buildResolution(oldValueElement.getValue());
+					} else if (field.getName().equalsIgnoreCase("SEVERITY")) {
+						oldValue = buildSeverity(oldValueElement.getValue());
+					} else if (field.getName().equalsIgnoreCase("STATUS")) {
+						oldValue = buildStatus(oldValueElement.getValue());
+					} else if (field.getName().equalsIgnoreCase("TYPE")) {
+						oldValue = buildType(oldValueElement.getValue());
+					} else {
+						oldValue = oldValueElement.getValue();
 					}
-				} else {
-					// take this
-					newValue = history.last().getNewValue(field);
+					
+					String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
+					String authorUsername = authorElement != null ? authorElement.getValue() : null;
+					
+					bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(
+					        authorUsername, authorFullname, null)), bugReport, field, oldValue, newValue, DateTimeUtils
+					        .parseDate(datetimeElement.getValue())));
 				}
-				
-				Object oldValue = null;
-				
-				if (field.getName().equalsIgnoreCase("PRIORITY")) {
-					oldValue = buildPriority(oldValueElement.getValue());
-				} else if (field.getName().equalsIgnoreCase("RESOLUTION")) {
-					oldValue = buildResolution(oldValueElement.getValue());
-				} else if (field.getName().equalsIgnoreCase("SEVERITY")) {
-					oldValue = buildSeverity(oldValueElement.getValue());
-				} else if (field.getName().equalsIgnoreCase("STATUS")) {
-					oldValue = buildStatus(oldValueElement.getValue());
-				} else if (field.getName().equalsIgnoreCase("TYPE")) {
-					oldValue = buildType(oldValueElement.getValue());
-				} else {
-					oldValue = oldValueElement.getValue();
-				}
-				
-				String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
-				String authorUsername = authorElement != null ? authorElement.getValue() : null;
-				
-				bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(authorUsername,
-				        authorFullname, null)), bugReport, field, oldValue, newValue, DateTimeUtils
-				        .parseDate(datetimeElement.getValue())));
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
 			// e = (Element) (e.getChildren() != null ? e.getChildren().get(0) :
@@ -471,9 +488,9 @@ public class SourceforgeTracker extends Tracker {
 		// Element element = content.getDocument().getRootElement();
 		Element element = xmlReport.getDocument().getRootElement();
 		Report bugReport = new Report();
-		hangle(bugReport, element, null);
 		bugReport.setLastFetch(xmlReport.getFetchTime());
 		bugReport.setHash(xmlReport.getMd5());
+		hangle(bugReport, element, null);
 		SortedSet<Comment> comments = bugReport.getComments();
 		int i = comments.size();
 		for (Comment comment : comments) {

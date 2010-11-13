@@ -208,36 +208,35 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.7</version>
-							<executions>
-								<execution>
-									<id>attach-javadocs</id>
-									<goals>
-										<goal>jar</goal>
-									</goals>
-									<phase>package</phase>
-								</execution>
-							</executions>
-							<configuration>
-								<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-								<docletArtifact>
-									<groupId>org.umlgraph</groupId>
-									<artifactId>doclet</artifactId>
-									<version>5.3</version>
-								</docletArtifact> -->
-					<!-- <additionalparam>-views</additionalparam> -->
-					<!-- <useStandardDocletOptions>true</useStandardDocletOptions>
-										<minmemory>64m</minmemory>
-										<maxmemory>512m</maxmemory>
-										<show>private</show>
-										<linksource>true</linksource>
-										<quiet>true</quiet>
-										<source>1.6</source>
-									</configuration>
-								</plugin> -->
+			<!--<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+					<docletArtifact>
+						<groupId>org.umlgraph</groupId>
+						<artifactId>doclet</artifactId>
+						<version>5.3</version>
+					</docletArtifact>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+					<minmemory>64m</minmemory>
+					<maxmemory>512m</maxmemory>
+					<show>private</show>
+					<linksource>true</linksource>
+					<quiet>true</quiet>
+					<source>1.6</source>
+				</configuration>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
