@@ -41,9 +41,10 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		}
 		
 		HibernateUtil.createSessionFactory(arguments.get("database.host").getValue().toString(),
-		        arguments.get("database").getValue().toString(), arguments.get("database.user").getValue().toString(),
-		        arguments.get("database.password").getValue().toString(), arguments.get("database.type").getValue()
-		                .toString(), arguments.get("database.driver").getValue().toString());
+		        arguments.get("database.name").getValue().toString(), arguments.get("database.user").getValue()
+		                .toString(), arguments.get("database.password").getValue().toString(),
+		        arguments.get("database.type").getValue().toString(), arguments.get("database.driver").getValue()
+		                .toString());
 		try {
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			return hibernateUtil;

@@ -3,6 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -11,7 +14,11 @@ import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -19,6 +26,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 
@@ -77,6 +87,80 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		return builder.toString();
 	}
 	
+	private static String getThreadInformation() {
+		ThreadGroup root = Thread.currentThread().getThreadGroup().getParent();
+		while (root.getParent() != null) {
+			root = root.getParent();
+		}
+		
+		// Visit each thread group
+		return visit(root, 0) + FileUtils.lineSeparator;
+	}
+	
+	private static String getVersionInfo() {
+		StringBuilder builder = new StringBuilder();
+		String path = CrashHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		try {
+			if (path.endsWith(".jar")) {
+				JarFile jarFile = new JarFile(path);
+				
+				for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
+					JarEntry current = e.nextElement();
+					
+					if (current.getName().endsWith(FileUtils.fileSeparator + "pom.xml")) {
+						System.err.println(">>> " + current.getName());
+						InputStream inputStream = CrashHandler.class.getResourceAsStream(FileUtils.fileSeparator
+						        + current.getName());
+						BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+						String line;
+						boolean capturing = false;
+						StringBuilder versionBuilder = new StringBuilder();
+						Regex regex = new Regex("<version>({version}[^<]+)</version>");
+						while (null != (line = reader.readLine())) {
+							if (line.contains("<parent>")) {
+								capturing = true;
+							}
+							if (capturing && line.contains("<version>")) {
+								versionBuilder.append(line);
+							}
+							if (capturing && line.contains("</version>")) {
+								versionBuilder.append(line);
+								capturing = false;
+								break;
+							}
+						}
+						if (versionBuilder.length() > 0) {
+							List<RegexGroup> list = regex.find(versionBuilder.toString());
+							if ((list != null) && (list.size() > 1)) {
+								builder.append("RepoSuite version: ");
+								builder.append(list.get(1).getMatch().trim());
+								builder.append(" (built ");
+								builder.append(new DateTime(current.getTime(), DateTimeZone.UTC));
+								builder.append(")");
+							}
+						}
+					}
+				}
+			} else {
+				// TODO
+			}
+		} catch (Throwable e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		
+		if (builder.length() == 0) {
+			builder.append("RepoSuite version: ");
+			builder.append(" <version could not be determined>");
+		}
+		
+		builder.append(FileUtils.lineSeparator);
+		builder.append(FileUtils.lineSeparator);
+		
+		return builder.toString();
+	}
+	
 	public static void init(final RepoSuiteToolchain toolchain) {
 		new CrashHandler(toolchain);
 	}
@@ -101,12 +185,60 @@ public class CrashHandler implements UncaughtExceptionHandler {
 				Logger.error(e.getMessage(), e);
 			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	
+	private static String visit(final ThreadGroup group, final int level) {
+		// Get threads in `group'
+		StringBuilder builder = new StringBuilder();
+		int numThreads = group.activeCount();
+		Thread[] threads = new Thread[numThreads * 2];
+		numThreads = group.enumerate(threads, false);
+		
+		StringBuilder indent = new StringBuilder();
+		for (int i = 0; i < level; ++i) {
+			indent.append("  ");
+		}
+		
+		// Enumerate each thread in `group'
+		for (int i = 0; i < numThreads; i++) {
+			// Get thread
+			Thread thread = threads[i];
+			builder.append(indent);
+			builder.append("|-");
+			builder.append(thread.getName()).append(" [");
+			builder.append(thread.getClass().getSimpleName()).append("], ");
+			builder.append(thread.getPriority()).append(", ");
+			builder.append(thread.getState().name());
+			builder.append(FileUtils.lineSeparator);
+			for (StackTraceElement element : thread.getStackTrace()) {
+				builder.append(indent);
+				builder.append("| ");
+				builder.append(element.toString());
+				builder.append(FileUtils.lineSeparator);
+			}
+			// builder.append(FileUtils.lineSeparator);
+		}
+		
+		// Get thread subgroups of `group'
+		int numGroups = group.activeGroupCount();
+		ThreadGroup[] groups = new ThreadGroup[numGroups * 2];
+		numGroups = group.enumerate(groups, false);
+		
+		// Recursively visit each subgroup
+		for (int i = 0; i < numGroups; i++) {
+			builder.append(indent);
+			builder.append(visit(groups[i], level + 1));
+		}
+		
+		return builder.toString();
+	}
+	
 	private final Thread.UncaughtExceptionHandler previousHandler;
+	
 	private final RepoSuiteToolchain              application;
 	
 	private CrashHandler(final RepoSuiteToolchain application) {
@@ -124,20 +256,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		body.append(FileUtils.lineSeparator);
 		body.append(FileUtils.lineSeparator);
 		
+		body.append(">>> RepoSuite VersionInfo >>>");
+		body.append(FileUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
+		body.append(getVersionInfo());
+		body.append("<<< RepoSuite VersionInfo <<<");
+		body.append(FileUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
+		
 		body.append(">>> Crash Report >>>");
 		body.append(FileUtils.lineSeparator);
 		body.append(FileUtils.lineSeparator);
-		// try {
-		// PackageInfo pi =
-		// this.application.getPackageManager().getPackageInfo(this.application.getPackageName(),
-		// 0);
-		// body.append("Package Name: ").append(pi.packageName).append("\n");
-		// body.append("Package Version: ").append(pi.versionCode).append("\n");
-		// body.append("Phone Model: ").append(android.os.Build.MODEL).append("\n");
-		// body.append("Phone Manufacturer: ").append(android.os.Build.MANUFACTURER).append("\n");
-		// body.append("Android Version:").append(android.os.Build.VERSION.RELEASE).append("\n");
-		// } catch (NameNotFoundException e1) {
-		// }
 		
 		StringWriter stack = new StringWriter();
 		PrintWriter writer = new PrintWriter(stack);
@@ -196,6 +325,14 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		body.append(FileUtils.lineSeparator);
 		body.append(this.application.getSettings().getToolInformation());
 		body.append("<<< RepoSuite ToolInfo <<<");
+		body.append(FileUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
+		
+		body.append(">>> Active Threads >>>");
+		body.append(FileUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
+		body.append(getThreadInformation());
+		body.append("<<< Active Threads <<<");
 		body.append(FileUtils.lineSeparator);
 		body.append(FileUtils.lineSeparator);
 		

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The {@link RepoSuiteDataStorage} elements are the node of a
@@ -146,9 +146,7 @@ public class RepoSuiteDataStorage<E> {
 			if (Logger.logWarn()) {
 				Logger.warn("No readers attached to this storage. Void sinking data.");
 			}
-			notifyAll();
 		} else {
-			
 			while (this.queue.size() >= this.cacheSize) {
 				wait();
 			}

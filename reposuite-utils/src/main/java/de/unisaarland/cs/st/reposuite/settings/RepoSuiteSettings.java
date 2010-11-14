@@ -137,7 +137,6 @@ public class RepoSuiteSettings {
 			builder.append(this.toolInformation.get(tool));
 			builder.append(FileUtils.lineSeparator);
 		}
-		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
 	

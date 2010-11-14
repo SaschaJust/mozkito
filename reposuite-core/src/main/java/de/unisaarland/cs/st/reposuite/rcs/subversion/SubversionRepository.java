@@ -290,7 +290,7 @@ public class SubversionRepository extends Repository {
 	public String gatherToolInformation() {
 		StringBuilder builder = new StringBuilder();
 		CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
-		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().toString());
+		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().getPath());
 		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}

@@ -12,5 +12,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-core"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=SUBVERSION -Drepository.uri=file:///Users/just/Documents/University/msa_ss10/project/svn_repo_2010-05-14"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dlog.level=debug -Drepository.type=SUBVERSION -Drepository.uri=file:///Users/just/Documents/University/msa_ss10/project/svn_repo_2010-05-14"/>
 </launchConfiguration>
