@@ -30,7 +30,7 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredExistsCreate() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
 		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, true);
@@ -45,7 +45,7 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredExistsNoCreate() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
 		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, false);
@@ -60,7 +60,7 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredNotExistsCreate() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, true);
 		try {
 			settings.parseArguments();
@@ -74,7 +74,7 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredNotExistsNoCreate() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, false);
 		try {
 			settings.parseArguments();

@@ -9,8 +9,11 @@ import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * {@link Core} is the standard {@link RepoSuiteToolchain} to mine a repository.
@@ -18,14 +21,27 @@ import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Core extends Thread implements RepoSuiteToolchain {
+public class Core extends RepoSuiteToolchain {
 	
 	private final RepoSuiteThreadPool threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName());
+	private final RepositoryArguments repoSettings;
+	private final LoggerArguments     logSettings;
+	private final DatabaseArguments   databaseSettings;
 	
-	/**
-	 * 
-	 */
 	public Core() {
+		super(new RepositorySettings());
+		RepositorySettings settings = (RepositorySettings) getSettings();
+		this.repoSettings = settings.setRepositoryArg(true);
+		this.databaseSettings = settings.setDatabaseArgs(false);
+		this.logSettings = settings.setLoggerArg(true);
+		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
+		        false);
+		new LongArgument(settings, "cache.size",
+		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
+		        false);
+		
+		settings.parseArguments();
 	}
 	
 	/*
@@ -39,7 +55,6 @@ public class Core extends Thread implements RepoSuiteToolchain {
 	@Override
 	public void run() {
 		setup();
-		
 		this.threadPool.execute();
 	}
 	
@@ -49,32 +64,19 @@ public class Core extends Thread implements RepoSuiteToolchain {
 	 */
 	@Override
 	public void setup() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
-		RepositoryArguments repoSettings = settings.setRepositoryArg(true);
-		DatabaseArguments databaseSettings = settings.setDatabaseArgs(false);
-		LoggerArguments logSettings = settings.setLoggerArg(true);
-		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		        false);
-		new LongArgument(settings, "cache.size",
-		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
-		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		        false);
+		Repository repository = this.repoSettings.getValue();
+		this.logSettings.getValue();
 		
-		settings.parseArguments();
+		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
+		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
+		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
-		Repository repository = repoSettings.getValue();
-		logSettings.getValue();
-		
-		new RepositoryReader(this.threadPool.getThreadGroup(), settings, repository);
-		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), settings, repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), settings, repository);
-		
-		HibernateUtil hibernateUtil = databaseSettings.getValue();
+		HibernateUtil hibernateUtil = this.databaseSettings.getValue();
 		
 		if (hibernateUtil != null) {
-			new RepositoryPersister(this.threadPool.getThreadGroup(), settings, hibernateUtil);
+			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), hibernateUtil);
 		} else {
-			new RepositoryVoidSink(this.threadPool.getThreadGroup(), settings);
+			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}
 	}
 	
@@ -84,6 +86,10 @@ public class Core extends Thread implements RepoSuiteToolchain {
 	 */
 	@Override
 	public void shutdown() {
+		
+		if (Logger.logInfo()) {
+			Logger.info("Toolchain shutdown.");
+		}
 		this.threadPool.shutdown();
 	}
 }

@@ -35,8 +35,8 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
 
 /**
@@ -294,6 +294,12 @@ public abstract class Repository {
 	 * @return Collection of deltas found between two revision
 	 */
 	public abstract Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision);
+	
+	/**
+	 * @return a string containing information about the instrumented
+	 *         library/tool (e.g. version, ...)
+	 */
+	public abstract String gatherToolInformation();
 	
 	/**
 	 * Gets the files that changed within the corresponding transaction.

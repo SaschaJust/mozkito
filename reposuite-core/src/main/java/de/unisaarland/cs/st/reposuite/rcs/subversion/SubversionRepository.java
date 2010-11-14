@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,10 +49,10 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -285,6 +286,15 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	@Override
+	public String gatherToolInformation() {
+		StringBuilder builder = new StringBuilder();
+		CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
+		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().toString());
+		builder.append(FileUtils.lineSeparator);
+		return builder.toString();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -324,7 +334,7 @@ public class SubversionRepository extends Repository {
 						default:
 							if (Logger.logError()) {
 								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
-								        + RepoSuiteSettings.reportThis);
+								        + RepositorySettings.reportThis);
 							}
 					}
 				}
@@ -535,7 +545,7 @@ public class SubversionRepository extends Repository {
 		this.username = username;
 		this.password = password;
 		
-		if (RepoSuiteSettings.debug) {
+		if (RepositorySettings.debug) {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
 		

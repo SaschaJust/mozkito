@@ -22,6 +22,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
@@ -29,9 +30,9 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.Delta;
@@ -288,6 +289,34 @@ public class MercurialRepository extends Repository {
 		
 		Patch patch = DiffUtils.diff(original, revised);
 		return patch.getDeltas();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.rcs.Repository#gatherToolInformation()
+	 */
+	@Override
+	public String gatherToolInformation() {
+		StringBuilder builder = new StringBuilder();
+		Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
+		        FileUtils.tmpDir, null, null);
+		if (execute.getFirst() != 0) {
+			builder.append(getHandle()).append(" could not determine `hg` version. (Error code: ")
+			        .append(execute.getFirst()).append(").");
+			builder.append(FileUtils.lineSeparator);
+			try {
+				builder.append("Command was: ").append(FileUtils.checkExecutable("hg")).append(" --version");
+			} catch (ExternalExecutableException e) {
+				builder.append(e.getMessage());
+			}
+		} else {
+			for (String line : execute.getSecond()) {
+				builder.append(line);
+			}
+		}
+		
+		return builder.toString();
 	}
 	
 	/*

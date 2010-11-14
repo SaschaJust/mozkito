@@ -8,7 +8,9 @@ import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteFilterThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -30,7 +32,7 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryAnalyzer(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public RepositoryAnalyzer(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 	        final Repository repository) {
 		super(threadGroup, RepositoryAnalyzer.class.getSimpleName(), settings);
 		this.repository = repository;

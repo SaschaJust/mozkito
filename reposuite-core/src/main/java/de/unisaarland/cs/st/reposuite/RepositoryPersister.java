@@ -5,7 +5,9 @@ package de.unisaarland.cs.st.reposuite;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -25,7 +27,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	 * @param settings
 	 * @param hibernateUtil
 	 */
-	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 	        final HibernateUtil hibernateUtil) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
 		this.hibernateUtil = hibernateUtil;

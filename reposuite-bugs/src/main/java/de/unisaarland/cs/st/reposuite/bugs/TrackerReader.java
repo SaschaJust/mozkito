@@ -5,11 +5,11 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import java.net.URI;
 
-import de.unisaarland.cs.st.reposuite.RepoSuiteSourceThread;
-import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**

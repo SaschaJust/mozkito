@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -28,8 +29,8 @@ import org.hibernate.Session;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
@@ -187,6 +188,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * 
 	 * @return the message
 	 */
+	@Lob
 	public String getMessage() {
 		return this.message;
 	}

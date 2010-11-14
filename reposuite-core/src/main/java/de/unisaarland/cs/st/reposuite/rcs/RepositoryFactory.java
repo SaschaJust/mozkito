@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -73,7 +73,7 @@ public final class RepositoryFactory {
 		Condition.notNull(repositoryClass);
 		Condition.isNull(repositoryHandlers.get(repositoryIdentifier));
 		
-		if (RepoSuiteSettings.debug) {
+		if (RepositorySettings.debug) {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 			}
@@ -100,7 +100,7 @@ public final class RepositoryFactory {
 	        throws UnregisteredRepositoryTypeException {
 		Condition.notNull(repositoryIdentifier);
 		
-		if (RepoSuiteSettings.debug) {
+		if (RepositorySettings.debug) {
 			if (Logger.logDebug()) {
 				Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 			}

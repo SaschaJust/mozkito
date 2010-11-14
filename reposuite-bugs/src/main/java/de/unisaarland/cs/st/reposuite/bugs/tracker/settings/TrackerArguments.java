@@ -11,6 +11,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.TrackerFactory;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.TrackerType;
 import de.unisaarland.cs.st.reposuite.settings.EnumArgument;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
+import de.unisaarland.cs.st.reposuite.settings.MaskedStringArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -35,8 +36,8 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 		addArgument(new EnumArgument(settings, "tracker.type",
 		        "The filename pattern the bugs have to match to be accepted", null, isRequired,
 		        JavaUtils.enumToArray(TrackerType.BUGZILLA)));
-		addArgument(new StringArgument(settings, "tracker.user", "Username to access tracker", null, false));
-		addArgument(new StringArgument(settings, "tracker.password", "Password to access tracker", null, false));
+		addArgument(new MaskedStringArgument(settings, "tracker.user", "Username to access tracker", null, false));
+		addArgument(new MaskedStringArgument(settings, "tracker.password", "Password to access tracker", null, false));
 		addArgument(new LongArgument(settings, "tracker.start", "BugID to start with", null, false));
 		addArgument(new LongArgument(settings, "tracker.stop", "BugID to stop at", null, false));
 		addArgument(new StringArgument(settings, "tracker.cachedir", "Cache directory to store raw data", null, false));

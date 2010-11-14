@@ -12,7 +12,9 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -34,7 +36,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryParser(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public RepositoryParser(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 			final Repository repository) {
 		super(threadGroup, RepositoryParser.class.getSimpleName(), settings);
 		this.repository = repository;

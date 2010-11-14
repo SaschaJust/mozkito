@@ -14,36 +14,36 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
-	protected DatabaseArguments(final RepoSuiteSettings settings, final boolean isRequired) {
+	protected DatabaseArguments(final RepositorySettings settings, final boolean isRequired) {
 		super();
-		addArgument(new StringArgument(settings, "database", "Name of the database", null, isRequired));
-		addArgument(new StringArgument(settings, "dbUser", "User name for database. Default: miner", "miner",
-				isRequired));
-		addArgument(new StringArgument(settings, "dbHost", "Name of database host. Default: localhost", "localhost",
-				isRequired));
-		addArgument(new StringArgument(settings, "dbPassword", "Password for database. Default: miner", "miner",
-				isRequired));
-		addArgument(new EnumArgument(settings, "dbType", "Possible values: " + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(),
- isRequired,
+		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
+		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
+		        "miner", isRequired));
+		addArgument(new StringArgument(settings, "database.host", "Name of database host. Default: localhost",
+		        "localhost", isRequired));
+		addArgument(new MaskedStringArgument(settings, "database.password", "Password for database. Default: miner",
+		        "miner", isRequired));
+		addArgument(new EnumArgument(settings, "database.type", "Possible values: "
+		        + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
 		        JavaUtils.enumToArray(DatabaseType.POSTGRESQL)));
-		addArgument(new StringArgument(settings, "dbDriver", "Default: org.postgresql.Driver", "org.postgresql.Driver",
-				isRequired));
+		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
+		        "org.postgresql.Driver", isRequired));
 	}
 	
 	@Override
 	public HibernateUtil getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
 		
-		if (JavaUtils.AnyNull(arguments.get("dbHost").getValue(), arguments.get("database").getValue(),
-				arguments.get("dbUser").getValue(), arguments.get("dbPassword").getValue(), arguments.get("dbType")
-				.getValue(), arguments.get("dbDriver").getValue())) {
+		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
+		        arguments.get("database.user").getValue(), arguments.get("database.password").getValue(), arguments
+		                .get("database.type").getValue(), arguments.get("database.driver").getValue())) {
 			return null;
 		}
 		
-		HibernateUtil.createSessionFactory(arguments.get("dbHost").getValue().toString(), arguments.get("database")
-				.getValue().toString(), arguments.get("dbUser").getValue().toString(), arguments.get("dbPassword")
-				.getValue().toString(), arguments.get("dbType").getValue().toString(), arguments.get("dbDriver")
-				.getValue().toString());
+		HibernateUtil.createSessionFactory(arguments.get("database.host").getValue().toString(),
+		        arguments.get("database").getValue().toString(), arguments.get("database.user").getValue().toString(),
+		        arguments.get("database.password").getValue().toString(), arguments.get("database.type").getValue()
+		                .toString(), arguments.get("database.driver").getValue().toString());
 		try {
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			return hibernateUtil;

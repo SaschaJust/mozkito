@@ -3,11 +3,11 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import de.unisaarland.cs.st.reposuite.RepoSuiteSinkThread;
-import de.unisaarland.cs.st.reposuite.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**

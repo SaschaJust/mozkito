@@ -39,7 +39,7 @@ public class FileArgumentTest {
 		if (this.dir == null) {
 			fail();
 		}
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
@@ -47,7 +47,7 @@ public class FileArgumentTest {
 		} catch (RuntimeException e) {
 			
 		}
-		settings = new RepoSuiteSettings();
+		settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, true, false);
 		try {
 			settings.parseArguments();
@@ -55,7 +55,7 @@ public class FileArgumentTest {
 		} catch (RuntimeException e) {
 			
 		}
-		settings = new RepoSuiteSettings();
+		settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, false, true);
 		try {
 			settings.parseArguments();
@@ -63,7 +63,7 @@ public class FileArgumentTest {
 		} catch (RuntimeException e) {
 			
 		}
-		settings = new RepoSuiteSettings();
+		settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(), true, true, true);
 		try {
 			settings.parseArguments();
@@ -82,7 +82,7 @@ public class FileArgumentTest {
 		} catch (IOException e) {
 			fail();
 		}
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
@@ -101,7 +101,7 @@ public class FileArgumentTest {
 		} catch (IOException e) {
 			fail();
 		}
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, true, false);
 		try {
 			settings.parseArguments();
@@ -112,7 +112,7 @@ public class FileArgumentTest {
 	
 	@Test
 	public void testNoDefautNotRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", null, false, false, false);
 		try {
 			settings.parseArguments();
@@ -123,7 +123,7 @@ public class FileArgumentTest {
 	
 	@Test
 	public void testNoDefautRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", null, true, false, false);
 		try {
 			settings.parseArguments();
@@ -135,7 +135,7 @@ public class FileArgumentTest {
 	
 	@Test
 	public void testNotExistsMustExist() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, true);
 		try {
 			settings.parseArguments();
@@ -147,7 +147,7 @@ public class FileArgumentTest {
 	
 	@Test
 	public void testNotExistsMustNotExist() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();

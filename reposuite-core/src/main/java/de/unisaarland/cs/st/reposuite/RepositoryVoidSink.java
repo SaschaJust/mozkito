@@ -4,7 +4,9 @@
 package de.unisaarland.cs.st.reposuite;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -21,7 +23,7 @@ public class RepositoryVoidSink extends RepoSuiteSinkThread<RCSTransaction> {
 	 * @param threadGroup
 	 * @param settings
 	 */
-	public RepositoryVoidSink(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
+	public RepositoryVoidSink(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings) {
 		super(threadGroup, RepositoryVoidSink.class.getSimpleName(), settings);
 	}
 	

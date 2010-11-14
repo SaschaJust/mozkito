@@ -9,7 +9,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultFalse_NotRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "fAlse", false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -24,7 +24,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultFalse_Required() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "fAlse", true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -39,7 +39,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultTrue_NotRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "TRuE", false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -54,7 +54,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultTrue_Required() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "trUe", true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -69,7 +69,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_NoDefault_NotRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -84,7 +84,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_NoDefault_Required() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
@@ -100,7 +100,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testSetRequired() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, false);
 		assertEquals(false, arg.isRequired());
 		try {
@@ -127,7 +127,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testSetValue() {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		RepositorySettings settings = new RepositorySettings();
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, true);
 		try {
 			settings.parseArguments();

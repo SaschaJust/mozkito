@@ -6,7 +6,9 @@ package de.unisaarland.cs.st.reposuite;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -27,7 +29,7 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public RepositoryReader(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 	        final Repository repository) {
 		super(threadGroup, RepositoryReader.class.getSimpleName(), settings);
 		this.repository = repository;
