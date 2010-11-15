@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -17,9 +18,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepoSuiteThreadGroup extends ThreadGroup {
+public class RepoSuiteThreadGroup extends CrashHandler {
 	
 	private final Collection<RepoSuiteThread<?, ?>> threads = new LinkedList<RepoSuiteThread<?, ?>>();
+	private final RepoSuiteSettings                 settings;
 	
 	/**
 	 * The only valid constructor of {@link RepoSuiteThreadGroup}
@@ -28,8 +30,9 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	 *            the name of the thread group. In general, this should be the
 	 *            simple class name of the calling tool chain.
 	 */
-	public RepoSuiteThreadGroup(final String name) {
+	public RepoSuiteThreadGroup(final String name, final RepoSuiteToolchain toolchain) {
 		super(name);
+		this.settings = toolchain.getSettings();
 	}
 	
 	/**
@@ -42,6 +45,11 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 		this.getThreads().add(thread);
 	}
 	
+	@Override
+	protected String getRepoSuiteSettings() {
+		return this.settings.toString();
+	}
+	
 	/**
 	 * Getter for a collection containing all managed threads.
 	 * 
@@ -49,6 +57,11 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	 */
 	public final Collection<RepoSuiteThread<?, ?>> getThreads() {
 		return this.threads;
+	}
+	
+	@Override
+	protected String getToolInformation() {
+		return this.settings.getToolInformation();
 	}
 	
 	/**
@@ -67,7 +80,7 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	 */
 	@Override
 	public void uncaughtException(final Thread t, final Throwable e) {
-		
+		super.uncaughtException(t, e);
 		if (Logger.logError()) {
 			Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
 			        + ". Message: " + e.getMessage(), e);

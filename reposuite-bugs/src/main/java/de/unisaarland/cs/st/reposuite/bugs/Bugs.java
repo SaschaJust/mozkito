@@ -22,7 +22,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class Bugs extends RepoSuiteToolchain {
 	
-	private final RepoSuiteThreadPool threadPool = new RepoSuiteThreadPool(Bugs.class.getSimpleName());
+	private final RepoSuiteThreadPool threadPool;
 	private final TrackerArguments    trackerArguments;
 	private final DatabaseArguments   databaseArguments;
 	private final LoggerArguments     logSettings;
@@ -32,6 +32,7 @@ public class Bugs extends RepoSuiteToolchain {
 	 */
 	public Bugs() {
 		super(new TrackerSettings());
+		this.threadPool = new RepoSuiteThreadPool(Bugs.class.getSimpleName(), this);
 		TrackerSettings settings = (TrackerSettings) getSettings();
 		this.trackerArguments = settings.setTrackerArgs(true);
 		this.databaseArguments = settings.setDatabaseArgs(false);

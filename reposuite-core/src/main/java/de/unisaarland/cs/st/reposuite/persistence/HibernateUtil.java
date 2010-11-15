@@ -26,7 +26,6 @@ public class HibernateUtil {
 	private static Map<Thread, HibernateUtil> instances = new HashMap<Thread, HibernateUtil>();
 	
 	protected static void createSessionFactory(final Properties properties) {
-		
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 			annotationConfiguration.addProperties(properties);
@@ -51,7 +50,6 @@ public class HibernateUtil {
 			
 			sessionFactory = annotationConfiguration.buildSessionFactory();
 		} else {
-			
 			if (Logger.logWarn()) {
 				Logger.warn("Session factory already exists. Skipping creating.");
 			}
@@ -84,6 +82,7 @@ public class HibernateUtil {
 		if (sessionFactory == null) {
 			throw new UninitializedDatabaseException();
 		}
+		
 		if (instances.containsKey(Thread.currentThread())) {
 			return instances.get(Thread.currentThread());
 		} else {
@@ -125,6 +124,7 @@ public class HibernateUtil {
 					Logger.error(e.getMessage(), e);
 				}
 				this.transaction.rollback();
+				throw new RuntimeException(HibernateUtil.class.getSimpleName() + ": " + e.getMessage(), e);
 			}
 		}
 	}

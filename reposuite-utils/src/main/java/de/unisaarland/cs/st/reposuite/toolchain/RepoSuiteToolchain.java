@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite.toolchain;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.utils.CrashHandler;
 
 /**
  * The {@link RepoSuiteToolchain} is a wrapper to a tool chain consisting of

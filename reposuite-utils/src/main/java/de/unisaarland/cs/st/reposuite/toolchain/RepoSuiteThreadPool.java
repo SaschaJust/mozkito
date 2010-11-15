@@ -41,8 +41,8 @@ public class RepoSuiteThreadPool {
 	 * @param name
 	 *            the name of the {@link RepoSuiteThreadGroup}
 	 */
-	public RepoSuiteThreadPool(final String name) {
-		this.threads = new RepoSuiteThreadGroup(name);
+	public RepoSuiteThreadPool(final String name, final RepoSuiteToolchain toolchain) {
+		this.threads = new RepoSuiteThreadGroup(name, toolchain);
 	}
 	
 	/**

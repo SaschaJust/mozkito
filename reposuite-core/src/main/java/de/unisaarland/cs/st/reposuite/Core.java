@@ -23,13 +23,14 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class Core extends RepoSuiteToolchain {
 	
-	private final RepoSuiteThreadPool threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName());
+	private final RepoSuiteThreadPool threadPool;
 	private final RepositoryArguments repoSettings;
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
 	
 	public Core() {
 		super(new RepositorySettings());
+		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
 		RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false);

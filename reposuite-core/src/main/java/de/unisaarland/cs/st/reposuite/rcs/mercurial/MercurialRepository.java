@@ -311,6 +311,14 @@ public class MercurialRepository extends Repository {
 				builder.append(e.getMessage());
 			}
 		} else {
+			builder.append("Executable: ");
+			try {
+				builder.append(FileUtils.checkExecutable("hg"));
+			} catch (ExternalExecutableException e) {
+				builder.append(e.getMessage());
+			}
+			builder.append(FileUtils.lineSeparator);
+			
 			for (String line : execute.getSecond()) {
 				builder.append(line);
 			}

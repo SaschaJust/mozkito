@@ -193,6 +193,14 @@ public class GitRepository extends Repository {
 				builder.append(e.getMessage());
 			}
 		} else {
+			builder.append("Executable: ");
+			try {
+				builder.append(FileUtils.checkExecutable("git"));
+			} catch (ExternalExecutableException e) {
+				builder.append(e.getMessage());
+			}
+			builder.append(FileUtils.lineSeparator);
+			
 			for (String line : execute.getSecond()) {
 				builder.append(line);
 			}

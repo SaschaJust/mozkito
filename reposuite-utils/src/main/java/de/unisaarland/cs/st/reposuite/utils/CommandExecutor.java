@@ -2,7 +2,6 @@ package de.unisaarland.cs.st.reposuite.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,39 +29,6 @@ public class CommandExecutor extends Thread {
 	 */
 	enum Task {
 		READER, WRITER;
-	}
-	
-	/**
-	 * @param commandLine
-	 * @param dir
-	 * @deprecated
-	 * @return
-	 */
-	@Deprecated
-	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir) {
-		return execute(commandLine, dir, null);
-	}
-	
-	/**
-	 * @param commandLine
-	 * @param dir
-	 * @param line
-	 * @deprecated
-	 * @return
-	 */
-	@Deprecated
-	public static Tuple<Integer, List<String>> execute(final String commandLine, final File dir, final String line) {
-		Condition.notNull(commandLine);
-		
-		String[] split = commandLine.split(" ");
-		String[] arguments = new String[split.length - 1];
-		
-		for (int i = 1; i < split.length; ++i) {
-			arguments[i - 1] = split[i];
-		}
-		
-		ByteArrayInputStream input = line != null ? new ByteArrayInputStream(line.getBytes()) : null;
-		return execute(split[0], arguments, dir, input, null);
 	}
 	
 	/**
@@ -161,12 +127,10 @@ public class CommandExecutor extends Thread {
 				pipe = new BufferedReader(new InputStreamReader(input));
 				// create writing thread
 				writeTask = new CommandExecutor(Task.WRITER, reader, writer, pipe);
-				writeTask.setName(CommandExecutor.getHandle() + writeTask.getTask().toString());
 			}
 			
 			// create reading thread
 			readTask = new CommandExecutor(Task.READER, reader, writer, pipe);
-			readTask.setName(CommandExecutor.getHandle() + readTask.getTask().toString());
 			
 			// run threads
 			readTask.start();
@@ -181,7 +145,7 @@ public class CommandExecutor extends Thread {
 			int returnValue = process.waitFor();
 			
 			// wait for threads to finish
-			readTask.join(10);
+			readTask.join();
 			
 			writer.close();
 			reader.close();
@@ -274,6 +238,7 @@ public class CommandExecutor extends Thread {
 		this.reader = reader;
 		this.writer = writer;
 		this.pipe = pipe;
+		setName(getHandle() + "-" + task.toString());
 	}
 	
 	/**
@@ -281,13 +246,6 @@ public class CommandExecutor extends Thread {
 	 */
 	private List<String> getReadLines() {
 		return this.readLines;
-	}
-	
-	/**
-	 * @return the task
-	 */
-	private Task getTask() {
-		return this.task;
 	}
 	
 	/**
