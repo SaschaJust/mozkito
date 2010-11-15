@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +30,8 @@ public class JiraXMLHandlerTest {
 		assertEquals(DateTimeConstants.NOVEMBER, time.getMonthOfYear());
 		assertEquals("2010", time.year().getAsString());
 		assertEquals(5, time.getDayOfMonth());
-		assertEquals(14, time.getHourOfDay());
+		assertEquals(13, time.getHourOfDay());
 		assertEquals(24, time.getMinuteOfHour());
 		assertEquals(16, time.getSecondOfMinute());
-		assertEquals(DateTimeZone.getDefault(), time.getZone());
 	}
 }
