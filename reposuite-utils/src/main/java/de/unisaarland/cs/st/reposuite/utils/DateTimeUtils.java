@@ -19,7 +19,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateTimeUtils {
 	
 	private static final Regex               timestampRegex = new Regex(
-	"({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?\\s+(({z}[A-Za-z]{3,4})|({Z}[+-]\\d{4}))?");
+	                                                                "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?(({z}\\s+[A-Za-z]{3,4})|({Z}\\s+[+-]\\d{4}))?");
 	
 	static {
 		DateTimeZone.setDefault(DateTimeZone.UTC);

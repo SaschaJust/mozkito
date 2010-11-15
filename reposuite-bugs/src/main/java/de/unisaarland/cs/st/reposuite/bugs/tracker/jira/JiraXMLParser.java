@@ -43,7 +43,7 @@ public class JiraXMLParser {
 	protected static final Regex dateTimeFormatRegex        = new Regex(
 	"({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	                                                                "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}\\d{1,2}):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
+	"(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
