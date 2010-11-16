@@ -78,15 +78,15 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		setShutdown(false);
 		
 		Condition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
-		                hasInputConnector(), this.inputStorage != null);
+		.equals(hasInputConnector(),
+				this.inputStorage != null,
+				"Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+				hasInputConnector(), this.inputStorage != null);
 		Condition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-		                hasOutputConnector(), this.outputStorage != null);
+		.equals(hasInputConnector(),
+				this.inputStorage != null,
+				"Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+				hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(settings, "`settings` must not be null.");
 		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
@@ -117,7 +117,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		if (retval && this.knownThreads.isEmpty()) {
 			if (Logger.logError()) {
 				Logger.error(getHandle()
-				        + " has known connections, but knownThreads is empty. This should never happen.");
+						+ " has known connections, but knownThreads is empty. This should never happen.");
 			}
 			retval = false;
 		}
@@ -354,7 +354,8 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isShutdown()
 	 */
-	public final synchronized boolean isShutdown() {
+	@Override
+	public final boolean isShutdown() {
 		return this.shutdown;
 	}
 	
@@ -473,8 +474,10 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
-		        hasOutputConnector());
-		
+				hasOutputConnector());
+		if (Logger.logTrace()) {
+			Logger.trace("writing data: " + data);
+		}
 		this.outputStorage.write(data);
 	}
 	

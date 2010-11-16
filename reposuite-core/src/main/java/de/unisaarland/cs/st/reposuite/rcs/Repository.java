@@ -34,6 +34,8 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -46,6 +48,18 @@ import difflib.Delta;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
+ */
+/**
+ * @author just
+ *
+ */
+/**
+ * @author just
+ *
+ */
+/**
+ * @author just
+ *
  */
 public abstract class Repository {
 	
@@ -108,7 +122,11 @@ public abstract class Repository {
 		return uri;
 	}
 	
+	private final PersonManager personManager = new PersonManager();
 	private URI uri;
+	public Repository() {
+		loadPersons();
+	}
 	
 	/**
 	 * Annotate file specified by file path at given revision.
@@ -393,8 +411,31 @@ public abstract class Repository {
 	 */
 	public abstract String getTransactionId(long index);
 	
+	/**
+	 * @return
+	 */
 	public URI getUri() {
-		return uri;
+		return this.uri;
+	}
+	
+	public void loadPersons() {
+		try {
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
+			if (hibernateUtil != null) {
+				Criteria criteria = hibernateUtil.createCriteria(Person.class);
+				@SuppressWarnings ("unchecked") List<Person> results = criteria.list();
+				if ((results != null) && (results.size() > 0)) {
+					this.personManager.setPersons(results);
+					if (Logger.logInfo()) {
+						Logger.info("Loaded " + results.size() + " persons from persitence storage.");
+					}
+				}
+			}
+		} catch (UninitializedDatabaseException e) {
+			if (Logger.logInfo()) {
+				Logger.info(e.getClass().getSimpleName());
+			}
+		}
 	}
 	
 	/**
@@ -404,15 +445,17 @@ public abstract class Repository {
 	public RCSTransaction loadTransaction(final String revision) {
 		try {
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
-			criteria.add(Restrictions.eq("id", revision));
-			@SuppressWarnings ("unchecked") List<RCSTransaction> results = criteria.list();
-			if ((results != null) && (results.size() > 0)) {
-				return results.get(0);
+			if (hibernateUtil != null) {
+				Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+				criteria.add(Restrictions.eq("id", revision));
+				@SuppressWarnings ("unchecked") List<RCSTransaction> results = criteria.list();
+				if ((results != null) && (results.size() > 0)) {
+					return results.get(0);
+				}
 			}
 		} catch (UninitializedDatabaseException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			if (Logger.logInfo()) {
+				Logger.info(e.getClass().getSimpleName());
 			}
 		}
 		return null;
@@ -456,7 +499,7 @@ public abstract class Repository {
 	 */
 	protected String setup(final URI address) {
 		
-		uri = address;
+		this.uri = address;
 		String fragment = address.getFragment();
 		if ((fragment != null) && (!fragment.equals(""))) {
 			// need to reformat URI and gitName
@@ -470,7 +513,7 @@ public abstract class Repository {
 				uriBuilder.append(address.getQuery());
 			}
 			try {
-				uri = new URI(uriBuilder.toString());
+				this.uri = new URI(uriBuilder.toString());
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
@@ -530,4 +573,5 @@ public abstract class Repository {
 	public void setUri(final URI uri) {
 		this.uri = uri;
 	}
+
 }

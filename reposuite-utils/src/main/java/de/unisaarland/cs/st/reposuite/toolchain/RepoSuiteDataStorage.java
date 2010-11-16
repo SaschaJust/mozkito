@@ -5,8 +5,8 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepoSuiteDataStorage<E> {
 	
-	private final BlockingQueue<E>                   queue;
+	private final Queue<E>                           queue;
 	private final List<RepoSuiteGeneralThread<?, E>> writers = new LinkedList<RepoSuiteGeneralThread<?, E>>();
 	private final List<RepoSuiteGeneralThread<E, ?>> readers = new LinkedList<RepoSuiteGeneralThread<E, ?>>();
 	private final int                                cacheSize;
@@ -35,7 +35,7 @@ public class RepoSuiteDataStorage<E> {
 	 */
 	public RepoSuiteDataStorage(final int cacheSize) {
 		this.cacheSize = cacheSize;
-		this.queue = new ArrayBlockingQueue<E>(this.cacheSize);
+		this.queue = new ConcurrentLinkedQueue<E>();
 	}
 	
 	/**
@@ -44,27 +44,33 @@ public class RepoSuiteDataStorage<E> {
 	 *         anymore.
 	 * @throws InterruptedException
 	 */
-	public synchronized E read() throws InterruptedException {
-		if (this.queue.size() > 0) {
-			E poll = this.queue.poll();
-			notifyAll();
-			return poll;
-		} else if (!this.writers.isEmpty()) {
-			while (this.queue.isEmpty()) {
-				wait();
-			}
+	public E read() throws InterruptedException {
+		if (Logger.logTrace()) {
+			Logger.trace("Entering read method.");
+		}
+		
+		synchronized (this.queue) {
 			if (this.queue.size() > 0) {
 				E poll = this.queue.poll();
-				notifyAll();
+				this.queue.notifyAll();
 				return poll;
+			} else if (!this.writers.isEmpty()) {
+				while (this.queue.isEmpty()) {
+					this.queue.wait();
+				}
+				if (this.queue.size() > 0) {
+					E poll = this.queue.poll();
+					this.queue.notifyAll();
+					return poll;
+				}
+			} else {
+				if (Logger.logWarn()) {
+					Logger.warn("No more incoming data. Returning (null).");
+				}
 			}
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("No more incoming data. Returning (null).");
-			}
+			this.queue.notifyAll();
+			return null;
 		}
-		notifyAll();
-		return null;
 	}
 	
 	/**
@@ -94,7 +100,7 @@ public class RepoSuiteDataStorage<E> {
 	/**
 	 * @return the current size of the queue. This is guaranteed to be &ge; 0.
 	 */
-	public synchronized int size() {
+	public int size() {
 		return this.queue.size();
 	}
 	
@@ -139,22 +145,26 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 * @throws InterruptedException
 	 */
-	public synchronized void write(final E data) throws InterruptedException {
+	public void write(final E data) throws InterruptedException {
 		Condition.notNull(data);
 		
-		if (this.readers.isEmpty()) {
-			if (Logger.logWarn()) {
-				Logger.warn("No readers attached to this storage. Void sinking data.");
-			}
-		} else {
-			while (this.queue.size() >= this.cacheSize) {
-				wait();
-			}
-			
-			if (this.queue.size() < this.cacheSize) {
+		if (Logger.logTrace()) {
+			Logger.trace("Entering write method.");
+		}
+		
+		synchronized (this.queue) {
+			if (this.readers.isEmpty()) {
+				if (Logger.logWarn()) {
+					Logger.warn("No readers attached to this storage. Void sinking data.");
+				}
+			} else {
+				while (this.queue.size() >= this.cacheSize) {
+					this.queue.wait();
+				}
+				
 				this.queue.add(data);
 			}
+			this.queue.notifyAll();
 		}
-		notifyAll();
 	}
 }

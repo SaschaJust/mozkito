@@ -30,7 +30,7 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 	 * @param repository
 	 */
 	public RepositoryReader(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository) {
+			final Repository repository) {
 		super(threadGroup, RepositoryReader.class.getSimpleName(), settings);
 		this.repository = repository;
 	}
@@ -53,7 +53,7 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 		this.repository.getTransactionCount();
 		long cacheSize = (Long) this.getSettings().getSetting("cache.size").getValue();
 		this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
-		        this.repository.getLastRevisionId(), (int) cacheSize);
+				this.repository.getLastRevisionId(), (int) cacheSize);
 		
 		if (Logger.logInfo()) {
 			Logger.info("Created iterator.");
@@ -64,9 +64,11 @@ public class RepositoryReader extends RepoSuiteSourceThread<LogEntry> {
 				if (Logger.logTrace()) {
 					Logger.trace("filling queue [" + outputSize() + "]");
 				}
-				
-				write(this.logIterator.next());
-				
+				LogEntry entry = this.logIterator.next();
+				if (Logger.logTrace()) {
+					Logger.trace("with entry: " + entry);
+				}
+				write(entry);
 			}
 			
 			finish();

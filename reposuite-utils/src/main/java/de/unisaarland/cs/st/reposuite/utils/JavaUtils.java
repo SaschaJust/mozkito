@@ -18,8 +18,8 @@ import org.apache.commons.collections.Predicate;
 public class JavaUtils {
 	
 	private static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
-	        (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
-	        (byte) 'e', (byte) 'f'            };
+		(byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
+		(byte) 'e', (byte) 'f'            };
 	
 	public static boolean AnyNull(final Object... objects) {
 		for (Object object : objects) {
@@ -44,8 +44,8 @@ public class JavaUtils {
 		
 		for (byte b : raw) {
 			int v = b & 0xFF;
-			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
-			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+			hex[index++] = JavaUtils.HEX_CHAR_TABLE[v >>> 4];
+			hex[index++] = JavaUtils.HEX_CHAR_TABLE[v & 0xF];
 		}
 		return new String(hex, "ASCII");
 	}
@@ -55,6 +55,10 @@ public class JavaUtils {
 	 * @return
 	 */
 	private static String checkDescent(final Object object) {
+		if (object == null) {
+			return "(null)";
+		}
+
 		if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override

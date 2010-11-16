@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,9 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -41,12 +43,51 @@ public class Person implements Annotated {
 		return Person.class.getSimpleName();
 	}
 	
+	public static Person merge(final Collection<Person> candidates) {
+		Person moltenCore;
+		String email = null;
+		String fullname = null;
+		String username = null;
+		long id = -1;
+		Set<String> synonyms = new TreeSet<String>();
+		Set<String> emails = new TreeSet<String>();
+		
+		for (Person tmpPerson : candidates) {
+			if ((email == null) && (tmpPerson.getEmail() != null)) {
+				email = tmpPerson.getEmail();
+			} else if ((email != null) && (tmpPerson.getEmail() != null)) {
+				emails.add(tmpPerson.getEmail());
+			}
+			
+			if ((fullname == null) && (tmpPerson.getFullname() != null)) {
+				fullname = tmpPerson.getFullname();
+			}
+			
+			if ((username == null) && (tmpPerson.getUsername() != null)) {
+				username = tmpPerson.getUsername();
+			} else if ((username != null) && (tmpPerson.getUsername() != null)) {
+				synonyms.add(tmpPerson.getUsername());
+			}
+			
+			if ((id == -1) && (tmpPerson.getGeneratedId() > -1)) {
+				id = tmpPerson.getGeneratedId();
+			}
+		}
+		
+		moltenCore = new Person(username, fullname, email);
+		moltenCore.addAllEmails(emails);
+		moltenCore.addAllSynonyms(synonyms);
+		moltenCore.setGeneratedId(id);
+		return moltenCore;
+	}
 	private long                    generatedId;
 	private String                  email;
 	private String                  fullname;
 	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
+	private Set<String>             synonyms       = new TreeSet<String>();
+	private Set<String>             emailAddresses = new TreeSet<String>();                                     ;
 	
-	private String                  username;                                     ;
+	private String                  username;
 	
 	/**
 	 * Default constructor used by Hibernate
@@ -62,14 +103,60 @@ public class Person implements Annotated {
 	 */
 	public Person(final String username, final String fullname, final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null));
+		if (fullname != null) {
+			Condition.equals(fullname.trim(), fullname);
+		}
+
+		if (username != null) {
+			Condition.equals(username, username);
+		}
+
+		if (email != null) {
+			Condition.equals(email, email);
+		}
 		
-		this.username = username;
-		this.fullname = fullname;
-		this.email = email;
+		this.username = username != null ? username.trim() : null;
+		this.fullname = fullname != null ? fullname.trim() : null;
+		this.email = email != null ? email.trim() : null;
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
+	}
+	
+	/**
+	 * @param emails
+	 */
+	public void addAllEmails(final Set<String> emails) {
+		this.emailAddresses.addAll(emails);
+	}
+	
+	/**
+	 * @param synonyms
+	 */
+	public void addAllSynonyms(final Set<String> synonyms) {
+		synonyms.addAll(synonyms);
+	}
+	
+	/**
+	 * @param email
+	 */
+	@Transient
+	public void addEmail(final String email) {
+		Condition.notNull(email);
+		Condition.equals(email != null ? email.trim() : null, email);
+		
+		this.getEmailAddresses().add(email);
+	}
+	
+	/**
+	 * @param fullname
+	 */
+	@Transient
+	public void addSynonym(final String fullname) {
+		Condition.notNull(fullname);
+		Condition.equals(fullname != null ? fullname.trim() : null, fullname);
+		this.synonyms.add(fullname);
 	}
 	
 	/**
@@ -131,6 +218,14 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @return
+	 */
+	@ElementCollection
+	public Set<String> getEmailAddresses() {
+		return this.emailAddresses;
+	}
+	
+	/**
 	 * @return the firstCommit
 	 */
 	@Transient
@@ -166,6 +261,11 @@ public class Person implements Annotated {
 	@Transient
 	public Collection<Annotated> getSaveFirst() {
 		return null;
+	}
+	
+	@ElementCollection
+	public Set<String> getSynonyms() {
+		return this.synonyms;
 	}
 	
 	/**
@@ -207,6 +307,11 @@ public class Person implements Annotated {
 		this.email = email;
 	}
 	
+	@SuppressWarnings ("unused")
+	private void setEmailAddresses(final Set<String> emailAddresses) {
+		this.emailAddresses = emailAddresses;
+	}
+	
 	/**
 	 * @param fullname
 	 *            the fullname to set
@@ -220,9 +325,13 @@ public class Person implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setGeneratedId(final long generatedId) {
+	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setSynonyms(final Set<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 	
 	/**
@@ -248,7 +357,9 @@ public class Person implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "Person [username=" + this.username + ", fullname=" + this.fullname + ", email=" + this.email + "]";
+		return "Person [username=" + this.username + ", fullname=" + this.fullname + ", email=" + this.email
+		+ ", synonyms=" + JavaUtils.collectionToString(this.synonyms) + ", emailAddresses="
+		+ JavaUtils.collectionToString(this.getEmailAddresses()) + "]";
 	}
 	
 }
