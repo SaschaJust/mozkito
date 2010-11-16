@@ -53,9 +53,9 @@ public class BugzillaTrackerTest {
 		try {
 			try {
 				assertFalse(tracker.checkRAW(new RawReport(1l, IOUtils.fetch(new URI(
-				        "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")))));
+				"https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")))));
 				assertFalse(tracker.checkRAW(new RawReport(1l, IOUtils.fetch(new URI(
-				        "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xml&id=1234")))));
+				"https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xml&id=1234")))));
 			} catch (UnsupportedProtocolException e) {
 				e.printStackTrace();
 				fail();
@@ -100,9 +100,10 @@ public class BugzillaTrackerTest {
 			assertEquals("mik.kersten", comments.first().getAuthor().getUsername());
 			assertEquals("Mik Kersten", comments.first().getAuthor().getFullname());
 			assertEquals(null, comments.first().getAuthor().getEmail());
-			assertTrue(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST").isEqual(comments.first().getTimestamp()));
+			DateTime dt = DateTimeUtils.parseDate("2005-11-01 11:52:13 EST");
+			assertTrue(dt.isEqual(comments.first().getTimestamp()));
 			assertEquals("Test site is here: https://node1.eclipse.org/bugstest/\n\nRelated to eclipse.org bug 113042",
-			        comments.first().getMessage());
+					comments.first().getMessage());
 			
 			assertEquals("mik.kersten", comments.last().getAuthor().getUsername());
 			assertEquals(comments.first().getAuthor(), comments.last().getAuthor());
@@ -110,8 +111,8 @@ public class BugzillaTrackerTest {
 			assertEquals("Mik Kersten", comments.last().getAuthor().getFullname());
 			assertTrue(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST").isEqual(comments.last().getTimestamp()));
 			assertEquals(
-			        "Core support works now (adding existing reports, creating new reports).  Still some issue\nwith search (bug 115017), and rest will be broken out into seperate reports.",
-			        comments.last().getMessage());
+					"Core support works now (adding existing reports, creating new reports).  Still some issue\nwith search (bug 115017), and rest will be broken out into seperate reports.",
+					comments.last().getMessage());
 			
 			assertEquals("Bugzilla", report.getComponent());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:42 EST"), report.getCreationTimestamp());
@@ -172,9 +173,9 @@ public class BugzillaTrackerTest {
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
 			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("priority")));
 			assertEquals(BugzillaXMLParser.getPriority("P3"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getFirst());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getFirst());
 			assertEquals(BugzillaXMLParser.getPriority("P1"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getSecond());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getSecond());
 			
 			hElem = hElemIter.next();
 			assertEquals(1, hElem.getChangedValues().size());
@@ -182,9 +183,9 @@ public class BugzillaTrackerTest {
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
 			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("summary")));
 			assertEquals("add support for Bugzilla 2.20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getFirst());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getFirst());
 			assertEquals("add support for Bugzilla 2 20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getSecond());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getSecond());
 			
 			hElem = hElemIter.next();
 			assertEquals(3, hElem.getChangedValues().size());
@@ -194,17 +195,17 @@ public class BugzillaTrackerTest {
 			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("resolution")));
 			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("summary")));
 			assertEquals(BugzillaXMLParser.getStatus("NEW"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getFirst());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getFirst());
 			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getSecond());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getSecond());
 			assertEquals(BugzillaXMLParser.getResolution(""),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getFirst());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getFirst());
 			assertEquals(BugzillaXMLParser.getResolution("FIXED"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getSecond());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getSecond());
 			assertEquals("add support for Bugzilla 2 20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getFirst());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getFirst());
 			assertEquals("add basic support for Bugzilla 2.20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getSecond());
+					hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getSecond());
 			
 			assertEquals("mik.kersten", report.getResolver().getUsername());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), report.getResolutionTimestamp());

@@ -40,6 +40,7 @@ public class BugzillaXMLParser {
 	protected static Namespace namespace    = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Regex     siblingRegex = new Regex("bug\\s+({sibling}\\d+)");
+	protected static Regex     dateRegex    = new Regex("yyyy-MM-dd HH:mm:ss Z");
 	
 	protected static Priority getPriority(final String string) {
 		String priorityString = string.toUpperCase();
@@ -129,8 +130,8 @@ public class BugzillaXMLParser {
 	}
 	
 	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	        throws UnsupportedProtocolException, FetchException, JDOMException, IOException, SecurityException,
-	        NoSuchFieldException {
+	throws UnsupportedProtocolException, FetchException, JDOMException, IOException, SecurityException,
+	NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
 		Condition.notNull(personManager);
@@ -145,7 +146,7 @@ public class BugzillaXMLParser {
 		if (!rootElement.getName().equals("html")) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-				        + rootElement.getName() + ">.");
+						+ rootElement.getName() + ">.");
 			}
 			return;
 		}
@@ -160,7 +161,7 @@ public class BugzillaXMLParser {
 		@SuppressWarnings ("unchecked") List<Element> bodyChildren = body.getChildren();
 		for (Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
-			        && (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
+					&& (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
 				Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
@@ -178,7 +179,7 @@ public class BugzillaXMLParser {
 				}
 				
 				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr",
-				        namespace));
+						namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
@@ -193,13 +194,13 @@ public class BugzillaXMLParser {
 					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
-							        + tds.size());
+									+ tds.size());
 						}
 						return;
 					} else if (tds.size() < 3) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 3 table columns, found :"
-							        + tds.size());
+									+ tds.size());
 						}
 						return;
 					}
@@ -363,7 +364,7 @@ public class BugzillaXMLParser {
 				} catch (NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Bugzilla bug id `" + element.getText()
-						        + "` cannot be interpreted as an long. Abort parsing.");
+								+ "` cannot be interpreted as an long. Abort parsing.");
 					}
 					return;
 				}
@@ -372,7 +373,7 @@ public class BugzillaXMLParser {
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
-						        + "` cannot be interpreted as timestamp. Ignoring.");
+								+ "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setCreationTimestamp(creationTime);
@@ -384,7 +385,7 @@ public class BugzillaXMLParser {
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla modification time `" + element.getText()
-						        + "` cannot be interpreted as timestamp. Ignoring.");
+								+ "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setLastUpdateTimestamp(modificationTime);
