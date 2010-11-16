@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -142,6 +143,32 @@ public class GitRepository extends Repository {
 		return result;
 	}
 	
+	private boolean clone(final InputStream inputStream, final String destDir) {
+		
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
+				this.uri.toString(), destDir }, this.cloneDir, inputStream, new HashMap<String, String>());
+		if (returnValue.getFirst() == 0) {
+			this.cloneDir = new File(destDir);
+			if (!this.cloneDir.exists()) {
+				if (Logger.logError()) {
+					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `"
+							+ destDir + "`");
+					Logger.error("Used command: `git clone -n -q " + this.uri.toString() + " " + destDir + "`");
+				}
+				return false;
+			}
+			try {
+				FileUtils.forceDeleteOnExit(this.cloneDir);
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage());
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
@@ -233,8 +260,8 @@ public class GitRepository extends Repository {
 		if (lines.size() < 1) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
-				        + "`: git reported zero lines output. Abort parsing. Used command: git log --pretty=format:%H --name-status "
-				        + revString);
+						+ "`: git reported zero lines output. Abort parsing. Used command: git log --pretty=format:%H --name-status "
+						+ revString);
 			}
 			return new HashMap<String, ChangeType>();
 		}
@@ -502,33 +529,12 @@ public class GitRepository extends Repository {
 		this.uri = Repository.encodeUsername(address, username);
 		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		+ DateTimeUtils.currentTimeMillis();
-		StringBuilder cmd = new StringBuilder();
-		cmd.append("git clone -n -q ");
-		cmd.append(this.uri);
-		cmd.append(" ");
-		cmd.append(gitName);
-		
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(password.getBytes());
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
-				this.uri.toString(), gitName }, this.cloneDir, inputStream, new HashMap<String, String>());
-		if (returnValue.getFirst() == 0) {
-			this.cloneDir = new File(gitName);
-			if (!this.cloneDir.exists()) {
-				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `"
-							+ gitName + "`");
-					Logger.error("Used command: `git clone -n -q " + this.uri.toString() + " " + gitName + "`");
-				}
-				return;
-			}
-			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
-			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-			}
+		if (clone(inputStream, gitName)) {
+			
 		}
+		
+		
 		if (startRevision == null) {
 			this.startRevision = this.getFirstRevisionId();
 		}
@@ -536,4 +542,5 @@ public class GitRepository extends Repository {
 			this.endRevision = this.getLastRevisionId();
 		}
 	}
+	
 }

@@ -25,9 +25,9 @@ class GitLogParser {
 	// protected static DateTimeFormatter gitLogDateFormat =
 	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex             gitLogDateFormatRegex = new Regex(
-	                                                                 "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
+	"({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
 	protected static Regex             regex                 = new Regex(
-	                                                                 "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex             messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	private static final PersonManager personManager         = new PersonManager();
 	
@@ -61,7 +61,7 @@ class GitLogParser {
 						previous = result.get(result.size() - 1);
 					}
 					result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author
-					        : null)), message.toString(), dateTime));
+							: null)), message.toString(), dateTime));
 					currentID = null;
 					author = null;
 					date = null;
@@ -98,7 +98,7 @@ class GitLogParser {
 				if (regex.getGroup("email") != null) {
 					email = regex.getGroup("email");
 				}
-				author = new Person(username, fullname, email);
+				author = new Person(username.trim(), fullname.trim(), email.trim());
 			} else if (line.startsWith("AuthorDate:")) {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
@@ -138,7 +138,7 @@ class GitLogParser {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(currentID, previous, personManager.getPerson((author != null ? author : null)),
-			        message.toString(), dateTime));
+					message.toString(), dateTime));
 		}
 		Collections.reverse(result);
 		return result;
