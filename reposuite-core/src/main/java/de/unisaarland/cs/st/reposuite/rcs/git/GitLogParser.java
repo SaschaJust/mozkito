@@ -89,16 +89,16 @@ class GitLogParser {
 				String email = null;
 				regex.find(authorParts[1].trim());
 				if (regex.getGroup("plain") != null) {
-					username = regex.getGroup("plain");
+					username = regex.getGroup("plain").trim();
 				} else if ((regex.getGroup("name") != null) && (regex.getGroup("lastname") != null)) {
-					fullname = regex.getGroup("name") + " " + regex.getGroup("lastname");
+					fullname = regex.getGroup("name").trim() + " " + regex.getGroup("lastname").trim();
 				} else if (regex.getGroup("name") != null) {
-					username = regex.getGroup("name");
+					username = regex.getGroup("name").trim();
 				}
 				if (regex.getGroup("email") != null) {
-					email = regex.getGroup("email");
+					email = regex.getGroup("email").trim();
 				}
-				author = new Person(username.trim(), fullname.trim(), email.trim());
+				author = new Person(username, fullname, email);
 			} else if (line.startsWith("AuthorDate:")) {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {

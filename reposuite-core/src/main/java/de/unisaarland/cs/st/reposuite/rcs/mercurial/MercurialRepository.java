@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -121,8 +122,6 @@ public class MercurialRepository extends Repository {
 	
 	private final PersonManager personManager = new PersonManager();
 	
-	private URI                 uri;
-	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -141,7 +140,7 @@ public class MercurialRepository extends Repository {
 			}
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r",
-				revision, filePath }, this.cloneDir, null, null);
+				revision, filePath }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -175,7 +174,7 @@ public class MercurialRepository extends Repository {
 			
 			if (!hashCache.containsKey(shortHash)) {
 				boolean found = false;
-				for (String hash : this.hashes) {
+				for (String hash : hashes) {
 					if (hash.startsWith(shortHash)) {
 						hashCache.put(shortHash, hash);
 						found = true;
@@ -204,7 +203,7 @@ public class MercurialRepository extends Repository {
 	 */
 	private void cacheHashes() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
-		"'{node}\n'" }, this.cloneDir, null, null);
+		"'{node}\n'" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -215,7 +214,7 @@ public class MercurialRepository extends Repository {
 			if (line.trim().equals("")) {
 				continue;
 			}
-			this.hashes.add(line.trim().replaceAll("'", ""));
+			hashes.add(line.trim().replaceAll("'", ""));
 		}
 	}
 	
@@ -240,11 +239,11 @@ public class MercurialRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-				new String[] { "update", "-C", revision }, this.cloneDir, null, null);
+				new String[] { "update", "-C", revision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
-		File file = new File(this.cloneDir, relativeRepoPath);
+		File file = new File(cloneDir, relativeRepoPath);
 		if (!file.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not get requested path using command `hg update -C`. Abort.");
@@ -252,6 +251,40 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		return file;
+	}
+	
+	/**
+	 * Clone.
+	 * 
+	 * @param inputStream
+	 *            the input stream
+	 * @param destDir
+	 *            the dest dir
+	 * @return true, if successful
+	 */
+	private boolean clone(final InputStream inputStream, final String destDir) {
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
+				new String[] { "clone", "-U", getUri().toString(), destDir }, cloneDir, inputStream, null);
+		if (returnValue.getFirst() == 0) {
+			cloneDir = new File(destDir);
+			if (!cloneDir.exists()) {
+				if (Logger.logError()) {
+					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + destDir
+							+ "`");
+				}
+				return false;
+			}
+			try {
+				FileUtils.forceDeleteOnExit(cloneDir);
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage());
+				}
+			}
+			cacheHashes();
+			return true;
+		}
+		return false;
 	}
 	
 	/*
@@ -275,14 +308,14 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision,
-				filePath }, this.cloneDir, null, null);
+				filePath }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> original = response.getSecond();
 		List<String> revised = new ArrayList<String>(0);
 		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
-				this.cloneDir, null, null);
+				cloneDir, null, null);
 		if (response.getFirst() == 0) {
 			revised = response.getSecond();
 		}
@@ -345,7 +378,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		try {
-			writeLogStyle(this.cloneDir);
+			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
 			if (Logger.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
@@ -354,7 +387,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-				"minerlog", "-r", revision + ":" + revision }, this.cloneDir, null, null);
+				"minerlog", "-r", revision + ":" + revision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -412,7 +445,7 @@ public class MercurialRepository extends Repository {
 	 * @return the clone dir
 	 */
 	public File getCloneDir() {
-		return this.cloneDir;
+		return cloneDir;
 	}
 	
 	/*
@@ -421,9 +454,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		if (this.startRevision == null) {
+		if (startRevision == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
-					"--template", "{node}" }, this.cloneDir, null, null);
+					"--template", "{node}" }, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -436,7 +469,7 @@ public class MercurialRepository extends Repository {
 			}
 			return lines.get(0).trim();
 		} else {
-			return this.startRevision;
+			return startRevision;
 		}
 	}
 	
@@ -454,7 +487,7 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision,
-				"--template", "{file_copies%filecopy}" }, this.cloneDir, null, null);
+				"--template", "{file_copies%filecopy}" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -484,9 +517,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		if (this.endRevision == null) {
+		if (endRevision == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
-					"--template", "{node}" }, this.cloneDir, null, null);
+					"--template", "{node}" }, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -499,7 +532,7 @@ public class MercurialRepository extends Repository {
 			}
 			return lines.get(0).trim();
 		} else {
-			return this.endRevision;
+			return endRevision;
 		}
 	}
 	
@@ -519,7 +552,7 @@ public class MercurialRepository extends Repository {
 		} else if (index > 0) {
 			String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template", "{node}\\n", "-l",
 					String.valueOf(index + 1) };
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -528,7 +561,7 @@ public class MercurialRepository extends Repository {
 		} else {
 			String[] args = new String[] { "log", "-r", transactionId + ":0", "--template", "{node}\\n", "-l",
 					String.valueOf(index + 1) };
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -545,7 +578,7 @@ public class MercurialRepository extends Repository {
 	public long getTransactionCount() {
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-				"--template", "{rev}\\n" }, this.cloneDir, null, null);
+				"--template", "{rev}\\n" }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -572,7 +605,7 @@ public class MercurialRepository extends Repository {
 		Condition.check(index >= 0, "Cannot get transaction id for revision number smaller than zero.");
 		
 		String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -600,7 +633,7 @@ public class MercurialRepository extends Repository {
 		}
 		
 		try {
-			writeLogStyle(this.cloneDir);
+			writeLogStyle(cloneDir);
 		} catch (IOException e1) {
 			if (Logger.logError()) {
 				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
@@ -609,7 +642,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-				"minerlog", "-r", fromRevision + ":" + toRevision }, this.cloneDir, null, null);
+				"minerlog", "-r", fromRevision + ":" + toRevision }, cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -647,16 +680,16 @@ public class MercurialRepository extends Repository {
 			authorRegex.getGroupNames();
 			
 			if (authorRegex.getGroup("plain") != null) {
-				authorUsername = authorRegex.getGroup("plain");
+				authorUsername = authorRegex.getGroup("plain").trim();
 			} else if ((authorRegex.getGroup("lastname") != null) && (authorRegex.getGroup("name") != null)) {
-				authorFullname = authorRegex.getGroup("name") + " " + authorRegex.getGroup("lastname");
+				authorFullname = authorRegex.getGroup("name").trim() + " " + authorRegex.getGroup("lastname").trim();
 			} else if (authorRegex.getGroup("name") != null) {
-				authorUsername = authorRegex.getGroup("name");
+				authorUsername = authorRegex.getGroup("name").trim();
 			}
 			if (authorRegex.getGroup("email") != null) {
-				authorEmail = authorRegex.getGroup("email");
+				authorEmail = authorRegex.getGroup("email").trim();
 			}
-			Person author = new Person(authorUsername.trim(), authorFullname.trim(), authorEmail.trim());
+			Person author = new Person(authorUsername, authorFullname, authorEmail);
 			
 			String[] dateString = lineParts[2].split(" ");
 			
@@ -667,7 +700,7 @@ public class MercurialRepository extends Repository {
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(revID, previous, this.personManager.getPerson((author != null ? author : null)),
+			result.add(new LogEntry(revID, previous, personManager.getPerson((author != null ? author : null)),
 					lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator), date));
 		}
 		return result;
@@ -682,26 +715,51 @@ public class MercurialRepository extends Repository {
 	public void setup(final URI address, final String startRevision, final String endRevision) {
 		Condition.notNull(address);
 		
-		this.uri = address;
-		// clone the remote repository
+		setup(address, startRevision, endRevision, null);
+	}
+	
+	/**
+	 * main setup method.
+	 * 
+	 * @param address
+	 *            the address
+	 * @param startRevision
+	 *            the start revision
+	 * @param endRevision
+	 *            the end revision
+	 * @param inputStream
+	 *            the input stream
+	 */
+	private void setup(final URI address, final String startRevision, final String endRevision,
+			final InputStream inputStream) {
+		
+		String innerRepoPath = setup(address);
 		
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
 		+ DateTimeUtils.currentTimeMillis();
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
-				new String[] { "clone", "-U", this.uri.toString(), hgName }, this.cloneDir, null, null);
+		// clone the remote repository
+		if (!clone(null, hgName)) {
+			if (Logger.logError()) {
+				Logger.error("Failed to clone mercurial repository!");
+				throw new RuntimeException();
+			}
+		}
+		
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
+				getUri().toString(), hgName }, cloneDir, null, null);
 		if (returnValue.getFirst() == 0) {
-			this.cloneDir = new File(hgName);
-			if (!this.cloneDir.exists()) {
+			cloneDir = new File(hgName + FileUtils.fileSeparator + innerRepoPath);
+			if (!cloneDir.exists()) {
 				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `" + hgName
+					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
 							+ "`");
 				}
 				return;
 			}
 			cacheHashes();
 			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
+				FileUtils.forceDeleteOnExit(cloneDir);
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage());
@@ -736,47 +794,7 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(username);
 		Condition.notNull(password);
 		
-		this.uri = Repository.encodeUsername(address, username);
-		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
-		+ DateTimeUtils.currentTimeMillis();
-		StringBuilder cmd = new StringBuilder();
-		cmd.append("hg clone -U ");
-		cmd.append(this.uri);
-		cmd.append(" ");
-		cmd.append(hgName);
-		
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(password.getBytes());
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
-				new String[] { "clone", "-U", this.uri.toString(), hgName }, this.cloneDir, inputStream, null);
-		if (returnValue.getFirst() == 0) {
-			this.cloneDir = new File(hgName);
-			if (!this.cloneDir.exists()) {
-				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + this.uri.toString() + "` to directory `" + hgName
-							+ "`");
-					Logger.error("Used command: " + cmd.toString());
-				}
-				return;
-			}
-			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
-			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-			}
-			cacheHashes();
-		}
-		if (startRevision == null) {
-			this.startRevision = this.getFirstRevisionId();
-		} else {
-			this.startRevision = startRevision;
-		}
-		
-		if (endRevision == null) {
-			this.endRevision = this.getLastRevisionId();
-		} else {
-			this.endRevision = startRevision;
-		}
+		setup(Repository.encodeUsername(address, username), startRevision, endRevision, new ByteArrayInputStream(
+				password.getBytes()));
 	}
 }

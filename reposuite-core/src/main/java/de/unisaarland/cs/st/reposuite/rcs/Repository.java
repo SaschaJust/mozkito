@@ -97,7 +97,7 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-					        + uriString.toString() + "`");
+							+ uriString.toString() + "`");
 				}
 				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
@@ -107,6 +107,8 @@ public abstract class Repository {
 		}
 		return uri;
 	}
+	
+	private URI uri;
 	
 	/**
 	 * Annotate file specified by file path at given revision.
@@ -118,6 +120,8 @@ public abstract class Repository {
 	 * @return List of AnnotationEntry for all lines starting by first line
 	 */
 	public abstract List<AnnotationEntry> annotate(String filePath, String revision);
+	
+	
 	
 	/**
 	 * Checks out the given relative path in repository and returns the file
@@ -150,8 +154,8 @@ public abstract class Repository {
 			if (previous != null) {
 				if (entry.getDateTime().isBefore(previous.getDateTime())) {
 					System.out.println("Transaction " + entry.getRevision()
-					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
-					        + previous);
+							+ " has timestamp before previous transaction: current " + entry + " vs. previous "
+							+ previous);
 				}
 			}
 			
@@ -209,7 +213,7 @@ public abstract class Repository {
 		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
 		idataset.addSeries(new String("Files per revision"), datapoints);
 		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
-		        PlotOrientation.VERTICAL, true, false, false);
+				PlotOrientation.VERTICAL, true, false, false);
 		
 		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
 		
@@ -242,7 +246,7 @@ public abstract class Repository {
 		
 		dataset.addSeries(new String("time per revision"), datapoints);
 		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
-		        PlotOrientation.VERTICAL, true, false, false);
+				PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -256,7 +260,7 @@ public abstract class Repository {
 		for (LogEntry entry : entries) {
 			// commits
 			String author = (entry.getAuthor().getUsername() != null ? entry.getAuthor().getUsername() : entry
-			        .getAuthor().getFullname());
+					.getAuthor().getFullname());
 			if (authors.containsKey(author)) {
 				authors.put(author, authors.get(author) + 1.0);
 			} else {
@@ -279,7 +283,7 @@ public abstract class Repository {
 		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
 		
 		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
-		        "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
+				"history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -367,8 +371,8 @@ public abstract class Repository {
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass().getSimpleName()
-		        .substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
-		        .toUpperCase());
+				.substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
+				.toUpperCase());
 	}
 	
 	/**
@@ -388,6 +392,10 @@ public abstract class Repository {
 	 *         021e7e97724b for 3.
 	 */
 	public abstract String getTransactionId(long index);
+	
+	public URI getUri() {
+		return uri;
+	}
 	
 	/**
 	 * @param revision
@@ -438,6 +446,42 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * This method extracts the fragment of the URI, saves the given uri without
+	 * fragment as repository uri and returns the fragment as string.
+	 * 
+	 * @param address
+	 *            the address
+	 * @return the string the extracted fragment section of the given address
+	 *         uri
+	 */
+	protected String setup(final URI address) {
+		
+		uri = address;
+		String fragment = address.getFragment();
+		if ((fragment != null) && (!fragment.equals(""))) {
+			// need to reformat URI and gitName
+			StringBuilder uriBuilder = new StringBuilder();
+			uriBuilder.append(address.getScheme());
+			uriBuilder.append("://");
+			uriBuilder.append(address.getAuthority());
+			uriBuilder.append(address.getPath());
+			if ((address.getQuery() != null) && (!address.getQuery().equals(""))) {
+				uriBuilder.append("?");
+				uriBuilder.append(address.getQuery());
+			}
+			try {
+				uri = new URI(uriBuilder.toString());
+			} catch (URISyntaxException e1) {
+				if (Logger.logError()) {
+					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
+							+ uriBuilder.toString() + "`");
+				}
+			}
+		}
+		return (fragment != null ? fragment : "");
+	}
+	
+	/**
 	 * Connect to repository at URI address.
 	 * 
 	 * @param address
@@ -456,7 +500,7 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
-	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -481,5 +525,9 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
-	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	
+	public void setUri(final URI uri) {
+		this.uri = uri;
+	}
 }
