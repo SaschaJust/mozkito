@@ -14,7 +14,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -29,6 +31,7 @@ import javax.mail.internet.MimeMessage;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
@@ -40,31 +43,34 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class CrashHandler extends ThreadGroup {
 	
-	private static final Properties mailProps = new Properties() {
-		
-		private static final long serialVersionUID = -4075576523389682827L;
-		
-		{
-			put("mail.smtp.host", "mail.own-hero.net");
-			put("mail.transport.protocol", "smtp");
-			put("mail.to", "methos@own-hero.net");
-			put("mail.subject", "RepoSuite Crash Report");
-			put("mail.sender.name", "RepoSuite Client");
-			put("mail.sender.address",
-			"reposuite-crasher@st.cs.uni-saarland.de");
-			put("mail.sender.host", "hg.st.cs.uni-saarland.de");
-		}
-	};
+	private static final Properties                      mailProps = new Properties() {
+		                                                               
+		                                                               private static final long serialVersionUID = -4075576523389682827L;
+		                                                               
+		                                                               {
+			                                                               put("mail.smtp.host", "mail.own-hero.net");
+			                                                               put("mail.transport.protocol", "smtp");
+			                                                               put("mail.to", "methos@own-hero.net");
+			                                                               put("mail.subject", "RepoSuite Crash Report");
+			                                                               put("mail.sender.name", "RepoSuite Client");
+			                                                               put("mail.sender.address",
+			                                                                       "reposuite-crasher@st.cs.uni-saarland.de");
+			                                                               put("mail.sender.host",
+			                                                                       "hg.st.cs.uni-saarland.de");
+		                                                               }
+	                                                               };
+	
+	private static Map<RepoSuiteToolchain, CrashHandler> handlers  = new HashMap<RepoSuiteToolchain, CrashHandler>();
 	
 	public static void init(final RepoSuiteToolchain toolchain) {
-		new CrashHandler(toolchain);
+		if (!handlers.containsKey(toolchain)) {
+			handlers.put(toolchain, new CrashHandler(toolchain));
+		}
 	}
 	
-	private Thread.UncaughtExceptionHandler previousHandler = null;
+	private RepoSuiteToolchain application = null;
 	
-	private RepoSuiteToolchain              application     = null;
-	
-	private static boolean                  executed        = false;
+	private static boolean     executed    = false;
 	
 	/**
 	 * @param application
@@ -73,16 +79,9 @@ public class CrashHandler extends ThreadGroup {
 	private CrashHandler(final RepoSuiteToolchain application) {
 		super(RepoSuiteToolchain.class.getSimpleName());
 		this.application = application;
-		this.previousHandler = Thread.getDefaultUncaughtExceptionHandler();
+		// this.previousHandler = Thread.getDefaultUncaughtExceptionHandler();
+		application.setUncaughtExceptionHandler(this);
 		Thread.setDefaultUncaughtExceptionHandler(this);
-	}
-	
-	/**
-	 * @param name
-	 *            default {@link ThreadGroup} with name constructor
-	 */
-	protected CrashHandler(final String name) {
-		super(name);
 	}
 	
 	/**
@@ -246,7 +245,7 @@ public class CrashHandler extends ThreadGroup {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Operating System: ");
 		builder.append(systemMXBean.getName()).append(" ").append(systemMXBean.getVersion()).append(" ")
-		.append(systemMXBean.getArch());
+		        .append(systemMXBean.getArch());
 		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
@@ -286,7 +285,7 @@ public class CrashHandler extends ThreadGroup {
 					
 					if (current.getName().endsWith(FileUtils.fileSeparator + "pom.xml")) {
 						InputStream inputStream = CrashHandler.class.getResourceAsStream(FileUtils.fileSeparator
-								+ current.getName());
+						        + current.getName());
 						BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 						String line;
 						boolean capturing = false;
@@ -351,11 +350,12 @@ public class CrashHandler extends ThreadGroup {
 			Transport transport = session.getTransport();
 			MimeMessage message = new MimeMessage(session);
 			message.setSubject(CrashHandler.mailProps.getProperty("mail.subject"));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
-			message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"), CrashHandler.mailProps
-					.getProperty("mail.sender.name")));
-			message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"), CrashHandler.mailProps
-					.getProperty("mail.sender.name")));
+			message.addRecipient(Message.RecipientType.TO,
+			        new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
+			message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
+			        CrashHandler.mailProps.getProperty("mail.sender.name")));
+			message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
+			        CrashHandler.mailProps.getProperty("mail.sender.name")));
 			message.setContent(report, "text/plain");
 			transport.connect();
 			transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
@@ -379,23 +379,35 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0, final Throwable arg1) {
-		if (!CrashHandler.executed && (arg1 != null)) {
+		if (!CrashHandler.executed) {
 			CrashHandler.executed = true;
-			if (Logger.logError()) {
-				Logger.error("[[ FATAL ERROR / CRASH ]] Generating crash report.");
-			}
-			String crashReport = getCrashReport(arg1);
 			
-			if (Logger.logError()) {
-				Logger.error(crashReport);
+			if ((arg1 == null) || (arg1 instanceof Shutdown)) {
+				if (Logger.logInfo()) {
+					Logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
+					        + arg1.getMessage());
+				}
+			} else {
+				if (Logger.logError()) {
+					Logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
+				}
+				
+				String crashReport = getCrashReport(arg1);
+				
+				if (Logger.logError()) {
+					Logger.error(crashReport);
+				}
+				
+				System.out.println(crashReport);
+				sendReport(crashReport);
 			}
-			System.out.println(crashReport);
-			sendReport(crashReport);
+			
+			if (Logger.logInfo()) {
+				Logger.info("Initiating shutdown.");
+			}
+			
 			if (this.application != null) {
 				this.application.shutdown();
-			}
-			if (this.previousHandler != null) {
-				this.previousHandler.uncaughtException(arg0, arg1);
 			}
 		}
 	}

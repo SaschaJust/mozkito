@@ -18,7 +18,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepoSuiteThreadGroup extends CrashHandler {
+public class RepoSuiteThreadGroup extends ThreadGroup {
 	
 	private final Collection<RepoSuiteThread<?, ?>> threads = new LinkedList<RepoSuiteThread<?, ?>>();
 	private final RepoSuiteSettings                 settings;
@@ -32,6 +32,7 @@ public class RepoSuiteThreadGroup extends CrashHandler {
 	 */
 	public RepoSuiteThreadGroup(final String name, final RepoSuiteToolchain toolchain) {
 		super(name);
+		CrashHandler.init(toolchain);
 		this.settings = toolchain.getSettings();
 	}
 	
@@ -45,7 +46,6 @@ public class RepoSuiteThreadGroup extends CrashHandler {
 		this.getThreads().add(thread);
 	}
 	
-	@Override
 	protected String getRepoSuiteSettings() {
 		return this.settings.toString();
 	}
@@ -59,7 +59,6 @@ public class RepoSuiteThreadGroup extends CrashHandler {
 		return this.threads;
 	}
 	
-	@Override
 	protected String getToolInformation() {
 		return this.settings.getToolInformation();
 	}

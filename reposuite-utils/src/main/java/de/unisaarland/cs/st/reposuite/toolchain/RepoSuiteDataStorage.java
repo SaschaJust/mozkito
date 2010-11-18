@@ -3,10 +3,10 @@
  */
 package de.unisaarland.cs.st.reposuite.toolchain;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -21,10 +21,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepoSuiteDataStorage<E> {
 	
-	private final Queue<E>                           queue;
-	private final List<RepoSuiteGeneralThread<?, E>> writers = new LinkedList<RepoSuiteGeneralThread<?, E>>();
-	private final List<RepoSuiteGeneralThread<E, ?>> readers = new LinkedList<RepoSuiteGeneralThread<E, ?>>();
-	private final int                                cacheSize;
+	private final Queue<E>                                    queue   = new ConcurrentLinkedQueue<E>();
+	private final BlockingDeque<RepoSuiteGeneralThread<?, E>> writers = new LinkedBlockingDeque<RepoSuiteGeneralThread<?, E>>();
+	private final BlockingDeque<RepoSuiteGeneralThread<E, ?>> readers = new LinkedBlockingDeque<RepoSuiteGeneralThread<E, ?>>();
+	private final int                                         cacheSize;
 	
 	public RepoSuiteDataStorage() {
 		this(3000);
@@ -35,7 +35,6 @@ public class RepoSuiteDataStorage<E> {
 	 */
 	public RepoSuiteDataStorage(final int cacheSize) {
 		this.cacheSize = cacheSize;
-		this.queue = new ConcurrentLinkedQueue<E>();
 	}
 	
 	/**
@@ -54,22 +53,24 @@ public class RepoSuiteDataStorage<E> {
 				E poll = this.queue.poll();
 				this.queue.notifyAll();
 				return poll;
-			} else if (!this.writers.isEmpty()) {
-				while (this.queue.isEmpty()) {
+			} else {
+				while (!this.writers.isEmpty() && this.queue.isEmpty()) {
 					this.queue.wait();
 				}
+				
 				if (this.queue.size() > 0) {
 					E poll = this.queue.poll();
 					this.queue.notifyAll();
 					return poll;
-				}
-			} else {
-				if (Logger.logWarn()) {
-					Logger.warn("No more incoming data. Returning (null).");
+					
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("No more incoming data. Returning (null).");
+					}
+					this.queue.notifyAll();
+					return null;
 				}
 			}
-			this.queue.notifyAll();
-			return null;
 		}
 	}
 	
@@ -79,10 +80,17 @@ public class RepoSuiteDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public synchronized void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
+	public void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
 		Condition.notNull(writerThread);
 		
+		if (Logger.logInfo()) {
+			Logger.info("Registering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
+		}
+		
 		this.writers.add(writerThread);
+		synchronized (this.queue) {
+			this.queue.notifyAll();
+		}
 	}
 	
 	/**
@@ -91,10 +99,17 @@ public class RepoSuiteDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public synchronized void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
+	public void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
 		Condition.notNull(readerThread);
 		
+		if (Logger.logInfo()) {
+			Logger.info("Registering output " + ((RepoSuiteThread<E, ?>) readerThread).getName());
+		}
+		
 		this.readers.add(readerThread);
+		synchronized (this.queue) {
+			this.queue.notifyAll();
+		}
 	}
 	
 	/**
@@ -112,12 +127,18 @@ public class RepoSuiteDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public synchronized void unregisterInput(final RepoSuiteGeneralThread<?, E> writerThread) {
+	public void unregisterInput(final RepoSuiteGeneralThread<?, E> writerThread) {
 		Condition.notNull(writerThread);
 		
 		if (this.writers.contains(writerThread)) {
+			if (Logger.logInfo()) {
+				Logger.info("Unregistering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
+			}
+			
 			this.writers.remove(writerThread);
-			notifyAll();
+			synchronized (this.queue) {
+				this.queue.notifyAll();
+			}
 		}
 	}
 	
@@ -129,12 +150,19 @@ public class RepoSuiteDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public synchronized void unregisterOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
+	public void unregisterOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
 		Condition.notNull(readerThread);
 		
 		if (this.readers.contains(readerThread)) {
+			
+			if (Logger.logInfo()) {
+				Logger.info("Unregistering output " + ((RepoSuiteThread<E, ?>) readerThread).getName());
+			}
+			
 			this.readers.remove(readerThread);
-			notifyAll();
+			synchronized (this.queue) {
+				this.queue.notifyAll();
+			}
 		}
 	}
 	
@@ -153,16 +181,16 @@ public class RepoSuiteDataStorage<E> {
 		}
 		
 		synchronized (this.queue) {
-			if (this.readers.isEmpty()) {
-				if (Logger.logWarn()) {
-					Logger.warn("No readers attached to this storage. Void sinking data.");
-				}
-			} else {
-				while (this.queue.size() >= this.cacheSize) {
-					this.queue.wait();
-				}
-				
+			while (!this.readers.isEmpty() && (this.queue.size() >= this.cacheSize)) {
+				this.queue.wait();
+			}
+			
+			if (!this.readers.isEmpty()) {
 				this.queue.add(data);
+			} else {
+				if (Logger.logWarn()) {
+					Logger.warn("No more readers attached. Void sinking data and returning.");
+				}
 			}
 			this.queue.notifyAll();
 		}

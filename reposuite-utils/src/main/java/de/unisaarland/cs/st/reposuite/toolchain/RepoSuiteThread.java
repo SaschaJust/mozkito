@@ -78,15 +78,15 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		setShutdown(false);
 		
 		Condition
-		.equals(hasInputConnector(),
-				this.inputStorage != null,
-				"Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
-				hasInputConnector(), this.inputStorage != null);
+		        .equals(hasInputConnector(),
+		                this.inputStorage != null,
+		                "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+		                hasInputConnector(), this.inputStorage != null);
 		Condition
-		.equals(hasInputConnector(),
-				this.inputStorage != null,
-				"Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-				hasOutputConnector(), this.outputStorage != null);
+		        .equals(hasInputConnector(),
+		                this.inputStorage != null,
+		                "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+		                hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(settings, "`settings` must not be null.");
 		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
@@ -117,7 +117,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		if (retval && this.knownThreads.isEmpty()) {
 			if (Logger.logError()) {
 				Logger.error(getHandle()
-						+ " has known connections, but knownThreads is empty. This should never happen.");
+				        + " has known connections, but knownThreads is empty. This should never happen.");
 			}
 			retval = false;
 		}
@@ -217,6 +217,15 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			if (this.inputThreads.contains(thread)) {
 				this.inputThreads.remove(thread);
 				this.inputStorage.unregisterInput(thread);
+				this.knownThreads.remove(thread);
+				
+				if (Logger.logInfo()) {
+					Logger.info("[" + getHandle() + "] Unlinking input connector from [" + thread.getHandle() + "]");
+				}
+				
+				if (thread.hasOutputConnector() && thread.isOutputConnected()) {
+					thread.disconnectOutput(this);
+				}
 			}
 		}
 	}
@@ -235,22 +244,35 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			if (this.outputThreads.contains(thread)) {
 				this.outputThreads.remove(thread);
 				this.outputStorage.unregisterOutput(thread);
+				this.knownThreads.remove(thread);
+				
+				if (Logger.logInfo()) {
+					Logger.info("[" + getHandle() + "] Unlinking output connector from [" + thread.getHandle() + "]");
+				}
+				
+				if (thread.hasInputConnector() && thread.isInputConnected()) {
+					thread.disconnectInput(this);
+				}
 			}
 		}
 	}
 	
 	@Override
-	public void finish() {
+	public synchronized void finish() {
 		
 		if (Logger.logInfo()) {
 			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
-		for (RepoSuiteGeneralThread<V, ?> thread : this.outputThreads) {
+		@SuppressWarnings ("unchecked") LinkedList<RepoSuiteGeneralThread<V, ?>> outputThreads = (LinkedList<RepoSuiteGeneralThread<V, ?>>) this.outputThreads
+		        .clone();
+		for (RepoSuiteGeneralThread<V, ?> thread : outputThreads) {
 			thread.disconnectInput(this);
 		}
 		
-		for (RepoSuiteGeneralThread<?, K> thread : this.inputThreads) {
+		@SuppressWarnings ("unchecked") LinkedList<RepoSuiteGeneralThread<?, K>> inputThreads = (LinkedList<RepoSuiteGeneralThread<?, K>>) this.inputThreads
+		        .clone();
+		for (RepoSuiteGeneralThread<?, K> thread : inputThreads) {
 			thread.disconnectOutput(this);
 		}
 		
@@ -431,7 +453,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#shutdown()
 	 */
 	@Override
-	public final void shutdown() {
+	public final synchronized void shutdown() {
 		if (!isShutdown()) {
 			if (Logger.logInfo()) {
 				Logger.info("[" + this.getClass().getSimpleName() + "] Received shutdown request. Terminating.");
@@ -439,16 +461,18 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			
 			setShutdown(true);
 			
+			for (RepoSuiteGeneralThread<?, ?> thread : this.knownThreads) {
+				if (!thread.isShutdown()) {
+					thread.shutdown();
+				}
+			}
+			
 			for (RepoSuiteGeneralThread<V, ?> thread : this.outputThreads) {
 				thread.disconnectInput(this);
 			}
 			
 			for (RepoSuiteGeneralThread<?, K> thread : this.inputThreads) {
 				thread.disconnectOutput(this);
-			}
-			
-			for (RepoSuiteGeneralThread<?, ?> thread : this.knownThreads) {
-				thread.shutdown();
 			}
 		}
 	}
@@ -474,7 +498,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
-				hasOutputConnector());
+		        hasOutputConnector());
 		if (Logger.logTrace()) {
 			Logger.trace("writing data: " + data);
 		}
