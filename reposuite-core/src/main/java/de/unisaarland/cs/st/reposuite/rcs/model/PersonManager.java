@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -41,35 +40,32 @@ public class PersonManager {
 				Logger.trace("Serving known " + Person.getHandle() + ": " + person);
 			}
 		} else {
-			@SuppressWarnings ("unchecked") Collection<Person> candidates = CollectionUtils.select(
-					this.persons, new Predicate() {
-						
-						@Override
-						public boolean evaluate(final Object object) {
-							return ((((Person) object).getUsername() != null) && ((Person) object).getUsername()
-									.equals(searchTarget.getUsername()))
-									|| ((((Person) object).getEmail() != null) && ((Person) object).getEmail().equals(
-											searchTarget.getEmail()))
-											|| ((((Person) object).getFullname() != null)
-													&& (((Person) object).getEmail() == null)
-													&& (((Person) object).getUsername() == null) && ((Person) object)
-													.getFullname().equals(searchTarget.getFullname()));
-						}
-					});
+			@SuppressWarnings ("unchecked") Collection<Person> candidates = CollectionUtils.select(this.persons,
+			        new Predicate() {
+				        
+				        @Override
+				        public boolean evaluate(final Object object) {
+					        return ((((Person) object).getUsername() != null) && ((Person) object).getUsername()
+					                .equals(searchTarget.getUsername()))
+					                || ((((Person) object).getEmail() != null) && ((Person) object).getEmail().equals(
+					                        searchTarget.getEmail()))
+					                || ((((Person) object).getFullname() != null)
+					                        && (((Person) object).getEmail() == null)
+					                        && (((Person) object).getUsername() == null) && ((Person) object)
+					                        .getFullname().equals(searchTarget.getFullname()));
+				        }
+			        });
 			
 			if ((candidates != null) && !candidates.isEmpty()) {
 				/*
-				 * found multiple targets with - same username or - same
-				 * email or - same fullname but username/email not set merge
-				 * them
+				 * found multiple targets with - same username or - same email
+				 * or - same fullname but username/email not set merge them
 				 */
 				candidates.add(searchTarget);
 				Person moltenCore = Person.merge(candidates);
 				if (Logger.logWarn()) {
 					Logger.warn("Merged " + candidates.size() + " " + Person.getHandle() + "s ("
-							+ JavaUtils.collectionToString(candidates)
-							+ "), resulting in: "
-							+ moltenCore);
+					        + JavaUtils.collectionToString(candidates) + "), resulting in: " + moltenCore);
 					Logger.warn("Set size before: " + this.persons.size());
 				}
 				
@@ -94,6 +90,6 @@ public class PersonManager {
 	}
 	
 	public void setPersons(final Collection<Person> persons) {
-		this.persons = new TreeSet<Person>(persons);
+		this.persons = new HashSet<Person>(persons);
 	}
 }

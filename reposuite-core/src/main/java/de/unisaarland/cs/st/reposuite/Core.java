@@ -65,14 +65,15 @@ public class Core extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void setup() {
+		// this has be done done BEFORE other instances like repository since
+		// they could rely on data loading
+		HibernateUtil hibernateUtil = this.databaseSettings.getValue();
 		Repository repository = this.repoSettings.getValue();
 		this.logSettings.getValue();
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
-		
-		HibernateUtil hibernateUtil = this.databaseSettings.getValue();
 		
 		if (hibernateUtil != null) {
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), hibernateUtil);

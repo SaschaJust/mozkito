@@ -13,8 +13,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -32,7 +32,8 @@ public class HibernateUtil {
 			Collection<Class<?>> annotatedClasses;
 			
 			try {
-				annotatedClasses = ClassFinder.getClassesOfInterface(Core.class.getPackage(), Annotated.class);
+				annotatedClasses = ClassFinder
+				        .getClassesOfInterface(RCSTransaction.class.getPackage(), Annotated.class);
 			} catch (Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
