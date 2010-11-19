@@ -26,6 +26,7 @@ public class PersonManager {
 		if (person == null) {
 			person = new Person("<unknown>", null, null);
 		}
+		
 		final Person searchTarget = person;
 		Person findPerson = (Person) CollectionUtils.find(this.persons, new Predicate() {
 			
@@ -34,6 +35,7 @@ public class PersonManager {
 				return object.equals(searchTarget);
 			}
 		});
+		
 		if (findPerson != null) {
 			person = findPerson;
 			if (Logger.logTrace()) {

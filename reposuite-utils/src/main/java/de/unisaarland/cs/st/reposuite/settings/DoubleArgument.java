@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -18,8 +19,8 @@ public class DoubleArgument extends RepoSuiteArgument {
 	 * @param isRequired
 	 * @throws DuplicateArgumentException
 	 */
-	public DoubleArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) {
+	public DoubleArgument(final RepoSuiteSettings settings, final String name, final String description,
+	        final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
@@ -39,7 +40,7 @@ public class DoubleArgument extends RepoSuiteArgument {
 				Logger.error("Value given for argument `" + getName()
 				        + "` could not be interpreted as a Double value. Abort!");
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 	}
 }

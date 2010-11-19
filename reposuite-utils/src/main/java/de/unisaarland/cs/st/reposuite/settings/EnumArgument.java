@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.util.HashSet;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -61,7 +62,7 @@ public class EnumArgument extends RepoSuiteArgument {
 			if (Logger.logError()) {
 				Logger.error(ss.toString());
 			}
-			System.exit(-1);
+			throw new Shutdown();
 		}
 		super.setStringValue(value);
 	}

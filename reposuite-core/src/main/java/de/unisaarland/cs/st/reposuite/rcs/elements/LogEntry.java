@@ -1,11 +1,13 @@
 package de.unisaarland.cs.st.reposuite.rcs.elements;
 
+import java.util.Set;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class LogEntry.
@@ -14,11 +16,13 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
  */
 public class LogEntry implements Comparable<LogEntry> {
 	
-	protected Person   author;
-	protected DateTime commitDate;
-	protected String   message;
-	protected LogEntry previous;
-	protected String   revision;
+	protected Person      author;
+	protected DateTime    commitDate;
+	protected String      message;
+	protected LogEntry    previous;
+	protected String      revision;
+	protected String      inBranch;
+	protected Set<String> mergedBranches;
 	
 	/**
 	 * Instantiates a new log entry.

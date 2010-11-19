@@ -101,7 +101,7 @@ public class RCSFile implements Annotated {
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		while ((current != null) && !this.changedNames.containsKey(current)) {
-			current = current.getPreviousRCSRcsTransaction();
+			current = current.getPrevTransaction();
 		}
 		
 		if (current != null) {

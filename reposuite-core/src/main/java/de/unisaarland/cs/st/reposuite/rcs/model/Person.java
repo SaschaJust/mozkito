@@ -80,12 +80,13 @@ public class Person implements Annotated {
 		moltenCore.setGeneratedId(id);
 		return moltenCore;
 	}
+	
 	private long                    generatedId;
 	private String                  email;
 	private String                  fullname;
-	private TreeSet<RCSTransaction> transactions = new TreeSet<RCSTransaction>();
+	private TreeSet<RCSTransaction> transactions   = new TreeSet<RCSTransaction>();
 	private Set<String>             synonyms       = new TreeSet<String>();
-	private Set<String>             emailAddresses = new TreeSet<String>();                                     ;
+	private Set<String>             emailAddresses = new TreeSet<String>();         ;
 	
 	private String                  username;
 	
@@ -106,11 +107,11 @@ public class Person implements Annotated {
 		if (fullname != null) {
 			Condition.equals(fullname.trim(), fullname);
 		}
-
+		
 		if (username != null) {
 			Condition.equals(username, username);
 		}
-
+		
 		if (email != null) {
 			Condition.equals(email, email);
 		}
@@ -358,8 +359,8 @@ public class Person implements Annotated {
 	@Override
 	public String toString() {
 		return "Person [username=" + this.username + ", fullname=" + this.fullname + ", email=" + this.email
-		+ ", synonyms=" + JavaUtils.collectionToString(this.synonyms) + ", emailAddresses="
-		+ JavaUtils.collectionToString(this.getEmailAddresses()) + "]";
+		        + ", synonyms=" + JavaUtils.collectionToString(this.synonyms) + ", emailAddresses="
+		        + JavaUtils.collectionToString(this.getEmailAddresses()) + "]";
 	}
 	
 }

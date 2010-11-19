@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.settings;
 import java.io.File;
 import java.io.IOException;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -38,8 +39,8 @@ public class FileArgument extends RepoSuiteArgument {
 	 *            Set to true if you want to ensure that the file at given
 	 *            location must already exist.
 	 */
-	public FileArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, boolean overwrite, boolean mustExist) {
+	public FileArgument(final RepoSuiteSettings settings, final String name, final String description,
+	        final String defaultValue, final boolean isRequired, final boolean overwrite, final boolean mustExist) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
 		this.mustExist = mustExist;
@@ -61,14 +62,14 @@ public class FileArgument extends RepoSuiteArgument {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` is a directory. Expected file. Abort.");
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 		if (file.exists() && (!this.overwrite)) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` exists already. Please remove file or choose different argument value.");
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		} else if (file.exists() && (this.overwrite)) {
 			
 			if (Logger.logDebug()) {
@@ -81,14 +82,14 @@ public class FileArgument extends RepoSuiteArgument {
 				if (Logger.logError()) {
 					Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
 				}
-				throw new RuntimeException();
+				throw new Shutdown();
 			}
 			try {
 				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					throw new RuntimeException();
+					throw new Shutdown();
 				}
 			} catch (IOException e) {
 				if (Logger.logError()) {
@@ -104,14 +105,14 @@ public class FileArgument extends RepoSuiteArgument {
 					Logger.error("Specified file `" + file.getAbsolutePath() + "` for argument `" + getName()
 					        + "` must exist but does not exist. Abort.");
 				}
-				throw new RuntimeException();
+				throw new Shutdown();
 			} else {
 				try {
 					if (!file.createNewFile()) {
 						if (Logger.logError()) {
 							Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 						}
-						throw new RuntimeException();
+						throw new Shutdown();
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {

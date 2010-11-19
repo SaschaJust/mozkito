@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -127,6 +128,9 @@ public class RepoSuiteSettings {
 		return this.arguments.get(name);
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getToolInformation() {
 		StringBuilder builder = new StringBuilder();
 		for (String tool : this.toolInformation.keySet()) {
@@ -176,12 +180,12 @@ public class RepoSuiteSettings {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage());
 					}
-					throw new RuntimeException();
+					throw new Shutdown();
 				} catch (IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage());
 					}
-					throw new RuntimeException();
+					throw new Shutdown();
 				}
 			}
 			for (Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -203,7 +207,7 @@ public class RepoSuiteSettings {
 		
 		if (!validateSettings()) {
 			System.err.println(getHelpString());
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 	}
 	

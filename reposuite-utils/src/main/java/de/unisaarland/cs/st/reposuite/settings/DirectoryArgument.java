@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.io.File;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -25,8 +26,8 @@ public class DirectoryArgument extends RepoSuiteArgument {
 	 * @param create
 	 *            Attempts to create directory if not exist
 	 */
-	public DirectoryArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired, boolean create) {
+	public DirectoryArgument(final RepoSuiteSettings settings, final String name, final String description,
+	        final String defaultValue, final boolean isRequired, final boolean create) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.create = create;
 	}
@@ -49,14 +50,14 @@ public class DirectoryArgument extends RepoSuiteArgument {
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 					        + "` does not exist.");
 				}
-				throw new RuntimeException();
+				throw new Shutdown();
 			} else {
 				if (!file.mkdirs()) {
 					if (Logger.logError()) {
 						Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 						        + "` does not exist and cannot be created.");
 					}
-					throw new RuntimeException();
+					throw new Shutdown();
 				}
 			}
 		}
@@ -65,7 +66,7 @@ public class DirectoryArgument extends RepoSuiteArgument {
 				Logger.error("The directory `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` is not a directory. Please remove file or choose different argument value.");
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 		return file;
 	}

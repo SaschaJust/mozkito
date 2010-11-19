@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -217,7 +218,7 @@ public class RepoSuiteThreadPool {
 				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
 				        + JavaUtils.collectionToString(sourceThreads.keySet()));
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 		
 		if (sinkThreads.keySet().size() != 1) {
@@ -226,7 +227,7 @@ public class RepoSuiteThreadPool {
 				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
 				        + JavaUtils.collectionToString(sinkThreads.keySet()));
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 		
 		// BUILD GRAPH
@@ -270,7 +271,7 @@ public class RepoSuiteThreadPool {
 				Logger.error("Transformers: " + JavaUtils.mapToString(transformerThreads));
 				Logger.error("Sinks: " + JavaUtils.mapToString(sinkThreads));
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 	}
 	
@@ -293,7 +294,7 @@ public class RepoSuiteThreadPool {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
-				throw new RuntimeException();
+				throw new Shutdown();
 			}
 		}
 	}

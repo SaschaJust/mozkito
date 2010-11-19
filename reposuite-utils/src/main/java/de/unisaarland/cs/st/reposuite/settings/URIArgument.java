@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.settings;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -25,8 +26,8 @@ public class URIArgument extends RepoSuiteArgument {
 	 *            Attempts to create directory if not exist
 	 * @throws DuplicateArgumentException
 	 */
-	public URIArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) {
+	public URIArgument(final RepoSuiteSettings settings, final String name, final String description,
+	        final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -48,7 +49,7 @@ public class URIArgument extends RepoSuiteArgument {
 				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `" + getName()
 				        + "`, the following error occurred: " + e.getMessage());
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 	}
 }

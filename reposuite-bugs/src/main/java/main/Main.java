@@ -4,6 +4,7 @@
 package main;
 
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -25,7 +26,7 @@ public class Main {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
+			throw new Shutdown();
 		}
 	}
 	

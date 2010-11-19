@@ -56,9 +56,19 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private Person                  author;
 	private String                  id;
 	private String                  message;
-	private RCSTransaction          previousRCSRcsTransaction;
-	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	
+	private RCSTransaction          nextTransaction;
+	private RCSTransaction          prevTransaction;
+	private RCSTransaction          nextTransactionByTimestamp;               // following
+	                                                                           // the
+	                                                                           // branch
+	                                                                           // path
+	private RCSTransaction          prevTransactionByTimestamp;               // following
+	                                                                           // the
+	                                                                           // branch
+	                                                                           // path
+	private RCSBranch               branch;
+	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	private DateTime                timestamp;
 	
 	/**
@@ -94,7 +104,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		this.message = message;
 		this.timestamp = timestamp;
 		this.author = author;
-		this.previousRCSRcsTransaction = previousRcsTransaction;
+		this.prevTransaction = previousRcsTransaction;
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -128,21 +138,21 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			return 0;
 		} else if (this.timestamp.equals(transaction.timestamp)) {
 			RCSTransaction currentTransaction = this;
-			while (currentTransaction.previousRCSRcsTransaction != null) {
-				if (currentTransaction.previousRCSRcsTransaction.equals(transaction)) {
+			while (currentTransaction.prevTransaction != null) {
+				if (currentTransaction.prevTransaction.equals(transaction)) {
 					return 1;
-				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isBefore(transaction.timestamp)) {
+				} else if (currentTransaction.prevTransaction.timestamp.isBefore(transaction.timestamp)) {
 					return -1;
-				} else if (currentTransaction.previousRCSRcsTransaction.timestamp.isAfter(transaction.timestamp)) {
+				} else if (currentTransaction.prevTransaction.timestamp.isAfter(transaction.timestamp)) {
 					if (Logger.logError()) {
 						Logger.error("Found previous transaction with larger timestamp then current: " + toString()
-						        + " vs " + currentTransaction.previousRCSRcsTransaction.toString());
+						        + " vs " + currentTransaction.prevTransaction.toString());
 					}
 					
 					throw new RuntimeException();
 				}
 				
-				currentTransaction = currentTransaction.previousRCSRcsTransaction;
+				currentTransaction = currentTransaction.prevTransaction;
 			}
 			
 			return -1;
@@ -159,6 +169,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getAuthor() {
 		return this.author;
+	}
+	
+	/**
+	 * @return the branch
+	 */
+	@Column (updatable = false)
+	public RCSBranch getBranch() {
+		return this.branch;
 	}
 	
 	/**
@@ -194,13 +212,35 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * Gets the previous rcs rcs transaction.
-	 * 
-	 * @return the previousRCSTransaction
+	 * @return the nextTransaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
-	public RCSTransaction getPreviousRCSRcsTransaction() {
-		return this.previousRCSRcsTransaction;
+	public RCSTransaction getNextTransaction() {
+		return this.nextTransaction;
+	}
+	
+	/**
+	 * @return the nextTransactionByTimestamp
+	 */
+	@OneToOne (fetch = FetchType.LAZY)
+	public RCSTransaction getNextTransactionByTimestamp() {
+		return this.nextTransactionByTimestamp;
+	}
+	
+	/**
+	 * @return the prevTransaction
+	 */
+	@OneToOne (fetch = FetchType.LAZY)
+	public RCSTransaction getPrevTransaction() {
+		return this.prevTransaction;
+	}
+	
+	/**
+	 * @return the prevTransactionByTimestamp
+	 */
+	@OneToOne (fetch = FetchType.LAZY)
+	public RCSTransaction getPrevTransactionByTimestamp() {
+		return this.prevTransactionByTimestamp;
 	}
 	
 	/**
@@ -249,6 +289,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * @param branch
+	 *            the branch to set
+	 */
+	public void setBranch(final RCSBranch branch) {
+		this.branch = branch;
+	}
+	
+	/**
 	 * Sets the id.
 	 * 
 	 * @param id
@@ -282,6 +330,22 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * @param nextTransaction
+	 *            the nextTransaction to set
+	 */
+	public void setNextTransaction(final RCSTransaction nextTransaction) {
+		this.nextTransaction = nextTransaction;
+	}
+	
+	/**
+	 * @param nextTransactionByTimestamp
+	 *            the nextTransactionByTimestamp to set
+	 */
+	public void setNextTransactionByTimestamp(final RCSTransaction nextTransactionByTimestamp) {
+		this.nextTransactionByTimestamp = nextTransactionByTimestamp;
+	}
+	
+	/**
 	 * Sets the previous rcs rcs transaction.
 	 * 
 	 * @param previousRCSRcsTransaction
@@ -289,7 +353,23 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setPreviousRCSRcsTransaction(final RCSTransaction previousRCSRcsTransaction) {
-		this.previousRCSRcsTransaction = previousRCSRcsTransaction;
+		this.prevTransaction = previousRCSRcsTransaction;
+	}
+	
+	/**
+	 * @param prevTransaction
+	 *            the prevTransaction to set
+	 */
+	public void setPrevTransaction(final RCSTransaction prevTransaction) {
+		this.prevTransaction = prevTransaction;
+	}
+	
+	/**
+	 * @param prevTransactionByTimestamp
+	 *            the prevTransactionByTimestamp to set
+	 */
+	public void setPrevTransactionByTimestamp(final RCSTransaction prevTransactionByTimestamp) {
+		this.prevTransactionByTimestamp = prevTransactionByTimestamp;
 	}
 	
 	/**
