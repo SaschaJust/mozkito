@@ -5,6 +5,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
+
 public class BooleanArgumentTest {
 	
 	@Test
@@ -17,7 +19,7 @@ public class BooleanArgumentTest {
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -32,7 +34,7 @@ public class BooleanArgumentTest {
 		assertEquals(true, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -47,7 +49,7 @@ public class BooleanArgumentTest {
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -62,7 +64,7 @@ public class BooleanArgumentTest {
 		assertEquals(true, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -77,7 +79,7 @@ public class BooleanArgumentTest {
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -93,7 +95,7 @@ public class BooleanArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 	}
@@ -105,7 +107,7 @@ public class BooleanArgumentTest {
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 		arg.setRequired(true);
@@ -113,14 +115,14 @@ public class BooleanArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		arg.setRequired(false);
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -132,14 +134,14 @@ public class BooleanArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		arg.setStringValue("false");
 		assertEquals(false, arg.getValue());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 		arg.setStringValue(null);
@@ -147,14 +149,14 @@ public class BooleanArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		arg.setStringValue("tRuE");
 		assertEquals(true, arg.getValue());
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}

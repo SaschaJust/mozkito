@@ -9,4 +9,7 @@
 	<artifactId>reposuite-tracker</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-tracker</name>
+	<properties>
+		<moduleName>tracker</moduleName>
+	</properties>
 </project>

@@ -17,4 +17,7 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<properties>
+		<moduleName>nalatra</moduleName>
+	</properties>
 </project>

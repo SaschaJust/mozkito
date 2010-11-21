@@ -9,4 +9,7 @@
 	<artifactId>reposuite-untangling</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-untangling</name>
+	<properties>
+		<moduleName>untangling</moduleName>
+	</properties>
 </project>

@@ -10,4 +10,7 @@
 	<artifactId>reposuite-mapping</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-mapping</name>
+	<properties>
+		<moduleName>mapping</moduleName>
+	</properties>
 </project>

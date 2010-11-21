@@ -10,4 +10,7 @@
 	<artifactId>reposuite-fixindchanges</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-fixindchanges</name>
+	<properties>
+		<moduleName>fixindchanges</moduleName>
+	</properties>
 </project>

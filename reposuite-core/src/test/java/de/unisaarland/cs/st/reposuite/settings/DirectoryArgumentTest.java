@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 
 public class DirectoryArgumentTest {
@@ -79,7 +80,7 @@ public class DirectoryArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		

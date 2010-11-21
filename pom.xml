@@ -170,7 +170,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>main.Main</mainClass>
+							<mainClass>${moduleName}.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -281,5 +281,6 @@
 	</reporting>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<moduleName>reposuite</moduleName>
 	</properties>
 </project>

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package bugs;
 
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;

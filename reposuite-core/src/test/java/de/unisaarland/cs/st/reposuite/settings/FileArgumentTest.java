@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 
 public class FileArgumentTest {
@@ -44,7 +45,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		settings = new RepositorySettings();
@@ -52,7 +53,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		settings = new RepositorySettings();
@@ -60,7 +61,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 		settings = new RepositorySettings();
@@ -68,7 +69,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 	}
@@ -87,7 +88,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 	}
@@ -105,7 +106,7 @@ public class FileArgumentTest {
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, true, false);
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -116,7 +117,7 @@ public class FileArgumentTest {
 		new FileArgument(settings, "testArg", "test argument", null, false, false, false);
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
@@ -128,7 +129,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 	}
@@ -140,7 +141,7 @@ public class FileArgumentTest {
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			
 		}
 	}
@@ -151,7 +152,7 @@ public class FileArgumentTest {
 		new FileArgument(settings, "testArg", "test argument", this.file.getAbsolutePath(), true, false, false);
 		try {
 			settings.parseArguments();
-		} catch (RuntimeException e) {
+		} catch (Shutdown e) {
 			fail();
 		}
 	}
