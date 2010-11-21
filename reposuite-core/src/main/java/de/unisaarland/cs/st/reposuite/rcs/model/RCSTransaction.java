@@ -74,8 +74,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * used by Hibernate to create RCSTransaction instance.
 	 */
-	@SuppressWarnings ("unused")
-	private RCSTransaction() {
+	protected RCSTransaction() {
 		
 	}
 	
@@ -100,17 +99,17 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		Condition.notNull(timestamp);
 		Condition.notNull(author);
 		
-		this.id = id;
-		this.message = message;
-		this.timestamp = timestamp;
-		this.author = author;
-		this.prevTransaction = previousRcsTransaction;
+		setId(id);
+		setMessage(message);
+		setTimestamp(timestamp);
+		setAuthor(author);
+		setPrevTransaction(previousRcsTransaction);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 		
-		Condition.check((previousRcsTransaction == null) || (compareTo(previousRcsTransaction) >= 0));
+		Condition.check((getPrevTransactionByTimestamp() == null) || (compareTo(getPrevTransactionByTimestamp()) >= 0));
 	}
 	
 	/**
@@ -123,7 +122,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Transient
 	public boolean addRevision(final RCSRevision revision) {
 		Condition.notNull(revision);
-		return this.revisions.add(revision);
+		return getRevisions().add(revision);
 	}
 	
 	/*
@@ -136,28 +135,28 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			return 1;
 		} else if (equals(transaction)) {
 			return 0;
-		} else if (this.timestamp.equals(transaction.timestamp)) {
+		} else if (getTimestamp().equals(transaction.getTimestamp())) {
 			RCSTransaction currentTransaction = this;
-			while (currentTransaction.prevTransaction != null) {
-				if (currentTransaction.prevTransaction.equals(transaction)) {
+			while (currentTransaction.getPrevTransaction() != null) {
+				if (currentTransaction.getPrevTransaction().equals(transaction)) {
 					return 1;
-				} else if (currentTransaction.prevTransaction.timestamp.isBefore(transaction.timestamp)) {
+				} else if (currentTransaction.getPrevTransaction().getTimestamp().isBefore(transaction.getTimestamp())) {
 					return -1;
-				} else if (currentTransaction.prevTransaction.timestamp.isAfter(transaction.timestamp)) {
+				} else if (currentTransaction.getPrevTransaction().getTimestamp().isAfter(transaction.getTimestamp())) {
 					if (Logger.logError()) {
 						Logger.error("Found previous transaction with larger timestamp then current: " + toString()
-						        + " vs " + currentTransaction.prevTransaction.toString());
+						        + " vs " + currentTransaction.getPrevTransaction().toString());
 					}
 					
 					throw new RuntimeException();
 				}
 				
-				currentTransaction = currentTransaction.prevTransaction;
+				currentTransaction = currentTransaction.getPrevTransaction();
 			}
 			
 			return -1;
 		} else {
-			return this.timestamp.isAfter(transaction.timestamp) ? 1 : -1;
+			return getTimestamp().isAfter(transaction.getTimestamp()) ? 1 : -1;
 		}
 	}
 	
@@ -174,7 +173,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the branch
 	 */
-	@Column (updatable = false)
+	// @Column (updatable = false)
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSBranch getBranch() {
 		return this.branch;
 	}
@@ -257,7 +257,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Override
 	@Transient
 	public Collection<Annotated> getSaveFirst() {
-		return CollectionUtils.collect(this.revisions, new Transformer() {
+		return CollectionUtils.collect(getRevisions(), new Transformer() {
 			
 			@Override
 			public Object transform(final Object input) {
@@ -283,7 +283,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param author
 	 *            the author to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setAuthor(final Person author) {
 		this.author = author;
 	}
@@ -302,7 +301,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param id
 	 *            the id to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setId(final String id) {
 		this.id = id;
 	}
@@ -324,7 +322,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param message
 	 *            the message to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setMessage(final String message) {
 		this.message = message;
 	}
@@ -343,17 +340,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	public void setNextTransactionByTimestamp(final RCSTransaction nextTransactionByTimestamp) {
 		this.nextTransactionByTimestamp = nextTransactionByTimestamp;
-	}
-	
-	/**
-	 * Sets the previous rcs rcs transaction.
-	 * 
-	 * @param previousRCSRcsTransaction
-	 *            the previousRCSRcsTransaction to set
-	 */
-	@SuppressWarnings ("unused")
-	private void setPreviousRCSRcsTransaction(final RCSTransaction previousRCSRcsTransaction) {
-		this.prevTransaction = previousRCSRcsTransaction;
 	}
 	
 	/**
@@ -389,7 +375,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -400,9 +385,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Override
 	public String toString() {
-		return "RCSTransaction [id=" + this.id + ", message=" + StringEscapeUtils.escapeJava(this.message)
-		        + ", timestamp=" + this.timestamp + ", revisionCount=" + this.revisions.size() + ", author="
-		        + this.author + "]";
+		return "RCSTransaction [id=" + getId() + ", message=" + StringEscapeUtils.escapeJava(getMessage())
+		        + ", timestamp=" + getTimestamp() + ", revisionCount=" + getRevisions().size() + ", author="
+		        + getAuthor() + "]";
 	}
 	
 }

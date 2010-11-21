@@ -93,8 +93,7 @@ public class Person implements Annotated {
 	/**
 	 * Default constructor used by Hibernate
 	 */
-	@SuppressWarnings ("unused")
-	private Person() {
+	protected Person() {
 	}
 	
 	/**
@@ -246,7 +245,7 @@ public class Person implements Annotated {
 	 */
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	public long getGeneratedId() {
+	private long getGeneratedId() {
 		return this.generatedId;
 	}
 	

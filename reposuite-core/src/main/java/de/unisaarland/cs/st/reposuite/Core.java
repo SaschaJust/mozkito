@@ -3,8 +3,15 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
@@ -27,6 +34,7 @@ public class Core extends RepoSuiteToolchain {
 	private final RepositoryArguments repoSettings;
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
+	private boolean                   shutdown;
 	
 	public Core() {
 		super(new RepositorySettings());
@@ -55,8 +63,12 @@ public class Core extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void run() {
-		setup();
-		this.threadPool.execute();
+		if (!this.shutdown) {
+			setup();
+			if (!this.shutdown) {
+				this.threadPool.execute();
+			}
+		}
 	}
 	
 	/*
@@ -70,6 +82,69 @@ public class Core extends RepoSuiteToolchain {
 		HibernateUtil hibernateUtil = this.databaseSettings.getValue();
 		Repository repository = this.repoSettings.getValue();
 		this.logSettings.getValue();
+		
+		if (hibernateUtil != null) {
+			String start = repository.getStartRevision().equalsIgnoreCase("HEAD") ? repository.getHEAD() : repository
+			        .getStartRevision();
+			String end = repository.getEndRevision().equalsIgnoreCase("HEAD") ? repository.getHEAD() : repository
+			        .getEndRevision();
+			
+			if (Logger.logInfo()) {
+				Logger.info("Checking for persistent transactions (" + start + ".." + end + ").");
+			}
+			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+			criteria.add(Restrictions.eq("id", start));
+			@SuppressWarnings ("unchecked") List<RCSTransaction> startTransactions = criteria.list();
+			if ((startTransactions != null) && (startTransactions.size() > 0)) {
+				RCSTransaction startTransaction = startTransactions.get(0);
+				if (startTransaction != null) {
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Found start transaction in persistence storage.");
+					}
+					
+					criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+					criteria.add(Restrictions.eq("id", end));
+					@SuppressWarnings ("unchecked") List<RCSTransaction> endTransactions = criteria.list();
+					
+					if ((endTransactions != null) && (endTransactions.size() > 0) && (endTransactions.get(0) != null)) {
+						if (Logger.logDebug()) {
+							Logger.debug("Found end transaction in persistence storage.");
+						}
+						if (Logger.logWarn()) {
+							Logger.warn("Nothing to do. Transactions from " + start + " to " + end
+							        + " are already persisten.");
+						}
+						shutdown();
+					} else {
+						criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+						criteria.addOrder(Order.desc("id"));
+						@SuppressWarnings ("unchecked") List<RCSTransaction> maxTransactions = criteria.list();
+						if ((maxTransactions != null) && (maxTransactions.size() > 0)) {
+							RCSTransaction maxPersistentTransaction = maxTransactions.get(0);
+							repository.setStartRevision(maxPersistentTransaction.getId());
+							
+							if (Logger.logWarn()) {
+								Logger.warn("Transactions known from " + startTransaction.getId() + " to "
+								        + maxPersistentTransaction.getId() + ". Skipping and fetching "
+								        + maxPersistentTransaction.getId() + " to " + repository.getEndRevision() + ".");
+							}
+							
+							repository.setStartTransaction(maxPersistentTransaction.getPrevTransaction());
+							hibernateUtil.delete(maxPersistentTransaction);
+						} else {
+							
+							if (Logger.logError()) {
+								Logger.error("Could not find max transaction although persitent transactions were found. Aborting.");
+							}
+							
+							shutdown();
+						}
+					}
+					
+				}
+			}
+		}
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
@@ -93,5 +168,6 @@ public class Core extends RepoSuiteToolchain {
 			Logger.info("Toolchain shutdown.");
 		}
 		this.threadPool.shutdown();
+		this.shutdown = true;
 	}
 }

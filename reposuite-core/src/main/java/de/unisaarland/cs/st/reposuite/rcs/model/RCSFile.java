@@ -28,22 +28,13 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Table (name = "rcsfile")
 public class RCSFile implements Annotated {
 	
-	/**
-	 * @return the simple class name
-	 */
-	public static String getHandle() {
-		return RCSFile.class.getSimpleName();
-	}
-	
 	private long                        generatedId;
-	
 	private Map<RCSTransaction, String> changedNames = new HashMap<RCSTransaction, String>();
 	
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance
 	 */
-	@SuppressWarnings ("unused")
-	private RCSFile() {
+	protected RCSFile() {
 		
 	}
 	
@@ -64,13 +55,12 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction, final String pathName) {
-		this.changedNames.put(transaction, pathName);
+		getChangedNames().put(transaction, pathName);
 	}
 	
 	/**
 	 * @return the changedNames
 	 */
-	@SuppressWarnings ("unused")
 	@ElementCollection (fetch = FetchType.LAZY)
 	private Map<RCSTransaction, String> getChangedNames() {
 		return this.changedNames;
@@ -84,6 +74,14 @@ public class RCSFile implements Annotated {
 	@GeneratedValue
 	private long getGeneratedId() {
 		return this.generatedId;
+	}
+	
+	/**
+	 * @return the simple class name
+	 */
+	@Transient
+	public String getHandle() {
+		return RCSFile.class.getSimpleName();
 	}
 	
 	/**
@@ -137,7 +135,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "RCSFile [changedNames=" + JavaUtils.collectionToString(this.changedNames.values()) + "]";
+		return "RCSFile [changedNames=" + JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }

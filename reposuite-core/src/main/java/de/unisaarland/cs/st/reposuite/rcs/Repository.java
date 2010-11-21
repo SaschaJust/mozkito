@@ -51,15 +51,15 @@ import difflib.Delta;
  */
 /**
  * @author just
- *
+ * 
  */
 /**
  * @author just
- *
+ * 
  */
 /**
  * @author just
- *
+ * 
  */
 public abstract class Repository {
 	
@@ -111,7 +111,7 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-							+ uriString.toString() + "`");
+					        + uriString.toString() + "`");
 				}
 				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
@@ -122,8 +122,14 @@ public abstract class Repository {
 		return uri;
 	}
 	
-	private final PersonManager personManager = new PersonManager();
-	private URI uri;
+	private final PersonManager personManager    = new PersonManager();
+	private URI                 uri;
+	private String              startRevision;
+	
+	private String              endRevision;
+	
+	private RCSTransaction      startTransaction = null;
+	
 	public Repository() {
 		loadPersons();
 	}
@@ -138,8 +144,6 @@ public abstract class Repository {
 	 * @return List of AnnotationEntry for all lines starting by first line
 	 */
 	public abstract List<AnnotationEntry> annotate(String filePath, String revision);
-	
-	
 	
 	/**
 	 * Checks out the given relative path in repository and returns the file
@@ -172,8 +176,8 @@ public abstract class Repository {
 			if (previous != null) {
 				if (entry.getDateTime().isBefore(previous.getDateTime())) {
 					System.out.println("Transaction " + entry.getRevision()
-							+ " has timestamp before previous transaction: current " + entry + " vs. previous "
-							+ previous);
+					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
+					        + previous);
 				}
 			}
 			
@@ -231,7 +235,7 @@ public abstract class Repository {
 		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
 		idataset.addSeries(new String("Files per revision"), datapoints);
 		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
-				PlotOrientation.VERTICAL, true, false, false);
+		        PlotOrientation.VERTICAL, true, false, false);
 		
 		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
 		
@@ -264,7 +268,7 @@ public abstract class Repository {
 		
 		dataset.addSeries(new String("time per revision"), datapoints);
 		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
-				PlotOrientation.VERTICAL, true, false, false);
+		        PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -278,7 +282,7 @@ public abstract class Repository {
 		for (LogEntry entry : entries) {
 			// commits
 			String author = (entry.getAuthor().getUsername() != null ? entry.getAuthor().getUsername() : entry
-					.getAuthor().getFullname());
+			        .getAuthor().getFullname());
 			if (authors.containsKey(author)) {
 				authors.put(author, authors.get(author) + 1.0);
 			} else {
@@ -301,7 +305,7 @@ public abstract class Repository {
 		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
 		
 		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
-				"history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
+		        "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -331,6 +335,13 @@ public abstract class Repository {
 	 * @return the changed paths
 	 */
 	public abstract Map<String, ChangeType> getChangedPaths(String revision);
+	
+	/**
+	 * @return the endRevision
+	 */
+	public String getEndRevision() {
+		return this.endRevision;
+	}
 	
 	/**
 	 * Gets the first revision of the repository.
@@ -389,8 +400,22 @@ public abstract class Repository {
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass().getSimpleName()
-				.substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
-				.toUpperCase());
+		        .substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
+		        .toUpperCase());
+	}
+	
+	/**
+	 * @return the startRevision
+	 */
+	public String getStartRevision() {
+		return this.startRevision;
+	}
+	
+	/**
+	 * @return the startTransaction
+	 */
+	public RCSTransaction getStartTransaction() {
+		return this.startTransaction;
 	}
 	
 	/**
@@ -489,6 +514,30 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * @param endRevision
+	 *            the endRevision to set
+	 */
+	public void setEndRevision(final String endRevision) {
+		this.endRevision = endRevision;
+	}
+	
+	/**
+	 * @param startRevision
+	 *            the startRevision to set
+	 */
+	public void setStartRevision(final String startRevision) {
+		this.startRevision = startRevision;
+	}
+	
+	/**
+	 * @param startTransaction
+	 *            the startTransaction to set
+	 */
+	public void setStartTransaction(final RCSTransaction startTransaction) {
+		this.startTransaction = startTransaction;
+	}
+	
+	/**
 	 * This method extracts the fragment of the URI, saves the given uri without
 	 * fragment as repository uri and returns the fragment as string.
 	 * 
@@ -517,7 +566,7 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-							+ uriBuilder.toString() + "`");
+					        + uriBuilder.toString() + "`");
 				}
 			}
 		}
@@ -543,7 +592,7 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
-	InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -568,10 +617,13 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
-	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
+	/**
+	 * @param uri
+	 */
 	public void setUri(final URI uri) {
 		this.uri = uri;
 	}
-
+	
 }

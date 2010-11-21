@@ -48,7 +48,7 @@ import difflib.Patch;
 public class MercurialRepository extends Repository {
 	
 	protected static Regex             authorRegex          = new Regex(
-	"^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	                                                                "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
 	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
@@ -115,9 +115,6 @@ public class MercurialRepository extends Repository {
 		
 	}
 	
-	private String              startRevision;
-	
-	private String              endRevision;
 	private File                cloneDir;
 	protected List<String>      hashes        = new ArrayList<String>();
 	private final PersonManager personManager = new PersonManager();
@@ -140,7 +137,7 @@ public class MercurialRepository extends Repository {
 			}
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r",
-				revision, filePath }, this.cloneDir, null, null);
+		        revision, filePath }, this.cloneDir, null, null);
 		
 		if (response.getFirst() != 0) {
 			return null;
@@ -204,7 +201,7 @@ public class MercurialRepository extends Repository {
 	 */
 	private void cacheHashes() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
-		"'{node}\n'" }, this.cloneDir, null, null);
+		        "'{node}\n'" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -240,7 +237,7 @@ public class MercurialRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-				new String[] { "update", "-C", revision }, this.cloneDir, null, null);
+		        new String[] { "update", "-C", revision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -264,14 +261,14 @@ public class MercurialRepository extends Repository {
 	 * @return true, if successful
 	 */
 	private boolean clone(final InputStream inputStream, final String destDir) {
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg",
-				new String[] { "clone", "-U", getUri().toString(), destDir }, this.cloneDir, inputStream, null);
+		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
+		        getUri().toString(), destDir }, this.cloneDir, inputStream, null);
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(destDir);
 			if (!this.cloneDir.exists()) {
 				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + destDir
-							+ "`");
+					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
+					        + destDir + "`");
 				}
 				return false;
 			}
@@ -309,14 +306,14 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision,
-				filePath }, this.cloneDir, null, null);
+		        filePath }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		List<String> original = response.getSecond();
 		List<String> revised = new ArrayList<String>(0);
 		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
-				this.cloneDir, null, null);
+		        this.cloneDir, null, null);
 		if (response.getFirst() == 0) {
 			revised = response.getSecond();
 		}
@@ -334,10 +331,10 @@ public class MercurialRepository extends Repository {
 	public String gatherToolInformation() {
 		StringBuilder builder = new StringBuilder();
 		Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
-				FileUtils.tmpDir, null, null);
+		        FileUtils.tmpDir, null, null);
 		if (execute.getFirst() != 0) {
 			builder.append(getHandle()).append(" could not determine `hg` version. (Error code: ")
-			.append(execute.getFirst()).append(").");
+			        .append(execute.getFirst()).append(").");
 			builder.append(FileUtils.lineSeparator);
 			try {
 				builder.append("Command was: ").append(FileUtils.checkExecutable("hg")).append(" --version");
@@ -388,7 +385,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-				"minerlog", "-r", revision + ":" + revision }, this.cloneDir, null, null);
+		        "minerlog", "-r", revision + ":" + revision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -455,9 +452,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		if (this.startRevision == null) {
+		if (this.getStartRevision() == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
-					"--template", "{node}" }, this.cloneDir, null, null);
+			        "--template", "{node}" }, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -470,7 +467,7 @@ public class MercurialRepository extends Repository {
 			}
 			return lines.get(0).trim();
 		} else {
-			return this.startRevision;
+			return this.getStartRevision();
 		}
 	}
 	
@@ -488,7 +485,7 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision,
-				"--template", "{file_copies%filecopy}" }, this.cloneDir, null, null);
+		        "--template", "{file_copies%filecopy}" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -518,9 +515,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getLastRevisionId() {
-		if (this.endRevision == null) {
+		if (this.getEndRevision() == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
-					"--template", "{node}" }, this.cloneDir, null, null);
+			        "--template", "{node}" }, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -533,7 +530,7 @@ public class MercurialRepository extends Repository {
 			}
 			return lines.get(0).trim();
 		} else {
-			return this.endRevision;
+			return this.getEndRevision();
 		}
 	}
 	
@@ -551,7 +548,7 @@ public class MercurialRepository extends Repository {
 			return transactionId;
 		} else if (index > 0) {
 			String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template", "{node}\\n", "-l",
-					String.valueOf(index + 1) };
+			        String.valueOf(index + 1) };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
@@ -560,7 +557,7 @@ public class MercurialRepository extends Repository {
 			return list.get(list.size() - 1).trim();
 		} else {
 			String[] args = new String[] { "log", "-r", transactionId + ":0", "--template", "{node}\\n", "-l",
-					String.valueOf(index + 1) };
+			        String.valueOf(index + 1) };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
@@ -578,7 +575,7 @@ public class MercurialRepository extends Repository {
 	public long getTransactionCount() {
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-				"--template", "{rev}\\n" }, this.cloneDir, null, null);
+		        "--template", "{rev}\\n" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -642,7 +639,7 @@ public class MercurialRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-				"minerlog", "-r", fromRevision + ":" + toRevision }, this.cloneDir, null, null);
+		        "minerlog", "-r", fromRevision + ":" + toRevision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -681,8 +678,10 @@ public class MercurialRepository extends Repository {
 			
 			if (MercurialRepository.authorRegex.getGroup("plain") != null) {
 				authorUsername = MercurialRepository.authorRegex.getGroup("plain").trim();
-			} else if ((MercurialRepository.authorRegex.getGroup("lastname") != null) && (MercurialRepository.authorRegex.getGroup("name") != null)) {
-				authorFullname = MercurialRepository.authorRegex.getGroup("name").trim() + " " + MercurialRepository.authorRegex.getGroup("lastname").trim();
+			} else if ((MercurialRepository.authorRegex.getGroup("lastname") != null)
+			        && (MercurialRepository.authorRegex.getGroup("name") != null)) {
+				authorFullname = MercurialRepository.authorRegex.getGroup("name").trim() + " "
+				        + MercurialRepository.authorRegex.getGroup("lastname").trim();
 			} else if (MercurialRepository.authorRegex.getGroup("name") != null) {
 				authorUsername = MercurialRepository.authorRegex.getGroup("name").trim();
 			}
@@ -694,14 +693,14 @@ public class MercurialRepository extends Repository {
 			String[] dateString = lineParts[2].split(" ");
 			
 			DateTime date = new DateTime(Long.valueOf(dateString[0]).longValue() * 1000,
-					DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
+			        DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
 			
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(revID, previous, this.personManager.getPerson((author != null ? author : null)),
-					lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator), date));
+			        lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator), date));
 		}
 		return result;
 		
@@ -731,12 +730,12 @@ public class MercurialRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(final URI address, final String startRevision, final String endRevision,
-			final InputStream inputStream) {
+	        final InputStream inputStream) {
 		
 		String innerRepoPath = setup(address);
 		
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
-		+ DateTimeUtils.currentTimeMillis();
+		        + DateTimeUtils.currentTimeMillis();
 		
 		// clone the remote repository
 		if (!clone(null, hgName)) {
@@ -747,13 +746,13 @@ public class MercurialRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
-				getUri().toString(), hgName }, this.cloneDir, null, null);
+		        getUri().toString(), hgName }, this.cloneDir, null, null);
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(hgName + FileUtils.fileSeparator + innerRepoPath);
 			if (!this.cloneDir.exists()) {
 				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
-							+ "`");
+					        + "`");
 				}
 				return;
 			}
@@ -767,15 +766,15 @@ public class MercurialRepository extends Repository {
 			}
 		}
 		if (startRevision == null) {
-			this.startRevision = this.getFirstRevisionId();
+			this.setStartRevision(this.getFirstRevisionId());
 		} else {
-			this.startRevision = startRevision;
+			this.setStartRevision(startRevision);
 		}
 		
 		if (endRevision == null) {
-			this.endRevision = this.getLastRevisionId();
+			this.setEndRevision(this.getLastRevisionId());
 		} else {
-			this.endRevision = startRevision;
+			this.setEndRevision(startRevision);
 		}
 	}
 	
@@ -786,7 +785,7 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
-			final String password) {
+	        final String password) {
 		Condition.notNull(address);
 		Condition.notNull(username);
 		Condition.notNull(password);
@@ -795,6 +794,6 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(password);
 		
 		setup(Repository.encodeUsername(address, username), startRevision, endRevision, new ByteArrayInputStream(
-				password.getBytes()));
+		        password.getBytes()));
 	}
 }

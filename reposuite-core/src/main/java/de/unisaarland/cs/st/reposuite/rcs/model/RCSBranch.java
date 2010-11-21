@@ -6,6 +6,12 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -16,10 +22,15 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 @Entity
 public class RCSBranch implements Annotated {
 	
+	private long           generatedId;
 	private String         name;
 	private RCSBranch      parent;
 	private RCSTransaction begin;
 	private RCSTransaction end;
+	
+	protected RCSBranch() {
+		
+	}
 	
 	/**
 	 * @param name
@@ -38,6 +49,7 @@ public class RCSBranch implements Annotated {
 	/**
 	 * @return the begin
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -45,13 +57,25 @@ public class RCSBranch implements Annotated {
 	/**
 	 * @return the end
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
 	
 	/**
+	 * @return the generatedId
+	 */
+	@SuppressWarnings ("unused")
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	private long getGeneratedId() {
+		return this.generatedId;
+	}
+	
+	/**
 	 * @return
 	 */
+	@Transient
 	public String getHandle() {
 		return RCSBranch.class.getSimpleName();
 	}
@@ -66,6 +90,7 @@ public class RCSBranch implements Annotated {
 	/**
 	 * @return the parent
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -75,8 +100,8 @@ public class RCSBranch implements Annotated {
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
 	 */
 	@Override
+	@Transient
 	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -94,6 +119,15 @@ public class RCSBranch implements Annotated {
 	 */
 	public void setEnd(final RCSTransaction end) {
 		this.end = end;
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	@SuppressWarnings ("unused")
+	private void setGeneratedId(final long generatedId) {
+		this.generatedId = generatedId;
 	}
 	
 	/**

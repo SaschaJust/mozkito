@@ -138,6 +138,10 @@ public class HibernateUtil {
 		}
 	}
 	
+	public void delete(final Annotated object) {
+		this.session.delete(object);
+	}
+	
 	public void saveOrUpdate(final Annotated object) {
 		Collection<Annotated> saveFirst = object.getSaveFirst();
 		if (saveFirst != null) {

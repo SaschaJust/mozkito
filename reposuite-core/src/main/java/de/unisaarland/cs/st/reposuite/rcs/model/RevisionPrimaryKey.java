@@ -23,7 +23,7 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	
 	private RCSFile           changedFile;
 	
-	public RevisionPrimaryKey() {
+	protected RevisionPrimaryKey() {
 	}
 	
 	public RevisionPrimaryKey(final RCSFile changedFile, final RCSTransaction transaction) {
