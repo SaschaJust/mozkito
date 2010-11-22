@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -210,7 +211,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the changedDateValues
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ElementCollection
 	private Map<String, PersistentTuple<Date, Date>> getChangedDateValues() {
 		return this.changedDateValues;
 	}
@@ -218,7 +220,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the changedEnumValues
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ElementCollection
 	private Map<String, PersistentTuple<Integer, Integer>> getChangedEnumValues() {
 		return this.changedEnumValues;
 	}
@@ -226,7 +229,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the changedPersonValues
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ElementCollection
 	private Map<String, PersistentTuple<Person, Person>> getChangedPersonValues() {
 		return this.changedPersonValues;
 	}
@@ -237,7 +241,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return the changedStringValues
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ElementCollection
 	private Map<String, PersistentTuple<String, String>> getChangedStringValues() {
 		return this.changedStringValues;
 	}
@@ -246,6 +251,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param field
 	 * @return
 	 */
+	@Transient
 	public HistoryElement getForField(final String field) {
 		String lowerFieldName = field.toLowerCase();
 		HistoryElement element = new HistoryElement();
@@ -284,6 +290,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param fieldName
 	 * @return
 	 */
+	@Transient
 	public Object getNewValue(final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
@@ -313,6 +320,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param fieldName
 	 * @return
 	 */
+	@Transient
 	public Object getOldValue(final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
@@ -349,6 +357,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @return
 	 */
+	@Transient
 	public boolean isEmpty() {
 		return this.changedDateValues.isEmpty() && this.changedEnumValues.isEmpty()
 		        && this.changedPersonValues.isEmpty() && this.changedStringValues.isEmpty();
