@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -37,7 +38,7 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 *            not null, 0 &lt; <code>content.length</code>
 	 */
 	public RawContent(final URI uri, final byte[] md5, final DateTime fetchTime, final String format,
-			final String content) {
+	        final String content) {
 		super();
 		Condition.notNull(uri);
 		Condition.notNull(md5);
@@ -127,14 +128,18 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RawReport [md5=");
-		builder.append(Arrays.toString(this.md5));
+		try {
+			builder.append(JavaUtils.byteArrayToHexString(getMd5()));
+		} catch (UnsupportedEncodingException e) {
+			builder.append(Arrays.toString(getMd5()));
+		}
 		builder.append(", fetchTime=");
 		builder.append(this.fetchTime);
 		builder.append(", format=");
 		builder.append(this.format);
 		builder.append(", content=");
 		builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10 ? this.content
-				.substring(0, 10) : this.content)));
+		        .substring(0, 10) : this.content)));
 		builder.append("]");
 		return builder.toString();
 	}

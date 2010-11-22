@@ -3,9 +3,11 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 
 /**
@@ -74,7 +76,11 @@ public class RawReport extends RawContent {
 		builder.append(", format=");
 		builder.append(getFormat());
 		builder.append(", md5=");
-		builder.append(Arrays.toString(getMd5()));
+		try {
+			builder.append(JavaUtils.byteArrayToHexString(getMd5()));
+		} catch (UnsupportedEncodingException e) {
+			builder.append(Arrays.toString(getMd5()));
+		}
 		builder.append(", uri=");
 		builder.append(getUri());
 		builder.append("]");

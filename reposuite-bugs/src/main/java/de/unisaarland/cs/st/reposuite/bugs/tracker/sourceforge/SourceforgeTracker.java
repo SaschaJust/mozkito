@@ -33,6 +33,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.PersistentTuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -378,7 +379,7 @@ public class SourceforgeTracker extends Tracker {
 						}
 						return;
 					}
-					History history = bugReport.getHistory().get(field);
+					History history = bugReport.getHistory().get(field.getName());
 					
 					Object newValue = null;
 					if (history.isEmpty()) {
@@ -408,7 +409,7 @@ public class SourceforgeTracker extends Tracker {
 						}
 					} else {
 						// take this
-						newValue = history.last().getNewValue(field);
+						newValue = history.last().getNewValue(field.getName());
 					}
 					
 					Object oldValue = null;
@@ -430,9 +431,11 @@ public class SourceforgeTracker extends Tracker {
 					String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
 					String authorUsername = authorElement != null ? authorElement.getValue() : null;
 					
+					Map<String, PersistentTuple<?, ?>> map = new HashMap<String, PersistentTuple<?, ?>>();
+					map.put(field.getName(), new PersistentTuple<Object, Object>(oldValue, newValue));
 					bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(
-					        authorUsername, authorFullname, null)), bugReport, field, oldValue, newValue, DateTimeUtils
-					        .parseDate(datetimeElement.getValue())));
+					        authorUsername, authorFullname, null)), bugReport, DateTimeUtils.parseDate(datetimeElement
+					        .getValue()), map));
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {

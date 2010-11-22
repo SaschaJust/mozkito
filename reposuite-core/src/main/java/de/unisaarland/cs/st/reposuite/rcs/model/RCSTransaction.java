@@ -256,7 +256,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@SuppressWarnings ("unchecked")
 	@Override
 	@Transient
-	public Collection<Annotated> getSaveFirst() {
+	public Collection<Annotated> saveFirst() {
 		return CollectionUtils.collect(getRevisions(), new Transformer() {
 			
 			@Override

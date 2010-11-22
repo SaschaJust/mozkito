@@ -3,10 +3,11 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -17,6 +18,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.PersistentTuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -130,8 +132,8 @@ public class BugzillaXMLParser {
 	}
 	
 	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	throws UnsupportedProtocolException, FetchException, JDOMException, IOException, SecurityException,
-	NoSuchFieldException {
+	        throws UnsupportedProtocolException, FetchException, JDOMException, IOException, SecurityException,
+	        NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
 		Condition.notNull(personManager);
@@ -146,7 +148,7 @@ public class BugzillaXMLParser {
 		if (!rootElement.getName().equals("html")) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-						+ rootElement.getName() + ">.");
+				        + rootElement.getName() + ">.");
 			}
 			return;
 		}
@@ -161,7 +163,7 @@ public class BugzillaXMLParser {
 		@SuppressWarnings ("unchecked") List<Element> bodyChildren = body.getChildren();
 		for (Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
-					&& (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
+			        && (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
 				Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
@@ -179,7 +181,7 @@ public class BugzillaXMLParser {
 				}
 				
 				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr",
-						namespace));
+				        namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
@@ -194,13 +196,13 @@ public class BugzillaXMLParser {
 					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
-									+ tds.size());
+							        + tds.size());
 						}
 						return;
 					} else if (tds.size() < 3) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 3 table columns, found :"
-									+ tds.size());
+							        + tds.size());
 						}
 						return;
 					}
@@ -212,7 +214,9 @@ public class BugzillaXMLParser {
 						}
 						historyAuthor = personManager.getPerson(new Person(username, null, null));
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
-						hElement = new HistoryElement(historyAuthor, report, null, null, null, dateTime);
+						Map<String, PersistentTuple<?, ?>> map = new HashMap<String, PersistentTuple<?, ?>>();
+						hElement = new HistoryElement(historyAuthor, report, dateTime, map);
+						// FIXME add only if sth set
 						report.addHistoryElement(hElement);
 					} else {
 						--rowspan;
@@ -223,17 +227,17 @@ public class BugzillaXMLParser {
 					String removed = tds.get(++whatIndex).getText().trim();
 					String added = tds.get(++whatIndex).getText().trim();
 					
-					Field field = null;
+					String field = null;
 					if (what.equals("priority")) {
-						field = Report.class.getDeclaredField("priority");
+						field = "priority";
 						hElement.addChangedValue(field, getPriority(removed), getPriority(added));
 						continue;
 					} else if (what.equals("summary")) {
-						field = Report.class.getDeclaredField("summary");
+						field = ("summary");
 						hElement.addChangedValue(field, removed, added);
 						continue;
 					} else if (what.equals("resolution")) {
-						field = Report.class.getDeclaredField("resolution");
+						field = ("resolution");
 						hElement.addChangedValue(field, getResolution(removed), getResolution(added));
 						// set report resolution date and resolver
 						if (getResolution(added).equals(Resolution.RESOLVED)) {
@@ -242,7 +246,7 @@ public class BugzillaXMLParser {
 						}
 						continue;
 					} else if (what.equals("assignee")) {
-						field = Report.class.getDeclaredField("assignedTo");
+						field = ("assignedTo");
 						Person oldValue = personManager.getPerson(new Person(removed, null, null));
 						Person newValue = personManager.getPerson(new Person(added, null, null));
 						hElement.addChangedValue(field, oldValue, newValue);
@@ -252,15 +256,15 @@ public class BugzillaXMLParser {
 					} else if (what.equals("cc")) {
 						
 					} else if (what.equals("component")) {
-						field = Report.class.getDeclaredField("component");
+						field = ("component");
 						hElement.addChangedValue(field, removed, added);
 						continue;
 					} else if (what.equals("summary")) {
-						field = Report.class.getDeclaredField("summary");
+						field = ("summary");
 						hElement.addChangedValue(field, removed, added);
 						continue;
 					} else if (what.equals("severity")) {
-						field = Report.class.getDeclaredField("severity");
+						field = ("severity");
 						hElement.addChangedValue(field, getSeverity(removed), getSeverity(added));
 						continue;
 					} else if (what.equals("blocks")) {
@@ -268,15 +272,15 @@ public class BugzillaXMLParser {
 					} else if (what.equals("depends on")) {
 						// TODO how shall I do that?
 					} else if (what.equals("status")) {
-						field = Report.class.getDeclaredField("status");
+						field = ("status");
 						hElement.addChangedValue(field, getStatus(removed), getStatus(added));
 						continue;
 					} else if (what.equals("product")) {
-						field = Report.class.getDeclaredField("product");
+						field = ("product");
 						hElement.addChangedValue(field, removed, added);
 						continue;
 					} else if (what.equals("category")) {
-						field = Report.class.getDeclaredField("category");
+						field = ("category");
 						hElement.addChangedValue(field, removed, added);
 						continue;
 					}
@@ -364,7 +368,7 @@ public class BugzillaXMLParser {
 				} catch (NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Bugzilla bug id `" + element.getText()
-								+ "` cannot be interpreted as an long. Abort parsing.");
+						        + "` cannot be interpreted as an long. Abort parsing.");
 					}
 					return;
 				}
@@ -373,7 +377,7 @@ public class BugzillaXMLParser {
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
-								+ "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setCreationTimestamp(creationTime);
@@ -385,7 +389,7 @@ public class BugzillaXMLParser {
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla modification time `" + element.getText()
-								+ "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setLastUpdateTimestamp(modificationTime);

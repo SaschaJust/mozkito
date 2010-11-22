@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package core;
 
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.utils.Logger;

@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -14,6 +13,7 @@ import java.util.TreeSet;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,13 +21,17 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -40,7 +44,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 @Entity
 @Table (name = "report")
-public class Report implements Annotated {
+public class Report implements Annotated, Comparable<Report> {
 	
 	private long               id       = -1l;
 	private Person             assignedTo;
@@ -52,7 +56,7 @@ public class Report implements Annotated {
 	private Resolution         resolution;
 	private Person             submitter;
 	private String             subject;
-	private Set<Long>          siblings = new HashSet<Long>();
+	private Set<Long>          siblings = new TreeSet<Long>();
 	private Person             resolver;
 	private History            history  = new History();
 	private Status             status;
@@ -95,10 +99,21 @@ public class Report implements Annotated {
 		this.siblings.add(sibling);
 	}
 	
+	@Override
+	public int compareTo(final Report o) {
+		if (getId() > o.getId()) {
+			return 1;
+		} else if (getId() < o.getId()) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+	
 	/**
 	 * @return the assignedTo
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Person getAssignedTo() {
 		return this.assignedTo;
 	}
@@ -114,6 +129,7 @@ public class Report implements Annotated {
 	/**
 	 * @return the comments
 	 */
+	@Sort (type = SortType.COMPARATOR, comparator = CommentComparator.class)
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
 		return this.comments;
@@ -126,7 +142,7 @@ public class Report implements Annotated {
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
-	private Date getCreationJavaTimetamp() {
+	private Date getCreationJavaTimestamp() {
 		return this.creationTimestamp.toDate();
 	}
 	
@@ -164,7 +180,7 @@ public class Report implements Annotated {
 	/**
 	 * @return the history
 	 */
-	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public History getHistory() {
 		return this.history;
 	}
@@ -230,20 +246,9 @@ public class Report implements Annotated {
 	/**
 	 * @return the resolver
 	 */
-	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Person getResolver() {
 		return this.resolver;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> getSaveFirst() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	/**
@@ -257,6 +262,7 @@ public class Report implements Annotated {
 	/**
 	 * @return the siblings
 	 */
+	@ElementCollection
 	public Set<Long> getSiblings() {
 		return this.siblings;
 	}
@@ -287,7 +293,7 @@ public class Report implements Annotated {
 	/**
 	 * @return the submitter
 	 */
-	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Person getSubmitter() {
 		return this.submitter;
 	}
@@ -312,6 +318,16 @@ public class Report implements Annotated {
 	 */
 	public String getVersion() {
 		return this.version;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
+	 */
+	@Override
+	@Transient
+	public Collection<Annotated> saveFirst() {
+		return null;
 	}
 	
 	/**
@@ -471,7 +487,7 @@ public class Report implements Annotated {
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final Set<Long> siblings) {
+	public void setSiblings(final TreeSet<Long> siblings) {
 		this.siblings = siblings;
 	}
 	

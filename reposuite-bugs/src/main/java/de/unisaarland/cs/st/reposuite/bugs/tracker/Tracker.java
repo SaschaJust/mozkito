@@ -79,6 +79,9 @@ public abstract class Tracker {
 		Condition.greater(bugIdRegex.getPattern().length(), 0);
 	}
 	
+	/**
+	 * @param id
+	 */
 	public void addBugId(final Long id) {
 		this.bugIds.add(id);
 	}
@@ -137,11 +140,14 @@ public abstract class Tracker {
 	 * @throws UnsupportedProtocolException
 	 * @throws FetchException
 	 */
-	
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
 		return new RawReport(reverseURI(uri), IOUtils.fetch(uri));
 	}
 	
+	/**
+	 * @param id
+	 * @return
+	 */
 	public File getFileForContent(final long id) {
 		return new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + getHandle() + "_"
 		        + this.fetchURI.getHost() + "_content_" + id);
@@ -269,13 +275,17 @@ public abstract class Tracker {
 	 */
 	public abstract Report parse(XmlReport rawReport);
 	
+	/**
+	 * @param uri
+	 * @return
+	 */
 	protected Long reverseURI(final URI uri) {
 		// pattern = /bleh/<BUGID>3-blub/<BUGID>_3.xml
 		String[] split = this.pattern.split(Tracker.bugIdPlaceholder);
 		String uriString = uri.toString();
 		
 		String tmpURI = uriString.substring(this.fetchURI.toString().length() + split[0].length(), uriString.length());
-		String bugid = tmpURI.substring(0, tmpURI.indexOf(split[1]));
+		String bugid = tmpURI.substring(0, split.length > 1 ? tmpURI.indexOf(split[1]) : tmpURI.length());
 		
 		try {
 			return new Long(bugid);

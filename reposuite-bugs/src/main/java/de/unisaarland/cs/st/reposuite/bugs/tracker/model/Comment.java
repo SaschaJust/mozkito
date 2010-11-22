@@ -169,16 +169,6 @@ public class Comment implements Annotated, Comparable<Comment> {
 		return this.message;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> getSaveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @return the timestamp
 	 */
@@ -200,6 +190,11 @@ public class Comment implements Annotated, Comparable<Comment> {
 		result = prime * result + ((this.bugReport == null) ? 0 : this.bugReport.hashCode());
 		result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
 		return result;
+	}
+	
+	@Override
+	public Collection<Annotated> saveFirst() {
+		return null;
 	}
 	
 	/**

@@ -19,7 +19,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -110,7 +110,7 @@ public class JiraTrackerTest {
 			        report.getDescription());
 			assertEquals(null, report.getExpectedBehavior());
 			
-			SortedSet<HistoryElement> history = report.getHistory();
+			History history = report.getHistory();
 			assertEquals(0, history.size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
@@ -247,7 +247,7 @@ public class JiraTrackerTest {
 			        report.getDescription());
 			assertEquals(null, report.getExpectedBehavior());
 			
-			SortedSet<HistoryElement> history = report.getHistory();
+			History history = report.getHistory();
 			assertEquals(0, history.size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
@@ -291,9 +291,8 @@ public class JiraTrackerTest {
 		URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
 		try {
 			JiraXMLParser.handleHistory(url.toURI(), report, new PersonManager());
-			SortedSet<HistoryElement> history = report.getHistory();
+			History history = report.getHistory();
 			assertEquals(1, history.size());
-			assertEquals(2, history.first().getChangedValues().keySet().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

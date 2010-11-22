@@ -111,7 +111,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	@Override
 	@Transient
-	public Collection<Annotated> getSaveFirst() {
+	public Collection<Annotated> saveFirst() {
 		return null;
 	}
 	

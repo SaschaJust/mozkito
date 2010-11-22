@@ -4,17 +4,15 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
-@Embeddable
+// @DiscriminatorValue ("Revision")
 public class RevisionPrimaryKey implements Annotated, Serializable {
 	
 	private static final long serialVersionUID = -6589083902512542247L;
@@ -55,8 +53,7 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	}
 	
 	@Override
-	@Transient
-	public Collection<Annotated> getSaveFirst() {
+	public Collection<Annotated> saveFirst() {
 		return null;
 	}
 	

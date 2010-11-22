@@ -259,7 +259,7 @@ public class Person implements Annotated {
 	
 	@Override
 	@Transient
-	public Collection<Annotated> getSaveFirst() {
+	public Collection<Annotated> saveFirst() {
 		return null;
 	}
 	
