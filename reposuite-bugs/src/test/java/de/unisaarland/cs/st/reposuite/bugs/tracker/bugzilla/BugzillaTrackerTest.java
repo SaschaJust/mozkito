@@ -165,46 +165,38 @@ public class BugzillaTrackerTest {
 		Report report = new Report();
 		try {
 			BugzillaXMLParser.handleHistory(historyURL.toURI(), report, new PersonManager());
-			SortedSet<HistoryElement> history = report.getHistory();
+			History history = report.getHistory();
 			assertEquals(3, history.size());
 			Iterator<HistoryElement> hElemIter = history.iterator();
 			HistoryElement hElem = hElemIter.next();
-			assertEquals(1, hElem.getChangedValues().size());
+			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsername());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
-			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("priority")));
-			assertEquals(BugzillaXMLParser.getPriority("P3"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getFirst());
-			assertEquals(BugzillaXMLParser.getPriority("P1"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("priority")).getSecond());
+			assertTrue(hElem.contains("priority"));
+			assertEquals(BugzillaXMLParser.getPriority("P3"), hElem.getOldValue("priority"));
+			assertEquals(BugzillaXMLParser.getPriority("P1"), hElem.getNewValue("priority"));
 			
 			hElem = hElemIter.next();
-			assertEquals(1, hElem.getChangedValues().size());
+			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsername());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
-			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("summary")));
+			assertTrue(hElem.contains("summary"));
 			assertEquals("add support for Bugzilla 2.20", hElem.getOldValue("summary"));
 			assertEquals("add support for Bugzilla 2 20", hElem.getNewValue("summary"));
 			
 			hElem = hElemIter.next();
-			assertEquals(3, hElem.getChangedValues().size());
+			assertEquals(3, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsername());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), hElem.getTimestamp());
-			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("status")));
-			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("resolution")));
-			assertTrue(hElem.getChangedValues().containsKey(Report.class.getDeclaredField("summary")));
-			assertEquals(BugzillaXMLParser.getStatus("NEW"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getFirst());
-			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("status")).getSecond());
-			assertEquals(BugzillaXMLParser.getResolution(""),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getFirst());
-			assertEquals(BugzillaXMLParser.getResolution("FIXED"),
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("resolution")).getSecond());
-			assertEquals("add support for Bugzilla 2 20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getFirst());
-			assertEquals("add basic support for Bugzilla 2.20",
-			        hElem.getChangedValues().get(Report.class.getDeclaredField("summary")).getSecond());
+			assertTrue(hElem.contains("status"));
+			assertTrue(hElem.contains("resolution"));
+			assertTrue(hElem.contains("summary"));
+			assertEquals(BugzillaXMLParser.getStatus("NEW"), hElem.getOldValue("status"));
+			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"), hElem.getNewValue("status"));
+			assertEquals(BugzillaXMLParser.getResolution(""), hElem.getOldValue("resolution"));
+			assertEquals(BugzillaXMLParser.getResolution("FIXED"), hElem.getNewValue("resolution"));
+			assertEquals("add support for Bugzilla 2 20", hElem.getOldValue("summary"));
+			assertEquals("add basic support for Bugzilla 2.20", hElem.getNewValue("summary"));
 			
 			assertEquals("mik.kersten", report.getResolver().getUsername());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), report.getResolutionTimestamp());

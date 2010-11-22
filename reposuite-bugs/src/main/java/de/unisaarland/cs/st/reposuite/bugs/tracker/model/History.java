@@ -174,11 +174,22 @@ public class History implements Annotated {
 	/**
 	 * @return
 	 */
+	public Iterator<HistoryElement> iterator() {
+		return this.elements.iterator();
+	}
+	
+	/**
+	 * @return
+	 */
 	@Transient
 	public HistoryElement last() {
 		return this.elements.last();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		return null;
