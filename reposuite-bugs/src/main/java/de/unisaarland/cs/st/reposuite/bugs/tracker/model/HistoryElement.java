@@ -334,36 +334,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public Object getNewValue(final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
-			return getChangedStringValues().get(lowerFieldName).get(0);
-		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
-			return getChangedPersonValues().get(lowerFieldName).get(0);
-		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
-			try {
-				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
-				        + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1));
-				if (e.isEnum()) {
-					return e.getEnumConstants()[getChangedEnumValues().get(lowerFieldName).get(0)];
-				} else {
-					throw new UnrecoverableError("Found none enum constant in enum container.");
-				}
-			} catch (ClassNotFoundException e) {
-				throw new UnrecoverableError("Found none enum constant in enum container.", e);
-			}
-		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
-			return getChangedDateValues().get(lowerFieldName).get(0);
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * @param fieldName
-	 * @return
-	 */
-	@Transient
-	public Object getOldValue(final String fieldName) {
-		String lowerFieldName = fieldName.toLowerCase();
-		if (this.changedStringValues.containsKey(lowerFieldName)) {
 			return getChangedStringValues().get(lowerFieldName).get(1);
 		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
 			return getChangedPersonValues().get(lowerFieldName).get(1);
@@ -381,6 +351,36 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 			}
 		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
 			return getChangedDateValues().get(lowerFieldName).get(1);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * @param fieldName
+	 * @return
+	 */
+	@Transient
+	public Object getOldValue(final String fieldName) {
+		String lowerFieldName = fieldName.toLowerCase();
+		if (this.changedStringValues.containsKey(lowerFieldName)) {
+			return getChangedStringValues().get(lowerFieldName).get(0);
+		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
+			return getChangedPersonValues().get(lowerFieldName).get(0);
+		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
+			try {
+				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
+				        + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1));
+				if (e.isEnum()) {
+					return e.getEnumConstants()[getChangedEnumValues().get(lowerFieldName).get(0)];
+				} else {
+					throw new UnrecoverableError("Found none enum constant in enum container.");
+				}
+			} catch (ClassNotFoundException e) {
+				throw new UnrecoverableError("Found none enum constant in enum container.", e);
+			}
+		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
+			return getChangedDateValues().get(lowerFieldName).get(0);
 		} else {
 			return null;
 		}
