@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.PersistentTuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -345,7 +345,9 @@ public class SourceforgeTracker extends Tracker {
 					datetime = datetime.substring(datetime.indexOf(" ") + 1, datetime.length());
 					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
 					String commentBody = e2.getContent(6).getValue().trim();
-					Comment comment = new Comment(bugReport, commentAuthor, commentTimestamp, commentBody);
+					// FIXME insert correct comment id
+					Comment comment = new Comment(bugReport, bugReport.getComments().size() + 1, commentAuthor,
+					        commentTimestamp, commentBody);
 					if (Logger.logDebug()) {
 						Logger.debug("Found comment: " + comment);
 					}
@@ -431,8 +433,10 @@ public class SourceforgeTracker extends Tracker {
 					String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
 					String authorUsername = authorElement != null ? authorElement.getValue() : null;
 					
-					Map<String, PersistentTuple<?, ?>> map = new HashMap<String, PersistentTuple<?, ?>>();
-					map.put(field.getName(), new PersistentTuple<Object, Object>(oldValue, newValue));
+					ArrayList<Object> list = new ArrayList<Object>(2);
+					list.add(oldValue);
+					list.add(newValue);
+					Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
 					bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(
 					        authorUsername, authorFullname, null)), bugReport, DateTimeUtils.parseDate(datetimeElement
 					        .getValue()), map));

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
@@ -12,7 +13,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
-// @DiscriminatorValue ("Revision")
+@Embeddable
 public class RevisionPrimaryKey implements Annotated, Serializable {
 	
 	private static final long serialVersionUID = -6589083902512542247L;
@@ -52,11 +53,6 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 		return this.changedFile;
 	}
 	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
@@ -65,6 +61,11 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	@Override
 	public int hashCode() {
 		return this.transaction.hashCode() + 13 * this.changedFile.hashCode();
+	}
+	
+	@Override
+	public Collection<Annotated> saveFirst() {
+		return null;
 	}
 	
 	public void setChangedFile(final RCSFile changedFile) {

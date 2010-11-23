@@ -18,7 +18,6 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.PersistentTuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -214,7 +213,7 @@ public class BugzillaXMLParser {
 						}
 						historyAuthor = personManager.getPerson(new Person(username, null, null));
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
-						Map<String, PersistentTuple<?, ?>> map = new HashMap<String, PersistentTuple<?, ?>>();
+						Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
 						hElement = new HistoryElement(historyAuthor, report, dateTime, map);
 						// FIXME add only if sth set
 						report.addHistoryElement(hElement);
@@ -348,7 +347,8 @@ public class BugzillaXMLParser {
 		if (report.getDescription() == null) {
 			report.setDescription(message);
 		} else {
-			report.addComment(new Comment(report, author, timestamp, message));
+			// FIXME insert correct comment ids
+			report.addComment(new Comment(report, report.getComments().size() + 1, author, timestamp, message));
 		}
 	}
 	

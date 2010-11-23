@@ -51,23 +51,35 @@ public class Person implements Annotated {
 		long id = -1;
 		Set<String> synonyms = new TreeSet<String>();
 		Set<String> emails = new TreeSet<String>();
+		Set<String> names = new TreeSet<String>();
 		
 		for (Person tmpPerson : candidates) {
-			if ((email == null) && (tmpPerson.getEmail() != null)) {
-				email = tmpPerson.getEmail();
-			} else if ((email != null) && (tmpPerson.getEmail() != null)) {
+			if (tmpPerson.getEmail() != null) {
+				if (email == null) {
+					email = tmpPerson.getEmail();
+				}
 				emails.add(tmpPerson.getEmail());
 			}
 			
-			if ((fullname == null) && (tmpPerson.getFullname() != null)) {
-				fullname = tmpPerson.getFullname();
+			emails.addAll(tmpPerson.getEmailAddresses());
+			
+			if (tmpPerson.getFullname() != null) {
+				if ((fullname == null)) {
+					fullname = tmpPerson.getFullname();
+				}
+				names.add(tmpPerson.getFullname());
 			}
 			
-			if ((username == null) && (tmpPerson.getUsername() != null)) {
-				username = tmpPerson.getUsername();
-			} else if ((username != null) && (tmpPerson.getUsername() != null)) {
+			names.addAll(tmpPerson.getNames());
+			
+			if (tmpPerson.getUsername() != null) {
+				if (username == null) {
+					username = tmpPerson.getUsername();
+				}
 				synonyms.add(tmpPerson.getUsername());
 			}
+			
+			synonyms.addAll(tmpPerson.getSynonyms());
 			
 			if ((id == -1) && (tmpPerson.getGeneratedId() > -1)) {
 				id = tmpPerson.getGeneratedId();
@@ -86,7 +98,8 @@ public class Person implements Annotated {
 	private String                  fullname;
 	private TreeSet<RCSTransaction> transactions   = new TreeSet<RCSTransaction>();
 	private Set<String>             synonyms       = new TreeSet<String>();
-	private Set<String>             emailAddresses = new TreeSet<String>();         ;
+	private Set<String>             emailAddresses = new TreeSet<String>();
+	private Set<String>             names          = new TreeSet<String>();
 	
 	private String                  username;
 	
@@ -108,16 +121,26 @@ public class Person implements Annotated {
 		}
 		
 		if (username != null) {
-			Condition.equals(username, username);
+			Condition.equals(username.trim(), username);
 		}
 		
 		if (email != null) {
-			Condition.equals(email, email);
+			Condition.equals(email.trim(), email);
 		}
 		
-		this.username = username != null ? username.trim() : null;
-		this.fullname = fullname != null ? fullname.trim() : null;
-		this.email = email != null ? email.trim() : null;
+		if (username != null) {
+			setUsername(username.trim());
+		}
+		
+		if (fullname != null) {
+			setFullname(fullname.trim());
+			getSynonyms().add(getFullname());
+		}
+		
+		if (email != null) {
+			setEmail(email.trim());
+			getEmailAddresses().add(getEmail());
+		}
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -128,13 +151,23 @@ public class Person implements Annotated {
 	 * @param emails
 	 */
 	public void addAllEmails(final Set<String> emails) {
+		Condition.notNull(emails);
+		
 		this.emailAddresses.addAll(emails);
+	}
+	
+	public void addAllNames(final Set<String> names) {
+		Condition.notNull(names);
+		
+		getNames().addAll(names);
 	}
 	
 	/**
 	 * @param synonyms
 	 */
 	public void addAllSynonyms(final Set<String> synonyms) {
+		Condition.notNull(synonyms);
+		
 		synonyms.addAll(synonyms);
 	}
 	
@@ -153,9 +186,20 @@ public class Person implements Annotated {
 	 * @param fullname
 	 */
 	@Transient
+	public void addName(final String fullname) {
+		Condition.notNull(fullname);
+		
+		this.names.add(fullname);
+	}
+	
+	/**
+	 * @param fullname
+	 */
+	@Transient
 	public void addSynonym(final String fullname) {
 		Condition.notNull(fullname);
 		Condition.equals(fullname != null ? fullname.trim() : null, fullname);
+		
 		this.synonyms.add(fullname);
 	}
 	
@@ -257,10 +301,12 @@ public class Person implements Annotated {
 		return this.transactions.last();
 	}
 	
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
+	/**
+	 * @return the name
+	 */
+	@ElementCollection
+	public Set<String> getNames() {
+		return this.names;
 	}
 	
 	@ElementCollection
@@ -298,11 +344,16 @@ public class Person implements Annotated {
 		return result;
 	}
 	
+	@Override
+	@Transient
+	public Collection<Annotated> saveFirst() {
+		return null;
+	}
+	
 	/**
 	 * @param email
 	 *            the email to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setEmail(final String email) {
 		this.email = email;
 	}
@@ -316,7 +367,6 @@ public class Person implements Annotated {
 	 * @param fullname
 	 *            the fullname to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setFullname(final String fullname) {
 		this.fullname = fullname;
 	}
@@ -327,6 +377,14 @@ public class Person implements Annotated {
 	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
+	}
+	
+	/**
+	 * @param names
+	 *            the names to set
+	 */
+	protected void setNames(final Set<String> names) {
+		this.names = names;
 	}
 	
 	@SuppressWarnings ("unused")
@@ -343,10 +401,17 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @param transactions
+	 *            the transactions to set
+	 */
+	protected void setTransactions(final TreeSet<RCSTransaction> transactions) {
+		this.transactions = transactions;
+	}
+	
+	/**
 	 * @param username
 	 *            the username to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setUsername(final String username) {
 		this.username = username;
 	}

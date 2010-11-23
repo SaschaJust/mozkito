@@ -9,9 +9,9 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,11 +32,11 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 @Table (name = "comment")
 public class Comment implements Annotated, Comparable<Comment> {
 	
-	private long     id = -1;
-	private DateTime timestamp;
-	private Person   author;
-	private String   message;
-	private Report   bugReport;
+	private DateTime          timestamp;
+	private Person            author;
+	private String            message;
+	private Report            bugReport;
+	private CommentPrimaryKey primaryKey;
 	
 	/**
 	 * 
@@ -52,16 +52,19 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param timestamp
 	 * @param message
 	 */
-	public Comment(final Report bugReport, final Person author, final DateTime timestamp, final String message) {
+	public Comment(final Report bugReport, final int id, final Person author, final DateTime timestamp,
+	        final String message) {
 		Condition.notNull(bugReport);
+		Condition.greater(id, 0);
 		Condition.notNull(author);
 		Condition.notNull(timestamp);
 		Condition.notNull(message);
 		
-		this.bugReport = bugReport;
-		this.author = author;
-		this.timestamp = timestamp;
-		this.message = message;
+		setBugReport(bugReport);
+		setAuthor(author);
+		setTimestamp(timestamp);
+		setMessage(message);
+		setPrimaryKey(new CommentPrimaryKey(bugReport.getId(), id));
 		
 		bugReport.addComment(this);
 	}
@@ -75,10 +78,10 @@ public class Comment implements Annotated, Comparable<Comment> {
 		if (object == null) {
 			return 1;
 		} else {
-			if (this.id == object.id) {
+			if (getPrimaryKey().getCommentId() == object.getPrimaryKey().getCommentId()) {
 				return this.timestamp.compareTo(object.timestamp);
 			} else {
-				if (this.id > object.id) {
+				if (getPrimaryKey().getCommentId() > object.getPrimaryKey().getCommentId()) {
 					return 1;
 				} else {
 					return -1;
@@ -146,9 +149,8 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the id
 	 */
-	@Id
-	public long getId() {
-		return this.id;
+	public int getId() {
+		return getPrimaryKey().getCommentId();
 	}
 	
 	/**
@@ -167,6 +169,14 @@ public class Comment implements Annotated, Comparable<Comment> {
 	@Basic
 	public String getMessage() {
 		return this.message;
+	}
+	
+	/**
+	 * @return the primaryKey
+	 */
+	@EmbeddedId
+	private CommentPrimaryKey getPrimaryKey() {
+		return this.primaryKey;
 	}
 	
 	/**
@@ -217,8 +227,8 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(final long id) {
-		this.id = id;
+	public void setId(final int id) {
+		getPrimaryKey().setCommentId(id);
 	}
 	
 	@SuppressWarnings ("unused")
@@ -232,6 +242,14 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	public void setMessage(final String message) {
 		this.message = message;
+	}
+	
+	/**
+	 * @param primaryKey
+	 *            the primaryKey to set
+	 */
+	private void setPrimaryKey(final CommentPrimaryKey primaryKey) {
+		this.primaryKey = primaryKey;
 	}
 	
 	/**
@@ -250,15 +268,15 @@ public class Comment implements Annotated, Comparable<Comment> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Comment [id=");
-		builder.append(this.id);
+		builder.append(getPrimaryKey().getCommentId());
 		builder.append(", timestamp=");
-		builder.append(this.timestamp);
+		builder.append(getTimestamp());
 		builder.append(", author=");
-		builder.append(this.author);
+		builder.append(getAuthor());
 		builder.append(", message=");
-		builder.append(this.message.length() > 10 ? this.message.substring(0, 10) : this.message);
+		builder.append(getMessage().length() > 10 ? getMessage().substring(0, 10) : getMessage());
 		builder.append(", bugReport=");
-		builder.append(this.bugReport.getId());
+		builder.append(getBugReport().getId());
 		builder.append("]");
 		return builder.toString();
 	}

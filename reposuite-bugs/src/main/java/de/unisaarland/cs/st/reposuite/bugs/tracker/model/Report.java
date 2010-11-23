@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -56,7 +55,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private Resolution         resolution;
 	private Person             submitter;
 	private String             subject;
-	private Set<Long>          siblings = new TreeSet<Long>();
+	private SortedSet<Long>    siblings = new TreeSet<Long>();
 	private Person             resolver;
 	private History            history  = new History();
 	private Status             status;
@@ -263,7 +262,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return the siblings
 	 */
 	@ElementCollection
-	public Set<Long> getSiblings() {
+	@Sort (type = SortType.NATURAL)
+	public SortedSet<Long> getSiblings() {
 		return this.siblings;
 	}
 	
@@ -487,7 +487,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final TreeSet<Long> siblings) {
+	public void setSiblings(final SortedSet<Long> siblings) {
 		this.siblings = siblings;
 	}
 	

@@ -41,13 +41,21 @@ public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 			}
 			
 			Report bugReport;
+			int i = 0;
 			
 			while (!isShutdown() && ((bugReport = read()) != null)) {
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + bugReport.getId() + ".");
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Saving " + bugReport);
+				}
+				
+				if (++i % 1000 == 0) {
+					this.hibernateUtil.commitTransaction();
+					this.hibernateUtil.beginTransaction();
 				}
 				this.hibernateUtil.saveOrUpdate(bugReport);
 			}
+			this.hibernateUtil.commitTransaction();
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {

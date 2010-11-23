@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,7 +18,6 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.PersistentTuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
@@ -131,7 +131,7 @@ public class JiraXMLParser {
 			if ((report.getResolutionTimestamp() != null) && (report.getResolutionTimestamp().isEqual(commentDate))) {
 				report.setResolver(author);
 			}
-			report.addComment(new Comment(report, author, commentDate, commentText));
+			report.addComment(new Comment(report, report.getComments().size() + 1, author, commentDate, commentText));
 		}
 	}
 	
@@ -216,7 +216,7 @@ public class JiraXMLParser {
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
 						HistoryElement hElement = new HistoryElement(author, report, timestamp,
-						        new HashMap<String, PersistentTuple<?, ?>>());
+						        new HashMap<String, ArrayList<?>>());
 						
 						for (Element tr : trs) {
 							if (tr == null) {
