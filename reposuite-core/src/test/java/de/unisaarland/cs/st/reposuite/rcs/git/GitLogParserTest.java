@@ -23,7 +23,6 @@ public class GitLogParserTest {
 	public void testAuthorRegExp() {
 		String author1 = "Carsten Nielsen <heycarsten@gmail.com>";
 		Regex regex = GitLogParser.regex;
-		assertTrue(Regex.checkRegex(author1));
 		assertTrue(regex.matches(author1));
 		assertTrue(regex.find(author1) != null);
 		assertTrue(regex.find(author1).size() > 0);
@@ -32,7 +31,6 @@ public class GitLogParserTest {
 		assertEquals("heycarsten@gmail.com", regex.getGroup("email"));
 		
 		String author2 = "tinogomes <tinorj@gmail.com>";
-		assertTrue(Regex.checkRegex(author2));
 		assertTrue(regex.matches(author2));
 		assertTrue(regex.find(author2) != null);
 		assertTrue(regex.find(author2).size() > 0);
@@ -41,7 +39,6 @@ public class GitLogParserTest {
 		assertEquals("tinorj@gmail.com", regex.getGroup("email"));
 		
 		String author3 = "<tinorj@gmail.com>";
-		assertTrue(Regex.checkRegex(author3));
 		assertTrue(regex.matches(author3));
 		assertTrue(regex.find(author3) != null);
 		assertTrue(regex.find(author3).size() > 0);
@@ -50,7 +47,6 @@ public class GitLogParserTest {
 		assertEquals("tinorj@gmail.com", regex.getGroup("email"));
 		
 		String author4 = "tinogomes";
-		assertTrue(Regex.checkRegex(author4));
 		assertTrue(regex.matches(author4));
 		assertTrue(regex.find(author4) != null);
 		assertTrue(regex.find(author4).size() > 0);
@@ -60,7 +56,6 @@ public class GitLogParserTest {
 		assertEquals(null, regex.getGroup("email"));
 		
 		String author5 = "just <just@b3cd8044-6b0a-409c-a07a-9925dc373c42>";
-		assertTrue(Regex.checkRegex(author5));
 		assertTrue(regex.matches(author5));
 		assertTrue(regex.find(author5) != null);
 		assertTrue(regex.find(author5).size() > 0);

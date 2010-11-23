@@ -123,9 +123,6 @@ public class MercurialRepositoryTest {
 			assertEquals(regex.getGroup(4), regex.getGroup("file"));
 			assertEquals(regex.getGroup(5), regex.getGroup("codeline"));
 			
-			for (int i = 0; i <= regex.getGroupCount(); ++i) {
-				System.out.println(i + ": " + regex.getGroup(i));
-			}
 			if (lineCounter == 1) {
 				assertEquals("sascha", regex.getGroup(1));
 				assertEquals("e63a20871c7f", regex.getGroup(2));
