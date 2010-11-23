@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package ppa;
 
 import de.unisaarland.cs.st.reposuite.ppa.PPA;
 

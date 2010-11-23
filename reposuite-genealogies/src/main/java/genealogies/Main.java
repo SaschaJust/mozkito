@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package genealogies;
 
 import de.unisaarland.cs.st.reposuite.genealogies.Genealogies;
 

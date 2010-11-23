@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package mapping;
 
 import de.unisaarland.cs.st.reposuite.mapping.Mapping;
 

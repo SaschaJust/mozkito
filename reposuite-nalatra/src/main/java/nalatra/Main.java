@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package nalatra;
 
 import de.unisaarland.cs.st.reposuite.nalatra.Nalatra;
 

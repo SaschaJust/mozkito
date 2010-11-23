@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package tracker;
 
 import de.unisaarland.cs.st.reposuite.tracker.Tracker;
 

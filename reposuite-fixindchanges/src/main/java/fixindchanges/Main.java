@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package fixinducingchanges;
 
 import de.unisaarland.cs.st.reposuite.fixindchanges.FixInducingChanges;
 

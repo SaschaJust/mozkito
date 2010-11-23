@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main;
+package untangling;
 
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 
