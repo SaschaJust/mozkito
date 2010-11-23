@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 
 
 public class GitRevDependencyIteratorTest {
@@ -26,16 +27,21 @@ public class GitRevDependencyIteratorTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			URL bareURL = GitRevDependencyIteratorTest.class.getResource(System.getProperty("file.separator") + "testGit");
-			if (bareURL == null) {
+			URL zipURL = GitRevDependencyIteratorTest.class.getResource(System.getProperty("file.separator")
+					+ "testGit.zip");
+			if (zipURL == null) {
 				fail();
 			}
-			File bareDir = new File(bareURL.toURI());
+			
+			File bareDir = new File((new URL(zipURL.toString().substring(0,
+					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+			FileUtils.unzip(new File(zipURL.toURI()), bareDir);
 			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
 				fail();
 			}
+			
 			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath()), null, null);
+			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null, null);
 		} catch (Exception e) {
 			fail();
 		}
