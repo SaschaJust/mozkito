@@ -18,6 +18,7 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import difflib.Delta;
@@ -101,6 +102,14 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
+	public RevDependencyIterator getRevDependencyIterator() {
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
+		}
+		throw new RuntimeException();
+	}
+	
+	@Override
 	public long getTransactionCount() {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
@@ -134,7 +143,7 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision)
-	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
+	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
 		}
@@ -144,8 +153,8 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
-	        final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
-	        UnsupportedProtocolType {
+			final String password) throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI,
+			UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
 		}

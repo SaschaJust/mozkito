@@ -16,37 +16,81 @@ import javax.persistence.Transient;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class RCSBranch.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-public class RCSBranch implements Annotated {
+public class RCSBranch implements Annotated, Comparable<RCSBranch> {
+	
+	public static RCSBranch MASTER = new RCSBranch("master");
 	
 	private long           generatedId;
 	private String         name;
-	private RCSBranch      parent;
+	private RCSBranch      parent = null;
 	private RCSTransaction begin;
 	private RCSTransaction end;
 	
+	/**
+	 * Instantiates a new rCS branch.
+	 */
 	protected RCSBranch() {
 		
 	}
 	
 	/**
+	 * Instantiates a new rCS branch.
+	 * 
+	 * @param name
+	 *            the name
+	 */
+	public RCSBranch(final String name) {
+		this.name = name;
+	}
+	
+	/**
+	 * Instantiates a new rCS branch.
+	 * 
 	 * @param name
 	 *            might be null
 	 * @param parent
 	 *            might be null
-	 * @param begin
-	 *            might NOT be null
 	 */
-	public RCSBranch(final String name, final RCSBranch parent, final RCSTransaction begin) {
+	public RCSBranch(final String name, final RCSBranch parent) {
 		this.name = name;
 		this.parent = parent;
-		this.begin = begin;
+	}
+	
+	@Override
+	public int compareTo(final RCSBranch other) {
+		RCSBranch p = getParent();
+		if (this.equals(other)) {
+			return 0;
+		}
+		if (other.equals(MASTER)) {
+			return 1;
+		} else if (this.equals(MASTER)) {
+			return -1;
+		}
+		while ((p != null) && (!p.equals(MASTER))) {
+			if (p.equals(other)) {
+				return 1;
+			}
+			p = p.getParent();
+		}
+		RCSBranch c = other.getParent();
+		while ((c != null) && (!c.equals(MASTER))) {
+			if (c.equals(this)) {
+				return -1;
+			}
+			c = c.getParent();
+		}
+		return 0;
 	}
 	
 	/**
+	 * Gets the begin.
+	 * 
 	 * @return the begin
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -55,6 +99,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Gets the end.
+	 * 
 	 * @return the end
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -63,6 +109,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Gets the generated id.
+	 * 
 	 * @return the generatedId
 	 */
 	@SuppressWarnings ("unused")
@@ -73,7 +121,9 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	@Transient
 	public String getHandle() {
@@ -81,6 +131,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Gets the name.
+	 * 
 	 * @return the name
 	 */
 	public String getName() {
@@ -88,11 +140,18 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Gets the parent.
+	 * 
 	 * @return the parent
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
 	public RCSBranch getParent() {
 		return this.parent;
+	}
+	
+	@Transient
+	public boolean hasParent() {
+		return (this.parent == null ? false : true);
 	}
 	
 	/*
@@ -106,6 +165,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the begin.
+	 * 
 	 * @param begin
 	 *            the begin to set
 	 */
@@ -114,6 +175,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the end.
+	 * 
 	 * @param end
 	 *            the end to set
 	 */
@@ -122,6 +185,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the generated id.
+	 * 
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
@@ -131,6 +196,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the name.
+	 * 
 	 * @param name
 	 *            the name to set
 	 */
@@ -139,11 +206,19 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the parent.
+	 * 
 	 * @param parent
 	 *            the parent to set
 	 */
-	public void setParent(final RCSBranch parent) {
+	@SuppressWarnings ("unused")
+	private void setParent(final RCSBranch parent) {
 		this.parent = parent;
+	}
+	
+	@Override
+	public String toString() {
+		return "RCSBranch [name=" + this.name + ", parent=" + this.parent + "]";
 	}
 	
 }

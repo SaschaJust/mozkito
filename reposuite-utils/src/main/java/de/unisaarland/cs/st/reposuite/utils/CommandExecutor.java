@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,11 @@ public class CommandExecutor extends Thread {
 		READER, WRITER;
 	}
 	
+	public static Tuple<Integer, List<String>> execute(final String command, final String[] arguments, final File dir,
+	        final InputStream input, final Map<String, String> environment) {
+		return execute(command, arguments, dir, input, environment, Charset.defaultCharset());
+	}
+
 	/**
 	 * Executes a command with the given arguments in the specified directory.
 	 * Input to the program is piped from `input` if present.
@@ -51,7 +57,7 @@ public class CommandExecutor extends Thread {
 	 *         representing the output of the program
 	 */
 	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
-	        final InputStream input, final Map<String, String> environment) {
+	        final InputStream input, final Map<String, String> environment, final Charset charset) {
 		Condition.notNull(command);
 		Condition.check((arguments == null) || (arguments.length > 0));
 		
@@ -116,7 +122,7 @@ public class CommandExecutor extends Thread {
 			process = processBuilder.start();
 			
 			// get the streams
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), charset));
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 			BufferedReader pipe = null;
 			
@@ -230,7 +236,7 @@ public class CommandExecutor extends Thread {
 	 * @param pipe
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
-	        final BufferedReader pipe) {
+			final BufferedReader pipe) {
 		if (Logger.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}
