@@ -79,7 +79,7 @@ public class RepositoryAnalyzer extends RepoSuiteFilterThread<LogEntry> {
 			}
 			finish();
 		} catch (InterruptedException e) {
-			
+            
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
