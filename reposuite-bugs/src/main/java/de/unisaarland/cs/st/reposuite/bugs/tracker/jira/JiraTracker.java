@@ -83,6 +83,12 @@ public class JiraTracker extends Tracker {
 		if (errorRegex.matches(rawReport.getContent())) {
 			return false;
 		}
+		if (!rawReport.getUri().toString().endsWith(".xml")) {
+			if (Logger.logWarn()) {
+				Logger.warn("The Jira rawRepo uri is not an xml file.");
+			}
+			return false;
+		}
 		return true;
 	}
 	
