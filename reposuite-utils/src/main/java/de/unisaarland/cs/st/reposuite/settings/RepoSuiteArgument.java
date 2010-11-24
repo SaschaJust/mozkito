@@ -11,6 +11,7 @@ public abstract class RepoSuiteArgument implements Comparable<RepoSuiteArgument>
 	private boolean      isRequired;
 	private final String name;
 	protected String     stringValue;
+	private boolean      wasSet;
 	
 	/**
 	 * @param settings
@@ -25,7 +26,7 @@ public abstract class RepoSuiteArgument implements Comparable<RepoSuiteArgument>
 	 *            Set to <code>true</code> if this argument will be required
 	 */
 	public RepoSuiteArgument(final RepoSuiteSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
@@ -65,6 +66,10 @@ public abstract class RepoSuiteArgument implements Comparable<RepoSuiteArgument>
 			return false;
 		}
 		return true;
+	}
+	
+	public String getDefaultValue() {
+		return this.defaultValue;
 	}
 	
 	/**
@@ -125,6 +130,7 @@ public abstract class RepoSuiteArgument implements Comparable<RepoSuiteArgument>
 	 */
 	protected void setStringValue(final String value) {
 		this.stringValue = value;
+		this.wasSet = true;
 	}
 	
 	/*
@@ -134,7 +140,11 @@ public abstract class RepoSuiteArgument implements Comparable<RepoSuiteArgument>
 	@Override
 	public String toString() {
 		return "RepoSuiteArgument [isRequired=" + this.isRequired + ", description=" + this.description + ", name="
-		        + this.name + ", defaultValue=" + this.defaultValue + ", stringValue=" + this.stringValue + "]";
+		+ this.name + ", defaultValue=" + this.defaultValue + ", stringValue=" + this.stringValue + "]";
+	}
+	
+	public boolean wasSet() {
+		return this.wasSet;
 	}
 	
 }

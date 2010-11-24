@@ -149,9 +149,21 @@ public class JiraTracker extends Tracker {
 		
 		if (this.overalXML == null) {
 			// fetch source from net
-			return super.fetchSource(uri);
+			if (Logger.logInfo()) {
+				Logger.info("Fetching report `" + uri.toString() + "` from net ... ");
+			}
+			RawReport source = super.fetchSource(uri);
+			if (Logger.logInfo()) {
+				Logger.info("done");
+			}
+			return source;
 		} else {
 			// fetch source from local file
+			
+			if (Logger.logInfo()) {
+				Logger.info("Fetching report `" + uri.toString() + "` from local overview xml file ... ");
+			}
+			
 			Long idToFetch = this.reverseURI(uri);
 			if (idToFetch == null) {
 				return super.fetchSource(uri);
@@ -171,21 +183,34 @@ public class JiraTracker extends Tracker {
 				StringWriter sw = new StringWriter();
 				outputter.output(document, sw);
 				
+				if (Logger.logInfo()) {
+					Logger.info("done");
+				}
+				
 				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
 						new DateTime(), "xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
+				if (Logger.logInfo()) {
+					Logger.info("failed");
+				}
 				return null;
 			} catch (JDOMException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
+				if (Logger.logInfo()) {
+					Logger.info("failed");
+				}
 				return null;
 			} catch (NoSuchAlgorithmException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
+				}
+				if (Logger.logInfo()) {
+					Logger.info("failed");
 				}
 				return null;
 			}
@@ -201,6 +226,11 @@ public class JiraTracker extends Tracker {
 	@Override
 	public Report parse(final XmlReport rawReport) {
 		Condition.notNull(rawReport);
+		
+		if (Logger.logInfo()) {
+			Logger.info("Parsing report with id `" + rawReport.getId() + "` ... ");
+		}
+		
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
 		JiraXMLParser.handleRoot(bugReport, itemElement, this.personManager);
@@ -228,6 +258,9 @@ public class JiraTracker extends Tracker {
 					Logger.error(e.getMessage(), e);
 				}
 			}
+		}
+		if (Logger.logInfo()) {
+			Logger.info("done");
 		}
 		return bugReport;
 	}
@@ -296,7 +329,9 @@ public class JiraTracker extends Tracker {
 				InputSource inputSource = new InputSource(new FileInputStream(this.overalXML));
 				parser.parse(inputSource);
 				for (Long id : handler.getIds()) {
-					addBugId(id);
+					if ((id <= this.stopAt) && (id > this.startAt)) {
+						addBugId(id);
+					}
 				}
 			} catch (Exception e) {
 				if (Logger.logError()) {

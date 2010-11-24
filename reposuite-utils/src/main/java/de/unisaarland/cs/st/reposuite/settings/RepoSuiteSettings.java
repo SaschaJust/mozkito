@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
@@ -25,7 +27,7 @@ public class RepoSuiteSettings {
 	
 	public static final boolean            debug           = (System.getProperty("debug") != null);
 	public static final String             reportThis      = "Please file a bug report with this error message here: "
-	                                                               + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
+		+ "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
 	private Map<String, RepoSuiteArgument> arguments       = new HashMap<String, RepoSuiteArgument>();
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
@@ -101,6 +103,20 @@ public class RepoSuiteSettings {
 		
 		ss.append("\t");
 		ss.append("-D");
+		ss.append("help");
+		ss.append(": ");
+		ss.append("Shows this help menu.");
+		ss.append(System.getProperty("line.separator"));
+		
+		ss.append("\t");
+		ss.append("-D");
+		ss.append("denyDefaultValues");
+		ss.append(": ");
+		ss.append("Ignore default values!");
+		ss.append(System.getProperty("line.separator"));
+		
+		ss.append("\t");
+		ss.append("-D");
 		ss.append("repoSuiteSettings");
 		ss.append(": ");
 		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
@@ -152,6 +168,11 @@ public class RepoSuiteSettings {
 	 */
 	public void parseArguments() {
 		
+		if (System.getProperties().containsKey("help")) {
+			System.err.println(getHelpString());
+			throw new de.unisaarland.cs.st.reposuite.exceptions.Shutdown();
+		}
+
 		// save given arguments to load if necessary
 		this.commandlineProps = System.getProperties();
 		
@@ -161,13 +182,13 @@ public class RepoSuiteSettings {
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					        + "` does not exists. Ignoring ...");
+							+ "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					        + "` is a directory. Ignoring ...");
+							+ "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;
 			}
@@ -224,7 +245,7 @@ public class RepoSuiteSettings {
 	protected void setField(final String argument, final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
-			        + "The argument is not part of the current argument set.");
+					+ "The argument is not part of the current argument set.");
 		}
 		this.arguments.get(argument).setStringValue(value);
 	}
@@ -277,8 +298,8 @@ public class RepoSuiteSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-				        arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
-				        arg.toString()));
+						arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
+								arg.toString()));
 				
 			}
 		}
@@ -293,7 +314,16 @@ public class RepoSuiteSettings {
 	 *         required argument with no value set first found.
 	 */
 	private boolean validateSettings() {
+		Set<RepoSuiteArgument> defaultValueArgs = new HashSet<RepoSuiteArgument>();
+		boolean noDefaults = System.getProperty("denyDefaultValues") != null ? true : false;
 		for (RepoSuiteArgument arg : this.arguments.values()) {
+			if (!arg.wasSet()) {
+				if (noDefaults) {
+					arg.setStringValue(null);
+				} else if ((arg.getDefaultValue() != null) && arg.isRequired()) {
+					defaultValueArgs.add(arg);
+				}
+			}
 			if (arg.isRequired() && (arg.getValue() == null)) {
 				if (Logger.logError()) {
 					Logger.error("Required argument `" + arg.getName() + "` is not set.");
@@ -301,6 +331,23 @@ public class RepoSuiteSettings {
 				return false;
 			}
 		}
+		
+		if (defaultValueArgs.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
+			sb.append(FileUtils.lineSeparator);
+			for (RepoSuiteArgument arg : defaultValueArgs) {
+				sb.append(arg.getName());
+				sb.append(": ");
+				sb.append(arg.getDefaultValue());
+				sb.append(FileUtils.lineSeparator);
+			}
+			sb.append("Use -DdenyDefaultValues=T to allow only manually set arguments");
+			if (Logger.logWarn()) {
+				Logger.warn(sb.toString());
+			}
+		}
+
 		return true;
 	}
 }
