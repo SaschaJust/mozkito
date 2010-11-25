@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Status implements Annotated {
-	UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS, REOPENED, VERIFIED, CLOSED;
+	UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS, FEEDBACK, REOPENED, REVIEWPENDING, VERIFIED, CLOSED;
 	
 	private long id;
 	

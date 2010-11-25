@@ -47,7 +47,6 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		Condition.notNull(format);
 		Condition.greater(format.length(), 2);
 		Condition.notNull(content);
-		Condition.greater(content.length(), 0);
 		
 		this.uri = uri;
 		this.md5 = md5;
