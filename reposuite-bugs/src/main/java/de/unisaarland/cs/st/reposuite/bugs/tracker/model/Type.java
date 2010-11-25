@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 public enum Type implements Annotated {
-	BUG, RFE, TASK, TEST, OTHER;
+	BUG, RFE, TASK, TEST, OTHER, UNKNOWN;
 	
 	private long id;
 	
