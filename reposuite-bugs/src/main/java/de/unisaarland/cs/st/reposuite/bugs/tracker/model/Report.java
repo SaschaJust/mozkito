@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -18,8 +19,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,6 +34,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -45,19 +47,20 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
-	private long               id       = -1l;
-	private Person             assignedTo;
+	/**
+     * 
+     */
+	private static final long  serialVersionUID = 3241584366125944268L;
+	private long               id               = -1l;
 	private String             category;
-	private SortedSet<Comment> comments = new TreeSet<Comment>();
+	private SortedSet<Comment> comments         = new TreeSet<Comment>();
 	private String             description;
 	private Severity           severity;
 	private Priority           priority;
 	private Resolution         resolution;
-	private Person             submitter;
 	private String             subject;
-	private SortedSet<Long>    siblings = new TreeSet<Long>();
-	private Person             resolver;
-	private History            history  = new History();
+	private SortedSet<Long>    siblings         = new TreeSet<Long>();
+	private History            history          = new History();
 	private Status             status;
 	private Type               type;
 	private DateTime           creationTimestamp;
@@ -71,12 +74,19 @@ public class Report implements Annotated, Comparable<Report> {
 	private String             stepsToReproduce;
 	private String             component;
 	private String             product;
-	private byte[]             hash     = new byte[33];
+	private byte[]             hash             = new byte[33];
+	// assignedTo
+	// submitter
+	// resolver
+	private PersonContainer    personContainer  = new PersonContainer();
 	
 	public Report() {
 		super();
 	}
 	
+	/**
+	 * @param comment
+	 */
 	@Transient
 	public void addComment(final Comment comment) {
 		Condition.notNull(comment);
@@ -84,6 +94,9 @@ public class Report implements Annotated, Comparable<Report> {
 		this.comments.add(comment);
 	}
 	
+	/**
+	 * @param historyElement
+	 */
 	@Transient
 	public void addHistoryElement(final HistoryElement historyElement) {
 		Condition.notNull(historyElement);
@@ -91,6 +104,9 @@ public class Report implements Annotated, Comparable<Report> {
 		this.history.add(historyElement);
 	}
 	
+	/**
+	 * @param sibling
+	 */
 	@Transient
 	public void addSibling(final Long sibling) {
 		Condition.notNull(sibling);
@@ -98,6 +114,10 @@ public class Report implements Annotated, Comparable<Report> {
 		this.siblings.add(sibling);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final Report o) {
 		if (getId() > o.getId()) {
@@ -112,9 +132,10 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the assignedTo
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@Transient
 	public Person getAssignedTo() {
-		return this.assignedTo;
+		return this.getPersonContainer().get("assignedTo");
 	}
 	
 	/**
@@ -134,15 +155,22 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.comments;
 	}
 	
+	/**
+	 * @return
+	 */
+	@Basic
 	public String getComponent() {
 		return this.component;
 	}
 	
+	/**
+	 * @return
+	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
-		return this.creationTimestamp.toDate();
+		return getCreationTimestamp() != null ? getCreationTimestamp().toDate() : null;
 	}
 	
 	/**
@@ -157,6 +185,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return the description
 	 */
 	@Basic
+	@Lob
 	public String getDescription() {
 		return this.description;
 	}
@@ -164,6 +193,8 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the expectedBehavior
 	 */
+	@Basic
+	@Lob
 	public String getExpectedBehavior() {
 		return this.expectedBehavior;
 	}
@@ -200,13 +231,30 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.lastFetch;
 	}
 	
+	/**
+	 * @return
+	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
-		return this.lastFetch.toDate();
+		return getLastFetch() != null ? getLastFetch().toDate() : null;
 	}
 	
+	/**
+	 * @return
+	 */
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "lastUpdateTimestamp")
+	private Date getLastUpdateJavaTimestamp() {
+		return getLastUpdateTimestamp() != null ? getLastUpdateTimestamp().toDate() : null;
+	}
+	
+	/**
+	 * @return
+	 */
+	@Transient
 	public DateTime getLastUpdateTimestamp() {
 		return this.lastUpdateTimestamp;
 	}
@@ -214,8 +262,18 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the observedBehavior
 	 */
+	@Basic
+	@Lob
 	public String getObservedBehavior() {
 		return this.observedBehavior;
+	}
+	
+	/**
+	 * @return the personContainer
+	 */
+	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public PersonContainer getPersonContainer() {
+		return this.personContainer;
 	}
 	
 	/**
@@ -226,6 +284,10 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.priority;
 	}
 	
+	/**
+	 * @return
+	 */
+	@Basic
 	public String getProduct() {
 		return this.product;
 	}
@@ -238,6 +300,20 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.resolution;
 	}
 	
+	/**
+	 * @return
+	 */
+	@SuppressWarnings ("unused")
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "resolutionTimestamp")
+	private Date getResolutionJavaTimestamp() {
+		return getResolutionTimestamp() != null ? getResolutionTimestamp().toDate() : null;
+	}
+	
+	/**
+	 * @return
+	 */
+	@Transient
 	public DateTime getResolutionTimestamp() {
 		return this.resolutionTimestamp;
 	}
@@ -245,9 +321,10 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the resolver
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@Transient
 	public Person getResolver() {
-		return this.resolver;
+		return this.getPersonContainer().get("resolver");
 	}
 	
 	/**
@@ -278,6 +355,8 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the stepsToReproduce
 	 */
+	@Basic
+	@Lob
 	public String getStepsToReproduce() {
 		return this.stepsToReproduce;
 	}
@@ -293,14 +372,17 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the submitter
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@Transient
 	public Person getSubmitter() {
-		return this.submitter;
+		return this.getPersonContainer().get("submitter");
 	}
 	
 	/**
 	 * @return the summary
 	 */
+	@Basic
+	@Lob
 	public String getSummary() {
 		return this.summary;
 	}
@@ -316,6 +398,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the version
 	 */
+	@Basic
 	public String getVersion() {
 		return this.version;
 	}
@@ -327,7 +410,17 @@ public class Report implements Annotated, Comparable<Report> {
 	@Override
 	@Transient
 	public Collection<Annotated> saveFirst() {
-		return null;
+		Collection<Annotated> ret = new LinkedList<Annotated>();
+		for (Comment comment : this.comments) {
+			ret.add(comment.getPersonContainer());
+		}
+		for (HistoryElement historyElement : this.history.getElements()) {
+			ret.add(historyElement.getPersonContainer());
+			ret.add(historyElement.getNewPersons());
+			ret.add(historyElement.getOldPersons());
+		}
+		ret.add(this.personContainer);
+		return ret;
 	}
 	
 	/**
@@ -335,7 +428,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the assignedTo to set
 	 */
 	public void setAssignedTo(final Person assignedTo) {
-		this.assignedTo = assignedTo;
+		this.getPersonContainer().add("assignedTo", assignedTo);
 	}
 	
 	/**
@@ -367,7 +460,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
-		this.creationTimestamp = new DateTime(creationTimestamp);
+		this.creationTimestamp = creationTimestamp != null ? new DateTime(creationTimestamp) : null;
 	}
 	
 	/**
@@ -426,11 +519,25 @@ public class Report implements Annotated, Comparable<Report> {
 		this.lastFetch = lastFetch;
 	}
 	
+	/**
+	 * @param lastFetch
+	 */
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
-		this.lastFetch = new DateTime(lastFetch);
+		this.lastFetch = lastFetch != null ? new DateTime(lastFetch) : null;
 	}
 	
+	/**
+	 * @param date
+	 */
+	@SuppressWarnings ("unused")
+	private void setLastUpdateJavaTimestamp(final Date date) {
+		this.lastUpdateTimestamp = date != null ? new DateTime(date) : null;
+	}
+	
+	/**
+	 * @param lastUpdateTimestamp
+	 */
 	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
 		this.lastUpdateTimestamp = lastUpdateTimestamp;
 	}
@@ -444,6 +551,14 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * @param personContainer
+	 *            the personContainer to set
+	 */
+	public void setPersonContainer(final PersonContainer personContainer) {
+		this.personContainer = personContainer;
+	}
+	
+	/**
 	 * @param priority
 	 *            the priority to set
 	 */
@@ -451,6 +566,9 @@ public class Report implements Annotated, Comparable<Report> {
 		this.priority = priority;
 	}
 	
+	/**
+	 * @param product
+	 */
 	public void setProduct(final String product) {
 		this.product = product;
 	}
@@ -463,6 +581,14 @@ public class Report implements Annotated, Comparable<Report> {
 		this.resolution = resolution;
 	}
 	
+	@SuppressWarnings ("unused")
+	private void setResolutionJavaTimestamp(final Date date) {
+		this.resolutionTimestamp = date != null ? new DateTime(date) : null;
+	}
+	
+	/**
+	 * @param resolutionTimestamp
+	 */
 	public void setResolutionTimestamp(final DateTime resolutionTimestamp) {
 		this.resolutionTimestamp = resolutionTimestamp;
 	}
@@ -472,7 +598,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the resolver to set
 	 */
 	public void setResolver(final Person resolver) {
-		this.resolver = resolver;
+		this.getPersonContainer().add("resolver", resolver);
 	}
 	
 	/**
@@ -520,7 +646,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the submitter to set
 	 */
 	public void setSubmitter(final Person submitter) {
-		this.submitter = submitter;
+		this.getPersonContainer().add("submitter", submitter);
 	}
 	
 	/**
@@ -560,13 +686,13 @@ public class Report implements Annotated, Comparable<Report> {
 		} catch (UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
-		return "BugReport [id=" + this.id + ", assignedTo=" + this.assignedTo + ", category=" + this.category
+		return "BugReport [id=" + this.id + ", assignedTo=" + getAssignedTo() + ", category=" + this.category
 		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
 		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
 		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
-		        + ", submitter=" + this.submitter + ", subject="
+		        + ", submitter=" + getSubmitter() + ", subject="
 		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
-		        + "... , resolver=" + this.resolver + ", status=" + this.status + ", type=" + this.type
+		        + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
 		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
 		        + "]";
 	}

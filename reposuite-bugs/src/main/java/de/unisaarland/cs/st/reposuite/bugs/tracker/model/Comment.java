@@ -12,7 +12,9 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,6 +24,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
@@ -32,11 +35,15 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 @Table (name = "comment")
 public class Comment implements Annotated, Comparable<Comment> {
 	
+	/**
+     * 
+     */
+	private static final long serialVersionUID = -2410349441783888667L;
 	private DateTime          timestamp;
-	private Person            author;
 	private String            message;
 	private Report            bugReport;
 	private CommentPrimaryKey primaryKey;
+	private PersonContainer   personContainer  = new PersonContainer();
 	
 	/**
 	 * 
@@ -95,29 +102,43 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(final Object object) {
-		if (this == object) {
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (object == null) {
+		if (obj == null) {
 			return false;
 		}
-		if (!(object instanceof Comment)) {
+		if (!(obj instanceof Comment)) {
 			return false;
 		}
-		Comment other = (Comment) object;
-		if (this.author == null) {
-			if (other.author != null) {
-				return false;
-			}
-		} else if (!this.author.equals(other.author)) {
-			return false;
-		}
+		Comment other = (Comment) obj;
 		if (this.bugReport == null) {
 			if (other.bugReport != null) {
 				return false;
 			}
 		} else if (!this.bugReport.equals(other.bugReport)) {
+			return false;
+		}
+		if (this.message == null) {
+			if (other.message != null) {
+				return false;
+			}
+		} else if (!this.message.equals(other.message)) {
+			return false;
+		}
+		if (this.personContainer == null) {
+			if (other.personContainer != null) {
+				return false;
+			}
+		} else if (!this.personContainer.equals(other.personContainer)) {
+			return false;
+		}
+		if (this.primaryKey == null) {
+			if (other.primaryKey != null) {
+				return false;
+			}
+		} else if (!this.primaryKey.equals(other.primaryKey)) {
 			return false;
 		}
 		if (this.timestamp == null) {
@@ -133,9 +154,10 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the author
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@Transient
 	public Person getAuthor() {
-		return this.author;
+		return this.personContainer.get("author");
 	}
 	
 	/**
@@ -166,9 +188,18 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the message
 	 */
+	@Lob
 	@Basic
 	public String getMessage() {
 		return this.message;
+	}
+	
+	/**
+	 * @return the personContainer
+	 */
+	@OneToOne
+	protected PersonContainer getPersonContainer() {
+		return this.personContainer;
 	}
 	
 	/**
@@ -192,12 +223,12 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	@Transient
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.author == null) ? 0 : this.author.hashCode());
-		result = prime * result + ((this.bugReport == null) ? 0 : this.bugReport.hashCode());
+		result = prime * result + ((this.message == null) ? 0 : this.message.hashCode());
+		result = prime * result + ((this.personContainer == null) ? 0 : this.personContainer.hashCode());
+		result = prime * result + ((this.primaryKey == null) ? 0 : this.primaryKey.hashCode());
 		result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
 		return result;
 	}
@@ -212,7 +243,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 *            the author to set
 	 */
 	public void setAuthor(final Person author) {
-		this.author = author;
+		this.personContainer.add("author", author);
 	}
 	
 	/**
@@ -242,6 +273,14 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	public void setMessage(final String message) {
 		this.message = message;
+	}
+	
+	/**
+	 * @param personContainer
+	 *            the personContainer to set
+	 */
+	protected void setPersonContainer(final PersonContainer personContainer) {
+		this.personContainer = personContainer;
 	}
 	
 	/**

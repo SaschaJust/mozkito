@@ -26,7 +26,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
@@ -43,13 +42,13 @@ public class JiraXMLParser {
 	// protected static DateTimeFormatter dateTimeHistoryFormat =
 	// DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
 	protected static final Regex dateTimeFormatRegex        = new Regex(
-	"({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
+	                                                                "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	"(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
+	                                                                "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
-			final String attribute, final String value) {
+	        final String attribute, final String value) {
 		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
@@ -57,7 +56,7 @@ public class JiraXMLParser {
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
-				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+		        + value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
 	}
 	
 	protected static Priority getPriority(final String prioString) {
@@ -122,10 +121,9 @@ public class JiraXMLParser {
 		}
 	}
 	
-	private static void handleComments(final List<Element> comments, final Report report,
-			final PersonManager personManager) {
+	private static void handleComments(final List<Element> comments, final Report report) {
 		for (Element comment : comments) {
-			Person author = personManager.getPerson(new Person(comment.getAttributeValue("author"), null, null));
+			Person author = new Person(comment.getAttributeValue("author"), null, null);
 			DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"), dateTimeFormatRegex);
 			String commentText = comment.getText();
 			if ((report.getResolutionTimestamp() != null) && (report.getResolutionTimestamp().isEqual(commentDate))) {
@@ -136,11 +134,10 @@ public class JiraXMLParser {
 	}
 	
 	@SuppressWarnings ("unchecked")
-	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	throws UnsupportedProtocolException, JDOMException, IOException, SecurityException, NoSuchFieldException {
+	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
+	        JDOMException, IOException, SecurityException, NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
-		Condition.notNull(personManager);
 		
 		try {
 			RawContent rawContent = IOUtils.fetch(historyUri);
@@ -153,7 +150,7 @@ public class JiraXMLParser {
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-							+ rootElement.getName() + ">.");
+					        + rootElement.getName() + ">.");
 				}
 				return;
 			}
@@ -196,7 +193,7 @@ public class JiraXMLParser {
 						Element actionDetailsA = as.get(1);
 						String email = actionDetailsA.getAttributeValue("rel");
 						String fullname = actionDetailsA.getText();
-						author = personManager.getPerson(new Person(null, fullname, email));
+						author = new Person(null, fullname, email);
 						
 						Element date = getElement(actionDetails, namespace, "span", "class", "date");
 						String dateString = date.getText();
@@ -223,7 +220,7 @@ public class JiraXMLParser {
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
 						HistoryElement hElement = new HistoryElement(author, report, timestamp,
-								new HashMap<String, ArrayList<?>>());
+						        new HashMap<String, ArrayList<?>>());
 						
 						for (Element tr : trs) {
 							if (tr == null) {
@@ -233,7 +230,7 @@ public class JiraXMLParser {
 								return;
 							}
 							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText()
-							.trim();
+							        .trim();
 							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
 							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
 							
@@ -267,11 +264,9 @@ public class JiraXMLParser {
 	}
 	
 	@SuppressWarnings ("unchecked")
-	private static void handleIssueLinks(final List<Element> elements, final Report report,
-			final PersonManager personManager) {
+	private static void handleIssueLinks(final List<Element> elements, final Report report) {
 		Condition.notNull(elements);
 		Condition.notNull(report);
-		Condition.notNull(personManager);
 		
 		for (Element issueLinkType : elements) {
 			if (issueLinkType.getName().equals("issuelinktype")) {
@@ -286,7 +281,7 @@ public class JiraXMLParser {
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
-												+ ". Cannot determine report id. Abort!");
+										        + ". Cannot determine report id. Abort!");
 									}
 									return;
 								}
@@ -301,10 +296,9 @@ public class JiraXMLParser {
 	}
 	
 	@SuppressWarnings ("unchecked")
-	public static void handleRoot(final Report report, final Element root, final PersonManager personManager) {
+	public static void handleRoot(final Report report, final Element root) {
 		Condition.notNull(report);
 		Condition.notNull(root);
-		Condition.notNull(personManager);
 		Condition.equals(root.getName(), "item");
 		
 		List<Element> children = root.getChildren();
@@ -318,7 +312,7 @@ public class JiraXMLParser {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-								+ ". Cannot determine report id. Abort!");
+						        + ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
@@ -354,9 +348,9 @@ public class JiraXMLParser {
 				if ((username != null) && (!username.equals("-1"))) {
 					String name = element.getText();
 					if (name.equals(username)) {
-						report.setAssignedTo(personManager.getPerson(new Person(username, null, null)));
+						report.setAssignedTo(new Person(username, null, null));
 					} else {
-						report.setAssignedTo(personManager.getPerson(new Person(username, name, null)));
+						report.setAssignedTo(new Person(username, name, null));
 					}
 				}
 			} else if (element.getName().equals("reporter")) {
@@ -364,9 +358,9 @@ public class JiraXMLParser {
 				if ((username != null) && (!username.equals("-1"))) {
 					String name = element.getText();
 					if (name.equals(username)) {
-						report.setSubmitter(personManager.getPerson(new Person(username, null, null)));
+						report.setSubmitter(new Person(username, null, null));
 					} else {
-						report.setSubmitter(personManager.getPerson(new Person(username, name, null)));
+						report.setSubmitter(new Person(username, name, null));
 					}
 				}
 			} else if (element.getName().equals("created")) {
@@ -380,9 +374,9 @@ public class JiraXMLParser {
 					report.setLastUpdateTimestamp(dateTime);
 				}
 			} else if (element.getName().equals("comments")) {
-				handleComments(element.getChildren("comment"), report, personManager);
+				handleComments(element.getChildren("comment"), report);
 			} else if (element.getName().equals("issuelinks")) {
-				handleIssueLinks(element.getChildren(), report, personManager);
+				handleIssueLinks(element.getChildren(), report);
 			} else if (element.getName().equals("resolved")) {
 				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {

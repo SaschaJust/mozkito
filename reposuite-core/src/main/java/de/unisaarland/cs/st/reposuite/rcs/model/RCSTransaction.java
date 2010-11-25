@@ -44,6 +44,11 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
+     * 
+     */
+	private static final long serialVersionUID = -7619009648634901112L;
+	
+	/**
 	 * Gets the handle.
 	 * 
 	 * @return the simple class name
@@ -53,7 +58,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return RCSTransaction.class.getSimpleName();
 	}
 	
-	private Person                  author;
+	private PersonContainer         persons   = new PersonContainer();
 	private String                  id;
 	private String                  message;
 	
@@ -161,13 +166,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * Gets the author.
-	 * 
-	 * @return the author
+	 * @return
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@Transient
 	public Person getAuthor() {
-		return this.author;
+		return getPersons().get("author");
 	}
 	
 	/**
@@ -198,7 +201,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	private Date getJavaTimestamp() {
-		return this.timestamp.toDate();
+		return getTimestamp() != null ? getTimestamp().toDate() : null;
 	}
 	
 	/**
@@ -228,6 +231,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
+	 * @return the persons
+	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public PersonContainer getPersons() {
+		return this.persons;
+	}
+	
+	/**
 	 * @return the prevTransaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -253,20 +264,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return this.revisions;
 	}
 	
-	@SuppressWarnings ("unchecked")
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return CollectionUtils.collect(getRevisions(), new Transformer() {
-			
-			@Override
-			public Object transform(final Object input) {
-				RCSRevision revision = (RCSRevision) input;
-				return revision.getChangedFile();
-			}
-		});
-	}
-	
 	/**
 	 * Gets the timestamp.
 	 * 
@@ -277,14 +274,28 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return this.timestamp;
 	}
 	
+	@SuppressWarnings ("unchecked")
+	@Override
+	@Transient
+	public Collection<Annotated> saveFirst() {
+		Collection<Annotated> ret = CollectionUtils.collect(getRevisions(), new Transformer() {
+			
+			@Override
+			public Object transform(final Object input) {
+				RCSRevision revision = (RCSRevision) input;
+				return revision.getChangedFile();
+			}
+		});
+		ret.addAll(this.persons.getPersons());
+		return ret;
+	}
+	
 	/**
-	 * Sets the author.
-	 * 
 	 * @param author
-	 *            the author to set
 	 */
-	private void setAuthor(final Person author) {
-		this.author = author;
+	@Transient
+	public void setAuthor(final Person author) {
+		getPersons().add("author", author);
 	}
 	
 	/**
@@ -313,7 +324,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date date) {
-		this.timestamp = new DateTime(date);
+		this.timestamp = date != null ? new DateTime(date) : null;
 	}
 	
 	/**
@@ -340,6 +351,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	public void setNextTransactionByTimestamp(final RCSTransaction nextTransactionByTimestamp) {
 		this.nextTransactionByTimestamp = nextTransactionByTimestamp;
+	}
+	
+	/**
+	 * @param persons
+	 *            the persons to set
+	 */
+	public void setPersons(final PersonContainer persons) {
+		this.persons = persons;
 	}
 	
 	/**

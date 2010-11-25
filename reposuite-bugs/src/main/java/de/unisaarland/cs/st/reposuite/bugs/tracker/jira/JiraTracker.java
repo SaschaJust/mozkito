@@ -54,16 +54,16 @@ public class JiraTracker extends Tracker {
 		String suffix = xmlUrl.substring(index, xmlUrl.length());
 		String historyUrl = xmlUrl.replace("si/jira.issueviews:issue-xml/", "browse/");
 		return historyUrl.replace(suffix,
-		"?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+		        "?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
 	}
 	
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	"<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	                                               "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
 	private static Regex errorRegex        = new Regex(
-	"<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	                                               "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
@@ -97,8 +97,8 @@ public class JiraTracker extends Tracker {
 		if (xmlReport.getDocument().getRootElement().getChildren("channel").size() != 1) {
 			return false;
 		}
-		@SuppressWarnings ("unchecked")
-		List<Element> items = xmlReport.getDocument().getRootElement().getChildren("channel");
+		@SuppressWarnings ("unchecked") List<Element> items = xmlReport.getDocument().getRootElement()
+		        .getChildren("channel");
 		if (items.get(0).getChildren("item").size() != 1) {
 			return false;
 		}
@@ -188,7 +188,7 @@ public class JiraTracker extends Tracker {
 				}
 				
 				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
-						new DateTime(), "xhtml", sw.getBuffer().toString()));
+				        new DateTime(), "xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -233,7 +233,7 @@ public class JiraTracker extends Tracker {
 		
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
-		JiraXMLParser.handleRoot(bugReport, itemElement, this.personManager);
+		JiraXMLParser.handleRoot(bugReport, itemElement);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
 		
@@ -246,14 +246,14 @@ public class JiraTracker extends Tracker {
 		} else {
 			try {
 				URI historyUri = new URI(historyUrl);
-				JiraXMLParser.handleHistory(historyUri, bugReport, this.personManager);
+				JiraXMLParser.handleHistory(historyUri, bugReport);
 			} catch (Exception e) {
 				if (Logger.logError()) {
 					if (bugReport.getId() == -1) {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
 					} else {
 						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-								+ "`. Used uri =`" + historyUrl + "`.");
+						        + "`. Used uri =`" + historyUrl + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}
@@ -286,8 +286,8 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	throws InvalidParameterException {
+	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	        throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");
@@ -312,7 +312,7 @@ public class JiraTracker extends Tracker {
 				if (!rawContent.getFormat().toLowerCase().equals("xhtml")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-								+ rawContent.getFormat());
+						        + rawContent.getFormat());
 					}
 					return;
 				}

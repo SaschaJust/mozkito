@@ -4,27 +4,24 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
+import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -32,8 +29,15 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 @Entity
 @javax.persistence.Table (name = "person")
-@Table (indexes = { @Index (name = "idx", columnNames = { "username", "fullname", "email" }) }, appliesTo = "person")
 public class Person implements Annotated {
+	
+	// @Table (indexes = { @Index (name = "idx", columnNames = { "username",
+	// "fullname", "email" }) }, appliesTo = "person")
+	
+	/**
+     * 
+     */
+	private static final long serialVersionUID = -8598414850294255203L;
 	
 	/**
 	 * @return the simple class name
@@ -43,65 +47,49 @@ public class Person implements Annotated {
 		return Person.class.getSimpleName();
 	}
 	
-	public static Person merge(final Collection<Person> candidates) {
-		Person moltenCore;
-		String email = null;
-		String fullname = null;
-		String username = null;
-		long id = -1;
-		Set<String> synonyms = new TreeSet<String>();
-		Set<String> emails = new TreeSet<String>();
-		Set<String> names = new TreeSet<String>();
+	/**
+	 * @param keeper
+	 * @param collisions
+	 * @return
+	 */
+	public static Person merge(final Person keeper, final Collection<Person> collisions) {
+		Condition.notNull(keeper);
+		Condition.notNull(collisions);
 		
-		for (Person tmpPerson : candidates) {
-			if (tmpPerson.getEmail() != null) {
-				if (email == null) {
-					email = tmpPerson.getEmail();
-				}
-				emails.add(tmpPerson.getEmail());
-			}
-			
-			emails.addAll(tmpPerson.getEmailAddresses());
-			
-			if (tmpPerson.getFullname() != null) {
-				if ((fullname == null)) {
-					fullname = tmpPerson.getFullname();
-				}
-				names.add(tmpPerson.getFullname());
-			}
-			
-			names.addAll(tmpPerson.getNames());
-			
-			if (tmpPerson.getUsername() != null) {
-				if (username == null) {
-					username = tmpPerson.getUsername();
-				}
-				synonyms.add(tmpPerson.getUsername());
-			}
-			
-			synonyms.addAll(tmpPerson.getSynonyms());
-			
-			if ((id == -1) && (tmpPerson.getGeneratedId() > -1)) {
-				id = tmpPerson.getGeneratedId();
-			}
+		for (Person merged : collisions) {
+			keeper.addAllEmails(merged.getEmailAddresses());
+			keeper.addAllFullnames(merged.getFullnames());
+			keeper.addAllUsernames(merged.getUsernames());
+			keeper.addAllTransactions(merged.getTransactions());
 		}
 		
-		moltenCore = new Person(username, fullname, email);
-		moltenCore.addAllEmails(emails);
-		moltenCore.addAllSynonyms(synonyms);
-		moltenCore.setGeneratedId(id);
-		return moltenCore;
+		return keeper;
 	}
 	
-	private long                    generatedId;
-	private String                  email;
-	private String                  fullname;
-	private TreeSet<RCSTransaction> transactions   = new TreeSet<RCSTransaction>();
-	private Set<String>             synonyms       = new TreeSet<String>();
-	private Set<String>             emailAddresses = new TreeSet<String>();
-	private Set<String>             names          = new TreeSet<String>();
+	/**
+	 * @param keeper
+	 * @param from
+	 * @return
+	 */
+	public static Person merge(final Person keeper, final Person from) {
+		Condition.notNull(keeper);
+		Condition.notNull(from);
+		
+		keeper.addAllEmails(from.getEmailAddresses());
+		keeper.addAllFullnames(from.getFullnames());
+		keeper.addAllUsernames(from.getUsernames());
+		keeper.addAllTransactions(from.getTransactions());
+		
+		return keeper;
+	}
 	
-	private String                  username;
+	private long                generatedId;
+	
+	private Set<String>         usernames      = new TreeSet<String>();
+	private Set<String>         emailAddresses = new TreeSet<String>();
+	private Set<String>         fullnames      = new TreeSet<String>();
+	
+	private Set<RCSTransaction> transactions   = new TreeSet<RCSTransaction>();
 	
 	/**
 	 * Default constructor used by Hibernate
@@ -116,6 +104,7 @@ public class Person implements Annotated {
 	 */
 	public Person(final String username, final String fullname, final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null));
+		
 		if (fullname != null) {
 			Condition.equals(fullname.trim(), fullname);
 		}
@@ -128,47 +117,49 @@ public class Person implements Annotated {
 			Condition.equals(email.trim(), email);
 		}
 		
-		if (username != null) {
-			setUsername(username.trim());
-		}
-		
-		if (fullname != null) {
-			setFullname(fullname.trim());
-			getSynonyms().add(getFullname());
-		}
-		
-		if (email != null) {
-			setEmail(email.trim());
-			getEmailAddresses().add(getEmail());
-		}
-		
-		if (Logger.logTrace()) {
-			Logger.trace("Creating " + getHandle() + ": " + this);
-		}
+		addUsername(username);
+		addFullname(fullname);
+		addEmail(email);
 	}
 	
 	/**
 	 * @param emails
 	 */
+	@Transient
 	public void addAllEmails(final Set<String> emails) {
 		Condition.notNull(emails);
 		
 		this.emailAddresses.addAll(emails);
 	}
 	
-	public void addAllNames(final Set<String> names) {
-		Condition.notNull(names);
+	/**
+	 * @param fullnames
+	 */
+	@Transient
+	public void addAllFullnames(final Set<String> fullnames) {
+		Condition.notNull(fullnames);
 		
-		getNames().addAll(names);
+		getFullnames().addAll(fullnames);
 	}
 	
 	/**
-	 * @param synonyms
+	 * @param transactions
 	 */
-	public void addAllSynonyms(final Set<String> synonyms) {
-		Condition.notNull(synonyms);
+	@Transient
+	public void addAllTransactions(final Set<RCSTransaction> transactions) {
+		Condition.notNull(transactions);
 		
-		synonyms.addAll(synonyms);
+		getTransactions().addAll(transactions);
+	}
+	
+	/**
+	 * @param usernames
+	 */
+	@Transient
+	public void addAllUsernames(final Set<String> usernames) {
+		Condition.notNull(usernames);
+		
+		getUsernames().addAll(usernames);
 	}
 	
 	/**
@@ -176,31 +167,29 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void addEmail(final String email) {
-		Condition.notNull(email);
-		Condition.equals(email != null ? email.trim() : null, email);
-		
-		this.getEmailAddresses().add(email);
+		if (email != null) {
+			this.getEmailAddresses().add(email);
+		}
 	}
 	
 	/**
 	 * @param fullname
 	 */
 	@Transient
-	public void addName(final String fullname) {
-		Condition.notNull(fullname);
-		
-		this.names.add(fullname);
+	public void addFullname(final String fullname) {
+		if (fullname != null) {
+			this.fullnames.add(fullname);
+		}
 	}
 	
 	/**
-	 * @param fullname
+	 * @param username
 	 */
 	@Transient
-	public void addSynonym(final String fullname) {
-		Condition.notNull(fullname);
-		Condition.equals(fullname != null ? fullname.trim() : null, fullname);
-		
-		this.synonyms.add(fullname);
+	public void addUsername(final String username) {
+		if (username != null) {
+			this.usernames.add(username);
+		}
 	}
 	
 	/**
@@ -211,6 +200,21 @@ public class Person implements Annotated {
 		Condition.notNull(transaction);
 		
 		this.transactions.add(transaction);
+	}
+	
+	/**
+	 * @param person
+	 */
+	@Transient
+	@Deprecated
+	public void clone(final Person person) {
+		Condition.notNull(person);
+		
+		this.setEmailAddresses(person.getEmailAddresses());
+		this.setFullnames(person.getFullnames());
+		this.setUsernames(person.getUsernames());
+		this.setTransactions(person.getTransactions());
+		this.setGeneratedId(person.getGeneratedId());
 	}
 	
 	/*
@@ -229,36 +233,38 @@ public class Person implements Annotated {
 			return false;
 		}
 		Person other = (Person) obj;
-		if (this.email == null) {
-			if (other.email != null) {
+		if (this.emailAddresses == null) {
+			if (other.emailAddresses != null) {
 				return false;
 			}
-		} else if (!this.email.equals(other.email)) {
+		} else if (!this.emailAddresses.equals(other.emailAddresses)) {
 			return false;
 		}
-		if (this.fullname == null) {
-			if (other.fullname != null) {
+		if (this.fullnames == null) {
+			if (other.fullnames != null) {
 				return false;
 			}
-		} else if (!this.fullname.equals(other.fullname)) {
+		} else if (!this.fullnames.equals(other.fullnames)) {
 			return false;
 		}
-		if (this.username == null) {
-			if (other.username != null) {
+		if (this.generatedId != other.generatedId) {
+			return false;
+		}
+		if (this.transactions == null) {
+			if (other.transactions != null) {
 				return false;
 			}
-		} else if (!this.username.equals(other.username)) {
+		} else if (!this.transactions.equals(other.transactions)) {
+			return false;
+		}
+		if (this.usernames == null) {
+			if (other.usernames != null) {
+				return false;
+			}
+		} else if (!this.usernames.equals(other.usernames)) {
 			return false;
 		}
 		return true;
-	}
-	
-	/**
-	 * @return the email
-	 */
-	@Column (unique = true)
-	public String getEmail() {
-		return this.email;
 	}
 	
 	/**
@@ -274,14 +280,15 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public RCSTransaction getFirstCommit() {
-		return this.transactions.first();
+		return this.transactions.iterator().next();
 	}
 	
 	/**
-	 * @return the fullname
+	 * @return the name
 	 */
-	public String getFullname() {
-		return this.fullname;
+	@ElementCollection
+	public Set<String> getFullnames() {
+		return this.fullnames;
 	}
 	
 	/**
@@ -298,36 +305,28 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public RCSTransaction getLatestCommit() {
-		return this.transactions.last();
-	}
-	
-	/**
-	 * @return the name
-	 */
-	@ElementCollection
-	public Set<String> getNames() {
-		return this.names;
-	}
-	
-	@ElementCollection
-	public Set<String> getSynonyms() {
-		return this.synonyms;
+		RCSTransaction rcsTransaction = null;
+		Iterator<RCSTransaction> iterator = this.transactions.iterator();
+		while (iterator.hasNext()) {
+			rcsTransaction = iterator.next();
+		}
+		return rcsTransaction;
 	}
 	
 	/**
 	 * @return the transactions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
 		return this.transactions;
 	}
 	
 	/**
-	 * @return the username
+	 * @return
 	 */
-	@Column (unique = true)
-	public String getUsername() {
-		return this.username;
+	@ElementCollection
+	public Set<String> getUsernames() {
+		return this.usernames;
 	}
 	
 	/*
@@ -338,12 +337,40 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
-		result = prime * result + ((this.fullname == null) ? 0 : this.fullname.hashCode());
-		result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
+		result = prime * result + ((this.emailAddresses == null) ? 0 : this.emailAddresses.hashCode());
+		result = prime * result + ((this.fullnames == null) ? 0 : this.fullnames.hashCode());
+		result = prime * result + (int) (this.generatedId ^ (this.generatedId >>> 32));
+		result = prime * result + ((this.transactions == null) ? 0 : this.transactions.hashCode());
+		result = prime * result + ((this.usernames == null) ? 0 : this.usernames.hashCode());
 		return result;
 	}
 	
+	/**
+	 * @param person
+	 * @return
+	 */
+	@Transient
+	public boolean matches(final Person person) {
+		Condition.notNull(person);
+		
+		if (!CollectionUtils.intersection(getEmailAddresses(), person.getEmailAddresses()).isEmpty()) {
+			return true;
+		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {
+			return true;
+		} else {
+			if (getUsernames().isEmpty() && person.getUsernames().isEmpty() && getEmailAddresses().isEmpty()
+			        && person.getEmailAddresses().isEmpty()) {
+				return !CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty();
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	@Transient
 	public Collection<Annotated> saveFirst() {
@@ -351,24 +378,18 @@ public class Person implements Annotated {
 	}
 	
 	/**
-	 * @param email
-	 *            the email to set
+	 * @param emailAddresses
 	 */
-	private void setEmail(final String email) {
-		this.email = email;
-	}
-	
-	@SuppressWarnings ("unused")
 	private void setEmailAddresses(final Set<String> emailAddresses) {
 		this.emailAddresses = emailAddresses;
 	}
 	
 	/**
-	 * @param fullname
-	 *            the fullname to set
+	 * @param fullnames
+	 *            the fullnames to set
 	 */
-	private void setFullname(final String fullname) {
-		this.fullname = fullname;
+	protected void setFullnames(final Set<String> fullnames) {
+		this.fullnames = fullnames;
 	}
 	
 	/**
@@ -380,40 +401,18 @@ public class Person implements Annotated {
 	}
 	
 	/**
-	 * @param names
-	 *            the names to set
-	 */
-	protected void setNames(final Set<String> names) {
-		this.names = names;
-	}
-	
-	@SuppressWarnings ("unused")
-	private void setSynonyms(final Set<String> synonyms) {
-		this.synonyms = synonyms;
-	}
-	
-	/**
 	 * @param transactions
+	 *            the transactions to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setTransactions(final Set<RCSTransaction> transactions) {
+	protected void setTransactions(final Set<RCSTransaction> transactions) {
 		this.transactions = new TreeSet<RCSTransaction>(transactions);
 	}
 	
 	/**
-	 * @param transactions
-	 *            the transactions to set
+	 * @param usernames
 	 */
-	protected void setTransactions(final TreeSet<RCSTransaction> transactions) {
-		this.transactions = transactions;
-	}
-	
-	/**
-	 * @param username
-	 *            the username to set
-	 */
-	private void setUsername(final String username) {
-		this.username = username;
+	private void setUsernames(final Set<String> usernames) {
+		this.usernames = usernames;
 	}
 	
 	/*
@@ -422,9 +421,19 @@ public class Person implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "Person [username=" + this.username + ", fullname=" + this.fullname + ", email=" + this.email
-		        + ", synonyms=" + JavaUtils.collectionToString(this.synonyms) + ", emailAddresses="
-		        + JavaUtils.collectionToString(this.getEmailAddresses()) + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Person [generatedId=");
+		builder.append(getGeneratedId());
+		builder.append(", usernames=");
+		builder.append(this.usernames);
+		builder.append(", emailAddresses=");
+		builder.append(this.emailAddresses);
+		builder.append(", fullnames=");
+		builder.append(this.fullnames);
+		builder.append(", transactions=");
+		builder.append(this.transactions);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

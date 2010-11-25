@@ -4,14 +4,16 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.hibernate.Criteria;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -20,78 +22,108 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PersonManager {
 	
-	private Set<Person> persons = new HashSet<Person>();
+	private Set<Person>                    persons     = new HashSet<Person>();
+	private final Map<String, Person>      emailMap    = new HashMap<String, Person>();
+	private final Map<String, Person>      usernameMap = new HashMap<String, Person>();
+	private final Map<String, Set<Person>> fullnameMap = new HashMap<String, Set<Person>>();
 	
-	public Person getPerson(Person person) {
-		if (person == null) {
-			person = new Person("<unknown>", null, null);
-		}
-		
-		final Person searchTarget = person;
-		Person findPerson = (Person) CollectionUtils.find(this.persons, new Predicate() {
-			
-			@Override
-			public boolean evaluate(final Object object) {
-				return object.equals(searchTarget);
-			}
-		});
-		
-		if (findPerson != null) {
-			person = findPerson;
-			if (Logger.logTrace()) {
-				Logger.trace("Serving known " + Person.getHandle() + ": " + person);
-			}
-		} else {
-			@SuppressWarnings ("unchecked") Collection<Person> candidates = CollectionUtils.select(this.persons,
-			        new Predicate() {
-				        
-				        @Override
-				        public boolean evaluate(final Object object) {
-					        return ((((Person) object).getUsername() != null) && ((Person) object).getUsername()
-					                .equals(searchTarget.getUsername()))
-					                || ((((Person) object).getEmail() != null) && ((Person) object).getEmail().equals(
-					                        searchTarget.getEmail()))
-					                || ((((Person) object).getFullname() != null)
-					                        && (((Person) object).getEmail() == null)
-					                        && (((Person) object).getUsername() == null) && ((Person) object)
-					                        .getFullname().equals(searchTarget.getFullname()));
-				        }
-			        });
-			
-			if ((candidates != null) && !candidates.isEmpty()) {
-				/*
-				 * found multiple targets with - same username or - same email
-				 * or - same fullname but username/email not set merge them
-				 */
-				candidates.add(searchTarget);
-				Person moltenCore = Person.merge(candidates);
-				if (Logger.logWarn()) {
-					Logger.warn("Merged " + candidates.size() + " " + Person.getHandle() + "s ("
-					        + JavaUtils.collectionToString(candidates) + "), resulting in: " + moltenCore);
-					Logger.warn("Set size before: " + this.persons.size());
-				}
-				
-				this.persons.removeAll(candidates);
-				
-				if (Logger.logWarn()) {
-					Logger.warn("Set size after: " + this.persons.size());
-				}
-				
-				this.persons.add(moltenCore);
-				return moltenCore;
-			} else {
-				
-				this.persons.add(person);
-				if (Logger.logTrace()) {
-					Logger.trace("Adding new " + Person.getHandle() + ": " + person);
-				}
-			}
-		}
-		Condition.notNull(person);
-		return person;
+	private final HibernateUtil            hibernateUtil;
+	
+	public PersonManager(final HibernateUtil hibernateUtil) {
+		this.hibernateUtil = hibernateUtil;
 	}
 	
+	/**
+	 * @param person
+	 */
+	public void add(final Person person) {
+		getPersons().add(person);
+		
+		for (String email : person.getEmailAddresses()) {
+			this.emailMap.put(email, person);
+		}
+		
+		for (String username : person.getUsernames()) {
+			this.usernameMap.put(username, person);
+		}
+		
+		for (String fullname : person.getFullnames()) {
+			if (this.fullnameMap.get(fullname) == null) {
+				this.fullnameMap.put(fullname, new HashSet<Person>());
+			}
+			this.fullnameMap.get(fullname).add(person);
+		}
+	}
+	
+	/**
+	 * @param person
+	 * @return
+	 */
+	public Collection<Person> collision(final Person person) {
+		LinkedList<Person> colliders = new LinkedList<Person>();
+		
+		for (Person reference : getPersons()) {
+			if (reference.matches(person)) {
+				colliders.add(reference);
+			}
+		}
+		return colliders;
+	}
+	
+	/**
+	 * @param collider
+	 */
+	public void delete(final Person collider) {
+		for (String key : this.emailMap.keySet()) {
+			if (this.emailMap.get(key).equals(collider)) {
+				this.emailMap.remove(key);
+			}
+		}
+		
+		for (String key : this.usernameMap.keySet()) {
+			if (this.usernameMap.get(key).equals(collider)) {
+				this.usernameMap.remove(key);
+			}
+		}
+		
+		for (String key : this.fullnameMap.keySet()) {
+			if (this.fullnameMap.get(key).remove(collider)) {
+				if (this.fullnameMap.get(key).isEmpty()) {
+					this.fullnameMap.remove(key);
+				}
+			}
+		}
+		this.persons.remove(collider);
+	}
+	
+	/**
+	 * @return
+	 */
+	public Collection<Person> getPersons() {
+		return this.persons;
+	}
+	
+	/**
+	 * 
+	 */
+	public void loadEntities() {
+		if (this.hibernateUtil != null) {
+			Criteria criteria = this.hibernateUtil.createCriteria(Person.class);
+			@SuppressWarnings ("unchecked") List<Person> results = criteria.list();
+			if ((results != null) && (results.size() > 0)) {
+				setPersons(results);
+				if (Logger.logInfo()) {
+					Logger.info("Loaded " + results.size() + " persons from persitence storage.");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param persons
+	 */
 	public void setPersons(final Collection<Person> persons) {
 		this.persons = new HashSet<Person>(persons);
 	}
+	
 }

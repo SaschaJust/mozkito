@@ -28,8 +28,12 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Table (name = "rcsfile")
 public class RCSFile implements Annotated {
 	
+	/**
+     * 
+     */
+	private static final long           serialVersionUID = 7232712367403624199L;
 	private long                        generatedId;
-	private Map<RCSTransaction, String> changedNames = new HashMap<RCSTransaction, String>();
+	private Map<RCSTransaction, String> changedNames     = new HashMap<RCSTransaction, String>();
 	
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance

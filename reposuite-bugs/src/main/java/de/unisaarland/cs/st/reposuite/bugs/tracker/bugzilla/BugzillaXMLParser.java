@@ -27,7 +27,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
@@ -130,12 +129,10 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	public static void handleHistory(final URI historyUri, final Report report, final PersonManager personManager)
-	        throws UnsupportedProtocolException, FetchException, JDOMException, IOException, SecurityException,
-	        NoSuchFieldException {
+	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
+	        FetchException, JDOMException, IOException, SecurityException, NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
-		Condition.notNull(personManager);
 		
 		RawContent rawContent = IOUtils.fetch(historyUri);
 		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
@@ -211,7 +208,7 @@ public class BugzillaXMLParser {
 						if (rowspanString != null) {
 							rowspan = Integer.valueOf(rowspanString).intValue() - 1;
 						}
-						historyAuthor = personManager.getPerson(new Person(username, null, null));
+						historyAuthor = new Person(username, null, null);
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
 						Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
 						hElement = new HistoryElement(historyAuthor, report, dateTime, map);
@@ -246,8 +243,8 @@ public class BugzillaXMLParser {
 						continue;
 					} else if (what.equals("assignee")) {
 						field = ("assignedTo");
-						Person oldValue = personManager.getPerson(new Person(removed, null, null));
-						Person newValue = personManager.getPerson(new Person(added, null, null));
+						Person oldValue = new Person(removed, null, null);
+						Person newValue = new Person(added, null, null);
 						hElement.addChangedValue(field, oldValue, newValue);
 						continue;
 					} else if (what.equals("target milestone")) {
@@ -288,11 +285,10 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	private static void handleLongDesc(final Report report, final Element rootElement, final PersonManager personManager) {
+	private static void handleLongDesc(final Report report, final Element rootElement) {
 		Condition.notNull(report);
 		Condition.notNull(rootElement);
 		Condition.check(rootElement.getName().equals("long_desc"));
-		Condition.notNull(personManager);
 		
 		Element who = rootElement.getChild("who");
 		Person author = null;
@@ -303,7 +299,7 @@ public class BugzillaXMLParser {
 		} else {
 			String authorUsername = who.getText().trim();
 			String authorName = who.getAttributeValue("name").trim();
-			author = personManager.getPerson(new Person(authorUsername, authorName, null));
+			author = new Person(authorUsername, authorName, null);
 		}
 		
 		Element bug_when = rootElement.getChild("bug_when");
@@ -352,11 +348,10 @@ public class BugzillaXMLParser {
 		}
 	}
 	
-	public static void handleRoot(final Report report, final Element rootElement, final PersonManager personManager) {
+	public static void handleRoot(final Report report, final Element rootElement) {
 		Condition.notNull(report);
 		Condition.notNull(rootElement);
 		Condition.check(rootElement.getName().equals("bug"));
-		Condition.notNull(personManager);
 		
 		report.setType(Type.BUG);
 		
@@ -423,13 +418,13 @@ public class BugzillaXMLParser {
 			} else if (element.getName().equals("reporter")) {
 				String username = element.getText().trim();
 				String name = element.getAttributeValue("name").trim();
-				report.setSubmitter(personManager.getPerson(new Person(username, name, null)));
+				report.setSubmitter(new Person(username, name, null));
 			} else if (element.getName().equals("assigned_to")) {
 				String username = element.getText().trim();
 				String name = element.getAttributeValue("name").trim();
-				report.setAssignedTo(personManager.getPerson(new Person(username, name, null)));
+				report.setAssignedTo(new Person(username, name, null));
 			} else if (element.getName().equals("long_desc")) {
-				handleLongDesc(report, element, personManager);
+				handleLongDesc(report, element);
 			} else if (element.getName().equals("blocked")) {
 				try {
 					report.addSibling(new Long(element.getText()));

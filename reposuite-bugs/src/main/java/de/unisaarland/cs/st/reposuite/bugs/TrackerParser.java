@@ -46,7 +46,8 @@ public class TrackerParser extends RepoSuiteTransformerThread<XmlReport, Report>
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing " + rawReport + ".");
 				}
-				write(this.tracker.parse(rawReport));
+				Report report = this.tracker.parse(rawReport);
+				write(report);
 			}
 			finish();
 		} catch (Exception e) {
