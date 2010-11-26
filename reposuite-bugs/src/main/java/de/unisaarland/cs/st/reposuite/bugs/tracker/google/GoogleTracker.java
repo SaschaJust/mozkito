@@ -120,7 +120,7 @@ public class GoogleTracker extends Tracker {
 			IssuesEntry issuesEntry = entries.get(0);
 			
 			byte[] digest = MessageDigest.getInstance("MD5").digest(issuesEntry.toString().getBytes());
-			return new RawReport(bugId.longValue(), new GoogleRawContent(bugId, new DateTime(), entries.get(0), digest));
+			return new GoogleRawContent(bugId, new DateTime(), entries.get(0), digest);
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -196,61 +196,65 @@ public class GoogleTracker extends Tracker {
 			report.setLastUpdateTimestamp(issue.getUpdateDate());
 		}
 		
-		String googlePriority = issue.getPriority().toLowerCase();
-		if (googlePriority.equals("critical")) {
-			report.setPriority(Priority.VERY_HIGH);
-		} else if (googlePriority.equals("high")) {
-			report.setPriority(Priority.HIGH);
-		} else if (googlePriority.equals("medium")) {
-			report.setPriority(Priority.NORMAL);
-		} else if (googlePriority.equals("low")) {
-			report.setPriority(Priority.LOW);
-		} else {
-			report.setPriority(Priority.UNKNOWN);
-			if (Logger.logWarn()) {
-				Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-				        + "`. Setting prioroty to UNKNOWN.");
+		if (issue.getPriority() != null) {
+			String googlePriority = issue.getPriority().toLowerCase();
+			if (googlePriority.equals("critical")) {
+				report.setPriority(Priority.VERY_HIGH);
+			} else if (googlePriority.equals("high")) {
+				report.setPriority(Priority.HIGH);
+			} else if (googlePriority.equals("medium")) {
+				report.setPriority(Priority.NORMAL);
+			} else if (googlePriority.equals("low")) {
+				report.setPriority(Priority.LOW);
+			} else {
+				report.setPriority(Priority.UNKNOWN);
+				if (Logger.logWarn()) {
+					Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
+							+ "`. Setting prioroty to UNKNOWN.");
+				}
 			}
 		}
 		
-		String status = issue.getStatus().toLowerCase();
-		// Started, Accepted, FixedNotReleased, NeedsInfo, New, PatchesWelcome,
-		// ReviewPending, AssumedStale, Duplicate, Fixed, Invalid, KnownQuirk,
-		// NotPlanned
-		if (status.equals("started")) {
-			report.setStatus(Status.IN_PROGRESS);
-		} else if (status.equals("accepted")) {
-			report.setStatus(Status.ASSIGNED);
-		} else if (status.equals("fixednotreleased")) {
-			report.setStatus(Status.IN_PROGRESS);
-		} else if (status.equals("needsinfo")) {
-			report.setStatus(Status.FEEDBACK);
-		} else if (status.equals("new")) {
-			report.setStatus(Status.NEW);
-		} else if (status.equals("patcheswelcome")) {
-			report.setStatus(Status.UNKNOWN);
-		} else if (status.equals("reviewpending")) {
-			report.setStatus(Status.REVIEWPENDING);
-		} else if (status.equals("assumedstale")) {
-			report.setStatus(Status.UNKNOWN);
-		} else if (status.equals("duplicate")) {
-			report.setResolution(Resolution.DUPLICATE);
-			report.setStatus(Status.CLOSED);
-		} else if (status.equals("fixed")) {
-			report.setResolution(Resolution.RESOLVED);
-			report.setStatus(Status.CLOSED);
-		} else if (status.equals("invalid")) {
-			report.setResolution(Resolution.INVALID);
-			report.setStatus(Status.CLOSED);
-		} else if (status.equals("knownquirk")) {
-			report.setResolution(Resolution.INVALID);
-			report.setStatus(Status.CLOSED);
-		} else if (status.equals("notplanned")) {
-			report.setResolution(Resolution.INVALID);
-			report.setStatus(Status.CLOSED);
-		}
-		if (issue.getState().toLowerCase().equals("closed")) {
-			report.setStatus(Status.CLOSED);
+		if (issue.getStatus() != null) {
+			String status = issue.getStatus().toLowerCase();
+			// Started, Accepted, FixedNotReleased, NeedsInfo, New, PatchesWelcome,
+			// ReviewPending, AssumedStale, Duplicate, Fixed, Invalid, KnownQuirk,
+			// NotPlanned
+			if (status.equals("started")) {
+				report.setStatus(Status.IN_PROGRESS);
+			} else if (status.equals("accepted")) {
+				report.setStatus(Status.ASSIGNED);
+			} else if (status.equals("fixednotreleased")) {
+				report.setStatus(Status.IN_PROGRESS);
+			} else if (status.equals("needsinfo")) {
+				report.setStatus(Status.FEEDBACK);
+			} else if (status.equals("new")) {
+				report.setStatus(Status.NEW);
+			} else if (status.equals("patcheswelcome")) {
+				report.setStatus(Status.UNKNOWN);
+			} else if (status.equals("reviewpending")) {
+				report.setStatus(Status.REVIEWPENDING);
+			} else if (status.equals("assumedstale")) {
+				report.setStatus(Status.UNKNOWN);
+			} else if (status.equals("duplicate")) {
+				report.setResolution(Resolution.DUPLICATE);
+				report.setStatus(Status.CLOSED);
+			} else if (status.equals("fixed")) {
+				report.setResolution(Resolution.RESOLVED);
+				report.setStatus(Status.CLOSED);
+			} else if (status.equals("invalid")) {
+				report.setResolution(Resolution.INVALID);
+				report.setStatus(Status.CLOSED);
+			} else if (status.equals("knownquirk")) {
+				report.setResolution(Resolution.INVALID);
+				report.setStatus(Status.CLOSED);
+			} else if (status.equals("notplanned")) {
+				report.setResolution(Resolution.INVALID);
+				report.setStatus(Status.CLOSED);
+			}
+			if (issue.getState().toLowerCase().equals("closed")) {
+				report.setStatus(Status.CLOSED);
+			}
 		}
 		
 		if (issue.getCloseDate() != null) {
@@ -274,6 +278,7 @@ public class GoogleTracker extends Tracker {
 		
 		report.setSubject(issue.getTitle());
 		report.setSummary(issue.getSummary());
+		report.setDescription(issue.getDescription());
 		
 		String type = issue.getType().toLowerCase();
 		if (type.equals("defect")) {
@@ -313,8 +318,8 @@ public class GoogleTracker extends Tracker {
 		while (run) {
 			
 			try {
-				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/"
-				        + report.getId() + "/comments/full/" + (++counter));
+				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/"
+						+ report.getId() + "/comments/full/" + (++counter));
 				ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
 				IssueCommentsEntry commentEntry = service.getEntry(feedUrl, IssueCommentsEntry.class);
 				TextContent textContent = (TextContent) commentEntry.getContent();
@@ -348,58 +353,59 @@ public class GoogleTracker extends Tracker {
 					Map<String, Tuple<String, String>> changes = new HashMap<String, Tuple<String, String>>();
 					
 					for (Label l : updates.getLabels()) {
-						String value = l.getValue().toLowerCase();
-						if (value.startsWith("type-")) {
-							String newValue = value.replace("type-", "").trim();
-							if (changes.containsKey("type")) {
+						String label = l.getValue();
+						String compValue = l.getValue().toLowerCase();
+						if (compValue.startsWith("type-")) {
+							String newValue = label.substring(5).trim();
+							if(changes.containsKey("type")){
 								changes.get("type").setSecond(newValue);
 							} else {
 								changes.put("type", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
-						} else if (value.startsWith("-type-")) {
-							String oldValue = value.replace("-type-", "").trim();
+						} else if (compValue.startsWith("-type-")) {
+							String oldValue = label.substring(6).trim();
 							if (changes.containsKey("type")) {
 								changes.get("type").setFirst(oldValue);
 							} else {
 								changes.put("type", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
-						} else if (value.startsWith("priority-")) {
-							String newValue = value.replace("priority-", "").trim();
-							if (changes.containsKey("priority")) {
+						} else if (compValue.startsWith("priority-")) {
+							String newValue = label.substring(9).trim();
+							if(changes.containsKey("priority")){
 								changes.get("priority").setSecond(newValue);
 							} else {
 								changes.put("priority", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
-						} else if (value.startsWith("-priority-")) {
-							String oldValue = value.replace("-priority-", "").trim();
+						} else if (compValue.startsWith("-priority-")) {
+							String oldValue = label.substring(10).trim();
 							if (changes.containsKey("priority")) {
 								changes.get("priority").setFirst(oldValue);
 							} else {
 								changes.put("priority", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
-						} else if (value.startsWith("category-")) {
-							String newValue = value.replace("category-", "").trim();
-							if (changes.containsKey("category")) {
+						} else if (compValue.startsWith("category-")) {
+							String newValue = label.substring(9).trim();
+							if(changes.containsKey("category")){
 								changes.get("category").setSecond(newValue);
 							} else {
 								changes.put("category", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
-						} else if (value.startsWith("-category-")) {
-							String oldValue = value.replace("-category-", "").trim();
+						} else if (compValue.startsWith("-category-")) {
+							String oldValue = label.substring(10).trim();
 							if (changes.containsKey("category")) {
 								changes.get("category").setFirst(oldValue);
 							} else {
 								changes.put("category", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
-						} else if (value.startsWith("milestone-")) {
-							String newValue = value.replace("milestone-", "").trim();
-							if (changes.containsKey("milestone")) {
+						} else if (compValue.startsWith("milestone-")) {
+							String newValue = label.substring(10).trim();
+							if(changes.containsKey("milestone")){
 								changes.get("milestone").setSecond(newValue);
 							} else {
 								changes.put("milestone", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
-						} else if (value.startsWith("-milestone-")) {
-							String oldValue = value.replace("-milestone-", "").trim();
+						} else if (compValue.startsWith("-milestone-")) {
+							String oldValue = label.substring(11).trim();
 							if (changes.containsKey("milestone")) {
 								changes.get("milestone").setFirst(oldValue);
 							} else {
@@ -454,6 +460,8 @@ public class GoogleTracker extends Tracker {
 					if (updates.getSummary() != null) {
 						hElem.addChangedValue("summary", "<unknown>", updates.getSummary().getValue());
 					}
+					
+					report.addHistoryElement(hElem);
 				}
 				
 				Comment comment = new Comment(report, counter, author, createDate, message);
@@ -502,7 +510,10 @@ public class GoogleTracker extends Tracker {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
-		Condition.check(groups.size() == 2);
+		Condition.check(groups != null,
+				"Google code fetch uri should have the following format: " + fetchRegex.getPattern());
+		Condition.check(groups.size() == 2,
+				"Google code fetch uri should have the following format: " + fetchRegex.getPattern());
 		Condition.check(groups.get(1).getName().equals("project"));
 		this.projectName = groups.get(1).getMatch();
 		
@@ -515,7 +526,10 @@ public class GoogleTracker extends Tracker {
 			IssuesFeed resultFeed = this.service.getFeed(fetchURI.toURL(), IssuesFeed.class);
 			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 				IssuesEntry entry = resultFeed.getEntries().get(i);
-				this.addBugId(Integer.valueOf(entry.getIssueId().getValue()).longValue());
+				long bugId = entry.getIssueId().getValue().longValue();
+				if((bugId >= startAt) && (bugId <= stopAt)){
+					this.addBugId(bugId);
+				}
 			}
 			
 		} catch (AuthenticationException e) {
