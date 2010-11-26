@@ -7,15 +7,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.Intercepted;
@@ -29,8 +27,8 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long   serialVersionUID = -5061178255449904475L;
 	private Map<String, Person> map              = new HashMap<String, Person>();
 	private long                generatedId;
@@ -112,8 +110,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * @return the map
 	 */
-	@ElementCollection
-	@Cascade (CascadeType.ALL)
+	@ManyToMany (cascade = CascadeType.ALL)
 	private Map<String, Person> getMap() {
 		return this.map;
 	}

@@ -44,8 +44,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -7619009648634901112L;
 	
 	/**
@@ -65,13 +65,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private RCSTransaction          nextTransaction;
 	private RCSTransaction          prevTransaction;
 	private RCSTransaction          nextTransactionByTimestamp;               // following
-	                                                                           // the
-	                                                                           // branch
-	                                                                           // path
+	// the
+	// branch
+	// path
 	private RCSTransaction          prevTransactionByTimestamp;               // following
-	                                                                           // the
-	                                                                           // branch
-	                                                                           // path
+	// the
+	// branch
+	// path
 	private RCSBranch               branch;
 	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	private DateTime                timestamp;
@@ -98,7 +98,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the previous rcs transaction
 	 */
 	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
-	        final RCSTransaction previousRcsTransaction) {
+			final RCSTransaction previousRcsTransaction) {
 		Condition.notNull(id);
 		Condition.notNull(message);
 		Condition.notNull(timestamp);
@@ -150,7 +150,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				} else if (currentTransaction.getPrevTransaction().getTimestamp().isAfter(transaction.getTimestamp())) {
 					if (Logger.logError()) {
 						Logger.error("Found previous transaction with larger timestamp then current: " + toString()
-						        + " vs " + currentTransaction.getPrevTransaction().toString());
+								+ " vs " + currentTransaction.getPrevTransaction().toString());
 					}
 					
 					throw new RuntimeException();
@@ -286,7 +286,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				return revision.getChangedFile();
 			}
 		});
-		ret.addAll(this.persons.getPersons());
+		ret.add(this.persons);
 		return ret;
 	}
 	
@@ -405,8 +405,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Override
 	public String toString() {
 		return "RCSTransaction [id=" + getId() + ", message=" + StringEscapeUtils.escapeJava(getMessage())
-		        + ", timestamp=" + getTimestamp() + ", revisionCount=" + getRevisions().size() + ", author="
-		        + getAuthor() + "]";
+		+ ", timestamp=" + getTimestamp() + ", revisionCount=" + getRevisions().size() + ", author="
+		+ getAuthor() + "]";
 	}
 	
 }
