@@ -91,7 +91,10 @@ public class Report implements Annotated, Comparable<Report> {
 	public void addComment(final Comment comment) {
 		Condition.notNull(comment);
 		Condition.notNull(this.comments);
-		this.comments.add(comment);
+		
+		boolean retval = this.comments.add(comment);
+		comment.setBugReport(this);
+		Condition.check(retval, "Could not add comment with id %i (already existing).", comment.getId());
 	}
 	
 	/**
@@ -102,6 +105,7 @@ public class Report implements Annotated, Comparable<Report> {
 		Condition.notNull(historyElement);
 		Condition.notNull(this.history);
 		this.history.add(historyElement);
+		historyElement.setBugReport(this);
 	}
 	
 	/**

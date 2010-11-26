@@ -35,7 +35,7 @@ public class StringTuple implements Annotated {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		setFirst(oldValue);
+		setOldValue(oldValue);
 		setNewValue(newValue);
 	}
 	
@@ -67,19 +67,19 @@ public class StringTuple implements Annotated {
 	}
 	
 	/**
-	 * @param oldValue
-	 *            the oldValue to set
-	 */
-	public void setFirst(final String oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
 	 * @param newValue
 	 *            the newValue to set
 	 */
 	public void setNewValue(final String newValue) {
 		this.newValue = newValue;
+	}
+	
+	/**
+	 * @param oldValue
+	 *            the oldValue to set
+	 */
+	public void setOldValue(final String oldValue) {
+		this.oldValue = oldValue;
 	}
 	
 }

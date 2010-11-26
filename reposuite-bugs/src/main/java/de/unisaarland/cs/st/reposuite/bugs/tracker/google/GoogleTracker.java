@@ -338,8 +338,7 @@ public class GoogleTracker extends Tracker {
 					Updates updates = commentEntry.getUpdates();
 					updates.getBlockedOnUpdates();
 					
-					HistoryElement hElem = new HistoryElement(author, report, createDate,
-					        new HashMap<String, Tuple<?, ?>>());
+					HistoryElement hElem = new HistoryElement(author, createDate, new HashMap<String, Tuple<?, ?>>());
 					
 					if (updates.getCcUpdates() != null) {
 						// CCs are not supported by report
@@ -456,7 +455,7 @@ public class GoogleTracker extends Tracker {
 					}
 				}
 				
-				Comment comment = new Comment(report, counter, author, createDate, message);
+				Comment comment = new Comment(counter, author, createDate, message);
 				comments.add(comment);
 				report.addComment(comment);
 			} catch (ServiceException e) {

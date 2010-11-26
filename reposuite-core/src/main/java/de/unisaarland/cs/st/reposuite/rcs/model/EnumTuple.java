@@ -34,7 +34,7 @@ public class EnumTuple implements Annotated {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		setFirst(oldValue);
+		setOldValue(oldValue);
 		setNewValue(newValue);
 	}
 	
@@ -64,19 +64,19 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
-	 * @param oldValue
-	 *            the oldValue to set
-	 */
-	public void setFirst(final Enum<?> oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
 	 * @param newValue
 	 *            the newValue to set
 	 */
 	public void setNewValue(final Enum<?> newValue) {
 		this.newValue = newValue;
+	}
+	
+	/**
+	 * @param oldValue
+	 *            the oldValue to set
+	 */
+	public void setOldValue(final Enum<?> oldValue) {
+		this.oldValue = oldValue;
 	}
 	
 }

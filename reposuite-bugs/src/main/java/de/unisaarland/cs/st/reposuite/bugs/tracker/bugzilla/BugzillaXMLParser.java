@@ -212,7 +212,7 @@ public class BugzillaXMLParser {
 						historyAuthor = new Person(username, null, null);
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
 						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
-						hElement = new HistoryElement(historyAuthor, report, dateTime, map);
+						hElement = new HistoryElement(historyAuthor, dateTime, map);
 						// FIXME add only if sth set
 						report.addHistoryElement(hElement);
 					} else {
@@ -345,7 +345,7 @@ public class BugzillaXMLParser {
 			report.setDescription(message);
 		} else {
 			// FIXME insert correct comment ids
-			report.addComment(new Comment(report, report.getComments().size() + 1, author, timestamp, message));
+			report.addComment(new Comment(report.getComments().size() + 1, author, timestamp, message));
 		}
 	}
 	

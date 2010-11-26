@@ -129,7 +129,7 @@ public class JiraXMLParser {
 			if ((report.getResolutionTimestamp() != null) && (report.getResolutionTimestamp().isEqual(commentDate))) {
 				report.setResolver(author);
 			}
-			report.addComment(new Comment(report, report.getComments().size() + 1, author, commentDate, commentText));
+			report.addComment(new Comment(report.getComments().size() + 1, author, commentDate, commentText));
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class JiraXMLParser {
 						}
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
-						HistoryElement hElement = new HistoryElement(author, report, timestamp,
+						HistoryElement hElement = new HistoryElement(author, timestamp,
 						        new HashMap<String, Tuple<?, ?>>());
 						
 						for (Element tr : trs) {

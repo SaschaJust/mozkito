@@ -33,7 +33,7 @@ public class IntegerTuple implements Annotated {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		setFirst(oldValue);
+		setOldValue(oldValue);
 		setNewValue(newValue);
 	}
 	
@@ -63,19 +63,19 @@ public class IntegerTuple implements Annotated {
 	}
 	
 	/**
-	 * @param oldValue
-	 *            the oldValue to set
-	 */
-	public void setFirst(final Integer oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
 	 * @param newValue
 	 *            the newValue to set
 	 */
 	public void setNewValue(final Integer newValue) {
 		this.newValue = newValue;
+	}
+	
+	/**
+	 * @param oldValue
+	 *            the oldValue to set
+	 */
+	public void setOldValue(final Integer oldValue) {
+		this.oldValue = oldValue;
 	}
 	
 }

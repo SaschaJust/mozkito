@@ -59,21 +59,16 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param timestamp
 	 * @param message
 	 */
-	public Comment(final Report bugReport, final int id, final Person author, final DateTime timestamp,
-	        final String message) {
-		Condition.notNull(bugReport);
+	public Comment(final int id, final Person author, final DateTime timestamp, final String message) {
 		Condition.greater(id, 0);
 		Condition.notNull(author);
 		Condition.notNull(timestamp);
 		Condition.notNull(message);
 		
-		setBugReport(bugReport);
 		setAuthor(author);
 		setTimestamp(timestamp);
 		setMessage(message);
-		setPrimaryKey(new CommentPrimaryKey(bugReport.getId(), id));
-		
-		bugReport.addComment(this);
+		setPrimaryKey(new CommentPrimaryKey(-1, id));
 	}
 	
 	/*
@@ -252,6 +247,10 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	public void setBugReport(final Report bugReport) {
 		this.bugReport = bugReport;
+		
+		if (bugReport != null) {
+			setPrimaryKey(new CommentPrimaryKey(bugReport.getId(), getPrimaryKey().getCommentId()));
+		}
 	}
 	
 	/**

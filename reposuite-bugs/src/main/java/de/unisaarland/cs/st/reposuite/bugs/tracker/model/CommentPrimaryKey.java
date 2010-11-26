@@ -38,7 +38,6 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	 * @param commentId
 	 */
 	CommentPrimaryKey(final long reportId, final int commentId) {
-		Condition.greater(reportId, 0l);
 		Condition.greater(commentId, 0);
 		
 		setReportId(reportId);

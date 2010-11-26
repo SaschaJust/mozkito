@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -36,7 +36,7 @@ public class PersonTuple implements Annotated {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		setFirst("oldValue", oldValue);
+		setOldValue("oldValue", oldValue);
 		setNewValue("newValue", newValue);
 	}
 	
@@ -48,14 +48,14 @@ public class PersonTuple implements Annotated {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		setFirst(oldValue);
+		setOldValue(oldValue);
 		setNewValue(newValue);
 	}
 	
 	/**
 	 * @return the newValue
 	 */
-	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getNewValue() {
 		return this.newValue;
 	}
@@ -63,7 +63,7 @@ public class PersonTuple implements Annotated {
 	/**
 	 * @return the oldValue
 	 */
-	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getOldValue() {
 		return this.oldValue;
 	}
@@ -75,24 +75,6 @@ public class PersonTuple implements Annotated {
 	@Override
 	public Collection<Annotated> saveFirst() {
 		return null;
-	}
-	
-	/**
-	 * @param oldValue
-	 *            the oldValue to set
-	 */
-	public void setFirst(final PersonContainer oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
-	 * @param key
-	 * @param oldValue
-	 */
-	@Transient
-	public void setFirst(final String key, final Person oldValue) {
-		this.oldValue = new PersonContainer();
-		getOldValue().add(key, oldValue);
 	}
 	
 	/**
@@ -111,6 +93,24 @@ public class PersonTuple implements Annotated {
 	public void setNewValue(final String key, final Person newValue) {
 		this.newValue = new PersonContainer();
 		getNewValue().add(key, newValue);
+	}
+	
+	/**
+	 * @param oldValue
+	 *            the oldValue to set
+	 */
+	public void setOldValue(final PersonContainer oldValue) {
+		this.oldValue = oldValue;
+	}
+	
+	/**
+	 * @param key
+	 * @param oldValue
+	 */
+	@Transient
+	public void setOldValue(final String key, final Person oldValue) {
+		this.oldValue = new PersonContainer();
+		getOldValue().add(key, oldValue);
 	}
 	
 }

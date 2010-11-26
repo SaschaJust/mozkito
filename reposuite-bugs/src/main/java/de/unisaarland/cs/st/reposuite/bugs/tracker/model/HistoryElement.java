@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -73,15 +74,12 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param newValue
 	 * @param timestamp
 	 */
-	public HistoryElement(final Person author, final Report bugReport, final DateTime timestamp,
-	        final Map<String, Tuple<?, ?>> values) {
+	public HistoryElement(final Person author, final DateTime timestamp, final Map<String, Tuple<?, ?>> values) {
 		Condition.notNull(author);
-		Condition.notNull(bugReport);
 		Condition.notNull(timestamp);
 		Condition.notNull(values);
 		
 		setAuthor(author);
-		setBugReport(bugReport);
 		setTimestamp(timestamp);
 		
 		addChange(values);
@@ -298,6 +296,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
+	@ElementCollection
 	private Map<String, DateTimeTuple> getChangedDateValues() {
 		return this.changedDateValues;
 	}
@@ -307,6 +306,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
+	@ElementCollection
 	private Map<String, EnumTuple> getChangedEnumValues() {
 		return this.changedEnumValues;
 	}
@@ -315,6 +315,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the changedPersonValues
 	 */
 	// @ManyToMany (cascade = CascadeType.ALL)
+	@ElementCollection
 	public Map<String, PersonTuple> getChangedPersonValues() {
 		return this.changedPersonValues;
 	}
@@ -324,6 +325,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
+	@ElementCollection
 	private Map<String, StringTuple> getChangedStringValues() {
 		return this.changedStringValues;
 	}
@@ -416,6 +418,10 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.personContainer;
 	}
 	
+	/**
+	 * @return
+	 */
+	@Transient
 	public Collection<PersonContainer> getPersonContainers() {
 		LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
 		list.add(this.personContainer);

@@ -345,8 +345,8 @@ public class SourceforgeTracker extends Tracker {
 					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
 					String commentBody = e2.getContent(6).getValue().trim();
 					// FIXME insert correct comment id
-					Comment comment = new Comment(bugReport, bugReport.getComments().size() + 1, commentAuthor,
-					        commentTimestamp, commentBody);
+					Comment comment = new Comment(bugReport.getComments().size() + 1, commentAuthor, commentTimestamp,
+					        commentBody);
 					if (Logger.logDebug()) {
 						Logger.debug("Found comment: " + comment);
 					}
@@ -437,7 +437,7 @@ public class SourceforgeTracker extends Tracker {
 					list.add(newValue);
 					Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
 					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
-					        bugReport, DateTimeUtils.parseDate(datetimeElement.getValue()), map));
+					        DateTimeUtils.parseDate(datetimeElement.getValue()), map));
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
