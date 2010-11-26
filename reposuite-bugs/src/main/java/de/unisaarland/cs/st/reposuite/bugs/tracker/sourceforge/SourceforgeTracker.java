@@ -260,15 +260,14 @@ public class SourceforgeTracker extends Tracker {
 				bugReport.setDescription(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Submitted")) {
 				List<RegexGroup> find = submittedRegex.find(fieldValue);
-				bugReport.setSubmitter(this.personManager.getPerson(new Person(find.get(2).getMatch().trim(), find
-				        .get(1).getMatch().trim(), null)));
+				bugReport.setSubmitter(new Person(find.get(2).getMatch().trim(), find.get(1).getMatch().trim(), null));
 				bugReport.setCreationTimestamp(DateTimeUtils.parseDate(find.get(3).getMatch().trim()));
 			} else if (fieldName.equals("Status")) {
 				bugReport.setStatus(buildStatus(fieldValue));
 			} else if (fieldName.equals("Resolution")) {
 				bugReport.setResolution(buildResolution(fieldValue));
 			} else if (fieldName.equalsIgnoreCase("Assigned")) {
-				bugReport.setAssignedTo(this.personManager.getPerson(new Person(null, fieldValue, null)));
+				bugReport.setAssignedTo(new Person(null, fieldValue, null));
 			} else if (fieldName.equalsIgnoreCase("Group")) {
 				bugReport.setComponent(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Details")) {
@@ -339,8 +338,7 @@ public class SourceforgeTracker extends Tracker {
 						}
 					}
 					
-					Person commentAuthor = this.personManager.getPerson(new Person(commenterFullname,
-					        commenterUsername, null));
+					Person commentAuthor = new Person(commenterFullname, commenterUsername, null);
 					String datetime = e1.getContent(0).getValue().trim();
 					datetime = datetime.substring(datetime.indexOf(" ") + 1, datetime.length());
 					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
@@ -437,9 +435,8 @@ public class SourceforgeTracker extends Tracker {
 					list.add(oldValue);
 					list.add(newValue);
 					Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
-					bugReport.addHistoryElement(new HistoryElement(this.personManager.getPerson(new Person(
-					        authorUsername, authorFullname, null)), bugReport, DateTimeUtils.parseDate(datetimeElement
-					        .getValue()), map));
+					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
+					        bugReport, DateTimeUtils.parseDate(datetimeElement.getValue()), map));
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {

@@ -27,7 +27,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -35,7 +34,7 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 public class JiraTrackerTest {
 	
 	private static final URL overViewUrl = JiraTrackerTest.class
-	.getResource(FileUtils.fileSeparator + "JAXEN_JIRA.xml");
+	                                             .getResource(FileUtils.fileSeparator + "JAXEN_JIRA.xml");
 	private static URL       url177      = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-177.xml");
 	private static String    baseURL     = url177.toString();
 	private static String    baseDirURL  = baseURL.substring(0, url177.toString().lastIndexOf("JIRA-177.xml"));
@@ -57,7 +56,7 @@ public class JiraTrackerTest {
 		try {
 			
 			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
-					null);
+			        null);
 			
 			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
 			XmlReport xmlReport = tracker.createDocument(rawReport);
@@ -70,44 +69,44 @@ public class JiraTrackerTest {
 			assertEquals(16, comments.size());
 			assertTrue(comments.first().getTimestamp().isBefore(comments.last().getTimestamp()));
 			
-			assertEquals("elharo", comments.first().getAuthor().getUsername());
-			assertEquals(null, comments.first().getAuthor().getEmail());
-			assertEquals(null, comments.first().getAuthor().getFullname());
+			assertEquals("elharo", comments.first().getAuthor().getUsernames().iterator().next());
+			assertTrue(comments.first().getAuthor().getEmailAddresses().isEmpty());
+			assertTrue(comments.first().getAuthor().getFullnames().isEmpty());
 			assertTrue(DateTimeUtils.parseDate("Wed, 3 Jan 2007 12:28:54 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(comments.first().getTimestamp()));
+			        .isEqual(comments.first().getTimestamp()));
 			assertEquals(
-					"<p>You specified this against 1.0. Have you tried 1.1? We've fixed a lot of bugs since 1.0. </p>\n\n<p>The issue is not immediately apparent to me. If you had a test case, that would help. </p>",
-					comments.first().getMessage());
+			        "<p>You specified this against 1.0. Have you tried 1.1? We've fixed a lot of bugs since 1.0. </p>\n\n<p>The issue is not immediately apparent to me. If you had a test case, that would help. </p>",
+			        comments.first().getMessage());
 			
-			assertEquals("elharo", comments.last().getAuthor().getUsername());
+			assertEquals("elharo", comments.last().getAuthor().getUsernames().iterator().next());
 			assertEquals(comments.first().getAuthor(), comments.last().getAuthor());
-			assertEquals(null, comments.last().getAuthor().getEmail());
-			assertEquals(null, comments.last().getAuthor().getFullname());
+			assertTrue(comments.last().getAuthor().getEmailAddresses().isEmpty());
+			assertTrue(comments.last().getAuthor().getFullnames().isEmpty());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(comments.last().getTimestamp()));
+			        .isEqual(comments.last().getTimestamp()));
 			assertEquals("<p>Fixed. </p>", comments.last().getMessage());
 			
 			assertEquals("core", report.getComponent());
 			assertEquals(DateTimeUtils.parseDate("Wed, 3 Jan 2007 11:22:12 -0600", JiraXMLParser.dateTimeFormatRegex),
-					report.getCreationTimestamp());
+			        report.getCreationTimestamp());
 			assertEquals(
-					"<p>There is at least one scenario "
-					+ "where calling the getText() method on the Jaxen XPath AST classes "
-					+ "can result in an invalid XPath query string, such that Jaxen "
-					+ "cannot be asked to create a new BaseXPath from the result of getText()"
-					+ ".</p>\n\n<p>1) A LiteralExpr where the value contains a "
-					+ "\" (double quote) character.  The resulting getText() looks like:</p>\n\n<p>\"\"\""
-					+ "  (3 double quotes).</p>\n\n<p>The original XPath query string was:</p>\n\n<p>'\"'"
-					+ "   (single quote, double quote, single quote)</p>\n\n<p>And example of a problematic query "
-					+ "from the PMD project is the optimizations.xml/SimplifyStartsWith rule, which uses XPath:<"
-					+ "/p>\n\n<p>//PrimaryExpression<br/>\n [PrimaryPrefix/Name<br/>\n  <span "
-					+ "class=\"error\">&#91;ends-with(@Image, &#39;.startsWith&#39;)"
-					+ "&#93;</span>]<br/>\n [PrimarySuffix/Arguments/ArgumentList<br/"
-					+ ">\n  /Expression/PrimaryExpression/PrimaryPrefix<br/>\n  /Literal<br/>\n   <span class=\"error\""
-					+ ">&#91;string-length(@Image)=3&#93;</span><br/>\n   <span class=\"error\">&#91;"
-					+ "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
-					+ "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
-					report.getDescription());
+			        "<p>There is at least one scenario "
+			                + "where calling the getText() method on the Jaxen XPath AST classes "
+			                + "can result in an invalid XPath query string, such that Jaxen "
+			                + "cannot be asked to create a new BaseXPath from the result of getText()"
+			                + ".</p>\n\n<p>1) A LiteralExpr where the value contains a "
+			                + "\" (double quote) character.  The resulting getText() looks like:</p>\n\n<p>\"\"\""
+			                + "  (3 double quotes).</p>\n\n<p>The original XPath query string was:</p>\n\n<p>'\"'"
+			                + "   (single quote, double quote, single quote)</p>\n\n<p>And example of a problematic query "
+			                + "from the PMD project is the optimizations.xml/SimplifyStartsWith rule, which uses XPath:<"
+			                + "/p>\n\n<p>//PrimaryExpression<br/>\n [PrimaryPrefix/Name<br/>\n  <span "
+			                + "class=\"error\">&#91;ends-with(@Image, &#39;.startsWith&#39;)"
+			                + "&#93;</span>]<br/>\n [PrimarySuffix/Arguments/ArgumentList<br/"
+			                + ">\n  /Expression/PrimaryExpression/PrimaryPrefix<br/>\n  /Literal<br/>\n   <span class=\"error\""
+			                + ">&#91;string-length(@Image)=3&#93;</span><br/>\n   <span class=\"error\">&#91;"
+			                + "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
+			                + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
+			        report.getDescription());
 			assertEquals(null, report.getExpectedBehavior());
 			
 			History history = report.getHistory();
@@ -115,21 +114,22 @@ public class JiraTrackerTest {
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(report.getLastUpdateTimestamp()));
+			        .isEqual(report.getLastUpdateTimestamp()));
 			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.NORMAL, report.getPriority());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(report.getResolutionTimestamp()));
-			assertEquals(comments.first().getAuthor().getUsername(), report.getResolver().getUsername());
+			        .isEqual(report.getResolutionTimestamp()));
+			assertEquals(comments.first().getAuthor().getUsernames().iterator().next(), report.getResolver()
+			        .getUsernames().iterator().next());
 			assertEquals(null, report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(Status.CLOSED, report.getStatus());
 			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("[JAXEN-177] Expression.getText() returns invalid XPath query strings", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
-			assertEquals("rgustav", report.getSubmitter().getUsername());
-			assertEquals("Ryan Gustafson", report.getSubmitter().getFullname());
+			assertEquals("rgustav", report.getSubmitter().getUsernames().iterator().next());
+			assertEquals("Ryan Gustafson", report.getSubmitter().getFullnames().iterator().next());
 			assertEquals("Expression.getText() returns invalid XPath query strings", report.getSummary());
 			assertEquals(Type.BUG, report.getType());
 			assertEquals("1.1", report.getVersion());
@@ -153,10 +153,10 @@ public class JiraTrackerTest {
 	public void testGetHistoryURL() {
 		try {
 			String historyURL = JiraTracker.getHistoryURL(new URI(
-			"http://jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-210/JAXEN-210.xml"));
+			        "http://jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-210/JAXEN-210.xml"));
 			assertEquals(
-					"http://jira.codehaus.org/browse/JAXEN-210?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs",
-					historyURL);
+			        "http://jira.codehaus.org/browse/JAXEN-210?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs",
+			        historyURL);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			fail();
@@ -178,7 +178,7 @@ public class JiraTrackerTest {
 		
 		try {
 			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
-					null);
+			        null);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -207,44 +207,44 @@ public class JiraTrackerTest {
 			assertEquals(16, comments.size());
 			assertTrue(comments.first().getTimestamp().isBefore(comments.last().getTimestamp()));
 			
-			assertEquals("elharo", comments.first().getAuthor().getUsername());
-			assertEquals(null, comments.first().getAuthor().getEmail());
-			assertEquals(null, comments.first().getAuthor().getFullname());
+			assertEquals("elharo", comments.first().getAuthor().getUsernames().iterator().next());
+			assertTrue(comments.first().getAuthor().getEmailAddresses().isEmpty());
+			assertTrue(comments.first().getAuthor().getFullnames().isEmpty());
 			assertTrue(DateTimeUtils.parseDate("Wed, 3 Jan 2007 12:28:54 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(comments.first().getTimestamp()));
+			        .isEqual(comments.first().getTimestamp()));
 			assertEquals(
-					"<p>You specified this against 1.0. Have you tried 1.1? We've fixed a lot of bugs since 1.0. </p>\n\n<p>The issue is not immediately apparent to me. If you had a test case, that would help. </p>",
-					comments.first().getMessage());
+			        "<p>You specified this against 1.0. Have you tried 1.1? We've fixed a lot of bugs since 1.0. </p>\n\n<p>The issue is not immediately apparent to me. If you had a test case, that would help. </p>",
+			        comments.first().getMessage());
 			
-			assertEquals("elharo", comments.last().getAuthor().getUsername());
+			assertEquals("elharo", comments.last().getAuthor().getUsernames().iterator().next());
 			assertEquals(comments.first().getAuthor(), comments.last().getAuthor());
-			assertEquals(null, comments.last().getAuthor().getEmail());
-			assertEquals(null, comments.last().getAuthor().getFullname());
+			assertTrue(comments.last().getAuthor().getEmailAddresses().isEmpty());
+			assertTrue(comments.last().getAuthor().getFullnames().isEmpty());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(comments.last().getTimestamp()));
+			        .isEqual(comments.last().getTimestamp()));
 			assertEquals("<p>Fixed. </p>", comments.last().getMessage());
 			
 			assertEquals("core", report.getComponent());
 			assertEquals(DateTimeUtils.parseDate("Wed, 3 Jan 2007 11:22:12 -0600", JiraXMLParser.dateTimeFormatRegex),
-					report.getCreationTimestamp());
+			        report.getCreationTimestamp());
 			assertEquals(
-					"<p>There is at least one scenario "
-					+ "where calling the getText() method on the Jaxen XPath AST classes "
-					+ "can result in an invalid XPath query string, such that Jaxen "
-					+ "cannot be asked to create a new BaseXPath from the result of getText()"
-					+ ".</p>\n\n<p>1) A LiteralExpr where the value contains a "
-					+ "\" (double quote) character.  The resulting getText() looks like:</p>\n\n<p>\"\"\""
-					+ "  (3 double quotes).</p>\n\n<p>The original XPath query string was:</p>\n\n<p>'\"'"
-					+ "   (single quote, double quote, single quote)</p>\n\n<p>And example of a problematic query "
-					+ "from the PMD project is the optimizations.xml/SimplifyStartsWith rule, which uses XPath:<"
-					+ "/p>\n\n<p>//PrimaryExpression<br/>\n [PrimaryPrefix/Name<br/>\n  <span "
-					+ "class=\"error\">&#91;ends-with(@Image, &#39;.startsWith&#39;)"
-					+ "&#93;</span>]<br/>\n [PrimarySuffix/Arguments/ArgumentList<br/"
-					+ ">\n  /Expression/PrimaryExpression/PrimaryPrefix<br/>\n  /Literal<br/>\n   <span class=\"error\""
-					+ ">&#91;string-length(@Image)=3&#93;</span><br/>\n   <span class=\"error\">&#91;"
-					+ "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
-					+ "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
-					report.getDescription());
+			        "<p>There is at least one scenario "
+			                + "where calling the getText() method on the Jaxen XPath AST classes "
+			                + "can result in an invalid XPath query string, such that Jaxen "
+			                + "cannot be asked to create a new BaseXPath from the result of getText()"
+			                + ".</p>\n\n<p>1) A LiteralExpr where the value contains a "
+			                + "\" (double quote) character.  The resulting getText() looks like:</p>\n\n<p>\"\"\""
+			                + "  (3 double quotes).</p>\n\n<p>The original XPath query string was:</p>\n\n<p>'\"'"
+			                + "   (single quote, double quote, single quote)</p>\n\n<p>And example of a problematic query "
+			                + "from the PMD project is the optimizations.xml/SimplifyStartsWith rule, which uses XPath:<"
+			                + "/p>\n\n<p>//PrimaryExpression<br/>\n [PrimaryPrefix/Name<br/>\n  <span "
+			                + "class=\"error\">&#91;ends-with(@Image, &#39;.startsWith&#39;)"
+			                + "&#93;</span>]<br/>\n [PrimarySuffix/Arguments/ArgumentList<br/"
+			                + ">\n  /Expression/PrimaryExpression/PrimaryPrefix<br/>\n  /Literal<br/>\n   <span class=\"error\""
+			                + ">&#91;string-length(@Image)=3&#93;</span><br/>\n   <span class=\"error\">&#91;"
+			                + "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
+			                + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
+			        report.getDescription());
 			assertEquals(null, report.getExpectedBehavior());
 			
 			History history = report.getHistory();
@@ -252,21 +252,22 @@ public class JiraTrackerTest {
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(report.getLastUpdateTimestamp()));
+			        .isEqual(report.getLastUpdateTimestamp()));
 			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.NORMAL, report.getPriority());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
-					.isEqual(report.getResolutionTimestamp()));
-			assertEquals(comments.first().getAuthor().getUsername(), report.getResolver().getUsername());
+			        .isEqual(report.getResolutionTimestamp()));
+			assertEquals(comments.first().getAuthor().getUsernames().iterator().next(), report.getResolver()
+			        .getUsernames().iterator().next());
 			assertEquals(null, report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(Status.CLOSED, report.getStatus());
 			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("[JAXEN-177] Expression.getText() returns invalid XPath query strings", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
-			assertEquals("rgustav", report.getSubmitter().getUsername());
-			assertEquals("Ryan Gustafson", report.getSubmitter().getFullname());
+			assertEquals("rgustav", report.getSubmitter().getUsernames().iterator().next());
+			assertEquals("Ryan Gustafson", report.getSubmitter().getFullnames().iterator().next());
 			assertEquals("Expression.getText() returns invalid XPath query strings", report.getSummary());
 			assertEquals(Type.BUG, report.getType());
 			assertEquals("1.1", report.getVersion());
@@ -290,7 +291,7 @@ public class JiraTrackerTest {
 		Report report = new Report();
 		URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
 		try {
-			JiraXMLParser.handleHistory(url.toURI(), report, new PersonManager());
+			JiraXMLParser.handleHistory(url.toURI(), report);
 			History history = report.getHistory();
 			assertEquals(1, history.size());
 		} catch (Exception e) {

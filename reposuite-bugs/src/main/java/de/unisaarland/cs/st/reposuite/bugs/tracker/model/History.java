@@ -33,8 +33,12 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 @Entity
 public class History implements Annotated {
 	
+	/**
+     * 
+     */
+	private static final long         serialVersionUID = 1720480073428317973L;
 	private long                      id;
-	private SortedSet<HistoryElement> elements = new TreeSet<HistoryElement>();
+	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
 	
 	/**
 	 * @param element

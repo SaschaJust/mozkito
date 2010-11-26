@@ -83,6 +83,7 @@ public class HibernateUtil {
 			throw new UninitializedDatabaseException();
 		}
 		
+		// FIXME this should be a toolchain instead of a thread
 		if (instances.containsKey(Thread.currentThread())) {
 			return instances.get(Thread.currentThread());
 		} else {
@@ -108,7 +109,9 @@ public class HibernateUtil {
 	
 	public HibernateUtil() {
 		Condition.notNull(sessionFactory);
-		this.session = sessionFactory.openSession();
+		HibernateInterceptor interceptor = new HibernateInterceptor(this);
+		this.session = sessionFactory.openSession(interceptor);
+		interceptor.loadEntities();
 	}
 	
 	public void beginTransaction() {
@@ -141,7 +144,7 @@ public class HibernateUtil {
 		this.session.delete(object);
 	}
 	
-	public void saveOrUpdate(final Annotated object) {
+	public void save(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
 		if (saveFirst != null) {
 			
@@ -149,14 +152,49 @@ public class HibernateUtil {
 				Logger.debug(JavaUtils.collectionToString(saveFirst));
 			}
 			for (Annotated innerObject : saveFirst) {
-				this.session.saveOrUpdate(innerObject);
+				saveOrUpdate(innerObject);
 			}
+		}
+		this.session.save(object);
+	}
+	
+	public void saveOrUpdate(final Annotated object) {
+		Collection<Annotated> saveFirst = object.saveFirst();
+		if (Logger.logWarn()) {
+			Logger.warn("Persisting request for " + object);
+		}
+		
+		if (saveFirst != null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Save first triggered...");
+			}
+			for (Annotated innerObject : saveFirst) {
+				saveOrUpdate(innerObject);
+			}
+		}
+		
+		if (Logger.logWarn()) {
+			Logger.warn("Persisting " + object);
 		}
 		this.session.saveOrUpdate(object);
 	}
 	
 	private void shutdownSession() {
 		this.session.close();
+	}
+	
+	public void update(final Annotated object) {
+		Collection<Annotated> saveFirst = object.saveFirst();
+		if (saveFirst != null) {
+			
+			if (Logger.logDebug()) {
+				Logger.debug(JavaUtils.collectionToString(saveFirst));
+			}
+			for (Annotated innerObject : saveFirst) {
+				saveOrUpdate(innerObject);
+			}
+		}
+		this.session.update(object);
 	}
 	
 }

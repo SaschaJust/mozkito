@@ -24,7 +24,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.StoringException;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -60,7 +59,6 @@ public abstract class Tracker {
 	protected boolean           initialized      = false;
 	private URI                 overviewURI;
 	private BlockingQueue<Long> bugIds           = new LinkedBlockingQueue<Long>();
-	protected PersonManager     personManager    = new PersonManager();
 	protected File              cacheDir;
 	
 	public static String        bugIdPlaceholder = "<BUGID>";
@@ -72,7 +70,6 @@ public abstract class Tracker {
 	public Tracker() {
 		Condition.check(!this.initialized);
 		Condition.notNull(this.bugIds);
-		Condition.notNull(this.personManager);
 		Condition.notNull(bugIdPlaceholder);
 		Condition.greater(bugIdPlaceholder.length(), 0);
 		Condition.notNull(bugIdRegex);

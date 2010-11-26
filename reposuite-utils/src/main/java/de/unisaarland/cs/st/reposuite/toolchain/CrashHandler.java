@@ -48,7 +48,8 @@ public class CrashHandler extends ThreadGroup {
 		                                                               private static final long serialVersionUID = -4075576523389682827L;
 		                                                               
 		                                                               {
-			                                                               put("mail.smtp.host", "mail.own-hero.net");
+			                                                               put("mail.smtp.host",
+			                                                                       "mail.st.cs.uni-saarland.de");
 			                                                               put("mail.transport.protocol", "smtp");
 			                                                               put("mail.to", "methos@own-hero.net");
 			                                                               put("mail.subject", "RepoSuite Crash Report");

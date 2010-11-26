@@ -32,6 +32,11 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**
+     * 
+     */
+	private static final long serialVersionUID = 2149118675856446526L;
+	
+	/**
 	 * @return the simple class name
 	 */
 	public static String getHandle() {
@@ -109,18 +114,18 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		return this.primaryKey;
 	}
 	
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @return the transaction
 	 */
 	@Transient
 	public RCSTransaction getTransaction() {
 		return this.transaction;
+	}
+	
+	@Override
+	@Transient
+	public Collection<Annotated> saveFirst() {
+		return null;
 	}
 	
 	/**

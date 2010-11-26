@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,6 +29,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
@@ -38,16 +40,22 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 @Table (name = "history_element")
 public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	
+	/**
+     * 
+     */
+	private static final long               serialVersionUID    = -8882135636304256696L;
+	
 	private long                            id;
 	
 	private Map<String, ArrayList<String>>  changedStringValues = new HashMap<String, ArrayList<String>>();
-	private Map<String, ArrayList<Person>>  changedPersonValues = new HashMap<String, ArrayList<Person>>();
 	private Map<String, ArrayList<Integer>> changedEnumValues   = new HashMap<String, ArrayList<Integer>>();
 	private Map<String, ArrayList<Date>>    changedDateValues   = new HashMap<String, ArrayList<Date>>();
+	private PersonContainer                 oldPersons           = new PersonContainer();
+	private PersonContainer                 newPersons          = new PersonContainer();
 	
 	private DateTime                        timestamp;
 	private Report                          bugReport;
-	private Person                          author;
+	private PersonContainer                 personContainer     = new PersonContainer();
 	
 	/**
 	 * used by hibernate
@@ -88,7 +96,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 			if (values.get(lowerFieldName).get(0) instanceof String) {
 				this.changedStringValues.put(lowerFieldName, (ArrayList<String>) values.get(lowerFieldName));
 			} else if (values.get(lowerFieldName).get(0) instanceof Person) {
-				this.changedPersonValues.put(lowerFieldName, (ArrayList<Person>) values.get(lowerFieldName));
+				this.oldPersons.add(lowerFieldName, (Person) values.get(lowerFieldName).get(0));
+				this.newPersons.add(lowerFieldName, (Person) values.get(lowerFieldName).get(1));
 			} else if (values.get(lowerFieldName).get(0) instanceof Integer) {
 				this.changedEnumValues.put(lowerFieldName, (ArrayList<Integer>) values.get(lowerFieldName));
 			} else if (values.get(lowerFieldName).get(0) instanceof Date) {
@@ -164,18 +173,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		this.changedPersonValues.put(field.toLowerCase(), new ArrayList<Person>(2) {
-			
-			/**
-             * 
-             */
-			private static final long serialVersionUID = 2071046940281833392L;
-			
-			{
-				add(oldValue);
-				add(newValue);
-			}
-		});
+		this.oldPersons.add(field, oldValue);
+		this.newPersons.add(field, newValue);
 	}
 	
 	/**
@@ -192,9 +191,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		
 		this.changedStringValues.put(field.toLowerCase(), new ArrayList<String>(2) {
 			
-			/**
-             * 
-             */
 			private static final long serialVersionUID = -3944857390937106108L;
 			
 			{
@@ -222,22 +218,94 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param string
 	 * @return
 	 */
+	@Transient
 	public boolean contains(final String fieldName) {
 		Condition.notNull(fieldName);
 		Condition.greater(fieldName.length(), 1);
 		
 		String lowerFieldName = fieldName.toLowerCase();
 		return getChangedDateValues().containsKey(lowerFieldName) || getChangedEnumValues().containsKey(lowerFieldName)
-		        || getChangedPersonValues().containsKey(lowerFieldName)
-		        || getChangedStringValues().containsKey(lowerFieldName);
+		        || this.oldPersons.contains(lowerFieldName) || getChangedStringValues().containsKey(lowerFieldName);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof HistoryElement)) {
+			return false;
+		}
+		HistoryElement other = (HistoryElement) obj;
+		if (this.changedDateValues == null) {
+			if (other.changedDateValues != null) {
+				return false;
+			}
+		} else if (!this.changedDateValues.equals(other.changedDateValues)) {
+			return false;
+		}
+		if (this.changedEnumValues == null) {
+			if (other.changedEnumValues != null) {
+				return false;
+			}
+		} else if (!this.changedEnumValues.equals(other.changedEnumValues)) {
+			return false;
+		}
+		if (this.changedStringValues == null) {
+			if (other.changedStringValues != null) {
+				return false;
+			}
+		} else if (!this.changedStringValues.equals(other.changedStringValues)) {
+			return false;
+		}
+		if (this.id != other.id) {
+			return false;
+		}
+		if (this.newPersons == null) {
+			if (other.newPersons != null) {
+				return false;
+			}
+		} else if (!this.newPersons.equals(other.newPersons)) {
+			return false;
+		}
+		if (this.oldPersons == null) {
+			if (other.oldPersons != null) {
+				return false;
+			}
+		} else if (!this.oldPersons.equals(other.oldPersons)) {
+			return false;
+		}
+		if (this.personContainer == null) {
+			if (other.personContainer != null) {
+				return false;
+			}
+		} else if (!this.personContainer.equals(other.personContainer)) {
+			return false;
+		}
+		if (this.timestamp == null) {
+			if (other.timestamp != null) {
+				return false;
+			}
+		} else if (!this.timestamp.equals(other.timestamp)) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
 	 * @return
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Transient
 	public Person getAuthor() {
-		return this.author;
+		return this.personContainer.get("author");
 	}
 	
 	/**
@@ -252,7 +320,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the changedDateValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection (targetClass = Date.class)
+	@ElementCollection
 	private Map<String, ArrayList<Date>> getChangedDateValues() {
 		return this.changedDateValues;
 	}
@@ -261,23 +329,11 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the changedEnumValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection (targetClass = Integer.class)
+	@ElementCollection
 	private Map<String, ArrayList<Integer>> getChangedEnumValues() {
 		return this.changedEnumValues;
 	}
 	
-	/**
-	 * @return the changedPersonValues
-	 */
-	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection
-	private Map<String, ArrayList<Person>> getChangedPersonValues() {
-		return this.changedPersonValues;
-	}
-	
-	/**
-	 * @return the bugReport
-	 */
 	/**
 	 * @return the changedStringValues
 	 */
@@ -297,8 +353,9 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		HistoryElement element = new HistoryElement();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
 			element.getChangedStringValues().put(lowerFieldName, this.changedStringValues.get(lowerFieldName));
-		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
-			element.getChangedPersonValues().put(lowerFieldName, this.changedPersonValues.get(lowerFieldName));
+		} else if (this.oldPersons.contains(lowerFieldName)) {
+			element.addChangedValue(lowerFieldName, this.oldPersons.get(lowerFieldName),
+			        this.newPersons.get(lowerFieldName));
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
 			element.getChangedEnumValues().put(lowerFieldName, this.changedEnumValues.get(lowerFieldName));
 		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
@@ -327,6 +384,14 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
+	 * @return the newPersons
+	 */
+	@OneToOne
+	protected PersonContainer getNewPersons() {
+		return this.newPersons;
+	}
+	
+	/**
 	 * @param fieldName
 	 * @return
 	 */
@@ -335,8 +400,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
 			return getChangedStringValues().get(lowerFieldName).get(1);
-		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
-			return getChangedPersonValues().get(lowerFieldName).get(1);
+		} else if (this.newPersons.contains(lowerFieldName)) {
+			return this.newPersons.get(lowerFieldName);
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
 			try {
 				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
@@ -357,6 +422,14 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
+	 * @return the oldPersons
+	 */
+	@OneToOne
+	protected PersonContainer getOldPersons() {
+		return this.oldPersons;
+	}
+	
+	/**
 	 * @param fieldName
 	 * @return
 	 */
@@ -365,8 +438,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
 			return getChangedStringValues().get(lowerFieldName).get(0);
-		} else if (this.changedPersonValues.containsKey(lowerFieldName)) {
-			return getChangedPersonValues().get(lowerFieldName).get(0);
+		} else if (this.oldPersons.contains(lowerFieldName)) {
+			return this.oldPersons.get(lowerFieldName);
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
 			try {
 				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
@@ -387,6 +460,14 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
+	 * @return the personContainer
+	 */
+	@OneToOne
+	public PersonContainer getPersonContainer() {
+		return this.personContainer;
+	}
+	
+	/**
 	 * @return the timestamp
 	 */
 	@Transient
@@ -394,13 +475,32 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		return this.timestamp;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.changedDateValues == null) ? 0 : this.changedDateValues.hashCode());
+		result = prime * result + ((this.changedEnumValues == null) ? 0 : this.changedEnumValues.hashCode());
+		result = prime * result + ((this.changedStringValues == null) ? 0 : this.changedStringValues.hashCode());
+		result = prime * result + (int) (this.id ^ (this.id >>> 32));
+		result = prime * result + ((this.newPersons == null) ? 0 : this.newPersons.hashCode());
+		result = prime * result + ((this.oldPersons == null) ? 0 : this.oldPersons.hashCode());
+		result = prime * result + ((this.personContainer == null) ? 0 : this.personContainer.hashCode());
+		result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
+		return result;
+	}
+	
 	/**
 	 * @return
 	 */
 	@Transient
 	public boolean isEmpty() {
-		return this.changedDateValues.isEmpty() && this.changedEnumValues.isEmpty()
-		        && this.changedPersonValues.isEmpty() && this.changedStringValues.isEmpty();
+		return this.changedDateValues.isEmpty() && this.changedEnumValues.isEmpty() && this.oldPersons.isEmpty()
+		        && this.changedStringValues.isEmpty();
 	}
 	
 	/*
@@ -417,7 +517,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param author
 	 */
 	public void setAuthor(final Person author) {
-		this.author = author;
+		this.personContainer.add("author", author);
 	}
 	
 	/**
@@ -447,15 +547,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
-	 * @param changedPersonValues
-	 *            the changedPersonValues to set
-	 */
-	@SuppressWarnings ("unused")
-	private void setChangedPersonValues(final Map<String, ArrayList<Person>> changedPersonValues) {
-		this.changedPersonValues = changedPersonValues;
-	}
-	
-	/**
 	 * @param changedStringValues
 	 *            the changedStringValues to set
 	 */
@@ -481,6 +572,30 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
+	 * @param newPersons
+	 *            the newPersons to set
+	 */
+	protected void setNewPersons(final PersonContainer newPersons) {
+		this.newPersons = newPersons;
+	}
+	
+	/**
+	 * @param oldPersons
+	 *            the oldPersons to set
+	 */
+	protected void setOldPersons(final PersonContainer oldPerons) {
+		this.oldPersons = oldPerons;
+	}
+	
+	/**
+	 * @param personContainer
+	 *            the personContainer to set
+	 */
+	public void setPersonContainer(final PersonContainer personContainer) {
+		this.personContainer = personContainer;
+	}
+	
+	/**
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
@@ -492,35 +607,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return
 	 */
 	public int size() {
-		return this.changedDateValues.size() + this.changedEnumValues.size() + this.changedPersonValues.size()
+		return this.changedDateValues.size() + this.changedEnumValues.size() + this.oldPersons.size()
 		        + this.changedStringValues.size();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("HistoryElement [id=");
-		builder.append(this.id);
-		builder.append(", changedStringValues=");
-		builder.append(this.changedStringValues);
-		builder.append(", changedPersonValues=");
-		builder.append(this.changedPersonValues);
-		builder.append(", changedEnumValues=");
-		builder.append(this.changedEnumValues);
-		builder.append(", changedDateValues=");
-		builder.append(this.changedDateValues);
-		builder.append(", timestamp=");
-		builder.append(this.timestamp);
-		builder.append(", bugReport=");
-		builder.append(this.bugReport.getId());
-		builder.append(", author=");
-		builder.append(this.author);
-		builder.append("]");
-		return builder.toString();
 	}
 	
 }

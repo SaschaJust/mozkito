@@ -30,7 +30,6 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 public class BugzillaTracker extends Tracker {
 	
-	
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
 		if (!super.checkRAW(rawReport)) {
@@ -55,7 +54,7 @@ public class BugzillaTracker extends Tracker {
 			return false;
 		}
 		@SuppressWarnings ("unchecked") List<Element> bugs = xmlReport.getDocument().getRootElement()
-		.getChildren("bug");
+		        .getChildren("bug");
 		if (bugs.size() != 1) {
 			return false;
 		}
@@ -94,7 +93,7 @@ public class BugzillaTracker extends Tracker {
 		
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("bug");
-		BugzillaXMLParser.handleRoot(bugReport, itemElement, this.personManager);
+		BugzillaXMLParser.handleRoot(bugReport, itemElement);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
 		
@@ -106,14 +105,14 @@ public class BugzillaTracker extends Tracker {
 		} else {
 			try {
 				URI historyUri = new URI(uriString);
-				BugzillaXMLParser.handleHistory(historyUri, bugReport, this.personManager);
+				BugzillaXMLParser.handleHistory(historyUri, bugReport);
 			} catch (Exception e) {
 				if (Logger.logError()) {
 					if (bugReport.getId() == -1) {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
 					} else {
-						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId() + "`. Used uri =`"
-								+ uriString + "`.");
+						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
+						        + "`. Used uri =`" + uriString + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}

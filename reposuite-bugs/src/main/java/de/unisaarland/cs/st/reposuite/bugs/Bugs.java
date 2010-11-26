@@ -74,7 +74,8 @@ public class Bugs extends RepoSuiteToolchain {
 			HibernateUtil hibernateUtil;
 			try {
 				hibernateUtil = HibernateUtil.getInstance();
-				new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), hibernateUtil);
+				new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker,
+				        hibernateUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

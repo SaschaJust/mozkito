@@ -23,13 +23,18 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 @Entity
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	public static RCSBranch MASTER = new RCSBranch("master");
+	/**
+     * 
+     */
+	private static final long serialVersionUID = 5419737140470855522L;
 	
-	private long           generatedId;
-	private String         name;
-	private RCSBranch      parent = null;
-	private RCSTransaction begin;
-	private RCSTransaction end;
+	public static RCSBranch   MASTER           = new RCSBranch("master");
+	
+	private long              generatedId;
+	private String            name;
+	private RCSBranch         parent           = null;
+	private RCSTransaction    begin;
+	private RCSTransaction    end;
 	
 	/**
 	 * Instantiates a new rCS branch.
