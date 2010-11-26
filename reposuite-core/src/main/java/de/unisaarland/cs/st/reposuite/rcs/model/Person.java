@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -271,6 +272,7 @@ public class Person implements Annotated {
 	 * @return
 	 */
 	@ElementCollection
+	@Column (unique = true)
 	public Set<String> getEmailAddresses() {
 		return this.emailAddresses;
 	}
@@ -325,6 +327,7 @@ public class Person implements Annotated {
 	 * @return
 	 */
 	@ElementCollection
+	@Column (unique = true)
 	public Set<String> getUsernames() {
 		return this.usernames;
 	}

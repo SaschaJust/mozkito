@@ -34,6 +34,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 public class BugzillaXMLParser {
 	
@@ -210,7 +211,7 @@ public class BugzillaXMLParser {
 						}
 						historyAuthor = new Person(username, null, null);
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
-						Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
+						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
 						hElement = new HistoryElement(historyAuthor, report, dateTime, map);
 						// FIXME add only if sth set
 						report.addHistoryElement(hElement);

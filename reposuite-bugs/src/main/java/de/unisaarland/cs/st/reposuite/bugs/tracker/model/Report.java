@@ -415,9 +415,7 @@ public class Report implements Annotated, Comparable<Report> {
 			ret.add(comment.getPersonContainer());
 		}
 		for (HistoryElement historyElement : this.history.getElements()) {
-			ret.add(historyElement.getPersonContainer());
-			ret.add(historyElement.getNewPersons());
-			ret.add(historyElement.getOldPersons());
+			ret.addAll(historyElement.getPersonContainers());
 		}
 		ret.add(this.personContainer);
 		return ret;

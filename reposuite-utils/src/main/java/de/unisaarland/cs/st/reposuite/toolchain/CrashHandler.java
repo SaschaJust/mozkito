@@ -51,7 +51,8 @@ public class CrashHandler extends ThreadGroup {
 			                                                               put("mail.smtp.host",
 			                                                                       "mail.st.cs.uni-saarland.de");
 			                                                               put("mail.transport.protocol", "smtp");
-			                                                               put("mail.to", "methos@own-hero.net");
+			                                                               put("mail.to",
+			                                                                       "project_reposuite@st.cs.uni-saarland.de");
 			                                                               put("mail.subject", "RepoSuite Crash Report");
 			                                                               put("mail.sender.name", "RepoSuite Client");
 			                                                               put("mail.sender.address",

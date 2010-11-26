@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +56,9 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public class GoogleTracker extends Tracker {
 	
-	protected static Regex fetchRegex = new Regex("https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
-	private String         projectName;
+	protected static Regex        fetchRegex    = new Regex(
+	                                                    "https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
+	private String                projectName;
 	private ProjectHostingService service;
 	
 	private static Person         unknownPerson = new Person("<unknown>", null, null);
@@ -170,7 +170,7 @@ public class GoogleTracker extends Tracker {
 	 * 
 	 * @return the project name
 	 */
-	public String getProjectName(){
+	public String getProjectName() {
 		return this.projectName;
 	}
 	
@@ -209,7 +209,7 @@ public class GoogleTracker extends Tracker {
 			report.setPriority(Priority.UNKNOWN);
 			if (Logger.logWarn()) {
 				Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-						+ "`. Setting prioroty to UNKNOWN.");
+				        + "`. Setting prioroty to UNKNOWN.");
 			}
 		}
 		
@@ -257,8 +257,6 @@ public class GoogleTracker extends Tracker {
 			report.setResolutionTimestamp(issue.getCloseDate());
 		}
 		
-		
-		
 		if (issue.getAuthors().size() > 0) {
 			report.setSubmitter(issue.getAuthors().get(0).toPerson());
 		}
@@ -296,7 +294,7 @@ public class GoogleTracker extends Tracker {
 			report.setType(Type.UNKNOWN);
 			if (Logger.logWarn()) {
 				Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
-						+ "`. Setting type to UNKNOWN.");
+				        + "`. Setting type to UNKNOWN.");
 			}
 		}
 		report.setVersion(issue.getVersion());
@@ -312,12 +310,11 @@ public class GoogleTracker extends Tracker {
 		Person fixer = null;
 		Person resolver = null;
 		
-		while(run){
+		while (run) {
 			
 			try {
-				URL feedUrl = new URL(
-						"https://code.google.com/feeds/issues/p/google-web-toolkit/issues/" + report.getId()
-						+ "/comments/full/" + (++counter));
+				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/"
+				        + report.getId() + "/comments/full/" + (++counter));
 				ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
 				IssueCommentsEntry commentEntry = service.getEntry(feedUrl, IssueCommentsEntry.class);
 				TextContent textContent = (TextContent) commentEntry.getContent();
@@ -327,35 +324,36 @@ public class GoogleTracker extends Tracker {
 					message = htmlConstruct.getHtml();
 				}
 				com.google.gdata.data.DateTime published = commentEntry.getPublished();
-				DateTime createDate = new DateTime(published.getValue(),DateTimeZone.forOffsetHours(published.getTzShift()));
+				DateTime createDate = new DateTime(published.getValue(), DateTimeZone.forOffsetHours(published
+				        .getTzShift()));
 				
 				Person author = unknownPerson;
 				List<com.google.gdata.data.Person> authors = commentEntry.getAuthors();
-				if(authors.size() > 0){
+				if (authors.size() > 0) {
 					com.google.gdata.data.Person person = authors.get(0);
 					author = new Person(person.getName(), person.getNameLang(), person.getEmail());
 				}
 				
-				if(commentEntry.hasUpdates()){
+				if (commentEntry.hasUpdates()) {
 					Updates updates = commentEntry.getUpdates();
 					updates.getBlockedOnUpdates();
 					
 					HistoryElement hElem = new HistoryElement(author, report, createDate,
-							new HashMap<String, ArrayList<?>>());
+					        new HashMap<String, Tuple<?, ?>>());
 					
 					if (updates.getCcUpdates() != null) {
 						// CCs are not supported by report
 					}
 					
-					Map<String,Tuple<String,String>> changes = new HashMap<String,Tuple<String,String>>();
+					Map<String, Tuple<String, String>> changes = new HashMap<String, Tuple<String, String>>();
 					
 					for (Label l : updates.getLabels()) {
 						String value = l.getValue().toLowerCase();
 						if (value.startsWith("type-")) {
 							String newValue = value.replace("type-", "").trim();
-							if(changes.containsKey("type")){
+							if (changes.containsKey("type")) {
 								changes.get("type").setSecond(newValue);
-							}else{
+							} else {
 								changes.put("type", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
 						} else if (value.startsWith("-type-")) {
@@ -363,13 +361,13 @@ public class GoogleTracker extends Tracker {
 							if (changes.containsKey("type")) {
 								changes.get("type").setFirst(oldValue);
 							} else {
-								changes.put("type", new Tuple<String, String>(oldValue,"<UNKNOWN>"));
+								changes.put("type", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
 						} else if (value.startsWith("priority-")) {
 							String newValue = value.replace("priority-", "").trim();
-							if(changes.containsKey("priority")){
+							if (changes.containsKey("priority")) {
 								changes.get("priority").setSecond(newValue);
-							}else{
+							} else {
 								changes.put("priority", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
 						} else if (value.startsWith("-priority-")) {
@@ -377,13 +375,13 @@ public class GoogleTracker extends Tracker {
 							if (changes.containsKey("priority")) {
 								changes.get("priority").setFirst(oldValue);
 							} else {
-								changes.put("priority", new Tuple<String, String>(oldValue,"<UNKNOWN>"));
+								changes.put("priority", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
 						} else if (value.startsWith("category-")) {
 							String newValue = value.replace("category-", "").trim();
-							if(changes.containsKey("category")){
+							if (changes.containsKey("category")) {
 								changes.get("category").setSecond(newValue);
-							}else{
+							} else {
 								changes.put("category", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
 						} else if (value.startsWith("-category-")) {
@@ -391,13 +389,13 @@ public class GoogleTracker extends Tracker {
 							if (changes.containsKey("category")) {
 								changes.get("category").setFirst(oldValue);
 							} else {
-								changes.put("category", new Tuple<String, String>(oldValue,"<UNKNOWN>"));
+								changes.put("category", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
 						} else if (value.startsWith("milestone-")) {
 							String newValue = value.replace("milestone-", "").trim();
-							if(changes.containsKey("milestone")){
+							if (changes.containsKey("milestone")) {
 								changes.get("milestone").setSecond(newValue);
-							}else{
+							} else {
 								changes.put("milestone", new Tuple<String, String>("<UNKNOWN>", newValue));
 							}
 						} else if (value.startsWith("-milestone-")) {
@@ -405,14 +403,14 @@ public class GoogleTracker extends Tracker {
 							if (changes.containsKey("milestone")) {
 								changes.get("milestone").setFirst(oldValue);
 							} else {
-								changes.put("milestone", new Tuple<String, String>(oldValue,"<UNKNOWN>"));
+								changes.put("milestone", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
 							}
 						}
 					}
 					
 					if (updates.getOwnerUpdate() != null) {
-						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate().getValue(),
-								null, null));
+						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
+						        .getValue(), null, null));
 					}
 					
 					if (updates.getStatus() != null) {
@@ -499,8 +497,8 @@ public class GoogleTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	throws InvalidParameterException {
+	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	        throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());

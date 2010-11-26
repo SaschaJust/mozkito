@@ -46,6 +46,7 @@ import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -434,7 +435,7 @@ public class SourceforgeTracker extends Tracker {
 					ArrayList<Object> list = new ArrayList<Object>(2);
 					list.add(oldValue);
 					list.add(newValue);
-					Map<String, ArrayList<?>> map = new HashMap<String, ArrayList<?>>();
+					Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
 					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
 					        bugReport, DateTimeUtils.parseDate(datetimeElement.getValue()), map));
 				}

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,6 +32,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 public class JiraXMLParser {
 	
@@ -220,7 +220,7 @@ public class JiraXMLParser {
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
 						HistoryElement hElement = new HistoryElement(author, report, timestamp,
-						        new HashMap<String, ArrayList<?>>());
+						        new HashMap<String, Tuple<?, ?>>());
 						
 						for (Element tr : trs) {
 							if (tr == null) {

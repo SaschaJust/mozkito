@@ -3,15 +3,14 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,9 +27,14 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple;
+import de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple;
+import de.unisaarland.cs.st.reposuite.rcs.model.StringTuple;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -43,19 +47,18 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
      * 
      */
-	private static final long               serialVersionUID    = -8882135636304256696L;
+	private static final long          serialVersionUID    = -8882135636304256696L;
 	
-	private long                            id;
+	private long                       id;
 	
-	private Map<String, ArrayList<String>>  changedStringValues = new HashMap<String, ArrayList<String>>();
-	private Map<String, ArrayList<Integer>> changedEnumValues   = new HashMap<String, ArrayList<Integer>>();
-	private Map<String, ArrayList<Date>>    changedDateValues   = new HashMap<String, ArrayList<Date>>();
-	private PersonContainer                 oldPersons           = new PersonContainer();
-	private PersonContainer                 newPersons          = new PersonContainer();
+	private Map<String, StringTuple>   changedStringValues = new HashMap<String, StringTuple>();
+	private Map<String, EnumTuple>     changedEnumValues   = new HashMap<String, EnumTuple>();
+	private Map<String, DateTimeTuple> changedDateValues   = new HashMap<String, DateTimeTuple>();
+	private Map<String, PersonTuple>   changedPersonValues = new HashMap<String, PersonTuple>();
 	
-	private DateTime                        timestamp;
-	private Report                          bugReport;
-	private PersonContainer                 personContainer     = new PersonContainer();
+	private DateTime                   timestamp;
+	private Report                     bugReport;
+	private PersonContainer            personContainer     = new PersonContainer();
 	
 	/**
 	 * used by hibernate
@@ -71,7 +74,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param timestamp
 	 */
 	public HistoryElement(final Person author, final Report bugReport, final DateTime timestamp,
-	        final Map<String, ArrayList<?>> values) {
+	        final Map<String, Tuple<?, ?>> values) {
 		Condition.notNull(author);
 		Condition.notNull(bugReport);
 		Condition.notNull(timestamp);
@@ -87,23 +90,28 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	/**
 	 * @param values
 	 */
-	@SuppressWarnings ("unchecked")
-	public void addChange(final Map<String, ArrayList<?>> values) {
+	public void addChange(final Map<String, Tuple<?, ?>> values) {
 		Condition.notNull(values);
 		
 		for (String fieldName : values.keySet()) {
 			String lowerFieldName = fieldName.toLowerCase();
-			if (values.get(lowerFieldName).get(0) instanceof String) {
-				this.changedStringValues.put(lowerFieldName, (ArrayList<String>) values.get(lowerFieldName));
-			} else if (values.get(lowerFieldName).get(0) instanceof Person) {
-				this.oldPersons.add(lowerFieldName, (Person) values.get(lowerFieldName).get(0));
-				this.newPersons.add(lowerFieldName, (Person) values.get(lowerFieldName).get(1));
-			} else if (values.get(lowerFieldName).get(0) instanceof Integer) {
-				this.changedEnumValues.put(lowerFieldName, (ArrayList<Integer>) values.get(lowerFieldName));
-			} else if (values.get(lowerFieldName).get(0) instanceof Date) {
-				this.changedDateValues.put(lowerFieldName, (ArrayList<Date>) values.get(lowerFieldName));
+			if (values.get(lowerFieldName).getFirst() instanceof String) {
+				this.changedStringValues.put(lowerFieldName, new StringTuple((String) values.get(lowerFieldName)
+				        .getFirst(), (String) values.get(lowerFieldName).getSecond()));
+			} else if (values.get(lowerFieldName).getFirst() instanceof Person) {
+				this.changedPersonValues.put(lowerFieldName, new PersonTuple((Person) values.get(lowerFieldName)
+				        .getFirst(), (Person) values.get(lowerFieldName).getSecond()));
+			} else if (values.get(lowerFieldName).getFirst() instanceof Enum) {
+				this.changedEnumValues.put(lowerFieldName, new EnumTuple((Enum<?>) values.get(lowerFieldName)
+				        .getFirst(), (Enum<?>) values.get(lowerFieldName).getSecond()));
+			} else if (values.get(lowerFieldName).getFirst() instanceof DateTime) {
+				this.changedDateValues.put(lowerFieldName, new DateTimeTuple((DateTime) values.get(lowerFieldName)
+				        .getFirst(), (DateTime) values.get(lowerFieldName).getSecond()));
+			} else if (values.get(lowerFieldName).getFirst() instanceof Date) {
+				this.changedDateValues.put(lowerFieldName, new DateTimeTuple((Date) values.get(lowerFieldName)
+				        .getFirst(), (Date) values.get(lowerFieldName).getSecond()));
 			} else {
-				throw new UnrecoverableError(values.get(lowerFieldName).get(0).getClass().getCanonicalName()
+				throw new UnrecoverableError(values.get(lowerFieldName).getFirst().getClass().getCanonicalName()
 				        + " is not supported for " + HistoryElement.class.getSimpleName() + ".");
 			}
 		}
@@ -121,18 +129,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		this.changedDateValues.put(field.toLowerCase(), new ArrayList<Date>(2) {
-			
-			/**
-                     * 
-                     */
-			private static final long serialVersionUID = -3679507437553394832L;
-			
-			{
-				add(oldValue.toDate());
-				add(newValue.toDate());
-			}
-		});
+		getChangedDateValues().put(field.toLowerCase(), new DateTimeTuple(oldValue, newValue));
 	}
 	
 	/**
@@ -147,18 +144,16 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		this.changedEnumValues.put(field.toLowerCase(), new ArrayList<Integer>(2) {
-			
-			/**
-             * 
-             */
-			private static final long serialVersionUID = 5042265831412117769L;
-			
-			{
-				add(oldValue.ordinal());
-				add(newValue.ordinal());
-			}
-		});
+		getChangedEnumValues().put(field.toLowerCase(), new EnumTuple(oldValue, newValue));
+	}
+	
+	/**
+	 * @param field
+	 * @param oldValue
+	 * @param newValue
+	 */
+	public void addChangedValue(final String field, final Person oldValue, final Person newValue) {
+		getChangedPersonValues().put(field, new PersonTuple(oldValue, newValue));
 	}
 	
 	/**
@@ -167,14 +162,13 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @param newValue
 	 */
 	@Transient
-	public void addChangedValue(final String field, final Person oldValue, final Person newValue) {
+	public void addChangedValue(final String field, final PersonContainer oldValue, final PersonContainer newValue) {
 		Condition.notNull(field);
 		Condition.greater(field.length(), 1);
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		this.oldPersons.add(field, oldValue);
-		this.newPersons.add(field, newValue);
+		getChangedPersonValues().put(field, new PersonTuple(oldValue, newValue));
 	}
 	
 	/**
@@ -189,15 +183,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		Condition.notNull(oldValue);
 		Condition.notNull(newValue);
 		
-		this.changedStringValues.put(field.toLowerCase(), new ArrayList<String>(2) {
-			
-			private static final long serialVersionUID = -3944857390937106108L;
-			
-			{
-				add(oldValue);
-				add(newValue);
-			}
-		});
+		getChangedStringValues().put(field, new StringTuple(oldValue, newValue));
 	}
 	
 	/*
@@ -225,7 +211,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		
 		String lowerFieldName = fieldName.toLowerCase();
 		return getChangedDateValues().containsKey(lowerFieldName) || getChangedEnumValues().containsKey(lowerFieldName)
-		        || this.oldPersons.contains(lowerFieldName) || getChangedStringValues().containsKey(lowerFieldName);
+		        || getChangedPersonValues().containsKey(lowerFieldName)
+		        || getChangedStringValues().containsKey(lowerFieldName);
 	}
 	
 	/*
@@ -258,28 +245,18 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		} else if (!this.changedEnumValues.equals(other.changedEnumValues)) {
 			return false;
 		}
+		if (this.changedPersonValues == null) {
+			if (other.changedPersonValues != null) {
+				return false;
+			}
+		} else if (!this.changedPersonValues.equals(other.changedPersonValues)) {
+			return false;
+		}
 		if (this.changedStringValues == null) {
 			if (other.changedStringValues != null) {
 				return false;
 			}
 		} else if (!this.changedStringValues.equals(other.changedStringValues)) {
-			return false;
-		}
-		if (this.id != other.id) {
-			return false;
-		}
-		if (this.newPersons == null) {
-			if (other.newPersons != null) {
-				return false;
-			}
-		} else if (!this.newPersons.equals(other.newPersons)) {
-			return false;
-		}
-		if (this.oldPersons == null) {
-			if (other.oldPersons != null) {
-				return false;
-			}
-		} else if (!this.oldPersons.equals(other.oldPersons)) {
 			return false;
 		}
 		if (this.personContainer == null) {
@@ -320,8 +297,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the changedDateValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection
-	private Map<String, ArrayList<Date>> getChangedDateValues() {
+	// @ManyToMany (cascade = CascadeType.ALL)
+	private Map<String, DateTimeTuple> getChangedDateValues() {
 		return this.changedDateValues;
 	}
 	
@@ -329,17 +306,25 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return the changedEnumValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection
-	private Map<String, ArrayList<Integer>> getChangedEnumValues() {
+	// @ManyToMany (cascade = CascadeType.ALL)
+	private Map<String, EnumTuple> getChangedEnumValues() {
 		return this.changedEnumValues;
+	}
+	
+	/**
+	 * @return the changedPersonValues
+	 */
+	// @ManyToMany (cascade = CascadeType.ALL)
+	public Map<String, PersonTuple> getChangedPersonValues() {
+		return this.changedPersonValues;
 	}
 	
 	/**
 	 * @return the changedStringValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection
-	private Map<String, ArrayList<String>> getChangedStringValues() {
+	// @ManyToMany (cascade = CascadeType.ALL)
+	private Map<String, StringTuple> getChangedStringValues() {
 		return this.changedStringValues;
 	}
 	
@@ -353,9 +338,9 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		HistoryElement element = new HistoryElement();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
 			element.getChangedStringValues().put(lowerFieldName, this.changedStringValues.get(lowerFieldName));
-		} else if (this.oldPersons.contains(lowerFieldName)) {
-			element.addChangedValue(lowerFieldName, this.oldPersons.get(lowerFieldName),
-			        this.newPersons.get(lowerFieldName));
+		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
+			element.addChangedValue(lowerFieldName, getChangedPersonValues().get(lowerFieldName).getOldValue(),
+			        getChangedPersonValues().get(lowerFieldName).getNewValue());
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
 			element.getChangedEnumValues().put(lowerFieldName, this.changedEnumValues.get(lowerFieldName));
 		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
@@ -384,14 +369,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	}
 	
 	/**
-	 * @return the newPersons
-	 */
-	@OneToOne
-	protected PersonContainer getNewPersons() {
-		return this.newPersons;
-	}
-	
-	/**
 	 * @param fieldName
 	 * @return
 	 */
@@ -399,34 +376,16 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public Object getNewValue(final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
-			return getChangedStringValues().get(lowerFieldName).get(1);
-		} else if (this.newPersons.contains(lowerFieldName)) {
-			return this.newPersons.get(lowerFieldName);
+			return getChangedStringValues().get(lowerFieldName).getNewValue();
+		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
+			return getChangedPersonValues().get(lowerFieldName).getNewValue();
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
-			try {
-				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
-				        + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1));
-				if (e.isEnum()) {
-					return e.getEnumConstants()[getChangedEnumValues().get(lowerFieldName).get(1)];
-				} else {
-					throw new UnrecoverableError("Found none enum constant in enum container for field: " + fieldName);
-				}
-			} catch (ClassNotFoundException e) {
-				throw new UnrecoverableError("Found none enum constant in enum container for field: " + fieldName, e);
-			}
+			return getChangedEnumValues().get(lowerFieldName).getNewValue();
 		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
-			return getChangedDateValues().get(lowerFieldName).get(1);
+			return getChangedDateValues().get(lowerFieldName).getNewValue();
 		} else {
 			return null;
 		}
-	}
-	
-	/**
-	 * @return the oldPersons
-	 */
-	@OneToOne
-	protected PersonContainer getOldPersons() {
-		return this.oldPersons;
 	}
 	
 	/**
@@ -437,23 +396,13 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	public Object getOldValue(final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		if (this.changedStringValues.containsKey(lowerFieldName)) {
-			return getChangedStringValues().get(lowerFieldName).get(0);
-		} else if (this.oldPersons.contains(lowerFieldName)) {
-			return this.oldPersons.get(lowerFieldName);
+			return getChangedStringValues().get(lowerFieldName).getOldValue();
+		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
+			return getChangedPersonValues().get(lowerFieldName).getOldValue();
 		} else if (this.changedEnumValues.containsKey(lowerFieldName)) {
-			try {
-				Class<?> e = Class.forName(this.getClass().getPackage().getName() + "."
-				        + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1));
-				if (e.isEnum()) {
-					return e.getEnumConstants()[getChangedEnumValues().get(lowerFieldName).get(0)];
-				} else {
-					throw new UnrecoverableError("Found none enum constant in enum container.");
-				}
-			} catch (ClassNotFoundException e) {
-				throw new UnrecoverableError("Found none enum constant in enum container.", e);
-			}
+			return getChangedEnumValues().get(lowerFieldName).getOldValue();
 		} else if (this.changedDateValues.containsKey(lowerFieldName)) {
-			return getChangedDateValues().get(lowerFieldName).get(0);
+			return getChangedDateValues().get(lowerFieldName).getOldValue();
 		} else {
 			return null;
 		}
@@ -465,6 +414,16 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	@OneToOne
 	public PersonContainer getPersonContainer() {
 		return this.personContainer;
+	}
+	
+	public Collection<PersonContainer> getPersonContainers() {
+		LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
+		list.add(this.personContainer);
+		for (String key : this.changedPersonValues.keySet()) {
+			list.add(this.changedPersonValues.get(key).getOldValue());
+			list.add(this.changedPersonValues.get(key).getNewValue());
+		}
+		return list;
 	}
 	
 	/**
@@ -485,10 +444,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 		int result = 1;
 		result = prime * result + ((this.changedDateValues == null) ? 0 : this.changedDateValues.hashCode());
 		result = prime * result + ((this.changedEnumValues == null) ? 0 : this.changedEnumValues.hashCode());
+		result = prime * result + ((this.changedPersonValues == null) ? 0 : this.changedPersonValues.hashCode());
 		result = prime * result + ((this.changedStringValues == null) ? 0 : this.changedStringValues.hashCode());
-		result = prime * result + (int) (this.id ^ (this.id >>> 32));
-		result = prime * result + ((this.newPersons == null) ? 0 : this.newPersons.hashCode());
-		result = prime * result + ((this.oldPersons == null) ? 0 : this.oldPersons.hashCode());
 		result = prime * result + ((this.personContainer == null) ? 0 : this.personContainer.hashCode());
 		result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
 		return result;
@@ -499,8 +456,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 */
 	@Transient
 	public boolean isEmpty() {
-		return this.changedDateValues.isEmpty() && this.changedEnumValues.isEmpty() && this.oldPersons.isEmpty()
-		        && this.changedStringValues.isEmpty();
+		return getChangedDateValues().isEmpty() && getChangedEnumValues().isEmpty()
+		        && getChangedPersonValues().isEmpty() && getChangedStringValues().isEmpty();
 	}
 	
 	/*
@@ -533,7 +490,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 *            the changedDateValues to set
 	 */
 	@SuppressWarnings ("unused")
-	private void setChangedDateValues(final Map<String, ArrayList<Date>> changedDateValues) {
+	private void setChangedDateValues(final Map<String, DateTimeTuple> changedDateValues) {
 		this.changedDateValues = changedDateValues;
 	}
 	
@@ -542,8 +499,16 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 *            the changedEnumValues to set
 	 */
 	@SuppressWarnings ("unused")
-	private void setChangedEnumValues(final Map<String, ArrayList<Integer>> changedEnumValues) {
+	private void setChangedEnumValues(final Map<String, EnumTuple> changedEnumValues) {
 		this.changedEnumValues = changedEnumValues;
+	}
+	
+	/**
+	 * @param changedPersonValues
+	 *            the changedPersonValues to set
+	 */
+	public void setChangedPersonValues(final Map<String, PersonTuple> changedPersonValues) {
+		this.changedPersonValues = changedPersonValues;
 	}
 	
 	/**
@@ -551,7 +516,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 *            the changedStringValues to set
 	 */
 	@SuppressWarnings ("unused")
-	private void setChangedStringValues(final Map<String, ArrayList<String>> changedStringValues) {
+	private void setChangedStringValues(final Map<String, StringTuple> changedStringValues) {
 		this.changedStringValues = changedStringValues;
 	}
 	
@@ -569,22 +534,6 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date timestamp) {
 		this.timestamp = new DateTime(timestamp);
-	}
-	
-	/**
-	 * @param newPersons
-	 *            the newPersons to set
-	 */
-	protected void setNewPersons(final PersonContainer newPersons) {
-		this.newPersons = newPersons;
-	}
-	
-	/**
-	 * @param oldPersons
-	 *            the oldPersons to set
-	 */
-	protected void setOldPersons(final PersonContainer oldPerons) {
-		this.oldPersons = oldPerons;
 	}
 	
 	/**
@@ -607,8 +556,8 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	 * @return
 	 */
 	public int size() {
-		return this.changedDateValues.size() + this.changedEnumValues.size() + this.oldPersons.size()
-		        + this.changedStringValues.size();
+		return getChangedDateValues().size() + getChangedEnumValues().size() + getChangedPersonValues().size()
+		        + getChangedStringValues().size();
 	}
 	
 }
