@@ -94,7 +94,7 @@ public class Report implements Annotated, Comparable<Report> {
 		
 		boolean retval = this.comments.add(comment);
 		comment.setBugReport(this);
-		Condition.check(retval, "Could not add comment with id %i (already existing).", comment.getId());
+		Condition.check(retval, "Could not add comment with id %s (already existing).", comment.getId());
 	}
 	
 	/**
