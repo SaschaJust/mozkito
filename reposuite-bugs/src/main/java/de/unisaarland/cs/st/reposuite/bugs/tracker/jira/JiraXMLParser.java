@@ -42,13 +42,13 @@ public class JiraXMLParser {
 	// protected static DateTimeFormatter dateTimeHistoryFormat =
 	// DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
 	protected static final Regex dateTimeFormatRegex        = new Regex(
-	                                                                "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
+	"({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	                                                                "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
+	"(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
-	        final String attribute, final String value) {
+			final String attribute, final String value) {
 		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
@@ -56,7 +56,7 @@ public class JiraXMLParser {
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
-		        + value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
 	}
 	
 	protected static Priority getPriority(final String prioString) {
@@ -135,7 +135,7 @@ public class JiraXMLParser {
 	
 	@SuppressWarnings ("unchecked")
 	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
-	        JDOMException, IOException, SecurityException, NoSuchFieldException {
+	JDOMException, IOException, SecurityException, NoSuchFieldException {
 		Condition.notNull(historyUri);
 		Condition.notNull(report);
 		
@@ -150,7 +150,7 @@ public class JiraXMLParser {
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-					        + rootElement.getName() + ">.");
+							+ rootElement.getName() + ">.");
 				}
 				return;
 			}
@@ -220,7 +220,7 @@ public class JiraXMLParser {
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
 						HistoryElement hElement = new HistoryElement(author, report, timestamp,
-						        new HashMap<String, ArrayList<?>>());
+								new HashMap<String, ArrayList<?>>());
 						
 						for (Element tr : trs) {
 							if (tr == null) {
@@ -230,7 +230,7 @@ public class JiraXMLParser {
 								return;
 							}
 							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText()
-							        .trim();
+							.trim();
 							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
 							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
 							
@@ -281,7 +281,7 @@ public class JiraXMLParser {
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
-										        + ". Cannot determine report id. Abort!");
+												+ ". Cannot determine report id. Abort!");
 									}
 									return;
 								}
@@ -312,7 +312,7 @@ public class JiraXMLParser {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-						        + ". Cannot determine report id. Abort!");
+								+ ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
