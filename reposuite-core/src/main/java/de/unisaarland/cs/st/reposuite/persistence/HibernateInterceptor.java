@@ -113,8 +113,8 @@ public class HibernateInterceptor extends EmptyInterceptor {
 		if (entity instanceof PersonContainer) {
 			PersonContainer container = (PersonContainer) entity;
 			
-			if (Logger.logWarn()) {
-				Logger.warn("Intercepting save action for " + container);
+			if (Logger.logDebug()) {
+				Logger.debug("Intercepting save action for " + container);
 			}
 			
 			for (Person person : container.interceptorTargets()) {
@@ -124,16 +124,16 @@ public class HibernateInterceptor extends EmptyInterceptor {
 				if (!collisions.isEmpty()) {
 					if (collisions.size() == 1) {
 						Person reference = Person.merge(collisions.iterator().next(), person);
-						if (Logger.logWarn()) {
-							Logger.warn("Replacing person " + person + " by " + reference + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Replacing person " + person + " by " + reference + ".");
 						}
 						container.replace(person, Person.merge(reference, person));
-						if (Logger.logWarn()) {
-							Logger.warn("from " + person + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("from " + person + ".");
 						}
 					} else {
-						if (Logger.logWarn()) {
-							Logger.warn("Performing merge on " + person + " due to collisions with "
+						if (Logger.logDebug()) {
+							Logger.debug("Performing merge on " + person + " due to collisions with "
 							        + JavaUtils.collectionToString(collisions));
 						}
 						// merge
@@ -148,79 +148,79 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							}
 						}
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Keeping " + keeper + " due to least references ("
+						if (Logger.logDebug()) {
+							Logger.debug("Keeping " + keeper + " due to least references ("
 							        + this.remap.get(keeper).size());
 						}
 						
 						collisions.remove(keeper);
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
+						if (Logger.logDebug()) {
+							Logger.debug("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
 						}
 						Person.merge(keeper, collisions);
-						if (Logger.logWarn()) {
-							Logger.warn("Merging " + keeper + " with " + person + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Merging " + keeper + " with " + person + ".");
 						}
 						Person.merge(keeper, person);
 						
 						this.hibernateUtil.beginTransaction();
 						for (Person collider : collisions) {
-							if (Logger.logWarn()) {
-								Logger.warn("Deleting collision " + collider + ".");
+							if (Logger.logDebug()) {
+								Logger.debug("Deleting collision " + collider + ".");
 							}
 							this.personManager.delete(collider);
 							this.hibernateUtil.delete(collider);
 						}
-						if (Logger.logWarn()) {
-							Logger.warn("Saving merged person " + keeper + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Saving merged person " + keeper + ".");
 						}
 						this.hibernateUtil.save(keeper);
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Performing replace on known referencing entities of collisions.");
+						if (Logger.logDebug()) {
+							Logger.debug("Performing replace on known referencing entities of collisions.");
 						}
 						for (PersonContainer tmpContainer : this.remap.get(keeper)) {
 							for (Person tmpPerson : tmpContainer.interceptorTargets()) {
 								if (tmpPerson.matches(keeper)) {
-									if (Logger.logWarn()) {
-										Logger.warn("Replacing " + tmpPerson + " by " + keeper);
+									if (Logger.logDebug()) {
+										Logger.debug("Replacing " + tmpPerson + " by " + keeper);
 									}
 									tmpContainer.replace(tmpPerson, keeper);
 								}
 							}
-							if (Logger.logWarn()) {
-								Logger.warn("Updating referencing entity.");
+							if (Logger.logDebug()) {
+								Logger.debug("Updating referencing entity.");
 							}
 							this.hibernateUtil.update(tmpContainer);
 						}
-						if (Logger.logWarn()) {
-							Logger.warn("Committing to database.");
+						if (Logger.logDebug()) {
+							Logger.debug("Committing to database.");
 						}
 						this.hibernateUtil.commitTransaction();
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Replacing person " + person + " by " + keeper + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
 						container.replace(person, keeper);
 					}
 				} else {
 					// new Person
-					if (Logger.logWarn()) {
-						Logger.warn("Adding new person " + person + ".");
+					if (Logger.logDebug()) {
+						Logger.debug("Adding new person " + person + ".");
 					}
 					this.personManager.add(person);
 				}
 				
 				if (!this.remap.containsKey(person)) {
-					if (Logger.logWarn()) {
-						Logger.warn("Creating new mapping for person " + person + ".");
+					if (Logger.logDebug()) {
+						Logger.debug("Creating new mapping for person " + person + ".");
 					}
 					this.remap.put(person, new LinkedList<PersonContainer>());
 				}
 				
-				if (Logger.logWarn()) {
-					Logger.warn("Adding reference on person " + person + " from " + container + " to remap cache.");
+				if (Logger.logDebug()) {
+					Logger.debug("Adding reference on person " + person + " from " + container + " to remap cache.");
 				}
 				this.remap.get(person).add(container);
 			}

@@ -346,6 +346,7 @@ public class CrashHandler extends ThreadGroup {
 	 * @param report
 	 *            the report to be send
 	 */
+	@SuppressWarnings ("unused")
 	private void sendReport(final String report) {
 		try {
 			Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);

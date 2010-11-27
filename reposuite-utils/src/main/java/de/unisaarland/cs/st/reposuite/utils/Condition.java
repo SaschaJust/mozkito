@@ -1408,6 +1408,41 @@ public final class Condition {
 	}
 	
 	/**
+	 * @param string
+	 * @param length
+	 */
+	@Deprecated
+	public static final void maxSize(final String string, final int length) {
+		assert string.length() <= length : getCallerString()
+		        + formatter.format("String `%s` exceeds max length of %s. Violated assertion: %s", string, length,
+		                violation);
+	}
+	
+	/**
+	 * @param string
+	 * @param length
+	 * @param message
+	 */
+	public static final void maxSize(final String string, final int length, final String message) {
+		assert string.length() <= length : getCallerString()
+		        + formatter.format("String `%s` exceeds max length of %s. Violated assertion: %s", string, length,
+		                message);
+	}
+	
+	/**
+	 * @param string
+	 * @param length
+	 * @param formatString
+	 * @param arguments
+	 */
+	public static final void maxSize(final String string, final int length, final String formatString,
+	        final Object... arguments) {
+		assert string.length() <= length : getCallerString()
+		        + formatter.format("String `%s` exceeds max length of %s. Violated assertion: %s", string, length,
+		                formatter.format(formatString, arguments));
+	}
+	
+	/**
 	 * @param array
 	 * @param length
 	 */
@@ -1771,6 +1806,37 @@ public final class Condition {
 	        final Object... arguments) {
 		assert array.length >= length : getCallerString()
 		        + formatter.format("Array exceeds min length of %s. Violated assertion: %s", length,
+		                formatter.format(formatString, arguments));
+	}
+	
+	@Deprecated
+	public static final void minSize(final String string, final int length) {
+		assert string.length() >= length : getCallerString()
+		        + formatter.format("String `%s` exceeds min length of %s. Violated assertion: %s", string, length,
+		                violation);
+	}
+	
+	/**
+	 * @param string
+	 * @param length
+	 * @param message
+	 */
+	public static final void minSize(final String string, final int length, final String message) {
+		assert string.length() >= length : getCallerString()
+		        + formatter.format("String `%s` exceeds min length of %s. Violated assertion: %s", string, length,
+		                message);
+	}
+	
+	/**
+	 * @param string
+	 * @param length
+	 * @param formatString
+	 * @param arguments
+	 */
+	public static final void minSize(final String string, final int length, final String formatString,
+	        final Object... arguments) {
+		assert string.length() >= length : getCallerString()
+		        + formatter.format("String `%s` exceeds min length of %s. Violated assertion: %s", string, length,
 		                formatter.format(formatString, arguments));
 	}
 	
@@ -3072,5 +3138,41 @@ public final class Condition {
 		assert ArrayUtils.isSameLength(firstArray, secondArray) : getCallerString()
 		        + formatter.format("Arrays differ in length (`%s` vs. `%s`). Violated assertion: %s",
 		                firstArray.length, secondArray.length, formatter.format(formatString, arguments));
+	}
+	
+	/**
+	 * @param firstString
+	 * @param secondString
+	 */
+	@Deprecated
+	public static final void sameSize(final String firstString, final String secondString) {
+		assert firstString.length() == secondString.length() : getCallerString()
+		        + formatter.format("Strings differ in length (`%s (%s)` vs. `%s (%s)`). Violated assertion: %s",
+		                firstString, firstString.length(), secondString, secondString.length(), violation);
+	}
+	
+	/**
+	 * @param firstString
+	 * @param secondString
+	 * @param message
+	 */
+	public static final void sameSize(final String firstString, final String secondString, final String message) {
+		assert firstString.length() == secondString.length() : getCallerString()
+		        + formatter.format("Strings differ in length (`%s (%s)` vs. `%s (%s)`). Violated assertion: %s",
+		                firstString, firstString.length(), secondString, secondString.length(), message);
+	}
+	
+	/**
+	 * @param firstString
+	 * @param secondString
+	 * @param formatString
+	 * @param arguments
+	 */
+	public static final void sameSize(final String firstString, final String secondString, final String formatString,
+	        final Object... arguments) {
+		assert firstString.length() == secondString.length() : getCallerString()
+		        + formatter.format("Strings differ in length (`%s (%s)` vs. `%s (%s)`). Violated assertion: %s",
+		                firstString, firstString.length(), secondString, secondString.length(),
+		                formatter.format(formatString, arguments));
 	}
 }
