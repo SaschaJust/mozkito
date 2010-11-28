@@ -102,9 +102,9 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						int i = 0;
 						
 						// find the person with the most references
-						// rehash();
+						//
 						List<PersonContainer> updatableTargets = new LinkedList<PersonContainer>();
-						
+						rehash();
 						for (Person collider : collisions) {
 							Condition.containsKey(this.remap, collider,
 							                      "Requesting remap for unknown collider. This should not happen.");
@@ -133,7 +133,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						}
 						Person.merge(keeper, person);
 						
-						this.hibernateUtil.beginTransaction();
+						// this.hibernateUtil.beginTransaction();
 						for (Person collider : collisions) {
 							if (Logger.logDebug()) {
 								Logger.debug("Deleting collision " + collider + ".");
@@ -150,7 +150,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Performing replace on known referencing entities of collisions.");
 						}
 						
-						// rehash();
+						rehash();
 						for (PersonContainer tmpContainer : updatableTargets) {
 							for (Person tmpPerson : tmpContainer.interceptorTargets()) {
 								if (tmpPerson.matches(keeper)) {
@@ -174,7 +174,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						}
 						container.replace(person, keeper);
 						
-						this.hibernateUtil.commitTransaction();
+						// this.hibernateUtil.commitTransaction();
 					}
 				} else {
 					// new Person
@@ -205,11 +205,10 @@ public class HibernateInterceptor extends EmptyInterceptor {
 		}
 	}
 	
-	// private void rehash() {
-	// HashMap<Person, List<PersonContainer>> remapNew = new HashMap<Person,
-	// List<PersonContainer>>();
-	// remapNew.putAll(this.remap);
-	// this.remap = remapNew;
-	// }
+	private void rehash() {
+		HashMap<Person, List<PersonContainer>> remapNew = new HashMap<Person, List<PersonContainer>>();
+		remapNew.putAll(this.remap);
+		this.remap = remapNew;
+	}
 	
 }

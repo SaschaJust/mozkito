@@ -215,7 +215,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PersonContainer [map=");
+		builder.append("PersonContainer [generatedId=");
+		builder.append(this.generatedId);
+		builder.append(", map=");
 		builder.append(JavaUtils.mapToString(this.map));
 		builder.append("]");
 		return builder.toString();
