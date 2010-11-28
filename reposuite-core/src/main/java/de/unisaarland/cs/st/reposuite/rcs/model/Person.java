@@ -22,6 +22,13 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotAllNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotEmpty;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.ParameterConditions;
+import de.unisaarland.cs.st.reposuite.utils.specification.Return;
+import de.unisaarland.cs.st.reposuite.utils.specification.Trimmed;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -52,15 +59,16 @@ public class Person implements Annotated {
 	 * @param collisions
 	 * @return
 	 */
-	public static Person merge(final Person keeper, final Collection<Person> collisions) {
+	@NoneNull ("When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
+	@Return (checks = ParameterConditions.NotNull)
+	public static Person merge(final Person keeper,
+	                           @NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
 		Condition.notNull(keeper);
-		Condition.notNull(collisions);
+		Condition.noneNull(collisions);
+		Condition.notEmpty(collisions);
 		
 		for (Person merged : collisions) {
-			keeper.addAllEmails(merged.getEmailAddresses());
-			keeper.addAllFullnames(merged.getFullnames());
-			keeper.addAllUsernames(merged.getUsernames());
-			keeper.addAllTransactions(merged.getTransactions());
+			merge(keeper, merged);
 		}
 		
 		return keeper;
@@ -71,7 +79,9 @@ public class Person implements Annotated {
 	 * @param from
 	 * @return
 	 */
-	public static Person merge(final Person keeper, final Person from) {
+	@NoneNull ("When merging two Person entities, neither target nor merged person may be null.")
+	public static Person merge(final Person keeper,
+	                           final Person from) {
 		Condition.notNull(keeper);
 		Condition.notNull(from);
 		
@@ -102,7 +112,8 @@ public class Person implements Annotated {
 	 * @param fullname
 	 * @param email
 	 */
-	public Person(final String username, final String fullname, final String email) {
+	@NotAllNull ("Creating a person with only (null) values makes no sense.")
+	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null));
 		
 		if (fullname != null) {
@@ -126,7 +137,7 @@ public class Person implements Annotated {
 	 * @param emails
 	 */
 	@Transient
-	public void addAllEmails(final Set<String> emails) {
+	public void addAllEmails(@NotNull final Set<String> emails) {
 		Condition.notNull(emails);
 		
 		this.emailAddresses.addAll(emails);
@@ -136,7 +147,7 @@ public class Person implements Annotated {
 	 * @param fullnames
 	 */
 	@Transient
-	public void addAllFullnames(final Set<String> fullnames) {
+	public void addAllFullnames(@NotNull final Set<String> fullnames) {
 		Condition.notNull(fullnames);
 		
 		getFullnames().addAll(fullnames);
@@ -146,7 +157,7 @@ public class Person implements Annotated {
 	 * @param transactions
 	 */
 	@Transient
-	public void addAllTransactions(final Set<RCSTransaction> transactions) {
+	public void addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
 		Condition.notNull(transactions);
 		
 		getTransactions().addAll(transactions);
@@ -156,7 +167,7 @@ public class Person implements Annotated {
 	 * @param usernames
 	 */
 	@Transient
-	public void addAllUsernames(final Set<String> usernames) {
+	public void addAllUsernames(@NotNull final Set<String> usernames) {
 		Condition.notNull(usernames);
 		
 		getUsernames().addAll(usernames);
@@ -196,25 +207,10 @@ public class Person implements Annotated {
 	 * @param transaction
 	 */
 	@Transient
-	public void assignTransaction(final RCSTransaction transaction) {
+	public void assignTransaction(@NotNull final RCSTransaction transaction) {
 		Condition.notNull(transaction);
 		
 		this.transactions.add(transaction);
-	}
-	
-	/**
-	 * @param person
-	 */
-	@Transient
-	@Deprecated
-	public void clone(final Person person) {
-		Condition.notNull(person);
-		
-		this.setEmailAddresses(person.getEmailAddresses());
-		this.setFullnames(person.getFullnames());
-		this.setUsernames(person.getUsernames());
-		this.setTransactions(person.getTransactions());
-		this.setGeneratedId(person.getGeneratedId());
 	}
 	
 	/*
@@ -233,45 +229,57 @@ public class Person implements Annotated {
 			return false;
 		}
 		Person other = (Person) obj;
-		if (this.emailAddresses == null) {
-			if (other.emailAddresses != null) {
+		
+		if (getGeneratedId() > 0) {
+			if (other.getGeneratedId() > 0) {
+				return getGeneratedId() == other.getGeneratedId();
+			} else {
 				return false;
 			}
-		} else if (!this.emailAddresses.equals(other.emailAddresses)) {
-			return false;
-		}
-		if (this.fullnames == null) {
-			if (other.fullnames != null) {
+		} else {
+			if (other.getGeneratedId() > 0) {
 				return false;
+			} else {
+				// both IDs null
+				if (!getUsernames().isEmpty()) {
+					if (!other.getUsernames().isEmpty() && (getUsernames().size() == other.getUsernames().size())) {
+						// TODO sufficient?
+						return getUsernames().iterator().next().equals(other.getUsernames().iterator().next());
+					} else {
+						return false;
+					}
+				} else {
+					if (other.getUsernames().isEmpty()) {
+						return false;
+					} else {
+						if (!getEmailAddresses().isEmpty()) {
+							if (!other.getEmailAddresses().isEmpty()
+							        && (getEmailAddresses().size() == other.getEmailAddresses().size())) {
+								// TODO sufficient?
+								return getEmailAddresses().iterator().next()
+								                          .equals(other.getEmailAddresses().iterator().next());
+							} else {
+								return false;
+							}
+						} else {
+							if (!other.getEmailAddresses().isEmpty()) {
+								return false;
+							} else {
+								// TODO sufficient?
+								return getFullnames().iterator().next().equals(other.getFullnames().iterator().next());
+							}
+						}
+					}
+				}
 			}
-		} else if (!this.fullnames.equals(other.fullnames)) {
-			return false;
 		}
-		if (this.generatedId != other.generatedId) {
-			return false;
-		}
-		if (this.transactions == null) {
-			if (other.transactions != null) {
-				return false;
-			}
-		} else if (!this.transactions.equals(other.transactions)) {
-			return false;
-		}
-		if (this.usernames == null) {
-			if (other.usernames != null) {
-				return false;
-			}
-		} else if (!this.usernames.equals(other.usernames)) {
-			return false;
-		}
-		return true;
+		
 	}
 	
 	/**
 	 * @return
 	 */
 	@ElementCollection
-	// @Column (unique = true)
 	public Set<String> getEmailAddresses() {
 		return this.emailAddresses;
 	}
@@ -338,11 +346,17 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.emailAddresses == null) ? 0 : this.emailAddresses.hashCode());
-		result = prime * result + ((this.fullnames == null) ? 0 : this.fullnames.hashCode());
-		result = prime * result + (int) (this.generatedId ^ (this.generatedId >>> 32));
-		result = prime * result + ((this.transactions == null) ? 0 : this.transactions.hashCode());
-		result = prime * result + ((this.usernames == null) ? 0 : this.usernames.hashCode());
+		result = prime * result + ((this.emailAddresses.isEmpty())
+		                                                          ? 0
+		                                                          : this.emailAddresses.iterator().next().hashCode());
+		result = prime * result + ((this.fullnames.isEmpty())
+		                                                     ? 0
+		                                                     : this.fullnames.iterator().next().hashCode());
+		result = prime * result + ((this.usernames.isEmpty())
+		                                                     ? 0
+		                                                     : this.usernames.iterator().next().hashCode());
+		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
+		// >>> 32));
 		return result;
 	}
 	
@@ -351,7 +365,7 @@ public class Person implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public boolean matches(final Person person) {
+	public boolean matches(@NotNull final Person person) {
 		Condition.notNull(person);
 		
 		if (!CollectionUtils.intersection(getEmailAddresses(), person.getEmailAddresses()).isEmpty()) {
@@ -359,9 +373,9 @@ public class Person implements Annotated {
 		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {
 			return true;
 		} else {
-			if (getUsernames().isEmpty() && person.getUsernames().isEmpty() && getEmailAddresses().isEmpty()
-			        && person.getEmailAddresses().isEmpty()) {
-				return !CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty();
+			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
+			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
+				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
 			} else {
 				return false;
 			}
@@ -381,6 +395,7 @@ public class Person implements Annotated {
 	/**
 	 * @param emailAddresses
 	 */
+	@SuppressWarnings ("unused")
 	private void setEmailAddresses(final Set<String> emailAddresses) {
 		this.emailAddresses = emailAddresses;
 	}
@@ -412,6 +427,7 @@ public class Person implements Annotated {
 	/**
 	 * @param usernames
 	 */
+	@SuppressWarnings ("unused")
 	private void setUsernames(final Set<String> usernames) {
 		this.usernames = usernames;
 	}

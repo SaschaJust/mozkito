@@ -4,13 +4,10 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -28,17 +25,27 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateInterceptor extends EmptyInterceptor {
 	
-	PersonManager                      personManager;
-	Map<Person, List<PersonContainer>> remap            = new HashMap<Person, List<PersonContainer>>();
-	HibernateUtil                      hibernateUtil    = null;
+	PersonManager                          personManager;
+	HashMap<Person, List<PersonContainer>> remap               = new HashMap<Person, List<PersonContainer>>();
+	HibernateUtil                          hibernateUtil       = null;
+	private HibernateInterceptor           previousInterceptor = null;
 	
 	/**
      * 
      */
-	private static final long          serialVersionUID = 3960920011929042813L;
+	private static final long              serialVersionUID    = 3960920011929042813L;
 	
 	/**
-	 * 
+	 * @param interceptor
+	 * @param hibernateUtil
+	 */
+	public HibernateInterceptor(final HibernateInterceptor interceptor, final HibernateUtil hibernateUtil) {
+		this(hibernateUtil);
+		this.previousInterceptor = interceptor;
+	}
+	
+	/**
+	 * @param hibernateUtil
 	 */
 	public HibernateInterceptor(final HibernateUtil hibernateUtil) {
 		this.personManager = new PersonManager(hibernateUtil);
@@ -46,56 +53,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	}
 	
 	/**
-	 * @param fieldName
-	 * @return
-	 */
-	@SuppressWarnings ("unused")
-	private Method getGetterForPerson(final String fieldName) {
-		Condition.notNull(fieldName);
-		Condition.greater(fieldName.length(), 1, "The name of the field has to consist of at least 2 characters.");
-		
-		try {
-			return Person.class.getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
-			        new Class<?>[0]);
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * @param getterMethod
-	 * @param person
-	 * @return
-	 */
-	@SuppressWarnings ("unused")
-	private Object getValueFromPerson(final Method getterMethod, final Person person) {
-		Condition.notNull(getterMethod);
-		Condition.notNull(person);
-		
-		try {
-			return getterMethod.invoke(person, new Object[0]);
-		} catch (IllegalArgumentException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (IllegalAccessException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (InvocationTargetException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	};
-	
-	/**
-	 * 
+	 * loads the all known entities from the persistent storage
 	 */
 	public void loadEntities() {
 		this.personManager.loadEntities();
@@ -108,8 +66,11 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	 * org.hibernate.type.Type[])
 	 */
 	@Override
-	public boolean onSave(final Object entity, final Serializable id, final Object[] state,
-	        final String[] propertyNames, final Type[] types) {
+	public boolean onSave(final Object entity,
+	                      final Serializable id,
+	                      final Object[] state,
+	                      final String[] propertyNames,
+	                      final Type[] types) {
 		if (entity instanceof PersonContainer) {
 			PersonContainer container = (PersonContainer) entity;
 			
@@ -141,11 +102,19 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						int i = 0;
 						
 						// find the person with the most references
+						// rehash();
+						List<PersonContainer> updatableTargets = new LinkedList<PersonContainer>();
+						
 						for (Person collider : collisions) {
+							Condition.containsKey(this.remap, collider,
+							                      "Requesting remap for unknown collider. This should not happen.");
+							
 							if (this.remap.get(collider).size() > i) {
 								keeper = collider;
 								i = this.remap.get(collider).size();
 							}
+							
+							updatableTargets.addAll(this.remap.get(collider));
 						}
 						
 						if (Logger.logDebug()) {
@@ -180,7 +149,9 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						if (Logger.logDebug()) {
 							Logger.debug("Performing replace on known referencing entities of collisions.");
 						}
-						for (PersonContainer tmpContainer : this.remap.get(keeper)) {
+						
+						// rehash();
+						for (PersonContainer tmpContainer : updatableTargets) {
 							for (Person tmpPerson : tmpContainer.interceptorTargets()) {
 								if (tmpPerson.matches(keeper)) {
 									if (Logger.logDebug()) {
@@ -197,12 +168,13 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						if (Logger.logDebug()) {
 							Logger.debug("Committing to database.");
 						}
-						this.hibernateUtil.commitTransaction();
 						
 						if (Logger.logDebug()) {
 							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
 						container.replace(person, keeper);
+						
+						this.hibernateUtil.commitTransaction();
 					}
 				} else {
 					// new Person
@@ -226,7 +198,18 @@ public class HibernateInterceptor extends EmptyInterceptor {
 			}
 		}
 		
-		return super.onSave(entity, id, state, propertyNames, types);
+		if (this.previousInterceptor == null) {
+			return super.onSave(entity, id, state, propertyNames, types);
+		} else {
+			return this.previousInterceptor.onSave(entity, id, state, propertyNames, types);
+		}
 	}
+	
+	// private void rehash() {
+	// HashMap<Person, List<PersonContainer>> remapNew = new HashMap<Person,
+	// List<PersonContainer>>();
+	// remapNew.putAll(this.remap);
+	// this.remap = remapNew;
+	// }
 	
 }

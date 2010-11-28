@@ -47,7 +47,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	@Transient
-	public void add(final String id, final Person person) {
+	public void add(final String id,
+	                final Person person) {
 		this.getMap().put(id, person);
 	}
 	
@@ -131,7 +132,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.map == null) ? 0 : this.map.hashCode());
+		result = prime * result + ((this.map == null)
+		                                             ? 0
+		                                             : this.map.hashCode());
 		return result;
 	}
 	
@@ -161,9 +164,11 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public void replace(final Person from, final Person to) {
+	public void replace(final Person from,
+	                    final Person to) {
 		for (String key : this.map.keySet()) {
-			if (key.equals(from)) {
+			if (getMap().get(key).matches(from)) {
+				getMap().remove(key);
 				getMap().put(key, to);
 			}
 		}

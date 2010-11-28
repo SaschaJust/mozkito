@@ -8,11 +8,14 @@ import java.util.Properties;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
@@ -20,16 +23,8 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 public class HibernateTest {
 	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
-	
-	@Test
-	public void testSaveRCSFile() {
+	@BeforeClass
+	public static void beforeClass() {
 		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest?useUnicode=true&characterEncoding=UTF-8";
 		
 		Properties properties = new Properties();
@@ -43,6 +38,51 @@ public class HibernateTest {
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		
 		HibernateUtil.createSessionFactory(properties);
+	}
+	
+	@Before
+	public void setUp() throws Exception {
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+	}
+	
+	/**
+	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}
+	 */
+	@Test
+	public void testMergePerson() {
+		
+		HibernateUtil hibernateUtil;
+		try {
+			hibernateUtil = HibernateUtil.getInstance();
+			Person[] persons = new Person[] { new Person("just", null, null),
+			        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
+			        new Person("just", "Sascha Just", null),
+			        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
+			
+			RCSTransaction rcsTransaction = null;
+			
+			hibernateUtil.beginTransaction();
+			
+			int i = 0;
+			for (Person person : persons) {
+				rcsTransaction = new RCSTransaction("" + ++i, "test", new DateTime(), person, null);
+				hibernateUtil.saveOrUpdate(rcsTransaction);
+			}
+			
+			hibernateUtil.commitTransaction();
+			
+		} catch (UninitializedDatabaseException e) {
+			e.printStackTrace();
+		}
+		
+		HibernateUtil.shutdown();
+	}
+	
+	@Test
+	public void testSaveRCSFile() {
 		HibernateUtil hibernateUtil;
 		try {
 			hibernateUtil = HibernateUtil.getInstance();
@@ -75,7 +115,6 @@ public class HibernateTest {
 			assertEquals(1, transactionList.size());
 			assertEquals(rcsTransaction, transactionList.get(0));
 		} catch (UninitializedDatabaseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

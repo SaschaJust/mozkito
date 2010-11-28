@@ -20,11 +20,18 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public class HibernateUtil {
 	
 	private static SessionFactory             sessionFactory;
 	private static Map<Thread, HibernateUtil> instances = new HashMap<Thread, HibernateUtil>();
 	
+	/**
+	 * @param properties
+	 */
 	protected static void createSessionFactory(final Properties properties) {
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
@@ -56,6 +63,15 @@ public class HibernateUtil {
 		}
 	}
 	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @throws HibernateException
+	 */
 	public static void createSessionFactory(final String host, final String database, final String user,
 	        final String password, final String type, final String driver) throws HibernateException {
 		try {
@@ -78,6 +94,10 @@ public class HibernateUtil {
 		}
 	}
 	
+	/**
+	 * @return
+	 * @throws UninitializedDatabaseException
+	 */
 	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
 		if (sessionFactory == null) {
 			throw new UninitializedDatabaseException();
@@ -93,6 +113,9 @@ public class HibernateUtil {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public static void shutdown() {
 		for (Thread thread : instances.keySet()) {
 			instances.get(thread).shutdownSession();
@@ -107,17 +130,26 @@ public class HibernateUtil {
 	private final Session session;
 	private Transaction   transaction;
 	
-	public HibernateUtil() {
-		Condition.notNull(sessionFactory);
+	/**
+	 * 
+	 */
+	private HibernateUtil() {
+		Condition.notNull(sessionFactory, "");
 		HibernateInterceptor interceptor = new HibernateInterceptor(this);
 		this.session = sessionFactory.openSession(interceptor);
 		interceptor.loadEntities();
 	}
 	
+	/**
+	 * 
+	 */
 	public void beginTransaction() {
 		this.transaction = this.session.beginTransaction();
 	}
 	
+	/**
+	 * 
+	 */
 	public void commitTransaction() {
 		if ((this.transaction != null) && this.transaction.isActive()) {
 			try {
@@ -132,6 +164,10 @@ public class HibernateUtil {
 		}
 	}
 	
+	/**
+	 * @param clazz
+	 * @return
+	 */
 	public Criteria createCriteria(final Class<?> clazz) {
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
 			return this.session.createCriteria(clazz);
@@ -140,10 +176,16 @@ public class HibernateUtil {
 		}
 	}
 	
+	/**
+	 * @param object
+	 */
 	public void delete(final Annotated object) {
 		this.session.delete(object);
 	}
 	
+	/**
+	 * @param object
+	 */
 	public void save(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
 		if (saveFirst != null) {
@@ -158,6 +200,9 @@ public class HibernateUtil {
 		this.session.save(object);
 	}
 	
+	/**
+	 * @param object
+	 */
 	public void saveOrUpdate(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
 		if (Logger.logWarn()) {
@@ -179,10 +224,16 @@ public class HibernateUtil {
 		this.session.saveOrUpdate(object);
 	}
 	
+	/**
+	 * 
+	 */
 	private void shutdownSession() {
 		this.session.close();
 	}
 	
+	/**
+	 * @param object
+	 */
 	public void update(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
 		if (saveFirst != null) {
