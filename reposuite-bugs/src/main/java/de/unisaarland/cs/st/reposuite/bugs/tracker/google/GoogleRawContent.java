@@ -11,7 +11,9 @@ import org.jdom.Document;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import com.google.gdata.data.HtmlTextConstruct;
 import com.google.gdata.data.Person;
+import com.google.gdata.data.TextContent;
 import com.google.gdata.data.projecthosting.BlockedOn;
 import com.google.gdata.data.projecthosting.Blocking;
 import com.google.gdata.data.projecthosting.Cc;
@@ -46,13 +48,14 @@ public class GoogleRawContent extends XmlReport implements Storable {
 	private final DateTime          updateDate;
 	private final GooglePerson      owner;
 	private String                  type;
-	private final String            state;
-	private final String            status;
+	private String                   state            = "<unknown>";
+	private String                   status           = "<unknown>";
 	private String                  priority;
-	private final String            summary;
-	private final String            title;
+	private String                   summary          = "";
+	private String                   title            = "";
 	private String                  category;
 	private String                  version;
+	private String                   description      = "";
 	
 	private final DateTime          creationDate;
 	
@@ -104,39 +107,56 @@ public class GoogleRawContent extends XmlReport implements Storable {
 		}
 		
 		com.google.gdata.data.DateTime edited = entry.getEdited();
-		if(edited != null){
+		if (edited != null) {
 			this.editDate = new DateTime(edited.getValue(), DateTimeZone.forOffsetHours(edited.getTzShift()));
-		}else{
+		} else {
 			this.editDate = null;
 		}
 		
 		com.google.gdata.data.DateTime googleUpdated = entry.getUpdated();
 		if (googleUpdated != null) {
-			this.updateDate = new DateTime(googleUpdated.getValue(),
-					DateTimeZone.forOffsetHours(googleUpdated.getTzShift()));
+			this.updateDate = new DateTime(googleUpdated.getValue(), DateTimeZone.forOffsetHours(googleUpdated
+					.getTzShift()));
 		} else {
 			this.updateDate = null;
 		}
 		
 		for (Label l : entry.getLabels()) {
-			String value = l.getValue().toLowerCase();
-			if (value.startsWith("type-")) {
-				this.type = value.replace("type-", "").trim();
-			} else if (value.startsWith("priority-")) {
-				this.priority = value.replace("priority-", "").trim();
-			} else if (value.startsWith("category-")) {
-				this.category = value.replace("category-", "").trim();
-			} else if (value.startsWith("milestone-")) {
-				this.version = value.replace("milestone-", "").trim();
+			String label = l.getValue();
+			String compValue = l.getValue().toLowerCase();
+			if (compValue.startsWith("type-")) {
+				this.type = label.substring(5).trim();
+			} else if (compValue.startsWith("priority-")) {
+				this.priority = label.substring(9).trim();
+			} else if (compValue.startsWith("category-")) {
+				this.category = label.substring(9).trim();
+			} else if (compValue.startsWith("milestone-")) {
+				this.version = label.substring(10).trim();
 			}
 		}
 		
 		this.owner = new GooglePerson(null, entry.getOwner().getUsername().getValue(), null);
-		this.state = entry.getState().getValue().toString();
-		this.status = entry.getStatus().getValue();
-		this.summary = entry.getSummary().getPlainText();
-		this.title = entry.getTitle().getPlainText();
+		if ((entry.getState() != null) && (entry.getState().getValue() != null)) {
+			this.state = entry.getState().getValue().toString();
+		}
+		if (entry.getStatus() != null) {
+			this.status = entry.getStatus().getValue();
+		}
+		if (entry.getSummary() != null) {
+			this.summary = entry.getSummary().getPlainText();
+		}
 		
+		if (entry.getTitle() != null) {
+			this.title = entry.getTitle().getPlainText();
+		}
+		
+		if (entry.getContent() != null) {
+			TextContent textContent = (TextContent) entry.getContent();
+			if ((textContent != null) && (textContent.getContent() != null)) {
+				HtmlTextConstruct htmlConstruct = (HtmlTextConstruct) textContent.getContent();
+				this.description = htmlConstruct.getHtml();
+			}
+		}
 	}
 	
 	/**
@@ -209,6 +229,15 @@ public class GoogleRawContent extends XmlReport implements Storable {
 	 */
 	public DateTime getCreationDate() {
 		return this.creationDate;
+	}
+	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
+	public String getDescription(){
+		return this.description;
 	}
 	
 	/**

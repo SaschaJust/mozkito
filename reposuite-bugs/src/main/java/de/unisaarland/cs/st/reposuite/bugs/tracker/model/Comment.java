@@ -6,12 +6,15 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -33,11 +36,14 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
  */
 @Entity
 @Table (name = "comment")
-public class Comment implements Annotated, Comparable<Comment> {
+@AssociationOverrides ({
+	@AssociationOverride (name = "primaryKey.reportId", joinColumns = @JoinColumn (name = "report_id")),
+	@AssociationOverride (name = "commentId", joinColumns = @JoinColumn (name = "comment_id")) })
+	public class Comment implements Annotated, Comparable<Comment> {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -2410349441783888667L;
 	private DateTime          timestamp;
 	private String            message;
