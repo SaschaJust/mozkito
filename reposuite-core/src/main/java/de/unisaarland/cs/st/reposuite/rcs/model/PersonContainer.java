@@ -167,8 +167,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public void replace(final Person from,
 	                    final Person to) {
 		for (String key : this.map.keySet()) {
-			if (getMap().get(key).matches(from)) {
-				getMap().remove(key);
+			if (getMap().get(key).equals(from)) {
 				getMap().put(key, to);
 			}
 		}

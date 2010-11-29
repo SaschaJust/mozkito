@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.persistence;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,15 +26,15 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateInterceptor extends EmptyInterceptor {
 	
-	PersonManager                          personManager;
-	HashMap<Person, List<PersonContainer>> remap               = new HashMap<Person, List<PersonContainer>>();
-	HibernateUtil                          hibernateUtil       = null;
-	private HibernateInterceptor           previousInterceptor = null;
+	PersonManager                             personManager;
+	HashMap<Person, HashSet<PersonContainer>> remap               = new HashMap<Person, HashSet<PersonContainer>>();
+	HibernateUtil                             hibernateUtil       = null;
+	private HibernateInterceptor              previousInterceptor = null;
 	
 	/**
      * 
      */
-	private static final long              serialVersionUID    = 3960920011929042813L;
+	private static final long                 serialVersionUID    = 3960920011929042813L;
 	
 	/**
 	 * @param interceptor
@@ -84,14 +85,14 @@ public class HibernateInterceptor extends EmptyInterceptor {
 				// found collision?
 				if (!collisions.isEmpty()) {
 					if (collisions.size() == 1) {
-						Person reference = Person.merge(collisions.iterator().next(), person);
+						Person collider = collisions.iterator().next();
+						Person reference = Person.merge(collider, person);
 						if (Logger.logDebug()) {
 							Logger.debug("Replacing person " + person + " by " + reference + ".");
 						}
-						container.replace(person, Person.merge(reference, person));
-						if (Logger.logDebug()) {
-							Logger.debug("from " + person + ".");
-						}
+						
+						container.replace(collider, reference);
+						person = reference;
 					} else {
 						if (Logger.logDebug()) {
 							Logger.debug("Performing merge on " + person + " due to collisions with "
@@ -118,8 +119,8 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						}
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Keeping " + keeper + " due to least references ("
-							        + this.remap.get(keeper).size());
+							Logger.debug("Keeping " + keeper + " due to most references ("
+							        + this.remap.get(keeper).size() + ")");
 						}
 						
 						collisions.remove(keeper);
@@ -139,6 +140,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 								Logger.debug("Deleting collision " + collider + ".");
 							}
 							this.personManager.delete(collider);
+							this.remap.remove(collider);
 							this.hibernateUtil.delete(collider);
 						}
 						if (Logger.logDebug()) {
@@ -173,7 +175,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
 						container.replace(person, keeper);
-						
+						person = keeper;
 						// this.hibernateUtil.commitTransaction();
 					}
 				} else {
@@ -184,11 +186,17 @@ public class HibernateInterceptor extends EmptyInterceptor {
 					this.personManager.add(person);
 				}
 				
+				rehash();
 				if (!this.remap.containsKey(person)) {
+					for (Person p : this.remap.keySet()) {
+						if (p.hashCode() == person.hashCode()) {
+							System.err.println("ERROR: " + p.hashCode());
+						}
+					}
 					if (Logger.logDebug()) {
 						Logger.debug("Creating new mapping for person " + person + ".");
 					}
-					this.remap.put(person, new LinkedList<PersonContainer>());
+					this.remap.put(person, new HashSet<PersonContainer>());
 				}
 				
 				if (Logger.logDebug()) {
@@ -205,8 +213,11 @@ public class HibernateInterceptor extends EmptyInterceptor {
 		}
 	}
 	
+	/**
+	 * Refreshes Hashmap due to modifications of the keys...
+	 */
 	private void rehash() {
-		HashMap<Person, List<PersonContainer>> remapNew = new HashMap<Person, List<PersonContainer>>();
+		HashMap<Person, HashSet<PersonContainer>> remapNew = new HashMap<Person, HashSet<PersonContainer>>();
 		remapNew.putAll(this.remap);
 		this.remap = remapNew;
 	}

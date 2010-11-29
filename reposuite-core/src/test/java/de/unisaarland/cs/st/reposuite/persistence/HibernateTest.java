@@ -1,12 +1,17 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Properties;
 
+import org.hibernate.Criteria;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +27,12 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 public class HibernateTest {
+	
+	@AfterClass
+	public static void afterClass() {
+		HibernateUtil.shutdown();
+		
+	}
 	
 	@BeforeClass
 	public static void beforeClass() {
@@ -57,6 +68,9 @@ public class HibernateTest {
 		HibernateUtil hibernateUtil;
 		try {
 			hibernateUtil = HibernateUtil.getInstance();
+			Criteria criteria = hibernateUtil.createCriteria(Person.class);
+			int personCount = criteria.list().size();
+			
 			Person[] persons = new Person[] { new Person("just", null, null),
 			        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
 			        new Person("just", "Sascha Just", null),
@@ -74,11 +88,63 @@ public class HibernateTest {
 			
 			hibernateUtil.commitTransaction();
 			
+			criteria = hibernateUtil.createCriteria(Person.class);
+			@SuppressWarnings ("unchecked")
+			List<Person> list = criteria.list();
+			
+			assertTrue(!list.isEmpty());
+			assertEquals(personCount + 1, list.size());
+			assertEquals(1, list.iterator().next().getUsernames().size());
+			assertEquals("just", list.iterator().next().getUsernames().iterator().next());
+			assertEquals(1, list.iterator().next().getEmailAddresses().size());
+			assertEquals("sascha.just@st.cs.uni-saarland.de", list.iterator().next().getEmailAddresses().iterator()
+			                                                      .next());
+			assertEquals(1, list.iterator().next().getFullnames().size());
+			assertEquals("Sascha Just", list.iterator().next().getFullnames().iterator().next());
 		} catch (UninitializedDatabaseException e) {
-			e.printStackTrace();
+			fail();
 		}
-		
-		HibernateUtil.shutdown();
+	}
+	
+	@Test
+	public void testMergePersonSingleContainer() {
+		HibernateUtil hibernateUtil;
+		try {
+			hibernateUtil = HibernateUtil.getInstance();
+			Criteria criteria = hibernateUtil.createCriteria(Person.class);
+			int personCount = criteria.list().size();
+			
+			PersonContainer personContainer = new PersonContainer();
+			Person[] persons = new Person[] { new Person("pan", null, null),
+			        new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new Person(null, "Peter Pan", null),
+			        new Person("pan", "Peter Pan", null),
+			        new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
+			
+			for (int i = 0; i < persons.length; ++i) {
+				personContainer.add("contrib_" + i, persons[i]);
+			}
+			
+			hibernateUtil.beginTransaction();
+			hibernateUtil.save(personContainer);
+			hibernateUtil.commitTransaction();
+			
+			criteria = hibernateUtil.createCriteria(Person.class);
+			@SuppressWarnings ("unchecked")
+			List<Person> list = criteria.list();
+			
+			assertTrue(!list.isEmpty());
+			assertEquals(personCount + 1, list.size());
+			assertEquals(1, list.iterator().next().getUsernames().size());
+			assertEquals("pan", list.iterator().next().getUsernames().iterator().next());
+			assertEquals(1, list.iterator().next().getEmailAddresses().size());
+			assertEquals("peter.pan@st.cs.uni-saarland.de", list.iterator().next().getEmailAddresses().iterator()
+			                                                    .next());
+			assertEquals(1, list.iterator().next().getFullnames().size());
+			assertEquals("Peter Pan", list.iterator().next().getFullnames().iterator().next());
+			
+		} catch (UninitializedDatabaseException e) {
+			fail();
+		}
 	}
 	
 	@Test
@@ -97,27 +163,28 @@ public class HibernateTest {
 			hibernateUtil.saveOrUpdate(rcsTransaction);
 			hibernateUtil.commitTransaction();
 			
-			@SuppressWarnings ("unchecked") List<RCSFile> fileList = hibernateUtil.createCriteria(RCSFile.class).list();
+			@SuppressWarnings ("unchecked")
+			List<RCSFile> fileList = hibernateUtil.createCriteria(RCSFile.class).list();
 			assertEquals(1, fileList.size());
 			assertEquals(file, fileList.get(0));
 			
-			@SuppressWarnings ("unchecked") List<Person> personList = hibernateUtil.createCriteria(Person.class).list();
-			assertEquals(1, personList.size());
-			assertEquals(person, personList.get(0));
+			@SuppressWarnings ("unchecked")
+			List<Person> personList = hibernateUtil.createCriteria(Person.class).list();
+			assertFalse(personList.isEmpty());
+			assertTrue(personList.contains(person));
 			
-			@SuppressWarnings ("unchecked") List<RCSFile> revisionList = hibernateUtil
-			        .createCriteria(RCSRevision.class).list();
+			@SuppressWarnings ("unchecked")
+			List<RCSFile> revisionList = hibernateUtil.createCriteria(RCSRevision.class).list();
 			assertEquals(1, revisionList.size());
 			assertEquals(revision, revisionList.get(0));
 			
-			@SuppressWarnings ("unchecked") List<RCSFile> transactionList = hibernateUtil.createCriteria(
-			        RCSTransaction.class).list();
-			assertEquals(1, transactionList.size());
-			assertEquals(rcsTransaction, transactionList.get(0));
+			@SuppressWarnings ("unchecked")
+			List<RCSFile> transactionList = hibernateUtil.createCriteria(RCSTransaction.class).list();
+			assertFalse(transactionList.isEmpty());
+			assertTrue(transactionList.contains(rcsTransaction));
 		} catch (UninitializedDatabaseException e) {
-			e.printStackTrace();
+			fail();
 		}
 		
-		HibernateUtil.shutdown();
 	}
 }

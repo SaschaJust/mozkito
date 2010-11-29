@@ -36,7 +36,7 @@ public class PersonManager {
 	/**
 	 * @param person
 	 */
-	public void add(final Person person) {
+	public synchronized void add(final Person person) {
 		getPersons().add(person);
 		
 		for (String email : person.getEmailAddresses()) {
@@ -59,7 +59,7 @@ public class PersonManager {
 	 * @param person
 	 * @return
 	 */
-	public Collection<Person> collision(final Person person) {
+	public synchronized Collection<Person> collision(final Person person) {
 		LinkedList<Person> colliders = new LinkedList<Person>();
 		
 		for (Person reference : getPersons()) {
@@ -73,20 +73,23 @@ public class PersonManager {
 	/**
 	 * @param collider
 	 */
-	public void delete(final Person collider) {
-		for (String key : this.emailMap.keySet()) {
+	public synchronized void delete(final Person collider) {
+		String[] keys = this.emailMap.keySet().toArray(new String[0]);
+		for (String key : keys) {
 			if (this.emailMap.get(key).equals(collider)) {
 				this.emailMap.remove(key);
 			}
 		}
 		
-		for (String key : this.usernameMap.keySet()) {
+		keys = this.usernameMap.keySet().toArray(new String[0]);
+		for (String key : keys) {
 			if (this.usernameMap.get(key).equals(collider)) {
 				this.usernameMap.remove(key);
 			}
 		}
 		
-		for (String key : this.fullnameMap.keySet()) {
+		keys = this.fullnameMap.keySet().toArray(new String[0]);
+		for (String key : keys) {
 			if (this.fullnameMap.get(key).remove(collider)) {
 				if (this.fullnameMap.get(key).isEmpty()) {
 					this.fullnameMap.remove(key);
@@ -99,17 +102,18 @@ public class PersonManager {
 	/**
 	 * @return
 	 */
-	public Collection<Person> getPersons() {
+	public synchronized Collection<Person> getPersons() {
 		return this.persons;
 	}
 	
 	/**
 	 * 
 	 */
-	public void loadEntities() {
+	public synchronized void loadEntities() {
 		if (this.hibernateUtil != null) {
 			Criteria criteria = this.hibernateUtil.createCriteria(Person.class);
-			@SuppressWarnings ("unchecked") List<Person> results = criteria.list();
+			@SuppressWarnings ("unchecked")
+			List<Person> results = criteria.list();
 			if ((results != null) && (results.size() > 0)) {
 				setPersons(results);
 				if (Logger.logInfo()) {
@@ -122,7 +126,7 @@ public class PersonManager {
 	/**
 	 * @param persons
 	 */
-	public void setPersons(final Collection<Person> persons) {
+	public synchronized void setPersons(final Collection<Person> persons) {
 		this.persons = new HashSet<Person>(persons);
 	}
 	

@@ -230,49 +230,41 @@ public class Person implements Annotated {
 		}
 		Person other = (Person) obj;
 		
-		if (getGeneratedId() > 0) {
-			if (other.getGeneratedId() > 0) {
-				return getGeneratedId() == other.getGeneratedId();
-			} else {
-				return false;
-			}
-		} else {
-			if (other.getGeneratedId() > 0) {
-				return false;
-			} else {
-				// both IDs null
-				if (!getUsernames().isEmpty()) {
-					if (!other.getUsernames().isEmpty() && (getUsernames().size() == other.getUsernames().size())) {
-						// TODO sufficient?
-						return getUsernames().iterator().next().equals(other.getUsernames().iterator().next());
-					} else {
-						return false;
-					}
-				} else {
-					if (other.getUsernames().isEmpty()) {
-						return false;
-					} else {
-						if (!getEmailAddresses().isEmpty()) {
-							if (!other.getEmailAddresses().isEmpty()
-							        && (getEmailAddresses().size() == other.getEmailAddresses().size())) {
-								// TODO sufficient?
-								return getEmailAddresses().iterator().next()
-								                          .equals(other.getEmailAddresses().iterator().next());
-							} else {
-								return false;
-							}
-						} else {
-							if (!other.getEmailAddresses().isEmpty()) {
-								return false;
-							} else {
-								// TODO sufficient?
-								return getFullnames().iterator().next().equals(other.getFullnames().iterator().next());
-							}
-						}
-					}
-				}
-			}
-		}
+		return this.hashCode() == other.hashCode();
+		// if (!getUsernames().isEmpty()) {
+		// if (!other.getUsernames().isEmpty() && (getUsernames().size() ==
+		// other.getUsernames().size())) {
+		// // TODO sufficient?
+		// return
+		// getUsernames().iterator().next().equals(other.getUsernames().iterator().next());
+		// } else {
+		// return false;
+		// }
+		// } else {
+		// if (other.getUsernames().isEmpty()) {
+		// return false;
+		// } else {
+		// if (!getEmailAddresses().isEmpty()) {
+		// if (!other.getEmailAddresses().isEmpty()
+		// && (getEmailAddresses().size() == other.getEmailAddresses().size()))
+		// {
+		// // TODO sufficient?
+		// return getEmailAddresses().iterator().next()
+		// .equals(other.getEmailAddresses().iterator().next());
+		// } else {
+		// return false;
+		// }
+		// } else {
+		// if (!other.getEmailAddresses().isEmpty()) {
+		// return false;
+		// } else {
+		// // TODO sufficient?
+		// return
+		// getFullnames().iterator().next().equals(other.getFullnames().iterator().next());
+		// }
+		// }
+		// }
+		// }
 		
 	}
 	
@@ -373,6 +365,12 @@ public class Person implements Annotated {
 		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {
 			return true;
 		} else {
+			// foo, null, bleh
+			// null, bar, bleh
+			
+			// foo, null, bleh
+			// null, null, bleh
+			
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
 			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
@@ -449,6 +447,8 @@ public class Person implements Annotated {
 		builder.append(this.fullnames);
 		builder.append(", transactions=");
 		builder.append(this.transactions);
+		builder.append(", hashcode=");
+		builder.append(hashCode());
 		builder.append("]");
 		return builder.toString();
 	}
