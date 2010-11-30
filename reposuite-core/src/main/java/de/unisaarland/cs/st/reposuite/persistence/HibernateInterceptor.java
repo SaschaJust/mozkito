@@ -91,7 +91,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Replacing person " + person + " by " + reference + ".");
 						}
 						
-						container.replace(collider, reference);
+						container.replace(person, reference);
 						person = reference;
 					} else {
 						if (Logger.logDebug()) {
@@ -126,13 +126,14 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						collisions.remove(keeper);
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
-						}
-						Person.merge(keeper, collisions);
-						if (Logger.logDebug()) {
 							Logger.debug("Merging " + keeper + " with " + person + ".");
 						}
 						Person.merge(keeper, person);
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
+						}
+						Person.merge(keeper, collisions);
 						
 						// this.hibernateUtil.beginTransaction();
 						for (Person collider : collisions) {
@@ -147,6 +148,12 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Saving merged person " + keeper + ".");
 						}
 						this.hibernateUtil.save(keeper);
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Replacing person " + person + " by " + keeper + ".");
+						}
+						container.replace(person, keeper);
+						person = keeper;
 						
 						if (Logger.logDebug()) {
 							Logger.debug("Performing replace on known referencing entities of collisions.");
@@ -171,11 +178,6 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Committing to database.");
 						}
 						
-						if (Logger.logDebug()) {
-							Logger.debug("Replacing person " + person + " by " + keeper + ".");
-						}
-						container.replace(person, keeper);
-						person = keeper;
 						// this.hibernateUtil.commitTransaction();
 					}
 				} else {

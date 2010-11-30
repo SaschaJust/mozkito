@@ -59,7 +59,7 @@ public class Person implements Annotated {
 	 * @param collisions
 	 * @return
 	 */
-	@NoneNull ("When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
+	@NoneNull (spec = "When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	@Return (checks = ParameterConditions.NotNull)
 	public static Person merge(final Person keeper,
 	                           @NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
@@ -79,7 +79,7 @@ public class Person implements Annotated {
 	 * @param from
 	 * @return
 	 */
-	@NoneNull ("When merging two Person entities, neither target nor merged person may be null.")
+	@NoneNull (spec = "When merging two Person entities, neither target nor merged person may be null.")
 	public static Person merge(final Person keeper,
 	                           final Person from) {
 		Condition.notNull(keeper);

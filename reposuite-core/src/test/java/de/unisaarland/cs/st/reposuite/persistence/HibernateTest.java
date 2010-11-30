@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.hibernate.Criteria;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -91,16 +93,23 @@ public class HibernateTest {
 			criteria = hibernateUtil.createCriteria(Person.class);
 			@SuppressWarnings ("unchecked")
 			List<Person> list = criteria.list();
+			Person person = (Person) CollectionUtils.find(list, new Predicate() {
+				
+				@Override
+				public boolean evaluate(final Object object) {
+					Person p = (Person) object;
+					return (p.getUsernames().size() == 1) && p.getUsernames().iterator().next().equals("just");
+				}
+			});
 			
 			assertTrue(!list.isEmpty());
 			assertEquals(personCount + 1, list.size());
-			assertEquals(1, list.iterator().next().getUsernames().size());
-			assertEquals("just", list.iterator().next().getUsernames().iterator().next());
-			assertEquals(1, list.iterator().next().getEmailAddresses().size());
-			assertEquals("sascha.just@st.cs.uni-saarland.de", list.iterator().next().getEmailAddresses().iterator()
-			                                                      .next());
-			assertEquals(1, list.iterator().next().getFullnames().size());
-			assertEquals("Sascha Just", list.iterator().next().getFullnames().iterator().next());
+			assertEquals(1, person.getUsernames().size());
+			assertEquals("just", person.getUsernames().iterator().next());
+			assertEquals(1, person.getEmailAddresses().size());
+			assertEquals("sascha.just@st.cs.uni-saarland.de", person.getEmailAddresses().iterator().next());
+			assertEquals(1, person.getFullnames().size());
+			assertEquals("Sascha Just", person.getFullnames().iterator().next());
 		} catch (UninitializedDatabaseException e) {
 			fail();
 		}
@@ -131,16 +140,23 @@ public class HibernateTest {
 			criteria = hibernateUtil.createCriteria(Person.class);
 			@SuppressWarnings ("unchecked")
 			List<Person> list = criteria.list();
+			Person person = (Person) CollectionUtils.find(list, new Predicate() {
+				
+				@Override
+				public boolean evaluate(final Object object) {
+					Person p = (Person) object;
+					return (p.getUsernames().size() == 1) && p.getUsernames().iterator().next().equals("pan");
+				}
+			});
 			
 			assertTrue(!list.isEmpty());
 			assertEquals(personCount + 1, list.size());
-			assertEquals(1, list.iterator().next().getUsernames().size());
-			assertEquals("pan", list.iterator().next().getUsernames().iterator().next());
-			assertEquals(1, list.iterator().next().getEmailAddresses().size());
-			assertEquals("peter.pan@st.cs.uni-saarland.de", list.iterator().next().getEmailAddresses().iterator()
-			                                                    .next());
-			assertEquals(1, list.iterator().next().getFullnames().size());
-			assertEquals("Peter Pan", list.iterator().next().getFullnames().iterator().next());
+			assertEquals(1, person.getUsernames().size());
+			assertEquals("pan", person.getUsernames().iterator().next());
+			assertEquals(1, person.getEmailAddresses().size());
+			assertEquals("peter.pan@st.cs.uni-saarland.de", person.getEmailAddresses().iterator().next());
+			assertEquals(1, person.getFullnames().size());
+			assertEquals("Peter Pan", person.getFullnames().iterator().next());
 			
 		} catch (UninitializedDatabaseException e) {
 			fail();
