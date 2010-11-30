@@ -47,7 +47,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	@Transient
-	public void add(final String id, final Person person) {
+	public void add(final String id,
+	                final Person person) {
 		this.getMap().put(id, person);
 	}
 	
@@ -58,32 +59,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Transient
 	public boolean contains(final String key) {
 		return this.map.containsKey(key);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof PersonContainer)) {
-			return false;
-		}
-		PersonContainer other = (PersonContainer) obj;
-		if (this.map == null) {
-			if (other.map != null) {
-				return false;
-			}
-		} else if (!this.map.equals(other.map)) {
-			return false;
-		}
-		return true;
 	}
 	
 	/*
@@ -125,18 +100,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.map == null) ? 0 : this.map.hashCode());
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.persistence.Intercepted#interceptorTargets
 	 * ()
@@ -161,9 +124,10 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public void replace(final Person from, final Person to) {
+	public void replace(final Person from,
+	                    final Person to) {
 		for (String key : this.map.keySet()) {
-			if (key.equals(from)) {
+			if (getMap().get(key).equals(from)) {
 				getMap().put(key, to);
 			}
 		}
@@ -210,7 +174,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PersonContainer [map=");
+		builder.append("PersonContainer [generatedId=");
+		builder.append(this.generatedId);
+		builder.append(", map=");
 		builder.append(JavaUtils.mapToString(this.map));
 		builder.append("]");
 		return builder.toString();

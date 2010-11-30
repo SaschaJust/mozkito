@@ -50,8 +50,8 @@ public class Regex {
 	 */
 	public static boolean checkRegex(final String pattern) {
 		// avoid captured positive look ahead
-		Condition.notNull(pattern);
-		Condition.greater(pattern.length(), 0);
+		Condition.notNull(pattern, "Patterns to be checked by checkRegex may have to be strings of length > 0.");
+		Condition.minSize(pattern, 1, "Patterns to be checked by checkRegex may have to be strings of length > 0.");
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Checking pattern: " + pattern);
@@ -199,8 +199,12 @@ public class Regex {
 	 * @return the {@link String} representation of the matching pattern
 	 */
 	public static String findLongestMatchingPattern(String pattern, final String text) {
-		Condition.notNull(text);
-		Condition.notNull(pattern);
+		Condition
+		        .notNull(text,
+		                "When trying to find the longest matching pattern to a given text, the text is required to be a non-null string.");
+		Condition
+		        .notNull(pattern,
+		                "When trying to find the longest matching pattern to a given text, the pattern is required to be a non-null string.");
 		
 		Regex regex = new Regex("placeholder");
 		regex.setPattern(pattern);

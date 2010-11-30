@@ -4,13 +4,11 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -28,17 +26,27 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateInterceptor extends EmptyInterceptor {
 	
-	PersonManager                      personManager;
-	Map<Person, List<PersonContainer>> remap            = new HashMap<Person, List<PersonContainer>>();
-	HibernateUtil                      hibernateUtil    = null;
+	PersonManager                             personManager;
+	HashMap<Person, HashSet<PersonContainer>> remap               = new HashMap<Person, HashSet<PersonContainer>>();
+	HibernateUtil                             hibernateUtil       = null;
+	private HibernateInterceptor              previousInterceptor = null;
 	
 	/**
      * 
      */
-	private static final long          serialVersionUID = 3960920011929042813L;
+	private static final long                 serialVersionUID    = 3960920011929042813L;
 	
 	/**
-	 * 
+	 * @param interceptor
+	 * @param hibernateUtil
+	 */
+	public HibernateInterceptor(final HibernateInterceptor interceptor, final HibernateUtil hibernateUtil) {
+		this(hibernateUtil);
+		this.previousInterceptor = interceptor;
+	}
+	
+	/**
+	 * @param hibernateUtil
 	 */
 	public HibernateInterceptor(final HibernateUtil hibernateUtil) {
 		this.personManager = new PersonManager(hibernateUtil);
@@ -46,56 +54,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	}
 	
 	/**
-	 * @param fieldName
-	 * @return
-	 */
-	@SuppressWarnings ("unused")
-	private Method getGetterForPerson(final String fieldName) {
-		Condition.notNull(fieldName);
-		Condition.greater(fieldName.length(), 1, "The name of the field has to consist of at least 2 characters.");
-		
-		try {
-			return Person.class.getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
-			        new Class<?>[0]);
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * @param getterMethod
-	 * @param person
-	 * @return
-	 */
-	@SuppressWarnings ("unused")
-	private Object getValueFromPerson(final Method getterMethod, final Person person) {
-		Condition.notNull(getterMethod);
-		Condition.notNull(person);
-		
-		try {
-			return getterMethod.invoke(person, new Object[0]);
-		} catch (IllegalArgumentException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (IllegalAccessException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (InvocationTargetException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	};
-	
-	/**
-	 * 
+	 * loads the all known entities from the persistent storage
 	 */
 	public void loadEntities() {
 		this.personManager.loadEntities();
@@ -108,13 +67,16 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	 * org.hibernate.type.Type[])
 	 */
 	@Override
-	public boolean onSave(final Object entity, final Serializable id, final Object[] state,
-	        final String[] propertyNames, final Type[] types) {
+	public boolean onSave(final Object entity,
+	                      final Serializable id,
+	                      final Object[] state,
+	                      final String[] propertyNames,
+	                      final Type[] types) {
 		if (entity instanceof PersonContainer) {
 			PersonContainer container = (PersonContainer) entity;
 			
-			if (Logger.logWarn()) {
-				Logger.warn("Intercepting save action for " + container);
+			if (Logger.logDebug()) {
+				Logger.debug("Intercepting save action for " + container);
 			}
 			
 			for (Person person : container.interceptorTargets()) {
@@ -123,17 +85,17 @@ public class HibernateInterceptor extends EmptyInterceptor {
 				// found collision?
 				if (!collisions.isEmpty()) {
 					if (collisions.size() == 1) {
-						Person reference = Person.merge(collisions.iterator().next(), person);
-						if (Logger.logWarn()) {
-							Logger.warn("Replacing person " + person + " by " + reference + ".");
+						Person collider = collisions.iterator().next();
+						Person reference = Person.merge(collider, person);
+						if (Logger.logDebug()) {
+							Logger.debug("Replacing person " + person + " by " + reference + ".");
 						}
-						container.replace(person, Person.merge(reference, person));
-						if (Logger.logWarn()) {
-							Logger.warn("from " + person + ".");
-						}
+						
+						container.replace(person, reference);
+						person = reference;
 					} else {
-						if (Logger.logWarn()) {
-							Logger.warn("Performing merge on " + person + " due to collisions with "
+						if (Logger.logDebug()) {
+							Logger.debug("Performing merge on " + person + " due to collisions with "
 							        + JavaUtils.collectionToString(collisions));
 						}
 						// merge
@@ -141,92 +103,131 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						int i = 0;
 						
 						// find the person with the most references
+						//
+						List<PersonContainer> updatableTargets = new LinkedList<PersonContainer>();
+						rehash();
 						for (Person collider : collisions) {
+							Condition.containsKey(this.remap, collider,
+							                      "Requesting remap for unknown collider. This should not happen.");
+							
 							if (this.remap.get(collider).size() > i) {
 								keeper = collider;
 								i = this.remap.get(collider).size();
 							}
+							
+							updatableTargets.addAll(this.remap.get(collider));
 						}
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Keeping " + keeper + " due to least references ("
-							        + this.remap.get(keeper).size());
+						if (Logger.logDebug()) {
+							Logger.debug("Keeping " + keeper + " due to most references ("
+							        + this.remap.get(keeper).size() + ")");
 						}
 						
 						collisions.remove(keeper);
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
-						}
-						Person.merge(keeper, collisions);
-						if (Logger.logWarn()) {
-							Logger.warn("Merging " + keeper + " with " + person + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Merging " + keeper + " with " + person + ".");
 						}
 						Person.merge(keeper, person);
 						
-						this.hibernateUtil.beginTransaction();
+						if (Logger.logDebug()) {
+							Logger.debug("Merging " + keeper + " with " + JavaUtils.collectionToString(collisions));
+						}
+						Person.merge(keeper, collisions);
+						
+						// this.hibernateUtil.beginTransaction();
 						for (Person collider : collisions) {
-							if (Logger.logWarn()) {
-								Logger.warn("Deleting collision " + collider + ".");
+							if (Logger.logDebug()) {
+								Logger.debug("Deleting collision " + collider + ".");
 							}
 							this.personManager.delete(collider);
+							this.remap.remove(collider);
 							this.hibernateUtil.delete(collider);
 						}
-						if (Logger.logWarn()) {
-							Logger.warn("Saving merged person " + keeper + ".");
+						if (Logger.logDebug()) {
+							Logger.debug("Saving merged person " + keeper + ".");
 						}
 						this.hibernateUtil.save(keeper);
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Performing replace on known referencing entities of collisions.");
+						if (Logger.logDebug()) {
+							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
-						for (PersonContainer tmpContainer : this.remap.get(keeper)) {
+						container.replace(person, keeper);
+						person = keeper;
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Performing replace on known referencing entities of collisions.");
+						}
+						
+						rehash();
+						for (PersonContainer tmpContainer : updatableTargets) {
 							for (Person tmpPerson : tmpContainer.interceptorTargets()) {
 								if (tmpPerson.matches(keeper)) {
-									if (Logger.logWarn()) {
-										Logger.warn("Replacing " + tmpPerson + " by " + keeper);
+									if (Logger.logDebug()) {
+										Logger.debug("Replacing " + tmpPerson + " by " + keeper);
 									}
 									tmpContainer.replace(tmpPerson, keeper);
 								}
 							}
-							if (Logger.logWarn()) {
-								Logger.warn("Updating referencing entity.");
+							if (Logger.logDebug()) {
+								Logger.debug("Updating referencing entity.");
 							}
 							this.hibernateUtil.update(tmpContainer);
 						}
-						if (Logger.logWarn()) {
-							Logger.warn("Committing to database.");
+						if (Logger.logDebug()) {
+							Logger.debug("Committing to database.");
 						}
-						this.hibernateUtil.commitTransaction();
 						
-						if (Logger.logWarn()) {
-							Logger.warn("Replacing person " + person + " by " + keeper + ".");
-						}
-						container.replace(person, keeper);
+						// this.hibernateUtil.commitTransaction();
 					}
 				} else {
 					// new Person
-					if (Logger.logWarn()) {
-						Logger.warn("Adding new person " + person + ".");
+					if (Logger.logDebug()) {
+						Logger.debug("Adding new person " + person + ".");
 					}
 					this.personManager.add(person);
 				}
 				
+				rehash();
 				if (!this.remap.containsKey(person)) {
-					if (Logger.logWarn()) {
-						Logger.warn("Creating new mapping for person " + person + ".");
+					for (Person p : this.remap.keySet()) {
+						if (p.hashCode() == person.hashCode()) {
+							System.err.println("ERROR: " + p.hashCode());
+						}
 					}
-					this.remap.put(person, new LinkedList<PersonContainer>());
+					if (Logger.logDebug()) {
+						Logger.debug("Creating new mapping for person " + person + ".");
+					}
+					this.remap.put(person, new HashSet<PersonContainer>());
 				}
 				
-				if (Logger.logWarn()) {
-					Logger.warn("Adding reference on person " + person + " from " + container + " to remap cache.");
+				if (Logger.logDebug()) {
+					Logger.debug("Adding reference on person " + person + " from " + container + " to remap cache.");
 				}
-				this.remap.get(person).add(container);
+				boolean add = this.remap.get(person).add(container);
+				if (!add) {
+					if (Logger.logTrace()) {
+						Logger.trace(container + " already known: "
+						        + JavaUtils.collectionToString(this.remap.get(person)));
+					}
+				}
 			}
 		}
 		
-		return super.onSave(entity, id, state, propertyNames, types);
+		if (this.previousInterceptor == null) {
+			return super.onSave(entity, id, state, propertyNames, types);
+		} else {
+			return this.previousInterceptor.onSave(entity, id, state, propertyNames, types);
+		}
+	}
+	
+	/**
+	 * Refreshes Hashmap due to modifications of the keys...
+	 */
+	private void rehash() {
+		HashMap<Person, HashSet<PersonContainer>> remapNew = new HashMap<Person, HashSet<PersonContainer>>();
+		remapNew.putAll(this.remap);
+		this.remap = remapNew;
 	}
 	
 }
