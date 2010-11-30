@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
  * 
  */
 @Retention (RetentionPolicy.RUNTIME)
-@Target (value = { ElementType.METHOD })
-public @interface Return {
+@Target (value = { ElementType.ANNOTATION_TYPE })
+public @interface ConditionPattern {
 	
-	ParameterConditions[] checks();
+	String value();
 }

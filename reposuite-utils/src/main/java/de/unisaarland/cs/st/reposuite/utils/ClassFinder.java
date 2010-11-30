@@ -25,6 +25,27 @@ import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException
  */
 public class ClassFinder {
 	
+	public static Collection<Class<?>> getAllClasses(final Package pakkage) throws ClassNotFoundException,
+	                                                                       WrongClassSearchMethodException,
+	                                                                       IOException {
+		Condition.notNull(pakkage);
+		
+		String classPaths = System.getProperty("java.class.path");
+		String[] split = classPaths.split(System.getProperty("path.separator"));
+		
+		Collection<Class<?>> discoveredClasses = new HashSet<Class<?>>();
+		String thePackage = pakkage.getName();
+		
+		for (String classPath : split) {
+			if (classPath.endsWith(".jar")) {
+				discoveredClasses.addAll(getClassesFromJarFile(thePackage, classPath));
+			} else {
+				discoveredClasses.addAll(getClassesFromClasspath(thePackage));
+			}
+		}
+		return discoveredClasses;
+	}
+	
 	/**
 	 * This class loads all classes in the specified package that can be found
 	 * in the classpath and checks if they are derived from the supplied super
@@ -41,8 +62,10 @@ public class ClassFinder {
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesExtendingClass(final Package pakkage, final Class<?> superClass)
-	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
+	public static Collection<Class<?>> getClassesExtendingClass(final Package pakkage,
+	                                                            final Class<?> superClass) throws ClassNotFoundException,
+	                                                                                      WrongClassSearchMethodException,
+	                                                                                      IOException {
 		Condition.notNull(pakkage);
 		Condition.notNull(superClass);
 		
@@ -98,7 +121,8 @@ public class ClassFinder {
 	 * @throws IOException
 	 */
 	public static Collection<Class<?>> getClassesFromClasspath(final String packageName) throws ClassNotFoundException,
-	        WrongClassSearchMethodException, IOException {
+	                                                                                    WrongClassSearchMethodException,
+	                                                                                    IOException {
 		// This will hold a list of directories matching the packageName. There
 		// may
 		// be more than one if a package is split over multiple jars/paths
@@ -150,7 +174,7 @@ public class ClassFinder {
 						// removes the .class extension
 						int index = directory.getAbsolutePath().indexOf(path);
 						String absolutePackageName = directory.getAbsolutePath().substring(index)
-						        .replaceAll(FileUtils.fileSeparator, ".");
+						                                      .replaceAll(FileUtils.fileSeparator, ".");
 						classes.add(Class.forName(absolutePackageName + '.' + file.substring(0, file.length() - 6)));
 					}
 				}
@@ -173,8 +197,10 @@ public class ClassFinder {
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesFromJarFile(final String packageName, final String filePath)
-	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
+	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
+	                                                         final String filePath) throws ClassNotFoundException,
+	                                                                               WrongClassSearchMethodException,
+	                                                                               IOException {
 		// String filePath =
 		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		
@@ -198,8 +224,8 @@ public class ClassFinder {
 			        && current.getName().substring(0, path.length()).equals(path)
 			        && current.getName().endsWith(".class")) {
 				classes.add(Class.forName(current.getName()
-				        .replaceAll(StringEscapeUtils.escapeJava(System.getProperty("file.separator")), ".")
-				        .replace(".class", "")));
+				                                 .replaceAll(StringEscapeUtils.escapeJava(System.getProperty("file.separator")),
+				                                             ".").replace(".class", "")));
 			}
 		}
 		
@@ -218,8 +244,10 @@ public class ClassFinder {
 	 * @throws IOException
 	 * @throws WrongClassSearchMethodException
 	 */
-	public static Collection<Class<?>> getClassesOfInterface(final Package pakkage, final Class<?> theInterface)
-	        throws ClassNotFoundException, WrongClassSearchMethodException, IOException {
+	public static Collection<Class<?>> getClassesOfInterface(final Package pakkage,
+	                                                         final Class<?> theInterface) throws ClassNotFoundException,
+	                                                                                     WrongClassSearchMethodException,
+	                                                                                     IOException {
 		Condition.notNull(pakkage);
 		Condition.notNull(theInterface);
 		

@@ -3539,25 +3539,6 @@ public final class Condition {
 	 * @param value
 	 * @param min
 	 * @param max
-	 * @param message
-	 */
-	public static final void range(final int value,
-	                               final int min,
-	                               final int max,
-	                               final String message) {
-		assert (value >= min) && (value <= max) : getCallerString()
-		        + formatter.format("Argument `%s` is not in specified integer range (%s..%s). Violated assertion: %s",
-		                           value, min == Integer.MIN_VALUE
-		                                                          ? "Integer.MIN_VALUE"
-		                                                          : min, max == Integer.MAX_VALUE
-		                                                                                         ? "Integer.MAX_VALUE"
-		                                                                                         : max, message);
-	}
-	
-	/**
-	 * @param value
-	 * @param min
-	 * @param max
 	 * @param formatString
 	 * @param arguments
 	 */
@@ -3574,6 +3555,25 @@ public final class Condition {
 		                                                                                         ? "Integer.MAX_VALUE"
 		                                                                                         : max,
 		                           formatter.format(formatString, arguments));
+	}
+	
+	/**
+	 * @param value
+	 * @param min
+	 * @param max
+	 * @param message
+	 */
+	public static final void range(final Integer value,
+	                               final int min,
+	                               final int max,
+	                               final String message) {
+		assert (value >= min) && (value <= max) : getCallerString()
+		        + formatter.format("Argument `%s` is not in specified integer range (%s..%s). Violated assertion: %s",
+		                           value, min == Integer.MIN_VALUE
+		                                                          ? "Integer.MIN_VALUE"
+		                                                          : min, max == Integer.MAX_VALUE
+		                                                                                         ? "Integer.MAX_VALUE"
+		                                                                                         : max, message);
 	}
 	
 	/**
