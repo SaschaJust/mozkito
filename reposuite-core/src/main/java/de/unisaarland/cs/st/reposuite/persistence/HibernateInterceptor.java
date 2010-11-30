@@ -204,7 +204,13 @@ public class HibernateInterceptor extends EmptyInterceptor {
 				if (Logger.logDebug()) {
 					Logger.debug("Adding reference on person " + person + " from " + container + " to remap cache.");
 				}
-				this.remap.get(person).add(container);
+				boolean add = this.remap.get(person).add(container);
+				if (!add) {
+					if (Logger.logTrace()) {
+						Logger.trace(container + " already known: "
+						        + JavaUtils.collectionToString(this.remap.get(person)));
+					}
+				}
 			}
 		}
 		

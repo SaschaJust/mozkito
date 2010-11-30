@@ -63,32 +63,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof PersonContainer)) {
-			return false;
-		}
-		PersonContainer other = (PersonContainer) obj;
-		if (this.map == null) {
-			if (other.map != null) {
-				return false;
-			}
-		} else if (!this.map.equals(other.map)) {
-			return false;
-		}
-		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.persistence.Intercepted#get(java.lang.
 	 * String)
@@ -122,20 +96,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Transient
 	public Collection<Person> getPersons() {
 		return this.map.values();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.map == null)
-		                                             ? 0
-		                                             : this.map.hashCode());
-		return result;
 	}
 	
 	/*

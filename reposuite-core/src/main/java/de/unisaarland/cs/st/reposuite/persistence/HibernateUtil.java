@@ -72,8 +72,12 @@ public class HibernateUtil {
 	 * @param driver
 	 * @throws HibernateException
 	 */
-	public static void createSessionFactory(final String host, final String database, final String user,
-	        final String password, final String type, final String driver) throws HibernateException {
+	public static void createSessionFactory(final String host,
+	                                        final String database,
+	                                        final String user,
+	                                        final String password,
+	                                        final String type,
+	                                        final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
 			        + "?useUnicode=true&characterEncoding=UTF-8";
@@ -205,21 +209,21 @@ public class HibernateUtil {
 	 */
 	public void saveOrUpdate(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
-		if (Logger.logWarn()) {
-			Logger.warn("Persisting request for " + object);
+		if (Logger.logDebug()) {
+			Logger.debug("Persisting request for " + object);
 		}
 		
 		if (saveFirst != null) {
-			if (Logger.logWarn()) {
-				Logger.warn("Save first triggered...");
+			if (Logger.logDebug()) {
+				Logger.debug("Save first triggered...");
 			}
 			for (Annotated innerObject : saveFirst) {
 				saveOrUpdate(innerObject);
 			}
 		}
 		
-		if (Logger.logWarn()) {
-			Logger.warn("Persisting " + object);
+		if (Logger.logDebug()) {
+			Logger.debug("Persisting " + object);
 		}
 		this.session.saveOrUpdate(object);
 	}

@@ -70,54 +70,16 @@ public class HibernateTest {
 	@SuppressWarnings ("serial")
 	@Test
 	public void testOrphanPerson() {
-		// Adding ||submitter|| --> ||Person [generatedId=0,
-		// usernames=[yokolet], emailAddresses=[], fullnames=[Yoko Harada],
-		// transactions=[], hashcode=-310434987]|| from setSubmitter
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[headius],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=795341638]|| from setAuthor
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[yokolet],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=-1001108160]|| from setAuthor
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[yokolet],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=-1001108160]|| from setAuthor
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[headius],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=795341638]|| from setAuthor
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[yokolet],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=-1001108160]|| from setAuthor
-		// Adding ||resolver|| --> ||Person [generatedId=0, usernames=[yokolet],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=-1001108160]|| from setResolver
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[yokolet],
-		// emailAddresses=[], fullnames=[], transactions=[],
-		// hashcode=-1001108160]|| from setAuthor
-		// Adding ||author|| --> ||Person [generatedId=0, usernames=[],
-		// emailAddresses=[], fullnames=[Yoko Harada], transactions=[],
-		// hashcode=690702964]|| from setAuthor
-		// Adding ||assignedTo|| --> ||Person [generatedId=0, usernames=[enebo],
-		// emailAddresses=[], fullnames=[Thomas E Enebo], transactions=[],
-		// hashcode=-1107881130]|| from setAssignedTo
 		try {
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			
 			Person submitter = new Person("yokolet", "Yoko Harada", null);
-			Person resolver = new Person("yokolet", null, null);
-			Person assignedTo = new Person("enebo", "thomas E Enebo", null);
 			Person historyAuthor1 = new Person("yokolet", null, null);
 			Person historyAuthor2 = new Person(null, "Yoko Harada", null);
-			Person commentAuthor1 = new Person("headius", null, null);
 			Person commentAuthor2 = new Person("yokolet", null, null);
-			Person commentAuthor3 = new Person("yokolet", null, null);
-			Person commentAuthor4 = new Person("headius", null, null);
-			Person commentAuthor5 = new Person("yokolet", null, null);
 			
 			Report report = new Report();
 			report.setSubmitter(submitter);
-			report.setAssignedTo(assignedTo);
-			report.setResolver(resolver);
 			
 			report.addHistoryElement(new HistoryElement(historyAuthor1, new DateTime(),
 			                                            new HashMap<String, Tuple<?, ?>>() {
@@ -136,11 +98,7 @@ public class HibernateTest {
 				                                            }
 			                                            }));
 			
-			report.addComment(new Comment(1, commentAuthor1, new DateTime(), "comment1"));
 			report.addComment(new Comment(2, commentAuthor2, new DateTime(), "comment2"));
-			report.addComment(new Comment(3, commentAuthor3, new DateTime(), "comment3"));
-			report.addComment(new Comment(4, commentAuthor4, new DateTime(), "comment4"));
-			report.addComment(new Comment(5, commentAuthor5, new DateTime(), "comment5"));
 			
 			hibernateUtil.beginTransaction();
 			hibernateUtil.save(report);

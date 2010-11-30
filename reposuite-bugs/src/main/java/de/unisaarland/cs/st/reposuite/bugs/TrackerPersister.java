@@ -54,7 +54,6 @@ public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 				if (++i % 15 == 0) {
 					this.hibernateUtil.commitTransaction();
 					this.hibernateUtil.beginTransaction();
-					throw new NullPointerException();
 				}
 				
 				this.hibernateUtil.saveOrUpdate(bugReport);
