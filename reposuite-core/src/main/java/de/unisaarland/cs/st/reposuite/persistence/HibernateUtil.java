@@ -1,5 +1,8 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,10 +11,12 @@ import java.util.Properties;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.jdbc.Work;
 
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
@@ -26,7 +31,22 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateUtil {
 	
+	private class QueryWork implements Work{
+		private final String query;
+		
+		public QueryWork(final String q) {
+			this.query = q;
+		}
+		
+		@Override
+		public void execute(final Connection connection) throws SQLException {
+			Statement st = connection.createStatement();
+			st.execute(this.query);
+		}
+	}
 	private static SessionFactory             sessionFactory;
+	private static String                     type;
+	
 	private static Map<Thread, HibernateUtil> instances = new HashMap<Thread, HibernateUtil>();
 	
 	/**
@@ -56,6 +76,16 @@ public class HibernateUtil {
 			}
 			
 			sessionFactory = annotationConfiguration.buildSessionFactory();
+			String url = properties.get("hibernate.connection.url").toString();
+			String[] split = url.split(":");
+			if (split.length < 3) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not determine connection type. Set to `<unknown>`.");
+				}
+				type = "<unknown>";
+			} else {
+				type = split[1];
+			}
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn("Session factory already exists. Skipping creating.");
@@ -73,14 +103,14 @@ public class HibernateUtil {
 	 * @throws HibernateException
 	 */
 	public static void createSessionFactory(final String host,
-	                                        final String database,
-	                                        final String user,
-	                                        final String password,
-	                                        final String type,
-	                                        final String driver) throws HibernateException {
+			final String database,
+			final String user,
+			final String password,
+			final String type,
+			final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			        + "?useUnicode=true&characterEncoding=UTF-8";
+			+ "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
@@ -117,6 +147,10 @@ public class HibernateUtil {
 		}
 	}
 	
+	public static String getType(){
+		return type;
+	}
+	
 	/**
 	 * 
 	 */
@@ -130,8 +164,8 @@ public class HibernateUtil {
 			sessionFactory = null;
 		}
 	}
-	
 	private final Session session;
+	
 	private Transaction   transaction;
 	
 	/**
@@ -181,10 +215,48 @@ public class HibernateUtil {
 	}
 	
 	/**
+	 * Creates the query.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param clazz
+	 *            the clazz
+	 * @return the criteria
+	 */
+	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
+		Condition.notNull(query);
+		Condition.notNull(clazz);
+		
+		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
+			SQLQuery hibernateQuery = this.session.createSQLQuery(query);
+			if (hibernateQuery == null) {
+				return null;
+			}
+			return hibernateQuery.addEntity(clazz);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * @param object
 	 */
 	public void delete(final Annotated object) {
 		this.session.delete(object);
+	}
+	
+	/**
+	 * Executes the query.
+	 * 
+	 * @param query
+	 *            the query
+	 * @return the criteria
+	 * @throws SQLException
+	 * @throws HibernateException
+	 */
+	public void executeQuery(final String query) throws HibernateException, SQLException {
+		Condition.notNull(query);
+		this.session.doWork(new QueryWork(query));
 	}
 	
 	/**
