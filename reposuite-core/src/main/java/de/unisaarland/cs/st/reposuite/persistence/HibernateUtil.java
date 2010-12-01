@@ -223,6 +223,20 @@ public class HibernateUtil {
 	 *            the clazz
 	 * @return the criteria
 	 */
+	public SQLQuery createSQLQuery(final String query) {
+		Condition.notNull(query);
+		return this.session.createSQLQuery(query);
+	}
+	
+	/**
+	 * Creates the query.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param clazz
+	 *            the clazz
+	 * @return the criteria
+	 */
 	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
 		Condition.notNull(query);
 		Condition.notNull(clazz);
