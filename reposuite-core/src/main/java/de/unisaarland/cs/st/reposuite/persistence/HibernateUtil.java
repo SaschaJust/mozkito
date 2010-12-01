@@ -52,7 +52,7 @@ public class HibernateUtil {
 	/**
 	 * @param properties
 	 */
-	protected static void createSessionFactory(final Properties properties) {
+	public static void createSessionFactory(final Properties properties) {
 		if (sessionFactory == null) {
 			AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 			annotationConfiguration.addProperties(properties);
