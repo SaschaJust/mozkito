@@ -1,25 +1,20 @@
 package de.unisaarland.cs.st.reposuite.changecouplings.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.persistence.Id;
 
-import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-
-
-public class ChangeCouplingRule implements Annotated, Comparable<ChangeCouplingRule> {
+public class ChangeCouplingRule implements Comparable<ChangeCouplingRule> {
 	
-	private Integer[]         premise;
-	private Integer           implication;
-	private Integer           support;
-	private Float             confidence;
+	private final Integer[]         premise;
+	private final Integer           implication;
+	private final Integer           support;
+	private final Float             confidence;
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2595605444114699401L;
-	
-	private ChangeCouplingRule() {
-		
+	private ChangeCouplingRule(final Integer[] premise, final Integer implication, final Integer support,
+			final Float confidence) {
+		this.premise = premise;
+		this.implication = implication;
+		this.support = support;
+		this.confidence = confidence;
 	}
 	
 	@Override
@@ -47,6 +42,7 @@ public class ChangeCouplingRule implements Annotated, Comparable<ChangeCouplingR
 		return this.implication;
 	}
 	
+	@Id
 	public Integer[] getPremise() {
 		return this.premise;
 	}
@@ -54,30 +50,4 @@ public class ChangeCouplingRule implements Annotated, Comparable<ChangeCouplingR
 	public Integer getSupport() {
 		return this.support;
 	}
-	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return new ArrayList<Annotated>(0);
-	}
-	
-	@SuppressWarnings ("unused")
-	private void setConfidence(final Float confidence) {
-		this.confidence = confidence;
-	}
-	
-	@SuppressWarnings ("unused")
-	private void setImplication(final Integer implication) {
-		this.implication = implication;
-	}
-	
-	@SuppressWarnings ("unused")
-	private void setPremise(final Integer[] premise) {
-		this.premise = premise;
-	}
-	
-	@SuppressWarnings ("unused")
-	private void setSupport(final Integer support) {
-		this.support = support;
-	}
-	
 }

@@ -1,12 +1,6 @@
 package de.unisaarland.cs.st.reposuite.changecouplings;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -21,10 +15,8 @@ import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
-import de.unisaarland.cs.st.reposuite.rcs.RepositoryTest;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
@@ -62,37 +54,49 @@ public class ChangeCouplingRuleFactory {
 				throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases!");
 			}
 			
-			URL sqlFunctionURL = RepositoryTest.class.getResource(System.getProperty("file.separator")
-					+ "change_couplings.psql");
-			File sqlFile = new File(sqlFunctionURL.toURI());
-			StringBuilder sql = new StringBuilder();
-			BufferedReader reader = new BufferedReader(new FileReader(sqlFile));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sql.append(line);
-				sql.append(FileUtils.lineSeparator);
-			}
-			reader.close();
-			hibernateUtil.executeQuery("CREATE LANGUAGE plpython2u");
-			hibernateUtil.executeQuery(sql.toString());
+			// URL sqlFunctionURL =
+			// ChangeCouplingRuleFactory.class.getResource(System
+			// .getProperty("file.separator")
+			// + "change_couplings.psql");
+			// Condition.notNull(sqlFunctionURL);
+			//
+			// File sqlFile = new File(sqlFunctionURL.toURI());
+			// Condition.notNull(sqlFile);
+			//
+			// StringBuilder sql = new StringBuilder();
+			// BufferedReader reader = new BufferedReader(new
+			// FileReader(sqlFile));
+			// String line = null;
+			// while ((line = reader.readLine()) != null) {
+			// sql.append(line);
+			// sql.append(FileUtils.lineSeparator);
+			// }
+			// reader.close();
+			// // hibernateUtil.executeQuery("CREATE LANGUAGE plpython2u");
+			// hibernateUtil.executeQuery(sql.toString());
 			String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
+			tablename = "reposuite_cc_" + tablename;
 			
-			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "','" + tablename
-					+ "')");
-			SQLQuery ccRulesQuery = hibernateUtil.createSQLQuery("SELECT premise, implication, support, confidence FROM " + tablename,
-					ChangeCouplingRule.class);
-			@SuppressWarnings ("rawtypes") List list = ccRulesQuery.list();
-			if (list == null) {
-				return null;
-			}
-			result.addAll(list);
+			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "'::varchar(40),'"
+					+ tablename + "'::varchar)");
+			SQLQuery ccRulesQuery = hibernateUtil
+			.createSQLQuery("SELECT premise, implication, support, confidence FROM " + tablename);
+			List list = ccRulesQuery.list();
+			// if (list == null) {
+			// return null;
+			// }
+			// for (ChangeCouplingRule rule : list) {
+			// if ((rule.getSupport() >= minSupport) && (rule.getConfidence() >
+			// minConfidence)) {
+			// result.add(rule);
+			// }
+			// }
+			
+			hibernateUtil.executeQuery("DROP TABLE " + tablename);
+			
 			Collections.sort(result);
 			return result;
 		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (URISyntaxException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		} catch (HibernateException e) {
 			throw new UnrecoverableError(e.getMessage(), e);

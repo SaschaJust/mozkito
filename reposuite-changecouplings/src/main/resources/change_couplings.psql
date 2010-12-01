@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), 
 	        sub.append(s[j])
 	    subsets.append(sub)
 	  return subsets
-	
+		
 	def cc_support(s,ctime):
 	  args = list(s)
 	  counter = 1
@@ -38,6 +38,8 @@ CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), 
 	  
 	
 	def cc_confidence(support, change_freq):
+	  if change_freq == 0:
+	    return 0
 	  return float(support)/float(change_freq)
 	
 	
@@ -91,6 +93,3 @@ CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), 
 	  
 	return 1
 $$ LANGUAGE plpython2u;
-
-
-select reposuite_changecouplings('cccee89bfaae3a3760338a826fd15b3ce92217d7','blablubb');
