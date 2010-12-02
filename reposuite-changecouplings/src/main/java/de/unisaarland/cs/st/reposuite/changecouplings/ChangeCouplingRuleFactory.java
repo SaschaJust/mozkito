@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.changecouplings;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static Collection<ChangeCouplingRule> getChangeCouplingRules(final RCSTransaction transaction,
+	public static List<ChangeCouplingRule> getChangeCouplingRules(final RCSTransaction transaction,
 			final int minSupport, final int minConfidence) {
 		
 		Condition.notNull(transaction);
@@ -77,20 +76,27 @@ public class ChangeCouplingRuleFactory {
 			String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
 			tablename = "reposuite_cc_" + tablename;
 			
-			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "'::varchar(40),'"
-					+ tablename + "'::varchar)");
+			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "','" + tablename
+					+ "')");
 			SQLQuery ccRulesQuery = hibernateUtil
-			.createSQLQuery("SELECT premise, implication, support, confidence FROM " + tablename);
-			List list = ccRulesQuery.list();
-			// if (list == null) {
-			// return null;
-			// }
-			// for (ChangeCouplingRule rule : list) {
-			// if ((rule.getSupport() >= minSupport) && (rule.getConfidence() >
-			// minConfidence)) {
-			// result.add(rule);
-			// }
-			// }
+			.createSQLQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
+					+ tablename);
+			List<Object[]> list = ccRulesQuery.list();
+			if (list == null) {
+				return null;
+			}
+			for (Object[] row : list) {
+				int support = (Integer) row[2];
+				double confidence = (Double) row[3];
+				if ((support >= minSupport) && (confidence >= minConfidence)) {
+					String[] premises = row[0].toString().split(",");
+					Integer[] premise = new Integer[premises.length];
+					for (int i = 0; i < premises.length; ++i) {
+						premise[i] = Integer.valueOf(premises[i]);
+					}
+					result.add(new ChangeCouplingRule(premise, (Integer) row[1], support, confidence));
+				}
+			}
 			
 			hibernateUtil.executeQuery("DROP TABLE " + tablename);
 			

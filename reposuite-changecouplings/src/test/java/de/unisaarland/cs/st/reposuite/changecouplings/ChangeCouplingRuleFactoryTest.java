@@ -4,7 +4,7 @@ package de.unisaarland.cs.st.reposuite.changecouplings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
@@ -67,56 +67,100 @@ public class ChangeCouplingRuleFactoryTest {
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			hibernateUtil.beginTransaction();
 			
+			// ###transaction 1
+			
 			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, null);
 			RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 			fileA.assignTransaction(rcsTransaction, "A.java");
-			RCSRevision revision = new RCSRevision(rcsTransaction, fileA, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction, fileA, ChangeType.Added, null);
 			
 			RCSFile fileB = fileManager.createFile("B.java", rcsTransaction);
 			fileB.assignTransaction(rcsTransaction, "B.java");
-			RCSRevision revision2 = new RCSRevision(rcsTransaction, fileB, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction, fileB, ChangeType.Added, null);
+			
+			RCSFile fileC = fileManager.createFile("C.java", rcsTransaction);
+			fileC.assignTransaction(rcsTransaction, "C.java");
+			new RCSRevision(rcsTransaction, fileC, ChangeType.Added, null);
+			
 			hibernateUtil.saveOrUpdate(rcsTransaction);
 			
-			RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", new DateTime(), person, rcsTransaction);
-			fileA.assignTransaction(rcsTransaction2, "A.java");
-			RCSRevision revision3 = new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified, rcsTransaction);
+			// ### transaction 2
 			
-			RCSFile fileC = fileManager.createFile("C.java", rcsTransaction2);
-			fileC.assignTransaction(rcsTransaction2, "C.java");
-			RCSRevision revision4 = new RCSRevision(rcsTransaction2, fileC, ChangeType.Added, null);
+			RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", new DateTime(), person, rcsTransaction);
+			new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified, rcsTransaction);
+			new RCSRevision(rcsTransaction2, fileB, ChangeType.Added, null);
+			RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
+			fileC.assignTransaction(rcsTransaction2, "D.java");
+			new RCSRevision(rcsTransaction2, fileD, ChangeType.Added, null);
 			hibernateUtil.saveOrUpdate(rcsTransaction2);
 			
+			// ### transaction 3
+			
 			RCSTransaction rcsTransaction3 = new RCSTransaction("2", "", new DateTime(), person, rcsTransaction2);
-			fileA.assignTransaction(rcsTransaction3, "A.java");
-			RCSRevision revision5 = new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified, rcsTransaction2);
+			new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified, rcsTransaction2);
 			
 			fileC.assignTransaction(rcsTransaction3, "C.java");
-			RCSRevision revision6 = new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified, rcsTransaction2);
-			
-			RCSFile fileD = fileManager.createFile("D.java", rcsTransaction3);
-			fileD.assignTransaction(rcsTransaction3, "D.java");
-			RCSRevision revision7 = new RCSRevision(rcsTransaction3, fileD, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified, rcsTransaction2);
+			new RCSRevision(rcsTransaction3, fileB, ChangeType.Added, null);
 			hibernateUtil.saveOrUpdate(rcsTransaction3);
 			
+			// ### transaction 4
+			
 			RCSTransaction rcsTransaction4 = new RCSTransaction("3", "", new DateTime(), person, rcsTransaction3);
-			fileA.assignTransaction(rcsTransaction4, "A.java");
-			RCSRevision revision8 = new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified, rcsTransaction3);
-			
-			fileC.assignTransaction(rcsTransaction4, "C.java");
-			RCSRevision revision9 = new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified, rcsTransaction3);
-			
-			fileD.assignTransaction(rcsTransaction4, "D.java");
-			RCSRevision revision10 = new RCSRevision(rcsTransaction4, fileD, ChangeType.Modified, rcsTransaction3);
+			new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified, rcsTransaction3);
+			new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified, rcsTransaction3);
+			new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified, rcsTransaction3);
 			hibernateUtil.saveOrUpdate(rcsTransaction4);
 			
 			hibernateUtil.commitTransaction();
 			
-			Collection<ChangeCouplingRule> changeCouplingRules = ChangeCouplingRuleFactory.getChangeCouplingRules(
+			List<ChangeCouplingRule> changeCouplingRules = ChangeCouplingRuleFactory.getChangeCouplingRules(
 					rcsTransaction3, 1, 0);
-			assertEquals(1, changeCouplingRules.size());
+			assertEquals(8, changeCouplingRules.size());
+			ChangeCouplingRule rule = changeCouplingRules.get(0);
+			assertEquals(1, rule.getPremise().length);
+			assertEquals(2, rule.getPremise()[0].intValue());
+			assertEquals(1, rule.getImplication().intValue());
+			assertEquals(2, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
 			
-			hibernateUtil.shutdown();
+			rule = changeCouplingRules.get(1);
+			assertEquals(1, rule.getPremise().length);
+			assertEquals(1, rule.getPremise()[0].intValue());
+			assertEquals(2, rule.getImplication().intValue());
+			assertEquals(2, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
 			
+			rule = changeCouplingRules.get(2);
+			assertEquals(2, rule.getPremise().length);
+			assertEquals(2, rule.getPremise()[0].intValue());
+			assertEquals(3, rule.getPremise()[1].intValue());
+			assertEquals(1, rule.getImplication().intValue());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(3);
+			assertEquals(1, rule.getPremise().length);
+			assertEquals(3, rule.getPremise()[0].intValue());
+			assertEquals(1, rule.getImplication().intValue());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(4);
+			assertEquals(1, rule.getPremise().length);
+			assertEquals(3, rule.getPremise()[0].intValue());
+			assertEquals(2, rule.getImplication().intValue());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(5);
+			assertEquals(2, rule.getPremise().length);
+			assertEquals(1, rule.getPremise()[0].intValue());
+			assertEquals(2, rule.getPremise()[1].intValue());
+			assertEquals(3, rule.getImplication().intValue());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(.5, rule.getConfidence().doubleValue(), 0);
+
 		} catch (UninitializedDatabaseException e) {
 			e.printStackTrace();
 			fail();
