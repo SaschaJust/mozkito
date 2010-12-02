@@ -417,11 +417,11 @@ public class Person implements Annotated {
 		builder.append(", fullnames=");
 		builder.append(this.fullnames);
 		builder.append(", transactions=");
-		builder.append(this.transactions);
+		builder.append(this.transactions.size());
 		builder.append(", hashcode=");
 		builder.append(hashCode());
 		builder.append("]");
 		return builder.toString();
 	}
-
+	
 }
