@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
@@ -24,9 +24,9 @@ class GitLogParser {
 	// protected static DateTimeFormatter gitLogDateFormat =
 	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex gitLogDateFormatRegex = new Regex(
-	                                                     "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
+	"({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
 	protected static Regex regex                 = new Regex(
-	                                                     "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
 	/**
@@ -67,19 +67,15 @@ class GitLogParser {
 				}
 				String[] commitParts = line.split(" ");
 				if (commitParts.length != 2) {
-					if (Logger.logError()) {
-						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
-					}
-					return null;
+					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
+							+ ". Abort parsing.");
 				}
 				currentID = commitParts[1].trim();
 			} else if (line.startsWith("Author:")) {
 				String[] authorParts = line.split(":");
 				if (authorParts.length != 2) {
-					if (Logger.logError()) {
-						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
-					}
-					return null;
+					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
+							+ ". Abort parsing.");
 				}
 				String username = null;
 				String fullname = null;
@@ -99,10 +95,8 @@ class GitLogParser {
 			} else if (line.startsWith("AuthorDate:")) {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
-					if (Logger.logError()) {
-						Logger.error("Found error in git log file: line " + lineCounter + ". Abort parsing.");
-					}
-					return null;
+					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
+					        + ". Abort parsing.");
 				}
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {
