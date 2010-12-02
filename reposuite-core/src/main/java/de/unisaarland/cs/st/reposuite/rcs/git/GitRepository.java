@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
@@ -91,10 +92,7 @@ public class GitRepository extends Repository {
 			
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse git blame output!");
-				}
-				return null;
+				throw new UnrecoverableError("Could not parse git blame output!");
 			}
 			String fileName = lineParts[1];
 			String author = "<unknown>";
@@ -106,11 +104,9 @@ public class GitRepository extends Repository {
 				date = new DateTime(dtf.parseDateTime(regex.getGroup("date")));
 				lineContent = regex.getGroup("codeline");
 			} else {
-				if (Logger.logWarn()) {
-					Logger.error("Could not extract author and date info from log entry for revision `" + revision
-							+ "`");
-				}
-				return null;
+				throw new UnrecoverableError("Could not extract author and date info from log entry for revision `"
+						+ revision
+						+ "`");
 			}
 			
 			if (fileName.equals(filePath)) {
@@ -140,10 +136,7 @@ public class GitRepository extends Repository {
 		}
 		File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
-			}
-			return null;
+			throw new UnrecoverableError("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
 		}
 		return result;
 	}
@@ -161,19 +154,14 @@ public class GitRepository extends Repository {
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(destDir);
 			if (!this.cloneDir.exists()) {
-				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-							+ destDir + "`");
-					Logger.error("Used command: `git clone -n -q " + getUri().toString() + " " + destDir + "`");
-				}
-				return false;
+				throw new UnrecoverableError("Could not clone git repository `" + getUri().toString()
+				        + "` to directory `" + destDir + "`" + FileUtils.lineSeparator
+				        + "Used command: `git clone -n -q " + getUri().toString() + " " + destDir + "`");
 			}
 			try {
 				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
+				throw new UnrecoverableError(e.getMessage(),e);
 			}
 			return true;
 		}
@@ -255,12 +243,9 @@ public class GitRepository extends Repository {
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
-		String revString = revision + "^.." + revision;
-		if (revision.equals(this.getFirstRevisionId())) {
-			revString = revision;
-		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--pretty=format:%H", "--name-status", revString }, this.cloneDir, null, new HashMap<String, String>());
+				"--pretty=format:%H", "--name-status", "-n1", revision }, this.cloneDir, null,
+				new HashMap<String, String>());
 		
 		if (response.getFirst() != 0) {
 			return new HashMap<String, ChangeType>();
@@ -269,21 +254,17 @@ public class GitRepository extends Repository {
 		
 		// delete first line. Contains the SHA hash of the wanted transaction
 		if (lines.size() < 1) {
-			if (Logger.logError()) {
-				Logger.error("Error while parsing GIT log to unveil changed paths for revision `"
-						+ revision
-						+ "`: git reported zero lines output. Abort parsing. Used command: git log --pretty=format:%H --name-status "
-						+ revString);
-			}
-			return new HashMap<String, ChangeType>();
+			throw new UnrecoverableError(
+					"Error while parsing GIT log to unveil changed paths for revision `"
+					+ revision
+					+ "`: git reported zero lines output. Abort parsing. Used command: git log --pretty=format:%H --name-status -n1"
+					+ revision);
 		}
 		String removed = lines.remove(0);
 		if ((!revision.toUpperCase().equals("HEAD")) && (!removed.trim().equals(revision))) {
-			if (Logger.logError()) {
-				Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
-						+ "`: wrong revision outputed. Abort parsing.");
-			}
-			return new HashMap<String, ChangeType>();
+			throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
+					+ revision
+					+ "`: wrong revision outputed. Abort parsing.");
 		}
 		Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
@@ -294,12 +275,10 @@ public class GitRepository extends Repository {
 			line = line.replaceAll("\\s+", " ");
 			String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (Logger.logWarn()) {
-					Logger.warn("Error while parsing GIT log to unveil changed paths for revision `" + revision
-							+ "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
-							+ line);
-				}
-				return new HashMap<String, ChangeType>();
+				throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
+						+ revision
+						+ "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
+						+ line);
 			}
 			String type = lineParts[0];
 			String path = "/" + lineParts[1];
@@ -340,10 +319,7 @@ public class GitRepository extends Repository {
 				return null;
 			}
 			if (response.getSecond().isEmpty()) {
-				if (Logger.logError()) {
-					Logger.error("Command ` git --pretty=format:%H` did not produc any output!");
-				}
-				return null;
+				throw new UnrecoverableError("Command ` git --pretty=format:%H` did not produc any output!");
 			}
 			List<String> lines = response.getSecond();
 			return lines.get(lines.size() - 1).trim();
@@ -391,10 +367,7 @@ public class GitRepository extends Repository {
 				return null;
 			}
 			if (response.getSecond().isEmpty()) {
-				if (Logger.logError()) {
-					Logger.error("Command `git rev-parse master` did not produc any output!");
-				}
-				return null;
+				throw new UnrecoverableError("Command `git rev-parse master` did not produc any output!");
 			}
 			return response.getSecond().get(0).trim();
 		} else {
@@ -518,18 +491,12 @@ public class GitRepository extends Repository {
 		+ DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {
-			if (Logger.logError()) {
-				Logger.error("Failed to clone git repository!");
-				throw new RuntimeException();
-			}
+			throw new UnrecoverableError("Failed to clone git repository!");
 		}
 		
 		this.cloneDir = new File(gitName + FileUtils.fileSeparator + innerRepoPath);
 		if (!this.cloneDir.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
-				throw new RuntimeException();
-			}
+			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}
 		
 		if (startRevision == null) {
