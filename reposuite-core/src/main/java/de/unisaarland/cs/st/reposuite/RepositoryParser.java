@@ -37,7 +37,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 	 * @param repository
 	 */
 	public RepositoryParser(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository) {
+			final Repository repository) {
 		super(threadGroup, RepositoryParser.class.getSimpleName(), settings);
 		this.repository = repository;
 	}
@@ -65,19 +65,19 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 					Logger.debug("Parsing " + entry);
 				}
 				RCSTransaction rcsTransaction = new RCSTransaction(entry.getRevision(), entry.getMessage(),
-				        entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
+						entry.getDateTime(), entry.getAuthor(), previousRcsTransaction);
 				Map<String, ChangeType> changedPaths = this.repository.getChangedPaths(entry.getRevision());
 				for (String fileName : changedPaths.keySet()) {
 					RCSFile file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
 						file = this.fileManager.getFile(this.repository.getFormerPathName(rcsTransaction.getId(),
-						        fileName));
+								fileName));
 						if (file == null) {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-								        + changedPaths.get(fileName));
+										+ changedPaths.get(fileName));
 							}
 							file = this.fileManager.getFile(fileName);
 							
@@ -94,9 +94,7 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 							file = this.fileManager.createFile(fileName, rcsTransaction);
 						}
 					}
-					
-					rcsTransaction.addRevision(new RCSRevision(rcsTransaction, file, changedPaths.get(fileName),
-					        previousRcsTransaction));
+					new RCSRevision(rcsTransaction, file, changedPaths.get(fileName), previousRcsTransaction);
 				}
 				if (Logger.logTrace()) {
 					Logger.trace("filling queue [" + outputSize() + "]");

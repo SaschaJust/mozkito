@@ -38,12 +38,10 @@ import de.unisaarland.cs.st.reposuite.utils.specification.Trimmed;
 @javax.persistence.Table (name = "person")
 public class Person implements Annotated {
 	
-	// @Table (indexes = { @Index (name = "idx", columnNames = { "username",
-	// "fullname", "email" }) }, appliesTo = "person")
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -8598414850294255203L;
 	
 	/**
@@ -62,7 +60,7 @@ public class Person implements Annotated {
 	@NoneNull (spec = "When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	@Return (checks = ParameterConditions.NotNull)
 	public static Person merge(final Person keeper,
-	                           @NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
+			@NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
 		Condition.notNull(keeper);
 		Condition.noneNull(collisions);
 		Condition.notEmpty(collisions);
@@ -81,7 +79,7 @@ public class Person implements Annotated {
 	 */
 	@NoneNull (spec = "When merging two Person entities, neither target nor merged person may be null.")
 	public static Person merge(final Person keeper,
-	                           final Person from) {
+			final Person from) {
 		Condition.notNull(keeper);
 		Condition.notNull(from);
 		
@@ -204,13 +202,21 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * Assign transaction. Is automatically called from the constructor of
+	 * RCSTransaction
+	 * 
 	 * @param transaction
+	 *            the transaction
 	 */
 	@Transient
-	public void assignTransaction(@NotNull final RCSTransaction transaction) {
+	protected void assignTransaction(@NotNull final RCSTransaction transaction) {
 		Condition.notNull(transaction);
 		
 		this.transactions.add(transaction);
+	}
+	
+	public void clearTransaction(){
+		this.transactions.clear();
 	}
 	
 	/*
@@ -231,41 +237,6 @@ public class Person implements Annotated {
 		Person other = (Person) obj;
 		
 		return this.hashCode() == other.hashCode();
-		// if (!getUsernames().isEmpty()) {
-		// if (!other.getUsernames().isEmpty() && (getUsernames().size() ==
-		// other.getUsernames().size())) {
-		// // TODO sufficient?
-		// return
-		// getUsernames().iterator().next().equals(other.getUsernames().iterator().next());
-		// } else {
-		// return false;
-		// }
-		// } else {
-		// if (other.getUsernames().isEmpty()) {
-		// return false;
-		// } else {
-		// if (!getEmailAddresses().isEmpty()) {
-		// if (!other.getEmailAddresses().isEmpty()
-		// && (getEmailAddresses().size() == other.getEmailAddresses().size()))
-		// {
-		// // TODO sufficient?
-		// return getEmailAddresses().iterator().next()
-		// .equals(other.getEmailAddresses().iterator().next());
-		// } else {
-		// return false;
-		// }
-		// } else {
-		// if (!other.getEmailAddresses().isEmpty()) {
-		// return false;
-		// } else {
-		// // TODO sufficient?
-		// return
-		// getFullnames().iterator().next().equals(other.getFullnames().iterator().next());
-		// }
-		// }
-		// }
-		// }
-		
 	}
 	
 	/**
@@ -339,14 +310,14 @@ public class Person implements Annotated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.emailAddresses.isEmpty())
-		                                                          ? 0
-		                                                          : this.emailAddresses.iterator().next().hashCode());
+				? 0
+						: this.emailAddresses.iterator().next().hashCode());
 		result = prime * result + ((this.fullnames.isEmpty())
-		                                                     ? 0
-		                                                     : this.fullnames.iterator().next().hashCode());
+				? 0
+						: this.fullnames.iterator().next().hashCode());
 		result = prime * result + ((this.usernames.isEmpty())
-		                                                     ? 0
-		                                                     : this.usernames.iterator().next().hashCode());
+				? 0
+						: this.usernames.iterator().next().hashCode());
 		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
 		// >>> 32));
 		return result;
@@ -372,7 +343,7 @@ public class Person implements Annotated {
 			// null, null, bleh
 			
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
-			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
+					|| (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
 			} else {
 				return false;
@@ -452,5 +423,5 @@ public class Person implements Annotated {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 }

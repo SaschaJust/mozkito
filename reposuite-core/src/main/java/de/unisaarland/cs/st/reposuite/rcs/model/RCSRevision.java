@@ -27,13 +27,13 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 @Table (name = "rcsrevision")
 @AssociationOverrides ({
-        @AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "changedFile_id")),
-        @AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
-public class RCSRevision implements Annotated, Comparable<RCSRevision> {
+	@AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "changedFile_id")),
+	@AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
+	public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = 2149118675856446526L;
 	
 	/**
@@ -58,12 +58,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	}
 	
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
-	        final RCSTransaction previousRcsTransaction) {
+			final RCSTransaction previousRcsTransaction) {
 		Condition.notNull(rcsTransaction);
 		Condition.notNull(rcsFile);
 		Condition.notNull(changeType);
 		
 		setTransaction(rcsTransaction);
+		rcsTransaction.addRevision(this);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
 		setPreviousTransaction(previousRcsTransaction);
@@ -174,7 +175,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Override
 	public String toString() {
 		return "RCSRevision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
-		        + ", changeType=" + getChangeType() + ", previousTransactionId="
-		        + (getPreviousTransaction() != null ? getPreviousTransaction().getId() : "(null)") + "]";
+		+ ", changeType=" + getChangeType() + ", previousTransactionId="
+		+ (getPreviousTransaction() != null ? getPreviousTransaction().getId() : "(null)") + "]";
 	}
 }

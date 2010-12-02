@@ -109,6 +109,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		setMessage(message);
 		setTimestamp(timestamp);
 		setAuthor(author);
+		author.assignTransaction(this);
 		setPrevTransaction(previousRcsTransaction);
 		
 		if (Logger.logTrace()) {
@@ -119,14 +120,15 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * Adds the revision.
+	 * Adds the revision. Is automatically called from the constructor of
+	 * RCSRevision
 	 * 
 	 * @param revision
 	 *            the revision
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addRevision(final RCSRevision revision) {
+	protected boolean addRevision(final RCSRevision revision) {
 		Condition.notNull(revision);
 		return getRevisions().add(revision);
 	}

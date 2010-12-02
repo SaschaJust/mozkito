@@ -29,8 +29,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class RCSFile implements Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long           serialVersionUID = 7232712367403624199L;
 	private long                        generatedId;
 	private Map<RCSTransaction, String> changedNames     = new HashMap<RCSTransaction, String>();
@@ -54,8 +54,12 @@ public class RCSFile implements Annotated {
 	}
 	
 	/**
+	 * Assign transaction.
+	 * 
 	 * @param transaction
+	 *            the transaction
 	 * @param pathName
+	 *            the path name
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction, final String pathName) {

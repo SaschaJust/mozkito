@@ -32,8 +32,8 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	private HibernateInterceptor              previousInterceptor = null;
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long                 serialVersionUID    = 3960920011929042813L;
 	
 	/**
@@ -68,10 +68,10 @@ public class HibernateInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public boolean onSave(final Object entity,
-	                      final Serializable id,
-	                      final Object[] state,
-	                      final String[] propertyNames,
-	                      final Type[] types) {
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) {
 		if (entity instanceof PersonContainer) {
 			PersonContainer container = (PersonContainer) entity;
 			
@@ -92,11 +92,12 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						}
 						
 						container.replace(person, reference);
+						person.clearTransaction();
 						person = reference;
 					} else {
 						if (Logger.logDebug()) {
 							Logger.debug("Performing merge on " + person + " due to collisions with "
-							        + JavaUtils.collectionToString(collisions));
+									+ JavaUtils.collectionToString(collisions));
 						}
 						// merge
 						Person keeper = null;
@@ -108,7 +109,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						rehash();
 						for (Person collider : collisions) {
 							Condition.containsKey(this.remap, collider,
-							                      "Requesting remap for unknown collider. This should not happen.");
+							"Requesting remap for unknown collider. This should not happen.");
 							
 							if (this.remap.get(collider).size() > i) {
 								keeper = collider;
@@ -120,7 +121,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 						
 						if (Logger.logDebug()) {
 							Logger.debug("Keeping " + keeper + " due to most references ("
-							        + this.remap.get(keeper).size() + ")");
+									+ this.remap.get(keeper).size() + ")");
 						}
 						
 						collisions.remove(keeper);
@@ -142,6 +143,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							}
 							this.personManager.delete(collider);
 							this.remap.remove(collider);
+							collider.clearTransaction();
 							this.hibernateUtil.delete(collider);
 						}
 						if (Logger.logDebug()) {
@@ -153,6 +155,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
 						container.replace(person, keeper);
+						person.clearTransaction();
 						person = keeper;
 						
 						if (Logger.logDebug()) {
@@ -208,7 +211,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
 				if (!add) {
 					if (Logger.logTrace()) {
 						Logger.trace(container + " already known: "
-						        + JavaUtils.collectionToString(this.remap.get(person)));
+								+ JavaUtils.collectionToString(this.remap.get(person)));
 					}
 				}
 			}
