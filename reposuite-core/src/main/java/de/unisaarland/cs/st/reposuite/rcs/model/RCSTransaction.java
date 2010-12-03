@@ -106,7 +106,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		Condition.notNull(message);
 		Condition.notNull(timestamp);
 		Condition.notNull(author);
-		Condition.notNull(branch);
 		
 		setId(id);
 		setMessage(message);
