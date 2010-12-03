@@ -151,12 +151,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				} else if (currentTransaction.getPrevTransaction().getTimestamp().isBefore(transaction.getTimestamp())) {
 					return -1;
 				} else if (currentTransaction.getPrevTransaction().getTimestamp().isAfter(transaction.getTimestamp())) {
-					if (Logger.logError()) {
-						Logger.error("Found previous transaction with larger timestamp then current: " + toString()
+					if (Logger.logWarn()) {
+						Logger.warn("Found previous transaction with larger timestamp then current: " + toString()
 								+ " vs " + currentTransaction.getPrevTransaction().toString());
 					}
-					
-					throw new RuntimeException();
 				}
 				
 				currentTransaction = currentTransaction.getPrevTransaction();
@@ -411,7 +409,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public String toString() {
 		return "RCSTransaction [id=" + getId() + ", message=" + StringEscapeUtils.escapeJava(getMessage())
 		+ ", timestamp=" + getTimestamp() + ", revisionCount=" + getRevisions().size() + ", author="
-		+ getAuthor() + "]";
+		        + getAuthor() + ", branch=" + branch.toString() + "]";
 	}
 	
 }

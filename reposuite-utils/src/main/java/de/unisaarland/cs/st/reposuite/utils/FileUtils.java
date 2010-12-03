@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class FileUtils.
@@ -91,6 +92,11 @@ public class FileUtils {
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
 					+ pathVariable);
 		}
+	}
+	
+	@NoneNull
+	public static void copyFileToDirectory(final File srcFile, final File destDir) throws IOException{
+		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 	}
 	
 	/**
@@ -361,6 +367,10 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
+	public static String readFileToString(final File file) throws IOException{
+		return org.apache.commons.io.FileUtils.readFileToString(file);
+	}
+	
 	/**
 	 * Unzips a given file to the specified directory.
 	 * 
@@ -426,5 +436,5 @@ public class FileUtils {
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
-	
+
 }
