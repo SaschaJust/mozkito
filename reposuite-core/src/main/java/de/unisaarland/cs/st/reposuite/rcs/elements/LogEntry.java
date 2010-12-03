@@ -21,7 +21,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	protected String      message;
 	protected LogEntry    previous;
 	protected String      revision;
-	protected String      inBranch;
 	protected Set<String> mergedBranches;
 	
 	/**
@@ -88,13 +87,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 	
 	/**
-	 * @return the inBranch
-	 */
-	public String getInBranch() {
-		return this.inBranch;
-	}
-	
-	/**
 	 * @return the mergedBranches
 	 */
 	public Set<String> getMergedBranches() {
@@ -119,13 +111,6 @@ public class LogEntry implements Comparable<LogEntry> {
 		return this.revision;
 	}
 	
-	/**
-	 * @param inBranch
-	 *            the inBranch to set
-	 */
-	public void setInBranch(final String inBranch) {
-		this.inBranch = inBranch;
-	}
 	
 	/**
 	 * @param mergedBranches

@@ -32,6 +32,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
@@ -98,17 +99,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param previousRcsTransaction
 	 *            the previous rcs transaction
 	 */
+	@NoneNull
 	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
 			final RCSTransaction previousRcsTransaction) {
 		Condition.notNull(id);
 		Condition.notNull(message);
 		Condition.notNull(timestamp);
 		Condition.notNull(author);
+		Condition.notNull(branch);
 		
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
 		setAuthor(author);
+		setBranch(branch);
 		author.assignTransaction(this);
 		setPrevTransaction(previousRcsTransaction);
 		
@@ -407,9 +411,23 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Override
 	public String toString() {
-		return "RCSTransaction [id=" + getId() + ", message=" + StringEscapeUtils.escapeJava(getMessage())
-		+ ", timestamp=" + getTimestamp() + ", revisionCount=" + getRevisions().size() + ", author="
-		        + getAuthor() + ", branch=" + branch.toString() + "]";
+		StringBuilder string = new StringBuilder();
+		string.append("RCSTransaction [id=");
+		string.append(getId());
+		string.append(", message=");
+		string.append(StringEscapeUtils.escapeJava(getMessage()));
+		string.append(", timestamp=");
+		string.append(getTimestamp());
+		string.append(", revisionCount=");
+		string.append(getRevisions().size());
+		string.append(", author=");
+		string.append(getAuthor());
+		if (branch != null) {
+			string.append(", branch=");
+			string.append(branch.toString());
+		}
+		string.append("]");
+		return string.toString();
 	}
 	
 }
