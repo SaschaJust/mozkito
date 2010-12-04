@@ -60,8 +60,8 @@ public class FileUtils {
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
 		Condition.notNull(command);
 		if (command.startsWith(FileUtils.fileSeparator)
-				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
-						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
+		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
 			// We got an absolut path here
 			File executable = new File(command);
 			if (!executable.exists()) {
@@ -90,12 +90,13 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-					+ pathVariable);
+			        + pathVariable);
 		}
 	}
 	
 	@NoneNull
-	public static void copyFileToDirectory(final File srcFile, final File destDir) throws IOException{
+	public static void copyFileToDirectory(final File srcFile,
+	                                       final File destDir) throws IOException {
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 	}
 	
@@ -111,7 +112,8 @@ public class FileUtils {
 	 * @return the file handle corresponding to the requested new directory if
 	 *         existed or created. <code>null</code> otherwise.
 	 */
-	public static File createDir(final File parentDir, final String name) {
+	public static File createDir(final File parentDir,
+	                             final String name) {
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
 		} catch (FilePermissionException e) {
@@ -127,14 +129,14 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath()
-							+ "`. Reason: directory exists already. Returning existing directory.");
+					        + parentDir.getAbsolutePath()
+					        + "`. Reason: directory exists already. Returning existing directory.");
 				}
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -142,7 +144,7 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
@@ -164,7 +166,9 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(final File parentDir, final String prefix, final String suffix) {
+	public static File createRandomDir(final File parentDir,
+	                                   final String prefix,
+	                                   final String suffix) {
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
@@ -197,7 +201,8 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(final String prefix, final String suffix) {
+	public static File createRandomDir(final String prefix,
+	                                   final String suffix) {
 		return createRandomDir(tmpDir, prefix, suffix);
 	}
 	
@@ -240,7 +245,8 @@ public class FileUtils {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public static void ensureFilePermissions(final File file, int permissions) throws FilePermissionException {
+	public static void ensureFilePermissions(final File file,
+	                                         int permissions) throws FilePermissionException {
 		Condition.notNull(file);
 		Condition.less(permissions, getMAX_PERM());
 		
@@ -363,11 +369,13 @@ public class FileUtils {
 	 * @return the collection
 	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
-	public static Collection<File> listFiles(final File directory, final String[] extensions, final boolean recursive) {
+	public static Collection<File> listFiles(final File directory,
+	                                         final String[] extensions,
+	                                         final boolean recursive) {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
-	public static String readFileToString(final File file) throws IOException{
+	public static String readFileToString(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}
 	
@@ -380,7 +388,8 @@ public class FileUtils {
 	 *            the target directory, not null
 	 * @return true on success, false otherwise
 	 */
-	public static boolean unzip(final File zipFile, final File directory) {
+	public static boolean unzip(final File zipFile,
+	                            final File directory) {
 		Condition.notNull(zipFile);
 		Condition.notNull(directory);
 		
@@ -405,7 +414,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-						+ FileUtils.fileSeparator + entry.getName()));
+				        + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);
@@ -436,5 +445,5 @@ public class FileUtils {
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
-
+	
 }

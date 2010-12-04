@@ -288,10 +288,16 @@ public class Logger {
 		error(message, null, t, 3);
 	}
 	
+	/**
+	 * @return
+	 */
 	public static Enum<LogLevel> getLogLevel() {
 		return logLevel;
 	}
 	
+	/**
+	 * @param logLevel
+	 */
 	public static void increaseLogLevel(final LogLevel logLevel) {
 		if (Logger.logLevel.compareTo(logLevel) < 0) {
 			setLogLevel(logLevel);

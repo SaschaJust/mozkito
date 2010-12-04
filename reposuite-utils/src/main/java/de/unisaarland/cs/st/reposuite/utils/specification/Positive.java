@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@ConditionPattern ("greaterOrEqual(($w) #{target}, ($w) 0, ${spec})")
+@ConditionPattern ("greaterOrEqual$target$, $type$, $spec$)")
 @Target (value = { ElementType.PARAMETER })
 public @interface Positive {
 	

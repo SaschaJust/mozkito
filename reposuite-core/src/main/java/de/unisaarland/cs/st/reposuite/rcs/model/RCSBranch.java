@@ -66,6 +66,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.parent = parent;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final RCSBranch other) {
 		RCSBranch p = getParent();
@@ -156,7 +160,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	@Transient
 	public boolean hasParent() {
-		return (this.parent == null ? false : true);
+		return (this.parent == null
+		                           ? false
+		                           : true);
 	}
 	
 	/*
