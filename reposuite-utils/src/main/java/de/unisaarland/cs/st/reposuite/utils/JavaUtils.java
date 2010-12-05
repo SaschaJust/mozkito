@@ -18,8 +18,8 @@ import org.apache.commons.collections.Predicate;
 public class JavaUtils {
 	
 	private static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
-		(byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
-		(byte) 'e', (byte) 'f'            };
+	        (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
+	        (byte) 'e', (byte) 'f'            };
 	
 	public static boolean AnyNull(final Object... objects) {
 		for (Object object : objects) {
@@ -58,7 +58,7 @@ public class JavaUtils {
 		if (object == null) {
 			return "(null)";
 		}
-
+		
 		if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override
@@ -91,11 +91,17 @@ public class JavaUtils {
 			builder.append("[(null)]");
 		} else {
 			builder.append("[");
+			int i = 0;
 			for (Object object : collection) {
+				++i;
 				if (builder.length() > 1) {
 					builder.append(",");
 				}
 				builder.append(checkDescent(object));
+				if (i == 10) {
+					builder.append("...");
+					break;
+				}
 			}
 			builder.append("]");
 		}

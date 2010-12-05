@@ -12,8 +12,9 @@
 <stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/tmp/reposuite_core.log"/>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-core"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=SUBVERSION -Drepository.uri=file:///Users/just/Documents/University/msa_ss10/project/svn_repo_2010-05-14 -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Dheadless -Ddatabase.name=reposuiteTest -Ddatabse.type=PostgreSQL -Ddatabase.host=quentin.cs.uni-saarland.de"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=GIT -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Dheadless -Ddatabase.name=reposuite_core_test -Ddatabase.host=localhost -Drepository.uri=file:///Users/just/jruby_git_repo_03_07_2010/git_repo_03_07_2010 -Ddatabse.type=PostgreSQL"/>
 </launchConfiguration>

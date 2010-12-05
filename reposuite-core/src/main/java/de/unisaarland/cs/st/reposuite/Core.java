@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -44,11 +45,11 @@ public class Core extends RepoSuiteToolchain {
 		this.databaseSettings = settings.setDatabaseArgs(false);
 		this.logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		        false);
+		                    false);
 		new LongArgument(settings, "cache.size",
-		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		        false);
+		                    false);
 		
 		settings.parseArguments();
 	}
@@ -84,17 +85,20 @@ public class Core extends RepoSuiteToolchain {
 		this.logSettings.getValue();
 		
 		if (hibernateUtil != null) {
-			String start = repository.getStartRevision().equalsIgnoreCase("HEAD") ? repository.getHEAD() : repository
-			        .getStartRevision();
-			String end = repository.getEndRevision().equalsIgnoreCase("HEAD") ? repository.getHEAD() : repository
-			        .getEndRevision();
+			String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
+			                                                                     ? repository.getHEAD()
+			                                                                     : repository.getStartRevision();
+			String end = repository.getEndRevision().equalsIgnoreCase("HEAD")
+			                                                                 ? repository.getHEAD()
+			                                                                 : repository.getEndRevision();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Checking for persistent transactions (" + start + ".." + end + ").");
 			}
 			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
 			criteria.add(Restrictions.eq("id", start));
-			@SuppressWarnings ("unchecked") List<RCSTransaction> startTransactions = criteria.list();
+			@SuppressWarnings ("unchecked")
+			List<RCSTransaction> startTransactions = criteria.list();
 			if ((startTransactions != null) && (startTransactions.size() > 0)) {
 				RCSTransaction startTransaction = startTransactions.get(0);
 				if (startTransaction != null) {
@@ -105,7 +109,8 @@ public class Core extends RepoSuiteToolchain {
 					
 					criteria = hibernateUtil.createCriteria(RCSTransaction.class);
 					criteria.add(Restrictions.eq("id", end));
-					@SuppressWarnings ("unchecked") List<RCSTransaction> endTransactions = criteria.list();
+					@SuppressWarnings ("unchecked")
+					List<RCSTransaction> endTransactions = criteria.list();
 					
 					if ((endTransactions != null) && (endTransactions.size() > 0) && (endTransactions.get(0) != null)) {
 						if (Logger.logDebug()) {
@@ -119,7 +124,8 @@ public class Core extends RepoSuiteToolchain {
 					} else {
 						criteria = hibernateUtil.createCriteria(RCSTransaction.class);
 						criteria.addOrder(Order.desc("id"));
-						@SuppressWarnings ("unchecked") List<RCSTransaction> maxTransactions = criteria.list();
+						@SuppressWarnings ("unchecked")
+						List<RCSTransaction> maxTransactions = criteria.list();
 						if ((maxTransactions != null) && (maxTransactions.size() > 0)) {
 							RCSTransaction maxPersistentTransaction = maxTransactions.get(0);
 							repository.setStartRevision(maxPersistentTransaction.getId());
@@ -130,8 +136,13 @@ public class Core extends RepoSuiteToolchain {
 								        + maxPersistentTransaction.getId() + " to " + repository.getEndRevision() + ".");
 							}
 							
-							repository.setStartTransaction(maxPersistentTransaction.getPrevTransaction());
-							hibernateUtil.delete(maxPersistentTransaction);
+							if (Logger.logError()) {
+								Logger.error("UNSUPPORTED RESUME FOUND. PLEASE FIX THE CODE.");
+							}
+							
+							throw new UnrecoverableError();
+							// repository.setStartTransaction(maxPersistentTransaction.getParents());
+							// hibernateUtil.delete(maxPersistentTransaction);
 						} else {
 							
 							if (Logger.logError()) {
@@ -151,6 +162,8 @@ public class Core extends RepoSuiteToolchain {
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
 		if (hibernateUtil != null) {
+			new RepositoryGraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
+			                           repository, hibernateUtil);
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), hibernateUtil);
 		} else {
 			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());

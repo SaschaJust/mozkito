@@ -7,11 +7,9 @@ import java.util.Collection;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -27,9 +25,9 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 @Table (name = "rcsrevision")
 @AssociationOverrides ({
-	@AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "changedFile_id")),
-	@AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
-	public class RCSRevision implements Annotated, Comparable<RCSRevision> {
+        @AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "changedFile_id")),
+        @AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
+public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**
 	 * 
@@ -45,7 +43,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 	
 	private RCSFile            changedFile;
 	private ChangeType         changeType;
-	private RCSTransaction     previousTransaction;
 	private RCSTransaction     transaction;
 	
 	private RevisionPrimaryKey primaryKey;
@@ -57,8 +54,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 		
 	}
 	
-	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType,
-			final RCSTransaction previousRcsTransaction) {
+	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
 		Condition.notNull(rcsTransaction);
 		Condition.notNull(rcsFile);
 		Condition.notNull(changeType);
@@ -67,7 +63,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 		rcsTransaction.addRevision(this);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
-		setPreviousTransaction(previousRcsTransaction);
 		getTransaction().addRevision(this);
 		setPrimaryKey(new RevisionPrimaryKey(getChangedFile(), getTransaction()));
 		
@@ -100,14 +95,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 	 */
 	public ChangeType getChangeType() {
 		return this.changeType;
-	}
-	
-	/**
-	 * @return the previousTransaction
-	 */
-	@ManyToOne (cascade = CascadeType.ALL)
-	public RCSTransaction getPreviousTransaction() {
-		return this.previousTransaction;
 	}
 	
 	@EmbeddedId
@@ -146,14 +133,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 	}
 	
 	/**
-	 * @param previousTransaction
-	 *            the previousTransaction to set
-	 */
-	private void setPreviousTransaction(final RCSTransaction previousTransaction) {
-		this.previousTransaction = previousTransaction;
-	}
-	
-	/**
 	 * @param primaryKey
 	 */
 	private void setPrimaryKey(final RevisionPrimaryKey primaryKey) {
@@ -175,7 +154,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 	@Override
 	public String toString() {
 		return "RCSRevision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
-		+ ", changeType=" + getChangeType() + ", previousTransactionId="
-		+ (getPreviousTransaction() != null ? getPreviousTransaction().getId() : "(null)") + "]";
+		        + ", changeType=" + getChangeType() + "]";
 	}
 }

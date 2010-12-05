@@ -23,18 +23,14 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 @Entity
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 5419737140470855522L;
-	
-	public static RCSBranch   MASTER           = new RCSBranch("master");
 	
 	private long              generatedId;
 	private String            name;
 	private RCSBranch         parent           = null;
-	private RCSTransaction    begin;
-	private RCSTransaction    end;
+	private RCSTransaction    begin            = null;
+	private RCSTransaction    end              = null;
+	public static RCSBranch   MASTER           = new RCSBranch("master");
 	
 	/**
 	 * Instantiates a new rCS branch.
@@ -50,7 +46,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 *            the name
 	 */
 	public RCSBranch(final String name) {
-		this.name = name;
+		setName(name);
 	}
 	
 	/**
@@ -62,10 +58,14 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 *            might be null
 	 */
 	public RCSBranch(final String name, final RCSBranch parent) {
-		this.name = name;
-		this.parent = parent;
+		setName(name);
+		setParent(parent);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final RCSBranch other) {
 		RCSBranch p = getParent();
@@ -154,9 +154,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return this.parent;
 	}
 	
+	/**
+	 * @return
+	 */
 	@Transient
 	public boolean hasParent() {
-		return (this.parent == null ? false : true);
+		return getParent() != null;
 	}
 	
 	/*
@@ -216,14 +219,17 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @param parent
 	 *            the parent to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setParent(final RCSBranch parent) {
 		this.parent = parent;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "RCSBranch [name=" + this.name + ", parent=" + this.parent + "]";
+		return "RCSBranch [name=" + getName() + ", parent=" + getParent() + "]";
 	}
 	
 }

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@ConditionPattern ("noneNull($args, ${spec})")
+@ConditionPattern ("noneNull($spec$)")
 @Target (value = { ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface NoneNull {
 	

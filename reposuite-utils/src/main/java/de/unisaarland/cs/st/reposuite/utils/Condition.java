@@ -697,6 +697,10 @@ public final class Condition {
 		                           formatter.format(formatString, arguments));
 	}
 	
+	public static final void dump(final Double o) {
+		System.err.println(">>> " + o);
+	}
+	
 	/**
 	 * @param array
 	 * @deprecated This method from {@link Condition} is deprecated. Please

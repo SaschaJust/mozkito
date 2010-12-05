@@ -60,11 +60,11 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 					Logger.debug("Storing " + currentTransaction);
 				}
 				
-				if (++i % 1000 == 0) {
+				if (++i % 100 == 0) {
 					this.hibernateUtil.commitTransaction();
 					this.hibernateUtil.beginTransaction();
 				}
-				this.hibernateUtil.saveOrUpdate(currentTransaction);
+				this.hibernateUtil.save(currentTransaction);
 			}
 			this.hibernateUtil.commitTransaction();
 			finish();

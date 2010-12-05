@@ -74,9 +74,9 @@ public class HibernateTest {
 			int personCount = criteria.list().size();
 			
 			Person[] persons = new Person[] { new Person("just", null, null),
-					new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
-					new Person("just", "Sascha Just", null),
-					new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
+			        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
+			        new Person("just", "Sascha Just", null),
+			        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
 			
 			RCSTransaction rcsTransaction = null;
 			
@@ -84,7 +84,7 @@ public class HibernateTest {
 			
 			int i = 0;
 			for (Person person : persons) {
-				rcsTransaction = new RCSTransaction("" + ++i, "test", new DateTime(), person, null);
+				rcsTransaction = new RCSTransaction("" + ++i, "test", new DateTime(), person);
 				hibernateUtil.saveOrUpdate(rcsTransaction);
 			}
 			
@@ -131,9 +131,9 @@ public class HibernateTest {
 			
 			PersonContainer personContainer = new PersonContainer();
 			Person[] persons = new Person[] { new Person("pan", null, null),
-					new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new Person(null, "Peter Pan", null),
-					new Person("pan", "Peter Pan", null),
-					new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
+			        new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new Person(null, "Peter Pan", null),
+			        new Person("pan", "Peter Pan", null),
+			        new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
 			
 			for (int i = 0; i < persons.length; ++i) {
 				personContainer.add("contrib_" + i, persons[i]);
@@ -177,10 +177,10 @@ public class HibernateTest {
 			
 			RCSFileManager fileManager = new RCSFileManager();
 			Person person = new Person("kim", null, null);
-			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, null);
+			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person);
 			RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 			file.assignTransaction(rcsTransaction, "formerTest.java");
-			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added, null);
+			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 			hibernateUtil.beginTransaction();
 			hibernateUtil.saveOrUpdate(rcsTransaction);
 			hibernateUtil.commitTransaction();

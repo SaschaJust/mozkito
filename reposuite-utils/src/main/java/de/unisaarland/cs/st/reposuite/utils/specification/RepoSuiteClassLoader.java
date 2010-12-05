@@ -8,8 +8,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -31,6 +31,11 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+
+import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+
 import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -72,6 +77,7 @@ public class RepoSuiteClassLoader extends ClassLoader {
 			Collection<Class<?>> annotationClasses = ClassFinder.getAllClasses(pakkage);
 			for (Class<?> c : annotationClasses) {
 				if (c.isAnnotation()) {
+					@SuppressWarnings ("unchecked")
 					Class<java.lang.annotation.Annotation> aC = (Class<java.lang.annotation.Annotation>) c;
 					ConditionPattern pattern = aC.getAnnotation(ConditionPattern.class);
 					Target target = aC.getAnnotation(Target.class);
@@ -117,7 +123,10 @@ public class RepoSuiteClassLoader extends ClassLoader {
 			c = cl.loadClass("de.unisaarland.cs.st.reposuite.utils" + ".Test");
 			Object instance = c.newInstance();
 			Method method = c.getMethod("test", Integer.class);
-			method.invoke(instance, (Integer) null);
+			method.invoke(instance, (Integer) 5);
+			
+			method = c.getMethod("test2", Double.class);
+			method.invoke(instance, 5d);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
@@ -156,6 +165,11 @@ public class RepoSuiteClassLoader extends ClassLoader {
 	
 	private String getAnnotationFormatString(final Annotation annotation,
 	                                         final String string) {
+		StringTemplate stringTemplate = new StringTemplate(string);
+		Map attributes = stringTemplate.getAttributes();
+		Map formalArguments = stringTemplate.getFormalArguments();
+		attributes.keySet();
+		formalArguments.keySet();
 		LinkedList<Object> arguments = new LinkedList<Object>();
 		Pattern pattern = Pattern.compile("\\$\\{([^}]+)\\}");
 		Matcher matcher = pattern.matcher(string);
@@ -182,15 +196,16 @@ public class RepoSuiteClassLoader extends ClassLoader {
 			return String.format(string.replaceAll("\\$\\{[^}]+\\}", "%s"), arguments.toArray()).toString()
 			             .replaceAll("\\#\\{target\\}", "%s");
 		} else {
-			return string;
+			return string.replaceAll("\\#\\{target\\}", "%s");
 		}
 		
 	}
 	
-	private String getConditionString(final String formatString,
-	                                  final Object... arguments) {
-		return Condition.class.getCanonicalName() + "." + new Formatter().format(formatString, arguments) + ";";
-	}
+	// private String getConditionString(final String formatString,
+	// final Object... arguments) {
+	// return Condition.class.getCanonicalName() + "." + new
+	// Formatter().format(formatString, arguments) + ";";
+	// }
 	
 	/*
 	 * (non-Javadoc)
@@ -235,8 +250,10 @@ public class RepoSuiteClassLoader extends ClassLoader {
 		for (CtMethod method : cc.getDeclaredMethods()) {
 			processMethodAnnotations(method);
 			String insertionString = null;
+			
 			System.err.println("Inserting at beginning of " + method.getName() + ": "
 			        + JavaUtils.collectionToString(this.insertions));
+			
 			for (ListIterator<String> it = this.insertions.listIterator(this.insertions.size()); it.hasPrevious();) {
 				try {
 					insertionString = it.previous();
@@ -271,6 +288,7 @@ public class RepoSuiteClassLoader extends ClassLoader {
 		
 	}
 	
+	@SuppressWarnings ("unused")
 	private void processConstructorParameterAnnotations(final CtConstructor constructor,
 	                                                    final Annotation[][] annotations) {
 		
@@ -278,6 +296,7 @@ public class RepoSuiteClassLoader extends ClassLoader {
 	
 	private void processMethodAnnotations(final CtMethod method) {
 		MethodInfo minfo = method.getMethodInfo();
+		
 		AnnotationsAttribute attr = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
 		if (attr != null) {
 			Annotation[] annotations = attr.getAnnotations();
@@ -311,16 +330,20 @@ public class RepoSuiteClassLoader extends ClassLoader {
 					if ((memberNames != null) && !memberNames.isEmpty()) {
 						// e.g. @NotNull(parameter="i")
 						// e.g. @Field (...)
-						String formatString = getAnnotationFormatString(annotation,
-						                                                methodAnnotations.get(annotation.getTypeName()));
-						String conditionString = getConditionString(formatString);
-						this.insertions.add(conditionString);
+						// String formatString =
+						// getAnnotationFormatString(annotation,
+						// methodAnnotations.get(annotation.getTypeName()));
+						// String conditionString =
+						// getConditionString(formatString);
+						// this.insertions.add(conditionString);
 					} else {
 						// e.g. @NoneNull
-						String formatString = getAnnotationFormatString(annotation,
-						                                                methodAnnotations.get(annotation.getTypeName()));
-						String conditionString = getConditionString(formatString);
-						this.insertions.add(conditionString);
+						// String formatString =
+						// getAnnotationFormatString(annotation,
+						// methodAnnotations.get(annotation.getTypeName()));
+						// String conditionString =
+						// getConditionString(formatString);
+						// this.insertions.add(conditionString);
 						
 					}
 				}
@@ -341,14 +364,89 @@ public class RepoSuiteClassLoader extends ClassLoader {
 		for (Annotation[] pAnnotations : annotations) {
 			for (Annotation annotation : pAnnotations) {
 				if (RepoSuiteClassLoader.parameterAnnotations.containsKey(annotation.getTypeName())) {
-					String formatString = getAnnotationFormatString(annotation,
-					                                                parameterAnnotations.get(annotation.getTypeName()));
-					String conditionString = getConditionString(formatString, "$" + i);
-					this.insertions.add(conditionString);
+					StringTemplate template = new StringTemplate(parameterAnnotations.get(annotation.getTypeName()));
+					if (annotation.getMemberNames() == null) {
+						CtClass ctClass;
+						try {
+							ctClass = this.cp.get(annotation.getTypeName());
+							
+							CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
+							CollectionUtils.transformedCollection(Arrays.asList(declaredMethods), new Transformer() {
+								
+								@Override
+								public Object transform(final Object input) {
+									return ((CtMethod) input).getName();
+								}
+							});
+						} catch (NotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					for (Object memberNameObject : annotation.getMemberNames()) {
+						String memberName = (String) memberNameObject;
+						
+						Object memberValue = annotation.getMemberValue(memberName);
+						if (memberValue == null) {
+							// determine default value
+							CtClass ctClass;
+							try {
+								ctClass = this.cp.get(annotation.getTypeName());
+								
+								MethodInfo info = ctClass.getDeclaredMethod(memberName).getMethodInfo();
+								AnnotationDefaultAttribute ada = (AnnotationDefaultAttribute) info.getAttribute(AnnotationDefaultAttribute.tag);
+								memberValue = ada.getDefaultValue();
+								
+								template.setAttribute(memberName, memberValue);
+							} catch (NotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						
+					}
+					template.setAttribute("target", "$" + i);
+					try {
+						template.setAttribute("type", upCast(method.getParameterTypes()[i - 1], "bleh"));
+						String conditionString = template.toString();
+						System.err.println(conditionString);
+						this.insertions.add(conditionString);
+					} catch (NotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 				}
 			}
 			++i;
 		}
+	}
+	
+	private String upCast(final CtClass class1,
+	                      final String string) {
+		if (class1.isPrimitive()) {
+			String className = class1.getName();
+			if (className.equals("int")) {
+				return "new Integer(" + string + ")";
+			} else if (className.equals("byte")) {
+				return "new Byte(" + string + ")";
+			} else if (className.equals("short")) {
+				return "new Short(" + string + ")";
+			} else if (className.equals("long")) {
+				return "new Long(" + string + ")";
+			} else if (className.equals("float")) {
+				return "new Float(" + string + ")";
+			} else if (className.equals("double")) {
+				return "new Double(" + string + ")";
+			} else if (className.equals("boolean")) {
+				return "new Boolean(" + string + ")";
+			} else if (className.equals("char")) {
+				return "new Character(" + string + ")";
+			} else {
+				System.err.println("Unknown primitive " + className);
+			}
+			
+		}
+		return string;
 	}
 }

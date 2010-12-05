@@ -62,7 +62,8 @@ public class RCSFile implements Annotated {
 	 *            the path name
 	 */
 	@Transient
-	public void assignTransaction(final RCSTransaction transaction, final String pathName) {
+	public void assignTransaction(final RCSTransaction transaction,
+	                              final String pathName) {
 		getChangedNames().put(transaction, pathName);
 	}
 	
@@ -107,7 +108,7 @@ public class RCSFile implements Annotated {
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		while ((current != null) && !this.changedNames.containsKey(current)) {
-			current = current.getPrevTransaction();
+			current = current.getParent(current.getBranch());
 		}
 		
 		if (current != null) {

@@ -9,16 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
- */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-// @ConditionPattern ("dump(($w) #{target})")
-@ConditionPattern ("lessOrEqual($parameter$, $type$ 0, $spec$)")
+@ConditionPattern ("ERROR(%s)")
 @Target (value = { ElementType.PARAMETER })
-public @interface Negative {
+public @interface HexString {
 	
 	String spec() default "";
 }

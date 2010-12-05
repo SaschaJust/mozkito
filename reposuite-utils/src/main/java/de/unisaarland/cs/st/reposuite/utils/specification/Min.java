@@ -15,10 +15,11 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-// @ConditionPattern ("dump(($w) #{target})")
-@ConditionPattern ("lessOrEqual($parameter$, $type$ 0, $spec$)")
+@ConditionPattern ("greaterOrEqual(#{target}, ${value}, ${spec})")
 @Target (value = { ElementType.PARAMETER })
-public @interface Negative {
+public @interface Min {
 	
 	String spec() default "";
+	
+	int value();
 }
