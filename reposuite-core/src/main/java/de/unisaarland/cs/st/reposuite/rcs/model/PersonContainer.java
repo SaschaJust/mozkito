@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.Intercepted;
@@ -77,6 +80,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * @return the generatedId
 	 */
 	@Id
+	@Index (name = "idx_id")
+	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;

@@ -49,16 +49,16 @@ public class CrashHandler extends ThreadGroup {
 		                                                               
 		                                                               {
 			                                                               put("mail.smtp.host",
-			                                                                       "mail.st.cs.uni-saarland.de");
+			                                                                   "mail.st.cs.uni-saarland.de");
 			                                                               put("mail.transport.protocol", "smtp");
 			                                                               put("mail.to",
-			                                                                       "project_reposuite@st.cs.uni-saarland.de");
+			                                                                   "project_reposuite@st.cs.uni-saarland.de");
 			                                                               put("mail.subject", "RepoSuite Crash Report");
 			                                                               put("mail.sender.name", "RepoSuite Client");
 			                                                               put("mail.sender.address",
-			                                                                       "reposuite-crasher@st.cs.uni-saarland.de");
+			                                                                   "reposuite-crasher@st.cs.uni-saarland.de");
 			                                                               put("mail.sender.host",
-			                                                                       "hg.st.cs.uni-saarland.de");
+			                                                                   "hg.st.cs.uni-saarland.de");
 		                                                               }
 	                                                               };
 	
@@ -224,7 +224,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return the reposuite settings of the monitored application, if any
 	 */
 	protected String getRepoSuiteSettings() {
-		return (this.application != null) ? this.application.getSettings().toString() : "";
+		return (this.application != null)
+		                                 ? this.application.getSettings().toString()
+		                                 : "";
 	}
 	
 	private String getRuntimeInformation() {
@@ -247,7 +249,7 @@ public class CrashHandler extends ThreadGroup {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Operating System: ");
 		builder.append(systemMXBean.getName()).append(" ").append(systemMXBean.getVersion()).append(" ")
-		        .append(systemMXBean.getArch());
+		       .append(systemMXBean.getArch());
 		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
@@ -269,7 +271,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return information provided by the {@link RepoSuiteToolchain}
 	 */
 	protected String getToolInformation() {
-		return (this.application != null) ? this.application.getSettings().getToolInformation() : "";
+		return (this.application != null)
+		                                 ? this.application.getSettings().getToolInformation()
+		                                 : "";
 	}
 	
 	/**
@@ -320,7 +324,7 @@ public class CrashHandler extends ThreadGroup {
 					}
 				}
 			} else {
-				// TODO
+				// TODO this will not work for .class only files.
 			}
 		} catch (Throwable e) {
 			if (Logger.logError()) {
@@ -354,11 +358,11 @@ public class CrashHandler extends ThreadGroup {
 			MimeMessage message = new MimeMessage(session);
 			message.setSubject(CrashHandler.mailProps.getProperty("mail.subject"));
 			message.addRecipient(Message.RecipientType.TO,
-			        new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
+			                     new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
 			message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-			        CrashHandler.mailProps.getProperty("mail.sender.name")));
+			                                    CrashHandler.mailProps.getProperty("mail.sender.name")));
 			message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-			        CrashHandler.mailProps.getProperty("mail.sender.name")));
+			                                      CrashHandler.mailProps.getProperty("mail.sender.name")));
 			message.setContent(report, "text/plain");
 			transport.connect();
 			transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
@@ -381,7 +385,8 @@ public class CrashHandler extends ThreadGroup {
 	 * .Thread, java.lang.Throwable)
 	 */
 	@Override
-	public synchronized void uncaughtException(final Thread arg0, final Throwable arg1) {
+	public synchronized void uncaughtException(final Thread arg0,
+	                                           final Throwable arg1) {
 		if (!CrashHandler.executed) {
 			CrashHandler.executed = true;
 			
@@ -423,7 +428,8 @@ public class CrashHandler extends ThreadGroup {
 	 * @param level
 	 * @return
 	 */
-	private String visit(final ThreadGroup group, final int level) {
+	private String visit(final ThreadGroup group,
+	                     final int level) {
 		// Get threads in `group'
 		StringBuilder builder = new StringBuilder();
 		int numThreads = group.activeCount();

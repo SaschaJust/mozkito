@@ -15,7 +15,6 @@ public class FetchException extends Exception {
 	 * 
 	 */
 	public FetchException() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -23,7 +22,6 @@ public class FetchException extends Exception {
 	 */
 	public FetchException(final String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -32,7 +30,6 @@ public class FetchException extends Exception {
 	 */
 	public FetchException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -40,7 +37,6 @@ public class FetchException extends Exception {
 	 */
 	public FetchException(final Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

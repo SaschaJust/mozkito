@@ -477,10 +477,12 @@ public class Logger {
 	}
 	
 	public static void setLogLevel(final LogLevel logLevel) {
-		Logger.logLevel = logLevel;
-		if (logLevel.compareTo(LogLevel.DEBUG) >= 0) {
+		if (Logger.logLevel.compareTo(LogLevel.DEBUG) >= 0) {
 			Logger.debug("Setting log level to " + logLevel.name());
 		}
+		
+		Logger.logLevel = logLevel;
+		
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
 			Logger.debug = true;
 		}

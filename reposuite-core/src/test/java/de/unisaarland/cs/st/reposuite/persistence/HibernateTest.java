@@ -27,6 +27,8 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.utils.LogLevel;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class HibernateTest {
 	
@@ -38,6 +40,7 @@ public class HibernateTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
+		Logger.setLogLevel(LogLevel.OFF);
 		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest?useUnicode=true&characterEncoding=UTF-8";
 		
 		Properties properties = new Properties();

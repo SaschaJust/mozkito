@@ -17,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -30,17 +31,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.annotations.Index;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
@@ -167,7 +162,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			return 0;
 		} else if (getBranch().equals(transaction.getBranch())) {
 			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
-				// // FIXME Branch not fully initialized
+				
+				if (Logger.logWarn()) {
+					Logger.warn("Comparing transactions of uninitialized branches: start transaction is unknown");
+				}
 				return -1;
 			}
 			if (getBranch().getBegin().equals(this)) {
@@ -189,7 +187,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		} else if (transaction.getBranch().equals(RCSBranch.MASTER)) {
 			return 1;
 		} else {
-			return getBranch().getBegin().compareTo(transaction.getBranch().getBegin());
+			// since none of the branches is a master branch, every
+			// getBegin() transaction must have exactly one parent.
+			return getBranch().getBegin().getParents().iterator().next()
+			                  .compareTo(transaction.getBranch().getBegin().getParents().iterator().next());
 		}
 	}
 	
@@ -236,7 +237,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the children
 	 */
 	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
 		return this.children;
 	}
@@ -247,7 +249,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the id
 	 */
 	@Id
-	@Index (name = "idx_id")
+	@Index (name = "idx_transactionid")
 	public String getId() {
 		return this.id;
 	}
@@ -277,35 +279,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * @return the nextTransactionByTimestamp
-	 */
-	@Transient
-	public RCSTransaction getNextTransactionByTimestamp() {
-		
-		try {
-			// find a transaction with timestamp greater or equal to this
-			// with min timetstamp and id different from this one
-			// and which does not contains this one as a child
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
-			criteria.add(Restrictions.ge("timestamp", getJavaTimestamp()));
-			criteria.addOrder(Order.asc("timestamp"));
-			criteria.add(Restrictions.ne("id", getId()));
-			// TODO fetched transaction.parents NOT CONTAINS this.id
-			// criteria.add(Restrictions.)
-			@SuppressWarnings ("rawtypes")
-			List list = criteria.list();
-			if (!list.isEmpty()) {
-				return (RCSTransaction) list.iterator().next();
-			} else {
-				return null;
-			}
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e);
-		}
-	}
-	
-	/**
 	 * @param branch
 	 * @return
 	 */
@@ -330,7 +303,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
 		return this.parents;
 	}
@@ -341,35 +315,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
 		return this.persons;
-	}
-	
-	/**
-	 * @return the prevTransactionByTimestamp
-	 */
-	@Transient
-	public RCSTransaction getPrevTransactionByTimestamp() {
-		
-		try {
-			// find a transaction with timestamp less or equal to this
-			// with max timetstamp and id different from this one
-			// and which does not contains this one as a parent
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
-			criteria.add(Restrictions.le("timestamp", getJavaTimestamp()));
-			criteria.addOrder(Order.desc("timestamp"));
-			criteria.add(Restrictions.ne("id", getId()));
-			// TODO fetched transaction.childs NOT CONTAINS this.id
-			// criteria.add(Restrictions.)
-			@SuppressWarnings ("rawtypes")
-			List list = criteria.list();
-			if (!list.isEmpty()) {
-				return (RCSTransaction) list.iterator().next();
-			} else {
-				return null;
-			}
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e);
-		}
 	}
 	
 	/**
@@ -404,31 +349,34 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Override
 	@Transient
 	public Collection<Annotated> saveFirst() {
-		Collection<Annotated> ret = CollectionUtils.collect(getRevisions(), new Transformer() {
+		Collection<Annotated> ret = new LinkedList<Annotated>();
+		
+		ret.addAll(CollectionUtils.collect(getRevisions(), new Transformer() {
 			
 			@Override
 			public Object transform(final Object input) {
 				RCSRevision revision = (RCSRevision) input;
 				return revision.getChangedFile();
 			}
-		});
+		}));
 		
 		ret.add(this.persons);
-		ret.add(getBranch());
-		
-		for (Collection<Annotated> coll : (Collection<Collection<Annotated>>) CollectionUtils.collect(getParents(),
-		                                                                                              new Transformer() {
-			                                                                                              
-			                                                                                              @Override
-			                                                                                              public Object transform(final Object input) {
-				                                                                                              RCSTransaction transaction = (RCSTransaction) input;
-				                                                                                              return transaction.saveFirst();
-			                                                                                              }
-		                                                                                              })) {
-			if (coll != null) {
-				ret.addAll(coll);
-			}
-		}
+		// ret.add(getBranch());
+		//
+		// for (Collection<Annotated> coll : (Collection<Collection<Annotated>>)
+		// CollectionUtils.collect(getParents(),
+		// new Transformer() {
+		//
+		// @Override
+		// public Object transform(final Object input) {
+		// RCSTransaction transaction = (RCSTransaction) input;
+		// return transaction.saveFirst();
+		// }
+		// })) {
+		// if (coll != null) {
+		// ret.addAll(coll);
+		// }
+		// }
 		
 		// for (Collection<Annotated> coll : (Collection<Collection<Annotated>>)
 		// CollectionUtils.collect(getChildren(),

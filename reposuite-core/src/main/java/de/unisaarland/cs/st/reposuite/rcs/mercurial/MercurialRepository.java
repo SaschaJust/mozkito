@@ -49,7 +49,7 @@ import difflib.Patch;
 public class MercurialRepository extends Repository {
 	
 	protected static Regex             authorRegex          = new Regex(
-	                                                                "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	                                                                    "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
 	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
@@ -126,7 +126,8 @@ public class MercurialRepository extends Repository {
 	 * java.lang.String)
 	 */
 	@Override
-	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
+	public List<AnnotationEntry> annotate(final String filePath,
+	                                      final String revision) {
 		Condition.notNull(filePath);
 		Condition.notNull(revision);
 		Condition.notNull(filePath, "Annotation of null path not possible");
@@ -223,7 +224,8 @@ public class MercurialRepository extends Repository {
 	 * String, java.lang.String)
 	 */
 	@Override
-	public File checkoutPath(final String relativeRepoPath, final String revision) {
+	public File checkoutPath(final String relativeRepoPath,
+	                         final String revision) {
 		Condition.notNull(relativeRepoPath);
 		Condition.notNull(revision);
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
@@ -237,7 +239,8 @@ public class MercurialRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-		        new String[] { "update", "-C", revision }, this.cloneDir, null, null);
+		                                                                new String[] { "update", "-C", revision },
+		                                                                this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -260,7 +263,8 @@ public class MercurialRepository extends Repository {
 	 *            the dest dir
 	 * @return true, if successful
 	 */
-	private boolean clone(final InputStream inputStream, final String destDir) {
+	private boolean clone(final InputStream inputStream,
+	                      final String destDir) {
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
 		        getUri().toString(), destDir }, this.cloneDir, inputStream, null);
 		if (returnValue.getFirst() == 0) {
@@ -291,7 +295,9 @@ public class MercurialRepository extends Repository {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
+	public Collection<Delta> diff(final String filePath,
+	                              final String baseRevision,
+	                              final String revisedRevision) {
 		Condition.notNull(filePath);
 		Condition.notNull(baseRevision);
 		Condition.notNull(revisedRevision);
@@ -313,7 +319,7 @@ public class MercurialRepository extends Repository {
 		List<String> original = response.getSecond();
 		List<String> revised = new ArrayList<String>(0);
 		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
-		        this.cloneDir, null, null);
+		                                   this.cloneDir, null, null);
 		if (response.getFirst() == 0) {
 			revised = response.getSecond();
 		}
@@ -331,10 +337,10 @@ public class MercurialRepository extends Repository {
 	public String gatherToolInformation() {
 		StringBuilder builder = new StringBuilder();
 		Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
-		        FileUtils.tmpDir, null, null);
+		                                                               FileUtils.tmpDir, null, null);
 		if (execute.getFirst() != 0) {
 			builder.append(getHandle()).append(" could not determine `hg` version. (Error code: ")
-			        .append(execute.getFirst()).append(").");
+			       .append(execute.getFirst()).append(").");
 			builder.append(FileUtils.lineSeparator);
 			try {
 				builder.append("Command was: ").append(FileUtils.checkExecutable("hg")).append(" --version");
@@ -478,7 +484,8 @@ public class MercurialRepository extends Repository {
 	 * lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormerPathName(final String revision, final String pathName) {
+	public String getFormerPathName(final String revision,
+	                                final String pathName) {
 		Condition.notNull(revision);
 		Condition.notNull(pathName);
 		Condition.notNull(revision, "Cannot get former path name of null revision");
@@ -541,7 +548,8 @@ public class MercurialRepository extends Repository {
 	 * (java.lang.String, long)
 	 */
 	@Override
-	public String getRelativeTransactionId(final String transactionId, final long index) {
+	public String getRelativeTransactionId(final String transactionId,
+	                                       final long index) {
 		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
 		
 		if (index == 0) {
@@ -569,7 +577,6 @@ public class MercurialRepository extends Repository {
 	
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
-		// TODO Auto-generated method stub
 		if (Logger.logError()) {
 			Logger.error("Support hasn't been implemented yet. " + RepositorySettings.reportThis);
 		}
@@ -624,7 +631,8 @@ public class MercurialRepository extends Repository {
 	 * java.lang.String)
 	 */
 	@Override
-	public List<LogEntry> log(final String fromRevision, final String toRevision) {
+	public List<LogEntry> log(final String fromRevision,
+	                          final String toRevision) {
 		Condition.notNull(fromRevision);
 		Condition.notNull(toRevision);
 		Condition.notNull(fromRevision, "Cannot get log info for NULL revision");
@@ -702,14 +710,14 @@ public class MercurialRepository extends Repository {
 			String[] dateString = lineParts[2].split(" ");
 			
 			DateTime date = new DateTime(Long.valueOf(dateString[0]).longValue() * 1000,
-			        DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
+			                             DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
 			
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(revID, previous, author, lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator),
-			        date));
+			                        date));
 		}
 		return result;
 		
@@ -720,7 +728,9 @@ public class MercurialRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address, final String startRevision, final String endRevision) {
+	public void setup(final URI address,
+	                  final String startRevision,
+	                  final String endRevision) {
 		Condition.notNull(address);
 		
 		setup(address, startRevision, endRevision, null);
@@ -738,8 +748,10 @@ public class MercurialRepository extends Repository {
 	 * @param inputStream
 	 *            the input stream
 	 */
-	private void setup(final URI address, final String startRevision, final String endRevision,
-	        final InputStream inputStream) {
+	private void setup(final URI address,
+	                   final String startRevision,
+	                   final String endRevision,
+	                   final InputStream inputStream) {
 		
 		String innerRepoPath = setup(address);
 		
@@ -793,8 +805,11 @@ public class MercurialRepository extends Repository {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
-	        final String password) {
+	public void setup(final URI address,
+	                  final String startRevision,
+	                  final String endRevision,
+	                  final String username,
+	                  final String password) {
 		Condition.notNull(address);
 		Condition.notNull(username);
 		Condition.notNull(password);
@@ -802,7 +817,7 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(username);
 		Condition.notNull(password);
 		
-		setup(Repository.encodeUsername(address, username), startRevision, endRevision, new ByteArrayInputStream(
-		        password.getBytes()));
+		setup(Repository.encodeUsername(address, username), startRevision, endRevision,
+		      new ByteArrayInputStream(password.getBytes()));
 	}
 }

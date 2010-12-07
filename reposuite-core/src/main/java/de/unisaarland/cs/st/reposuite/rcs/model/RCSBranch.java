@@ -5,13 +5,19 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -21,6 +27,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
+@Table (name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long serialVersionUID = 5419737140470855522L;
@@ -98,7 +105,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne (fetch = FetchType.LAZY)
+	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -108,7 +115,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY)
+	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -118,8 +125,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the generatedId
 	 */
-	@SuppressWarnings ("unused")
 	@Id
+	@Index (name = "idx_branchid")
+	@Column (name = "id", nullable = false)
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	private long getGeneratedId() {
 		return this.generatedId;
@@ -140,6 +148,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the name
 	 */
+	@Basic
+	@Index (name = "idx_name")
 	public String getName() {
 		return this.name;
 	}
@@ -149,7 +159,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne (fetch = FetchType.LAZY)
+	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -229,7 +239,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Override
 	public String toString() {
-		return "RCSBranch [name=" + getName() + ", parent=" + getParent() + "]";
+		return "RCSBranch [id=" + getGeneratedId() + ", name=" + getName() + ", parent=" + getParent() + "]";
 	}
 	
 }

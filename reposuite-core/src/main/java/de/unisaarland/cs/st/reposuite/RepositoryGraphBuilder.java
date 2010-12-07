@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
+import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,9 +46,17 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 			Logger.info("Starting " + getHandle());
 		}
 		
+		if (Logger.logInfo()) {
+			Logger.info("Fetching reverse dependencies. This could take a while...");
+		}
+		
 		for (RevDependencyIterator revdep = this.repository.getRevDependencyIterator(); revdep.hasNext();) {
 			RevDependency rd = revdep.next();
 			this.reverseDependencies.put(rd.getId(), rd);
+		}
+		
+		if (Logger.logInfo()) {
+			Logger.info("Reverse dependencies ready.");
 		}
 		
 		RCSTransaction rcsTransaction = null;
@@ -63,16 +72,33 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				rcsTransaction.setTag(revdep.getTagName());
 				for (String parent : revdep.getParents()) {
 					if (!this.cached.containsKey(parent)) {
-						// ERROR!
-						
+						if (Logger.logError()) {
+							Logger.error("Got child of unknown parent. This should not happen.");
+						}
+						throw new UnrecoverableEntryException("Got child of unknown parent. This should not happen.");
 					} else {
 						RCSTransaction parentTransaction = this.cached.get(parent);
 						rcsTransaction.addParent(parentTransaction);
 					}
 				}
 				
+				// detect new branch
+				if (rcsTransaction.getParents().size() == 1) {
+					RCSTransaction parentTransaction = rcsTransaction.getParents().iterator().next();
+					if (!rcsTransaction.getBranch().equals(parentTransaction.getBranch())) {
+						rcsTransaction.getBranch().setBegin(rcsTransaction);
+					}
+				} else if (rcsTransaction.getParents().isEmpty()) {
+					if (rcsTransaction.getBranch().getBegin() == null) {
+						rcsTransaction.getBranch().setBegin(rcsTransaction);
+					}
+				}
+				
+				// we have to store the current transaction before (!) we update
+				// the parents' children
 				write(rcsTransaction);
 				
+				// detect branch merge
 				if (revdep.getParents().size() > 1) {
 					for (String parent : revdep.getParents()) {
 						RCSTransaction parentTransaction = this.cached.get(parent);
@@ -80,6 +106,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 						if (!parentTransaction.getBranch().getName().equals(rcsTransaction.getBranch().getName())) {
 							// closed branch
 							// remove parent transaction from cache
+							
 							// wait for children to be persisted
 							while (getOutputStorage().size() > 0) {
 								Thread.sleep(1000);
@@ -92,15 +119,6 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 							
 							parentTransaction.getBranch().setEnd(parentTransaction);
 						}
-					}
-				}
-				
-				// detect new branch
-				if (rcsTransaction.getParents().size() == 1) {
-					RCSTransaction parentTransaction = rcsTransaction.getParents().iterator().next();
-					if (!rcsTransaction.getBranch().equals(parentTransaction.getBranch())
-					        && (parentTransaction.getChildren().size() > 1)) {
-						rcsTransaction.getBranch().setBegin(rcsTransaction);
 					}
 				}
 				
@@ -128,6 +146,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				Thread.sleep(1000);
 			}
 			
+			// persist all remaining cached transactions
 			this.hibernateUtil.commitTransaction();
 			this.hibernateUtil.beginTransaction();
 			for (RCSTransaction transaction : this.cached.values()) {

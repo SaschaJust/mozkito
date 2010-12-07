@@ -4,11 +4,14 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,6 +20,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -25,7 +29,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 @Table (name = "rcsrevision")
 @AssociationOverrides ({
-        @AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "changedFile_id")),
+        @AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "file_id")),
         @AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
@@ -41,9 +45,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		return RCSRevision.class.getSimpleName();
 	}
 	
-	private RCSFile            changedFile;
 	private ChangeType         changeType;
-	private RCSTransaction     transaction;
 	
 	private RevisionPrimaryKey primaryKey;
 	
@@ -54,17 +56,20 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		
 	}
 	
+	@NoneNull
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
 		Condition.notNull(rcsTransaction);
 		Condition.notNull(rcsFile);
 		Condition.notNull(changeType);
 		
-		setTransaction(rcsTransaction);
-		rcsTransaction.addRevision(this);
-		setChangedFile(rcsFile);
-		setChangeType(changeType);
+		setPrimaryKey(new RevisionPrimaryKey(rcsFile, rcsTransaction));
+		
+		Condition.notNull(this.primaryKey);
+		Condition.notNull(getTransaction());
+		Condition.notNull(getChangedFile());
+		
 		getTransaction().addRevision(this);
-		setPrimaryKey(new RevisionPrimaryKey(getChangedFile(), getTransaction()));
+		setChangeType(changeType);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -78,7 +83,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Override
 	@Transient
 	public int compareTo(final RCSRevision rcsRevision) {
-		Condition.notNull(rcsRevision);
+		Condition.notNull(rcsRevision, "Compare to (null) makes no sense.");
 		return getTransaction().compareTo(rcsRevision.getTransaction());
 	}
 	
@@ -87,12 +92,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Transient
 	public RCSFile getChangedFile() {
-		return this.changedFile;
+		return getPrimaryKey().getChangedFile();
 	}
 	
 	/**
 	 * @return the changeType
 	 */
+	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
 		return this.changeType;
 	}
@@ -107,21 +113,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Transient
 	public RCSTransaction getTransaction() {
-		return this.transaction;
+		return getPrimaryKey().getTransaction();
 	}
 	
 	@Override
 	@Transient
 	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
-	/**
-	 * @param changedFile
-	 *            the changedFile to set
-	 */
-	private void setChangedFile(final RCSFile changedFile) {
-		this.changedFile = changedFile;
+		return new LinkedList<Annotated>();
 	}
 	
 	/**
@@ -137,14 +135,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	private void setPrimaryKey(final RevisionPrimaryKey primaryKey) {
 		this.primaryKey = primaryKey;
-	}
-	
-	/**
-	 * @param transaction
-	 *            the transaction to set
-	 */
-	private void setTransaction(final RCSTransaction transaction) {
-		this.transaction = transaction;
 	}
 	
 	/*

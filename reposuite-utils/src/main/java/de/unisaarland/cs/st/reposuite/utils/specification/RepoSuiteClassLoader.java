@@ -95,20 +95,16 @@ public class RepoSuiteClassLoader extends ClassLoader {
 									constructorAnnotations.put(aC.getCanonicalName(), pattern.value());
 									break;
 								default:
-									// TODO error
 							}
 						}
 					}
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (WrongClassSearchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -160,7 +156,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 	 */
 	public RepoSuiteClassLoader(final ClassLoader parent) {
 		super(parent);
-		// TODO Auto-generated constructor stub
 	}
 	
 	private String getAnnotationFormatString(final Annotation annotation,
@@ -260,7 +255,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 					System.err.println("Inserting before: " + insertionString);
 					method.insertBefore(insertionString);
 				} catch (CannotCompileException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -274,7 +268,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 				try {
 					constructor.insertBefore(insertionString);
 				} catch (CannotCompileException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -284,7 +277,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 	}
 	
 	private void processConstructorAnnotations(final CtConstructor constructor) {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -316,7 +308,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 					// method.insertBefore(conditionPakkage.getName() +
 					// ".Condition.notNull(i);");
 					// } catch (CannotCompileException e) {
-					// // TODO Auto-generated catch block
 					// e.printStackTrace();
 					// }
 					// }
@@ -379,7 +370,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 								}
 							});
 						} catch (NotFoundException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -399,7 +389,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 								
 								template.setAttribute(memberName, memberValue);
 							} catch (NotFoundException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -412,7 +401,6 @@ public class RepoSuiteClassLoader extends ClassLoader {
 						System.err.println(conditionString);
 						this.insertions.add(conditionString);
 					} catch (NotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					

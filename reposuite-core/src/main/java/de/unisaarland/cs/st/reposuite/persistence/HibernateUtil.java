@@ -20,6 +20,8 @@ import org.hibernate.jdbc.Work;
 
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -31,7 +33,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateUtil {
 	
-	private class QueryWork implements Work{
+	private class QueryWork implements Work {
+		
 		private final String query;
 		
 		public QueryWork(final String q) {
@@ -44,6 +47,7 @@ public class HibernateUtil {
 			st.execute(this.query);
 		}
 	}
+	
 	private static SessionFactory             sessionFactory;
 	private static String                     type;
 	
@@ -103,14 +107,14 @@ public class HibernateUtil {
 	 * @throws HibernateException
 	 */
 	public static void createSessionFactory(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver) throws HibernateException {
+	                                        final String database,
+	                                        final String user,
+	                                        final String password,
+	                                        final String type,
+	                                        final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			+ "?useUnicode=true&characterEncoding=UTF-8";
+			        + "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
@@ -147,7 +151,7 @@ public class HibernateUtil {
 		}
 	}
 	
-	public static String getType(){
+	public static String getType() {
 		return type;
 	}
 	
@@ -164,6 +168,7 @@ public class HibernateUtil {
 			sessionFactory = null;
 		}
 	}
+	
 	private final Session session;
 	
 	private Transaction   transaction;
@@ -237,7 +242,8 @@ public class HibernateUtil {
 	 *            the clazz
 	 * @return the criteria
 	 */
-	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
+	public SQLQuery createSQLQuery(final String query,
+	                               final Class<?> clazz) {
 		Condition.notNull(query);
 		Condition.notNull(clazz);
 		
@@ -255,7 +261,7 @@ public class HibernateUtil {
 	/**
 	 * @param object
 	 */
-	public void delete(final Annotated object) {
+	public synchronized void delete(final Annotated object) {
 		this.session.delete(object);
 	}
 	
@@ -269,21 +275,38 @@ public class HibernateUtil {
 	 * @throws HibernateException
 	 */
 	public void executeQuery(final String query) throws HibernateException, SQLException {
-		Condition.notNull(query);
+		Condition.notNull(query, "Calling execute query with query=(null) does not make any sense.");
 		this.session.doWork(new QueryWork(query));
 	}
 	
 	/**
 	 * @param object
 	 */
-	public void save(final Annotated object) {
+	public synchronized void save(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
+		RCSTransaction rcstransaction = null;
+		if (object instanceof RCSTransaction) {
+			rcstransaction = (RCSTransaction) object;
+		}
+		
 		if (saveFirst != null) {
 			
 			if (Logger.logDebug()) {
 				Logger.debug(JavaUtils.collectionToString(saveFirst));
 			}
+			
+			// this fixes a major design flaw
+			// we avoid cascaded updates on RCSFiles caused
+			// by the saveFirst() collections manually
+			// if—and only if—the RCSFile was not modified for
+			// the transaction under suspect.
 			for (Annotated innerObject : saveFirst) {
+				if (innerObject instanceof RCSFile) {
+					RCSFile file = (RCSFile) innerObject;
+					if (file.saved() && !file.getChangedNames().containsKey(rcstransaction.getId())) {
+						continue;
+					}
+				}
 				saveOrUpdate(innerObject);
 			}
 		}
@@ -293,17 +316,32 @@ public class HibernateUtil {
 	/**
 	 * @param object
 	 */
-	public void saveOrUpdate(final Annotated object) {
+	public synchronized void saveOrUpdate(final Annotated object) {
 		Collection<Annotated> saveFirst = object.saveFirst();
 		if (Logger.logDebug()) {
 			Logger.debug("Persisting request for " + object);
+		}
+		RCSTransaction rcstransaction = null;
+		if (object instanceof RCSTransaction) {
+			rcstransaction = (RCSTransaction) object;
 		}
 		
 		if (saveFirst != null) {
 			if (Logger.logDebug()) {
 				Logger.debug("Save first triggered...");
 			}
+			// this fixes a major design flaw
+			// we avoid cascaded updates on RCSFiles caused
+			// by the saveFirst() collections manually
+			// if—and only if—the RCSFile was not modified for
+			// the transaction under suspect.
 			for (Annotated innerObject : saveFirst) {
+				if (innerObject instanceof RCSFile) {
+					RCSFile file = (RCSFile) innerObject;
+					if (file.saved() && !file.getChangedNames().containsKey(rcstransaction.getId())) {
+						continue;
+					}
+				}
 				saveOrUpdate(innerObject);
 			}
 		}
@@ -311,6 +349,7 @@ public class HibernateUtil {
 		if (Logger.logDebug()) {
 			Logger.debug("Persisting " + object);
 		}
+		// System.out.println("Persisting: " + object);
 		this.session.saveOrUpdate(object);
 	}
 	
@@ -324,17 +363,7 @@ public class HibernateUtil {
 	/**
 	 * @param object
 	 */
-	public void update(final Annotated object) {
-		Collection<Annotated> saveFirst = object.saveFirst();
-		if (saveFirst != null) {
-			
-			if (Logger.logDebug()) {
-				Logger.debug(JavaUtils.collectionToString(saveFirst));
-			}
-			for (Annotated innerObject : saveFirst) {
-				saveOrUpdate(innerObject);
-			}
-		}
+	public synchronized void update(final Annotated object) {
 		this.session.update(object);
 	}
 	

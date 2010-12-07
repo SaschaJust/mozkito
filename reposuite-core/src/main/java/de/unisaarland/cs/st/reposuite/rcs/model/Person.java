@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -37,7 +39,6 @@ import de.unisaarland.cs.st.reposuite.utils.specification.Trimmed;
 @Entity
 @javax.persistence.Table (name = "person")
 public class Person implements Annotated {
-	
 	
 	/**
 	 * 
@@ -60,7 +61,7 @@ public class Person implements Annotated {
 	@NoneNull (spec = "When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	@Return (checks = ParameterConditions.NotNull)
 	public static Person merge(final Person keeper,
-			@NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
+	                           @NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
 		Condition.notNull(keeper);
 		Condition.noneNull(collisions);
 		Condition.notEmpty(collisions);
@@ -79,7 +80,7 @@ public class Person implements Annotated {
 	 */
 	@NoneNull (spec = "When merging two Person entities, neither target nor merged person may be null.")
 	public static Person merge(final Person keeper,
-			final Person from) {
+	                           final Person from) {
 		Condition.notNull(keeper);
 		Condition.notNull(from);
 		
@@ -215,7 +216,11 @@ public class Person implements Annotated {
 		this.transactions.add(transaction);
 	}
 	
-	public void clearTransaction(){
+	/**
+	 * 
+	 */
+	@Transient
+	public void clearTransaction() {
 		this.transactions.clear();
 	}
 	
@@ -267,6 +272,8 @@ public class Person implements Annotated {
 	 * @return the generatedId
 	 */
 	@Id
+	@Index (name = "idx_personid")
+	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	private long getGeneratedId() {
 		return this.generatedId;
@@ -288,7 +295,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the transactions
 	 */
-	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToMany (cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
 		return this.transactions;
 	}
@@ -310,14 +317,14 @@ public class Person implements Annotated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.emailAddresses.isEmpty())
-				? 0
-						: this.emailAddresses.iterator().next().hashCode());
+		                                                          ? 0
+		                                                          : this.emailAddresses.iterator().next().hashCode());
 		result = prime * result + ((this.fullnames.isEmpty())
-				? 0
-						: this.fullnames.iterator().next().hashCode());
+		                                                     ? 0
+		                                                     : this.fullnames.iterator().next().hashCode());
 		result = prime * result + ((this.usernames.isEmpty())
-				? 0
-						: this.usernames.iterator().next().hashCode());
+		                                                     ? 0
+		                                                     : this.usernames.iterator().next().hashCode());
 		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
 		// >>> 32));
 		return result;
@@ -336,14 +343,8 @@ public class Person implements Annotated {
 		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {
 			return true;
 		} else {
-			// foo, null, bleh
-			// null, bar, bleh
-			
-			// foo, null, bleh
-			// null, null, bleh
-			
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
-					|| (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
+			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
 			} else {
 				return false;
