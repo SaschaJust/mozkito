@@ -406,8 +406,8 @@ public class CrashHandler extends ThreadGroup {
 					Logger.error(crashReport);
 				}
 				
-				// System.out.println(crashReport);
-				// sendReport(crashReport);
+				System.out.println(crashReport);
+				sendReport(crashReport);
 			}
 			
 			if (Logger.logInfo()) {

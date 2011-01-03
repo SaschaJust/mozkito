@@ -6,10 +6,12 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 import java.util.Queue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * The {@link RepoSuiteDataStorage} elements are the node of a
@@ -21,7 +23,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepoSuiteDataStorage<E> {
 	
-	private final Queue<E>                                    queue   = new ConcurrentLinkedQueue<E>();
+	private final Queue<Tuple<E, CountDownLatch>>             queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
 	private final BlockingDeque<RepoSuiteGeneralThread<?, E>> writers = new LinkedBlockingDeque<RepoSuiteGeneralThread<?, E>>();
 	private final BlockingDeque<RepoSuiteGeneralThread<E, ?>> readers = new LinkedBlockingDeque<RepoSuiteGeneralThread<E, ?>>();
 	private final int                                         cacheSize;
@@ -43,14 +45,14 @@ public class RepoSuiteDataStorage<E> {
 	 *         anymore.
 	 * @throws InterruptedException
 	 */
-	public E read() throws InterruptedException {
+	public Tuple<E, CountDownLatch> read() throws InterruptedException {
 		if (Logger.logTrace()) {
 			Logger.trace("Entering read method.");
 		}
 		
 		synchronized (this.queue) {
 			if (this.queue.size() > 0) {
-				E poll = this.queue.poll();
+				Tuple<E, CountDownLatch> poll = this.queue.poll();
 				this.queue.notifyAll();
 				return poll;
 			} else {
@@ -59,10 +61,9 @@ public class RepoSuiteDataStorage<E> {
 				}
 				
 				if (this.queue.size() > 0) {
-					E poll = this.queue.poll();
+					Tuple<E, CountDownLatch> poll = this.queue.poll();
 					this.queue.notifyAll();
 					return poll;
-					
 				} else {
 					if (Logger.logWarn()) {
 						Logger.warn("No more incoming data. Returning (null).");
@@ -81,7 +82,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
-		Condition.notNull(writerThread);
+		Condition.notNull(writerThread, "Registering null objects is not allowed.");
 		
 		if (Logger.logInfo()) {
 			Logger.info("Registering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
@@ -100,7 +101,7 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 */
 	public void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
-		Condition.notNull(readerThread);
+		Condition.notNull(readerThread, "Registering null objects is not allowed.");
 		
 		if (Logger.logInfo()) {
 			Logger.info("Registering output " + ((RepoSuiteThread<E, ?>) readerThread).getName());
@@ -173,8 +174,8 @@ public class RepoSuiteDataStorage<E> {
 	 *            may not be null
 	 * @throws InterruptedException
 	 */
-	public void write(final E data) throws InterruptedException {
-		Condition.notNull(data);
+	public CountDownLatch write(final E data) throws InterruptedException {
+		Condition.notNull(data, "Writing null data is not allowed.");
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Entering write method.");
@@ -184,15 +185,17 @@ public class RepoSuiteDataStorage<E> {
 			while (!this.readers.isEmpty() && (this.queue.size() >= this.cacheSize)) {
 				this.queue.wait();
 			}
+			CountDownLatch countDownLatch = new CountDownLatch(1);
 			
 			if (!this.readers.isEmpty()) {
-				this.queue.add(data);
+				this.queue.add(new Tuple<E, CountDownLatch>(data, countDownLatch));
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("No more readers attached. Void sinking data and returning.");
 				}
 			}
 			this.queue.notifyAll();
+			return countDownLatch;
 		}
 	}
 }

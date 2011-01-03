@@ -5,11 +5,13 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * {@link RepoSuiteThread}s are the edges of a {@link RepoSuiteToolchain} graph,
@@ -77,16 +79,14 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 		setShutdown(false);
 		
-		Condition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
-		                hasInputConnector(), this.inputStorage != null);
-		Condition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-		                hasOutputConnector(), this.outputStorage != null);
+		Condition.equals(hasInputConnector(),
+		                 this.inputStorage != null,
+		                 "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+		                 hasInputConnector(), this.inputStorage != null);
+		Condition.equals(hasInputConnector(),
+		                 this.inputStorage != null,
+		                 "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+		                 hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(settings, "`settings` must not be null.");
 		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
@@ -264,14 +264,14 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
-		@SuppressWarnings ("unchecked") LinkedList<RepoSuiteGeneralThread<V, ?>> outputThreads = (LinkedList<RepoSuiteGeneralThread<V, ?>>) this.outputThreads
-		        .clone();
+		@SuppressWarnings ("unchecked")
+		LinkedList<RepoSuiteGeneralThread<V, ?>> outputThreads = (LinkedList<RepoSuiteGeneralThread<V, ?>>) this.outputThreads.clone();
 		for (RepoSuiteGeneralThread<V, ?> thread : outputThreads) {
 			thread.disconnectInput(this);
 		}
 		
-		@SuppressWarnings ("unchecked") LinkedList<RepoSuiteGeneralThread<?, K>> inputThreads = (LinkedList<RepoSuiteGeneralThread<?, K>>) this.inputThreads
-		        .clone();
+		@SuppressWarnings ("unchecked")
+		LinkedList<RepoSuiteGeneralThread<?, K>> inputThreads = (LinkedList<RepoSuiteGeneralThread<?, K>>) this.inputThreads.clone();
 		for (RepoSuiteGeneralThread<?, K> thread : inputThreads) {
 			thread.disconnectOutput(this);
 		}
@@ -403,6 +403,16 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @throws InterruptedException
 	 */
 	protected final K read() throws InterruptedException {
+		return this.inputStorage.read().getFirst();
+	}
+	
+	/**
+	 * @return the next chunk from the inputStorage. Will be null if there isn't
+	 *         any input left and no writers are attached to the storage
+	 *         anymore.
+	 * @throws InterruptedException
+	 */
+	protected final Tuple<K, CountDownLatch> readLatch() throws InterruptedException {
 		return this.inputStorage.read();
 	}
 	
@@ -492,17 +502,18 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * 
 	 * @param data
 	 *            a chunk of data, not null
+	 * @return
 	 * @throws InterruptedException
 	 */
-	protected final void write(final V data) throws InterruptedException {
+	protected final CountDownLatch write(final V data) throws InterruptedException {
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
-		        hasOutputConnector());
+		                hasOutputConnector());
 		if (Logger.logTrace()) {
 			Logger.trace("writing data: " + data);
 		}
-		this.outputStorage.write(data);
+		return this.outputStorage.write(data);
 	}
 	
 }

@@ -3,12 +3,15 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
+import java.util.concurrent.CountDownLatch;
+
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous
@@ -52,9 +55,14 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 		}
 		this.hibernateUtil.beginTransaction();
 		RCSTransaction currentTransaction;
+		CountDownLatch currentLatch = new CountDownLatch(1);
+		Tuple<RCSTransaction, CountDownLatch> tuple;
 		int i = 0;
+		
 		try {
-			while (!isShutdown() && ((currentTransaction = read()) != null)) {
+			while (!isShutdown() && ((tuple = readLatch()) != null)) {
+				currentTransaction = tuple.getFirst();
+				currentLatch = tuple.getSecond();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentTransaction);
@@ -62,11 +70,13 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 				
 				if (++i % 100 == 0) {
 					this.hibernateUtil.commitTransaction();
+					currentLatch.countDown();
 					this.hibernateUtil.beginTransaction();
 				}
 				this.hibernateUtil.save(currentTransaction);
 			}
 			this.hibernateUtil.commitTransaction();
+			currentLatch.countDown();
 			finish();
 		} catch (InterruptedException e) {
 			

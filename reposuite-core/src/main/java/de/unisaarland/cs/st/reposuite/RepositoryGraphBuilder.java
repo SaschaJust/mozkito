@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite;
 import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -60,6 +61,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 		}
 		
 		RCSTransaction rcsTransaction = null;
+		CountDownLatch latch = new CountDownLatch(1);
 		
 		try {
 			while (!isShutdown() && ((rcsTransaction = read()) != null)) {
@@ -96,7 +98,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				
 				// we have to store the current transaction before (!) we update
 				// the parents' children
-				write(rcsTransaction);
+				latch = write(rcsTransaction);
 				
 				// detect branch merge
 				if (revdep.getParents().size() > 1) {
@@ -108,9 +110,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 							// remove parent transaction from cache
 							
 							// wait for children to be persisted
-							while (getOutputStorage().size() > 0) {
-								Thread.sleep(1000);
-							}
+							latch.await();
 							
 							parentTransaction.addChild(rcsTransaction);
 							this.hibernateUtil.update(this.cached.remove(parentTransaction.getId()));
@@ -125,9 +125,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				// ++++++ Update caches ++++++
 				// remove old "latest transaction" from cache
 				if (this.cached.containsKey(this.latest.get(revdep.getCommitBranch().getName()))) {
-					while (getOutputStorage().size() > 0) {
-						Thread.sleep(1000);
-					}
+					latch.await();
 					this.cached.get(this.latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
 					this.hibernateUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
 				}
@@ -142,9 +140,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 			}
 			
 			// wait for children to be persisted
-			while (getOutputStorage().size() > 0) {
-				Thread.sleep(1000);
-			}
+			latch.await();
 			
 			// persist all remaining cached transactions
 			this.hibernateUtil.commitTransaction();
