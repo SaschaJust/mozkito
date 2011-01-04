@@ -3,9 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.toolchain;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -27,16 +26,16 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteGeneralThread<K, V> {
 	
-	private boolean                                        shutdown;
-	private final Collection<RepoSuiteGeneralThread<?, ?>> knownThreads  = new LinkedList<RepoSuiteGeneralThread<?, ?>>();
-	private final RepoSuiteThreadGroup                     threadGroup;
+	private boolean                                                 shutdown;
+	private final LinkedBlockingDeque<RepoSuiteGeneralThread<?, ?>> knownThreads  = new LinkedBlockingDeque<RepoSuiteGeneralThread<?, ?>>();
+	private final RepoSuiteThreadGroup                              threadGroup;
 	
-	private final LinkedList<RepoSuiteGeneralThread<?, K>> inputThreads  = new LinkedList<RepoSuiteGeneralThread<?, K>>();
-	private final LinkedList<RepoSuiteGeneralThread<V, ?>> outputThreads = new LinkedList<RepoSuiteGeneralThread<V, ?>>();
+	private final LinkedBlockingDeque<RepoSuiteGeneralThread<?, K>> inputThreads  = new LinkedBlockingDeque<RepoSuiteGeneralThread<?, K>>();
+	private final LinkedBlockingDeque<RepoSuiteGeneralThread<V, ?>> outputThreads = new LinkedBlockingDeque<RepoSuiteGeneralThread<V, ?>>();
 	
-	private RepoSuiteDataStorage<K>                        inputStorage;
-	private RepoSuiteDataStorage<V>                        outputStorage;
-	private final RepoSuiteSettings                        settings;
+	private RepoSuiteDataStorage<K>                                 inputStorage;
+	private RepoSuiteDataStorage<V>                                 outputStorage;
+	private final RepoSuiteSettings                                 settings;
 	
 	/**
 	 * The constructor of the {@link RepoSuiteThread}. This should be called
@@ -264,16 +263,16 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
-		@SuppressWarnings ("unchecked")
-		LinkedList<RepoSuiteGeneralThread<V, ?>> outputThreads = (LinkedList<RepoSuiteGeneralThread<V, ?>>) this.outputThreads.clone();
-		for (RepoSuiteGeneralThread<V, ?> thread : outputThreads) {
-			thread.disconnectInput(this);
+		RepoSuiteGeneralThread<V, ?> outputThread = null;
+		
+		while ((outputThread = this.outputThreads.poll()) != null) {
+			outputThread.disconnectInput(this);
 		}
 		
-		@SuppressWarnings ("unchecked")
-		LinkedList<RepoSuiteGeneralThread<?, K>> inputThreads = (LinkedList<RepoSuiteGeneralThread<?, K>>) this.inputThreads.clone();
-		for (RepoSuiteGeneralThread<?, K> thread : inputThreads) {
-			thread.disconnectOutput(this);
+		RepoSuiteGeneralThread<?, K> inputThread = null;
+		
+		while ((inputThread = this.inputThreads.poll()) != null) {
+			inputThread.disconnectOutput(this);
 		}
 		
 		setShutdown(true);
@@ -471,18 +470,24 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			
 			setShutdown(true);
 			
-			for (RepoSuiteGeneralThread<?, ?> thread : this.knownThreads) {
+			RepoSuiteGeneralThread<?, ?> thread = null;
+			
+			while ((thread = this.knownThreads.poll()) != null) {
 				if (!thread.isShutdown()) {
 					thread.shutdown();
 				}
 			}
 			
-			for (RepoSuiteGeneralThread<V, ?> thread : this.outputThreads) {
-				thread.disconnectInput(this);
+			RepoSuiteGeneralThread<V, ?> outputThread = null;
+			
+			while ((outputThread = this.outputThreads.poll()) != null) {
+				outputThread.disconnectInput(this);
 			}
 			
-			for (RepoSuiteGeneralThread<?, K> thread : this.inputThreads) {
-				thread.disconnectOutput(this);
+			RepoSuiteGeneralThread<?, K> inputThread = null;
+			
+			while ((inputThread = this.inputThreads.poll()) != null) {
+				inputThread.disconnectOutput(this);
 			}
 		}
 	}
