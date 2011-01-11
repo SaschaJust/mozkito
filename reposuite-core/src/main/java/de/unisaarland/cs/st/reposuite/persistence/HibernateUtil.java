@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class HibernateUtil {
 	
-	private class QueryWork implements Work {
+	private static class QueryWork implements Work {
 		
 		private final String query;
 		
@@ -107,14 +107,14 @@ public class HibernateUtil {
 	 * @throws HibernateException
 	 */
 	public static void createSessionFactory(final String host,
-	                                        final String database,
-	                                        final String user,
-	                                        final String password,
-	                                        final String type,
-	                                        final String driver) throws HibernateException {
+			final String database,
+			final String user,
+			final String password,
+			final String type,
+			final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			        + "?useUnicode=true&characterEncoding=UTF-8";
+			+ "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
@@ -243,7 +243,7 @@ public class HibernateUtil {
 	 * @return the criteria
 	 */
 	public SQLQuery createSQLQuery(final String query,
-	                               final Class<?> clazz) {
+			final Class<?> clazz) {
 		Condition.notNull(query);
 		Condition.notNull(clazz);
 		

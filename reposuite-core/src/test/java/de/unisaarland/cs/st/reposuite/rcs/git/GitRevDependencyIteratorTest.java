@@ -2,12 +2,14 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -18,6 +20,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 
 public class GitRevDependencyIteratorTest {
@@ -149,6 +152,22 @@ public class GitRevDependencyIteratorTest {
 		parents = dep.getParents();
 		assertEquals(0, parents.size());
 		
+	}
+	
+	@Test
+	public void testRegEx() {
+		String line1 = "0cc858f14daa9750596051cb5b92c317ed17c401  (hudson-whatever)";
+		String line2 = "ba4fb16f3057524353e5159e505b2f8d8405f38a  (HEAD, origin/master, origin/HEAD, master)";
+		
+		List<RegexGroup> groups = GitRevDependencyIterator.tagRegex.find(line1);
+		assertFalse(groups == null);
+		assertEquals(2, groups.size());
+		assertEquals("hudson-whatever", groups.get(1).getMatch());
+		
+		groups = GitRevDependencyIterator.tagRegex.find(line2);
+		assertFalse(groups == null);
+		assertEquals(2, groups.size());
+		assertEquals("HEAD, origin/master, origin/HEAD, master", groups.get(1).getMatch());
 	}
 	
 }

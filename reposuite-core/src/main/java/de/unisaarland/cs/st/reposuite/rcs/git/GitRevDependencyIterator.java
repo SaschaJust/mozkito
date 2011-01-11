@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 public class GitRevDependencyIterator implements RevDependencyIterator {
 	
-	protected Regex           tagRegex = new Regex("\\(([^)])\\)");
+	protected static Regex               tagRegex = new Regex("\\(([^)]+)\\)");
 	
 	private LineIterator      lineIter;
 	private final File        cloneDir;
@@ -84,7 +84,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				if (!decoration.equals("")) {
 					StringBuilder decorateBuilder = new StringBuilder();
-					List<RegexGroup> groups = this.tagRegex.find(decoration);
+					List<RegexGroup> groups = tagRegex.find(decoration);
 					if ((groups != null) && (groups.size() == 2)) {
 						String tagNamesString = groups.get(1).getMatch();
 						String[] tagNamesStrings = tagNamesString.split(",");
