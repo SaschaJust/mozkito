@@ -31,7 +31,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 	private final Map<String, RCSTransaction> cached              = new HashMap<String, RCSTransaction>();
 	
 	public RepositoryGraphBuilder(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository, final HibernateUtil hibernateUtil) {
+			final Repository repository, final HibernateUtil hibernateUtil) {
 		super(threadGroup, RepositoryGraphBuilder.class.getSimpleName(), settings);
 		this.repository = repository;
 		this.hibernateUtil = hibernateUtil;
@@ -75,7 +75,8 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				for (String parent : revdep.getParents()) {
 					if (!this.cached.containsKey(parent)) {
 						if (Logger.logError()) {
-							Logger.error("Got child of unknown parent. This should not happen.");
+							Logger.error("Got child `" + rcsTransaction.getId()
+							        + "` of unknown parent. This should not happen.");
 						}
 						throw new UnrecoverableEntryException("Got child of unknown parent. This should not happen.");
 					} else {
