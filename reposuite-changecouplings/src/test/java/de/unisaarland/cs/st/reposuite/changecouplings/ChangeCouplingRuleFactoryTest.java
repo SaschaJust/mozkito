@@ -69,47 +69,47 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			// ###transaction 1
 			
-			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, null);
+			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person);
 			RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 			fileA.assignTransaction(rcsTransaction, "A.java");
-			new RCSRevision(rcsTransaction, fileA, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
 			
 			RCSFile fileB = fileManager.createFile("B.java", rcsTransaction);
 			fileB.assignTransaction(rcsTransaction, "B.java");
-			new RCSRevision(rcsTransaction, fileB, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction, fileB, ChangeType.Added);
 			
 			RCSFile fileC = fileManager.createFile("C.java", rcsTransaction);
 			fileC.assignTransaction(rcsTransaction, "C.java");
-			new RCSRevision(rcsTransaction, fileC, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
 			
 			hibernateUtil.saveOrUpdate(rcsTransaction);
 			
 			// ### transaction 2
 			
-			RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", new DateTime(), person, rcsTransaction);
-			new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified, rcsTransaction);
-			new RCSRevision(rcsTransaction2, fileB, ChangeType.Added, null);
+			RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", new DateTime(), person);
+			new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
+			new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
 			RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
 			fileC.assignTransaction(rcsTransaction2, "D.java");
-			new RCSRevision(rcsTransaction2, fileD, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
 			hibernateUtil.saveOrUpdate(rcsTransaction2);
 			
 			// ### transaction 3
 			
-			RCSTransaction rcsTransaction3 = new RCSTransaction("2", "", new DateTime(), person, rcsTransaction2);
-			new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified, rcsTransaction2);
+			RCSTransaction rcsTransaction3 = new RCSTransaction("2", "", new DateTime(), person);
+			new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
 			
 			fileC.assignTransaction(rcsTransaction3, "C.java");
-			new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified, rcsTransaction2);
-			new RCSRevision(rcsTransaction3, fileB, ChangeType.Added, null);
+			new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
+			new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
 			hibernateUtil.saveOrUpdate(rcsTransaction3);
 			
 			// ### transaction 4
 			
-			RCSTransaction rcsTransaction4 = new RCSTransaction("3", "", new DateTime(), person, rcsTransaction3);
-			new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified, rcsTransaction3);
-			new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified, rcsTransaction3);
-			new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified, rcsTransaction3);
+			RCSTransaction rcsTransaction4 = new RCSTransaction("3", "", new DateTime(), person);
+			new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
+			new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
+			new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
 			hibernateUtil.saveOrUpdate(rcsTransaction4);
 			
 			hibernateUtil.commitTransaction();
@@ -160,7 +160,7 @@ public class ChangeCouplingRuleFactoryTest {
 			assertEquals(3, rule.getImplication().intValue());
 			assertEquals(1, rule.getSupport().intValue());
 			assertEquals(.5, rule.getConfidence().doubleValue(), 0);
-
+			
 		} catch (UninitializedDatabaseException e) {
 			e.printStackTrace();
 			fail();
