@@ -116,7 +116,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getDecorateListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--encoding=UTF-8", "--pretty=format:%H %d", this.revision }, this.cloneDir, null,
+ "--reverse",
+		        "--encoding=UTF-8", "--pretty=format:%H %d", this.revision }, this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
@@ -135,7 +136,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	private File getRevListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
 				new String[] { "rev-list",
-				"--encoding=UTF-8", "--parents", this.revision }, this.cloneDir, null,
+ "--reverse",
+		        "--encoding=UTF-8", "--parents", this.revision }, this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo: could not get revList.");
