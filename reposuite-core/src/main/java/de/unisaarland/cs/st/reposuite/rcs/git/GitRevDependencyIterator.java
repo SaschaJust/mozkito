@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,23 +29,20 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	protected static Regex               tagRegex = new Regex("\\(([^)]+)\\)");
-	
-	private LineIterator      lineIter;
+	private Iterator<RevDependency>      depIter;
 	private final File        cloneDir;
 	private final String      revision;
 	private final Set<String> tagNames = new HashSet<String>();
+	
 	private final Map<String, RCSBranch> branches = new HashMap<String, RCSBranch>();
 	
 	public GitRevDependencyIterator(final File cloneDir, final String revision) {
 		Condition.notNull(cloneDir);
 		Condition.notNull(revision);
 		
-		File depFile = FileUtils.createRandomFile();
-		
 		this.cloneDir = cloneDir;
 		this.revision = revision;
 		try {
-			FileUtils.forceDeleteOnExit(depFile);
 			LineIterator revListFileIterator = FileUtils.getLineIterator(this.getRevListFile());
 			LineIterator decorateListIterator = FileUtils.getLineIterator(this.getDecorateListFile());
 			
@@ -58,10 +57,12 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 			}
 			
+			List<RevDependency> depList = new LinkedList<RevDependency>();
+			
 			// merge files
-			BufferedWriter depFileWriter = new BufferedWriter(new FileWriter(depFile));
 			while ((revListFileIterator.hasNext()) && (decorateListIterator.hasNext())) {
-				StringBuilder lineToWrite = new StringBuilder();
+				
+				
 				
 				String[] revFields = revListFileIterator.next().split("\\s");
 				String decoLine = decorateListIterator.next();
@@ -70,20 +71,16 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				Condition.check(revFields.length > 0);
 				Condition.check(revFields[0].trim().equals(decoId));
-				String revId = revFields[0].trim();
-				lineToWrite.append(revId.trim());
-				lineToWrite.append("|");
 				
-				StringBuilder revBuilder = new StringBuilder();
+				String revId = revFields[0].trim();
+				List<String> parents = new LinkedList<String>();
+				List<String> branches = new LinkedList<String>();
+				
 				for (int i = 1; i < revFields.length; ++i) {
-					revBuilder.append(revFields[i]);
-					revBuilder.append(" ");
+					parents.add(revFields[i]);
 				}
-				lineToWrite.append(revBuilder.toString().trim());
-				lineToWrite.append("|");
 				
 				if (!decoration.equals("")) {
-					StringBuilder decorateBuilder = new StringBuilder();
 					List<RegexGroup> groups = tagRegex.find(decoration);
 					if ((groups != null) && (groups.size() == 2)) {
 						String tagNamesString = groups.get(1).getMatch();
@@ -93,21 +90,55 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 							if (tagName.equals("master") || tagName.equals("HEAD")) {
 								continue;
 							}
-							decorateBuilder.append(tagName);
-							decorateBuilder.append(" ");
+							branches.add(tagName);
 						}
 					}
-					lineToWrite.append(decorateBuilder.toString().trim());
 				}
-				depFileWriter.write(lineToWrite.toString().trim());
-				depFileWriter.write(FileUtils.lineSeparator);
+				
+				if (this.branches.isEmpty()) {
+					// found last commit
+					this.branches.put(revId, RCSBranch.MASTER);
+				}
+				Condition.check(this.branches.containsKey(revId));
+				RCSBranch commitBranch = this.branches.get(revId);
+				this.branches.remove(revId);
+				
+				if (parents.size() > 0) {
+					String parent = parents.get(0);
+					if (!this.branches.containsKey(parent)) {
+						this.branches.put(parent, commitBranch);
+					} else {
+						if (commitBranch.compareTo(this.branches.get(parent)) < 0) {
+							this.branches.put(parent, commitBranch);
+						}
+					}
+				}
+				for (int i = 1; i < parents.size(); ++i) {
+					String parent = parents.get(i);
+					RCSBranch newBranch = new RCSBranch(parent + "Branch", commitBranch);
+					if (!this.branches.containsKey(parent)) {
+						this.branches.put(parent, newBranch);
+					} else {
+						if (newBranch.compareTo(this.branches.get(parent)) < 0) {
+							this.branches.put(parent, newBranch);
+						}
+					}
+				}
+				
+				String tagName = null;
+				for (String branch : branches) {
+					if (this.tagNames.contains(branch)) {
+						tagName = branch;
+						break;
+					}
+				}
+				depList.add(0, new RevDependency(revId, commitBranch, new HashSet<String>(parents), tagName));
 			}
 			if ((revListFileIterator.hasNext()) || (decorateListIterator.hasNext())) {
 				throw new UnrecoverableError(
 				"Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
 			}
-			depFileWriter.close();
-			this.lineIter = FileUtils.getLineIterator(depFile);
+			depIter = depList.iterator();
 		} catch (Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
 					+ FileUtils.lineSeparator + e.getMessage(), e);
@@ -116,8 +147,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getDecorateListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
- "--reverse",
-		        "--encoding=UTF-8", "--pretty=format:%H %d", this.revision }, this.cloneDir, null,
+				"--encoding=UTF-8", "--pretty=format:%H %d", this.revision }, this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
@@ -136,8 +166,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	private File getRevListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
 				new String[] { "rev-list",
- "--reverse",
-		        "--encoding=UTF-8", "--parents", this.revision }, this.cloneDir, null,
+				"--encoding=UTF-8", "--parents", this.revision }, this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo: could not get revList.");
@@ -154,7 +183,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	@Override
 	public boolean hasNext() {
-		return this.lineIter.hasNext();
+		return this.depIter.hasNext();
 	}
 	
 	@Override
@@ -162,68 +191,12 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		if (!hasNext()) {
 			return null;
 		}
-		String[] depLine = this.lineIter.next().split("\\|");
-		Condition.check(depLine.length >= 1);
-		Condition.check(depLine.length <= 3);
-		String id = depLine[0];
-		String[] parents = new String[0];
-		if (this.branches.isEmpty()) {
-			// found last commit
-			this.branches.put(depLine[0], RCSBranch.MASTER);
-		}
-		if (depLine.length > 1) {
-			parents = depLine[1].split(" ");
-			Condition.check(parents.length > 0);
-		}
-		
-		
-		
-		Condition.check(this.branches.containsKey(id));
-		RCSBranch commitBranch = this.branches.get(id);
-		this.branches.remove(id);
-		
-		Set<String> parentSet = new HashSet<String>();
-		if (parents.length > 0) {
-			String parent = parents[0];
-			parentSet.add(parent);
-			if (!this.branches.containsKey(parent)) {
-				this.branches.put(parent, commitBranch);
-			} else {
-				if (commitBranch.compareTo(this.branches.get(parent)) < 0) {
-					this.branches.put(parent, commitBranch);
-				}
-			}
-		}
-		for (int i = 1; i < parents.length; ++i) {
-			String parent = parents[i];
-			parentSet.add(parent);
-			RCSBranch newBranch = new RCSBranch(parent + "Branch", commitBranch);
-			if (!this.branches.containsKey(parent)) {
-				this.branches.put(parent, newBranch);
-			} else {
-				if (newBranch.compareTo(this.branches.get(parent)) < 0) {
-					this.branches.put(parent, newBranch);
-				}
-			}
-		}
-		
-		String[] decos = new String[0];
-		if (depLine.length == 3) {
-			decos = depLine[2].split(" ");
-		}
-		String tagName = null;
-		for (String deco : decos) {
-			if (this.tagNames.contains(deco)) {
-				tagName = deco;
-			}
-		}
-		
-		return new RevDependency(depLine[0], commitBranch, parentSet, tagName);
+		return depIter.next();
 	}
 	
 	@Override
 	public void remove() {
-		this.lineIter.remove();
+		this.depIter.remove();
 	}
 	
 }
