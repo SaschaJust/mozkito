@@ -17,14 +17,14 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-utils</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>jdt-core</artifactId>
 			<version>3.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.mcgill.cs.swevo.ppa</groupId>
-			<artifactId>ppa</artifactId>
-			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
@@ -43,13 +43,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>equinox-preferences</artifactId>
-			<version>3.6.0</version>
+			<artifactId>core-jobs</artifactId>
+			<version>3.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>core-jobs</artifactId>
-			<version>3.5.1</version>
+			<artifactId>osgi</artifactId>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>osgi</artifactId>
+			<artifactId>equinox-preferences</artifactId>
 			<version>3.6.0</version>
 		</dependency>
 	</dependencies>
