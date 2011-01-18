@@ -9,10 +9,10 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class GitLogParser.
@@ -37,9 +37,7 @@ class GitLogParser {
 	 *            (not null)
 	 * @return the list of parsed log entries representing the logMessages
 	 */
-	protected static List<LogEntry> parse(final List<String> logMessages) {
-		Condition.notNull(logMessages);
-		Condition.notNull(logMessages);
+	protected static List<LogEntry> parse(@NotNull final List<String> logMessages) {
 		List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
 		
@@ -96,7 +94,7 @@ class GitLogParser {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-					        + ". Abort parsing.");
+							+ ". Abort parsing.");
 				}
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {

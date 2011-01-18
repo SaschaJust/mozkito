@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 
 public class GitRevDependencyIterator implements RevDependencyIterator {
@@ -36,9 +37,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private final Map<String, RCSBranch> branches = new HashMap<String, RCSBranch>();
 	
+	@NoneNull
 	public GitRevDependencyIterator(final File cloneDir, final String revision) {
-		Condition.notNull(cloneDir);
-		Condition.notNull(revision);
 		
 		this.cloneDir = cloneDir;
 		this.revision = revision;
@@ -52,7 +52,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			if(tagDir.exists()){
 				for (File tagFile : FileUtils.listFiles(tagDir, null, false)){
 					if(!tagFile.isDirectory()){
-						this.tagNames.add(tagFile.getName());
+						tagNames.add(tagFile.getName());
 					}
 				}
 			}
@@ -69,8 +69,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				String decoId = decoLine.substring(0, 40).trim();
 				String decoration = decoLine.substring(40).trim();
 				
-				Condition.check(revFields.length > 0);
-				Condition.check(revFields[0].trim().equals(decoId));
+				Condition.check(revFields.length > 0, "The fileds in the temporary csv filed should never be empty");
+				Condition.check(revFields[0].trim().equals(decoId),
+				"the first field in the current temp csv line must equal the current tranaction id");
 				
 				String revId = revFields[0].trim();
 				List<String> parents = new LinkedList<String>();
@@ -99,7 +100,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					// found last commit
 					this.branches.put(revId, RCSBranch.MASTER);
 				}
-				Condition.check(this.branches.containsKey(revId));
+				Condition
+				        .check(this.branches.containsKey(revId),
+				                "The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
 				RCSBranch commitBranch = this.branches.get(revId);
 				this.branches.remove(revId);
 				
@@ -127,7 +130,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				String tagName = null;
 				for (String branch : branches) {
-					if (this.tagNames.contains(branch)) {
+					if (tagNames.contains(branch)) {
 						tagName = branch;
 						break;
 					}
@@ -147,7 +150,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getDecorateListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--encoding=UTF-8", "--pretty=format:%H %d", this.revision }, this.cloneDir, null,
+				"--encoding=UTF-8", "--pretty=format:%H %d", revision }, cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
@@ -166,7 +169,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	private File getRevListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
 				new String[] { "rev-list",
-				"--encoding=UTF-8", "--parents", this.revision }, this.cloneDir, null,
+				"--encoding=UTF-8", "--parents", revision }, cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo: could not get revList.");
@@ -183,7 +186,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	@Override
 	public boolean hasNext() {
-		return this.depIter.hasNext();
+		return depIter.hasNext();
 	}
 	
 	@Override
@@ -196,7 +199,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	@Override
 	public void remove() {
-		this.depIter.remove();
+		depIter.remove();
 	}
 	
 }

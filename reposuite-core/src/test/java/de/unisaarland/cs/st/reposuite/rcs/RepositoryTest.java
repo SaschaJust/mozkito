@@ -63,13 +63,13 @@ public class RepositoryTest {
 					FileUtils.deleteDirectory(tmpDirectory);
 				} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 					GitRepository gitRepo = (GitRepository) repository;
-					if (gitRepo.getCloneDir() != null) {
-						FileUtils.deleteDirectory(gitRepo.getCloneDir());
+					if (gitRepo.getWokingCopyLocation() != null) {
+						FileUtils.deleteDirectory(gitRepo.getWokingCopyLocation());
 					}
 				} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
 					MercurialRepository hgRepo = (MercurialRepository) repository;
-					if (hgRepo.getCloneDir() != null) {
-						FileUtils.deleteDirectory(hgRepo.getCloneDir());
+					if (hgRepo.getWokingCopyLocation() != null) {
+						FileUtils.deleteDirectory(hgRepo.getWokingCopyLocation());
 					}
 				}
 			}

@@ -61,7 +61,7 @@ public class GitRevDependencyIteratorTest {
 	
 	@Test
 	public void testIter() {
-		GitRevDependencyIterator iter = new GitRevDependencyIterator(repo.getCloneDir(),
+		GitRevDependencyIterator iter = new GitRevDependencyIterator(repo.getWokingCopyLocation(),
 		"8273c1e51992a4d7a1da012dbb416864c2749a7f");
 		
 		assertTrue(iter.hasNext());

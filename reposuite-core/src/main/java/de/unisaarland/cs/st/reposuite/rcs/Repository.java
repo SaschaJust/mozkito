@@ -36,8 +36,9 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 import difflib.Delta;
 
 /**
@@ -46,14 +47,6 @@ import difflib.Delta;
  * mandatory to add a new enum constant in {@link RepositoryType}.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
- */
-/**
- * @author just
- * 
- */
-/**
- * @author just
  * 
  */
 /**
@@ -110,7 +103,7 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-					        + uriString.toString() + "`");
+							+ uriString.toString() + "`");
 				}
 				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
@@ -162,10 +155,7 @@ public abstract class Repository {
 	 * 
 	 * @param withInterface
 	 */
-	public void consistencyCheck(final List<LogEntry> logEntries, final boolean withInterface) {
-		Condition.notNull(logEntries);
-		Condition.greater(logEntries.size(), 0);
-		
+	public void consistencyCheck(@NotNull final List<LogEntry> logEntries, @NonNegative final boolean withInterface) {
 		LogEntry previous = null;
 		
 		for (LogEntry entry : logEntries) {
@@ -173,8 +163,8 @@ public abstract class Repository {
 			if (previous != null) {
 				if (entry.getDateTime().isBefore(previous.getDateTime())) {
 					System.out.println("Transaction " + entry.getRevision()
-					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
-					        + previous);
+							+ " has timestamp before previous transaction: current " + entry + " vs. previous "
+							+ previous);
 				}
 			}
 			
@@ -232,7 +222,7 @@ public abstract class Repository {
 		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
 		idataset.addSeries(new String("Files per revision"), datapoints);
 		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
-		        PlotOrientation.VERTICAL, true, false, false);
+				PlotOrientation.VERTICAL, true, false, false);
 		
 		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
 		
@@ -265,7 +255,7 @@ public abstract class Repository {
 		
 		dataset.addSeries(new String("time per revision"), datapoints);
 		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
-		        PlotOrientation.VERTICAL, true, false, false);
+				PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -301,7 +291,7 @@ public abstract class Repository {
 		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
 		
 		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
-		        "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
+				"history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -336,7 +326,7 @@ public abstract class Repository {
 	 * @return the endRevision
 	 */
 	public String getEndRevision() {
-		return this.endRevision;
+		return endRevision;
 	}
 	
 	/**
@@ -396,8 +386,8 @@ public abstract class Repository {
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass().getSimpleName()
-		        .substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
-		        .toUpperCase());
+				.substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
+				.toUpperCase());
 	}
 	
 	/**
@@ -411,14 +401,14 @@ public abstract class Repository {
 	 * @return the startRevision
 	 */
 	public String getStartRevision() {
-		return this.startRevision;
+		return startRevision;
 	}
 	
 	/**
 	 * @return the startTransaction
 	 */
 	public RCSTransaction getStartTransaction() {
-		return this.startTransaction;
+		return startTransaction;
 	}
 	
 	/**
@@ -443,12 +433,23 @@ public abstract class Repository {
 	 * @return
 	 */
 	public URI getUri() {
-		return this.uri;
+		return uri;
 	}
 	
 	/**
-	 * @param revision
+	 * Returns the path of the directory that contains the local
+	 * copy/clone/checkout of the repository (the working copy)
+	 * 
 	 * @return
+	 */
+	public abstract File getWokingCopyLocation();
+	
+	/**
+	 * Load transaction.
+	 * 
+	 * @param revision
+	 *            the revision
+	 * @return the rCS transaction
 	 */
 	public RCSTransaction loadTransaction(final String revision) {
 		try {
@@ -531,7 +532,7 @@ public abstract class Repository {
 	 */
 	protected String setup(final URI address) {
 		
-		this.uri = address;
+		uri = address;
 		String fragment = address.getFragment();
 		if ((fragment != null) && (!fragment.equals(""))) {
 			// need to reformat URI and gitName
@@ -545,11 +546,11 @@ public abstract class Repository {
 				uriBuilder.append(address.getQuery());
 			}
 			try {
-				this.uri = new URI(uriBuilder.toString());
+				uri = new URI(uriBuilder.toString());
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-					        + uriBuilder.toString() + "`");
+							+ uriBuilder.toString() + "`");
 				}
 			}
 		}
@@ -575,7 +576,7 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
-	        InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -600,7 +601,7 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
-	        throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
 	
 	/**
 	 * @param uri

@@ -126,6 +126,14 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
+	public File getWokingCopyLocation() {
+		if (Logger.logError()) {
+			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
+		}
+		throw new RuntimeException();
+	}
+	
+	@Override
 	public List<LogEntry> log(final String fromRevision, final String toRevision) {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
