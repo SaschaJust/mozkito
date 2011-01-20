@@ -71,13 +71,13 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<AnnotationEntry> annotate(final String filePath,
-			final String revision) {
+	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
 		Condition.notNull(filePath, "Annotation of null path not possible");
 		Condition.notNull(revision, "Annotation requires revision");
 		
@@ -125,19 +125,18 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
 	 */
 	@Override
-	public File checkoutPath(final String relativeRepoPath,
-			final String revision) {
+	public File checkoutPath(final String relativeRepoPath, final String revision) {
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
 		Condition.notNull(revision, "Checking ut requries revision");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
-				cloneDir, null,
-				new HashMap<String, String>());
+				cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -153,8 +152,7 @@ public class GitRepository extends Repository {
 	 * @param destDir
 	 * @return
 	 */
-	private boolean clone(final InputStream inputStream,
-			final String destDir) {
+	private boolean clone(final InputStream inputStream, final String destDir) {
 		Condition.notNull(destDir, "[clone] `destDir` should not be null.");
 		
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
@@ -178,13 +176,12 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#diff(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Collection<Delta> diff(final String filePath,
-			final String baseRevision,
-			final String revisedRevision) {
+	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
 		Condition.notNull(filePath, "Cannot diff NULL path");
 		Condition.notNull(baseRevision, "cannot compare to NULL revision");
 		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
@@ -199,8 +196,8 @@ public class GitRepository extends Repository {
 		
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
-		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath },
-				cloneDir, null, new HashMap<String, String>());
+		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, cloneDir,
+				null, new HashMap<String, String>());
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
 		}
@@ -211,6 +208,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#gatherToolInformation()
 	 */
@@ -247,15 +245,16 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getChangedPaths()
 	 */
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				
-				"--pretty=format:%H", "--name-status", "-n1", revision }, cloneDir, null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor
+		.execute("git", new String[] { "log", "--pretty=format:%H", "--name-status", "-n1", revision },
+				cloneDir, null, new HashMap<String, String>());
 		
 		if (response.getFirst() != 0) {
 			return new HashMap<String, ChangeType>();
@@ -312,6 +311,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -333,8 +333,7 @@ public class GitRepository extends Repository {
 	}
 	
 	@Override
-	public String getFormerPathName(final String revision,
-			final String pathName) {
+	public String getFormerPathName(final String revision, final String pathName) {
 		Condition.notNull(revision, "Cannot get former path name of null revision");
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
@@ -361,15 +360,14 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
 	public String getLastRevisionId() {
 		if (getEndRevision() == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
-					new String[] { "rev-parse", "master" },
-					cloneDir, null,
-					new HashMap<String, String>());
+					new String[] { "rev-parse", "master" }, cloneDir, null, new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -383,8 +381,7 @@ public class GitRepository extends Repository {
 	}
 	
 	@Override
-	public String getRelativeTransactionId(final String transactionId,
-			final long index) {
+	public String getRelativeTransactionId(final String transactionId, final long index) {
 		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
 		
 		if (index == 0) {
@@ -458,12 +455,13 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#log(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<LogEntry> log(@NotNull @Length (min = 1) @HexString final String fromRevision,
-			@NotNull @Length (min = 1) @HexString final String toRevision) {
+	public List<LogEntry> log(@NotNull @Length(min = 1) @HexString final String fromRevision,
+			@NotNull @Length(min = 1) @HexString final String toRevision) {
 		Condition.notNull(fromRevision, "Cannot get log info for NULL revision");
 		Condition.notNull(toRevision, "Cannot get log info for NULL revision");
 		
@@ -471,9 +469,7 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
-				new String[] { "log", "--pretty=fuller" },
-				cloneDir, null,
-				new HashMap<String, String>());
+				new String[] { "log", "--pretty=fuller" }, cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -482,12 +478,11 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address,
-			final String startRevision,
-			final String endRevision) {
+	public void setup(final URI address, final String startRevision, final String endRevision) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setup(address, startRevision, endRevision, null);
@@ -505,9 +500,7 @@ public class GitRepository extends Repository {
 	 * @param inputStream
 	 *            the input stream
 	 */
-	private void setup(final URI address,
-			final String startRevision,
-			final String endRevision,
+	private void setup(final URI address, final String startRevision, final String endRevision,
 			final InputStream inputStream) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
@@ -541,20 +534,18 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address,
-			final String startRevision,
-			final String endRevision,
-			final String username,
+	public void setup(final URI address, final String startRevision, final String endRevision, final String username,
 			final String password) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
 		
-		setup(Repository.encodeUsername(getUri(), username), startRevision, endRevision,
-				new ByteArrayInputStream(password.getBytes()));
+		setup(Repository.encodeUsername(getUri(), username), startRevision, endRevision, new ByteArrayInputStream(
+				password.getBytes()));
 	}
 }

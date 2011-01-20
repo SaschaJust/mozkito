@@ -51,9 +51,9 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 			Logger.info("Fetching reverse dependencies. This could take a while...");
 		}
 		
-		for (RevDependencyIterator revdep = this.repository.getRevDependencyIterator(); revdep.hasNext();) {
+		for (RevDependencyIterator revdep = repository.getRevDependencyIterator(); revdep.hasNext();) {
 			RevDependency rd = revdep.next();
-			this.reverseDependencies.put(rd.getId(), rd);
+			reverseDependencies.put(rd.getId(), rd);
 		}
 		
 		if (Logger.logInfo()) {
@@ -69,18 +69,19 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 					Logger.debug("Updating graph for " + rcsTransaction);
 				}
 				
-				RevDependency revdep = this.reverseDependencies.get(rcsTransaction.getId());
+				RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
 				rcsTransaction.setBranch(revdep.getCommitBranch());
-				rcsTransaction.setTag(revdep.getTagName());
+				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (String parent : revdep.getParents()) {
-					if (!this.cached.containsKey(parent)) {
+					if (!cached.containsKey(parent)) {
+						//TODO fetch parent from Hibernate
 						if (Logger.logError()) {
 							Logger.error("Got child `" + rcsTransaction.getId()
-							        + "` of unknown parent. This should not happen.");
+									+ "` of unknown parent. This should not happen.");
 						}
 						throw new UnrecoverableEntryException("Got child of unknown parent. This should not happen.");
 					} else {
-						RCSTransaction parentTransaction = this.cached.get(parent);
+						RCSTransaction parentTransaction = cached.get(parent);
 						rcsTransaction.addParent(parentTransaction);
 					}
 				}
@@ -104,7 +105,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				// detect branch merge
 				if (revdep.getParents().size() > 1) {
 					for (String parent : revdep.getParents()) {
-						RCSTransaction parentTransaction = this.cached.get(parent);
+						RCSTransaction parentTransaction = cached.get(parent);
 						
 						if (!parentTransaction.getBranch().getName().equals(rcsTransaction.getBranch().getName())) {
 							// closed branch
@@ -114,9 +115,9 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 							latch.await();
 							
 							parentTransaction.addChild(rcsTransaction);
-							this.hibernateUtil.update(this.cached.remove(parentTransaction.getId()));
+							hibernateUtil.update(cached.remove(parentTransaction.getId()));
 							// remove branch from cache
-							this.latest.remove(parentTransaction.getBranch().getName());
+							latest.remove(parentTransaction.getBranch().getName());
 							
 							parentTransaction.getBranch().setEnd(parentTransaction);
 						}
@@ -125,17 +126,17 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				
 				// ++++++ Update caches ++++++
 				// remove old "latest transaction" from cache
-				if (this.cached.containsKey(this.latest.get(revdep.getCommitBranch().getName()))) {
+				if (cached.containsKey(latest.get(revdep.getCommitBranch().getName()))) {
 					latch.await();
-					this.cached.get(this.latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
-					this.hibernateUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
+					cached.get(latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
+					hibernateUtil.update(cached.remove(latest.get(revdep.getCommitBranch().getName())));
 				}
 				
 				// add transaction to cache
-				this.cached.put(rcsTransaction.getId(), rcsTransaction);
+				cached.put(rcsTransaction.getId(), rcsTransaction);
 				
 				// set new "latest transaction" to active branch cache
-				this.latest.put(revdep.getCommitBranch().getName(), rcsTransaction.getId());
+				latest.put(revdep.getCommitBranch().getName(), rcsTransaction.getId());
 				// ------ Update caches ------
 				
 			}
@@ -144,12 +145,12 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 			latch.await();
 			
 			// persist all remaining cached transactions
-			this.hibernateUtil.commitTransaction();
-			this.hibernateUtil.beginTransaction();
-			for (RCSTransaction transaction : this.cached.values()) {
-				this.hibernateUtil.update(transaction);
+			hibernateUtil.commitTransaction();
+			hibernateUtil.beginTransaction();
+			for (RCSTransaction transaction : cached.values()) {
+				hibernateUtil.update(transaction);
 			}
-			this.hibernateUtil.commitTransaction();
+			hibernateUtil.commitTransaction();
 			
 			finish();
 		} catch (Exception e) {

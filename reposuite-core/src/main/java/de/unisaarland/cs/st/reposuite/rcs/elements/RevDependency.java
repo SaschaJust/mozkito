@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
@@ -13,30 +14,36 @@ public class RevDependency {
 	/** The map of children to their branches. */
 	private Set<String>  parents = new HashSet<String>();
 	private final RCSBranch commitBranch;
-	private final String        tagName;
+	private final List<String>        tagNames;
+	private final boolean      isMerge;
 	
 	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
-			final String tagName) {
-		this.revId = id;
+			final List<String> tagNames, final boolean isMerge) {
+		revId = id;
 		this.commitBranch = commitBranch;
 		this.parents = parents;
-		this.tagName = tagName;
+		this.tagNames = tagNames;
+		this.isMerge = isMerge;
 	}
 	
 	public RCSBranch getCommitBranch() {
-		return this.commitBranch;
+		return commitBranch;
 	}
 	
 	public String getId() {
-		return this.revId;
+		return revId;
 	}
 	
 	public Set<String> getParents() {
-		return this.parents;
+		return parents;
 	}
 	
-	public String getTagName() {
-		return this.tagName;
+	public List<String> getTagNames() {
+		return tagNames;
 	}
+
+	public boolean isMerge() {
+	    return isMerge;
+    }
 	
 }
