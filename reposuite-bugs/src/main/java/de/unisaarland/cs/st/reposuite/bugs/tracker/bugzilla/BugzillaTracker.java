@@ -54,7 +54,7 @@ public class BugzillaTracker extends Tracker {
 			return false;
 		}
 		@SuppressWarnings ("unchecked") List<Element> bugs = xmlReport.getDocument().getRootElement()
-		        .getChildren("bug");
+		.getChildren("bug");
 		if (bugs.size() != 1) {
 			return false;
 		}
@@ -67,7 +67,7 @@ public class BugzillaTracker extends Tracker {
 		
 		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder();
+			SAXBuilder saxBuilder = new SAXBuilder(false);
 			Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
@@ -112,7 +112,7 @@ public class BugzillaTracker extends Tracker {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
 					} else {
 						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-						        + "`. Used uri =`" + uriString + "`.");
+								+ "`. Used uri =`" + uriString + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}
