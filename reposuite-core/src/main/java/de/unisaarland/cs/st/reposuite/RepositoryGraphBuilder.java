@@ -5,8 +5,12 @@ package de.unisaarland.cs.st.reposuite;
 
 import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -73,16 +77,38 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				rcsTransaction.setBranch(revdep.getCommitBranch());
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (String parent : revdep.getParents()) {
+					RCSTransaction parentTransaction = null;
 					if (!cached.containsKey(parent)) {
-						//TODO fetch parent from Hibernate
+						Criteria parentCriteria = hibernateUtil.createCriteria(RCSTransaction.class).add(
+								Restrictions.eq("id", parent));
+						@SuppressWarnings("unchecked") List<RCSTransaction> parentList = parentCriteria.list();
+						if (parentList.isEmpty()) {
+							if (Logger.logError()) {
+								Logger.error("Got child `" + rcsTransaction.getId()
+										+ "` of unknown parent. This should not happen.");
+							}
+							throw new UnrecoverableEntryException(
+							"Got child of unknown parent. This should not happen.");
+						} else if (parentList.size() > 1) {
+							if (Logger.logError()) {
+								Logger.error("Could not fetch unique transaction for ID `" + parent + "`.");
+							}
+							throw new UnrecoverableEntryException("Could not fetch unique transaction for ID `"
+									+ parent + "`.");
+						} else {
+							parentTransaction = parentList.get(0);
+						}
+					} else {
+						parentTransaction = cached.get(parent);
+					}
+					if (parentTransaction != null) {
+						rcsTransaction.addParent(parentTransaction);
+					} else {
 						if (Logger.logError()) {
 							Logger.error("Got child `" + rcsTransaction.getId()
 									+ "` of unknown parent. This should not happen.");
 						}
 						throw new UnrecoverableEntryException("Got child of unknown parent. This should not happen.");
-					} else {
-						RCSTransaction parentTransaction = cached.get(parent);
-						rcsTransaction.addParent(parentTransaction);
 					}
 				}
 				

@@ -26,6 +26,7 @@ import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -38,13 +39,13 @@ public class HibernateUtil {
 		private final String query;
 		
 		public QueryWork(final String q) {
-			this.query = q;
+			query = q;
 		}
 		
 		@Override
 		public void execute(final Connection connection) throws SQLException {
 			Statement st = connection.createStatement();
-			st.execute(this.query);
+			st.execute(query);
 		}
 	}
 	
@@ -179,7 +180,7 @@ public class HibernateUtil {
 	private HibernateUtil() {
 		Condition.notNull(sessionFactory, "");
 		HibernateInterceptor interceptor = new HibernateInterceptor(this);
-		this.session = sessionFactory.openSession(interceptor);
+		session = sessionFactory.openSession(interceptor);
 		interceptor.loadEntities();
 	}
 	
@@ -187,21 +188,21 @@ public class HibernateUtil {
 	 * 
 	 */
 	public void beginTransaction() {
-		this.transaction = this.session.beginTransaction();
+		transaction = session.beginTransaction();
 	}
 	
 	/**
 	 * 
 	 */
 	public void commitTransaction() {
-		if ((this.transaction != null) && this.transaction.isActive()) {
+		if ((transaction != null) && transaction.isActive()) {
 			try {
-				this.transaction.commit();
+				transaction.commit();
 			} catch (HibernateException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
-				this.transaction.rollback();
+				transaction.rollback();
 				throw new RuntimeException(HibernateUtil.class.getSimpleName() + ": " + e.getMessage(), e);
 			}
 		}
@@ -213,7 +214,7 @@ public class HibernateUtil {
 	 */
 	public Criteria createCriteria(final Class<?> clazz) {
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
-			return this.session.createCriteria(clazz);
+			return session.createCriteria(clazz);
 		} else {
 			return null;
 		}
@@ -228,9 +229,10 @@ public class HibernateUtil {
 	 *            the clazz
 	 * @return the criteria
 	 */
+	@NoneNull
 	public SQLQuery createSQLQuery(final String query) {
 		Condition.notNull(query);
-		return this.session.createSQLQuery(query);
+		return session.createSQLQuery(query);
 	}
 	
 	/**
@@ -242,13 +244,14 @@ public class HibernateUtil {
 	 *            the clazz
 	 * @return the criteria
 	 */
+	@NoneNull
 	public SQLQuery createSQLQuery(final String query,
 			final Class<?> clazz) {
 		Condition.notNull(query);
 		Condition.notNull(clazz);
 		
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
-			SQLQuery hibernateQuery = this.session.createSQLQuery(query);
+			SQLQuery hibernateQuery = session.createSQLQuery(query);
 			if (hibernateQuery == null) {
 				return null;
 			}
@@ -262,7 +265,7 @@ public class HibernateUtil {
 	 * @param object
 	 */
 	public synchronized void delete(final Annotated object) {
-		this.session.delete(object);
+		session.delete(object);
 	}
 	
 	/**
@@ -276,7 +279,7 @@ public class HibernateUtil {
 	 */
 	public void executeQuery(final String query) throws HibernateException, SQLException {
 		Condition.notNull(query, "Calling execute query with query=(null) does not make any sense.");
-		this.session.doWork(new QueryWork(query));
+		session.doWork(new QueryWork(query));
 	}
 	
 	/**
@@ -310,7 +313,7 @@ public class HibernateUtil {
 				saveOrUpdate(innerObject);
 			}
 		}
-		this.session.save(object);
+		session.save(object);
 	}
 	
 	/**
@@ -350,21 +353,21 @@ public class HibernateUtil {
 			Logger.debug("Persisting " + object);
 		}
 		// System.out.println("Persisting: " + object);
-		this.session.saveOrUpdate(object);
+		session.saveOrUpdate(object);
 	}
 	
 	/**
 	 * 
 	 */
 	private void shutdownSession() {
-		this.session.close();
+		session.close();
 	}
 	
 	/**
 	 * @param object
 	 */
 	public synchronized void update(final Annotated object) {
-		this.session.update(object);
+		session.update(object);
 	}
 	
 }
