@@ -67,7 +67,9 @@ public class BugzillaTracker extends Tracker {
 		
 		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder(false);
+			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
