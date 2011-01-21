@@ -51,12 +51,11 @@
 		<module>reposuite-mapping</module>
 		<module>reposuite-nalatra</module>
 		<module>reposuite-fixindchanges</module>
-		<module>reposuite-ppa</module>
 		<module>reposuite-genealogies</module>
 		<module>reposuite-untangling</module>
 		<module>reposuite-utils</module>
 		<module>reposuite-changecouplings</module>
-		<module>reposuite-delta</module>
+		<module>reposuite-ppa</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
@@ -137,11 +136,6 @@
 							</regex>
 						</regexes>
 					</check>
-					<!-- <instrumentation>
-						<includes>
-							<include>de/unisaarland/cs/st/reposuite/**/*.class</include>
-						</includes>
-					</instrumentation> -->
 				</configuration>
 				<executions>
 					<execution>
