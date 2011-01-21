@@ -97,6 +97,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 									+ parent + "`.");
 						} else {
 							parentTransaction = parentList.get(0);
+							cached.put(parentTransaction.getId(), parentTransaction);
 						}
 					} else {
 						parentTransaction = cached.get(parent);

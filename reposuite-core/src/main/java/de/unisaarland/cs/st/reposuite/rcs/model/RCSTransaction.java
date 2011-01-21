@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Index;
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -179,7 +180,16 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public int compareTo(final RCSTransaction transaction) {
 		if (transaction == null) {
 			return 1;
-		} else if (equals(transaction)) {
+		}
+		
+		if (getBranch() == null) {
+			throw new UnrecoverableError("Branch of a transaction should never be NULL");
+		}
+		if (transaction.getBranch() == null) {
+			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
+		}
+		
+		if (equals(transaction)) {
 			return 0;
 		} else if (getBranch().equals(transaction.getBranch())) {
 			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
@@ -429,7 +439,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param branch
 	 *            the branch to set
 	 */
+	@NoneNull
 	public void setBranch(final RCSBranch branch) {
+		Condition.notNull(branch, "You cannot set the branch of a transaction to NULL");
 		this.branch = branch;
 	}
 	
