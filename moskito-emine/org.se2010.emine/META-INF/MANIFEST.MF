@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Emine
+Bundle-SymbolicName: org.se2010.emine
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.se2010.emine.Activator
+Bundle-Vendor: se2010
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
