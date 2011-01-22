@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+          <view
+         class="org.se2010.emine.ui.views.markers.eMineProblemViewMarker"
+         icon="icons/problems_view.gif"
+         id="org.se2010.emine.ui.views.markers.eMineProblemViewMarker"
+         name="eMine Problem View">
+   </view> 
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerSupport">
+         <markerContentGenerator
+         id="org.se2010.emine.ui.views.marker.emineProblemViewMarkerGenerator"
+         name="eMine Marker Generator">
+        <markerTypeReference
+         	id="org.eclipse.core.resources.marker"/>
+        <markerTypeReference
+         	id="org.eclipse.core.resources.marker"/>
+ 		 <markerFieldReference
+         	id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+  		 <markerFieldReference
+         	id="org.eclipse.ui.ide.locationField"/>
+   		<markerFieldReference
+         	id="org.eclipse.ui.ide.markerType"/>
+   		<markerFieldReference
+         	id="org.eclipse.ui.ide.priorityField"/>
+   		<markerFieldReference
+         	id="org.eclipse.ui.ide.resourceField"/>   
+        <markerFieldReference
+        	id="org.se2010.emine.ui.views.markers.SupportField"/>
+     	</markerContentGenerator> 
+     	<markerField	
+      		class="org.se2010.emine.ui.views.markers.SupportField"
+      		id="org.se2010.emine.ui.views.markers.SupportField"
+      		name="Support">
+		</markerField> 
+   </extension>
+  
+
+</plugin>
