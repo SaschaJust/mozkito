@@ -38,6 +38,20 @@
       		name="Support">
 		</markerField> 
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="emine.WorkbenchPropertyPage1"
+            id="eMine.p1"
+            name="eMine - Backend">
+      </page>
+      <page
+            class="emine.WorkbenchPropertyPage2"
+            id="eMine.page2"
+            name="eMine - Frontend">
+      </page>
+   </extension>
   
 
 </plugin>
