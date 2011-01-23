@@ -8,8 +8,15 @@ Bundle-Vendor: se2010
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide;bundle-version="3.6.1",
- org.eclipse.core.resources;bundle-version="3.6.0"
+ org.eclipse.core.resources;bundle-version="3.6.0",
+ org.eclipse.ui.views;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.se2010.emine,
- org.se2010.emine.ui.views.markers
+Export-Package: org.se2010.emine;uses:="org.eclipse.ui.plugin,org.osgi.framework",
+ org.se2010.emine.properties;
+  uses:="org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.ui.dialogs,
+   org.eclipse.swt.widgets",
+ org.se2010.emine.ui.views.markers;uses:="org.eclipse.ui.views.markers"
+

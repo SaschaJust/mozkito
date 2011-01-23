@@ -42,9 +42,10 @@
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
-            class="emine.WorkbenchPropertyPage1"
-            id="eMine.p1"
-            name="eMine - Backend">
+            class="org.se2010.emine.properties.PropertyPage"
+            id="org.se2010.emine.properties.PropertyPage"
+            name="eMine - Backend"
+            objectClass="org.se2010.emine.properties.PropertyFile">
       </page>
       <page
             class="emine.WorkbenchPropertyPage2"
