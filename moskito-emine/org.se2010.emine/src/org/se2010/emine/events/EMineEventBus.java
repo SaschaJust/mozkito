@@ -2,6 +2,8 @@ package org.se2010.emine.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public final class EMineEventBus implements IEMineEventBus
 {
@@ -55,12 +57,17 @@ public final class EMineEventBus implements IEMineEventBus
 	@Override
 	public void unregisterEventListener(final IEMineEventListener listener) 
 	{
-//		if(listener == null)
-//		{
-//			throw new NullPointerException("Event listener must not be null!");
-//		}
-//		
+		if(listener == null)
+		{
+			throw new NullPointerException("Event listener must not be null!");
+		}
 		
+		// a IEMineEventListener can be installed for different event types. Therefore, the entire map need to be browsed.
+		for(final Map.Entry<Class<? extends IEMineEvent>, ArrayList<IEMineEventListener>> entrySet : this.listenerMap.entrySet())
+		{
+			final ArrayList<IEMineEventListener> listeners = entrySet.getValue();
+			listeners.remove(listener);
+		}
 	}
 
 	@Override
