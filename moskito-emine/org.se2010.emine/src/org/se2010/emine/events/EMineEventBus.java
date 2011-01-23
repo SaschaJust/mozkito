@@ -47,6 +47,13 @@ public final class EMineEventBus implements IEMineEventBus
 			this.listenerMap.put(eventType, listenerList);
 		}
 		
+		if(listenerList.contains(listener))
+		{
+			// TODO: introduce specialization of RuntimeExcepion?
+			throw new RuntimeException("Listener " + listener + 
+									   " is already registered for event type" + eventType.getName());
+		}
+		
 		listenerList.add(listener);
 	}
 	
