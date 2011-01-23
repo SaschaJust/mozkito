@@ -1,9 +1,6 @@
 package org.se2010.emine.events;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class EMineEventBus implements IEMineEventBus
 {
@@ -78,16 +75,7 @@ public final class EMineEventBus implements IEMineEventBus
 			throw new NullPointerException("Event must not be null!");
 		}
 		
-		final Class<? extends IEMineEvent> eventType= event.getType();
-		
-		if(eventType == null)
-		{
-			//TODO: introduce an own RuntimeException?
-			throw new RuntimeException("Event type retrieved from event " + event + " is null!");
-		}
-
-		
-		final ArrayList<IEMineEventListener> listeners = this.listenerMap.get(eventType);
+		final ArrayList<IEMineEventListener> listeners = this.listenerMap.get(event.getClass());
 
 		// TODO: shall we introduce a logging mechanism and output a warning here?
 		if(listeners != null)
