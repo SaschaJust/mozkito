@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.se2010.emine.artifacts.SyntaxhighlightingArtifact;
 
@@ -15,12 +16,13 @@ public class SyntaxhighlightingView {
 	private static final String GREEN = "org.se2010.eMine.green_marker";
 	private static final String YELLOW = "org.se2010.eMine.yellow_marker";
 	
-	// at update first deleteMarkers(file); with file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
+	// at update first  with 
 	
 	void updateSyntaxhighlightingView(SyntaxhighlightingArtifact artifact){
 		Map<Integer,String> map = artifact.getMap();
 		String message = artifact.getMessage();
 		IFile file = artifact.getFile();
+		deleteMarkers(file);
 		for (Map.Entry<Integer,String> mark : map.entrySet()) {
 			String markertype;
 			if (mark.getValue()=="red"){
@@ -31,6 +33,15 @@ public class SyntaxhighlightingView {
 				markertype=YELLOW;
 			}
 			addMarker(file,markertype,message,mark.getKey());
+		}
+	}
+	
+	private void deleteMarkers(IFile file){
+		try {
+			file.deleteMarkers(RED, false, IResource.DEPTH_ZERO);
+			file.deleteMarkers(GREEN, false, IResource.DEPTH_ZERO);
+			file.deleteMarkers(YELLOW, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
 		}
 	}
 	
