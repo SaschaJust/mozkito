@@ -1,5 +1,8 @@
 package org.se2010.emine.ui.views.markers;
 
+
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,10 +24,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -35,7 +41,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IDE.SharedImages;
+import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.part.ViewPart;
+import org.se2010.emine.artifacts.Artifact;
 
 
  
@@ -43,17 +51,19 @@ import org.eclipse.ui.part.ViewPart;
 public class eMineProblemViewMarker extends ViewPart implements ISelectionChangedListener {
 	
 	private TableViewer viewer;
+	private ProblemViewComparator comparator;
 	static final String MARKER_ID  ="xyz";
+	private List <Artifact> artifactList;
 	
 	  /**
 	   * Columns for the table viewer
 	   */
-	  static final String[] COLUMN_NAMES = {
-	      "Marker ID", "Message", "State"};
+	  static final String[] COLUMN_NAMES = {"Type",
+	      "Title", "Message", "State"};
 	  /**
 	   * Attributes that will be obtained from the marker
 	   */
-	  static final String[] MARKER_ATTRIBUTES = {
+	  static final String[] MARKER_ATTRIBUTES = {"type",
 	      "id", "message", "transient"};
 
 	  private Action deleteMarkerAction;
@@ -81,6 +91,11 @@ public class eMineProblemViewMarker extends ViewPart implements ISelectionChange
 		    viewer.addSelectionChangedListener(this);
 
 		    setupHelp();
+		    
+		    // Add comparator for sorting
+		    comparator = new ProblemViewComparator(new ViewRegistry());
+			viewer.setComparator(comparator);
+
 		  }
 
 		  /**
@@ -139,19 +154,22 @@ public class eMineProblemViewMarker extends ViewPart implements ISelectionChange
 		    tc0.setText(COLUMN_NAMES[0]);
 		    tc0.setAlignment(SWT.LEFT);
 		    tc0.setResizable(true);
+		    tc0.addSelectionListener(getSelectionAdapter(tc0, 0));
 
 		    layout.addColumnData(new ColumnWeightData(10, true));
 		    TableColumn tc1 = new TableColumn(table, SWT.NONE);
 		    tc1.setText(COLUMN_NAMES[1]);
 		    tc1.setAlignment(SWT.LEFT);
 		    tc1.setResizable(true);
-
+		    tc1.addSelectionListener(getSelectionAdapter(tc1, 1));
+		    
 		    layout.addColumnData(new ColumnWeightData(10, true));
 		    TableColumn tc2 = new TableColumn(table, SWT.NONE);
 		    tc2.setText(COLUMN_NAMES[2]);
 		    tc2.setAlignment(SWT.LEFT);
 		    tc2.setResizable(true);
-
+		    tc2.addSelectionListener(getSelectionAdapter(tc2, 2));
+		    
 		    return new TableViewer(table);
 
 		  }
@@ -303,8 +321,30 @@ public class eMineProblemViewMarker extends ViewPart implements ISelectionChange
 		    }
 
 		  }
+		 
+		  
+		  /** This function enables sorting the table by clicking on a column*/
+		  private SelectionAdapter getSelectionAdapter(final TableColumn column,
+					final int index) {
+				SelectionAdapter selectionAdapter = new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						comparator.setColumn(index);
+						int dir = viewer.getTable().getSortDirection();
+						if (viewer.getTable().getSortColumn() == column) {
+							dir = dir == SWT.UP ? SWT.DOWN : SWT.UP;
+						} else {
 
-
+							dir = SWT.DOWN;
+						}
+						viewer.getTable().setSortDirection(dir);
+						viewer.getTable().setSortColumn(column);
+						viewer.refresh();
+					}
+				};
+				return selectionAdapter;
+			}
+		 
 	  
 }
 
