@@ -1,5 +1,7 @@
 package org.se2010.emine.properties;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -48,10 +50,34 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		setPasswordField(myComposite);
 		seturl(myComposite);
 		setVMargs(myComposite);
-
 		return myComposite;
 
 
+	}
+	
+	private String getUser(){
+		IResource res = (IResource) getElement();
+		 try {
+			return res.getPersistentProperty(AUTHOR_PROP_KEY);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		
+		return "default";
+	}
+	
+	private void setUser(Text usertext){
+		IResource res = (IResource) getElement();
+		
+		try {
+			res.setPersistentProperty(AUTHOR_PROP_KEY, usertext.getText());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 
@@ -79,7 +105,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		user = new Text(parent, SWT.WRAP | SWT.BORDER);
 		user.setLayoutData(data);
-		user.setText("defaultUSER");
+		user.setText(getUser());
 
 	}
 	
@@ -189,12 +215,11 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 
 	public boolean performOk(){
-		//setUser(user.getText());
+		setUser(user);
 		return super.performOk();
 	}
 
 	public static IPropertyDescriptor[] getDescriptors() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
