@@ -53,6 +53,63 @@
             name="eMine - Frontend">
       </page>
    </extension>
-  
+   
+   <extension
+         id="red_marker"
+         name="red Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.red_marker"
+			icon="icons/red_marker.gif"
+         id="red_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+     <extension
+         id="yellow_marker"
+         name="yellow Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.yellow_marker"
+			icon="icons/yellow_marker.gif"
+         id="yellow_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+      <extension
+         id="green_marker"
+         name="green Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.green_marker"
+			icon="icons/green_marker.gif"
+         id="green_marker.ImageProvider">
+   </imageprovider>
+   </extension>
 
 </plugin>
