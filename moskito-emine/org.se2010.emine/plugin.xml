@@ -17,7 +17,7 @@
             class="org.se2010.emine.properties.PropertyPage"
             id="org.se2010.emine.properties.PropertyPage"
             name="eMine - Backend"
-            objectClass="org.se2010.emine.properties.PropertyFile">
+            objectClass="org.eclipse.core.resources.IProject">
       </page>
       <page
             class="emine.WorkbenchPropertyPage2"
