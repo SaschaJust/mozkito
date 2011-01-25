@@ -75,14 +75,11 @@ public final class ModificationEvent
 		private final List<String>  addedFields;
 		private final List<String>  removedFields;
 		private final List<String>  changedFields;
-		
 		private final List<String>  addedMethods;
 		private final List<String>  removedMethods;
 		private final List<String>  changedMethods;
 
-		// TODO: Constructor to big...should be made smaller with setter methods
 		public ClassChangedEvent(final String clazzName)
-
 		{
 			super(clazzName);
 			
@@ -94,69 +91,98 @@ public final class ModificationEvent
 			this.removedMethods = new ArrayList<String>();
 		}
 
+		private void checkInput(final String input)
+		{
+			if(input == null)
+			{
+				throw new NullPointerException("Name must not be null!");
+			}
+			
+			if(input.trim().isEmpty())
+			{
+				throw new IllegalArgumentException("Name must not be  empty!");
+			}
+		}
+		
 		public void addAddedField(final String fieldName)
 		{
+			this.checkInput(fieldName);
 			this.addedFields.add(fieldName);
 		}
 		
 		public void addRemovedField(final String fieldName)
 		{
+			this.checkInput(fieldName);
 			this.removedFields.add(fieldName);
 		}
 		
 		public void addChangedField(final String fieldName)
 		{
+			this.checkInput(fieldName);
 			this.changedFields.add(fieldName);
 		}
 		
-		public void addAddedMethod(final String fieldName)
+		public void addAddedMethod(final String methodName)
 		{
-			this.addedMethods.add(fieldName);
+			this.checkInput(methodName);
+			this.addedMethods.add(methodName);
 		}
 		
-		public void addRemovedMethod(final String fieldName)
+		public void addRemovedMethod(final String methodName)
 		{
-			this.removedMethods.add(fieldName);
+			this.checkInput(methodName);
+			this.removedMethods.add(methodName);
 		}
 		
-		public void addChangedMethod(final String fieldName)
+		public void addChangedMethod(final String methodName)
 		{
-			this.changedMethods.add(fieldName);
+			this.checkInput(methodName);
+			this.changedMethods.add(methodName);
 		}
 		
-		
-		//---
+		private void checkInputList(final List<String> inputs)
+		{
+			for(final String input : inputs)
+			{
+				this.checkInput(input);
+			}
+		}
 		
 		public void addAllAddedFields(final List<String> fieldNames)
 		{
+			this.checkInputList(fieldNames);
 			this.addedFields.addAll(fieldNames);
 		}
 		
 		public void addAllRemovedFields(final List<String> fieldNames)
 		{
+			this.checkInputList(fieldNames);
 			this.removedFields.addAll(fieldNames);
 		}
 		
 		public void addAllChangedFields(final List<String> fieldNames)
 		{
+			this.checkInputList(fieldNames);
 			this.changedFields.addAll(fieldNames);
 		}
 		
 		public void addAllAddedMethods(final List<String> methodNames)
 		{
+			this.checkInputList(methodNames);
 			this.addedMethods.addAll(methodNames);
 		}
 		
 		public void addAllRemovedMethods(final List<String> methodNames)
 		{
+			this.checkInputList(methodNames);
 			this.removedMethods.addAll(methodNames);
 		}
 		
 		public void addAllChangedMethods(final List<String> methodNames)
 		{
+			this.checkInputList(methodNames);
 			this.changedMethods.addAll(methodNames);
 		}
-		
 		
 		public List<String> getAddedFields() 
 		{

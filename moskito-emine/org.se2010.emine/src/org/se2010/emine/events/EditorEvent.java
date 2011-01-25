@@ -3,7 +3,6 @@ package org.se2010.emine.events;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("rawtypes")
 public final class EditorEvent
 {
 	private EditorEvent(){ }
