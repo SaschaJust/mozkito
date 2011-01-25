@@ -1,6 +1,8 @@
 package org.se2010.emine.events;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.jdt.core.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
@@ -101,6 +103,11 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	{
 		final ArrayList<IJavaElementDelta> deltas = getAffectedCUDeltas(event.getDelta());
 		
+		System.out.println("EVENT:    " + event);
+		System.out.println("ELEMENT:  " + event.getDelta().getElement().getClass().getName());
+		System.out.println("DELTAS:   " + deltas);
+		System.out.println("MOVED TO: " + event.getDelta().getMovedToElement());
+		
 		for(final IJavaElementDelta delta : deltas)
 		{
 			final String clazzName = extractClassNameFromCU((ICompilationUnit)delta.getElement());
@@ -108,7 +115,6 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 			
 			if(deltaKind == IJavaElementDelta.ADDED)
 			{
-				
 				final IEMineEvent evt = new ModificationEvent.ClassAddedEvent(clazzName);
 				EMineEventBus.getInstance().fireEvent(evt);
 			}
@@ -116,6 +122,17 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 			{
 				final IEMineEvent evt       = new ModificationEvent.ClassRemovedEvent(clazzName);
 				EMineEventBus.getInstance().fireEvent(evt);
+				
+				// handle removal of package name segment which is logically the same as class renaming
+				final IJavaElement movedToElem = delta.getMovedToElement();
+				if(movedToElem != null)
+				{
+					final ICompilationUnit cu         = (ICompilationUnit) movedToElem;
+					final String           clazzName2 = extractClassNameFromCU(cu); 
+					
+					final IEMineEvent evt2 = new ModificationEvent.ClassAddedEvent(clazzName2);
+					EMineEventBus.getInstance().fireEvent(evt2);
+				}
 			}
 			else if(deltaKind == IJavaElementDelta.CHANGED)
 			{
