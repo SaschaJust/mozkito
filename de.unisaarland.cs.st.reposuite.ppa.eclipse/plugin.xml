@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.unisaarland.cs.st.reposuite.ppa.eclipse.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.reposuite.ppa.eclipse.application"
+            name="de.unisaarland.cs.st.reposuite.ppa.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.reposuite.ppa.eclipse.product">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
