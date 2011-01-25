@@ -9,14 +9,19 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 {
 	private ICompilationUnit currentCU;
 	
+	private static EclipseEventHandler instance;
+	
 	private EclipseEventHandler() {}
 	
 	public static void init()
 	{
-		final EclipseEventHandler handler = new EclipseEventHandler();
-		
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(handler);
-		JavaCore.addElementChangedListener(handler);
+		// ensure that the initialization is not done multiple times
+		if(EclipseEventHandler.instance == null)
+		{
+			EclipseEventHandler.instance = new EclipseEventHandler();
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(EclipseEventHandler.instance);
+			JavaCore.addElementChangedListener(EclipseEventHandler.instance);
+		}
 	}
 	
 	
