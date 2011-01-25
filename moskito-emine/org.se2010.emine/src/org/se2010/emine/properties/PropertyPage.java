@@ -23,11 +23,6 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 
-	private Text user;
-	private Text password;
-	private Text url;
-	private Text vmArgs;
-
 	private Text descriptionText;
 	public static QualifiedName  AUTHOR_PROP_KEY = new QualifiedName("User", "User");
 	private static String USER_ID = "RMP.user";
@@ -44,48 +39,25 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	protected Control createContents(Composite parent)
 	{
-//		Composite myComposite = new Composite(parent, SWT.NONE);
 
-		//Composite myComposite = createDefaultComposite(parent);
-		
-		 Composite myComposite = new Composite(parent, SWT.NONE);
+		 Composite backendpage = new Composite(parent, SWT.NONE);
 
-		 final TabFolder tabFolder = new TabFolder(myComposite, SWT.BORDER|SWT.TOP);
-		    for (int i = 0; i < 6; i++) {
+		 final TabFolder tabFolder = new TabFolder(backendpage, SWT.BORDER|SWT.TOP);
+		    
+		 for (int i = 0; i < 6; i++) {
 		      TabItem item = new TabItem(tabFolder, SWT.NONE);
 		      item.setText("TabItem " + i);
 		   
+		      RepositoryPropertiePage repo = new RepositoryPropertiePage("Page_"+i);
+		      Composite repoTab = new Composite(tabFolder, SWT.NONE);
 		     
-		      Composite test = new Composite(tabFolder, SWT.NONE);
-		      test.setLayout(new GridLayout(2,false));
-		      Label label = new Label(test, SWT.NONE);
+		      repo.createContents(repoTab);
 		      
-		      label.setText("HELLO SITE: "+ i);
-		      
-		      Button button = new Button(test, SWT.PUSH);
-		      button.setText("Page " + i);
-		      item.setControl(test);
+		      item.setControl(repoTab);
 		    }
 		 tabFolder.pack();
 		
-		    
-
-		//Composite myComposite = createDefaultComposite(parent);
-	
-//		Label userLabel = new Label(myComposite, SWT.NONE);
-//		userLabel.setText("User");
-//
-//		IResource res = (IResource) getElement();
-//		RepositoryPropertiePage repoPage = new RepositoryPropertiePage("Init");
-//		repoPage.createContents(myComposite, res);
-//		return myComposite;
-
-		
-//		createUserField(myComposite);
-//		setPasswordField(myComposite);
-//		seturl(myComposite);
-//		setVMargs(myComposite);
-		return myComposite;
+		return backendpage;
 
 
 	}

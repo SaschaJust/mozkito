@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.Text;
 
 public class RepositoryPropertiePage extends PropertyPage{
 
-	private static QualifiedName USER_PROP_KEY;
-	private static QualifiedName PASSWORD_PROP_KEY;
-	private static QualifiedName URL_PROP_KEY;
-	private static QualifiedName VMARG_PROP_KEY;
+	private QualifiedName USER_PROP_KEY;
+	private QualifiedName PASSWORD_PROP_KEY;
+	private QualifiedName URL_PROP_KEY;
+	private QualifiedName VMARG_PROP_KEY;
 	private String repoName;
 
 	private static Text userField;
@@ -25,32 +25,28 @@ public class RepositoryPropertiePage extends PropertyPage{
 	private static Text vmargField;
 	
 	private GridData data;
-	public static final int TEXT_FIELD_WIDTH = PropertyPage.TEXT_FIELD_WIDTH;
-	public static final int TEXT_FIELD_HEIGHT = PropertyPage.TEXT_FIELD_HEIGHT;
-
+	
 	public RepositoryPropertiePage(String repoName) {
 
 		this.repoName = repoName;
-		USER_PROP_KEY = new QualifiedName(repoName + "_User", repoName
+		this.USER_PROP_KEY = new QualifiedName(repoName + "_User", repoName
 				+ "_User");
-		PASSWORD_PROP_KEY = new QualifiedName(repoName + "_Password", repoName
+		this.PASSWORD_PROP_KEY = new QualifiedName(repoName + "_Password", repoName
 				+ "_Password");
-		VMARG_PROP_KEY = new QualifiedName(repoName + "_VMarg", repoName
+		this.VMARG_PROP_KEY = new QualifiedName(repoName + "_VMarg", repoName
 				+ "_VMarg");
-		URL_PROP_KEY = new QualifiedName(repoName + "_URL", repoName + "_URL");
+		this.URL_PROP_KEY = new QualifiedName(repoName + "_URL", repoName + "_URL");
 
 	}
 
 	protected Control createContents(Composite parent) {
-		// Composite myComposite = new Composite(parent, SWT.NONE);
-
-		Composite myComposite = createDefaultComposite(parent);
-
-		createUserField(myComposite);
-		createPasswordField(myComposite);
-		createURLField(myComposite);
-		createVMargField(myComposite);
-		return myComposite;
+	
+		parent.setLayout(new GridLayout(2, false));
+		createUserField(parent);
+		createPasswordField(parent);
+		createURLField(parent);
+		createVMargField(parent);
+		return parent;
 
 	}
 
