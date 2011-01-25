@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class RepositoryPropertiePage extends PropertyPage {
+public class RepositoryPropertiePage extends PropertyPage{
 
 	private static QualifiedName USER_PROP_KEY;
 	private static QualifiedName PASSWORD_PROP_KEY;
@@ -25,10 +25,11 @@ public class RepositoryPropertiePage extends PropertyPage {
 	private static Text vmargField;
 	
 	private GridData data;
+	public static final int TEXT_FIELD_WIDTH = PropertyPage.TEXT_FIELD_WIDTH;
+	public static final int TEXT_FIELD_HEIGHT = PropertyPage.TEXT_FIELD_HEIGHT;
 
 	public RepositoryPropertiePage(String repoName) {
 
-		super();
 		this.repoName = repoName;
 		USER_PROP_KEY = new QualifiedName(repoName + "_User", repoName
 				+ "_User");
@@ -38,7 +39,6 @@ public class RepositoryPropertiePage extends PropertyPage {
 				+ "_VMarg");
 		URL_PROP_KEY = new QualifiedName(repoName + "_URL", repoName + "_URL");
 
-		
 	}
 
 	protected Control createContents(Composite parent) {
@@ -54,32 +54,7 @@ public class RepositoryPropertiePage extends PropertyPage {
 
 	}
 
-	private String getValue(QualifiedName ident) {
-		IResource res = (IResource) getElement();
-		try {
-			String val = res.getPersistentProperty(ident);
-			if (val != null) {
-				return val;
-			} else
-				return "";
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			setValue(ident, "");
-			return "";
-		}
-	}
-
-	private void setValue(QualifiedName ident, String string) {
-		IResource res = (IResource) getElement();
-
-		try {
-			res.setPersistentProperty(ident, string);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	
 
 	private void createUserField(Composite parent) {
 
@@ -122,7 +97,7 @@ public class RepositoryPropertiePage extends PropertyPage {
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
 		vmargField.setLayoutData(localLayout);
-		vmargField.setText("default");
+		vmargField.setText(getValue(VMARG_PROP_KEY));
 	}
 
 	private void addSeparator(Composite parent) {
@@ -154,13 +129,13 @@ public class RepositoryPropertiePage extends PropertyPage {
 	}
 
 	
-	public boolean performOk() {
-		setValue(USER_PROP_KEY, userField.getText());
-		setValue(PASSWORD_PROP_KEY, passwordField.getText());
-		setValue(URL_PROP_KEY, urlField.getText());
-		setValue(VMARG_PROP_KEY, vmargField.getText());
-		
-		return super.performOk();
-	}
+//	public boolean performOk() {
+//		setValue(USER_PROP_KEY, userField.getText());
+//		setValue(PASSWORD_PROP_KEY, passwordField.getText());
+//		setValue(URL_PROP_KEY, urlField.getText());
+//		setValue(VMARG_PROP_KEY, vmargField.getText());
+//		
+//		return super.performOk();
+//	}
 
 }
