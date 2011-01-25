@@ -1,23 +1,21 @@
 package org.se2010.emine.events;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import javax.xml.crypto.dsig.keyinfo.PGPData;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.BufferChangedEvent;
 import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IBufferChangedListener;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.core.JavaElement;
-import org.eclipse.jdt.internal.core.JavaElementDelta;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -26,58 +24,22 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-public final class EclipseEventHandler 
+public class EclipseEventHandler implements IPartListener, IBufferChangedListener, IElementChangedListener
 {
-	private EclipseEventHandler(){}
+	private ICompilationUnit currentCU;
 	
+	private EclipseEventHandler() {}
 	
-	private static String extractAffectedClassNameFromDelta(IJavaElementDelta delta)
+	public static void init()
 	{
-		final org.eclipse.jdt.internal.core.CompilationUnit  cu = (org.eclipse.jdt.internal.core.CompilationUnit) delta.getElement();
+		final EclipseEventHandler handler = new EclipseEventHandler();
 		
-		final StringBuilder builder = new StringBuilder();
-		for(final char[] pkgSegm : cu.getPackageName())
-		{
-			builder.append(pkgSegm).append(".");
-		}
-		
-		builder.append(cu.getMainTypeName());
-		
-		return builder.toString();
-		
-////		final String[]      segments = delta.getElement().getResource().getProjectRelativePath().segments();
-////		final StringBuilder builder  = new StringBuilder();
-////		
-////		for(int i = 1; i < segments.length; i++)
-////		{
-////			builder.append(segments[i]);
-////			
-////			if(i != (segments.length - 1))
-////			{
-////				builder.append(".");
-////			}
-////			
-////			final String tmpClazzName = builder.toString();
-////			if(tmpClazzName.length() > 0)
-////			{
-//////				System.out.println("--coutn-> " + tmpClazzName.length());
-//////				System.out.println("--last Index-> " + tmpClazzName.lastIndexOf("."));
-////				return tmpClazzName.substring(0, tmpClazzName.lastIndexOf("."));
-//////				System.out.println("---> " + qClazzName);
-////				
-////			}
-////			else
-////			{
-////				System.out.println("WARNING: " + tmpClazzName + " is emtpy");
-////			}
-//		}
-		
-//		return null;
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(handler);
+		JavaCore.addElementChangedListener(handler);
 	}
 	
 	
-	
-	private static IJavaElementDelta getAfftectedClassDelta(IJavaElementDelta delta)
+	private IJavaElementDelta getAffectedCUDelta(IJavaElementDelta delta)
 	{
 		if(delta == null)
 		{
@@ -92,90 +54,180 @@ public final class EclipseEventHandler
 			if(delta.getAffectedChildren().length > 0)
 			{
 				//TODO: Do we need to consider all affected children? Can this happen, when we are looking only at the first time for searching for the affected class?
-				return getAfftectedClassDelta(delta.getAffectedChildren()[0]);
+				return getAffectedCUDelta(delta.getAffectedChildren()[0]);
 			}
 			
 			return null;
 		}
 	}
 	
-	
-	public static void initElementChangedListener()
+	private String extractClassNameFromCU(final ICompilationUnit cu)
 	{
-		JavaCore.addElementChangedListener(new IElementChangedListener() 
+		final StringBuilder builder  = new StringBuilder();
+		final String[]      segments =  cu.getPath().segments();
+		
+		for(int i = 2; i < segments.length - 1; i++)
 		{
-			@Override
-			public void elementChanged(final ElementChangedEvent event) 
-			{
-//					final IJavaElementDelta delta = event.getDelta();
-					
-					final IJavaElementDelta delta = getAfftectedClassDelta(event.getDelta());
-					System.out.println("AFFECTED DELTA: " + delta);
-					
-					if(delta == null)
-					{
-						return;
-					}
-					
-					
-					final int deltaKind = delta.getKind();
-					if(deltaKind == IJavaElementDelta.ADDED)
-					{
-						System.out.println("==ADDED==> " + event.getDelta());
-						System.out.println("ADDED class " + extractAffectedClassNameFromDelta(delta));
-					
-					}
-					else if(deltaKind == IJavaElementDelta.REMOVED)
-					{
-						System.out.println("==REMOVED==> " + event.getDelta());
-						System.out.println("REMOVED class " + extractAffectedClassNameFromDelta(delta));
-					}
-					else if(deltaKind == IJavaElementDelta.CHANGED)
-					{
-//						System.out.println("==CHANGED==> " + event.getDelta());
-//						System.out.println("==AFFECTED==> " + event.getDelta().getAffectedChildren().length);
-//						System.out.println("==ADDED==> " + event.getDelta().getAddedChildren().length);
-//						System.out.println("==REMOVED== " + event.getDelta().getRemovedChildren().length);
-//						
-						final int flags = delta.getFlags();
-						
-						if( ( (flags & IJavaElementDelta.F_CHILDREN)     != 0  &&
-							  (flags & IJavaElementDelta.F_FINE_GRAINED) != 0  &&	
-							  (flags & IJavaElementDelta.F_AST_AFFECTED) != 0) || 
-							  
-							( (flags & IJavaElementDelta.F_CONTENT)      != 0 &&
-							  (flags & IJavaElementDelta.F_FINE_GRAINED) != 0 &&
-							  (flags & IJavaElementDelta.F_AST_AFFECTED) != 0))
-						{
-							System.out.println("CHANGED " + extractAffectedClassNameFromDelta(delta));
-						}
-						
-						else
-						{
-//							System.out.println("OUT: " + delta);
-						}
-						
-					}
-					else
-					{
-						System.out.println("WARNING: Unknown delta kind " + deltaKind);
-					}
-						
-
-							
-//							// receives all events when a Java element is changed
-//							System.out.println("xxxx      : " + event);
-//							System.out.println("xxxx delta: " + event.getDelta());
-//							System.out.println("xxxx source: " + event.getSource());
-	
-					}
-		});
+			builder.append(segments[i]).append(".");
+		}
+		
+		final String elemName = cu.getElementName();
+		builder.append(elemName.substring(0, elemName.lastIndexOf(".")));
+		
+		return builder.toString();
 	}
 	
 	
-	private static ArrayList<Class> handleEditorLifeCycleEvent(IWorkbenchPart part)
+	private void collectInterestingDeltas(final IJavaElementDelta[] deltas,  final int kind, final int targetType, final ArrayList<String> interestingElements)
 	{
-		final ArrayList<Class> clazzesList = new ArrayList<Class>();
+		for(final IJavaElementDelta delta : deltas)
+		{
+			final IJavaElement javaElem = delta.getElement();
+			final int 		   type		= javaElem.getElementType();
+			
+			if(type == targetType)
+			{
+				interestingElements.add(delta.getElement().getElementName());
+			}
+			else
+			{
+				if(kind == IJavaElementDelta.ADDED)
+				{
+					collectInterestingDeltas(delta.getAddedChildren(), kind, targetType, interestingElements);
+				}
+				else if(kind == IJavaElementDelta.CHANGED)
+				{
+					collectInterestingDeltas(delta.getChangedChildren(), kind, targetType, interestingElements);
+				}
+				else if(kind == IJavaElementDelta.REMOVED)
+				{
+					collectInterestingDeltas(delta.getRemovedChildren(), kind, targetType, interestingElements);
+				}
+			}
+		}		
+	}
+	
+	
+	@Override
+	public void elementChanged(final ElementChangedEvent event)
+	{
+		final IJavaElementDelta delta = getAffectedCUDelta(event.getDelta());
+		
+		if(delta == null)
+		{
+			return;
+		}
+		
+		
+		final String clazzName = extractClassNameFromCU((ICompilationUnit)delta.getElement());
+		final int deltaKind    = delta.getKind();
+		
+		if(deltaKind == IJavaElementDelta.ADDED)
+		{
+			
+			final IEMineEvent evt = new ModificationEvent.ClassAddedEvent(clazzName);
+			EMineEventBus.getInstance().fireEvent(evt);
+		}
+		else if(deltaKind == IJavaElementDelta.REMOVED)
+		{
+			//TODO: NOT WORKING
+			final IEMineEvent evt       = new ModificationEvent.ClassRemovedEvent(clazzName);
+			EMineEventBus.getInstance().fireEvent(evt);
+		}
+		else if(deltaKind == IJavaElementDelta.CHANGED)
+		{
+			final int flags = event.getDelta().getFlags();
+			
+			if( (flags & IJavaElementDelta.F_CHILDREN)     != 0 &&
+				(flags & IJavaElementDelta.F_FINE_GRAINED) != 0	&&
+				(flags & IJavaElementDelta.F_AST_AFFECTED) != 0)
+			{
+				final ArrayList<String> addedFields   = new ArrayList<String>();
+				final ArrayList<String> changedFields = new ArrayList<String>();
+				final ArrayList<String> removedFields = new ArrayList<String>();
+						
+				final ArrayList<String> addedMethods   = new ArrayList<String>();
+				final ArrayList<String> changedMethods = new ArrayList<String>();
+				final ArrayList<String> removedMethods = new ArrayList<String>();
+				
+				
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.FIELD, addedFields);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.FIELD, changedFields);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.FIELD, removedFields);
+				
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.METHOD, addedMethods);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.METHOD, changedMethods);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.METHOD, removedMethods);
+				
+				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
+				evt.addAllAddedFields(addedFields);
+				evt.addAllAddedMethods(addedMethods);
+				evt.addAllChangedFields(changedFields);
+				evt.addAllChangedMethods(changedMethods);
+				evt.addAllRemovedFields(removedFields);
+				evt.addAllRemovedMethods(removedMethods);
+				
+				EMineEventBus.getInstance().fireEvent(evt);
+			}
+		}
+	}
+	
+	
+	@Override
+	public void bufferChanged(final BufferChangedEvent event) 
+	{
+		try 
+		{
+			final IJavaElement affectedElem = this.currentCU.getElementAt(event.getOffset());
+			
+			if((affectedElem instanceof IField))
+			{
+				final String clazzName = this.extractClassNameFromCU(this.currentCU);
+				final String elemName  = affectedElem.getElementName();
+				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
+				evt.addChangedField(elemName);
+				EMineEventBus.getInstance().fireEvent(evt);
+			}
+			else if((affectedElem instanceof IMethod))
+			{
+				final String clazzName = this.extractClassNameFromCU(this.currentCU);
+				final String elemName  = affectedElem.getElementName();
+				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
+				evt.addChangedMethod(elemName);
+				EMineEventBus.getInstance().fireEvent(evt);
+			}
+		} 
+		catch (final JavaModelException e) 
+		{
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	private ArrayList<String> extractCorrespondingClasses()
+	{
+		final ArrayList<String> clazzesList = new ArrayList<String>();
+		
+		try 
+		{
+			for(final IType type : this.currentCU.getAllTypes())
+			{
+				clazzesList.add(type.getFullyQualifiedName());
+			}
+		}
+		catch (final Exception e) 
+		{
+			// TODO: introduce new exception type
+			throw new RuntimeException(e);
+		}
+		
+		return clazzesList;
+	}
+	
+	
+	private void extractCurrentCompilationUnit(final IWorkbenchPart part)
+	{
+		this.currentCU = null;
 		
 		if(part instanceof IEditorPart)
 		{
@@ -185,174 +237,97 @@ public final class EclipseEventHandler
 			if(eIn instanceof FileEditorInput)
 			{
 				final IFileEditorInput fIn = (IFileEditorInput) eIn;
-				final ICompilationUnit cu  = JavaCore.createCompilationUnitFrom(fIn.getFile());
-				
-				try 
-				{
-					for(final IType type : cu.getAllTypes())
-					{
-						final Class clazz = Class.forName(type.getFullyQualifiedName());
-						clazzesList.add(clazz);
-					}
-				}
-				catch (final Exception e) 
-				{
-					// TODO: introduce new exception type
-					new RuntimeException(e);
-				}
-				
-//				try 
-//				{
-//					System.out.println("______ALL TYPEs____");
-//					for(final IType type : cu.getAllTypes())
-//					{
-//						type.getClassFile().getBytes() Class.forName(arg0)
-//						
-//						System.out.println("-- class --> " + type.getFullyQualifiedName());
-//					
-//						for(final IMethod method : type.getMethods())
-//						{
-//							System.out.println("-- method --> " + method);
-//						}
-//					}
-//				} 
-//				catch (final JavaModelException e1) 
-//				{
-//					e1.printStackTrace();
-//				}
+				this.currentCU  = JavaCore.createCompilationUnitFrom(fIn.getFile());
 			}
 		}	
-		
-		return clazzesList;
 	}
 	
 	
-	public static void initEditorLifeCycleEvents()
-	{
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() 
-		{
-			@Override
-			public void partOpened(IWorkbenchPart part) 
-			{
-				final ArrayList<Class> clazzes = handleEditorLifeCycleEvent(part);
-				final IEMineEvent      event   = new EditorEvent.EditorOpenedEvent(clazzes);
-				
-				EMineEventBus.getInstance().fireEvent(event);
-				
-//				//----------------------------------
-//
-//				if(part instanceof IEditorPart)
-//				{
-//					final IEditorPart  ePart = (IEditorPart) part;
-//					
-//					
-//					
-//					if(ePart instanceof  AbstractDecoratedTextEditor)
-//					{
-//						 AbstractDecoratedTextEditor txtEditor= ( AbstractDecoratedTextEditor) ePart;
-//						
-//						 txtEditor.get
-//		
-//					}
-//					
-//					
-//					ePart.getEditorSite().getShell().addMouseTrackListener(new MouseTrackListener() 
-//					{
-//						@Override
-//						public void mouseHover(MouseEvent e) 
-//						{
-//							System.out.println("=== mouseHover === " + e);
-//						}
-//						
-//						@Override
-//						public void mouseExit(MouseEvent e) {
-//							System.out.println("=== mouseExit === " + e);
-//						}
-//						
-//						@Override
-//						public void mouseEnter(MouseEvent e) {
-//							System.out.println("=== mouseEnter === " + e);
-//						}
-//					});
-//					
-//					
-//				
-//				ePart.getEditorSite().getShell().addMouseListener(new MouseListener() 
-//				{
-//					@Override
-//					public void mouseUp(MouseEvent e) 
-//					{
-//						System.out.println("=== mouseUp === " + e);
-//					}
-//					
-//					@Override
-//					public void mouseDown(MouseEvent e) 
-//					{
-//						System.out.println("=== mouseDown === " + e);
-//					}
-//					
-//					@Override
-//					public void mouseDoubleClick(MouseEvent e) 
-//					{
-//						System.out.println("=== mouseDoubleClick === " + e);
-//					}
-//				});
-//				
-//				
-//				//----------------------------------
-//				
-//				
-//				ePart.getEditorSite().getShell().addMouseMoveListener(new MouseMoveListener() 
-//				{
-//					@Override
-//					public void mouseMove(MouseEvent e) 
-//					{
-//						System.out.println("=== mouseMove === " + e);
-//					}
-//				});
-//				
-//				}
-//				
-			}
 
+	@Override
+	public void partOpened(IWorkbenchPart part) 
+	{
+		this.extractCurrentCompilationUnit(part);
+		
+		// do not consider editor for non-existing or non-Java compilation units
+		if(this.currentCU != null &&  this.currentCU.exists())
+		{
+			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
+			final IEMineEvent       event   = new EditorEvent.EditorOpenedEvent(clazzes);
 			
+			EMineEventBus.getInstance().fireEvent(event);
+		}
+	}			
+	
+	@Override
+	public void partClosed(final IWorkbenchPart part) 
+	{
+		this.extractCurrentCompilationUnit(part);
+		
+		// do not consider editor for non-existing or non-Java compilation units
+		if(this.currentCU != null &&  this.currentCU.exists())
+		{
+			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
+			final IEMineEvent       event   = new EditorEvent.EditorClosedEvent(clazzes);
 			
+			EMineEventBus.getInstance().fireEvent(event);
+		}
+	}
+	
+	@Override
+	public void partBroughtToTop(final IWorkbenchPart part) 
+	{
+//		handleEditorLifeCycleEvent(part);
+	}
+	
+	@Override
+	public void partActivated(final IWorkbenchPart part) 
+	{
+		this.extractCurrentCompilationUnit(part);
+		
+		
+		// do not consider editor for non-existing or non-Java compilation units
+		if(this.currentCU != null &&  this.currentCU.exists())
+		{
+			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
+			final IEMineEvent       event   = new EditorEvent.EditorActivatedEvent(clazzes);
 			
+			EMineEventBus.getInstance().fireEvent(event);
 			
-			
-			
-			@Override
-			public void partDeactivated(final IWorkbenchPart part) 
+			try 
 			{
-				final ArrayList<Class> clazzes = handleEditorLifeCycleEvent(part);
-				final IEMineEvent      event   = new EditorEvent.EditorDeactivatedEvent(clazzes);
-				
-				EMineEventBus.getInstance().fireEvent(event);
-			}
-			
-			@Override
-			public void partClosed(final IWorkbenchPart part) 
+				this.currentCU.getBuffer().addBufferChangedListener(this);
+			} 
+			catch (JavaModelException e) 
 			{
-				final ArrayList<Class> clazzes = handleEditorLifeCycleEvent(part);
-				final IEMineEvent      event   = new EditorEvent.EditorClosedEvent(clazzes);
-				
-				EMineEventBus.getInstance().fireEvent(event);
+				throw new RuntimeException(e);
 			}
+		}
+	}
+	
+	
+	@Override
+	public void partDeactivated(final IWorkbenchPart part) 
+	{
+		this.extractCurrentCompilationUnit(part);
+		
+		// do not consider editor for non-existing or non-Java compilation units
+		if(this.currentCU != null &&  this.currentCU.exists())
+		{
+			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
+			final IEMineEvent       event   = new EditorEvent.EditorDeactivatedEvent(clazzes);
 			
-			@Override
-			public void partBroughtToTop(final IWorkbenchPart part) 
-			{
-//				handleEditorLifeCycleEvent(part);
-			}
+			EMineEventBus.getInstance().fireEvent(event);
 			
-			@Override
-			public void partActivated(final IWorkbenchPart part) 
+			
+			try 
 			{
-				final ArrayList<Class> clazzes = handleEditorLifeCycleEvent(part);
-				final IEMineEvent      event   = new EditorEvent.EditorActivatedEvent(clazzes);
-				
-				EMineEventBus.getInstance().fireEvent(event);
+				this.currentCU.getBuffer().removeBufferChangedListener(this);
+			} 
+			catch (JavaModelException e) 
+			{
+				throw new RuntimeException(e);
 			}
-		});		
+		}
 	}
 }

@@ -10,48 +10,82 @@ public final class EditorEvent
 	
 	private static abstract class AEditorEvent  implements IEMineEvent
 	{
-		private final List<Class> clazzes;
+		private final List<String> clazzes;
 		
-		public AEditorEvent(List<Class> clazzes)
+		public AEditorEvent(List<String> clazzes)
 		{
 			this.clazzes = clazzes;
 		}
 		
-		public List<Class> getAffectedClazzes()
+		public List<String> getAffectedClazzes()
 		{
-			return new ArrayList<Class>(clazzes);
+			return new ArrayList<String>(this.clazzes);
+		}
+
+		@Override
+		public String toString() 
+		{
+			return "AEditorEvent [clazzes=" + clazzes + "]";
 		}
 	}
 	
 	public static final class EditorOpenedEvent extends AEditorEvent
 	{
-		public EditorOpenedEvent(List<Class> clazzes)
+		public EditorOpenedEvent(List<String> clazzes)
 		{
 			super(clazzes);
+		}
+
+		@Override
+		public String toString() 
+		{
+			return "EditorOpenedEvent [getAffectedClazzes()="
+					+ getAffectedClazzes() + "]";
 		}
 	}
 	
 	public static final class EditorClosedEvent extends AEditorEvent
 	{
-		public EditorClosedEvent(List<Class> clazzes)
+		public EditorClosedEvent(List<String> clazzes)
 		{
 			super(clazzes);
+		}
+
+		@Override
+		public String toString() 
+		{
+			return "EditorClosedEvent [getAffectedClazzes()="
+					+ getAffectedClazzes() + "]";
 		}
 	}
 	
 	public static final class EditorActivatedEvent extends AEditorEvent
 	{
-		public EditorActivatedEvent(List<Class> clazzes)
+		public EditorActivatedEvent(List<String> clazzes)
 		{
 			super(clazzes);
+		}
+
+		@Override
+		public String toString() 
+		{
+			return "EditorActivatedEvent [getAffectedClazzes()="
+					+ getAffectedClazzes() + "]";
 		}
 	}
 	
 	public static final class EditorDeactivatedEvent extends AEditorEvent
 	{
-		public EditorDeactivatedEvent(List<Class> clazzes)
+		public EditorDeactivatedEvent(final List<String> clazzes)
 		{
 			super(clazzes);
+		}
+
+		@Override
+		public String toString() 
+		{
+			return "EditorDeactivatedEvent [getAffectedClazzes()="
+					+ getAffectedClazzes() + "]";
 		}
 	}
 }
