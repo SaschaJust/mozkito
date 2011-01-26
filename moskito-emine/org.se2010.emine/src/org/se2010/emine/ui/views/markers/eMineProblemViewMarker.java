@@ -1,14 +1,6 @@
 package org.se2010.emine.ui.views.markers;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.List;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -37,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -92,11 +85,12 @@ public class eMineProblemViewMarker extends ViewPart implements
 		searchText.setMessage("Enter search term");
 		searchText.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 10,1));
 		searchText.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent ke) {
+			@Override
+			public void keyReleased(final KeyEvent ke) 
+			{
 				filter.setSearchText(searchText.getText());
 				viewer.refresh();
 			}
-
 		});
 		
 		
