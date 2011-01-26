@@ -21,6 +21,9 @@ public class Main {
 			core.setName(core.getClass().getSimpleName());
 			core.start();
 			core.join();
+			if (Logger.logInfo()) {
+				Logger.info("Core.Main: All done. cerio!");
+			}
 		} catch (InterruptedException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
