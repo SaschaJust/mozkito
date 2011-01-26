@@ -5,13 +5,11 @@ package de.unisaarland.cs.st.reposuite;
 
 import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
+import de.unisaarland.cs.st.reposuite.exceptions.LoadingException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
@@ -79,24 +77,16 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				for (String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
 					if (!cached.containsKey(parent)) {
-						Criteria parentCriteria = hibernateUtil.createCriteria(RCSTransaction.class).add(
-								Restrictions.eq("id", parent));
-						@SuppressWarnings("unchecked") List<RCSTransaction> parentList = parentCriteria.list();
-						if (parentList.isEmpty()) {
-							if (Logger.logError()) {
-								Logger.error("Got child `" + rcsTransaction.getId()
-										+ "` of unknown parent. This should not happen.");
+						parentTransaction = hibernateUtil.getSessionRCSTransaction(parent);
+						try {
+							if (parentTransaction == null) {
+								parentTransaction = hibernateUtil.fetchRCSTransaction(parent);
 							}
-							throw new UnrecoverableEntryException(
-							"Got child of unknown parent. This should not happen.");
-						} else if (parentList.size() > 1) {
-							if (Logger.logError()) {
-								Logger.error("Could not fetch unique transaction for ID `" + parent + "`.");
-							}
-							throw new UnrecoverableEntryException("Could not fetch unique transaction for ID `"
-									+ parent + "`.");
-						} else {
-							parentTransaction = parentList.get(0);
+						} catch (LoadingException e) {
+							throw new UnrecoverableError(
+									"Got child of parent that is not cached an cannot be loaded anymore.", e);
+						}
+						if (parentTransaction != null) {
 							cached.put(parentTransaction.getId(), parentTransaction);
 						}
 					} else {
