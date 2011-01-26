@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,10 +17,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
 
 import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.exceptions.LoadingException;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
@@ -107,12 +111,8 @@ public class HibernateUtil {
 	 * @param driver
 	 * @throws HibernateException
 	 */
-	public static void createSessionFactory(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver) throws HibernateException {
+	public static void createSessionFactory(final String host, final String database, final String user,
+			final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
 			+ "?useUnicode=true&characterEncoding=UTF-8";
@@ -245,8 +245,7 @@ public class HibernateUtil {
 	 * @return the criteria
 	 */
 	@NoneNull
-	public SQLQuery createSQLQuery(final String query,
-			final Class<?> clazz) {
+	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
 		Condition.notNull(query);
 		Condition.notNull(clazz);
 		
@@ -280,6 +279,29 @@ public class HibernateUtil {
 	public void executeQuery(final String query) throws HibernateException, SQLException {
 		Condition.notNull(query, "Calling execute query with query=(null) does not make any sense.");
 		session.doWork(new QueryWork(query));
+	}
+	
+	@NoneNull
+	public RCSTransaction fetchRCSTransaction(final String id) throws LoadingException {
+		
+		Criteria parentCriteria = this.createCriteria(RCSTransaction.class).add(Restrictions.eq("id", id));
+		@SuppressWarnings("unchecked") List<RCSTransaction> list = parentCriteria.list();
+		if (list.isEmpty()) {
+			throw new LoadingException("Could not fetch RCSTrabsaction with id `" + id + "`");
+		} else if (list.size() > 1) {
+			throw new UnrecoverableError("Found multiple RCSTransactions with same ID. This should be impossible.");
+		}
+		return list.get(0);
+	}
+	
+	@NoneNull
+	public RCSTransaction getSessionRCSTransaction(final String id){
+		
+		Object cached = session.get(RCSTransaction.class, id);
+		if(cached != null){
+			return (RCSTransaction) cached;
+		}
+		return null;
 	}
 	
 	/**
