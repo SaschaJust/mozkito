@@ -210,53 +210,34 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 			{
 				final IEMineEvent evt       = new ModificationEvent.ClassRemovedEvent(clazzName);
 				EMineEventBus.getInstance().fireEvent(evt);
-				
-//				// handle removal of package name segment which is logically the same as class renaming
-//				final IJavaElement movedToElem = delta.getMovedToElement();
-//				if(movedToElem != null)
-//				{
-//					final ICompilationUnit cu         = (ICompilationUnit) movedToElem;
-//					final String           clazzName2 = extractClassNameFromCU(cu); 
-//					
-//					final IEMineEvent evt2 = new ModificationEvent.ClassAddedEvent(clazzName2);
-//					EMineEventBus.getInstance().fireEvent(evt2);
-//				}
 			}
 			else if(deltaKind == IJavaElementDelta.CHANGED)
 			{
-				final int flags = delta.getFlags();//event.getDelta().getFlags();
+				final ArrayList<String> addedFields   = new ArrayList<String>();
+				final ArrayList<String> changedFields = new ArrayList<String>();
+				final ArrayList<String> removedFields = new ArrayList<String>();
+						
+				final ArrayList<String> addedMethods   = new ArrayList<String>();
+				final ArrayList<String> changedMethods = new ArrayList<String>();
+				final ArrayList<String> removedMethods = new ArrayList<String>();
 				
-				if( (flags & IJavaElementDelta.F_CHILDREN)     != 0 &&
-					(flags & IJavaElementDelta.F_FINE_GRAINED) != 0	&&
-					(flags & IJavaElementDelta.F_AST_AFFECTED) != 0)
-				{
-					final ArrayList<String> addedFields   = new ArrayList<String>();
-					final ArrayList<String> changedFields = new ArrayList<String>();
-					final ArrayList<String> removedFields = new ArrayList<String>();
-							
-					final ArrayList<String> addedMethods   = new ArrayList<String>();
-					final ArrayList<String> changedMethods = new ArrayList<String>();
-					final ArrayList<String> removedMethods = new ArrayList<String>();
-					
-					
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.FIELD, addedFields);
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.FIELD, changedFields);
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.FIELD, removedFields);
-					
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.METHOD, addedMethods);
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.METHOD, changedMethods);
-					collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.METHOD, removedMethods);
-					
-					final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
-					evt.addAllAddedFields(addedFields);
-					evt.addAllAddedMethods(addedMethods);
-					evt.addAllChangedFields(changedFields);
-					evt.addAllChangedMethods(changedMethods);
-					evt.addAllRemovedFields(removedFields);
-					evt.addAllRemovedMethods(removedMethods);
-					
-					EMineEventBus.getInstance().fireEvent(evt);
-				}
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.FIELD, addedFields);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.FIELD, changedFields);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.FIELD, removedFields);
+				
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.ADDED,   IJavaElement.METHOD, addedMethods);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.CHANGED, IJavaElement.METHOD, changedMethods);
+				collectInterestingDeltas(delta.getAffectedChildren(), IJavaElementDelta.REMOVED, IJavaElement.METHOD, removedMethods);
+				
+				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
+				evt.addAllAddedFields(addedFields);
+				evt.addAllAddedMethods(addedMethods);
+				evt.addAllChangedFields(changedFields);
+				evt.addAllChangedMethods(changedMethods);
+				evt.addAllRemovedFields(removedFields);
+				evt.addAllRemovedMethods(removedMethods);
+				
+				EMineEventBus.getInstance().fireEvent(evt);
 			}		
 		}
 	}
@@ -266,13 +247,6 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	public void elementChanged(final ElementChangedEvent event)
 	{
   		final ArrayList<IJavaElementDelta> deltas = getAffectedCUDeltas(event.getDelta());
-		
-//		System.out.println("EVENT:    " + event);
-//		System.out.println("ELEMENT:  " + event.getDelta().getElement().getClass().getName());
-//		System.out.println("DELTAS:   " + deltas);
-//		System.out.println("MOVED TO: " + event.getDelta().getMovedToElement());
-		
-		
 		
 		if(event.getDelta().getElement() instanceof IJavaModel)
 		{
