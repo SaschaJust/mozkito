@@ -85,13 +85,13 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#annotate(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public List<AnnotationEntry> annotate(final String filePath,
-			final String revision) {
+	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
 		Condition.check(initialized);
 		Condition.notNull(filePath);
 		Condition.notNull(revision);
@@ -352,6 +352,11 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	@Override
+	public String getEndRevision() {
+		return endRevision.toString();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getFirstRevisionId()
@@ -420,7 +425,7 @@ public class SubversionRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
-	public String getLastRevisionId() {
+	public String getHEADRevisionId() {
 		Condition.check(initialized);
 		Condition.notNull(endRevision);
 		Condition.greater(endRevision.getNumber(), 0l);;
@@ -450,8 +455,8 @@ public class SubversionRepository extends Repository {
 			final long index) {
 		Condition.notNull(transactionId);
 		
-		if (buildRevision(transactionId).getNumber() + index > buildRevision(getLastRevisionId()).getNumber()) {
-			return getLastRevisionId();
+		if (buildRevision(transactionId).getNumber() + index > buildRevision(getEndRevision()).getNumber()) {
+			return getEndRevision();
 		} else if (buildRevision(transactionId).getNumber() + index < buildRevision(getFirstRevisionId()).getNumber()) {
 			return getFirstRevisionId();
 		} else {
@@ -573,147 +578,147 @@ public class SubversionRepository extends Repository {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI)
 	 */
-	 @Override
-	 public void setup(final URI address,
-			 final String startRevision,
-			 final String endRevision) throws MalformedURLException,
-			 InvalidProtocolType,
-			 InvalidRepositoryURI,
-			 UnsupportedProtocolType {
-		 setup(address, startRevision, endRevision, null, null);
-	 }
-	 
-	 /*
-	  * (non-Javadoc)
-	  * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
-	  * java.lang.String, java.lang.String)
-	  */
-	 @Override
-	 public void setup(final URI address,
-			 final String startRevision,
-			 final String endRevision,
-			 final String username,
-			 final String password) throws MalformedURLException,
-			 InvalidProtocolType,
-			 InvalidRepositoryURI,
-			 UnsupportedProtocolType {
-		 Condition.notNull(address);
-		 this.setUri(address);
-		 this.username = username;
-		 this.password = password;
-		 
-		 if (RepositorySettings.debug) {
-			 SVNDebugLog.setDefaultLog(new SubversionLogger());
-		 }
-		 
-		 type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
-		 if (type != null) {
-			 if (Logger.logInfo()) {
-				 Logger.info("Setting up in '" + type.name() + "' mode.");
-			 }
-			 switch (type) {
-				 case FILE:
-					 if (Logger.logDebug()) {
-						 Logger.debug("Using valid mode " + type.name() + ".");
-					 }
-					 FSRepositoryFactory.setup();
-					 if (Logger.logTrace()) {
-						 Logger.trace("Setup done for mode " + type.name() + ".");
-					 }
-					 break;
-				 case HTTP:
-				 case HTTPS:
-					 if (Logger.logDebug()) {
-						 Logger.debug("Using valid mode " + type.name() + ".");
-					 }
-					 DAVRepositoryFactory.setup();
-					 if (Logger.logTrace()) {
-						 Logger.trace("Setup done for mode " + type.name() + ".");
-					 }
-					 break;
-				 case SSH:
-					 if (Logger.logDebug()) {
-						 Logger.debug("Using valid mode " + type.name() + ".");
-					 }
-					 SVNRepositoryFactoryImpl.setup();
-					 if (Logger.logTrace()) {
-						 Logger.trace("Setup done for mode " + type.name() + ".");
-					 }
-					 break;
-				 default:
-					 if (Logger.logError()) {
-						 Logger.error("Failed to setup in '" + type.name() + "' mode. Unsupported at this time.");
-					 }
-					 throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + type.name());
-			 }
-			 try {
-				 if (Logger.logInfo()) {
-					 Logger.info("Parsing URL: " + getUri().toString());
-				 }
-				 svnurl = SVNURL.parseURIDecoded(getUri().toString());
-				 if (Logger.logTrace()) {
-					 Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
-							 + svnurl.toString());
-				 }
-				 
-				 if (this.username != null) {
-					 ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
-							 this.password);
-					 repository.setAuthenticationManager(authManager);
-				 }
-				 
-				 repository = SVNRepositoryFactory.create(svnurl);
-				 
-				 this.startRevision = (startRevision != null
-						 ? SVNRevision.parse(startRevision)
-								 : SVNRevision.create(1));
-				 this.endRevision = (endRevision != null
-						 ? SVNRevision.parse(endRevision)
-								 : SVNRevision.create(repository.getLatestRevision()));
-				 
-				 if (this.startRevision.getNumber() < 0) {
-					 if (this.startRevision.equals(SVNRevision.PREVIOUS)) {
-						 this.startRevision = SVNRevision.create(repository.getLatestRevision() - 1);
-					 } else {
-						 this.startRevision = SVNRevision.create(repository.getLatestRevision());
-					 }
-				 }
-				 
-				 if (this.endRevision.getNumber() < 0) {
-					 if (this.endRevision.equals(SVNRevision.PREVIOUS)) {
-						 this.endRevision = SVNRevision.create(repository.getLatestRevision() - 1);
-					 } else {
-						 this.endRevision = SVNRevision.create(repository.getLatestRevision());
-					 }
-				 }
-				 
-				 initialized = true;
-				 
-				 if (Logger.logInfo()) {
-					 Logger.info("Setup repository: " + this);
-				 }
-				 
-			 } catch (SVNException e) {
-				 throw new InvalidRepositoryURI(e.getMessage());
-			 }
-			 
-		 } else {
-			 throw new InvalidProtocolType(getUri().toURL().getProtocol().toUpperCase());
-		 }
-	 }
+	@Override
+	public void setup(final URI address,
+			final String startRevision,
+			final String endRevision) throws MalformedURLException,
+			InvalidProtocolType,
+			InvalidRepositoryURI,
+			UnsupportedProtocolType {
+		setup(address, startRevision, endRevision, null, null);
+	}
 	
 	/*
-	  * (non-Javadoc)
-	  * @see java.lang.Object#toString()
-	  */
-	 @Override
-	 public String toString() {
-		 return "SubversionRepository [password=" + (password != null
-				 ? password.replaceAll(".", "*")
-						 : "(unset)") + ", svnurl=" + svnurl
-						 + ", type=" + type + ", uri=" + getUri() + ", username=" + (username != null
-								 ? username
-										 : "(unset)")
-										 + ", startRevision=" + startRevision + ", endRevision=" + endRevision + "]";
-	 }
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#setup(java.net.URI,
+	 * java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void setup(final URI address,
+			final String startRevision,
+			final String endRevision,
+			final String username,
+			final String password) throws MalformedURLException,
+			InvalidProtocolType,
+			InvalidRepositoryURI,
+			UnsupportedProtocolType {
+		Condition.notNull(address);
+		this.setUri(address);
+		this.username = username;
+		this.password = password;
+		
+		if (RepositorySettings.debug) {
+			SVNDebugLog.setDefaultLog(new SubversionLogger());
+		}
+		
+		type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
+		if (type != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Setting up in '" + type.name() + "' mode.");
+			}
+			switch (type) {
+				case FILE:
+					if (Logger.logDebug()) {
+						Logger.debug("Using valid mode " + type.name() + ".");
+					}
+					FSRepositoryFactory.setup();
+					if (Logger.logTrace()) {
+						Logger.trace("Setup done for mode " + type.name() + ".");
+					}
+					break;
+				case HTTP:
+				case HTTPS:
+					if (Logger.logDebug()) {
+						Logger.debug("Using valid mode " + type.name() + ".");
+					}
+					DAVRepositoryFactory.setup();
+					if (Logger.logTrace()) {
+						Logger.trace("Setup done for mode " + type.name() + ".");
+					}
+					break;
+				case SSH:
+					if (Logger.logDebug()) {
+						Logger.debug("Using valid mode " + type.name() + ".");
+					}
+					SVNRepositoryFactoryImpl.setup();
+					if (Logger.logTrace()) {
+						Logger.trace("Setup done for mode " + type.name() + ".");
+					}
+					break;
+				default:
+					if (Logger.logError()) {
+						Logger.error("Failed to setup in '" + type.name() + "' mode. Unsupported at this time.");
+					}
+					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + type.name());
+			}
+			try {
+				if (Logger.logInfo()) {
+					Logger.info("Parsing URL: " + getUri().toString());
+				}
+				svnurl = SVNURL.parseURIDecoded(getUri().toString());
+				if (Logger.logTrace()) {
+					Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
+							+ svnurl.toString());
+				}
+				
+				if (this.username != null) {
+					ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
+							this.password);
+					repository.setAuthenticationManager(authManager);
+				}
+				
+				repository = SVNRepositoryFactory.create(svnurl);
+				
+				this.startRevision = (startRevision != null
+						? SVNRevision.parse(startRevision)
+								: SVNRevision.create(1));
+				this.endRevision = (endRevision != null
+						? SVNRevision.parse(endRevision)
+								: SVNRevision.create(repository.getLatestRevision()));
+				
+				if (this.startRevision.getNumber() < 0) {
+					if (this.startRevision.equals(SVNRevision.PREVIOUS)) {
+						this.startRevision = SVNRevision.create(repository.getLatestRevision() - 1);
+					} else {
+						this.startRevision = SVNRevision.create(repository.getLatestRevision());
+					}
+				}
+				
+				if (this.endRevision.getNumber() < 0) {
+					if (this.endRevision.equals(SVNRevision.PREVIOUS)) {
+						this.endRevision = SVNRevision.create(repository.getLatestRevision() - 1);
+					} else {
+						this.endRevision = SVNRevision.create(repository.getLatestRevision());
+					}
+				}
+				
+				initialized = true;
+				
+				if (Logger.logInfo()) {
+					Logger.info("Setup repository: " + this);
+				}
+				
+			} catch (SVNException e) {
+				throw new InvalidRepositoryURI(e.getMessage());
+			}
+			
+		} else {
+			throw new InvalidProtocolType(getUri().toURL().getProtocol().toUpperCase());
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SubversionRepository [password=" + (password != null
+				? password.replaceAll(".", "*")
+						: "(unset)") + ", svnurl=" + svnurl
+						+ ", type=" + type + ", uri=" + getUri() + ", username=" + (username != null
+								? username
+										: "(unset)")
+										+ ", startRevision=" + startRevision + ", endRevision=" + endRevision + "]";
+	}
 }
