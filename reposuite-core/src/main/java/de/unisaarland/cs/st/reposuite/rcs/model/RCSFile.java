@@ -50,7 +50,7 @@ public class RCSFile implements Annotated {
 	 * @param path
 	 */
 	RCSFile(final String path, final RCSTransaction transaction) {
-		this.changedNames.put(transaction.getId(), path);
+		changedNames.put(transaction.getId(), path);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -67,7 +67,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction,
-	                              final String pathName) {
+			final String pathName) {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
@@ -77,7 +77,7 @@ public class RCSFile implements Annotated {
 	@ElementCollection
 	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return this.changedNames;
+		return changedNames;
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class RCSFile implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue
 	private long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public String getLatestPath() {
-		return this.changedNames.get(new TreeSet<String>(this.changedNames.keySet()).last());
+		return changedNames.get(new TreeSet<String>(changedNames.keySet()).last());
 	}
 	
 	/**
@@ -113,12 +113,12 @@ public class RCSFile implements Annotated {
 	@Transient
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
-		while ((current != null) && !this.changedNames.containsKey(current)) {
+		while ((current != null) && !changedNames.containsKey(current)) {
 			current = current.getParent(current.getBranch());
 		}
 		
 		if (current != null) {
-			return this.changedNames.get(current);
+			return changedNames.get(current);
 		} else {
 			return null;
 		}
@@ -140,7 +140,7 @@ public class RCSFile implements Annotated {
 	
 	@SuppressWarnings ("unused")
 	private void setChangedNames(final Map<String, String> changedNames) {
-		this.changedNames = changedNames;
+		this.changedNames = new HashMap<String, String>(changedNames);
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class RCSFile implements Annotated {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }
