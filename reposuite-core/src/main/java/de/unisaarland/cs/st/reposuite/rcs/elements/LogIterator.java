@@ -23,7 +23,7 @@ public class LogIterator implements Iterator<LogEntry> {
 	private int              currentIndex = 0;
 	private boolean          done         = false;
 	private final int        cacheSize;
-	private List<LogEntry>   nextEntries;
+	private List<LogEntry>   nextEntries  = null;
 	private boolean          seenEnd      = false;
 	
 	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
@@ -46,55 +46,57 @@ public class LogIterator implements Iterator<LogEntry> {
 		}
 		
 		this.repository = repository;
-		//		this.cacheSize = cacheSize;
-		//FIXME replace by cache value again
-		this.cacheSize = 100000;
-		
+		this.cacheSize = cacheSize;
+
 		String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2 - 1);
-		currentEntries = repository.log(this.startRevision, relativeTransactionId);
+		this.currentEntries = repository.log(this.startRevision, relativeTransactionId);
 		
-		//FIXME check if necessary
-		String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2);
-		String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize - 1);
-		nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
-		
+		if (!relativeTransactionId.equals(endRevision)) {
+			String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2);
+			String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize - 1);
+			this.nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
+		}
 		if (Logger.logDebug()) {
 			Logger.debug("LogIterator: endRevision=" + this.endRevision);
 		}
 		
-		Condition.notNull(currentEntries);
-		Condition.check(!currentEntries.isEmpty());
+		Condition
+		.notNull(this.currentEntries,
+		"The current entries should never be null at this point. This would imply that there is nothing to do.");
+		Condition
+		.check(!this.currentEntries.isEmpty(),
+		"The current entries should never be empty at this point. This would imply that there is nothing to do.");
 	}
 	
 	public boolean done() {
-		return done;
+		return this.done;
 	}
 	
 	@Override
 	public boolean hasNext() {
-		return ((currentEntries.size() > 0) && !done);
+		return ((this.currentEntries.size() > 0) && !this.done);
 	}
 	
 	@Override
 	public LogEntry next() {
-		if (done) {
+		if (this.done) {
 			return null;
 		} else {
-			LogEntry entry = currentEntries.get(currentIndex);
-			currentIndex++;
+			LogEntry entry = this.currentEntries.get(this.currentIndex);
+			this.currentIndex++;
 			
-			if (entry.getRevision().equals(endRevision) || entry.getRevision().equals(repository.getEndRevision())) {
-				done = true;
+			if (entry.getRevision().equals(this.endRevision) || entry.getRevision().equals(this.repository.getEndRevision())) {
+				this.done = true;
 			} else {
 				
-				if (currentIndex >= currentEntries.size()) {
-					if ((nextEntries != null) && nextEntries.isEmpty()) {
-						done = true;
+				if (this.currentIndex >= this.currentEntries.size()) {
+					if ((this.nextEntries != null) && this.nextEntries.isEmpty()) {
+						this.done = true;
 						return null;
 					} else {
-						currentEntries = nextEntries;
-						nextEntries = null;
-						currentIndex = 0;
+						this.currentEntries = this.nextEntries;
+						this.nextEntries = null;
+						this.currentIndex = 0;
 						update();
 					}
 				}
@@ -113,22 +115,22 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	public synchronized void update() {
 		if (Logger.logDebug()) {
-			Logger.debug("Fetching next " + cacheSize / 2 + " logs.");
+			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
 		}
 		
-		String nextStart = repository.getRelativeTransactionId(currentEntries.get(0).getRevision(), cacheSize / 2);
-		String nextEnd = repository.getRelativeTransactionId(currentEntries.get(0).getRevision(), cacheSize - 1);
+		String nextStart = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2);
+		String nextEnd = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("LogIterator: nextStart=" + nextStart);
 			Logger.debug("LogIterator: nextEnd=" + nextEnd);
 		}
 		
-		if (!seenEnd) {
-			if (nextStart.equals(endRevision) || nextEnd.equals(endRevision)) {
-				seenEnd = true;
+		if (!this.seenEnd) {
+			if (nextStart.equals(this.endRevision) || nextEnd.equals(this.endRevision)) {
+				this.seenEnd = true;
 			}
-			nextEntries = repository.log(nextStart, nextEnd);
+			this.nextEntries = this.repository.log(nextStart, nextEnd);
 		}
 	}
 	
