@@ -16,6 +16,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	
 	private EclipseEventHandler() {}
 	
+	synchronized
 	public static void init()
 	{
 		// ensure that the initialization is not done multiple times
