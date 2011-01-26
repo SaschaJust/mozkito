@@ -5,6 +5,7 @@ package de.unisaarland.cs.st.reposuite;
 
 import java.util.concurrent.CountDownLatch;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
@@ -31,7 +32,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	 * @param hibernateUtil
 	 */
 	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-	        final HibernateUtil hibernateUtil) {
+			final HibernateUtil hibernateUtil) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
 		this.hibernateUtil = hibernateUtil;
 	}
@@ -53,7 +54,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 		if (Logger.logInfo()) {
 			Logger.info("Starting " + getHandle());
 		}
-		this.hibernateUtil.beginTransaction();
+		hibernateUtil.beginTransaction();
 		RCSTransaction currentTransaction;
 		CountDownLatch currentLatch = new CountDownLatch(1);
 		Tuple<RCSTransaction, CountDownLatch> tuple;
@@ -69,15 +70,25 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 				}
 				
 				if (++i % 100 == 0) {
-					this.hibernateUtil.commitTransaction();
-					this.hibernateUtil.beginTransaction();
+					hibernateUtil.commitTransaction();
+					hibernateUtil.beginTransaction();
 				}
-				
-				this.hibernateUtil.save(currentTransaction);
+				RCSTransaction foundTransaction = hibernateUtil.getSessionRCSTransaction(currentTransaction.getId());
+				if (foundTransaction != null) {
+					if (Logger.logWarn()) {
+						Logger.warn("Found dubplicate RCSTransaction within session. Abort!");
+						throw new UnrecoverableError("Found dubplicate RCSTransaction within session. Abort!");
+					}
+				} else {
+					hibernateUtil.save(currentTransaction);
+				}
 				currentLatch.countDown();
 			}
-			this.hibernateUtil.commitTransaction();
+			hibernateUtil.commitTransaction();
 			currentLatch.countDown();
+			if (Logger.logInfo()) {
+				Logger.info("RepositoryPersister done. Terminating... ");
+			}
 			finish();
 		} catch (InterruptedException e) {
 			
