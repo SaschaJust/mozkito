@@ -124,8 +124,10 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 				reponames.add(name);
 			}
 
-		} catch (CoreException e) {
-
+		} 
+		catch (CoreException e) 
+		{
+			throw new RuntimeException(e);
 		}
 
 	}
@@ -204,9 +206,13 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	protected void setValue(QualifiedName perKey, String value) {
 		IResource res = (IResource) getElement();
 			//TODO: properly implement + Test
-		try {
+		try 
+		{
 			res.setPersistentProperty(perKey, value);
-		} catch (CoreException e) {
+		} 
+		catch (final CoreException e) 
+		{
+			throw new RuntimeException(e);
 		}
 
 	}
