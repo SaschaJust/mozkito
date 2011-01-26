@@ -323,6 +323,8 @@ public abstract class Repository {
 	public abstract Map<String, ChangeType> getChangedPaths(String revision);
 	
 	/**
+	 * Get the last revision to be considered.
+	 * 
 	 * @return the endRevision
 	 */
 	public String getEndRevision() {
@@ -366,7 +368,7 @@ public abstract class Repository {
 	 * 
 	 * @return the last revision id
 	 */
-	public abstract String getLastRevisionId();
+	public abstract String getHEADRevisionId();
 	
 	/**
 	 * Returns the relative transaction id to the given one. Result is bounded

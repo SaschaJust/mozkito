@@ -86,7 +86,7 @@ public class CVSRepository extends Repository {
 	}
 	
 	@Override
-	public String getLastRevisionId() {
+	public String getHEADRevisionId() {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + RepositorySettings.reportThis);
 		}

@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -24,73 +24,84 @@ public class LogIterator implements Iterator<LogEntry> {
 	private boolean          done         = false;
 	private final int        cacheSize;
 	private List<LogEntry>   nextEntries;
+	private boolean          seenEnd      = false;
 	
 	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
-	        final int cacheSize) {
+			final int cacheSize) {
 		Condition.notNull(repository);
 		Condition.notEquals(cacheSize, 0);
 		
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
+		} else if (startRevision.equals("HEAD")) {
+			this.startRevision = repository.getHEADRevisionId();
 		} else {
 			this.startRevision = startRevision;
 		}
 		
-		if (endRevision == null) {
-			this.endRevision = repository.getLastRevisionId();
+		if ((endRevision == null) || (endRevision.equals("HEAD"))) {
+			this.endRevision = repository.getHEADRevisionId();
 		} else {
 			this.endRevision = endRevision;
 		}
 		
 		this.repository = repository;
-		this.cacheSize = cacheSize;
+		//		this.cacheSize = cacheSize;
+		//FIXME replace by cache value again
+		this.cacheSize = 100000;
 		
-		String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision, cacheSize / 2 - 1);
-		this.currentEntries = repository.log(this.startRevision, relativeTransactionId);
+		String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2 - 1);
+		currentEntries = repository.log(this.startRevision, relativeTransactionId);
 		
-		String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision, cacheSize / 2);
-		String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, cacheSize - 1);
-		this.nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
+		//FIXME check if necessary
+		String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2);
+		String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize - 1);
+		nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
 		
-		Condition.notNull(this.currentEntries);
-		Condition.check(!this.currentEntries.isEmpty());
+		if (Logger.logDebug()) {
+			Logger.debug("LogIterator: endRevision=" + this.endRevision);
+		}
+		
+		Condition.notNull(currentEntries);
+		Condition.check(!currentEntries.isEmpty());
 	}
 	
 	public boolean done() {
-		return this.done;
+		return done;
 	}
 	
 	@Override
 	public boolean hasNext() {
-		return ((this.currentEntries.size() > 0) && !this.done);
+		return ((currentEntries.size() > 0) && !done);
 	}
 	
 	@Override
 	public LogEntry next() {
-		if (this.done) {
+		if (done) {
 			return null;
 		} else {
-			LogEntry entry = this.currentEntries.get(this.currentIndex);
-			this.currentIndex++;
+			LogEntry entry = currentEntries.get(currentIndex);
+			currentIndex++;
 			
-			if (entry.getRevision().equals(this.endRevision)
-			        || entry.getRevision().equals(this.repository.getLastRevisionId())) {
-				this.done = true;
+			if (entry.getRevision().equals(endRevision) || entry.getRevision().equals(repository.getEndRevision())) {
+				done = true;
 			} else {
 				
-				if (this.currentIndex >= this.currentEntries.size()) {
-					if ((this.nextEntries != null) && this.nextEntries.isEmpty()) {
-						this.done = true;
+				if (currentIndex >= currentEntries.size()) {
+					if ((nextEntries != null) && nextEntries.isEmpty()) {
+						done = true;
 						return null;
 					} else {
-						this.currentEntries = this.nextEntries;
-						this.nextEntries = null;
-						this.currentIndex = 0;
+						currentEntries = nextEntries;
+						nextEntries = null;
+						currentIndex = 0;
 						update();
 					}
 				}
 			}
-			
+			if (Logger.logDebug()) {
+				Logger.debug("LogIterator.next(): " + entry.getRevision());
+			}
 			return entry;
 		}
 	}
@@ -100,14 +111,25 @@ public class LogIterator implements Iterator<LogEntry> {
 		next();
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		if (Logger.logDebug()) {
-			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
+			Logger.debug("Fetching next " + cacheSize / 2 + " logs.");
 		}
 		
-		this.nextEntries = this.repository.log(
-		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2),
-		        this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1));
+		String nextStart = repository.getRelativeTransactionId(currentEntries.get(0).getRevision(), cacheSize / 2);
+		String nextEnd = repository.getRelativeTransactionId(currentEntries.get(0).getRevision(), cacheSize - 1);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("LogIterator: nextStart=" + nextStart);
+			Logger.debug("LogIterator: nextEnd=" + nextEnd);
+		}
+		
+		if (!seenEnd) {
+			if (nextStart.equals(endRevision) || nextEnd.equals(endRevision)) {
+				seenEnd = true;
+			}
+			nextEntries = repository.log(nextStart, nextEnd);
+		}
 	}
 	
 }

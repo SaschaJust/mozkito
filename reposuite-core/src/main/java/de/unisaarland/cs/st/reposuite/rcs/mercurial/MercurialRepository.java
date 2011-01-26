@@ -509,7 +509,7 @@ public class MercurialRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getLastRevisionId()
 	 */
 	@Override
-	public String getLastRevisionId() {
+	public String getHEADRevisionId() {
 		if (this.getEndRevision() == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
 					"--template", "{node}" }, cloneDir, null, null);
@@ -782,7 +782,7 @@ public class MercurialRepository extends Repository {
 		}
 		
 		if (endRevision == null) {
-			this.setEndRevision(this.getLastRevisionId());
+			this.setEndRevision(this.getHEADRevisionId());
 		} else {
 			this.setEndRevision(startRevision);
 		}
