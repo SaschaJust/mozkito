@@ -27,11 +27,11 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	protected static final int TEXT_FIELD_WIDTH = 200;
 	protected static final int TEXT_FIELD_HEIGHT = 20;
-	
+
 	Text repoNameInit;
 	Text userInit;
 	Text passwordInit;
-	Text urlLabel;
+	// Text urlLabel;
 	Text urlInit;
 	Text vmArgInit;
 
@@ -43,6 +43,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	private QualifiedName URL_PROP_KEY = new QualifiedName("url", "url");
 	private QualifiedName VMARG_PROP_KEY = new QualifiedName("vm", "vm");
 
+	private static final QualifiedName REPO_PROP_KEY = new QualifiedName(
+			"eMine_repos", "eMine_repos");
 	private List<String> reponames = new ArrayList<String>();
 
 	private static Text userField;
@@ -62,93 +64,84 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		Composite backendpage = new Composite(parent, SWT.NONE);
 
 		createRepoList();
-		
-		createInitPage(backendpage);
-		
-//		if (this.reponames.isEmpty()){
-//			createInitPage(backendpage);
-//			return backendpage;
-//		}
-		
-//		final TabFolder tabFolder = new TabFolder(backendpage, SWT.BORDER
-//				| SWT.TOP);
 
-		
-//		for (String repo:this.reponames){
-//			TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.COLOR_GRAY);
-//			item.setText(repo);
-//
-//			Composite repoTab = new Composite(tabFolder, SWT.NONE);
-//
-//			createRepoTab(repoTab, repo);
-//		
-//			
-//		}
-		
-//		for (int i = 0; i < 6; i++) {
-//			TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.COLOR_GRAY);
-//			item.setText("Repositoryname " + i);
-//
-//			Composite repoTab = new Composite(tabFolder, SWT.NONE);
-//
-//			createRepoTab(repoTab, "Init" + i);
-//			//		      
-//			item.setControl(repoTab);
-//		}
-//		tabFolder.pack();
+		if (reponames.isEmpty()) {
+			createInitPage(backendpage);
+		} else {
+
+			final TabFolder tabFolder = new TabFolder(backendpage, SWT.BORDER
+					| SWT.TOP | SWT.TRANSPARENT);
+			
+			for (String repo:reponames) {
+				TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.TRANSPARENT);
+				item.setText(repo);
+
+				Composite repoTab = new Composite(tabFolder, SWT.NONE);
+
+				createRepoTab(repoTab, repo);
+
+				item.setControl(repoTab);
+			}
+			
+			TabItem item = new TabItem(tabFolder, SWT.None | SWT.TRANSPARENT);
+			item.setText("New Entry");
+			
+			Composite newRepoTab = new Composite(tabFolder, SWT.NONE);
+			createInitPage(newRepoTab);
+			item.setControl(newRepoTab);
+			
+			tabFolder.pack();
+
+		}
 
 		return backendpage;
 
 	}
 
 	private void createInitPage(Composite parent) {
-		
+
 		GridLayout overview = new GridLayout(1, false);
 		overview.verticalSpacing = 15;
 		parent.setLayout(overview);
-				
-		Label helptext = new Label(parent, SWT.NONE);
-		helptext.setText("Here you can provide a new repository for eMine.");
+
 		
-		//creating data fields for a new type of repository
-		
+		createDefaultLabel(parent,"Here you can provide a new repository for eMine.");
+
+		// creating data fields for a new type of repository
+
 		Composite initPage = new Composite(parent, SWT.NONE);
-		
-		GridLayout initPageLayout = new GridLayout(2,false);
+
+		GridLayout initPageLayout = new GridLayout(2, false);
 		initPageLayout.horizontalSpacing = 15;
 		initPage.setLayout(initPageLayout);
-		
-		Label repoNameLabel = new Label(initPage, SWT.NONE);
-		repoNameLabel.setText("Repository Name *");
+
+		createDefaultLabel(initPage, "Repository Name *");
 
 		repoNameInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
 		repoNameInit.setLayoutData(data);
 		repoNameInit.setText("");
-		
+
 		Label userLabel = new Label(initPage, SWT.NONE);
 		userLabel.setText("User *");
 
-		userInit = new Text(initPage, SWT.WRAP | SWT.BORDER | SWT.PASSWORD);
+		userInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
 		userInit.setLayoutData(data);
 		userInit.setText("");
-		
-		Label passwordLabel = new Label(initPage, SWT.NONE);
-		passwordLabel.setText("Password *");
 
-		passwordInit = new Text(initPage, SWT.WRAP | SWT.BORDER | SWT.PASSWORD);
+		createDefaultLabel(initPage, "Password *");
+
+		passwordInit = new Text(initPage, SWT.PASSWORD | SWT.BORDER);
 		passwordInit.setLayoutData(data);
 		passwordInit.setText("");
-		
-		Label urlLabel = new Label(initPage, SWT.NONE);
-		urlLabel.setText("Repository Path *");
+
+		createDefaultLabel(initPage, "Repository Path *");
 
 		urlInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
 		urlInit.setLayoutData(data);
 		urlInit.setText("");
-		
-		Label vmLabel = new Label(initPage, SWT.NONE);
-		vmLabel.setText("VM Arguments");
-		
+
+		createDefaultLabel(initPage, "VM Arguments");
+
 		vmArgInit = new Text(initPage, SWT.WRAP | SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL);
 		GridData localLayout = new GridData();
@@ -156,46 +149,76 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
 		vmArgInit.setLayoutData(localLayout);
 		vmArgInit.setText("");
-		
-		
-		//create Warning Message
-		
-		Label warning = new Label(parent, SWT.NONE);
-		warning.setText("* necessary values:\n \t If empty, nothing is stored.");
-		
-		
+
+		// create Warning Message
+
+		createDefaultLabel(parent,"* necessary values:\n \t If empty, nothing is stored.");
+
 	}
 	
-	private boolean storeNewRepo(){
+	private void createDefaultLabel(Composite parent, String text){
 		
-		if (repoNameInit.getText() == ""){
-			return false;
-		}
-		
-		return true;
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(text);
 		
 	}
 
+	private boolean storeNewRepo() {
+
+		String newRepoName = repoNameInit.getText();
+		if (newRepoName == "") {
+			return true;
+		}
+
+		String repoList = newRepoName;
+		for (String registeredRepos : reponames) {
+			if (newRepoName.contentEquals(registeredRepos)) {
+				// TODO: someAlertMessage: RepoName already registered.
+				return false;
+			}
+			repoList += ";"+ registeredRepos;
+		}
+
+		String newUserName = userInit.getText();
+		String newPassword = passwordInit.getText();
+		String newUrl = urlInit.getText();
+		String newVMarg = vmArgInit.getText();
+
+		if (newRepoName.contains(";") || newUserName == "" || newPassword == ""
+			|| newUrl == "") {
+			// TODO: some AlertMessage: Insufficient information provided
+			return false;
+		}
+
+		setValue(REPO_PROP_KEY, repoList);
+		setValue(
+				new QualifiedName(newRepoName + "_user", newRepoName + "_user"),
+				newUserName);
+		setValue(new QualifiedName(newRepoName + "_password", newRepoName
+				+ "_password"), newPassword);
+		setValue(new QualifiedName(newRepoName + "_url", newRepoName + "_url"),
+				newUrl);
+		setValue(new QualifiedName(newRepoName + "_vmArg", newRepoName
+				+ "_vmArg"), newVMarg);
+
+		return true;
+
+	}
+
+	@SuppressWarnings("static-access")
 	private void createRepoList() {
 
-		QualifiedName repo = new QualifiedName("eMine_repos", "eMine_repos");
+		String names = getValue(this.REPO_PROP_KEY);
 
-		IResource res = (IResource) getElement();
-		try {
-			String names = res.getPersistentProperty(repo);
-			if (names == null || names == "") {
-				return;
-			}
-			String[] list = names.split(";");
+		if (names == null || names == "") {
+			setValue(this.REPO_PROP_KEY, ""); // eMine_repos not initialized yet
+			return;
+		}
 
-			for (String name : list) {
-				reponames.add(name);
-			}
+		String[] list = names.split(";");
 
-		} 
-		catch (CoreException e) 
-		{
-			throw new RuntimeException(e);
+		for (String name : list) {
+			reponames.add(name);
 		}
 
 	}
@@ -213,8 +236,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	private void createUserField(Composite parent) {
 
-		Label userLabel = new Label(parent, SWT.NONE);
-		userLabel.setText("User");
+		createDefaultLabel(parent,"User");
 
 		userField = new Text(parent, SWT.WRAP | SWT.BORDER);
 		userField.setLayoutData(data);
@@ -223,8 +245,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	}
 
 	private void createPasswordField(Composite parent) {
-		Label userLabel = new Label(parent, SWT.NONE);
-		userLabel.setText("Password");
+		createDefaultLabel(parent,"Password");
 
 		passwordField = new Text(parent, SWT.PASSWORD | SWT.BORDER);
 		passwordField.setLayoutData(data);
@@ -233,8 +254,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	private void createURLField(Composite parent) {
 
-		Label urlLabel = new Label(parent, SWT.NONE);
-		urlLabel.setText("Repository-Path");
+		createDefaultLabel(parent,"Repository-Path");
 
 		urlField = new Text(parent, SWT.WRAP | SWT.BORDER);
 		urlField.setLayoutData(data);
@@ -243,8 +263,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	}
 
 	private void createVMargField(Composite parent) {
-		Label vmArgsLabel = new Label(parent, SWT.NONE);
-		vmArgsLabel.setText("VM-Arguments");
+		createDefaultLabel(parent,"VM-Arguments");
 
 		vmargField = new Text(parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL);
@@ -264,69 +283,30 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 				return "DEF";
 			return result;
 		} catch (CoreException e) {
-			//TODO: Can that happen?
+			// TODO: Can that happen?
 			throw new RuntimeException();
 		}
 	}
 
 	protected void setValue(QualifiedName perKey, String value) {
 		IResource res = (IResource) getElement();
-			//TODO: properly implement + Test
-		try 
-		{
+		// TODO: properly implement + Test
+		try {
 			res.setPersistentProperty(perKey, value);
-		} 
-		catch (final CoreException e) 
-		{
-			//TODO: Can that happen?
+		} catch (final CoreException e) {
+			// TODO: Can that happen?
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	private void addFirstSection(Composite parent) {
-
-		// Label for value field
-		Label locationLabel = new Label(parent, SWT.NONE);
-		locationLabel.setText("Somethingelse");
-
-		// Location text field
-		Text location = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
-		location.setText(getElement().toString());
-	}
-
-	private void addSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 2;
-		separator.setLayoutData(gridData);
-	}
-
-	private Composite createDefaultComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.horizontalSpacing = 20;
-		layout.verticalSpacing = 10;
-		composite.setLayout(layout);
-
-		data = new GridData();
-		data.verticalAlignment = GridData.FILL_VERTICAL;
-		data.horizontalAlignment = GridData.FILL_HORIZONTAL;
-		data.widthHint = TEXT_FIELD_WIDTH;
-		data.heightHint = TEXT_FIELD_HEIGHT;
-		composite.setLayoutData(data);
-
-		return composite;
-	}
-
 	public boolean performOk() {
-		
-		
-		// setUser(user);
-		return super.performOk();
+
+		if (storeNewRepo()) {
+			return super.performOk();
+		}
+
+		return false;
 	}
 
 }
