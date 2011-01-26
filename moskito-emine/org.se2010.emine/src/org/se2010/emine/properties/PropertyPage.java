@@ -57,36 +57,36 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		
 		createRepoList();
 		
-		if (this.reponames.isEmpty()){
-			createInitPage(backendpage);
-			return backendpage;
-		}
+//		if (this.reponames.isEmpty()){
+//			createInitPage(backendpage);
+//			return backendpage;
+//		}
 		
 		final TabFolder tabFolder = new TabFolder(backendpage, SWT.BORDER
 				| SWT.TOP);
 
 		
-		for (String repo:this.reponames){
-			TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.COLOR_GRAY);
-			item.setText(repo);
-
-			Composite repoTab = new Composite(tabFolder, SWT.NONE);
-
-			createRepoTab(repoTab, repo);
-		
-			
-		}
-		
-//		for (int i = 0; i < 6; i++) {
+//		for (String repo:this.reponames){
 //			TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.COLOR_GRAY);
-//			item.setText("TabItem " + i);
+//			item.setText(repo);
 //
 //			Composite repoTab = new Composite(tabFolder, SWT.NONE);
 //
-//			createRepoTab(repoTab, "Init");
-//			//		      
-//			item.setControl(repoTab);
+//			createRepoTab(repoTab, repo);
+//		
+//			
 //		}
+		
+		for (int i = 0; i < 6; i++) {
+			TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.COLOR_GRAY);
+			item.setText("Repositoryname " + i);
+
+			Composite repoTab = new Composite(tabFolder, SWT.NONE);
+
+			createRepoTab(repoTab, "Init" + i);
+			//		      
+			item.setControl(repoTab);
+		}
 		tabFolder.pack();
 
 		return backendpage;
