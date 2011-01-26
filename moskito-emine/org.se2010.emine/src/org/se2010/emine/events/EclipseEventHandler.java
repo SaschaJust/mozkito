@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -98,18 +99,105 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	}
 	
 	
-	@Override
-	public void elementChanged(final ElementChangedEvent event)
+	//TODO minimize complexity
+	private void handleChangedJavaModel(final IJavaElementDelta delta)
 	{
-		final ArrayList<IJavaElementDelta> deltas = getAffectedCUDeltas(event.getDelta());
-		
-		System.out.println("EVENT:    " + event);
-		System.out.println("ELEMENT:  " + event.getDelta().getElement().getClass().getName());
-		System.out.println("DELTAS:   " + deltas);
-		System.out.println("MOVED TO: " + event.getDelta().getMovedToElement());
-		
-		for(final IJavaElementDelta delta : deltas)
+		IJavaElement elem = delta.getElement();
+		if(elem instanceof IJavaModel)
 		{
+			for(IJavaElementDelta tmpDelta : delta.getAffectedChildren())
+			{
+				elem = tmpDelta.getElement();
+				if(elem instanceof IJavaProject)
+				{
+					for(IJavaElementDelta tmpDelta2 : tmpDelta.getAffectedChildren())
+					{
+						elem = tmpDelta2.getElement();
+						if(elem instanceof IPackageFragmentRoot)
+						{
+							String pkgFromName = null;
+							String pkgToName   = null;
+							final ArrayList<String> cuNames = new ArrayList<String>();
+							
+							for(IJavaElementDelta tmpDelta3 : tmpDelta2.getAffectedChildren())
+							{
+								
+								for(IJavaElementDelta tmpDelta4 : tmpDelta3.getAffectedChildren())
+								{
+									// handle removal of package name segment which is logically the same as class renaming
+									final IJavaElement movedTo = tmpDelta4.getMovedToElement();
+									if(movedTo != null)
+									{
+										final ICompilationUnit cu        = (ICompilationUnit) movedTo;
+										final String           clazzName = extractClassNameFromCU(cu); 
+										
+										final IEMineEvent evt = new ModificationEvent.ClassAddedEvent(clazzName);
+										EMineEventBus.getInstance().fireEvent(evt);
+										
+										final ICompilationUnit cuOld        = (ICompilationUnit) tmpDelta4.getElement();
+										final String           clazzNameOld = extractClassNameFromCU(cuOld); 
+										
+										final IEMineEvent evt2 = new ModificationEvent.ClassRemovedEvent(clazzNameOld);
+										EMineEventBus.getInstance().fireEvent(evt2);
+									}
+								}
+								
+								final IJavaElement movedToElem   = tmpDelta3.getMovedToElement();
+								final IJavaElement movedFromElem = tmpDelta3.getMovedFromElement();
+								
+								// handle removed package segment
+								
+								if(movedFromElem instanceof IPackageFragment)
+								{
+									final IPackageFragment pkgFrom = (IPackageFragment) movedFromElem;
+									pkgFromName = pkgFrom.getElementName();
+								}
+								else if(movedToElem instanceof IPackageFragment)
+								{
+									final IPackageFragment pkgTo = (IPackageFragment) movedToElem;
+									pkgToName = pkgTo.getElementName();
+									
+									try 
+									{
+										for(final ICompilationUnit cu : pkgTo.getCompilationUnits())
+										{
+											final String cuName = cu.getElementName();
+											cuNames.add( cuName.substring(0, cuName.lastIndexOf(".")));
+										}
+									} 
+									catch (final JavaModelException e) 
+									{
+										throw new RuntimeException(e);
+									}
+								}
+							}
+							
+							if(pkgToName != null && pkgFromName != null)
+							{
+								for(final String tmpCuName : cuNames)
+								{
+									final String removedClass = pkgFromName + "." + tmpCuName;
+									final String addedClass   = pkgToName   + "." + tmpCuName;
+									
+									final IEMineEvent evt = new ModificationEvent.ClassAddedEvent(addedClass);
+									EMineEventBus.getInstance().fireEvent(evt);
+									
+									final IEMineEvent evt2 = new ModificationEvent.ClassRemovedEvent(removedClass);
+									EMineEventBus.getInstance().fireEvent(evt2);
+								}
+							}
+						}
+					}
+				}
+			}
+		}		
+	}
+	
+	
+	private void handleChangedCUs(final ArrayList<IJavaElementDelta> deltas )
+	{
+		for(final IJavaElementDelta delta : deltas)
+		{	
 			final String clazzName = extractClassNameFromCU((ICompilationUnit)delta.getElement());
 			final int deltaKind    = delta.getKind();
 			
@@ -123,20 +211,20 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 				final IEMineEvent evt       = new ModificationEvent.ClassRemovedEvent(clazzName);
 				EMineEventBus.getInstance().fireEvent(evt);
 				
-				// handle removal of package name segment which is logically the same as class renaming
-				final IJavaElement movedToElem = delta.getMovedToElement();
-				if(movedToElem != null)
-				{
-					final ICompilationUnit cu         = (ICompilationUnit) movedToElem;
-					final String           clazzName2 = extractClassNameFromCU(cu); 
-					
-					final IEMineEvent evt2 = new ModificationEvent.ClassAddedEvent(clazzName2);
-					EMineEventBus.getInstance().fireEvent(evt2);
-				}
+//				// handle removal of package name segment which is logically the same as class renaming
+//				final IJavaElement movedToElem = delta.getMovedToElement();
+//				if(movedToElem != null)
+//				{
+//					final ICompilationUnit cu         = (ICompilationUnit) movedToElem;
+//					final String           clazzName2 = extractClassNameFromCU(cu); 
+//					
+//					final IEMineEvent evt2 = new ModificationEvent.ClassAddedEvent(clazzName2);
+//					EMineEventBus.getInstance().fireEvent(evt2);
+//				}
 			}
 			else if(deltaKind == IJavaElementDelta.CHANGED)
 			{
-				final int flags = event.getDelta().getFlags();
+				final int flags = delta.getFlags();//event.getDelta().getFlags();
 				
 				if( (flags & IJavaElementDelta.F_CHILDREN)     != 0 &&
 					(flags & IJavaElementDelta.F_FINE_GRAINED) != 0	&&
@@ -169,7 +257,35 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 					
 					EMineEventBus.getInstance().fireEvent(evt);
 				}
-			}
+			}		
+		}
+	}
+	
+	
+	@Override
+	public void elementChanged(final ElementChangedEvent event)
+	{
+  		final ArrayList<IJavaElementDelta> deltas = getAffectedCUDeltas(event.getDelta());
+		
+//		System.out.println("EVENT:    " + event);
+//		System.out.println("ELEMENT:  " + event.getDelta().getElement().getClass().getName());
+//		System.out.println("DELTAS:   " + deltas);
+//		System.out.println("MOVED TO: " + event.getDelta().getMovedToElement());
+		
+		
+		
+		if(event.getDelta().getElement() instanceof IJavaModel)
+		{
+			this.handleChangedJavaModel(event.getDelta());
+		}
+		else 
+		{
+			if( (event.getDelta().getFlags() & IJavaElementDelta.F_CHILDREN)     != 0 &&
+				(event.getDelta().getFlags() & IJavaElementDelta.F_FINE_GRAINED) != 0	&&
+				(event.getDelta().getFlags() & IJavaElementDelta.F_AST_AFFECTED) != 0)
+				{
+					this.handleChangedCUs(deltas);				
+				}
 		}
 	}
 	
