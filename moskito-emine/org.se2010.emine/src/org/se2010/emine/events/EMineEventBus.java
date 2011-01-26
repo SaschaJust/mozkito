@@ -6,7 +6,7 @@ public final class EMineEventBus implements IEMineEventBus
 {
 	private final HashMap<Class<? extends IEMineEvent>, ArrayList<IEMineEventListener>> listenerMap;
 	
-	private static EMineEventBus instance;
+	private static final EMineEventBus instance = new EMineEventBus();
 	
 	private EMineEventBus() 
 	{	
@@ -15,14 +15,13 @@ public final class EMineEventBus implements IEMineEventBus
 	
 	public static IEMineEventBus getInstance()
 	{
-		if(EMineEventBus.instance == null)
-		{
-		   EMineEventBus.instance = new EMineEventBus();
-		}
-		
 		return EMineEventBus.instance;
 	}
 	
+	public static void clear()
+	{
+		EMineEventBus.instance.listenerMap.clear();
+	}
 	
 	@Override
 	public void registerEventListener(final Class<? extends IEMineEvent> eventType,
