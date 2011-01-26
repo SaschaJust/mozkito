@@ -213,7 +213,6 @@ public class BugzillaXMLParser {
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
 						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
 						hElement = new HistoryElement(historyAuthor, dateTime, map);
-						// FIXME add only if sth set
 						report.addHistoryElement(hElement);
 					} else {
 						--rowspan;
