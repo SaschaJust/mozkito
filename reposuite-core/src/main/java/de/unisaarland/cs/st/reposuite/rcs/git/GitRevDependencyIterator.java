@@ -198,7 +198,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				"--encoding=UTF-8", "--parents", "--branches", "--remotes", revision }, cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo: could not get revList.");
+			throw new UnrecoverableError(
+					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
+					+ revision + ".");
 		}
 		File revListFile = FileUtils.createRandomFile();
 		BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));
