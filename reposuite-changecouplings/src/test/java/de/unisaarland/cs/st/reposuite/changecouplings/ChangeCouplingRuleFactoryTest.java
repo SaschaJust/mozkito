@@ -69,7 +69,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			// ###transaction 1
 			
-			RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person);
+			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person);
 			RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 			fileA.assignTransaction(rcsTransaction, "A.java");
 			new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
@@ -86,7 +86,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			// ### transaction 2
 			
-			RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", new DateTime(), person);
+			RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", new DateTime(), person);
 			new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
 			new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
 			RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
@@ -96,7 +96,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			// ### transaction 3
 			
-			RCSTransaction rcsTransaction3 = new RCSTransaction("2", "", new DateTime(), person);
+			RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", new DateTime(), person);
 			new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
 			
 			fileC.assignTransaction(rcsTransaction3, "C.java");
@@ -106,7 +106,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			// ### transaction 4
 			
-			RCSTransaction rcsTransaction4 = new RCSTransaction("3", "", new DateTime(), person);
+			RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", new DateTime(), person);
 			new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 			new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 			new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
