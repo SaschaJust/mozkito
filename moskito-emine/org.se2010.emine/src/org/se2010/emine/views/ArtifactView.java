@@ -31,6 +31,7 @@ public abstract class ArtifactView {
 	
 	
 	protected abstract void checkViewProperties();
+	// TODO open question if this is handled in the controller class
 	public abstract void clear();
 	//TODO method vizualizeBackendConfiguration necessary??
 	

@@ -76,7 +76,7 @@
          id="yellow_marker.ImageProvider">
    </imageprovider>
    </extension>
-      <extension
+   <extension
          id="green_marker"
          name="green Marker"
          point="org.eclipse.core.resources.markers">
@@ -93,6 +93,101 @@
          markertype="org.se2010.emine.green_marker"
 			icon="icons/green_marker.gif"
          id="green_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+   <extension
+         id="trans0_marker"
+         name="Transparenz 0 Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.trans0_marker"
+			icon="icons/trans0_marker.gif"
+         id="trans0_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+   <extension
+         id="trans1_marker"
+         name="Transparenz 1 Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.trans1_marker"
+			icon="icons/trans1_marker.gif"
+         id="trans1_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+   <extension
+         id="trans2_marker"
+         name="Transparenz 2 Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.trans2_marker"
+			icon="icons/trans2_marker.gif"
+         id="trans2_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+   <extension
+         id="trans3_marker"
+         name="Transparenz 3 Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.trans3_marker"
+			icon="icons/trans3_marker.gif"
+         id="trans3_marker.ImageProvider">
+   </imageprovider>
+   </extension>
+   <extension
+         id="trans4_marker"
+         name="Transparenz 4 Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent value="false">
+      </persistent>
+      <attribute name="message"/>
+      <attribute name="location"/>      
+   </extension>
+   <extension
+      point="org.eclipse.ui.ide.markerImageProviders">
+   <imageprovider
+         markertype="org.se2010.emine.trans4_marker"
+			icon="icons/trans4_marker.gif"
+         id="trans4_marker.ImageProvider">
    </imageprovider>
    </extension>
 

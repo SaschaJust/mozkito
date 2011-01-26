@@ -7,11 +7,11 @@ import org.eclipse.core.resources.IFile;
 public class SyntaxhighlightingArtifact implements Artifact{
 
 	private String title;
-	private Map<Integer,String> map;	// map of Int lines->String color (at the moment red,yellow,green)
+	private Map<Integer,HighlightIconType> map;	// map of Int lines->String color (at the moment red,yellow,green)
 	private String message;
 	private IFile file;
 	
-	SyntaxhighlightingArtifact(String title,IFile file,Map<Integer,String> map, String message){
+	SyntaxhighlightingArtifact(String title,IFile file,Map<Integer,HighlightIconType> map, String message){
 		this.title=title;
 		this.map=map;
 		this.message=message;
@@ -22,7 +22,7 @@ public class SyntaxhighlightingArtifact implements Artifact{
 		return file;
 	}
 	
-	public Map<Integer,String> getMap(){
+	public Map<Integer,HighlightIconType> getMap(){
 		return map;
 	}
 	
