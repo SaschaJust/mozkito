@@ -58,6 +58,25 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private static final long serialVersionUID = -7619009648634901112L;
 	
 	/**
+	 * Creates the transaction.
+	 * 
+	 * @param id
+	 *            the id
+	 * @param message
+	 *            the message
+	 * @param timestamp
+	 *            the timestamp
+	 * @param author
+	 *            the author
+	 * @return the rCS transaction
+	 */
+	@NoneNull
+	public static RCSTransaction createTransaction(final String id, final String message, final DateTime timestamp,
+			final Person author) {
+		return new RCSTransaction(id, message, timestamp, author);
+	}
+	
+	/**
 	 * Gets the handle.
 	 * 
 	 * @return the simple class name
@@ -66,16 +85,16 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public static String getHandle() {
 		return RCSTransaction.class.getSimpleName();
 	}
-	
 	private PersonContainer         persons   = new PersonContainer();
 	private String                  id;
-	private String                  message;
 	
+	private String                  message;
 	private Set<RCSTransaction>     children  = new HashSet<RCSTransaction>();
 	private Set<RCSTransaction>     parents   = new HashSet<RCSTransaction>();
 	private RCSBranch               branch    = RCSBranch.MASTER;
 	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	private DateTime                timestamp;
+	
 	private Set<String>             tags      = new HashSet<String>();
 	
 	/**
@@ -100,7 +119,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the previous rcs transaction
 	 */
 	@NoneNull
-	public RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author) {
+	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author) {
 		Condition.notNull(id);
 		Condition.notNull(message);
 		Condition.notNull(timestamp);
@@ -205,6 +224,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				return 1;
 			} else {
 				RCSTransaction cache = getParent(getBranch());
+				if (cache == null) {
+					return -1;
+				}
 				while (cache != getBranch().getBegin()) {
 					if (cache.equals(transaction)) {
 						return 1;
