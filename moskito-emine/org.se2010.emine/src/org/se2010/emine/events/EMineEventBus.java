@@ -1,21 +1,22 @@
 package org.se2010.emine.events;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class EMineEventBus implements IEMineEventBus
 {
-	private final HashMap<Class<? extends IEMineEvent>, ArrayList<IEMineEventListener>> listenerMap;
+	private final Map<Class<? extends IEMineEvent>, List<IEMineEventListener>> listenerMap;
 	
 	private static final EMineEventBus instance = new EMineEventBus();
 	
 	private EMineEventBus() 
 	{	
-		this.listenerMap = new HashMap<Class<? extends IEMineEvent>, ArrayList<IEMineEventListener>>();
+		this.listenerMap = new ConcurrentHashMap<Class<? extends IEMineEvent>, List<IEMineEventListener>>();
 	}
 	
 	public static IEMineEventBus getInstance()
 	{
-		return EMineEventBus.instance;
+		return EMineEventBus.instance;				
 	}
 	
 	public static void clear()
@@ -37,23 +38,29 @@ public final class EMineEventBus implements IEMineEventBus
 			throw new NullPointerException("Event listener must not be null!");
 		}
 		
-		
-		ArrayList<IEMineEventListener> listenerList = this.listenerMap.get(eventType);
-		
-		if(listenerList == null)
+		List<IEMineEventListener> listenerList;
+		synchronized (this.listenerMap) 
 		{
-			listenerList = new ArrayList<IEMineEventListener>();
-			this.listenerMap.put(eventType, listenerList);
+			listenerList = this.listenerMap.get(eventType);
+
+			if(listenerList == null)
+			{
+				listenerList = Collections.synchronizedList(new ArrayList<IEMineEventListener>());
+				this.listenerMap.put(eventType, listenerList);
+			}	
 		}
 		
-		if(listenerList.contains(listener))
+		synchronized (listenerList) 
 		{
-			// TODO: introduce specialization of RuntimeExcepion?
-			throw new RuntimeException("Listener " + listener + 
-									   " is already registered for event type" + eventType.getName());
+			if(listenerList.contains(listener))
+			{
+				// TODO: introduce specialization of RuntimeExcepion?
+				throw new RuntimeException("Listener " + listener + 
+										   " is already registered for event type" + eventType.getName());
+			}
+			
+			listenerList.add(listener);
 		}
-		
-		listenerList.add(listener);
 	}
 	
 
@@ -64,11 +71,11 @@ public final class EMineEventBus implements IEMineEventBus
 		{
 			throw new NullPointerException("Event listener must not be null!");
 		}
-		
+
 		// a IEMineEventListener can be installed for different event types. Therefore, the entire map need to be browsed.
-		for(final Map.Entry<Class<? extends IEMineEvent>, ArrayList<IEMineEventListener>> entrySet : this.listenerMap.entrySet())
+		for(final Map.Entry<Class<? extends IEMineEvent>, List<IEMineEventListener>> entrySet : this.listenerMap.entrySet())
 		{
-			final ArrayList<IEMineEventListener> listeners = entrySet.getValue();
+			final List<IEMineEventListener> listeners = entrySet.getValue();
 			listeners.remove(listener);
 		}
 	}
@@ -81,10 +88,14 @@ public final class EMineEventBus implements IEMineEventBus
 			throw new NullPointerException("Event must not be null!");
 		}
 		
-		final ArrayList<IEMineEventListener> listeners = this.listenerMap.get(event.getClass());
-
-		// TODO: shall we introduce a logging mechanism and output a warning here?
-		if(listeners != null)
+		final List<IEMineEventListener> listeners = this.listenerMap.get(event.getClass());
+		if(listeners == null)
+		{
+			// TODO: shall we introduce a logging mechanism and output a warning here?
+			return;
+		}
+		
+		synchronized(listeners)
 		{
 			// TODO: thread pool management
 			for(final IEMineEventListener listener : listeners)
@@ -98,7 +109,7 @@ public final class EMineEventBus implements IEMineEventBus
 					}
 				};
 				new Thread(run).start();
-			}
+			}			
 		}
 	}
 }
