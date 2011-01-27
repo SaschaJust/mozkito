@@ -13,6 +13,9 @@ import org.se2010.emine.events.EditorEvent;
 import org.se2010.emine.events.IEMineEvent;
 import org.se2010.emine.events.IEMineEventListener;
 import org.se2010.emine.events.ModificationEvent;
+import org.se2010.emine.events.reposuite.RepoSuiteEvent;
+import org.se2010.emine.events.reposuite.RepoSuiteListener;
+import org.se2010.emine.listeners.Controller;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -24,6 +27,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	//private EclipseEventHandler eHandler = null;
 	
 	/**
 	 * The constructor
@@ -40,11 +45,11 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		EclipseEventHandler.init();
+	 EclipseEventHandler.init();
 		
 		final IEMineEventListener listener = new IEMineEventListener() 
 		{
-			@Override
+			
 			public void onEvent(final IEMineEvent event) 
 			{
 				System.out.println("==== TEST LISTENER ====> " + event);
@@ -58,6 +63,13 @@ public class Activator extends AbstractUIPlugin {
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassAddedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassRemovedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassChangedEvent.class, listener); 
+		
+		new RepoSuiteListener();
+		new Controller();
+	}
+	
+	public static void getEclipseEventHandler(){
+		
 	}
 
 	/*
