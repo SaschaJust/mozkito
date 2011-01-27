@@ -2,16 +2,22 @@ package org.se2010.emine.events;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class EMineEventBus implements IEMineEventBus
 {
 	private final Map<Class<? extends IEMineEvent>, List<IEMineEventListener>> listenerMap;
 	
 	private static final EMineEventBus instance = new EMineEventBus();
+
+	private final Lock lock;
+
 	
 	private EMineEventBus() 
 	{	
 		this.listenerMap = new ConcurrentHashMap<Class<? extends IEMineEvent>, List<IEMineEventListener>>();
+		this.lock        = new ReentrantLock();
 	}
 	
 	public static IEMineEventBus getInstance()
@@ -23,7 +29,7 @@ public final class EMineEventBus implements IEMineEventBus
 	{
 		EMineEventBus.instance.listenerMap.clear();
 	}
-	
+
 	@Override
 	public void registerEventListener(final Class<? extends IEMineEvent> eventType,
 									  final IEMineEventListener 		 listener) 
@@ -39,7 +45,9 @@ public final class EMineEventBus implements IEMineEventBus
 		}
 		
 		List<IEMineEventListener> listenerList;
-		synchronized (this.listenerMap) 
+
+		this.lock.lock();
+		try
 		{
 			listenerList = this.listenerMap.get(eventType);
 
@@ -48,6 +56,10 @@ public final class EMineEventBus implements IEMineEventBus
 				listenerList = Collections.synchronizedList(new ArrayList<IEMineEventListener>());
 				this.listenerMap.put(eventType, listenerList);
 			}	
+		}
+		finally
+		{
+			this.lock.unlock();
 		}
 		
 		synchronized (listenerList) 
@@ -88,11 +100,20 @@ public final class EMineEventBus implements IEMineEventBus
 			throw new NullPointerException("Event must not be null!");
 		}
 		
-		final List<IEMineEventListener> listeners = this.listenerMap.get(event.getClass());
-		if(listeners == null)
+		this.lock.lock();
+		final List<IEMineEventListener> listeners;
+		try
 		{
-			// TODO: shall we introduce a logging mechanism and output a warning here?
-			return;
+			listeners = this.listenerMap.get(event.getClass());
+			if(listeners == null)
+			{
+				// TODO: shall we introduce a logging mechanism and output a warning here?
+				return;
+			}
+		}
+		finally
+		{
+			this.lock.unlock();
 		}
 		
 		synchronized(listeners)
