@@ -10,11 +10,14 @@ public class ProblemArtifact implements Artifact{
 	private String message;			//additional details	
 	private IFile file;				//the file the artifact belongs to
 	
-	public ProblemArtifact(String t, Map <String, String> m, String me, IFile f){
+	private String path;
+	
+	public ProblemArtifact(String t, Map <String, String> m, String me, IFile f , String path ){
 		this.title = t;
 		this.map = m;
 		this.message = me;
 		this.file = f;
+		this.path = path;
 	}
 	
 	public Map<String, String> getMap() {
@@ -32,7 +35,7 @@ public class ProblemArtifact implements Artifact{
 	}
 
 
-	@Override
+	
 	public String getTitle() {
 		return title;
 	}
