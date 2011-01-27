@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.se2010.emine.artifacts.ConfigurationArtifact;
 
 @SuppressWarnings("unused")
 public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
@@ -31,26 +32,13 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	Text repoNameInit;
 	Text userInit;
 	Text passwordInit;
-	// Text urlLabel;
-	Text urlInit;
+	Text uriInit;
 	Text vmArgInit;
 
 	GridData data;
 
-	// Only for testing
-	private QualifiedName USER_PROP_KEY = new QualifiedName("User", "User");
-	private QualifiedName PASSWORD_PROP_KEY = new QualifiedName("pw", "pw");
-	private QualifiedName URL_PROP_KEY = new QualifiedName("url", "url");
-	private QualifiedName VMARG_PROP_KEY = new QualifiedName("vm", "vm");
-
-	private static final QualifiedName REPO_PROP_KEY = new QualifiedName(
-			"eMine_repos", "eMine_repos");
 	private List<String> reponames = new ArrayList<String>();
-
-	private static Text userField;
-	private static Text passwordField;
-	private static Text urlField;
-	private static Text vmargField;
+	private List<Text> inputFields = new ArrayList<Text>();
 
 	public PropertyPage() {
 		super();
@@ -71,9 +59,10 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 			final TabFolder tabFolder = new TabFolder(backendpage, SWT.BORDER
 					| SWT.TOP | SWT.TRANSPARENT);
-			
-			for (String repo:reponames) {
-				TabItem item = new TabItem(tabFolder, SWT.NONE | SWT.TRANSPARENT);
+
+			for (String repo : reponames) {
+				TabItem item = new TabItem(tabFolder, SWT.NONE
+						| SWT.TRANSPARENT);
 				item.setText(repo);
 
 				Composite repoTab = new Composite(tabFolder, SWT.NONE);
@@ -82,14 +71,14 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 				item.setControl(repoTab);
 			}
-			
+
 			TabItem item = new TabItem(tabFolder, SWT.None | SWT.TRANSPARENT);
 			item.setText("New Entry");
-			
+
 			Composite newRepoTab = new Composite(tabFolder, SWT.NONE);
 			createInitPage(newRepoTab);
 			item.setControl(newRepoTab);
-			
+
 			tabFolder.pack();
 
 		}
@@ -104,8 +93,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		overview.verticalSpacing = 15;
 		parent.setLayout(overview);
 
-		
-		createDefaultLabel(parent,"Here you can provide a new repository for eMine.");
+		createDefaultLabel(parent,
+				"Here you can provide a new repository for eMine.");
 
 		// creating data fields for a new type of repository
 
@@ -120,6 +109,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		repoNameInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
 		repoNameInit.setLayoutData(data);
 		repoNameInit.setText("");
+		repoNameInit
+				.setToolTipText("The name of the repository is used\nto store your values locally.");
 
 		Label userLabel = new Label(initPage, SWT.NONE);
 		userLabel.setText("User *");
@@ -136,9 +127,9 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		createDefaultLabel(initPage, "Repository Path *");
 
-		urlInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
-		urlInit.setLayoutData(data);
-		urlInit.setText("");
+		uriInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
+		uriInit.setLayoutData(data);
+		uriInit.setText("");
 
 		createDefaultLabel(initPage, "VM Arguments");
 
@@ -152,15 +143,17 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		// create Warning Message
 
-		createDefaultLabel(parent,"* necessary values:\n \t If empty, nothing is stored.");
+		createDefaultLabel(parent, "* necessary values.");
+
+		createDefaultLabel(parent, "You have: " + reponames.size());
 
 	}
-	
-	private void createDefaultLabel(Composite parent, String text){
-		
+
+	private void createDefaultLabel(Composite parent, String text) {
+
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(text);
-		
+
 	}
 
 	private boolean storeNewRepo() {
@@ -176,42 +169,87 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 				// TODO: someAlertMessage: RepoName already registered.
 				return false;
 			}
-			repoList += ";"+ registeredRepos;
+			repoList += ";" + registeredRepos;
 		}
 
 		String newUserName = userInit.getText();
 		String newPassword = passwordInit.getText();
-		String newUrl = urlInit.getText();
+		String newUrl = uriInit.getText();
 		String newVMarg = vmArgInit.getText();
 
 		if (newRepoName.contains(";") || newUserName == "" || newPassword == ""
-			|| newUrl == "") {
+				|| newUrl == "") {
 			// TODO: some AlertMessage: Insufficient information provided
 			return false;
 		}
 
-		setValue(REPO_PROP_KEY, repoList);
-		setValue(
-				new QualifiedName(newRepoName + "_user", newRepoName + "_user"),
-				newUserName);
-		setValue(new QualifiedName(newRepoName + "_password", newRepoName
-				+ "_password"), newPassword);
-		setValue(new QualifiedName(newRepoName + "_url", newRepoName + "_url"),
-				newUrl);
-		setValue(new QualifiedName(newRepoName + "_vmArg", newRepoName
-				+ "_vmArg"), newVMarg);
+		setValue("eMine_repos", repoList);
+		setValue(newRepoName + "_Drepository.user", newUserName);
+		setValue(newRepoName + "_Drepository.password", newPassword);
+		setValue(newRepoName + "_Drepository.uri", newUrl);
+		setValue(newRepoName + "_vmArg", newVMarg);
 
 		return true;
 
 	}
 
-	@SuppressWarnings("static-access")
-	private void createRepoList() {
+	private List<ConfigurationArtifact> saveChanges() {
 
-		String names = getValue(this.REPO_PROP_KEY);
+		List<ConfigurationArtifact> changedRepos = new ArrayList<ConfigurationArtifact>();
+		int numStoredRepos = reponames.size();
+		int numInputfields = inputFields.size();
+		int fieldstosave = numInputfields / numStoredRepos;
+		int j = 0;
+
+		// TODO: possible Indexoutofbounds?
+		for (int i = 0; i < numInputfields; i++) {
+
+			String repoName = reponames.get(j++);
+
+			String Drepository_user = inputFields.get(i++).getText();
+			String Drepository_password = inputFields.get(i++).getText();
+			String Drepository_uri = inputFields.get(i++).getText();
+			String vmArg = inputFields.get(i).getText();
+
+			String olduser = repoName + "_Drepository_user";
+			String oldpw = repoName + "_Drepository_password";
+			String old_uri = repoName + "_Drepository_uri";
+			String old_vmArg = repoName + "_vmArg";
+
+			if (Drepository_user.contentEquals(getValue(olduser))
+					& Drepository_password.contentEquals(getValue(oldpw))
+					& Drepository_uri.contentEquals(getValue(old_uri))
+					& vmArg.contentEquals(getValue(old_vmArg))) {
+
+				break;
+			}
+			
+			setValue(olduser, Drepository_user);
+			setValue(oldpw, Drepository_password);
+			setValue(old_uri, Drepository_uri);
+			storeVMarg(old_vmArg, vmArg);
+			
+			changedRepos.add(new ConfigurationArtifact(null, Drepository_uri, Drepository_user, Drepository_password, 100, null, null, null));
+
+		}
+
+		// TODO: implement
+		return changedRepos;
+	}
+
+	private void storeVMarg(String perKeyName, String value) {
+		// TODO check and overwrite values
+		setValue(perKeyName, value);
+		
+		
+		
+	}
+
+	private void createRepoList() {
+		String names = getValue("eMine_repos");
 
 		if (names == null || names == "") {
-			setValue(this.REPO_PROP_KEY, ""); // eMine_repos not initialized yet
+			setValue("eMine_repos", ""); // eMine_repos not initialized yet
 			return;
 		}
 
@@ -227,54 +265,61 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		GridLayout tablayout = new GridLayout(2, false);
 		parent.setLayout(tablayout);
-		createUserField(parent);
-		createPasswordField(parent);
-		createURLField(parent);
-		createVMargField(parent);
+
+		createUserField(parent, repoName + "_Drepository.user");
+		createPasswordField(parent, repoName + "_Drepository.password");
+		createURIField(parent, repoName + "_Drepository.uri");
+		createVMargField(parent, repoName + "_vmArg");
 
 	}
 
-	private void createUserField(Composite parent) {
+	private void createUserField(Composite parent, String qualifiedName) {
 
-		createDefaultLabel(parent,"User");
+		createDefaultLabel(parent, "User");
 
-		userField = new Text(parent, SWT.WRAP | SWT.BORDER);
+		Text userField = new Text(parent, SWT.WRAP | SWT.BORDER);
 		userField.setLayoutData(data);
-		userField.setText(getValue(USER_PROP_KEY));
+		userField.setText(getValue(qualifiedName));
+		inputFields.add(userField);
 
 	}
 
-	private void createPasswordField(Composite parent) {
-		createDefaultLabel(parent,"Password");
+	private void createPasswordField(Composite parent, String qualifiedName) {
+		createDefaultLabel(parent, "Password");
 
-		passwordField = new Text(parent, SWT.PASSWORD | SWT.BORDER);
+		Text passwordField = new Text(parent, SWT.PASSWORD | SWT.BORDER);
 		passwordField.setLayoutData(data);
-		passwordField.setText(getValue(PASSWORD_PROP_KEY));
+		passwordField.setText(getValue(qualifiedName));
+		inputFields.add(passwordField);
 	}
 
-	private void createURLField(Composite parent) {
+	private void createURIField(Composite parent, String qualifiedName) {
 
-		createDefaultLabel(parent,"Repository-Path");
+		createDefaultLabel(parent, "Repository-Path");
 
-		urlField = new Text(parent, SWT.WRAP | SWT.BORDER);
-		urlField.setLayoutData(data);
-		urlField.setText(getValue(URL_PROP_KEY));
+		Text uriField = new Text(parent, SWT.WRAP | SWT.BORDER);
+		uriField.setLayoutData(data);
+		uriField.setText(getValue(qualifiedName));
+		inputFields.add(uriField);
 
 	}
 
-	private void createVMargField(Composite parent) {
-		createDefaultLabel(parent,"VM-Arguments");
+	private void createVMargField(Composite parent, String qualifiedName) {
+		createDefaultLabel(parent, "VM-Arguments");
 
-		vmargField = new Text(parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
+		Text vmargField = new Text(parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL);
 		GridData localLayout = new GridData();
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
 		vmargField.setLayoutData(localLayout);
-		vmargField.setText(getValue(VMARG_PROP_KEY));
+		vmargField.setText(getValue(qualifiedName));
+		inputFields.add(vmargField);
 	}
 
-	protected String getValue(QualifiedName perKey) {
+	protected String getValue(String key) {
+
+		QualifiedName perKey = new QualifiedName(key, key);
 		IResource res = (IResource) getElement();
 		try {
 
@@ -288,7 +333,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		}
 	}
 
-	protected void setValue(QualifiedName perKey, String value) {
+	protected void setValue(String perKeyName, String value) {
+		QualifiedName perKey = new QualifiedName(perKeyName, perKeyName);
 		IResource res = (IResource) getElement();
 		// TODO: properly implement + Test
 		try {
@@ -305,6 +351,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		if (storeNewRepo()) {
 			return super.performOk();
 		}
+		
+		saveChanges();
 
 		return false;
 	}
