@@ -84,7 +84,7 @@ public class GitRepository extends Repository {
 		List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		String firstRev = getFirstRevisionId();
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "blame", "-lf", revision,
-				"--", filePath }, cloneDir, null, new HashMap<String, String>());
+				"--", filePath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -136,11 +136,11 @@ public class GitRepository extends Repository {
 		Condition.notNull(revision, "Checking ut requries revision");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
-				cloneDir, null, new HashMap<String, String>());
+				this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
-		File result = new File(cloneDir, relativeRepoPath);
+		File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
 			throw new UnrecoverableError("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
 		}
@@ -156,16 +156,16 @@ public class GitRepository extends Repository {
 		Condition.notNull(destDir, "[clone] `destDir` should not be null.");
 		
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
-				getUri().toString(), destDir }, cloneDir, inputStream, new HashMap<String, String>());
+				getUri().toString(), destDir }, this.cloneDir, inputStream, new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
-			cloneDir = new File(destDir);
-			if (!cloneDir.exists()) {
+			this.cloneDir = new File(destDir);
+			if (!this.cloneDir.exists()) {
 				throw new UnrecoverableError("Could not clone git repository `" + getUri().toString()
 						+ "` to directory `" + destDir + "`" + FileUtils.lineSeparator
 						+ "Used command: `git clone -n -q " + getUri().toString() + " " + destDir + "`");
 			}
 			try {
-				FileUtils.forceDeleteOnExit(cloneDir);
+				FileUtils.forceDeleteOnExit(this.cloneDir);
 			} catch (IOException e) {
 				throw new UnrecoverableError(e.getMessage(), e);
 			}
@@ -188,7 +188,7 @@ public class GitRepository extends Repository {
 		
 		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
-				baseRevision + ":" + filePath }, cloneDir, null, new HashMap<String, String>());
+				baseRevision + ":" + filePath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -196,7 +196,7 @@ public class GitRepository extends Repository {
 		
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
-		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, cloneDir,
+		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, this.cloneDir,
 				null, new HashMap<String, String>());
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
@@ -252,8 +252,8 @@ public class GitRepository extends Repository {
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--branches",
-				"--remotes", "--pretty=format:%H", "--name-status", "-n1", revision }, cloneDir, null,
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
+		        "--pretty=format:%H", "--name-status", "-n1", revision }, this.cloneDir, null,
 				new HashMap<String, String>());
 		
 		if (response.getFirst() != 0) {
@@ -318,7 +318,7 @@ public class GitRepository extends Repository {
 	public String getFirstRevisionId() {
 		if (getStartRevision() == null) {
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--branches",
-					"--remotes", "--pretty=format:%H" }, cloneDir, null, new HashMap<String, String>());
+					"--remotes", "--pretty=format:%H" }, this.cloneDir, null, new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -339,7 +339,7 @@ public class GitRepository extends Repository {
 		
 		String[] args = new String[] { "log", "--branches", "--remotes", "-r", revision + "^.." + revision, "-M", "-C",
 				"--name-status", "--diff-filter=R,C" };
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -366,7 +366,7 @@ public class GitRepository extends Repository {
 	@Override
 	public String getHEADRevisionId() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-parse", "master" },
-				cloneDir, null, new HashMap<String, String>());
+				this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -384,7 +384,7 @@ public class GitRepository extends Repository {
 			return transactionId;
 		} else if (index < 0) {
 			String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "-r", transactionId };
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -398,7 +398,7 @@ public class GitRepository extends Repository {
 			String[] args = new String[] { "log", "--branches", "--remotes", "--reverse", "--pretty=format:%H", "-r",
 					transactionId + ".." + getHEAD() };
 			
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -416,13 +416,13 @@ public class GitRepository extends Repository {
 	
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
-		return revDepIter;
+		return this.revDepIter;
 	}
 	
 	@Override
 	public long getTransactionCount() {
 		String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -434,7 +434,7 @@ public class GitRepository extends Repository {
 		Condition.greaterOrEqual(index, 0l, "Cannot get transaction id for revision number smaller than zero.");
 		
 		String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:'%H'", "--reverse" };
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, cloneDir, null, null);
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -449,7 +449,7 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public File getWokingCopyLocation() {
-		return cloneDir;
+		return this.cloneDir;
 	}
 	
 	/*
@@ -475,7 +475,7 @@ public class GitRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller",
-				"--branches", "--remotes", revisionSelection }, cloneDir, null, new HashMap<String, String>());
+				"--branches", "--remotes", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -522,9 +522,9 @@ public class GitRepository extends Repository {
 			throw new UnrecoverableError("Failed to clone git repository!");
 		}
 		
-		cloneDir = new File(gitName + FileUtils.fileSeparator + innerRepoPath);
-		if (!cloneDir.exists()) {
-			throw new UnrecoverableError("Could not access clone directory `" + cloneDir.getAbsolutePath() + "`");
+		this.cloneDir = new File(gitName + FileUtils.fileSeparator + innerRepoPath);
+		if (!this.cloneDir.exists()) {
+			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}
 		
 		if ((startRevision == null) || (startRevision.equals("HEAD"))) {
@@ -538,7 +538,7 @@ public class GitRepository extends Repository {
 			this.setEndRevision(endRevision);
 		}
 		
-		revDepIter = new GitRevDependencyIterator(cloneDir, getEndRevision());
+		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision());
 	}
 	
 	/*
