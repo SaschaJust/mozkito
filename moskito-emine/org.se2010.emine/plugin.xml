@@ -21,7 +21,7 @@
       </page>
       <page
             adaptable="true"
-            class="org.se2010.emine.properties.PropertyPage"
+            class="org.se2010.emine.properties.FrontendPropertyPage"
             id="org.se2010.emine.properties.Frontend"
             name="eMine - Frontend"
             category="org.se2010.emine.properties.Overview"
