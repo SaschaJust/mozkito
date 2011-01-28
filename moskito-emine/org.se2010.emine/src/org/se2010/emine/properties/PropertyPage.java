@@ -2,47 +2,42 @@ package org.se2010.emine.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import javax.security.auth.login.Configuration;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.se2010.emine.artifacts.ConfigurationArtifact;
 
-@SuppressWarnings("unused")
+/**
+ * This class creates the whole back-end-configuration page and is responsible to show/store all <br>
+ * information once provided by the user in a persistent and project-specific way.
+ * @author Amras
+ *
+ */
 public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	protected static final int TEXT_FIELD_WIDTH = 200;
 	protected static final int TEXT_FIELD_HEIGHT = 20;
 
-	Text repoNameInit;
-	Text userInit;
-	Text passwordInit;
-	Text uriInit;
-	Text vmArgInit;
-
 	GridData data;
 
 	private List<String> reponames = new ArrayList<String>();
-	private List<Text> inputFields = new ArrayList<Text>();
+	private List<PropertyTextField> inputFields = new ArrayList<PropertyTextField>();
+	private List<PropertyTextField> initFields = new ArrayList<PropertyTextField>();
 
+	/**
+	 * This field is used to identify the qualified names for storing in the workbench properties.<p>
+	 * <b> Don't ever touch the order of this array!</b> <p>
+	 * If you do so, <code> createInitPage, storeNewRepo, saveChanges and createRepoTab </code>(in <code>PropertyPage<code>) must be changed to. 
+	 */
 	private final String[] VAR_PER_KEY = new String[] { "eMine_repos",
 			"_Drepository.user", "_Drepository.password", "_Drepository.uri",
 			"_vmArg" };
@@ -94,6 +89,12 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	}
 
+	/**
+	 * This method implements the initialization page of the back-end-configuration.<p>
+	 * All describing labels AND text-fields are inititialized empty in a Grid-layout.
+	 * 
+	 * @param parent the graphical container, the page is bedded in.
+	 */
 	private void createInitPage(Composite parent) {
 
 		GridLayout overview = new GridLayout(1, false);
@@ -113,118 +114,129 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		createDefaultLabel(initPage, "Repository Name *");
 
-		repoNameInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
-		repoNameInit.setLayoutData(data);
-		repoNameInit.setText("");
-		repoNameInit
-				.setToolTipText("The name of the repository is used\nto store your values locally.");
+		PropertyTextField newRepo = new PropertyTextField(
+				"",
+				VAR_PER_KEY[0],
+				"The name of the repository is used\nto store your values locally.",
+				initPage, SWT.WRAP | SWT.BORDER, data);
+		initFields.add(newRepo);
+		
+		createDefaultLabel(initPage, "User *");
 
-		Label userLabel = new Label(initPage, SWT.NONE);
-		userLabel.setText("User *");
+		PropertyTextField newUser = new PropertyTextField("", VAR_PER_KEY[1],
+				"Username to access repository", initPage, SWT.WRAP
+						| SWT.BORDER, data);
+		initFields.add(newUser);
 
-		userInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
-		userInit.setLayoutData(data);
-		userInit.setText("");
 
 		createDefaultLabel(initPage, "Password *");
 
-		passwordInit = new Text(initPage, SWT.PASSWORD | SWT.BORDER);
-		passwordInit.setLayoutData(data);
-		passwordInit.setText("");
+		PropertyTextField newpw = new PropertyTextField("", VAR_PER_KEY[2],
+				"Password to access repository", initPage, SWT.PASSWORD
+						| SWT.BORDER, data);
+		initFields.add(newpw);
+
 
 		createDefaultLabel(initPage, "Repository Path *");
 
-		uriInit = new Text(initPage, SWT.WRAP | SWT.BORDER);
-		uriInit.setLayoutData(data);
-		uriInit.setText("");
+		PropertyTextField newURI = new PropertyTextField("", VAR_PER_KEY[3],
+				"URI where the rcs repository is located", initPage, SWT.WRAP
+						| SWT.BORDER, data);
+		initFields.add(newURI);
+
 
 		createDefaultLabel(initPage, "VM Arguments");
 
-		vmArgInit = new Text(initPage, SWT.WRAP | SWT.BORDER | SWT.MULTI
-				| SWT.V_SCROLL);
 		GridData localLayout = new GridData();
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
-		vmArgInit.setLayoutData(localLayout);
-		vmArgInit.setText("");
+		PropertyTextField newVMarg = new PropertyTextField("", VAR_PER_KEY[4],
+				"Provide additional flags to core", initPage, SWT.WRAP
+						| SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, localLayout);
+
+		initFields.add(newVMarg);
 
 		// create Warning Message
 
 		createDefaultLabel(parent, "* necessary values");
 
 	}
+	
+	/**
+	 * creates a standardized label for back-end-page 
+	 */
 
 	private void createDefaultLabel(Composite parent, String text) {
 
-		Label label = new Label(parent, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE | SWT.TRAVERSE_NONE);
 		label.setText(text);
 
 	}
 
+	/**
+	 * Stores any kind of new repository provided by the user in the back-end-property-interface.<p>
+	 * 
+	 * It checks crucial parts of provided information: <p>
+	 * * no separator symbol (e.g. ';') <br>
+	 * * no emptiness of as necessary marked information <br>
+	 * * no double occurrence of unique identifier (e.g. Repository Name)
+	 * @return: <b>true</b> indicates if storing process was successful or nothing was stored.
+	 *          <b>false</b> indicates that some input was malformed.
+	 */
 	private boolean storeNewRepo() {
 
-		String newRepoName = repoNameInit.getText();
-		if (newRepoName.contentEquals("")) {
+		String newRepoName = initFields.get(0).getTextField().getText();
+		if (newRepoName == null || newRepoName.contentEquals(""))
 			return true;
-		}
 
-		String repoList = newRepoName;
-		for (String registeredRepos : reponames) {
-			if (newRepoName.contentEquals(registeredRepos)) {
-				// TODO: someAlertMessage: RepoName already registered.
-				return false;
-			}
-			repoList += ";" + registeredRepos;
-		}
+		String newUserName = initFields.get(1).getTextField().getText();
+		String newPassword = initFields.get(2).getTextField().getText();
+		String newUrl = initFields.get(3).getTextField().getText();
+		String newVMarg = initFields.get(4).getTextField().getText();
+		String repoList = getValue(VAR_PER_KEY[0]);
 
-		String newUserName = userInit.getText();
-		String newPassword = passwordInit.getText();
-		String newUrl = uriInit.getText();
-		String newVMarg = vmArgInit.getText();
-
-		if (newRepoName.contains(";") || newUserName.contentEquals("") || newPassword.contentEquals("")
-				|| newUrl.contentEquals("")) {
+		if (repoList.contains(newRepoName) || newRepoName.contains(";")
+				|| newUserName.contentEquals("")
+				|| newPassword.contentEquals("") || newUrl.contentEquals("")) {
 			// TODO: some AlertMessage: Insufficient information provided
 			return false;
 		}
+
+		repoList += newRepoName + ";";
 
 		setValue(VAR_PER_KEY[0], repoList);
 		setValue(newRepoName + VAR_PER_KEY[1], newUserName);
 		setValue(newRepoName + VAR_PER_KEY[2], newPassword);
 		setValue(newRepoName + VAR_PER_KEY[3], newUrl);
-		setValue(newRepoName + VAR_PER_KEY[VAR_PER_KEY.length - 1], newVMarg);
+		setValue(newRepoName + VAR_PER_KEY[4], newVMarg);
 
 		return true;
 
 	}
 
+	/**
+	 * Actual saving of any changes made by the user in the interface. <p>
+	 * A change is reported via <Code> EventBus</Code> to the MSA-Core.
+	 * @return if there was a change
+	 */
 	private boolean saveChanges() {
 
 		boolean change = false;
-
 		String changes = "";
-		for (int i = 0; i < inputFields.size(); i++) {
 
-			Text input = inputFields.get(i);
-			String[] info = input.getToolTipText().split(" ");
-			String repoName = info[info.length - 1];
-
-			int index = i % (VAR_PER_KEY.length - 1);
-			String key = repoName + VAR_PER_KEY[index + 1];
-
-			String value = input.getText();
+		for (PropertyTextField field : inputFields) {
+			String key = field.getVALUE_PROP_KEY();
+			String value = field.getTextField().getText();
+			String repo = field.getRepoName();
 
 			if (!value.contentEquals(getValue(key))) {
-				if (index == (VAR_PER_KEY.length -1)){
+				if (key.contentEquals(VAR_PER_KEY[4])) {
 					storeVMarg(key, value);
 				} else {
-				setValue(key, value);
+					setValue(key, value);
 				}
 				change = true;
-
-				if (!changes.contains(repoName)) {
-					changes += repoName + ";";
-				}
+				changes += repo + ";";
 			}
 		}
 
@@ -235,28 +247,40 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 					getValue(repoName + VAR_PER_KEY[1]), getValue(repoName
 							+ VAR_PER_KEY[2]), getValue(repoName
 							+ VAR_PER_KEY[3]), 0, null, null, null,
-					getValue(repoName + VAR_PER_KEY[VAR_PER_KEY.length - 1]));
+					getValue(repoName + VAR_PER_KEY[4]));
 			fireChangeEvent(artifact);
 		}
 
 		return change;
 	}
-
+	
+	/**
+	 * fires a Configuration-Artifact via the <Code> EventBus</Code> to the MSA-Core.
+	 */
 	private void fireChangeEvent(ConfigurationArtifact artifact) {
 		// TODO: implement
 	}
 
+	/**
+	 * Filters and Overrides given VM-Arguments directly in the configuration file.
+	 * @param perKeyName: Key for Saving VM-Arguments.
+	 * @param value: new VM-Args -> are postprocessed.
+	 */
 	private void storeVMarg(String perKeyName, String value) {
 		// TODO check and overwrite values
 		setValue(perKeyName, value);
 
 	}
 
+	/**
+	 * Gathers information about the already stored Repositories from the Configuration-File. <p>
+	 * This information is needed to create the tab-view in the back-end-page.
+	 */
 	private void createRepoList() {
-		String names = getValue("eMine_repos");
+		String names = getValue(VAR_PER_KEY[0]);
 
 		if (names == null || names == "") {
-			setValue("eMine_repos", ""); // eMine_repos not initialized yet
+			setValue(VAR_PER_KEY[0], ""); // eMine_repos not initialized yet
 			return;
 		}
 
@@ -267,79 +291,57 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		}
 
 	}
-
+	/**
+	 * Creates a complete tab-entry for back-end-configuration. <p>
+	 * 
+	 * Determines a necessary entries for the Text-Fields and creates corresponding values.
+	 * @param parent embedded Tab
+	 * @param repoName repository-identifier for gathering current information
+	 */
 	private void createRepoTab(Composite parent, String repoName) {
 
 		GridLayout tablayout = new GridLayout(2, false);
 		parent.setLayout(tablayout);
 
-		createUserField(parent, repoName, VAR_PER_KEY[1]);
-		createPasswordField(parent, repoName, VAR_PER_KEY[2]);
-		createURIField(parent, repoName, VAR_PER_KEY[3]);
-		createVMargField(parent, repoName, VAR_PER_KEY[VAR_PER_KEY.length - 1]);
-
-	}
-
-	private void createUserField(Composite parent, String reponame,
-			String variable) {
-
 		createDefaultLabel(parent, "User");
+		PropertyTextField user = new PropertyTextField(repoName,
+				VAR_PER_KEY[1], "Username to access repository", parent,
+				SWT.WRAP | SWT.BORDER, data);
+		user.setText(getValue(repoName + VAR_PER_KEY[1]));
+		inputFields.add(user);
 
-		Text userField = new Text(parent, SWT.WRAP | SWT.BORDER);
-		userField.setLayoutData(data);
-		userField.setText(getValue(reponame + variable));
-		userField.setToolTipText("Username to access repository" + " "
-				+ reponame);
-		inputFields.add(userField);
-
-	}
-
-	private void createPasswordField(Composite parent, String reponame,
-			String variable) {
 		createDefaultLabel(parent, "Password");
+		PropertyTextField password = new PropertyTextField(repoName,
+				VAR_PER_KEY[2], "Password to access repository" + " "
+						+ repoName, parent, SWT.PASSWORD | SWT.BORDER, data);
+		password.setText(getValue(repoName + VAR_PER_KEY[2]));
+		inputFields.add(password);
 
-		Text passwordField = new Text(parent, SWT.PASSWORD | SWT.BORDER);
-		passwordField.setLayoutData(data);
-		passwordField.setText(getValue(reponame + variable));
-		passwordField.setToolTipText("Password to access repository" + " "
-				+ reponame);
-		inputFields.add(passwordField);
+		createDefaultLabel(parent, "Repository-URI");
+		PropertyTextField uri = new PropertyTextField(repoName, VAR_PER_KEY[3],
+				"URI where the rcs repository is located" + " " + repoName,
+				parent, SWT.WRAP | SWT.BORDER, data);
+		uri.setText(getValue(repoName + VAR_PER_KEY[3]));
+		inputFields.add(uri);
 
-	}
-
-	private void createURIField(Composite parent, String reponame,
-			String variable) {
-
-		createDefaultLabel(parent, "Repository-Path");
-
-		Text uriField = new Text(parent, SWT.WRAP | SWT.BORDER);
-		uriField.setLayoutData(data);
-		uriField.setText(getValue(reponame + variable));
-		uriField.setToolTipText("URI where the rcs repository is located" + " "
-				+ reponame);
-		inputFields.add(uriField);
-
-	}
-
-	private void createVMargField(Composite parent, String reponame,
-			String variable) {
 		createDefaultLabel(parent, "VM-Arguments");
-
-		Text vmargField = new Text(parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
-				| SWT.V_SCROLL);
-
 		GridData localLayout = new GridData();
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
-		vmargField.setLayoutData(localLayout);
-
-		vmargField.setText(getValue(reponame + variable));
-		vmargField.setToolTipText("Provide additional flags to core" + " "
-				+ reponame);
-		inputFields.add(vmargField);
-
+		PropertyTextField vmarg = new PropertyTextField(repoName,
+				VAR_PER_KEY[4], "Provide additional flags to core" + " "
+						+ repoName, parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
+						| SWT.V_SCROLL, localLayout);
+		vmarg.setText(getValue(repoName + VAR_PER_KEY[4]));
+		inputFields.add(vmarg);
 	}
 
+	/**
+	 * This method encapsulates the IResource from project's workspace. <p>
+	 * 
+	 * @param key given string determines the identifier for the QualifiedName.
+	 * @return value stored altogether with the identifier.
+	 */
 	protected String getValue(String key) {
 
 		QualifiedName perKey = new QualifiedName(key, key);
@@ -351,19 +353,22 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 				return "";
 			return result;
 		} catch (CoreException e) {
-			// TODO: Can that happen?
 			throw new RuntimeException();
 		}
 	}
 
+	/**
+	 * This method encapsulates the IResource from project's workspace. <p>
+	 * 
+	 * @param perKeyName identifies the QualifiedName
+	 * @param value which is stored for given argument
+	 */
 	protected void setValue(String perKeyName, String value) {
 		QualifiedName perKey = new QualifiedName(perKeyName, perKeyName);
 		IResource res = (IResource) getElement();
-		// TODO: properly implement + Test
 		try {
 			res.setPersistentProperty(perKey, value);
 		} catch (final CoreException e) {
-			// TODO: Can that happen?
 			throw new RuntimeException(e);
 		}
 
@@ -375,7 +380,6 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 			saveChanges();
 			return super.performOk();
 		}
-
 		return false;
 	}
 
