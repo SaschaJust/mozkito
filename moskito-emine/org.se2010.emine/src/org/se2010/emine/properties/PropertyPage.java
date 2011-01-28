@@ -2,6 +2,9 @@ package org.se2010.emine.properties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.security.auth.login.Configuration;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +42,10 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	private List<String> reponames = new ArrayList<String>();
 	private List<Text> inputFields = new ArrayList<Text>();
+
+	private final String[] VAR_PER_KEY = new String[] { "eMine_repos",
+			"_Drepository.user", "_Drepository.password", "_Drepository.uri",
+			"_vmArg" };
 
 	public PropertyPage() {
 		super();
@@ -143,9 +150,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 		// create Warning Message
 
-		createDefaultLabel(parent, "* necessary values.");
-
-		createDefaultLabel(parent, "You have: " + reponames.size());
+		createDefaultLabel(parent, "* necessary values");
 
 	}
 
@@ -159,7 +164,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	private boolean storeNewRepo() {
 
 		String newRepoName = repoNameInit.getText();
-		if (newRepoName == "") {
+		if (newRepoName.contentEquals("")) {
 			return true;
 		}
 
@@ -177,72 +182,74 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		String newUrl = uriInit.getText();
 		String newVMarg = vmArgInit.getText();
 
-		if (newRepoName.contains(";") || newUserName == "" || newPassword == ""
-				|| newUrl == "") {
+		if (newRepoName.contains(";") || newUserName.contentEquals("") || newPassword.contentEquals("")
+				|| newUrl.contentEquals("")) {
 			// TODO: some AlertMessage: Insufficient information provided
 			return false;
 		}
 
-		setValue("eMine_repos", repoList);
-		setValue(newRepoName + "_Drepository.user", newUserName);
-		setValue(newRepoName + "_Drepository.password", newPassword);
-		setValue(newRepoName + "_Drepository.uri", newUrl);
-		setValue(newRepoName + "_vmArg", newVMarg);
+		setValue(VAR_PER_KEY[0], repoList);
+		setValue(newRepoName + VAR_PER_KEY[1], newUserName);
+		setValue(newRepoName + VAR_PER_KEY[2], newPassword);
+		setValue(newRepoName + VAR_PER_KEY[3], newUrl);
+		setValue(newRepoName + VAR_PER_KEY[VAR_PER_KEY.length - 1], newVMarg);
 
 		return true;
 
 	}
 
-	private List<ConfigurationArtifact> saveChanges() {
+	private boolean saveChanges() {
 
-		List<ConfigurationArtifact> changedRepos = new ArrayList<ConfigurationArtifact>();
-		int numStoredRepos = reponames.size();
-		int numInputfields = inputFields.size();
-		int fieldstosave = numInputfields / numStoredRepos;
-		int j = 0;
+		boolean change = false;
 
-		// TODO: possible Indexoutofbounds?
-		for (int i = 0; i < numInputfields; i++) {
+		String changes = "";
+		for (int i = 0; i < inputFields.size(); i++) {
 
-			String repoName = reponames.get(j++);
+			Text input = inputFields.get(i);
+			String[] info = input.getToolTipText().split(" ");
+			String repoName = info[info.length - 1];
 
-			String Drepository_user = inputFields.get(i++).getText();
-			String Drepository_password = inputFields.get(i++).getText();
-			String Drepository_uri = inputFields.get(i++).getText();
-			String vmArg = inputFields.get(i).getText();
+			int index = i % (VAR_PER_KEY.length - 1);
+			String key = repoName + VAR_PER_KEY[index + 1];
 
-			String olduser = repoName + "_Drepository_user";
-			String oldpw = repoName + "_Drepository_password";
-			String old_uri = repoName + "_Drepository_uri";
-			String old_vmArg = repoName + "_vmArg";
+			String value = input.getText();
 
-			if (Drepository_user.contentEquals(getValue(olduser))
-					& Drepository_password.contentEquals(getValue(oldpw))
-					& Drepository_uri.contentEquals(getValue(old_uri))
-					& vmArg.contentEquals(getValue(old_vmArg))) {
+			if (!value.contentEquals(getValue(key))) {
+				if (index == (VAR_PER_KEY.length -1)){
+					storeVMarg(key, value);
+				} else {
+				setValue(key, value);
+				}
+				change = true;
 
-				break;
+				if (!changes.contains(repoName)) {
+					changes += repoName + ";";
+				}
 			}
-			
-			setValue(olduser, Drepository_user);
-			setValue(oldpw, Drepository_password);
-			setValue(old_uri, Drepository_uri);
-			storeVMarg(old_vmArg, vmArg);
-			
-			changedRepos.add(new ConfigurationArtifact(null, Drepository_uri, Drepository_user, Drepository_password, 100, null, null, null));
-
 		}
 
+		String[] changed = changes.split(";");
+		for (String repoName : changed) {
+
+			ConfigurationArtifact artifact = new ConfigurationArtifact(null,
+					getValue(repoName + VAR_PER_KEY[1]), getValue(repoName
+							+ VAR_PER_KEY[2]), getValue(repoName
+							+ VAR_PER_KEY[3]), 0, null, null, null,
+					getValue(repoName + VAR_PER_KEY[VAR_PER_KEY.length - 1]));
+			fireChangeEvent(artifact);
+		}
+
+		return change;
+	}
+
+	private void fireChangeEvent(ConfigurationArtifact artifact) {
 		// TODO: implement
-		return changedRepos;
 	}
 
 	private void storeVMarg(String perKeyName, String value) {
 		// TODO check and overwrite values
 		setValue(perKeyName, value);
-		
-		
-		
+
 	}
 
 	private void createRepoList() {
@@ -266,55 +273,71 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		GridLayout tablayout = new GridLayout(2, false);
 		parent.setLayout(tablayout);
 
-		createUserField(parent, repoName + "_Drepository.user");
-		createPasswordField(parent, repoName + "_Drepository.password");
-		createURIField(parent, repoName + "_Drepository.uri");
-		createVMargField(parent, repoName + "_vmArg");
+		createUserField(parent, repoName, VAR_PER_KEY[1]);
+		createPasswordField(parent, repoName, VAR_PER_KEY[2]);
+		createURIField(parent, repoName, VAR_PER_KEY[3]);
+		createVMargField(parent, repoName, VAR_PER_KEY[VAR_PER_KEY.length - 1]);
 
 	}
 
-	private void createUserField(Composite parent, String qualifiedName) {
+	private void createUserField(Composite parent, String reponame,
+			String variable) {
 
 		createDefaultLabel(parent, "User");
 
 		Text userField = new Text(parent, SWT.WRAP | SWT.BORDER);
 		userField.setLayoutData(data);
-		userField.setText(getValue(qualifiedName));
+		userField.setText(getValue(reponame + variable));
+		userField.setToolTipText("Username to access repository" + " "
+				+ reponame);
 		inputFields.add(userField);
 
 	}
 
-	private void createPasswordField(Composite parent, String qualifiedName) {
+	private void createPasswordField(Composite parent, String reponame,
+			String variable) {
 		createDefaultLabel(parent, "Password");
 
 		Text passwordField = new Text(parent, SWT.PASSWORD | SWT.BORDER);
 		passwordField.setLayoutData(data);
-		passwordField.setText(getValue(qualifiedName));
+		passwordField.setText(getValue(reponame + variable));
+		passwordField.setToolTipText("Password to access repository" + " "
+				+ reponame);
 		inputFields.add(passwordField);
+
 	}
 
-	private void createURIField(Composite parent, String qualifiedName) {
+	private void createURIField(Composite parent, String reponame,
+			String variable) {
 
 		createDefaultLabel(parent, "Repository-Path");
 
 		Text uriField = new Text(parent, SWT.WRAP | SWT.BORDER);
 		uriField.setLayoutData(data);
-		uriField.setText(getValue(qualifiedName));
+		uriField.setText(getValue(reponame + variable));
+		uriField.setToolTipText("URI where the rcs repository is located" + " "
+				+ reponame);
 		inputFields.add(uriField);
 
 	}
 
-	private void createVMargField(Composite parent, String qualifiedName) {
+	private void createVMargField(Composite parent, String reponame,
+			String variable) {
 		createDefaultLabel(parent, "VM-Arguments");
 
 		Text vmargField = new Text(parent, SWT.WRAP | SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL);
+
 		GridData localLayout = new GridData();
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
 		localLayout.widthHint = TEXT_FIELD_WIDTH;
 		vmargField.setLayoutData(localLayout);
-		vmargField.setText(getValue(qualifiedName));
+
+		vmargField.setText(getValue(reponame + variable));
+		vmargField.setToolTipText("Provide additional flags to core" + " "
+				+ reponame);
 		inputFields.add(vmargField);
+
 	}
 
 	protected String getValue(String key) {
@@ -325,7 +348,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 			String result = res.getPersistentProperty(perKey);
 			if (result == null)
-				return "DEF";
+				return "";
 			return result;
 		} catch (CoreException e) {
 			// TODO: Can that happen?
@@ -349,10 +372,9 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	public boolean performOk() {
 
 		if (storeNewRepo()) {
+			saveChanges();
 			return super.performOk();
 		}
-		
-		saveChanges();
 
 		return false;
 	}

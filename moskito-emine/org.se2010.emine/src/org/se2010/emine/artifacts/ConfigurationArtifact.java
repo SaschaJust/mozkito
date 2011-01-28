@@ -10,6 +10,7 @@ public class ConfigurationArtifact implements Artifact {
 	private String Ddatabase_type;
 	private String Dlog_level;
 	private String Drepository_type;
+	private String vmArg;
 
 
 	//default values
@@ -18,7 +19,7 @@ public class ConfigurationArtifact implements Artifact {
 	private String Ddatabase_name= "miner";
 	private String Ddatabase_user= "miner";
 
-	public ConfigurationArtifact(String projectname, String Drepository_uri, String Drepository_user, String Drepository_password, int Dcache_size, String Ddatabase_type, String Dlog_level, String Drepository_type){
+	public ConfigurationArtifact(String projectname, String Drepository_user, String Drepository_password, String Drepository_uri, int Dcache_size, String Ddatabase_type, String Dlog_level, String Drepository_type, String vmArg){
 
 		this.projectname = projectname;
 		if (projectname != null) this.Ddatabase_user= projectname;
@@ -30,7 +31,7 @@ public class ConfigurationArtifact implements Artifact {
 		this.Ddatabase_type = Ddatabase_type;
 		this.Dlog_level = Dlog_level;
 		this.Drepository_type = Drepository_type;
-
+		this.vmArg = vmArg;
 	}
 
 	@Override
