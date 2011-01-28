@@ -208,7 +208,9 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		setValue(newRepoName + VAR_PER_KEY[1], newUserName);
 		setValue(newRepoName + VAR_PER_KEY[2], newPassword);
 		setValue(newRepoName + VAR_PER_KEY[3], newUrl);
-		setValue(newRepoName + VAR_PER_KEY[4], newVMarg);
+		storeVMarg(newRepoName + VAR_PER_KEY[4], newVMarg);
+		
+		fireChangeEvent(newRepoName);
 
 		return true;
 
@@ -243,12 +245,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		String[] changed = changes.split(";");
 		for (String repoName : changed) {
 
-			ConfigurationArtifact artifact = new ConfigurationArtifact(null,
-					getValue(repoName + VAR_PER_KEY[1]), getValue(repoName
-							+ VAR_PER_KEY[2]), getValue(repoName
-							+ VAR_PER_KEY[3]), 0, null, null, null,
-					getValue(repoName + VAR_PER_KEY[4]));
-			fireChangeEvent(artifact);
+			
+			fireChangeEvent(repoName);
 		}
 
 		return change;
@@ -257,8 +255,16 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	/**
 	 * fires a Configuration-Artifact via the <Code> EventBus</Code> to the MSA-Core.
 	 */
-	private void fireChangeEvent(ConfigurationArtifact artifact) {
-		// TODO: implement
+	private void fireChangeEvent(String repoName) {
+		ConfigurationArtifact artifact = new ConfigurationArtifact(null,
+				getValue(repoName + VAR_PER_KEY[1]), getValue(repoName
+						+ VAR_PER_KEY[2]), getValue(repoName
+						+ VAR_PER_KEY[3]), 0, null, null, null,
+				getValue(repoName + VAR_PER_KEY[4]));
+		
+		
+		//TODO: FIRE EVENT IMPLEMENTING
+	
 	}
 
 	/**
