@@ -58,6 +58,7 @@ public class SyntaxhighlightingView extends ArtifactView{
 			file.deleteMarkers(M_TRANS3, false, IResource.DEPTH_ZERO);
 			file.deleteMarkers(M_TRANS4, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
+			throw new RuntimeException("error occured while removing the markers of the higlighting");
 		}
 	}
 	
@@ -71,6 +72,7 @@ public class SyntaxhighlightingView extends ArtifactView{
 			}
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 		} catch (CoreException e) {
+			throw new RuntimeException("error occured while setting markers for highlighting");
 		}
 	}
 
