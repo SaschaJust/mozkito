@@ -22,10 +22,9 @@ public class RepoSuiteListener implements IEMineEventListener {
 	
     RepoSuiteEvent mCoreEvent = new RepoSuiteEvent(changedMethodNames);
     
-    mCoreEvent.createArtifact();
+    mCoreEvent.createArtifacts();
     
 	
-	EMineEventBus.getInstance().fireEvent(event);
 	}
 	
 }

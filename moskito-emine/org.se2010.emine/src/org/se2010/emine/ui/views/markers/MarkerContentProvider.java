@@ -1,6 +1,7 @@
-package org.se2010.emine.ui.views.markers;
+ package org.se2010.emine.ui.views.markers;
 
-import org.eclipse.core.resources.IMarker;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -11,6 +12,12 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.se2010.emine.artifacts.ProblemArtifact;
+import org.se2010.emine.events.EMineEventBus;
+import org.se2010.emine.events.IEMineEvent;
+import org.se2010.emine.events.IEMineEventListener;
+import org.se2010.emine.events.reposuite.RepoSuiteEvent;
+
 
 /**
  * This content provider processes the input (<code>IWorkspace</code>) to find the
@@ -22,17 +29,26 @@ import org.eclipse.swt.widgets.Control;
  */
 
 class MarkerContentProvider implements IStructuredContentProvider,
-    IResourceChangeListener {
+    IEMineEventListener {
 
   private StructuredViewer viewer;
+  
+  private RepoSuiteEvent event;
 
   /**
    * The constructor.
    */
   MarkerContentProvider() {
+	  EMineEventBus.getInstance().registerEventListener(RepoSuiteEvent.class, this);	
+
   }
 
-  private IWorkspace input = null;
+  	private ProblemArtifact input = null;
+  
+	private static Object[] EMPTY_ARRAY = new Object[0];
+	
+	private static ArrayList<ProblemArtifact> display = new ArrayList<ProblemArtifact>();
+
 
   /**
    * Saves input reference and adds change listener first time around.
@@ -41,8 +57,24 @@ class MarkerContentProvider implements IStructuredContentProvider,
    * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
    */
   public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+	  
+	  if (viewer == null){
+		  
+		  this.viewer = (StructuredViewer) v;
+		  
+	  if (input == null && newInput !=null){
+		  
+		  input = (ProblemArtifact) newInput;
+	  }
+	  
+	  if (newInput == null && input != null) {
+	      input = null;
+	    }
+	  
+	  }
+	  
     // JDG2E: 66d - View/ContentProvider listens for model changes
-    if (viewer == null)
+   /* if (viewer == null)
       this.viewer = (StructuredViewer) v;
 
     if (input == null && newInput != null) {
@@ -53,7 +85,9 @@ class MarkerContentProvider implements IStructuredContentProvider,
     if (newInput == null && input != null) {
       input.removeResourceChangeListener(this);
       input = null;
-    }
+    }*/
+	  
+	  
   }
 
   /**
@@ -63,9 +97,9 @@ class MarkerContentProvider implements IStructuredContentProvider,
    */
   public void dispose() {
     // Make sure the listener has been removed.
-    if (input != null) {
-      input.removeResourceChangeListener(this);
-      input = null;
+   if (input != null) {
+      //input.removeResourceChangeListener(this);
+     input = null;
     }
   }
 
@@ -78,49 +112,40 @@ class MarkerContentProvider implements IStructuredContentProvider,
    * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
    */
   public Object[] getElements(Object parent) {
-    IMarker[] markers = null;
-    try {
-      markers = input.getRoot().findMarkers(eMineProblemViewMarker.MARKER_ID,
-          false, IResource.DEPTH_INFINITE);
-    } catch (CoreException e) {
-    }
-    return markers;
+    
+	  if (event !=null)
+ 
+	 return  display.toArray();
+	  
+	  else 
+		  
+		 return EMPTY_ARRAY;
   }
 
-  /**
-   * React to changes that impact the elements in the associated viewer.
-   * <p>
-   * As this method is not fired on the UI thread we need to use the SWT <code>Display</code>
-   * to get back on the UI thread before telling the viewer to refresh.  An <code>asyncExec</code>
-   * will work here as we do not need to visit the delta in the runnable. 
-   * <p>
-   * If resource delta must be visited inside the runnable then a <code>syncExec</code> must 
-   * be used to ensure the delta is not discarded.
-   *  
-   * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-   */
-  public void resourceChanged(IResourceChangeEvent event) {
+  
+@Override
+public void onEvent(IEMineEvent event) {
+	// TODO Auto-generated method stub	 input = ((RepoSuiteEvent)event).getArtifact();	
+	 ArrayList<ProblemArtifact> eventArtifacts = ((RepoSuiteEvent)event).getArtifacts();
+	 //Control ctrl = viewer.getControl();
+	 this.event = ((RepoSuiteEvent)event);
+	 for (int i = 0 ; i < eventArtifacts.size() ; i++){
+		 
+		ProblemArtifact p = eventArtifacts.get(i);
+		 display.add(p);
+	 }
+	 
+	 
+	 Control ctrl = viewer.getControl();
+	    if (ctrl != null && !ctrl.isDisposed()) {     
+	        ctrl.getDisplay().asyncExec(new Runnable() {
+	          public void run() {
+	              viewer.refresh();  
+	          }
+	        }); 
+	    }	
+}
 
-    // Make sure control exists - no sense telling a disposed widget to react
-    Control ctrl = viewer.getControl();
-    if (ctrl != null && !ctrl.isDisposed()) {
 
-     
-      // If there are any markers of interest in the delta we refresh the viewer
-      IMarkerDelta[] mDeltas =  event.findMarkerDeltas(eMineProblemViewMarker.MARKER_ID,false);
-      if (mDeltas.length !=0) {
-        
-        ctrl.getDisplay().asyncExec(new Runnable() {
-          public void run() {
-            if (null == null) {
-              viewer.refresh();
-            } else {
-            }
-          }
-        });
-        
-      }
-    }
-  }
 
 }

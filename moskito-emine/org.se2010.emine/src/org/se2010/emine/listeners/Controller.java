@@ -1,7 +1,8 @@
-package org.se2010.emine.listeners;
+ package org.se2010.emine.listeners;
 
 import java.util.ArrayList;
 
+import org.eclipse.ui.IWorkbench;
 import org.se2010.emine.artifacts.ProblemArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.IEMineEvent;
@@ -14,28 +15,30 @@ import org.se2010.emine.ui.views.markers.eMineProblemViewMarker;
  * artifact details
  * */
 
-public class Controller implements IEMineEventListener{
+public class Controller  {
 	
-	private static  ProblemArtifact artifact ;
 	
-
+	private static ProblemArtifact artifact;
+	
 	
 	public Controller(){
-		EMineEventBus.getInstance().registerEventListener(RepoSuiteEvent.class, this);
-		
-	}
-	public void onEvent(IEMineEvent event) {
-		// TODO Auto-generated method stub
-		
-		 artifact = ((RepoSuiteEvent)event).getArtifact();		
-		
+	//	EMineEventBus.getInstance().registerEventListener(RepoSuiteEvent.class, this);	
 	}
 	
-	public static ProblemArtifact getArtifact(){
-		
+	
+	
+	public void onEvent(IEMineEvent event) {
+		// TODO Auto-generated method stub
+		artifact =   ((RepoSuiteEvent)event).getArtifact();		
+	}
+	
+	
+	public  static ProblemArtifact getArtifact(){
 		return artifact;
 	}
 	
+	
+ 
 	
 	
 	

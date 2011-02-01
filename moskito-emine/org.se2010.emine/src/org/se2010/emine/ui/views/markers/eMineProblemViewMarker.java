@@ -1,9 +1,8 @@
-package org.se2010.emine.ui.views.markers;
+ package org.se2010.emine.ui.views.markers;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -48,32 +47,29 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.part.ViewPart;
 import org.se2010.emine.artifacts.Artifact;
+import org.se2010.emine.artifacts.ProblemArtifact;
+import org.se2010.emine.listeners.Controller;
 
-public class eMineProblemViewMarker extends ViewPart implements
-		ISelectionChangedListener {
+public class eMineProblemViewMarker extends ViewPart 
+		  {
 
 	private TableViewer viewer;
-	private ProblemViewComparator comparator;
-	private ProblemViewFilter filter;
+	//private ProblemViewComparator comparator;
+	//private ProblemViewFilter filter;
 	private String searchString;
 
-	static final String MARKER_ID = "xyz";
+	//static final String MARKER_ID = "xyz";
 	private List<Artifact> artifactList;
 
 	/**
 	 * Columns for the table viewer
 	 */
-	static final String[] COLUMN_NAMES = { "Type", "Title", "Message", "State" };
+	static final String[] COLUMN_NAMES = { "Artifact Title", "Artifcat ID", "Message", "Resource" };
 	/**
 	 * Attributes that will be obtained from the marker
 	 */
-	static final String[] MARKER_ATTRIBUTES = { "type", "id", "message",
-			"transient" };
-
-	private Action deleteMarkerAction;
-	private Action doubleClickAction;
-	//private Action filterAction;
-	//private Action unFilterAction;
+	static final String[] MARKER_ATTRIBUTES = { "title", "id", "message","resource" };
+  
 
 	public void createPartControl(Composite parent) {
 		// Create a Layout for the filter field
@@ -84,22 +80,25 @@ public class eMineProblemViewMarker extends ViewPart implements
 		final Text searchText = new Text(parent, SWT.BORDER | SWT.SEARCH);
 		searchText.setMessage("Enter search term");
 		searchText.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 10,1));
-		searchText.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(final KeyEvent ke) 
+		//searchText.addKeyListener(new KeyAdapter() {
+		//	@Override
+		/*	public void keyReleased(final KeyEvent ke) 
 			{
 				filter.setSearchText(searchText.getText());
 				viewer.refresh();
 			}
-		});
+		});*/
 		
 		
 		viewer = multiColumnViewer(parent);
 		viewer.setContentProvider(new MarkerContentProvider());
 		viewer.setLabelProvider(new MarkerLabelProvider());
 		// viewer.setSorter(new NameSorter());
-		viewer.setInput(ResourcesPlugin.getWorkspace());
+	//viewer.setInput(ResourcesPlugin.getWorkspace());
 		
+		//ProblemArtifact pArtifact = new ProblemArtifact("hello", null, "world", null, "method");
+		
+		viewer.setInput(new ProblemArtifact("Tom", 0, "Dick", "Harry"));
 		//create a layout for the viewer
 		GridData layoutData = new GridData (SWT.FILL, SWT.FILL, true, true);
 		viewer.getControl().setLayoutData(layoutData);
@@ -111,63 +110,25 @@ public class eMineProblemViewMarker extends ViewPart implements
 		makeActions();
 
 		// Create actions and connect them to the UI
-		hookContextMenu();
-		hookDoubleClickAction();
+		 
 		contributeToActionBars();
 
 		// Establish listener for viewer selection to keep action state correct
-		viewer.addSelectionChangedListener(this);
-
-		setupHelp();
-
-		// Add comparator for sorting
-		comparator = new ProblemViewComparator(new ViewRegistry());
-		viewer.setComparator(comparator);
+		//viewer.addSelectionChangedListener(this);
 
 		
-		filter = new ProblemViewFilter();
-		viewer.addFilter(filter);
+
+		// Add comparator for sorting
+		//comparator = new ProblemViewComparator(new ViewRegistry());
+		//viewer.setComparator(comparator);
+
+		
+		//filter = new ProblemViewFilter();
+		//viewer.addFilter(filter);
 
 	}
 
-	/**
-	 * Markers are displayed in the viewer in this view. As markers can have
-	 * help, and the type of marker being displayed does have help defined (in
-	 * the <code>com.ibm.jdg2e.resources.extensions</code> project).
-	 * <p>
-	 * The marker help API is used to find and display any help defined for the
-	 * marker being displayed.
-	 * 
-	 */
-	void setupHelp() {
-		// Set help on the view itself
-		viewer.getControl().addHelpListener(new HelpListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse
-			 * .swt.events.HelpEvent)
-			 */
-			public void helpRequested(HelpEvent e) {
-				String contextId = null;
-				// See if there is a context registered for the current
-				// selection
-				IMarker marker = (IMarker) ((IStructuredSelection) viewer
-						.getSelection()).getFirstElement();
-				if (marker != null) {
-					contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
-				}
-
-				if (contextId != null) {
-					// PlatformUI.getWorkbench().getHelpSystem().displayHelp(contextId);
-					// FIXED - removed deprecation
-					// WorkbenchHelp.displayHelp(contextId);
-				}
-			}
-		});
-
-	}
+ 
 
 	/**
 	 * Creates a <code>TableViewer</code> that has a table with multiple
@@ -191,54 +152,35 @@ public class eMineProblemViewMarker extends ViewPart implements
 		tc0.setText(COLUMN_NAMES[0]);
 		tc0.setAlignment(SWT.LEFT);
 		tc0.setResizable(true);
-		tc0.addSelectionListener(getSelectionAdapter(tc0, 0));
+		//tc0.addSelectionListener(getSelectionAdapter(tc0, 0));
 
 		layout.addColumnData(new ColumnWeightData(10, true));
 		TableColumn tc1 = new TableColumn(table, SWT.NONE);
 		tc1.setText(COLUMN_NAMES[1]);
 		tc1.setAlignment(SWT.LEFT);
 		tc1.setResizable(true);
-		tc1.addSelectionListener(getSelectionAdapter(tc1, 1));
+		//tc1.addSelectionListener(getSelectionAdapter(tc1, 1));
 
 		layout.addColumnData(new ColumnWeightData(10, true));
 		TableColumn tc2 = new TableColumn(table, SWT.NONE);
 		tc2.setText(COLUMN_NAMES[2]);
 		tc2.setAlignment(SWT.LEFT);
 		tc2.setResizable(true);
-		tc2.addSelectionListener(getSelectionAdapter(tc2, 2));
+	//	tc2.addSelectionListener(getSelectionAdapter(tc2, 2));
+		
+		layout.addColumnData(new ColumnWeightData(10, true));
+		TableColumn tc3 = new TableColumn(table, SWT.NONE);
+		tc3.setText(COLUMN_NAMES[3]);
+		tc3.setAlignment(SWT.LEFT);
+		tc3.setResizable(true);
+		//tc3.addSelectionListener(getSelectionAdapter(tc3, 3));
 
 		return new TableViewer(table);
 
 	}
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-
-			public void menuAboutToShow(IMenuManager manager) {
-				eMineProblemViewMarker.this.fillContextMenu(manager);
-			}
-		});
-
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-
-		// Register context menu for viewer/part with workbench
-		// This allows for the possibility of external contributions
-		getSite().registerContextMenu(menuMgr, viewer);
-
-	}
-
-	private void fillContextMenu(IMenuManager manager) {
-		manager.add(doubleClickAction);
-		manager.add(deleteMarkerAction);
-		//manager.add(filterAction);
-		//manager.add(unFilterAction);
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator("additions"));
-
-	}
+ 
+ 
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -256,44 +198,7 @@ public class eMineProblemViewMarker extends ViewPart implements
 
 	private void makeActions() {
 
-		// Double-Click to open editor for resource identified by marker
-		doubleClickAction = new Action() {
-
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				openEditor(selection);
-
-			}
-		};
-		doubleClickAction.setText("Open File");
-		doubleClickAction.setToolTipText("Open file identified by marker");
-		doubleClickAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(SharedImages.IMG_OPEN_MARKER));
-		doubleClickAction.setEnabled(false);
-
-		// Delete Marker
-		deleteMarkerAction = new Action() {
-
-			public void run() {
-
-				IStructuredSelection ssel = (IStructuredSelection) viewer
-						.getSelection();
-				IMarker marker = (IMarker) ssel.getFirstElement();
-				try {
-					marker.delete();
-				} catch (CoreException e) {
-				}
-
-			}
-		};
-		deleteMarkerAction.setText("Delete Marker");
-		deleteMarkerAction.setToolTipText("Delete marker from workspace");
-		deleteMarkerAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		deleteMarkerAction.setEnabled(false);
-
+		 
 		// Filter Functionality
 		//TODO: find out how to attach the filter field to the menu
 		  
@@ -333,46 +238,8 @@ public class eMineProblemViewMarker extends ViewPart implements
 		unFilterAction.setEnabled(true);*/
 	}
 
-	/**
-	 * Opens the file referenced by the marker in the appropriate editor.
-	 * <p>
-	 * Logic extracted from similar Eclipse actions. Some of the Eclipse actions
-	 * are a bit more robust in their implementation.
-	 * 
-	 * See org.eclipse.ui.views.markers.internal.ActionOpenMarker for a more
-	 * detailed example.
-	 * 
-	 * @param selection
-	 *            - the marker that will be used to open an editor.
-	 */
-	void openEditor(ISelection selection) {
-
-		IMarker marker = (IMarker) ((IStructuredSelection) selection)
-				.getFirstElement();
-		if (marker.getResource() instanceof IFile) {
-			try {
-				IDE.openEditor(this.getSite().getPage(), marker,
-						OpenStrategy.activateOnOpen());
-			} catch (PartInitException e) {
-				MessageDialog.openError(this.getSite().getShell(),
-						"Unable to open file in editor for given marker",
-						e.getMessage());
-			}
-		}
-
-	}
-
-	/**
-	 * Opens editor for the selected marker
-	 */
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			public void doubleClick(DoubleClickEvent event) {
-				openEditor(event.getSelection());
-			}
-		});
-	}
+	 
+ 
 
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -383,24 +250,10 @@ public class eMineProblemViewMarker extends ViewPart implements
 		viewer.getControl().setFocus();
 	}
 
-	/**
-	 * Keeps the action state correct based on the viewer selection.
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		if (event.getSelection().isEmpty()) {
-			deleteMarkerAction.setEnabled(false);
-			doubleClickAction.setEnabled(false);
-		} else {
-			deleteMarkerAction.setEnabled(true);
-			doubleClickAction.setEnabled(true);
-		}
-
-	}
+ 
 
 	/** This function enables sorting the table by clicking on a column */
-	private SelectionAdapter getSelectionAdapter(final TableColumn column,
+	/*private SelectionAdapter getSelectionAdapter(final TableColumn column,
 			final int index) {
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
 			@Override
@@ -420,5 +273,12 @@ public class eMineProblemViewMarker extends ViewPart implements
 		};
 		return selectionAdapter;
 	}
+	
+	
+	public void addArtifact(ProblemArtifact pArtifact){
+		
+		
+		
+	}*/
 
 }

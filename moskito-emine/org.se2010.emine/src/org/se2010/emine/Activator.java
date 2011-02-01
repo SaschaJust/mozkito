@@ -1,4 +1,4 @@
-package org.se2010.emine;
+ package org.se2010.emine;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.JavaCore;
@@ -62,10 +62,10 @@ public class Activator extends AbstractUIPlugin {
 		EMineEventBus.getInstance().registerEventListener(EditorEvent.EditorDeactivatedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassAddedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassRemovedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassChangedEvent.class, listener); 
+		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassChangedEvent.class, listener);
 		
 		new RepoSuiteListener();
-		new Controller();
+	//	new Controller();
 	}
 	
 	public static void getEclipseEventHandler(){
