@@ -1,29 +1,28 @@
 package org.se2010.emine.ui.views.markers;
 
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.se2010.emine.artifacts.ProblemArtifact;
 
-public class ProblemViewFilter extends ViewerFilter {
-	private String searchString;
-
-	public ProblemViewFilter() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public void setSearchText(String s) {
-		// Search must be a substring of the existing value
-		this.searchString = ".*" + s + ".*";
-	}
+public class ProblemViewFilter extends PatternFilter {
 
 	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (searchString == null || searchString.length() == 0) {
-			return true;
+	protected boolean isLeafMatch(Viewer viewer, Object element) {
+		if (element instanceof ProblemArtifact) {
+			ProblemArtifact a = (ProblemArtifact) element;
+			for (int i = 0; i < a.getColumnList().size(); i++) {
+				String labelText = ((ITableLabelProvider) ((StructuredViewer) viewer)
+						.getLabelProvider()).getColumnText(element, i);
+				if (labelText == null) {
+					return false;
+				}
+				if (wordMatches(labelText))
+					return true;
+			}
 		}
-		ProblemArtifact a = (ProblemArtifact) element;
-	
-		return a.getMap().containsValue(searchString);
+		return false;
 	}
 
 }

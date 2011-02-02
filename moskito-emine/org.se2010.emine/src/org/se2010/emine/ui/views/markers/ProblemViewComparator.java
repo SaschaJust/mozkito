@@ -1,16 +1,25 @@
 package org.se2010.emine.ui.views.markers;
 
+import java.text.Collator;
+import java.util.Comparator;
+
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.dialogs.ViewComparator;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.se2010.emine.artifacts.Artifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
+import org.se2010.emine.artifacts.ProblemArtifactTypeList;
 
-public class ProblemViewComparator extends ViewComparator {
+public class ProblemViewComparator extends ViewerComparator {
+	public ProblemViewComparator() {
 
-	public ProblemViewComparator(ViewRegistry reg) {
-		super(reg);
-		this.propertyIndex = 0;
+		this.propertyIndex = 1;
 		direction = DESCENDING;
 	}
 
@@ -30,28 +39,61 @@ public class ProblemViewComparator extends ViewComparator {
 	}
 
 	/**
-	 * This function enables sorting by column. Since a list of ProblemArtifacts
-	 * is provided for the view, the column names can be derived from the keys of
-	 * the InformationMap of the first Artifact. Thereby columns can be sorted
-	 * by comparing the different column values with each other.
+	 * This function enables sorting by column.
 	 */
+
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		ProblemArtifact a1 = (ProblemArtifact) e1;
-		ProblemArtifact a2 = (ProblemArtifact) e2;
+		int cat1 = category(e1);
+		int cat2 = category(e2);
 		int rc = 0;
+		String name1 = "";
+		String name2 = "";
 
-		String compareTo1 = null;
-		String compareTo2 = null;
+		if (propertyIndex == 0) {
+			if (cat1 != cat2)
+				rc = cat1 - cat2;
 
-		String Key = null;
+			if (viewer == null || !(viewer instanceof TreeViewer)) {
+				name1 = e1.toString();
+				name2 = e2.toString();
+			} else {
+				IBaseLabelProvider prov = ((TreeViewer) viewer)
+						.getLabelProvider();
+				if (prov instanceof ITableLabelProvider) {
+					ITableLabelProvider lprov = (ITableLabelProvider) prov;
+					name1 = lprov.getColumnText(e1, this.propertyIndex);
+					name2 = lprov.getColumnText(e2, this.propertyIndex);
+				} else {
+					name1 = e1.toString();
+					name2 = e2.toString();
+				}
+				rc = name1.compareToIgnoreCase(name2);
+			}
+		} else {
+			if (cat1 == 1) {
+				ProblemArtifactTypeList l1 = (ProblemArtifactTypeList) e1;
+				ProblemArtifactTypeList l2 = (ProblemArtifactTypeList) e2;
 
-		for (int i = 0; i < propertyIndex; i++) {
-			Key = a1.getMap().keySet().iterator().next();
+				name1 = l1.getType();
+				name2 = l2.getType();
+			}
+			if (cat1 == 2) {
+				ProblemArtifact a1 = (ProblemArtifact) e1;
+				ProblemArtifact a2 = (ProblemArtifact) e2;
+
+				String Key = null;
+
+				for (int i = 0; i < propertyIndex; i++) {
+					Key = a1.getMap().keySet().iterator().next();
+				}
+				name1 = a1.getMap().get(Key);
+				name2 = a2.getMap().get(Key);
+			}
+
+			if (!(name1 == null || name2 == null))
+				rc = name1.compareToIgnoreCase(name2);
 		}
-		compareTo1 = a1.getMap().get(Key);
-		compareTo2 = a2.getMap().get(Key);
-		rc = compareTo1.compareTo(compareTo2);
 		// If descending order, flip the direction
 		if (direction == DESCENDING) {
 			rc = -rc;
@@ -59,4 +101,12 @@ public class ProblemViewComparator extends ViewComparator {
 		return rc;
 	}
 
+	@Override
+	public int category(Object o) {
+		if (o instanceof ProblemArtifactTypeList)
+			return 1;
+		if (o instanceof ProblemArtifact)
+			return 2;
+		return 0;
+	}
 }
