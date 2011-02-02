@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.se2010.emine.artifacts.ConfigurationArtifact;
+import org.se2010.emine.events.EMineEventBus;
+import org.se2010.emine.events.IEMineEventBus;
 
 /**
  * This class creates the whole back-end-configuration page and is responsible to show/store all <br>
@@ -262,8 +264,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 						+ VAR_PER_KEY[3]), 0, null, null, null,
 				getValue(repoName + VAR_PER_KEY[4]));
 		
-		
-		//TODO: FIRE EVENT IMPLEMENTING
+		 IEMineEventBus bus = EMineEventBus.getInstance();
+		 bus.fireEvent(artifact);
 	
 	}
 

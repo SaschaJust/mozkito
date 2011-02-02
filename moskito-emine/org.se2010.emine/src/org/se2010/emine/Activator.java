@@ -6,6 +6,7 @@ import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.se2010.emine.artifacts.ConfigurationArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.EclipseEventHandler;
 import org.se2010.emine.events.EclipseEventHandler;
@@ -63,6 +64,7 @@ public class Activator extends AbstractUIPlugin {
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassAddedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassRemovedEvent.class, listener); 
 		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassChangedEvent.class, listener);
+		EMineEventBus.getInstance().registerEventListener(ConfigurationArtifact.class, listener);
 		
 		new RepoSuiteListener();
 	//	new Controller();

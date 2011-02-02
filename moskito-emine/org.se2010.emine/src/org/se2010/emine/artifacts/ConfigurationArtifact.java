@@ -1,6 +1,8 @@
 package org.se2010.emine.artifacts;
 
-public class ConfigurationArtifact implements Artifact {
+import org.se2010.emine.events.IEMineEvent;
+
+public class ConfigurationArtifact implements IEMineEvent, Artifact {
 
 	private String projectname;
 	private String Drepository_uri;
@@ -34,7 +36,7 @@ public class ConfigurationArtifact implements Artifact {
 		this.vmArg = vmArg;
 	}
 
-	@Override
+	
 	public String getTitle() {
 		// TODO Auto-generated method stub
 		return projectname;
