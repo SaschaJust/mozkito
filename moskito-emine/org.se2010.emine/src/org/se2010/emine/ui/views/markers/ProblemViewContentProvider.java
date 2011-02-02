@@ -30,14 +30,14 @@ public class ProblemViewContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof List) 
 			return ((List) parentElement).toArray();
-		return new Object[0];
+		return null;
 	}
 
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ProblemArtifact)
 			return ((ProblemArtifact) element).getList();
-		return new Object();
+		return null;
 	}
 
 	@Override
