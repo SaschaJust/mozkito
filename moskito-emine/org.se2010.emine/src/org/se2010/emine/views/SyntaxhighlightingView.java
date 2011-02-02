@@ -25,7 +25,7 @@ public class SyntaxhighlightingView extends ArtifactView{
 	private static final String M_TRANS4 = "org.se2010.emine.trans4_marker";
 	private List<IFile> filelist = new LinkedList<IFile>();
 		
-	void updateSyntaxhighlightingView(SyntaxhighlightingArtifact artifact){
+	public void  updateSyntaxhighlightingView(SyntaxhighlightingArtifact artifact){
 		Map<Integer,HighlightIconType> map = artifact.getMap();
 		String message = artifact.getMessage();
 		IFile file = artifact.getFile();

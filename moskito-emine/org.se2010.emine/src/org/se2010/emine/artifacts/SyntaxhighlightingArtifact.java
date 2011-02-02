@@ -11,7 +11,7 @@ public class SyntaxhighlightingArtifact implements Artifact{
 	private String message;
 	private IFile file;
 	
-	SyntaxhighlightingArtifact(String title,IFile file,Map<Integer,HighlightIconType> map, String message){
+	public SyntaxhighlightingArtifact(String title,IFile file,Map<Integer,HighlightIconType> map, String message){
 		this.title=title;
 		this.map=map;
 		this.message=message;

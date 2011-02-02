@@ -3,6 +3,9 @@ package org.se2010.emine.events;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ui.*;
@@ -14,6 +17,16 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	
 	private static EclipseEventHandler instance;
 	
+	IFile file ;
+	
+	public IFile getFile() {
+		return file;
+	}
+
+	public void setFile(IFile file) {
+		this.file = file;
+	}
+
 	private EclipseEventHandler() {}
 	
 	synchronized
@@ -300,10 +313,18 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	{
 		final ArrayList<String> clazzesList = new ArrayList<String>();
 		
+		
 		try 
+	
 		{
+			
+			IResource resource = currentCU.getCorrespondingResource();
+			
+			this.file = (IFile)resource  ;
+			
 			for(final IType type : this.currentCU.getAllTypes())
 			{
+				IPath p = type.getPath();
 				clazzesList.add(type.getFullyQualifiedName());
 			}
 		}
@@ -345,11 +366,14 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		if(this.currentCU != null &&  this.currentCU.exists())
 		{
 			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
-			final IEMineEvent       event   = new EditorEvent.EditorOpenedEvent(clazzes);
+			final IEMineEvent       event   = new EditorEvent.EditorOpenedEvent(clazzes,getFile());
 			
 			EMineEventBus.getInstance().fireEvent(event);
 		}
-	}			
+	}		
+	
+	
+	
 	
 	@Override
 	public void partClosed(final IWorkbenchPart part) 

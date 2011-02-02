@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.se2010.emine.artifacts.ProblemArtifact;
+import org.se2010.emine.artifacts.SyntaxhighlightingArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.IEMineEvent;
+import org.se2010.emine.views.SyntaxhighlightingView;
 
 public class RepoSuiteEvent implements IEMineEvent{
 	
 	private List<String> changedMethod;
+	
+	SyntaxhighlightingArtifact syntax ;
 	
 	
 	public RepoSuiteEvent(List<String> changedMethods){
@@ -44,11 +48,17 @@ public class RepoSuiteEvent implements IEMineEvent{
 
 		 }
 		 
-		 
-		 
 			EMineEventBus.getInstance().fireEvent(this);
 
 
+		
+	}
+	
+	public void createSyntaxArtifacts (){
+		
+		
+		
+		
 		
 	}
 	
