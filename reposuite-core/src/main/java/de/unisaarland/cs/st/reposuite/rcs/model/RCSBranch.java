@@ -120,7 +120,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSTransaction getBegin() {
-		return begin;
+		return this.begin;
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSTransaction getEnd() {
-		return end;
+		return this.end;
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Column (name = "id", nullable = false)
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	private long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -157,7 +157,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	public String getMergedIn() {
-		return mergedIn;
+		return this.mergedIn;
 	}
 	
 	/**
@@ -168,12 +168,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Basic
 	@Index (name = "idx_name")
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	@SuppressWarnings("unused")
 	private boolean getOpen() {
-		return open;
+		return this.open;
 	}
 	
 	/**
@@ -183,7 +183,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	public RCSBranch getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/**
@@ -196,12 +196,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	@Transient
 	public boolean isOpen() {
-		return open;
+		return this.open;
 	}
 	
 	@Transient
 	public void markOpen() {
-		mergedIn = null;
+		this.mergedIn = null;
 		setOpen(true);
 	}
 	
@@ -263,7 +263,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	private void setOpen(final boolean b) {
-		open = b;
+		this.open = b;
 	}
 	
 	/**
@@ -282,7 +282,27 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Override
 	public String toString() {
-		return "RCSBranch [id=" + getGeneratedId() + ", name=" + getName() + ", parent=" + getParent() + "]";
+		StringBuilder sb = new StringBuilder();
+		sb .append("RCSBranch [id=");
+		sb .append(getGeneratedId());
+		sb .append(", name=");
+		sb .append(getName());
+		sb .append(", parent=");
+		if(getParent() != null){
+			sb .append(getParent());
+		}else{
+			sb .append("null");
+		}
+		sb .append(", end=");
+		if(getEnd() != null){
+			sb .append(getEnd().getId());
+		}else{
+			sb .append("null");
+		}
+		sb.append(", mergedIn=");
+		sb.append(getMergedIn());
+		sb.append("]");
+		return sb.toString();
 	}
 	
 }

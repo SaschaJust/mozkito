@@ -207,7 +207,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		if (transaction.getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
 		}
-		
+		if (Logger.logDebug()) {
+			Logger.debug("omparing transactions: `" + this.getId() + "` and `" + transaction.getId() + "`");
+		}
 		if (equals(transaction)) {
 			return 0;
 		} else if (getBranch().equals(transaction.getBranch())) {
@@ -236,14 +238,27 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				return -1;
 			}
 		} else if (getBranch().equals(RCSBranch.MASTER)) {
-			return -1;
+			if (Logger.logDebug()) {
+				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
+			}
+			if (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null) {
+				return -1;
+			}
+			return this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 		} else if (transaction.getBranch().equals(RCSBranch.MASTER)) {
-			return 1;
+			if (getBranch().getEnd().getChild(getBranch()) == null) {
+				return 1;
+			}
+			return getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
 		} else {
-			// since none of the branches is a master branch, every
-			// getBegin() transaction must have exactly one parent.
-			return getBranch().getBegin().getParents().iterator().next()
-			.compareTo(transaction.getBranch().getBegin().getParents().iterator().next());
+			if (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null) {
+				return -1;
+			} else if (getBranch().getEnd().getChild(getBranch()) == null) {
+				return 1;
+			} else {
+				return getBranch().getEnd().getChild(getBranch())
+				.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			}
 		}
 	}
 	

@@ -43,13 +43,13 @@ public class HibernateUtil {
 		private final String query;
 		
 		public QueryWork(final String q) {
-			query = q;
+			this.query = q;
 		}
 		
 		@Override
 		public void execute(final Connection connection) throws SQLException {
 			Statement st = connection.createStatement();
-			st.execute(query);
+			st.execute(this.query);
 		}
 	}
 	
@@ -180,7 +180,7 @@ public class HibernateUtil {
 	private HibernateUtil() {
 		Condition.notNull(sessionFactory, "");
 		HibernateInterceptor interceptor = new HibernateInterceptor(this);
-		session = sessionFactory.openSession(interceptor);
+		this.session = sessionFactory.openSession(interceptor);
 		interceptor.loadEntities();
 	}
 	
@@ -188,21 +188,23 @@ public class HibernateUtil {
 	 * 
 	 */
 	public void beginTransaction() {
-		transaction = session.beginTransaction();
+		if (!hasOpenTransaction()) {
+			this.transaction = this.session.beginTransaction();
+		}
 	}
 	
 	/**
 	 * 
 	 */
 	public void commitTransaction() {
-		if ((transaction != null) && transaction.isActive()) {
+		if ((this.transaction != null) && this.transaction.isActive()) {
 			try {
-				transaction.commit();
+				this.transaction.commit();
 			} catch (HibernateException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
-				transaction.rollback();
+				this.transaction.rollback();
 				throw new RuntimeException(HibernateUtil.class.getSimpleName() + ": " + e.getMessage(), e);
 			}
 		}
@@ -214,7 +216,7 @@ public class HibernateUtil {
 	 */
 	public Criteria createCriteria(final Class<?> clazz) {
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
-			return session.createCriteria(clazz);
+			return this.session.createCriteria(clazz);
 		} else {
 			return null;
 		}
@@ -232,7 +234,7 @@ public class HibernateUtil {
 	@NoneNull
 	public SQLQuery createSQLQuery(final String query) {
 		Condition.notNull(query);
-		return session.createSQLQuery(query);
+		return this.session.createSQLQuery(query);
 	}
 	
 	/**
@@ -250,7 +252,7 @@ public class HibernateUtil {
 		Condition.notNull(clazz);
 		
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
-			SQLQuery hibernateQuery = session.createSQLQuery(query);
+			SQLQuery hibernateQuery = this.session.createSQLQuery(query);
 			if (hibernateQuery == null) {
 				return null;
 			}
@@ -264,7 +266,7 @@ public class HibernateUtil {
 	 * @param object
 	 */
 	public synchronized void delete(final Annotated object) {
-		session.delete(object);
+		this.session.delete(object);
 	}
 	
 	/**
@@ -278,7 +280,7 @@ public class HibernateUtil {
 	 */
 	public void executeQuery(final String query) throws HibernateException, SQLException {
 		Condition.notNull(query, "Calling execute query with query=(null) does not make any sense.");
-		session.doWork(new QueryWork(query));
+		this.session.doWork(new QueryWork(query));
 	}
 	
 	@NoneNull
@@ -297,11 +299,19 @@ public class HibernateUtil {
 	@NoneNull
 	public RCSTransaction getSessionRCSTransaction(final String id){
 		
-		Object cached = session.get(RCSTransaction.class, id);
+		Object cached = this.session.get(RCSTransaction.class, id);
 		if(cached != null){
 			return (RCSTransaction) cached;
 		}
 		return null;
+	}
+	
+	public boolean hasOpenTransaction() {
+		if(this.session.getTransaction() == null){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	/**
@@ -335,7 +345,7 @@ public class HibernateUtil {
 				saveOrUpdate(innerObject);
 			}
 		}
-		session.save(object);
+		this.session.save(object);
 	}
 	
 	/**
@@ -375,21 +385,21 @@ public class HibernateUtil {
 			Logger.debug("Persisting " + object);
 		}
 		// System.out.println("Persisting: " + object);
-		session.saveOrUpdate(object);
+		this.session.saveOrUpdate(object);
 	}
 	
 	/**
 	 * 
 	 */
 	private void shutdownSession() {
-		session.close();
+		this.session.close();
 	}
 	
 	/**
 	 * @param object
 	 */
 	public synchronized void update(final Annotated object) {
-		session.update(object);
+		this.session.update(object);
 	}
 	
 }

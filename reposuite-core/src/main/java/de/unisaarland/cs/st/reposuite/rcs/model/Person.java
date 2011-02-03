@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -61,7 +62,7 @@ public class Person implements Annotated {
 	@NoneNull (spec = "When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	@Return (checks = ParameterConditions.NotNull)
 	public static Person merge(final Person keeper,
-	                           @NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
+			@NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
 		Condition.notNull(keeper);
 		Condition.noneNull(collisions);
 		Condition.notEmpty(collisions);
@@ -80,7 +81,7 @@ public class Person implements Annotated {
 	 */
 	@NoneNull (spec = "When merging two Person entities, neither target nor merged person may be null.")
 	public static Person merge(final Person keeper,
-	                           final Person from) {
+			final Person from) {
 		Condition.notNull(keeper);
 		Condition.notNull(from);
 		
@@ -98,7 +99,7 @@ public class Person implements Annotated {
 	private Set<String>         emailAddresses = new TreeSet<String>();
 	private Set<String>         fullnames      = new TreeSet<String>();
 	
-	private Set<RCSTransaction> transactions   = new TreeSet<RCSTransaction>();
+	private Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
 	
 	/**
 	 * Default constructor used by Hibernate
@@ -317,14 +318,14 @@ public class Person implements Annotated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.emailAddresses.isEmpty())
-		                                                          ? 0
-		                                                          : this.emailAddresses.iterator().next().hashCode());
+				? 0
+						: this.emailAddresses.iterator().next().hashCode());
 		result = prime * result + ((this.fullnames.isEmpty())
-		                                                     ? 0
-		                                                     : this.fullnames.iterator().next().hashCode());
+				? 0
+						: this.fullnames.iterator().next().hashCode());
 		result = prime * result + ((this.usernames.isEmpty())
-		                                                     ? 0
-		                                                     : this.usernames.iterator().next().hashCode());
+				? 0
+						: this.usernames.iterator().next().hashCode());
 		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
 		// >>> 32));
 		return result;
@@ -344,7 +345,7 @@ public class Person implements Annotated {
 			return true;
 		} else {
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
-			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
+					|| (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
 			} else {
 				return false;
@@ -391,7 +392,7 @@ public class Person implements Annotated {
 	 *            the transactions to set
 	 */
 	protected void setTransactions(final Set<RCSTransaction> transactions) {
-		this.transactions = new TreeSet<RCSTransaction>(transactions);
+		this.transactions = new HashSet<RCSTransaction>(transactions);
 	}
 	
 	/**
