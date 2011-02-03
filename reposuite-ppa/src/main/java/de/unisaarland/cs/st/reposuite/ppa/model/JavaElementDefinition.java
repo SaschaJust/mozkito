@@ -15,10 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
-import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
@@ -28,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
  */
 @Entity
 @ForeignKey(name = "JAVA_ELEM_DEF")
-public abstract class JavaElementDefinition extends JavaElement implements Annotated{
+public abstract class JavaElementDefinition extends JavaElement implements Annotated {
 	
 	/**
 	 * 
@@ -36,10 +34,10 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	private static final long                    serialVersionUID = 1535115107166147270L;
 	
 	/** The parent. */
-	private JavaElementDefinition parent = null;
+	private JavaElementDefinition                parent           = null;
 	
 	/** The children. */
-	protected Map<String, JavaElementDefinition> children = new HashMap<String, JavaElementDefinition>();
+	protected Map<String, JavaElementDefinition> children         = new HashMap<String, JavaElementDefinition>();
 	
 	/**
 	 * Instantiates a new java element definition.
@@ -57,10 +55,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * @param parent
 	 *            the parent
 	 */
-	public JavaElementDefinition(@NotNull final String fullQualifiedName, @NotNull final String filePath,
-			@NotNull final DateTime timestamp, @NonNegative final int startLine, @NonNegative final int endLine,
-			final JavaElementDefinition parent) {
-		super(fullQualifiedName, filePath, timestamp, startLine, endLine);
+	public JavaElementDefinition(@NotNull final String fullQualifiedName, final JavaElementDefinition parent) {
+		super(fullQualifiedName);
 		this.parent = parent;
 	}
 	
@@ -72,11 +68,11 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addChild(final JavaElementDefinition child){
-		if (children.containsKey(child.getFullQualifiedName())) {
+	public boolean addChild(final JavaElementDefinition child) {
+		if (this.children.containsKey(child.getFullQualifiedName())) {
 			return false;
 		}
-		children.put(child.getFullQualifiedName(), child);
+		this.children.put(child.getFullQualifiedName(), child);
 		return true;
 	}
 	
@@ -99,11 +95,11 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 			return false;
 		}
 		JavaElementDefinition other = (JavaElementDefinition) obj;
-		if (parent == null) {
+		if (this.parent == null) {
 			if (other.parent != null) {
 				return false;
 			}
-		} else if (!parent.equals(other.parent)) {
+		} else if (!this.parent.equals(other.parent)) {
 			return false;
 		}
 		return true;
@@ -117,7 +113,7 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	@ElementCollection
 	@JoinTable(name = "children", joinColumns = { @JoinColumn(name = "child_id", nullable = false) })
 	public Collection<JavaElementDefinition> getChildren() {
-		return children.values();
+		return this.children.values();
 	}
 	
 	/**
@@ -126,12 +122,12 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * @return the package name
 	 */
 	@Transient
-	private String getPackageName() {
-		if(!super.getFullQualifiedName().contains(".")){
+	public String getPackageName() {
+		if (!super.getFullQualifiedName().contains(".")) {
 			return "";
-		}else{
+		} else {
 			int index = super.getFullQualifiedName().lastIndexOf(".");
-			return super.getFullQualifiedName().substring(0,index);
+			return super.getFullQualifiedName().substring(0, index);
 		}
 	}
 	
@@ -140,9 +136,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * 
 	 * @return the parent
 	 */
-	@SuppressWarnings("unused")
 	protected JavaElementDefinition getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	@Transient
@@ -157,7 +152,7 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
 		return result;
 	}
 	

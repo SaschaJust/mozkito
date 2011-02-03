@@ -2,39 +2,30 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Entity
-public class JavaMethodCall extends JavaElement implements Annotated{
+public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/**
 	 * 
 	 */
 	private static final long     serialVersionUID  = -2885710604331995125L;
 	
-	private List<String>          signature;
-	
-	private String                calledPackageName = "<unknown>";
-	
-	private String                calledClassName   = "<unknown>";
-	
-	private JavaElementDefinition parent;
-	
-	public JavaMethodCall(final String fullQualifiedName, final String filePath, final DateTime timestamp,
-			final int startLine, final int endLine, final List<String> signature, final JavaElementDefinition parent) {
-		super(fullQualifiedName, filePath, timestamp, startLine, endLine);
-		this.signature = new ArrayList<String>(signature);
-		this.parent = parent;
+	public static String composeFullQualifiedName(final String fullQualifiedName, final List<String> signature){
 		StringBuilder sb = new StringBuilder();
-		sb.append(super.getFullQualifiedName());
+		sb.append(fullQualifiedName);
 		sb.append("(");
 		if (!signature.isEmpty()) {
 			sb.append(signature.get(0));
@@ -44,7 +35,48 @@ public class JavaMethodCall extends JavaElement implements Annotated{
 			sb.append(signature.get(i));
 		}
 		sb.append(")");
-		this.fullQualifiedName = sb.toString();
+		return sb.toString();
+	}
+	
+	private List<String>          signature;
+	
+	private String                calledPackageName = "<unknown>";
+	
+	private String                calledClassName   = "<unknown>";
+	
+	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
+		super(fullQualifiedName);
+		this.signature = new ArrayList<String>(signature);
+		this.fullQualifiedName = composeFullQualifiedName(fullQualifiedName, signature);
+		int index = fullQualifiedName.lastIndexOf(".");
+		Condition.check(index < fullQualifiedName.length(),
+				"Could not determine called class name. Last index of `.` is not less than length of string: "
+				+ fullQualifiedName);
+		this.calledPackageName = fullQualifiedName.substring(0, index);
+		this.calledClassName = fullQualifiedName.substring(index+1, fullQualifiedName.length());
+		
+	}
+	
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		JavaMethodCall other = (JavaMethodCall) obj;
+		if (getSignature() == null) {
+			if (other.getSignature() != null) {
+				return false;
+			}
+		} else if (!getSignature().equals(other.getSignature())) {
+			return false;
+		}
+		return true;
 	}
 	
 	@Transient
@@ -54,26 +86,32 @@ public class JavaMethodCall extends JavaElement implements Annotated{
 	
 	@Transient
 	public String getCalledClassNameShort() {
-		return calledClassName;
+		return this.calledClassName;
 	}
 	
 	public String getCalledPackageName() {
-		return calledPackageName;
-	}
-	
-	public JavaElementDefinition getParent() {
-		return parent;
+		return this.calledPackageName;
 	}
 	
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
+	}
+	
+	@Override
+	public Element getXMLRepresentation(final Document document) {
+		Element thisElement = document.createElement("JavaMethodCall");
+		
+		Element nameElement = document.createElement("fullQualifiedName");
+		nameElement.setNodeValue(this.getFullQualifiedName());
+		thisElement.appendChild(nameElement);
+		
+		return thisElement;
 	}
 	
 	@Override
 	public Collection<Annotated> saveFirst() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<Annotated>();
 	}
 	
 	@SuppressWarnings("unused")
@@ -87,26 +125,7 @@ public class JavaMethodCall extends JavaElement implements Annotated{
 	}
 	
 	@SuppressWarnings("unused")
-	private void setParent(final JavaElementDefinition parent) {
-		this.parent = parent;
-	}
-	
-	@SuppressWarnings("unused")
 	private void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("JavaMethodCall [calledMethod=");
-		sb.append(super.getFullQualifiedName());
-		sb.append(", in File=");
-		sb.append(super.getFilePath());
-		sb.append(", in line=");
-		sb.append(super.getEndLine());
-		sb.append("]");
-		return sb.toString();
-	}
-	
 }

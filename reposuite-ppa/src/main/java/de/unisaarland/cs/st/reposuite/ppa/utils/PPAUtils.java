@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -32,15 +36,28 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.internal.core.JavaProject;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinitionCache;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElements;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
+import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.utils.DiffUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import difflib.DeleteDelta;
+import difflib.Delta;
+import difflib.InsertDelta;
 
 /**
  * The Class PPAUtils.
@@ -48,6 +65,225 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class PPAUtils {
+	
+	/**
+	 * Gets the change operations.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param transaction
+	 *            the transaction
+	 * @return the change operations
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Collection<JavaChangeOperation> getChangeOperations(final Repository repository,
+			final RCSTransaction transaction) {
+		
+		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		
+		String transactionID = transaction.getId();
+		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
+		String parentTransactionID = parentTransaction.getId();
+		
+		Collection<RCSRevision> revisions = transaction.getRevisions();
+		Map<String, RCSRevision> addedRCSRevs = new HashMap<String, RCSRevision>();
+		Map<String, RCSRevision> removedRCSRevs = new HashMap<String, RCSRevision>();
+		Map<String, RCSRevision> changedRCSRevs = new HashMap<String, RCSRevision>();
+		
+		for (RCSRevision revision : revisions) {
+			RCSFile rcsFile = revision.getChangedFile();
+			if (revision.getChangeType().equals(ChangeType.Added)) {
+				addedRCSRevs.put(rcsFile.getPath(transaction), revision);
+			} else if (revision.getChangeType().equals(ChangeType.Deleted)) {
+				removedRCSRevs.put(rcsFile.getPath(transaction), revision);
+			} else if (revision.getChangeType().equals(ChangeType.Modified)) {
+				changedRCSRevs.put(rcsFile.getPath(transaction), revision);
+			}
+			//TODO what's with renamed files?
+		}
+		
+		//update working copy to parent transaction
+		File checkoutPath = repository.checkoutPath("/", parentTransactionID);
+		
+		//handle old files BEGIN
+		Set<File> oldFiles = new HashSet<File>();
+		for (String filePath : removedRCSRevs.keySet()) {
+			oldFiles.add(new File(checkoutPath + FileUtils.fileSeparator + filePath));
+		}
+		for (String filePath : changedRCSRevs.keySet()) {
+			oldFiles.add(new File(checkoutPath + FileUtils.fileSeparator + filePath));
+		}
+		
+		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByFile(oldFiles.iterator(),
+				checkoutPath.getAbsolutePath(), new String[0], false);
+		//handle old files END
+		
+		//update working copy
+		checkoutPath = repository.checkoutPath("/", transactionID);
+		
+		//handle new files BEGIN
+		Set<File> newFiles = new HashSet<File>();
+		for (String filePath : addedRCSRevs.keySet()) {
+			newFiles.add(new File(checkoutPath + FileUtils.fileSeparator + filePath));
+		}
+		for (String filePath : changedRCSRevs.keySet()) {
+			newFiles.add(new File(checkoutPath + FileUtils.fileSeparator + filePath));
+		}
+		
+		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByFile(newFiles.iterator(),
+				checkoutPath.getAbsolutePath(), new String[0], false);
+		//handle new files END
+		
+		//for added and deleted files, we can just add an change operation
+		for (String addedPath : addedRCSRevs.keySet()) {
+			if (!newElems.containsFilePath(addedPath)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Found file `" + addedPath + "` for which no new JavaElements were found!");
+				}
+				continue;
+			}
+			RCSRevision revision = addedRCSRevs.get(addedPath);
+			for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(addedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Added, classDef, revision));
+			}
+			for (JavaElementLocation<JavaMethodDefinition> methDef : newElems.getMethodDefs(addedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Added, methDef, revision));
+			}
+			for (JavaElementLocation<JavaMethodCall> methCall : newElems.getMethodCalls(addedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Added, methCall, revision));
+			}
+		}
+		for (String removedPath : removedRCSRevs.keySet()) {
+			if (!oldElems.containsFilePath(removedPath)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Found file `" + removedPath + "` for which no old JavaElements were found!");
+				}
+				continue;
+			}
+			RCSRevision revision = addedRCSRevs.get(removedPath);
+			for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(removedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Deleted, classDef, revision));
+			}
+			for (JavaElementLocation<JavaMethodDefinition> methDef : oldElems.getMethodDefs(removedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Deleted, methDef, revision));
+			}
+			for (JavaElementLocation<JavaMethodCall> methCall : oldElems.getMethodCalls(removedPath)) {
+				result.add(new JavaChangeOperation(ChangeType.Deleted, methCall, revision));
+			}
+		}
+		
+		//handle changed files
+		for (String changedPath : changedRCSRevs.keySet()) {
+			//generate diff
+			Collection<Delta> diff = repository.diff(changedPath, parentTransactionID, transactionID);
+			RCSRevision revision = addedRCSRevs.get(changedPath);
+			
+			for (Delta delta : diff) {
+				if (delta instanceof DeleteDelta) {
+					//corresponding elements to be removed
+					HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getOriginal());
+					for (JavaElementLocation javaElem : oldElems.getElements(changedPath)) {
+						if (javaElem.coversAnyLine(lines)) {
+							result.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
+						}
+					}
+				} else if (delta instanceof InsertDelta) {
+					//corresponding elements to be added
+					HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getRevised());
+					for (JavaElementLocation javaElem : newElems.getElements(changedPath)) {
+						if (javaElem.coversAnyLine(lines)) {
+							result.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
+						}
+					}
+				} else {
+					//make a collection diff
+					HashSet<Integer> oldLines = DiffUtils.getLineNumbers(delta.getOriginal());
+					HashSet<Integer> newLines = DiffUtils.getLineNumbers(delta.getRevised());
+					
+					Collection<JavaElementLocation<JavaElementDefinition>> removeDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
+					for (JavaElementLocation def : oldElems.getDefs(changedPath)) {
+						if (def.coversAnyLine(oldLines)) {
+							removeDefCandidates.add(def);
+						}
+					}
+					Collection<JavaElementLocation<JavaElementDefinition>> addDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
+					for (JavaElementLocation def : newElems.getDefs(changedPath)) {
+						if (def.coversAnyLine(newLines)) {
+							addDefCandidates.add(def);
+						}
+					}
+					
+					Collection<JavaElement> elemsToRemove = new HashSet<JavaElement>();
+					Collection<JavaElement> elemsToAdd = new HashSet<JavaElement>();
+					
+					elemsToRemove.addAll(CollectionUtils.subtract(removeDefCandidates, addDefCandidates));
+					elemsToAdd.addAll(CollectionUtils.subtract(addDefCandidates, removeDefCandidates));
+					
+					Map<String, TreeSet<JavaElementLocation<JavaMethodCall>>> removeCallCandidates = new HashMap<String, TreeSet<JavaElementLocation<JavaMethodCall>>>();
+					for (JavaElementLocation<JavaMethodCall> call : oldElems.getMethodCalls(changedPath)) {
+						if (call.coversAnyLine(oldLines)) {
+							if (!removeCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
+								removeCallCandidates.put(call.getElement().getFullQualifiedName(),
+										new TreeSet<JavaElementLocation<JavaMethodCall>>());
+							}
+							removeCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
+						}
+					}
+					
+					Map<String, TreeSet<JavaElementLocation<JavaMethodCall>>> addCallCandidates = new HashMap<String, TreeSet<JavaElementLocation<JavaMethodCall>>>();
+					for (JavaElementLocation<JavaMethodCall> call : newElems.getMethodCalls(changedPath)) {
+						if (call.coversAnyLine(newLines)) {
+							if (!addCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
+								addCallCandidates.put(call.getElement().getFullQualifiedName(),
+										new TreeSet<JavaElementLocation<JavaMethodCall>>());
+							}
+							addCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
+						}
+					}
+					
+					for (String addedCallId : addCallCandidates.keySet()) {
+						if (removeCallCandidates.containsKey(addedCallId)) {
+							TreeSet<JavaElementLocation<JavaMethodCall>> delSet = removeCallCandidates.get(addedCallId);
+							TreeSet<JavaElementLocation<JavaMethodCall>> addSet = addCallCandidates.get(addedCallId);
+							for (JavaElementLocation<JavaMethodCall> addedCall : new TreeSet<JavaElementLocation<JavaMethodCall>>(
+									addCallCandidates.get(addedCallId))) {
+								//search the nearest deleted method call and remove both from their collections
+								JavaElementLocation<JavaMethodCall> ceiling = delSet.ceiling(addedCall);
+								int distance = ceiling.getPosition() - addedCall.getPosition();
+								if (distance != 0) {
+									JavaElementLocation<JavaMethodCall> floor = delSet.floor(addedCall);
+									if ((ceiling.getPosition() - addedCall.getPosition()) < distance) {
+										delSet.remove(floor);
+										addSet.remove(addedCall);
+									} else {
+										delSet.remove(ceiling);
+										addSet.remove(addedCall);
+									}
+								} else {
+									delSet.remove(ceiling);
+									addSet.remove(addedCall);
+								}
+							}
+						}
+					}
+					
+					//method calls that are still present in their collections make up the operations
+					for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates
+							.values()) {
+						for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToDelete) {
+							result.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
+						}
+					}
+					for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToAdd : addCallCandidates.values()) {
+						for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToAdd) {
+							result.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
 	
 	/**
 	 * Gets the cU.
@@ -222,36 +458,31 @@ public class PPAUtils {
 		return cus;
 	}
 	
-	
 	/**
 	 * Gets the java method elements of all java files within
 	 * <code>sourceDir</code>.
 	 * 
 	 * @param sourceDir
 	 *            the source dir
-	 * @param methodCallVisitor
-	 *            the method call visitor
-	 * @param eclipseProjectName
-	 *            the eclipse project name
 	 * @param packageFilter
 	 *            the package filter
 	 * @param resetDefinitionCache
 	 *            the reset definition cache
 	 * @return the java method elements
 	 */
-	public static Map<String, JavaElements> getJavaElementsByFile(final File sourceDir,
+	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
 			final String[] packageFilter, final boolean resetDefinitionCache) {
 		
 		try {
 			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
-			return getJavaElementsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter,
+			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter,
 					resetDefinitionCache);
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 		}
-		return new HashMap<String, JavaElements>();
+		return new JavaElementLocations();
 	}
 	
 	/**
@@ -261,57 +492,32 @@ public class PPAUtils {
 	 *            the file iterator
 	 * @param filePrefixPath
 	 *            the file prefix path
-	 * @param methodCallVisitor
-	 *            the method call visitor
-	 * @param eclipseProjectName
-	 *            the eclipse project name
 	 * @param packageFilter
 	 *            the package filter
 	 * @param resetDefinitionCache
 	 *            the reset definition cache
 	 * @return the java method elements
 	 */
-	public static Map<String, JavaElements> getJavaElementsByFile(final Iterator<File> fileIterator,
+	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
 			final String filePrefixPath, final String[] packageFilter, final boolean resetDefinitionCache) {
 		if (resetDefinitionCache) {
-			JavaElementDefinitionCache.reset();
+			JavaElementCache.reset();
 		}
-		Map<String, JavaElements> result = new HashMap<String, JavaElements>();
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
+		
+		JavaElementCache elemCache = new JavaElementCache();
+		
 		while (fileIterator.hasNext()) {
 			File file = fileIterator.next();
 			CompilationUnit cu = getCU(file, ppaOptions);
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter);
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter, elemCache);
 			typeVisitor.registerVisitor(methodCallVisitor);
 			cu.accept(typeVisitor);
 		}
-		Map<String, Set<JavaClassDefinition>> cdefsByFile = JavaElementDefinitionCache.getClassDefsByFile();
-		for (String fileName : cdefsByFile.keySet()) {
-			if (!result.containsKey(fileName)) {
-				result.put(fileName, new JavaElements());
-			}
-			result.get(fileName).addAllClassDefs(cdefsByFile.get(fileName));
-		}
-		Map<String, Set<JavaMethodDefinition>> mdefsByFile = JavaElementDefinitionCache.getMethodDefsByFile();
-		for (String fileName : mdefsByFile.keySet()) {
-			if (!result.containsKey(fileName)) {
-				result.put(fileName, new JavaElements());
-			}
-			result.get(fileName).addAllMethodDefs(mdefsByFile.get(fileName));
-		}
 		
-		Map<String, Collection<JavaMethodCall>> methodCallsByFile = methodCallVisitor.getMethodCallsByFile();
-		for (String fileName : methodCallsByFile.keySet()) {
-			if (!result.containsKey(fileName)) {
-				result.put(fileName, new JavaElements());
-			}
-			result.get(fileName).addAllMethodCalls(methodCallsByFile.get(fileName));
-		}
-		return result;
+		return elemCache.getJavaElementLocations();
 	}
-	
-	
 	
 	/**
 	 * Gets the package from file.

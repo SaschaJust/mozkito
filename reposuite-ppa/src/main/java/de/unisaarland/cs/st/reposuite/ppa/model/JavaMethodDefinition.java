@@ -2,17 +2,18 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
@@ -37,7 +38,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the signature
 	 * @return the string
 	 */
-	public static String composeFullQualifiedName(final String name, final List<String> signature){
+	public static String composeFullQualifiedName(final String name, final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		sb.append("(");
@@ -74,10 +75,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the end line
 	 */
 	protected JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
-			@NotNull final String file, @NotNull final DateTime timestamp, @NotNull final JavaClassDefinition parent,
-			@NonNegative final int startLine, @NonNegative final int endLine) {
+			@NotNull final JavaClassDefinition parent) {
 		
-		super(fullQualifiedName, file, timestamp, startLine, endLine, parent);
+		super(fullQualifiedName, parent);
 		if (parent != null) {
 			Condition.check(parent instanceof JavaClassDefinition,
 			"The parent of a method Definition has to be another class definition");
@@ -86,8 +86,6 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		this.setSignature(new ArrayList<String>(signature));
 		this.fullQualifiedName = composeFullQualifiedName(super.getFullQualifiedName(), signature);
 	}
-	
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -118,8 +116,6 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		return true;
 	}
 	
-	
-	
 	/**
 	 * Gets the signature.
 	 * 
@@ -127,13 +123,38 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#getTypedParent
+	 * ()
+	 */
 	@Override
 	@Transient
 	public JavaClassDefinition getTypedParent() {
 		return (JavaClassDefinition) super.getParent();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
+	 * (org.w3c.dom.Document)
+	 */
+	@Override
+	public Element getXMLRepresentation(final Document document) {
+		Element thisElement = document.createElement("JavaMethodDefinition");
+		
+		Element nameElement = document.createElement("fullQualifiedName");
+		nameElement.setNodeValue(this.getFullQualifiedName());
+		thisElement.appendChild(nameElement);
+		
+		return thisElement;
 	}
 	
 	/*
@@ -152,8 +173,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	
 	@Override
 	public Collection<Annotated> saveFirst() {
-		// TODO Auto-generated method stub
-		return null;
+		HashSet<Annotated> set = new HashSet<Annotated>();
+		set.add(this.getParent());
+		return set;
 	}
 	
 	private void setSignature(final List<String> signature) {

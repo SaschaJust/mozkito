@@ -9,8 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
+import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
@@ -22,19 +27,20 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 public class JavaChangeOperation implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long       serialVersionUID = 8988140924725401608L;
+	private static final long   serialVersionUID = 8988140924725401608L;
 	
 	/** The id. */
-	private long                    id;
+	private long                id;
 	
 	/** The change type. */
-	private JavaChangeOperationType changeType;
+	private ChangeType          changeType;
 	
 	/** The changed element. */
-	private JavaElement             changedElement;
+	@SuppressWarnings("rawtypes")
+	private JavaElementLocation changedElement;
 	
-	/** The changed line. */
-	private int                     changedLine;
+	/** The revision. */
+	private RCSRevision         revision;
 	
 	@SuppressWarnings("unused")
 	private JavaChangeOperation() {
@@ -50,12 +56,12 @@ public class JavaChangeOperation implements Annotated {
 	 * @param line
 	 *            the line
 	 */
+	@SuppressWarnings("rawtypes")
 	@NoneNull
-	public JavaChangeOperation(final JavaChangeOperationType type, final JavaElement element,
-			@NonNegative final int line) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
 		setChangeType(type);
 		setChangedElement(element);
-		setChangedLine(line);
+		setRevision(revision);
 	}
 	
 	/**
@@ -63,8 +69,9 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the changed element
 	 */
-	public JavaElement getChangedElement() {
-		return changedElement;
+	@SuppressWarnings("rawtypes")
+	public JavaElementLocation getChangedElementLocation() {
+		return this.changedElement;
 	}
 	
 	/**
@@ -73,18 +80,8 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the changed file
 	 */
 	@Transient
-	public String getChangedFile(){
-		return changedElement.getFilePath();
-	}
-	
-	
-	/**
-	 * Gets the changed line.
-	 * 
-	 * @return the changed line
-	 */
-	public int getChangedLine() {
-		return changedLine;
+	public String getChangedFile() {
+		return this.changedElement.getFilePath();
 	}
 	
 	/**
@@ -92,8 +89,8 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the change type
 	 */
-	public JavaChangeOperationType getChangeType() {
-		return changeType;
+	public ChangeType getChangeType() {
+		return this.changeType;
 	}
 	
 	/**
@@ -102,9 +99,22 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
+	}
+	
+	public RCSRevision getRevision() {
+		return this.revision;
+	}
+	
+	public Element getXMLRepresentation(final Document document) {
+		Element thisElement = document.createElement(this.changeType.toString());
+		Attr revision = document.createAttribute("revision");
+		revision.setNodeValue(this.getRevision().getTransaction().getId());
+		thisElement.setAttributeNode(revision);
+		thisElement.appendChild(getChangedElementLocation().getXMLRepresentation(document));
+		return thisElement;
 	}
 	
 	/*
@@ -115,7 +125,7 @@ public class JavaChangeOperation implements Annotated {
 	@Override
 	public Collection<Annotated> saveFirst() {
 		HashSet<Annotated> set = new HashSet<Annotated>();
-		set.add(getChangedElement());
+		set.add(getChangedElementLocation());
 		return set;
 	}
 	
@@ -125,18 +135,9 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	private void setChangedElement(final JavaElement changedElement) {
+	@SuppressWarnings("rawtypes")
+	private void setChangedElement(final JavaElementLocation changedElement) {
 		this.changedElement = changedElement;
-	}
-	
-	/**
-	 * Sets the changed line.
-	 * 
-	 * @param changedLine
-	 *            the new changed line
-	 */
-	private void setChangedLine(final int changedLine) {
-		this.changedLine = changedLine;
 	}
 	
 	/**
@@ -145,12 +146,17 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changeType
 	 *            the new change type
 	 */
-	private void setChangeType(final JavaChangeOperationType changeType) {
+	private void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
+	@SuppressWarnings("unused")
 	private void setId(final long id) {
 		this.id = id;
+	}
+	
+	private void setRevision(final RCSRevision revision) {
+		this.revision = revision;
 	}
 	
 }

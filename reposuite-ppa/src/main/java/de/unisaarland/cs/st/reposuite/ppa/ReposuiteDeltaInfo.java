@@ -1,69 +1,109 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.List;
+
+import org.dom4j.io.XMLWriter;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.PersistingChangeOperationVisitor;
+import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.XMLChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
+import de.unisaarland.cs.st.reposuite.settings.FileArgument;
+import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class ReposuiteDeltaInfo {
 	
 	private final RepositoryArguments repoSettings;
+	@SuppressWarnings("unused")
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
-	private boolean                   shutdown;
-	private final HibernateUtil             hibernateUtil;
+	private final HibernateUtil       hibernateUtil;
+	private final FileArgument        asXML;
+	private final ListArgument        testCaseTransactionArg;
 	
 	public ReposuiteDeltaInfo() {
 		RepositorySettings settings = new RepositorySettings();
-		repoSettings = settings.setRepositoryArg(true);
-		databaseSettings = settings.setDatabaseArgs(false);
-		logSettings = settings.setLoggerArg(true);
+		this.repoSettings = settings.setRepositoryArg(true);
+		this.databaseSettings = settings.setDatabaseArgs(false);
+		this.logSettings = settings.setLoggerArg(true);
+		this.testCaseTransactionArg = new ListArgument(
+				settings,
+				"testCaseTransactions",
+				"List of transactions that will be passed for test case purposes. "
+				+ "If this option is set, this module will start in test case mode. "
+				+ "If will generate change operations to specified transactions, only;"
+				+ "outputting result as XML either to sdtout (if option -DasXML not set) "
+				+ "or to specified XML file.",
+				null, false);
+		
+		this.asXML = new FileArgument(settings, "output.xml",
+				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
+				null, false, true, false);
+		
 		settings.parseArguments();
-		hibernateUtil = databaseSettings.getValue();
+		this.hibernateUtil = this.databaseSettings.getValue();
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run() {
 		
-		Repository repository = repoSettings.getValue();
+		File xmlFile = this.asXML.getValue();
+		Repository repository = this.repoSettings.getValue();
+		ChangeOperationGenerator generator = new ChangeOperationGenerator(repository);
 		
-
-		//		if (!shutdown) {
-		//			setup();
-		//			if (!shutdown) {
-		//				threadPool.execute();
-		//			}
-		//		}
-		//		File tmpDir = new File("/Users/kim/Backup/reposuite-ppa/src/test/resources/DataStructure.java");
-		//		CompilationUnit cu = PPAUtils.getCU(tmpDir, new PPAOptions());
-		//		System.out.println(cu.toString());
+		Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
+		HashSet<String> transactionsLimit = this.testCaseTransactionArg.getValue();
+		if (transactionsLimit != null) {
+			criteria.add(Restrictions.in("id", transactionsLimit));
+			boolean stdout = false;
+			if (xmlFile != null) {
+				try {
+					generator.registerVisitor(new XMLChangeOperationVisitor(new XMLWriter(new FileWriter(xmlFile))));
+				} catch (IOException e) {
+					if (Logger.logError()) {
+						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
+								+ "Writing to sstdout!");
+					}
+					stdout = true;
+				}
+			} else {
+				stdout = true;
+			}
+			
+			if (stdout) {
+				try {
+					generator.registerVisitor(new XMLChangeOperationVisitor(new XMLWriter(System.out)));
+				} catch (UnsupportedEncodingException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				}
+			}
+		} else {
+			generator.registerVisitor(new PersistingChangeOperationVisitor(this.hibernateUtil));
+		}
 		
-		//		if (tmpDir.exists() && (tmpDir.isDirectory())) {
-		//			System.out.println("Found file");
-		//			Map<String, Collection<JavaElement>> elems = PPAUtils.getJavaMethodElementsByFile(tmpDir, new String[0],
-		//					true);
-		//			System.out.println("Found " + elems.size() + " files!");
-		//			if (elems.containsKey("DataStructure.java")) {
-		//				System.out.println("For file DataStructure.java: ");
-		//				int classDefCount = 0;
-		//				int methDefCount = 0;
-		//				int methCallCount = 0;
-		//				for (JavaElement elem : elems.get("DataStrcuture.java")) {
-		//					if (elem instanceof JavaClassDefinition) {
-		//						classDefCount += 1;
-		//					} else if (elem instanceof JavaMethodDefinition) {
-		//						methDefCount += 1;
-		//					} else if (elem instanceof JavaMethodCall) {
-		//						methCallCount += 1;
-		//					}
-		//				}
-		//				System.out.println(classDefCount + " class definitions");
-		//				System.out.println(methDefCount + " method definitions");
-		//				System.out.println(methCallCount + " method calls");
-		//			}
-		//
-		//		}
+		@SuppressWarnings("unchecked") List<RCSTransaction> transactions = criteria.list();
+		generator.handleTransactions(transactions);
 		
+		
+		if (Logger.logInfo()) {
+			Logger.info("Done. Terminating ...");
+		}
 	}
 }

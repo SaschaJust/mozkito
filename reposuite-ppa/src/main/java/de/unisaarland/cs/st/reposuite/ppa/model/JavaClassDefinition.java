@@ -1,17 +1,17 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
@@ -28,19 +28,17 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	private static final long   serialVersionUID = 945704236316941413L;
 	
 	/** The super class name. */
-	private String superClassName = null;
+	private String              superClassName   = null;
 	
 	/** The Constant anonCheck. */
-	private final static String anonCheck      = ".*\\$\\d+";
-	
+	private final static String anonCheck        = ".*\\$\\d+";
 	
 	/** The anon counter. */
 	@Transient
-	private int          anonCounter = 0;
+	private int                 anonCounter      = 0;
 	
 	/** The anonym class. */
-	private boolean      anonymClass = false;
-	
+	private boolean             anonymClass      = false;
 	
 	/**
 	 * Instantiates a new java class definition.
@@ -60,11 +58,10 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @param packageName
 	 *            the package name
 	 */
-	protected JavaClassDefinition(@NotNull final String fullQualifiedName, @NotNull final String file,
-			@NotNull final DateTime timestamp, final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NotNull final String packageName) {
+	protected JavaClassDefinition(@NotNull final String fullQualifiedName, final JavaClassDefinition parent,
+			@NotNull final String packageName) {
 		
-		super(fullQualifiedName, file, timestamp, startLine, endLine, parent);
+		super(fullQualifiedName, parent);
 		if (parent != null) {
 			Condition.check(parent instanceof JavaClassDefinition,
 			"The parent of a class Definition has to be another class definition");
@@ -72,7 +69,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		}
 		
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			anonymClass = true;
+			this.anonymClass = true;
 		}
 	}
 	
@@ -91,11 +88,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 *            the end line
 	 * @return the java method definition
 	 */
-	public JavaMethodDefinition addMethod(final String methodName, final List<String> arguments,
-			final DateTime timestamp, final int startLine, final int endLine) {
-		
-		return JavaElementDefinitionCache.getMethodDefinition(this.getFullQualifiedName() + "." + methodName,
-				arguments, this.getFilePath(), timestamp, this, startLine, endLine);
+	public void addMethod(final JavaMethodDefinition methodDef) {
+		this.getChildren().add(methodDef);
 	}
 	
 	/**
@@ -105,7 +99,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 */
 	@SuppressWarnings("unused")
 	private String getSuperClassName() {
-		return superClassName;
+		return this.superClassName;
 	}
 	
 	/*
@@ -121,6 +115,17 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		return (JavaClassDefinition) super.getParent();
 	}
 	
+	@Override
+    public Element getXMLRepresentation(final Document document) {
+		Element thisElement = document.createElement("JavaClassDefinition");
+		
+		Element nameElement = document.createElement("fullQualifiedName");
+		nameElement.setNodeValue(this.getFullQualifiedName());
+		thisElement.appendChild(nameElement);
+
+		return thisElement;
+    }
+	
 	/**
 	 * Checks if is anonym class.
 	 * 
@@ -128,7 +133,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 */
 	@SuppressWarnings("unused")
 	private boolean isAnonymClass() {
-		return anonymClass;
+		return this.anonymClass;
 	}
 	
 	/**
@@ -138,17 +143,16 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 */
 	@Transient
 	public int nextAnonCounter() {
-		if (anonymClass) {
+		if (this.anonymClass) {
 			return this.getTypedParent().nextAnonCounter();
 		} else {
-			return ++anonCounter;
+			return ++this.anonCounter;
 		}
 	}
 	
 	@Override
 	public Collection<Annotated> saveFirst() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<Annotated>();
 	}
 	
 	/**
@@ -180,24 +184,16 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	public String toLongString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(superClassName);
+		sb.append(this.superClassName);
 		sb.append(", anonymClass=");
-		sb.append(anonymClass);
+		sb.append(this.anonymClass);
 		sb.append(", childrenSize=");
-		sb.append(children.size());
+		sb.append(this.children.size());
 		
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
 		sb.append(getShortName());
-		sb.append(", getFilePath()=");
-		sb.append(getFilePath());
-		sb.append(", getTimestamp()=");
-		sb.append(getTimestamp());
-		sb.append(", getStartLine()=");
-		sb.append(getStartLine());
-		sb.append(", getEndLine()=");
-		sb.append(getEndLine());
 		sb.append(", parent=");
 		if (getParent() != null) {
 			sb.append(getParent().getFullQualifiedName());
@@ -212,7 +208,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		sb.append("]]");
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,24 +218,16 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(superClassName);
+		sb.append(this.superClassName);
 		sb.append(", anonymClass=");
-		sb.append(anonymClass);
+		sb.append(this.anonymClass);
 		sb.append(", childrenSize=");
-		sb.append(children.size());
+		sb.append(this.children.size());
 		
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
 		sb.append(getShortName());
-		sb.append(", getFilePath()=");
-		sb.append(getFilePath());
-		sb.append(", getTimestamp()=");
-		sb.append(getTimestamp());
-		sb.append(", getStartLine()=");
-		sb.append(getStartLine());
-		sb.append(", getEndLine()=");
-		sb.append(getEndLine());
 		sb.append("]");
 		return sb.toString();
 	}

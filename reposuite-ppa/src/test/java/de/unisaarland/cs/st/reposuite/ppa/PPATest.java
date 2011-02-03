@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElements;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
