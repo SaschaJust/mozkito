@@ -32,7 +32,7 @@ public class RepoSuiteListener implements IEMineEventListener {
 		
 	
 		
-	List<String> changedMethodNames = ((ModificationEvent.ClassChangedEvent)event).getChangedMethods();
+/*	List<String> changedMethodNames = ((ModificationEvent.ClassChangedEvent)event).getChangedMethods();
 	
 		if (changedMethodNames !=null ){
 			  RepoSuiteEvent mCoreEvent = new RepoSuiteEvent(changedMethodNames);
@@ -40,12 +40,13 @@ public class RepoSuiteListener implements IEMineEventListener {
 			    mCoreEvent.createArtifacts();
 			
 		}
-		
+*/		
 		IFile file = ((EditorEvent.EditorOpenedEvent)event).getFile();
 		
 		HashMap<Integer, HighlightIconType> map = new HashMap<Integer, HighlightIconType>() ;
 		
 		map.put(3, HighlightIconType.GREEN);
+		map.put(1, HighlightIconType.YELLOW);
 		
 		
 		SyntaxhighlightingArtifact syn = new SyntaxhighlightingArtifact("hopeitworks", file, map, "hello");

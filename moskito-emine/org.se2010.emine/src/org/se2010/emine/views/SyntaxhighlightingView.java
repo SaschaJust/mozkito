@@ -34,13 +34,13 @@ public class SyntaxhighlightingView extends ArtifactView{
 		for (Map.Entry<Integer,HighlightIconType> mark : map.entrySet()) {
 			String markertype;
 			switch(mark.getValue()){
-				case RED : markertype=M_RED;
-				case GREEN : markertype=M_GREEN;
-				case YELLOW : markertype=M_YELLOW;
-				case TRANSPARENT_1 : markertype=M_TRANS1; 
-				case TRANSPARENT_2 : markertype=M_TRANS2; 
-				case TRANSPARENT_3 : markertype=M_TRANS3; 
-				case TRANSPARENT_4 : markertype=M_TRANS4; 
+				case RED : markertype=M_RED; break;
+				case GREEN : markertype=M_GREEN; break;
+				case YELLOW : markertype=M_YELLOW; break;
+				case TRANSPARENT_1 : markertype=M_TRANS1; break;
+				case TRANSPARENT_2 : markertype=M_TRANS2; break;
+				case TRANSPARENT_3 : markertype=M_TRANS3; break;
+				case TRANSPARENT_4 : markertype=M_TRANS4; break;
 				default : markertype=M_TRANS0;
 			}
 		addMarker(file,markertype,message,mark.getKey());
