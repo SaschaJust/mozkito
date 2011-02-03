@@ -44,23 +44,23 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 public class CrashHandler extends ThreadGroup {
 	
 	private static final Properties                      mailProps = new Properties() {
-		                                                               
-		                                                               private static final long serialVersionUID = -4075576523389682827L;
-		                                                               
-		                                                               {
-			                                                               put("mail.smtp.host",
-			                                                                   "mail.st.cs.uni-saarland.de");
-			                                                               put("mail.transport.protocol", "smtp");
-			                                                               put("mail.to",
-			                                                                   "project_reposuite@st.cs.uni-saarland.de");
-			                                                               put("mail.subject", "RepoSuite Crash Report");
-			                                                               put("mail.sender.name", "RepoSuite Client");
-			                                                               put("mail.sender.address",
-			                                                                   "reposuite-crasher@st.cs.uni-saarland.de");
-			                                                               put("mail.sender.host",
-			                                                                   "hg.st.cs.uni-saarland.de");
-		                                                               }
-	                                                               };
+		
+		private static final long serialVersionUID = -4075576523389682827L;
+		
+		{
+			put("mail.smtp.host",
+					"mail.st.cs.uni-saarland.de");
+			put("mail.transport.protocol", "smtp");
+			put("mail.to",
+					"project_reposuite@st.cs.uni-saarland.de");
+			put("mail.subject", "RepoSuite Crash Report");
+			put("mail.sender.name", "RepoSuite Client");
+			put("mail.sender.address",
+			"reposuite-crasher@st.cs.uni-saarland.de");
+			put("mail.sender.host",
+			"hg.st.cs.uni-saarland.de");
+		}
+	};
 	
 	private static Map<RepoSuiteToolchain, CrashHandler> handlers  = new HashMap<RepoSuiteToolchain, CrashHandler>();
 	
@@ -225,8 +225,8 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	protected String getRepoSuiteSettings() {
 		return (this.application != null)
-		                                 ? this.application.getSettings().toString()
-		                                 : "";
+		? this.application.getSettings().toString()
+				: "";
 	}
 	
 	private String getRuntimeInformation() {
@@ -249,7 +249,7 @@ public class CrashHandler extends ThreadGroup {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Operating System: ");
 		builder.append(systemMXBean.getName()).append(" ").append(systemMXBean.getVersion()).append(" ")
-		       .append(systemMXBean.getArch());
+		.append(systemMXBean.getArch());
 		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
@@ -272,8 +272,8 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	protected String getToolInformation() {
 		return (this.application != null)
-		                                 ? this.application.getSettings().getToolInformation()
-		                                 : "";
+		? this.application.getSettings().getToolInformation()
+				: "";
 	}
 	
 	/**
@@ -291,7 +291,7 @@ public class CrashHandler extends ThreadGroup {
 					
 					if (current.getName().endsWith(FileUtils.fileSeparator + "pom.xml")) {
 						InputStream inputStream = CrashHandler.class.getResourceAsStream(FileUtils.fileSeparator
-						        + current.getName());
+								+ current.getName());
 						BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 						String line;
 						boolean capturing = false;
@@ -350,30 +350,32 @@ public class CrashHandler extends ThreadGroup {
 	 * @param report
 	 *            the report to be send
 	 */
-	@SuppressWarnings ("unused")
 	private void sendReport(final String report) {
-		try {
-			Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);
-			Transport transport = session.getTransport();
-			MimeMessage message = new MimeMessage(session);
-			message.setSubject(CrashHandler.mailProps.getProperty("mail.subject"));
-			message.addRecipient(Message.RecipientType.TO,
-			                     new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
-			message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-			                                    CrashHandler.mailProps.getProperty("mail.sender.name")));
-			message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-			                                      CrashHandler.mailProps.getProperty("mail.sender.name")));
-			message.setContent(report, "text/plain");
-			transport.connect();
-			transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-			transport.close();
-		} catch (MessagingException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-		} catch (UnsupportedEncodingException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+		if ((System.getProperty("disableCrashEmail") == null)
+		        || (System.getProperty("disableCrashEmail").toLowerCase().equals("false"))) {
+			try {
+				Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);
+				Transport transport = session.getTransport();
+				MimeMessage message = new MimeMessage(session);
+				message.setSubject(CrashHandler.mailProps.getProperty("mail.subject"));
+				message.addRecipient(Message.RecipientType.TO,
+						new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
+				message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
+						CrashHandler.mailProps.getProperty("mail.sender.name")));
+				message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
+						CrashHandler.mailProps.getProperty("mail.sender.name")));
+				message.setContent(report, "text/plain");
+				transport.connect();
+				transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+				transport.close();
+			} catch (MessagingException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage());
+				}
+			} catch (UnsupportedEncodingException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
 			}
 		}
 	}
@@ -386,14 +388,14 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0,
-	                                           final Throwable arg1) {
+			final Throwable arg1) {
 		if (!CrashHandler.executed) {
 			CrashHandler.executed = true;
 			
 			if ((arg1 == null) || (arg1 instanceof Shutdown)) {
 				if (Logger.logInfo()) {
 					Logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
-					        + arg1.getMessage());
+							+ arg1.getMessage());
 				}
 			} else {
 				if (Logger.logError()) {
@@ -429,7 +431,7 @@ public class CrashHandler extends ThreadGroup {
 	 * @return
 	 */
 	private String visit(final ThreadGroup group,
-	                     final int level) {
+			final int level) {
 		// Get threads in `group'
 		StringBuilder builder = new StringBuilder();
 		int numThreads = group.activeCount();

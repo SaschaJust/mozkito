@@ -18,6 +18,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -47,6 +48,7 @@ public class RepoSuiteSettings {
 	 * @return <code>true</code> if the argument could be added.
 	 *         <code>False</code> otherwise.
 	 */
+	@NoneNull
 	protected boolean addArgument(final RepoSuiteArgument argument) {
 		Condition.notNull(argument);
 		
@@ -117,6 +119,13 @@ public class RepoSuiteSettings {
 		
 		ss.append("\t");
 		ss.append("-D");
+		ss.append("disableCrashEmail");
+		ss.append(": ");
+		ss.append("If set to `true` no crash emails will be send!");
+		ss.append(System.getProperty("line.separator"));
+		
+		ss.append("\t");
+		ss.append("-D");
 		ss.append("repoSuiteSettings");
 		ss.append(": ");
 		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
@@ -172,7 +181,7 @@ public class RepoSuiteSettings {
 			System.err.println(getHelpString());
 			throw new de.unisaarland.cs.st.reposuite.exceptions.Shutdown();
 		}
-
+		
 		// save given arguments to load if necessary
 		this.commandlineProps = System.getProperties();
 		
@@ -347,7 +356,7 @@ public class RepoSuiteSettings {
 				Logger.warn(sb.toString());
 			}
 		}
-
+		
 		return true;
 	}
 }
