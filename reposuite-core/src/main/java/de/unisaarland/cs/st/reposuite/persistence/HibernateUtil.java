@@ -188,7 +188,7 @@ public class HibernateUtil {
 	 * 
 	 */
 	public void beginTransaction() {
-		if (!hasOpenTransaction()) {
+		if (this.transaction == null) {
 			this.transaction = this.session.beginTransaction();
 		}
 	}
@@ -208,6 +208,7 @@ public class HibernateUtil {
 				throw new RuntimeException(HibernateUtil.class.getSimpleName() + ": " + e.getMessage(), e);
 			}
 		}
+		this.transaction = this.session.beginTransaction();
 	}
 	
 	/**
@@ -306,13 +307,6 @@ public class HibernateUtil {
 		return null;
 	}
 	
-	public boolean hasOpenTransaction() {
-		if(this.session.getTransaction() == null){
-			return false;
-		}else{
-			return true;
-		}
-	}
 	
 	/**
 	 * @param object
