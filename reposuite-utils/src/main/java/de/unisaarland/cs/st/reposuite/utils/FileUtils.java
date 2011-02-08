@@ -14,12 +14,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
-import org.apache.commons.io.filefilter.IOFileFilter;
 
 /**
  * The Class FileUtils.
@@ -125,7 +125,7 @@ public class FileUtils {
 			return null;
 		}
 		
-		File newDir = new File(parentDir.getAbsolutePath() + System.getProperty("file.separator") + name);
+		File newDir = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + name);
 		if (newDir.exists()) {
 			if (newDir.isDirectory()) {
 				
@@ -376,6 +376,44 @@ public class FileUtils {
 	}
 	
 	/**
+	 *
+	 * This method returns an file iterator the iterates over sub-directories only.
+	 *
+	 * @param topLevelDir
+	 * @return An valid file iterator if given top level directory exists and is a directory. Null otherwise.
+	 */
+	@NoneNull
+	public static Iterator<File> getSubDirectoryIterator(final File topLevelDir) {
+		if ((!topLevelDir.exists()) || (topLevelDir.isDirectory())) {
+			return null;
+		}
+		return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
+			
+			@Override
+			public boolean accept(final File file) {
+				return false;
+			}
+			
+			@Override
+			public boolean accept(final File dir, final String name) {
+				return false;
+			}
+		}, new IOFileFilter(){
+			
+			@Override
+			public boolean accept(final File file) {
+				return true;
+			}
+			
+			@Override
+			public boolean accept(final File dir, final String name) {
+				return true;
+			}
+			
+		});
+	}
+	
+	/**
 	 * List files. @see
 	 * 
 	 * @param directory
@@ -396,6 +434,7 @@ public class FileUtils {
 	public static String readFileToString(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}
+	
 	
 	/**
 	 * Unzips a given file to the specified directory.
@@ -454,8 +493,7 @@ public class FileUtils {
 		}
 		return true;
 	}
-
-
+	
 	/**
 	 * Gets the handle.
 	 * 
@@ -464,43 +502,5 @@ public class FileUtils {
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
-
-    /**
-     *
-     * This method returns an file iterator the iterates over sub-directories only.
-     *
-     * @param topLevelDir
-     * @return An valid file iterator if given top level directory exists and is a directory. Null otherwise.
-     */
-    @NoneNull
-    public static Iterator<File> getSubDirectoryIterator(File topLevelDir) {
-        if ((!topLevelDir.exists()) || (topLevelDir.isDirectory())) {
-            return null;
-        }
-        return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
-
-            @Override
-            public boolean accept(File file) {
-                return false;
-            }
-
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        }, new IOFileFilter(){
-
-            @Override
-            public boolean accept(File file) {
-                return true;
-            }
-
-            @Override
-            public boolean accept(File dir, String name) {
-                return true;
-            }
-
-        });
-    }
-
+	
 }

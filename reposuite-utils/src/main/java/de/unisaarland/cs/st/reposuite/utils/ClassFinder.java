@@ -223,7 +223,7 @@ public class ClassFinder {
 					&& current.getName().substring(0, path.length()).equals(path)
 					&& current.getName().endsWith(".class")) {
 				classes.add(Class.forName(current.getName()
-						.replaceAll(StringEscapeUtils.escapeJava(System.getProperty("file.separator")),
+				        .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
 						".").replace(".class", "")));
 			}
 		}
