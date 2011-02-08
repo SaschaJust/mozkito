@@ -20,38 +20,38 @@ public class FileUtilsTest {
 	
 	@Test
 	public void exists() {
-		nameDir = new File(tmpDir.getAbsoluteFile() + System.getProperty("file.separator")
-		        + "reposuiteFileUtilsTestDir");
-		if (!nameDir.mkdirs()) {
+		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
+				+ "reposuiteFileUtilsTestDir");
+		if (!this.nameDir.mkdirs()) {
 			fail();
 		}
-		File newDir = FileUtils.createDir(tmpDir, "reposuiteFileUtilsTestDir");
-		assertEquals(nameDir.getAbsolutePath(), newDir.getAbsolutePath());
-		assertEquals(nameDir, newDir);
+		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir");
+		assertEquals(this.nameDir.getAbsolutePath(), newDir.getAbsolutePath());
+		assertEquals(this.nameDir, newDir);
 	}
 	
 	@Test
 	public void existsAsFile() {
-		nameDir = new File(tmpDir.getAbsoluteFile() + System.getProperty("file.separator")
-		        + "reposuiteFileUtilsTestDir");
+		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
+				+ "reposuiteFileUtilsTestDir");
 		try {
-			if (!nameDir.createNewFile()) {
+			if (!this.nameDir.createNewFile()) {
 				fail();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
-		File newDir = FileUtils.createDir(tmpDir, "reposuiteFileUtilsTestDir");
+		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir");
 		assertEquals(null, newDir);
 	}
 	
 	@Test
 	public void parentDirNoDir() {
 		
-		File file = new File(System.getProperty("file.separator") + RandomStringUtils.random(10, chars));
+		File file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, chars));
 		while (file.exists()) {
-			file = new File(System.getProperty("file.separator") + RandomStringUtils.random(10, chars));
+			file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, chars));
 		}
 		File newDir = FileUtils.createDir(file, "reposuiteFileUtilsTestDir");
 		assertEquals(null, newDir);
@@ -59,13 +59,13 @@ public class FileUtilsTest {
 	
 	@Before
 	public void setUp() {
-		tmpDir = new File(System.getProperty("java.io.tmpdir"));
-		nameDir = tmpDir;
+		this.tmpDir = new File(System.getProperty("java.io.tmpdir"));
+		this.nameDir = this.tmpDir;
 	}
 	
 	@After
 	public void tearDown() {
-		nameDir.delete();
+		this.nameDir.delete();
 	}
 	
 }

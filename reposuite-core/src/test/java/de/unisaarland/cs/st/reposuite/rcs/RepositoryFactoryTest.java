@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.utils;
+package de.unisaarland.cs.st.reposuite.rcs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
