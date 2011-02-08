@@ -126,6 +126,13 @@ public class RepoSuiteSettings {
 		
 		ss.append("\t");
 		ss.append("-D");
+		ss.append("disableLongTests");
+		ss.append(": ");
+		ss.append("If set to `true` no long tests will be executed!");
+		ss.append(System.getProperty("line.separator"));
+		
+		ss.append("\t");
+		ss.append("-D");
 		ss.append("repoSuiteSettings");
 		ss.append(": ");
 		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
