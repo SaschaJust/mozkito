@@ -52,7 +52,7 @@ public class RepositoryTest {
 	@AfterClass
 	public static void afterClass() {
 		try {
-			URL repoURL = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.mercurial");
+			URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
 			File toDelete = new File(repoURL.toURI());
 			FileUtils.deleteDirectory(toDelete);
 			
@@ -88,7 +88,7 @@ public class RepositoryTest {
 			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
 			
 			// UNZIP mercurial repo
-			URL zipURL = RepositoryTest.class.getResource(System.getProperty("file.separator")
+			URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator
 					+ "repotest.mercurial.zip");
 			if (zipURL == null) {
 				fail();
@@ -101,7 +101,7 @@ public class RepositoryTest {
 			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
 			// UNZIP END
 			// UNZIP git repo
-			zipURL = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest.git.zip");
+			zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
 			if (zipURL == null) {
 				fail();
 			}
@@ -114,7 +114,7 @@ public class RepositoryTest {
 				}
 				Repository repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
 				repositories.add(repository);
-				URL url = RepositoryTest.class.getResource(System.getProperty("file.separator") + "repotest."
+				URL url = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
 						+ type.toString().toLowerCase());
 				File urlFile = new File(url.toURI());
 				

@@ -30,7 +30,7 @@ public class GitRevDependencyIteratorTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			URL zipURL = GitRevDependencyIteratorTest.class.getResource(System.getProperty("file.separator")
+			URL zipURL = GitRevDependencyIteratorTest.class.getResource(FileUtils.fileSeparator
 					+ "testGit.zip");
 			if (zipURL == null) {
 				fail();

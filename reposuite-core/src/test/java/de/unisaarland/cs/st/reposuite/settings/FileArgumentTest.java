@@ -21,7 +21,7 @@ public class FileArgumentTest {
 	@Before
 	public void setUp() {
 		this.dir = FileUtils.createDir(tmpDir, "fileargumenttestdir");
-		this.file = new File(tmpDir.getAbsolutePath() + System.getProperty("file.separator") + "fileargumenttestfile");
+		this.file = new File(tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "fileargumenttestfile");
 	}
 	
 	@Test
