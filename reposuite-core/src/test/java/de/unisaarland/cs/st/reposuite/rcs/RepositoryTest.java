@@ -56,6 +56,14 @@ public class RepositoryTest {
 			File toDelete = new File(repoURL.toURI());
 			FileUtils.deleteDirectory(toDelete);
 			
+			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
+			toDelete = new File(repoURL.toURI());
+			FileUtils.deleteDirectory(toDelete);
+			
+			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
+			toDelete = new File(repoURL.toURI());
+			FileUtils.deleteDirectory(toDelete);
+			
 			for (Repository repository : repositories) {
 				if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
 					continue;
@@ -104,7 +112,7 @@ public class RepositoryTest {
 			}
 			FileUtils.unzip(zipFile, baseDir);
 			// UNZIP END
-
+			
 			// UNZIP git repo
 			zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
 			if (zipURL == null) {

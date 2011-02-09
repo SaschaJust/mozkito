@@ -253,7 +253,7 @@ public class GitRepository extends Repository {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-		        "--pretty=format:%H", "--name-status", "-n1", revision }, this.cloneDir, null,
+				"--pretty=format:%H", "--name-status", "-n1", revision }, this.cloneDir, null,
 				new HashMap<String, String>());
 		
 		if (response.getFirst() != 0) {
@@ -515,7 +515,7 @@ public class GitRepository extends Repository {
 		
 		String innerRepoPath = setup(address);
 		
-		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
+		String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_git_clone_"
 		+ DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {

@@ -744,7 +744,7 @@ public class MercurialRepository extends Repository {
 		
 		String innerRepoPath = setup(address);
 		
-		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_clone_"
+		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_hg_clone_"
 		+ DateTimeUtils.currentTimeMillis();
 		
 		// clone the remote repository
