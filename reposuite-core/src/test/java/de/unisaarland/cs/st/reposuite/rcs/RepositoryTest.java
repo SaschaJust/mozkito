@@ -98,14 +98,23 @@ public class RepositoryTest {
 			if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
 				fail();
 			}
-			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
+			File zipFile = new File(zipURL.toURI());
+			if (Logger.logInfo()) {
+				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			}
+			FileUtils.unzip(zipFile, baseDir);
 			// UNZIP END
+
 			// UNZIP git repo
 			zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
 			if (zipURL == null) {
 				fail();
 			}
-			FileUtils.unzip(new File(zipURL.toURI()), baseDir);
+			zipFile = new File(zipURL.toURI());
+			if (Logger.logInfo()) {
+				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			}
+			FileUtils.unzip(zipFile, baseDir);
 			// UNZIP END
 			
 			for (RepositoryType type : RepositoryType.values()) {
