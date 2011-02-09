@@ -53,16 +53,22 @@ public class RepositoryTest {
 	public static void afterClass() {
 		try {
 			URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
-			File toDelete = new File(repoURL.toURI());
-			FileUtils.deleteDirectory(toDelete);
+			if (repoURL != null) {
+				File toDelete = new File(repoURL.toURI());
+				FileUtils.deleteDirectory(toDelete);
+			}
 			
 			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
-			toDelete = new File(repoURL.toURI());
-			FileUtils.deleteDirectory(toDelete);
+			if (repoURL != null) {
+				File toDelete = new File(repoURL.toURI());
+				FileUtils.deleteDirectory(toDelete);
+			}
 			
 			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
-			toDelete = new File(repoURL.toURI());
-			FileUtils.deleteDirectory(toDelete);
+			if (repoURL != null) {
+				File toDelete = new File(repoURL.toURI());
+				FileUtils.deleteDirectory(toDelete);
+			}
 			
 			for (Repository repository : repositories) {
 				if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
