@@ -93,6 +93,8 @@ public class RepositoryTest {
 			}
 			fail();
 		}
+		
+		//TODO delete all reposuite* directories and files from /tmp/
 	}
 	
 	@BeforeClass
@@ -102,8 +104,7 @@ public class RepositoryTest {
 			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
 			
 			// UNZIP mercurial repo
-			URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator
-					+ "repotest.mercurial.zip");
+			URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 			if (zipURL == null) {
 				fail();
 			}
@@ -150,8 +151,10 @@ public class RepositoryTest {
 							Logger.debug("Creating " + type.toString() + " repository at: "
 									+ tmpDirectory.getAbsolutePath());
 						}
-						Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin", new String[] {
-								"create", tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
+						Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin",
+								new String[] { "create", "--config-dir",
+								System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
+								tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
 						returnValue += execute.getFirst();
 						execute = CommandExecutor.execute("svnadmin",
 								new String[] { "load", tmpDirectory.getAbsolutePath() }, tmpDirectory,
