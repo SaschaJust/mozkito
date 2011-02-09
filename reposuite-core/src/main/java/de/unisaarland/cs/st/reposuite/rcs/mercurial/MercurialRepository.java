@@ -742,7 +742,7 @@ public class MercurialRepository extends Repository {
 			final String endRevision,
 			final InputStream inputStream) {
 		
-		String innerRepoPath = setup(address);
+		setup(address);
 		
 		String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_hg_clone_"
 		+ DateTimeUtils.currentTimeMillis();
@@ -750,31 +750,12 @@ public class MercurialRepository extends Repository {
 		// clone the remote repository
 		if (!clone(null, hgName)) {
 			if (Logger.logError()) {
-				Logger.error("Failed to clone mercurial repository!");
+				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
+						+ "`");
 				throw new RuntimeException();
 			}
 		}
 		
-		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
-				getUri().toString(), hgName }, this.cloneDir, null, null);
-		if (returnValue.getFirst() == 0) {
-			this.cloneDir = new File(hgName + FileUtils.fileSeparator + innerRepoPath);
-			if (!this.cloneDir.exists()) {
-				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
-							+ "`");
-				}
-				return;
-			}
-			cacheHashes();
-			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
-			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-			}
-		}
 		if (startRevision == null) {
 			this.setStartRevision(this.getFirstRevisionId());
 		} else {
