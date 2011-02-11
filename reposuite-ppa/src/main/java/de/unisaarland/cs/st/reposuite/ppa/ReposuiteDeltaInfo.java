@@ -1,13 +1,13 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
 
-import org.dom4j.io.XMLWriter;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -75,8 +75,14 @@ public class ReposuiteDeltaInfo {
 			boolean stdout = false;
 			if (xmlFile != null) {
 				try {
-					generator.registerVisitor(new XMLChangeOperationVisitor(new XMLWriter(new FileWriter(xmlFile))));
+					generator.registerVisitor(new XMLChangeOperationVisitor(new FileOutputStream(xmlFile)));
 				} catch (IOException e) {
+					if (Logger.logError()) {
+						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
+								+ "Writing to sstdout!");
+					}
+					stdout = true;
+				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
 								+ "Writing to sstdout!");
@@ -89,8 +95,8 @@ public class ReposuiteDeltaInfo {
 			
 			if (stdout) {
 				try {
-					generator.registerVisitor(new XMLChangeOperationVisitor(new XMLWriter(System.out)));
-				} catch (UnsupportedEncodingException e) {
+					generator.registerVisitor(new XMLChangeOperationVisitor(System.out));
+				} catch (ParserConfigurationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
