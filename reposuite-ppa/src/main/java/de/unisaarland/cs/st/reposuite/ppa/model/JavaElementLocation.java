@@ -6,8 +6,10 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -121,6 +123,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return true;
 	}
 	
+	@Type(type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
 	public T getElement() {
 		return this.element;
 	}
@@ -134,6 +137,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	}
 	
 	@Index(name = "idx_elemlocid")
+	@Id
 	@GeneratedValue
 	public long getId() {
 		return this.id;
