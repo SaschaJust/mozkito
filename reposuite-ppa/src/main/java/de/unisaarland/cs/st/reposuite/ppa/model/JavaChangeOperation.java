@@ -37,7 +37,7 @@ public class JavaChangeOperation implements Annotated {
 	
 	/** The changed element. */
 	@SuppressWarnings("rawtypes")
-	private JavaElementLocation changedElement;
+	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
 	private RCSRevision         revision;
@@ -60,7 +60,7 @@ public class JavaChangeOperation implements Annotated {
 	@NoneNull
 	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
 		setChangeType(type);
-		setChangedElement(element);
+		setChangedElementLocation(element);
 		setRevision(revision);
 	}
 	
@@ -71,7 +71,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@SuppressWarnings("rawtypes")
 	public JavaElementLocation getChangedElementLocation() {
-		return this.changedElement;
+		return this.changedElementLocation;
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Transient
 	public String getChangedFile() {
-		return this.changedElement.getFilePath();
+		return this.changedElementLocation.getFilePath();
 	}
 	
 	/**
@@ -136,8 +136,8 @@ public class JavaChangeOperation implements Annotated {
 	 *            the new changed element
 	 */
 	@SuppressWarnings("rawtypes")
-	private void setChangedElement(final JavaElementLocation changedElement) {
-		this.changedElement = changedElement;
+	private void setChangedElementLocation(final JavaElementLocation changedElement) {
+		this.changedElementLocation = changedElement;
 	}
 	
 	/**
