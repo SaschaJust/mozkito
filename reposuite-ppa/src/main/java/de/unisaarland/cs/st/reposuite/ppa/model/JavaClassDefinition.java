@@ -89,7 +89,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @return the java method definition
 	 */
 	public void addMethod(final JavaMethodDefinition methodDef) {
-		this.getChildren().add(methodDef);
+		super.addChild(methodDef);
 	}
 	
 	/**
@@ -116,15 +116,15 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	}
 	
 	@Override
-    public Element getXMLRepresentation(final Document document) {
+	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement("JavaClassDefinition");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
 		nameElement.setNodeValue(this.getFullQualifiedName());
 		thisElement.appendChild(nameElement);
-
+		
 		return thisElement;
-    }
+	}
 	
 	/**
 	 * Checks if is anonym class.
@@ -208,7 +208,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		sb.append("]]");
 		return sb.toString();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
