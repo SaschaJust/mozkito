@@ -63,14 +63,14 @@ public class PPATypeVisitor extends ASTVisitor {
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final File file, final String filePathPrefix,
-	        final String[] packageFilter, final JavaElementCache elementCache) {
+			final String[] packageFilter, final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.file = file;
 		this.cu = cu;
 		this.elementCache = elementCache;
 		
 		if (file.getAbsolutePath().startsWith(filePathPrefix)) {
-			this.relativeFilePath = file.getAbsolutePath().replaceFirst(filePathPrefix, "");
+			this.relativeFilePath = file.getAbsolutePath().substring(filePathPrefix.length());
 			if (this.relativeFilePath.startsWith(FileUtils.fileSeparator)) {
 				this.relativeFilePath = this.relativeFilePath.substring(1);
 			}
