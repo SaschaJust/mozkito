@@ -50,7 +50,7 @@ public class RCSFile implements Annotated {
 	 * @param path
 	 */
 	RCSFile(final String path, final RCSTransaction transaction) {
-		changedNames.put(transaction.getId(), path);
+		this.changedNames.put(transaction.getId(), path);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -77,7 +77,7 @@ public class RCSFile implements Annotated {
 	@ElementCollection
 	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return changedNames;
+		return this.changedNames;
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class RCSFile implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue
 	private long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public String getLatestPath() {
-		return changedNames.get(new TreeSet<String>(changedNames.keySet()).last());
+		return this.changedNames.get(new TreeSet<String>(this.changedNames.keySet()).last());
 	}
 	
 	/**
@@ -113,12 +113,12 @@ public class RCSFile implements Annotated {
 	@Transient
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
-		while ((current != null) && !changedNames.containsKey(current)) {
+		while ((current != null) && !this.changedNames.containsKey(current.getId())) {
 			current = current.getParent(current.getBranch());
 		}
 		
 		if (current != null) {
-			return changedNames.get(current);
+			return this.changedNames.get(current.getId());
 		} else {
 			return null;
 		}
