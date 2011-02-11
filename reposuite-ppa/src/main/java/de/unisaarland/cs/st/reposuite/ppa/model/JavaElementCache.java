@@ -169,7 +169,9 @@ public class JavaElementCache {
 			} else {
 				if (Logger.logError()) {
 					Logger.error(
-							"Trying to override parent of JavaMethodDefinition. This is not possible. Create new MethodDefinition first.",
+							"Trying to override parent of JavaMethodDefinition '" + result.getFullQualifiedName()
+							+ "'. This is not possible (already set to `" + result.getParent().fullQualifiedName
+					        + "`). Create new MethodDefinition first.",
 							new RuntimeException());
 				}
 			}
