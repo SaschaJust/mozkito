@@ -186,9 +186,14 @@ public class GitRepository extends Repository {
 		Condition.notNull(baseRevision, "cannot compare to NULL revision");
 		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
 		
+		String diffPath = filePath;
+		if (diffPath.startsWith("/")) {
+			diffPath = diffPath.substring(1);
+		}
+		
 		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
-				baseRevision + ":" + filePath }, this.cloneDir, null, new HashMap<String, String>());
+				baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -196,7 +201,8 @@ public class GitRepository extends Repository {
 		
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
-		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + filePath }, this.cloneDir,
+		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + diffPath },
+				this.cloneDir,
 				null, new HashMap<String, String>());
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
