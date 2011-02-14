@@ -91,7 +91,7 @@ public class JavaElementCache {
 	 * 
 	 * @return the java element locations
 	 */
-	public JavaElementLocations getJavaElementLocations(){
+	public JavaElementLocations getJavaElementLocations() {
 		JavaElementLocations result = new JavaElementLocations();
 		result.addAllClassDefs(this.classDefLocations);
 		result.addAllMethodCalls(this.methodCallLocations);
@@ -157,7 +157,8 @@ public class JavaElementCache {
 			@NotNull final JavaClassDefinition parent, @NonNegative final int startLine,
 			@NonNegative final int endLine, @NonNegative final int position) {
 		
-		String cacheName = JavaMethodDefinition.composeFullQualifiedName(fullQualifiedName, signature);
+		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName,
+				signature);
 		if (!methodDefs.containsKey(cacheName)) {
 			methodDefs.put(cacheName, new JavaMethodDefinition(fullQualifiedName, signature, parent));
 		}
@@ -168,11 +169,9 @@ public class JavaElementCache {
 				result.setParent(parent);
 			} else {
 				if (Logger.logError()) {
-					Logger.error(
-							"Trying to override parent of JavaMethodDefinition '" + result.getFullQualifiedName()
+					Logger.error("Trying to override parent of '" + result.getFullQualifiedName()
 							+ "'. This is not possible (already set to `" + result.getParent().fullQualifiedName
-					        + "`). Create new MethodDefinition first.",
-							new RuntimeException());
+							+ "`). Create new MethodDefinition first.", new RuntimeException());
 				}
 			}
 		}
