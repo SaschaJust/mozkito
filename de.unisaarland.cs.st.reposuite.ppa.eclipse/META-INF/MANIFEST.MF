@@ -36,4 +36,5 @@ Bundle-ClassPath: lib/reposuite-core-0.1-SNAPSHOT.jar,
  lib/javassist-3.9.0.GA.jar,
  lib/hibernate-jpa-2.0-api-1.0.0.Final.jar,
  lib/postgresql-9.0-801.jdbc4.jar,
- lib/jta-1.1.jar
+ lib/jta-1.1.jar,
+ lib/difflib-1.1.jar
