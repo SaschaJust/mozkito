@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,6 +68,15 @@ public abstract class JavaElement implements Annotated {
 	@Id
 	public String getFullQualifiedName() {
 		return this.fullQualifiedName;
+	}
+	
+	@Transient
+	public String getPackageName(){
+		int index = this.fullQualifiedName.lastIndexOf(".");
+		if(index > 0){
+			return this.fullQualifiedName.substring(index);
+		}
+		return "";
 	}
 	
 	/**
