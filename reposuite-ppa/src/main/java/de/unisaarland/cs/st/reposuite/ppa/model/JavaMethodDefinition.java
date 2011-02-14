@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -34,13 +35,18 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 * 
 	 * @param name
 	 *            the name
+	 * @param string
 	 * @param signature
 	 *            the signature
 	 * @return the string
 	 */
-	public static String composeFullQualifiedName(final String name, final List<String> signature) {
+	public static String composeFullQualifiedName(final JavaClassDefinition parent, final String methodName,
+			final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(name);
+		
+		sb.append(parent.getFullQualifiedName());
+		sb.append(".");
+		sb.append(methodName);
 		sb.append("(");
 		if (!signature.isEmpty()) {
 			sb.append(signature.get(0));
@@ -84,7 +90,8 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 			parent.addChild(this);
 		}
 		this.setSignature(new ArrayList<String>(signature));
-		this.fullQualifiedName = composeFullQualifiedName(super.getFullQualifiedName(), signature);
+		this.fullQualifiedName = composeFullQualifiedName(parent, super.getFullQualifiedName(),
+				signature);
 	}
 	
 	/*
@@ -151,7 +158,8 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		Element thisElement = document.createElement("JavaMethodDefinition");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		nameElement.setNodeValue(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		nameElement.appendChild(textNode);
 		thisElement.appendChild(nameElement);
 		
 		return thisElement;
