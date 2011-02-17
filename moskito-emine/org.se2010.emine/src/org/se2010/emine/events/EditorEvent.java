@@ -12,18 +12,18 @@ public final class EditorEvent
 	private static abstract class AEditorEvent  implements IEMineEvent
 	{
 		private final List<String> clazzes;
-		protected IFile file;
-		public AEditorEvent(List<String> clazzes,IFile file)
+		private final String       filePath;
+		
+		public AEditorEvent(final List<String> clazzes, final String filePath)
 		{
-			this.clazzes = clazzes;
-			this.file = file;
+			this.clazzes  = clazzes;
+			this.filePath = filePath;
 		}
 		
-		public AEditorEvent(List<String> clazzes)
+		public String getFilePath()
 		{
-			this.clazzes = clazzes;
-		 
-		} 
+			return this.filePath;
+		}
 		
 		public List<String> getAffectedClazzes()
 		{
@@ -39,9 +39,9 @@ public final class EditorEvent
 	
 	public static final class EditorOpenedEvent extends AEditorEvent
 	{
-		public EditorOpenedEvent(List<String> clazzes, IFile file )
+		public EditorOpenedEvent(List<String> clazzes, final String filePath )
 		{
-			super(clazzes,file);
+			super(clazzes, filePath);
 		}
 
 		@Override
@@ -50,18 +50,13 @@ public final class EditorEvent
 			return "EditorOpenedEvent [getAffectedClazzes()="
 					+ getAffectedClazzes() + "]";
 		}
-		
-		public IFile getFile (){
-			
-			return file;
-		}
 	}
 	
 	public static final class EditorClosedEvent extends AEditorEvent
 	{
-		public EditorClosedEvent(List<String> clazzes)
+		public EditorClosedEvent(final List<String> clazzes, final String filePath)
 		{
-			super(clazzes);
+			super(clazzes, filePath);
 		}
 
 		@Override
@@ -74,9 +69,9 @@ public final class EditorEvent
 	
 	public static final class EditorActivatedEvent extends AEditorEvent
 	{
-		public EditorActivatedEvent(List<String> clazzes)
+		public EditorActivatedEvent(final List<String> clazzes, final String filePath)
 		{
-			super(clazzes);
+			super(clazzes, filePath);
 		}
 
 		@Override
@@ -89,9 +84,9 @@ public final class EditorEvent
 	
 	public static final class EditorDeactivatedEvent extends AEditorEvent
 	{
-		public EditorDeactivatedEvent(final List<String> clazzes)
+		public EditorDeactivatedEvent(final List<String> clazzes, final String filePath)
 		{
-			super(clazzes);
+			super(clazzes, filePath);
 		}
 
 		@Override

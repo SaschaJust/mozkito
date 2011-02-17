@@ -11,21 +11,15 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class EclipseEventHandler implements IPartListener, IBufferChangedListener, IElementChangedListener
+public final class EclipseEventHandler implements IPartListener, IBufferChangedListener, IElementChangedListener
 {
 	private ICompilationUnit currentCU;
+//	private IFile            file ;
 	
 	private static EclipseEventHandler instance;
 	
-	IFile file ;
 	
-	public IFile getFile() {
-		return file;
-	}
 
-	public void setFile(IFile file) {
-		this.file = file;
-	}
 
 	private EclipseEventHandler() {}
 	
@@ -66,18 +60,33 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		}
 	}
 	
-	private String extractClassNameFromCU(final ICompilationUnit cu)
+	
+	private StringBuilder getPackageNameFromCU(final ICompilationUnit cu)
 	{
 		final StringBuilder builder  = new StringBuilder();
 		final String[]      segments =  cu.getPath().segments();
 		
 		for(int i = 2; i < segments.length - 1; i++)
 		{
-			builder.append(segments[i]).append(".");
+			builder.append(segments[i]).append('.');
 		}
 		
+		return builder;
+	}
+	
+	
+	private String extractClassNameFromCU(final ICompilationUnit cu)
+	{
+		final StringBuilder builder  = this.getPackageNameFromCU(cu);
+//		final String[]      segments =  cu.getPath().segments();
+//		
+//		for(int i = 2; i < segments.length - 1; i++)
+//		{
+//			builder.append(segments[i]).append('.');
+//		}
+		
 		final String elemName = cu.getElementName();
-		builder.append(elemName.substring(0, elemName.lastIndexOf(".")));
+		builder.append(elemName.substring(0, elemName.lastIndexOf('.')));
 		
 		return builder.toString();
 	}
@@ -176,7 +185,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 										for(final ICompilationUnit cu : pkgTo.getCompilationUnits())
 										{
 											final String cuName = cu.getElementName();
-											cuNames.add( cuName.substring(0, cuName.lastIndexOf(".")));
+											cuNames.add( cuName.substring(0, cuName.lastIndexOf('.')));
 										}
 									} 
 									catch (final JavaModelException e) 
@@ -190,8 +199,8 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 							{
 								for(final String tmpCuName : cuNames)
 								{
-									final String removedClass = pkgFromName + "." + tmpCuName;
-									final String addedClass   = pkgToName   + "." + tmpCuName;
+									final String removedClass = pkgFromName + '.' + tmpCuName;
+									final String addedClass   = pkgToName   + '.' + tmpCuName;
 									
 									final IEMineEvent evt = new ModificationEvent.ClassAddedEvent(addedClass);
 									EMineEventBus.getInstance().fireEvent(evt);
@@ -269,7 +278,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		else 
 		{
 			if( (event.getDelta().getFlags() & IJavaElementDelta.F_CHILDREN)     != 0 &&
-				(event.getDelta().getFlags() & IJavaElementDelta.F_FINE_GRAINED) != 0	&&
+				(event.getDelta().getFlags() & IJavaElementDelta.F_FINE_GRAINED) != 0 &&
 				(event.getDelta().getFlags() & IJavaElementDelta.F_AST_AFFECTED) != 0)
 				{
 					this.handleChangedCUs(deltas);				
@@ -285,22 +294,28 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		{
 			final IJavaElement affectedElem = this.currentCU.getElementAt(event.getOffset());
 			
-			if((affectedElem instanceof IField))
+			if((affectedElem instanceof IField)  || (affectedElem instanceof IMethod))
 			{
 				final String clazzName = this.extractClassNameFromCU(this.currentCU);
 				final String elemName  = affectedElem.getElementName();
 				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
-				evt.addChangedField(elemName);
+				
+				final StringBuilder pkgStrBuilder = this.getPackageNameFromCU(this.currentCU);
+				pkgStrBuilder.append('.').append(elemName);
+				evt.addChangedField(pkgStrBuilder.toString());
+				
+				
+//				evt.addChangedField(elemName);
 				EMineEventBus.getInstance().fireEvent(evt);
 			}
-			else if((affectedElem instanceof IMethod))
-			{
-				final String clazzName = this.extractClassNameFromCU(this.currentCU);
-				final String elemName  = affectedElem.getElementName();
-				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
-				evt.addChangedMethod(elemName);
-				EMineEventBus.getInstance().fireEvent(evt);
-			}
+//			else if((affectedElem instanceof IMethod))
+//			{
+//				final String clazzName = this.extractClassNameFromCU(this.currentCU);
+//				final String elemName  = affectedElem.getElementName();
+//				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName);
+//				evt.addChangedMethod(elemName);
+//				EMineEventBus.getInstance().fireEvent(evt);
+//			}
 		} 
 		catch (final JavaModelException e) 
 		{
@@ -313,18 +328,10 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 	{
 		final ArrayList<String> clazzesList = new ArrayList<String>();
 		
-		
 		try 
-	
 		{
-			
-			IResource resource = currentCU.getCorrespondingResource();
-			
-			this.file = (IFile)resource  ;
-			
 			for(final IType type : this.currentCU.getAllTypes())
 			{
-				IPath p = type.getPath();
 				clazzesList.add(type.getFullyQualifiedName());
 			}
 		}
@@ -366,7 +373,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		if(this.currentCU != null &&  this.currentCU.exists())
 		{
 			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
-			final IEMineEvent       event   = new EditorEvent.EditorOpenedEvent(clazzes,getFile());
+			final IEMineEvent       event   = new EditorEvent.EditorOpenedEvent(clazzes, this.currentCU.getPath().toString());
 			
 			EMineEventBus.getInstance().fireEvent(event);
 		}
@@ -384,7 +391,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		if(this.currentCU != null &&  this.currentCU.exists())
 		{
 			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
-			final IEMineEvent       event   = new EditorEvent.EditorClosedEvent(clazzes);
+			final IEMineEvent       event   = new EditorEvent.EditorClosedEvent(clazzes, this.currentCU.getPath().toString());
 			
 			EMineEventBus.getInstance().fireEvent(event);
 		}
@@ -402,7 +409,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		if(this.currentCU != null &&  this.currentCU.exists())
 		{
 			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
-			final IEMineEvent       event   = new EditorEvent.EditorActivatedEvent(clazzes);
+			final IEMineEvent       event   = new EditorEvent.EditorActivatedEvent(clazzes, this.currentCU.getPath().toString());
 			
 			EMineEventBus.getInstance().fireEvent(event);
 			
@@ -427,7 +434,7 @@ public class EclipseEventHandler implements IPartListener, IBufferChangedListene
 		if(this.currentCU != null &&  this.currentCU.exists())
 		{
 			final ArrayList<String> clazzes = this.extractCorrespondingClasses();
-			final IEMineEvent       event   = new EditorEvent.EditorDeactivatedEvent(clazzes);
+			final IEMineEvent       event   = new EditorEvent.EditorDeactivatedEvent(clazzes, this.currentCU.getPath().toString());
 			
 			EMineEventBus.getInstance().fireEvent(event);
 			
