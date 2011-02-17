@@ -33,7 +33,8 @@ public final class EditorEvent
 		@Override
 		public String toString() 
 		{
-			return "AEditorEvent [clazzes=" + clazzes + "]";
+			return "AEditorEvent [clazzes=" + clazzes + ", filePath="
+					+ filePath + "]";
 		}
 	}
 	
@@ -47,8 +48,8 @@ public final class EditorEvent
 		@Override
 		public String toString() 
 		{
-			return "EditorOpenedEvent [getAffectedClazzes()="
-					+ getAffectedClazzes() + "]";
+			return "EditorOpenedEvent [getFilePath()=" + getFilePath()
+					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
 	
@@ -62,8 +63,8 @@ public final class EditorEvent
 		@Override
 		public String toString() 
 		{
-			return "EditorClosedEvent [getAffectedClazzes()="
-					+ getAffectedClazzes() + "]";
+			return "EditorClosedEvent [getFilePath()=" + getFilePath()
+					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
 	
@@ -77,8 +78,8 @@ public final class EditorEvent
 		@Override
 		public String toString() 
 		{
-			return "EditorActivatedEvent [getAffectedClazzes()="
-					+ getAffectedClazzes() + "]";
+			return "EditorActivatedEvent [getFilePath()=" + getFilePath()
+					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
 	
@@ -92,8 +93,8 @@ public final class EditorEvent
 		@Override
 		public String toString() 
 		{
-			return "EditorDeactivatedEvent [getAffectedClazzes()="
-					+ getAffectedClazzes() + "]";
+			return "EditorDeactivatedEvent [getFilePath()=" + getFilePath()
+					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
 }

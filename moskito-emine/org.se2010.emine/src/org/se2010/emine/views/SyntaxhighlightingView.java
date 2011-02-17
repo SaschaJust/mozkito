@@ -6,10 +6,13 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.internal.Workbench;
 import org.se2010.emine.artifacts.HighlightIconType;
 import org.se2010.emine.artifacts.SyntaxhighlightingArtifact;
 
@@ -34,9 +37,8 @@ public class SyntaxhighlightingView extends ArtifactView{
 		// changed by bfriedrich
 //		IFile file = artifact.getFile();
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IFile          file = root.getProject().getFile(artifact.getFile());
+		final IFile          file = root.getFile(new Path(artifact.getFile()));
 
-		
 		
 		if (!filelist.contains(file)) filelist.add(file);
 		deleteMarkers(file);

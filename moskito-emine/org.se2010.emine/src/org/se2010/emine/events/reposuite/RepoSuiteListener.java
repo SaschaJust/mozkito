@@ -43,6 +43,10 @@ public class RepoSuiteListener implements IEMineEventListener {
 */		
 		// changed by bfriedrich
 		// TODO: event type should be checked before casting
+		if(!(event instanceof EditorEvent.EditorOpenedEvent))
+		{
+			return;
+		}
 //		IFile file = ((EditorEvent.EditorOpenedEvent)event).getFile();
 		final String file = ((EditorEvent.EditorOpenedEvent)event).getFilePath();
 		

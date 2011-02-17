@@ -11,8 +11,9 @@ public final class ModificationEvent
 	private static abstract class ACompilationUnitEvent implements IEMineEvent
 	{
 		private final String claszzName;
+		private final String filePath;
 		
-		public ACompilationUnitEvent(final String clazzName)
+		public ACompilationUnitEvent(final String clazzName, final String filePath)
 		{
 			if(clazzName == null)
 			{
@@ -24,48 +25,67 @@ public final class ModificationEvent
 				throw new IllegalArgumentException("Class name must not be emtpy!");
 			}
 
+			if(filePath == null)
+			{
+				throw new NullPointerException("File path must not be null!");
+			}
+
+			if(filePath.trim().isEmpty())
+			{
+				throw new IllegalArgumentException("File path must not be emtpy!");
+			}
+			
 			this.claszzName = clazzName;
+			this.filePath   = filePath;
 		}
 		
 		public String getClaszzName() 
 		{
-			return claszzName;
+			return this.claszzName;
+		}
+		
+		public String getFilePath()
+		{
+			return this.filePath;
 		}
 
 		@Override
 		public String toString() 
 		{
-			return "ACompilationUnitEvent [claszzName=" + claszzName + "]";
+			return "ACompilationUnitEvent [claszzName=" + claszzName
+					+ ", filePath=" + filePath + "]";
 		}
 	}
 
 	public static final class ClassAddedEvent extends ACompilationUnitEvent
 	{
 
-		public ClassAddedEvent(final String clazzName) 
+		public ClassAddedEvent(final String clazzName, final String filePath) 
 		{
-			super(clazzName);
+			super(clazzName, filePath);
 		}
 
 		@Override
 		public String toString() 
 		{
-			return "ClassAddedEvent [getClaszzName()=" + getClaszzName() + "]";
+			return "ClassAddedEvent [getClaszzName()=" + getClaszzName()
+					+ ", getFilePath()=" + getFilePath() + "]";
 		}
 	}
 	
 	
 	public static final class ClassRemovedEvent extends ACompilationUnitEvent
 	{
-		public ClassRemovedEvent(final String clazzName) 
+		public ClassRemovedEvent(final String clazzName, final String filePath) 
 		{
-			super(clazzName);
+			super(clazzName, filePath);
 		}
 
 		@Override
 		public String toString() 
 		{
-			return "ClassRemovedEvent [getClaszzName()=" + getClaszzName() + "]";
+			return "ClassRemovedEvent [getClaszzName()=" + getClaszzName()
+					+ ", getFilePath()=" + getFilePath() + "]";
 		}
 	}
 	
@@ -79,9 +99,9 @@ public final class ModificationEvent
 		private final List<String>  removedMethods;
 		private final List<String>  changedMethods;
 
-		public ClassChangedEvent(final String clazzName)
+		public ClassChangedEvent(final String clazzName, final String filePath) 
 		{
-			super(clazzName);
+			super(clazzName, filePath);
 			
 			this.addedFields    = new ArrayList<String>();
 			this.changedFields  = new ArrayList<String>();
@@ -222,7 +242,8 @@ public final class ModificationEvent
 					+ changedFields + ", addedMethods=" + addedMethods
 					+ ", removedMethods=" + removedMethods
 					+ ", changedMethods=" + changedMethods
-					+ ", getClaszzName()=" + getClaszzName() + "]";
+					+ ", getClaszzName()=" + getClaszzName()
+					+ ", getFilePath()=" + getFilePath() + "]";
 		}
 	}
 }
