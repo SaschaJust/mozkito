@@ -23,8 +23,8 @@ public class MarkerLabelProvider extends LabelProvider implements ITableLabelPro
 	  public String getColumnText(Object obj, int index) {
 
 		ProblemArtifact marker = (ProblemArtifact)obj;
-	    switch (index) {
-	    
+	    switch (index) 
+	    {
 	    case 3 :
 	    	return marker.getResource();
 	    

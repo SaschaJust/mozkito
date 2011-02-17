@@ -18,6 +18,7 @@ public class ProblemArtifact implements Artifact {
 	private ProblemArtifactTypeList myTypeList;
 	private List<TreeColumn> myColumnList;
 
+	// TODO: it is impossible to get a IFILE instance if you are not inside Eclipse!!!!
 	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f,
 			String path) {
 		this.title = t;
@@ -63,6 +64,21 @@ public class ProblemArtifact implements Artifact {
 		this.myColumnList = myColumList;
 	}
 
+	
+	// changes by bfriedrich
+	// TODO: only intended for fixing compilation problems till implementation is finished
+	public String getResource()
+	{
+		return "ProblemArtifact - Resource";
+	}
+
+	// changes by bfriedrich
+	// TODO: only intended for fixing compilation problems till implementation is finished
+	public long getId()
+	{
+		return System.currentTimeMillis();
+	}
+	
 	@Override
 	public String toString() {
 		return getTitle();

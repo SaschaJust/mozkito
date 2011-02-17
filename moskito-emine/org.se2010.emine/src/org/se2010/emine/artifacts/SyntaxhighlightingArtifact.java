@@ -9,16 +9,17 @@ public class SyntaxhighlightingArtifact implements Artifact{
 	private String title;
 	private Map<Integer,HighlightIconType> map;	// map of Int lines->String color (at the moment red,yellow,green)
 	private String message;
-	private IFile file;
+//	private IFile file;
+	private String file;
 	
-	public SyntaxhighlightingArtifact(String title,IFile file,Map<Integer,HighlightIconType> map, String message){
+	public SyntaxhighlightingArtifact(String title,String file,Map<Integer,HighlightIconType> map, String message){
 		this.title=title;
 		this.map=map;
 		this.message=message;
 		this.file=file;
 	}
 	
-	public IFile getFile(){
+	public String getFile(){
 		return file;
 	}
 	

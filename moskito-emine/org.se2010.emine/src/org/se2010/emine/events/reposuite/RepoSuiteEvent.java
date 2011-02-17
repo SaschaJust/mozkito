@@ -32,41 +32,41 @@ public class RepoSuiteEvent implements IEMineEvent{
 		this.artifacts = artifacts;
 	}
 
-	private ProblemArtifact artifact;
-	
-	public void createArtifacts(){
-		
-		artifacts = new ArrayList<ProblemArtifact>();
-		
-		String methodName  = null;
-	 
-		 
-		 for (int i = 0 ; i < changedMethod.size() ; i++){
-			  methodName = changedMethod.get(i);
-			  artifact = new ProblemArtifact("dummy title", i , "dummy message", methodName);
-				 artifacts.add(artifact);
-
-		 }
-		 
-			EMineEventBus.getInstance().fireEvent(this);
-
-
-		
-	}
-	
-	public void createSyntaxArtifacts (){
-		
-		
-		
-		
-		
-	}
-	
-	public ProblemArtifact getArtifact(){
-		
-		return this.artifact;
-		
-	}
+//	private ProblemArtifact artifact;
+//	
+//	public void createArtifacts(){
+//		
+//		artifacts = new ArrayList<ProblemArtifact>();
+//		
+//		String methodName  = null;
+//	 
+//		 
+//		 for (int i = 0 ; i < changedMethod.size() ; i++){
+//			  methodName = changedMethod.get(i);
+//			  artifact = new ProblemArtifact("dummy title", i , "dummy message", methodName);
+//				 artifacts.add(artifact);
+//
+//		 }
+//		 
+//			EMineEventBus.getInstance().fireEvent(this);
+//
+//
+//		
+//	}
+//	
+//	public void createSyntaxArtifacts (){
+//		
+//		
+//		
+//		
+//		
+//	}
+//	
+//	public ProblemArtifact getArtifact(){
+//		
+//		return this.artifact;
+//		
+//	}
 	 
 
 }

@@ -98,7 +98,9 @@ public class eMineProblemViewMarker extends ViewPart
 		
 		//ProblemArtifact pArtifact = new ProblemArtifact("hello", null, "world", null, "method");
 		
-		viewer.setInput(new ProblemArtifact("Tom", 0, "Dick", "Harry"));
+		// changed by bfriedrich
+//		viewer.setInput(new ProblemArtifact("Tom", 0, "Dick", "Harry"));
+		
 		//create a layout for the viewer
 		GridData layoutData = new GridData (SWT.FILL, SWT.FILL, true, true);
 		viewer.getControl().setLayoutData(layoutData);

@@ -41,7 +41,10 @@ public class RepoSuiteListener implements IEMineEventListener {
 			
 		}
 */		
-		IFile file = ((EditorEvent.EditorOpenedEvent)event).getFile();
+		// changed by bfriedrich
+		// TODO: event type should be checked before casting
+//		IFile file = ((EditorEvent.EditorOpenedEvent)event).getFile();
+		final String file = ((EditorEvent.EditorOpenedEvent)event).getFilePath();
 		
 		HashMap<Integer, HighlightIconType> map = new HashMap<Integer, HighlightIconType>() ;
 		

@@ -18,24 +18,23 @@ import org.se2010.emine.ui.views.markers.eMineProblemViewMarker;
 public class Controller  {
 	
 	
-	private static ProblemArtifact artifact;
-	
-	
-	public Controller(){
-	//	EMineEventBus.getInstance().registerEventListener(RepoSuiteEvent.class, this);	
-	}
-	
-	
-	
-	public void onEvent(IEMineEvent event) {
-		// TODO Auto-generated method stub
-		artifact =   ((RepoSuiteEvent)event).getArtifact();		
-	}
-	
-	
-	public  static ProblemArtifact getArtifact(){
-		return artifact;
-	}
+//	private static ProblemArtifact artifact;
+//	
+//	
+//	public Controller(){
+//	//	EMineEventBus.getInstance().registerEventListener(RepoSuiteEvent.class, this);	
+//	}
+//	
+//	
+//	public void onEvent(IEMineEvent event) {
+//		// TODO Auto-generated method stub
+//		artifact =   ((RepoSuiteEvent)event).getArtifact();		
+//	}
+//	
+//	
+//	public  static ProblemArtifact getArtifact(){
+//		return artifact;
+//	}
 	
 	
  
