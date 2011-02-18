@@ -7,7 +7,14 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.TreeColumn;
 
+import java.util.Map;
+
+import org.eclipse.core.resources.IFile;
+
 public class ProblemArtifact implements Artifact {
+	private int id;
+	private String resource;
+
 	private String title; // serves as ID
 	private Map<String, String> map; // map of String categories->String
 										// properties
@@ -18,9 +25,8 @@ public class ProblemArtifact implements Artifact {
 	private ProblemArtifactTypeList myTypeList;
 	private List<TreeColumn> myColumnList;
 
-	// TODO: it is impossible to get a IFILE instance if you are not inside Eclipse!!!!
-	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f,
-			String path) {
+	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f,	String path) 
+	{
 		this.title = t;
 		this.map = m;
 		this.message = me;
@@ -28,12 +34,40 @@ public class ProblemArtifact implements Artifact {
 		this.path = path;
 	}
 
-	public Map<String, String> getMap() {
-		return map;
+	public ProblemArtifact(String t, int id, String me, String resource) {
+		this.title = t;
+		this.message = me;
+		this.setId(id);
+		this.setResource(resource);
 	}
 
 	public String getMessage() {
 		return message;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setResource(String resource) {
+		this.resource = resource;
+	}
+
+	public String getResource() {
+		return resource;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+	
+	public Map<String, String> getMap()
+	{
+		return this.map;
 	}
 
 	public IFile getFile() {
@@ -64,23 +98,4 @@ public class ProblemArtifact implements Artifact {
 		this.myColumnList = myColumList;
 	}
 
-	
-	// changes by bfriedrich
-	// TODO: only intended for fixing compilation problems till implementation is finished
-	public String getResource()
-	{
-		return "ProblemArtifact - Resource";
-	}
-
-	// changes by bfriedrich
-	// TODO: only intended for fixing compilation problems till implementation is finished
-	public long getId()
-	{
-		return System.currentTimeMillis();
-	}
-	
-	@Override
-	public String toString() {
-		return getTitle();
-	}
 }
