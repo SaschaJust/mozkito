@@ -12,6 +12,7 @@ public class PropertyInitPage extends org.eclipse.ui.dialogs.PropertyPage {
 	Composite parent;
 	GridData data;
 
+	//TODO: Fix uninitialized data attribute
 	public PropertyInitPage(Composite parent) {
 		super();
 		data.widthHint = PropertyPage.TEXT_FIELD_WIDTH;

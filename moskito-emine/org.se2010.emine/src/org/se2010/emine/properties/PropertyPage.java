@@ -210,8 +210,10 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	private boolean saveChanges() {
 
 		boolean change = false;
-		String changes = "";
+//		String changes = "";
 
+		final StringBuilder changes = new StringBuilder();
+		
 		for (PropertyTextField field : inputFields) {
 			String key = field.getVALUE_PROP_KEY();
 			String value = field.getTextField().getText();
@@ -224,12 +226,14 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 					setValue(key, value);
 				}
 				change = true;
-				changes += repo + ";";
+				changes.append(repo).append(';');
 			}
 		}
+		
+		final String[] changed = changes.toString().split(";");
 
-		String[] changed = changes.split(";");
-		for (String repoName : changed) {
+		for (final String repoName : changed) 
+		{
 			fireChangeEvent(repoName);
 		}
 

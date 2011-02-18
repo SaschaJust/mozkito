@@ -27,13 +27,13 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
 		
 		Composite myComposite = createDefaultComposite(parent);
 
-        Label space0 = new Label(myComposite,SWT.NONE);
-        Label space1 = new Label(myComposite,SWT.NONE);
+//        Label space0 = new Label(myComposite,SWT.NONE);
+//        Label space1 = new Label(myComposite,SWT.NONE);
 
 		
-		Composite ch_tool = new Composite(myComposite, SWT.NONE);
-		BooleanFieldEditor tooltip = new BooleanFieldEditor("BOOL",
-       		"Enable Tooltip", ch_tool);
+//		Composite ch_tool = new Composite(myComposite, SWT.NONE);
+//		BooleanFieldEditor tooltip = new BooleanFieldEditor("BOOL",
+//       		"Enable Tooltip", ch_tool);
 
 		Composite hover = new Composite(myComposite,SWT.NONE);
 		GridLayout hover_grid = new GridLayout();
@@ -49,10 +49,10 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
         hovertime.setLayoutData(tool_input);
         hovertime.setText("3");
         
-        Composite ch_highl = new Composite(myComposite, SWT.NONE);
-        BooleanFieldEditor highlight = new BooleanFieldEditor(
-        		"BOOL","Enable Highlighting", ch_highl);
-        Label empty = new Label(myComposite,SWT.NONE);
+//        Composite ch_highl = new Composite(myComposite, SWT.NONE);
+//        BooleanFieldEditor highlight = new BooleanFieldEditor(
+//        		"BOOL","Enable Highlighting", ch_highl);
+//        Label empty = new Label(myComposite,SWT.NONE);
 //        Label empty2 = new Label(myComposite,SWT.NONE);
         Composite mch_highl = new Composite(myComposite, SWT.NONE);
         new RadioGroupFieldEditor("choice","  Highlight Servity:",1,
