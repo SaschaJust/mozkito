@@ -2,7 +2,7 @@ package org.se2010.emine.artifacts;
 
 import org.se2010.emine.events.IEMineEvent;
 
-public class ConfigurationArtifact implements IEMineEvent, Artifact {
+public class ConfigurationArtifact implements IEMineEvent, IArtifact {
 
 	private String projectname;
 	private String Drepository_uri;

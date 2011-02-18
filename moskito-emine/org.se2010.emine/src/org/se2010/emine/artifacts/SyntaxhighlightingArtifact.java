@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 
-public class SyntaxhighlightingArtifact implements Artifact{
+public class SyntaxhighlightingArtifact implements IArtifact{
 
 	private String title;
 	private Map<Integer,HighlightIconType> map;	// map of Int lines->String color (at the moment red,yellow,green)

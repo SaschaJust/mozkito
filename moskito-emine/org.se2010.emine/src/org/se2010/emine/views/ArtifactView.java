@@ -3,7 +3,7 @@ package org.se2010.emine.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.se2010.emine.artifacts.Artifact;
+import org.se2010.emine.artifacts.IArtifact;
 
 public abstract class ArtifactView {
 	
@@ -11,14 +11,14 @@ public abstract class ArtifactView {
 	//for this has it to hold an object of the respective classes?
 	//then TODO add the respective update methodes
 
-	private final List<Artifact> artifacts;
+	private final List<IArtifact> artifacts;
 	
 	public ArtifactView()
 	{
-		this.artifacts = new ArrayList<Artifact>();
+		this.artifacts = new ArrayList<IArtifact>();
 	}
 	
-	public void addArtifact(Artifact artifact){
+	public void addArtifact(IArtifact artifact){
 		artifacts.add(artifact);
 	}
 	

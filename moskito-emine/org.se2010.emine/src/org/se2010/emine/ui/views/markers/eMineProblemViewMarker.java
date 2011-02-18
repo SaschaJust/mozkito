@@ -46,7 +46,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.part.ViewPart;
-import org.se2010.emine.artifacts.Artifact;
+import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
 import org.se2010.emine.listeners.Controller;
 
@@ -59,7 +59,7 @@ public class eMineProblemViewMarker extends ViewPart
 	private String searchString;
 
 	//static final String MARKER_ID = "xyz";
-	private List<Artifact> artifactList;
+	private List<IArtifact> artifactList;
 
 	/**
 	 * Columns for the table viewer

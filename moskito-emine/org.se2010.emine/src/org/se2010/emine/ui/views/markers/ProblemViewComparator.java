@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.dialogs.ViewComparator;
 import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.se2010.emine.artifacts.Artifact;
+import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
 import org.se2010.emine.artifacts.ProblemArtifactTypeList;
 

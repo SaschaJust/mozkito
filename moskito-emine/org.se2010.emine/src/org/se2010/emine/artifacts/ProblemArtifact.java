@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 
-public class ProblemArtifact implements Artifact {
+public class ProblemArtifact implements IArtifact {
 	private int id;
 	private String resource;
 
