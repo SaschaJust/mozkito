@@ -1,4 +1,4 @@
- package org.se2010.emine;
+package org.se2010.emine;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
