@@ -6,24 +6,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog;
-
-public class ProblemArtifactTypeList implements List {
-	private List<ProblemArtifact> myProblemArtifacts = new ArrayList<ProblemArtifact>();
+public class ProblemArtifactTypeList implements List 
+{
+	private List<ProblemArtifact> myProblemArtifacts;
 	private String myType;
 
-	public ProblemArtifactTypeList(String type, List<ProblemArtifact> list) {
+	public ProblemArtifactTypeList()
+	{
+		 this.myProblemArtifacts = new ArrayList<ProblemArtifact>();
+	}
+	
+	public ProblemArtifactTypeList(String type, List<ProblemArtifact> list) 
+	{
 		myType = type;
 		myProblemArtifacts = list;
 	}
+	
 	/**This function adds all artifacts with the correct type from a given ProblemArtifact list*/
-	public synchronized void addFromList (List <ProblemArtifact> list){
-		ListIterator<ProblemArtifact> it = list.listIterator();
-		
-		while(it.hasNext()){
-			ProblemArtifact a = it.next();
-			add(a);
-			a.setTypeList(this);
+	public synchronized void addFromList (List <ProblemArtifact> list)
+	{
+		for(final ProblemArtifact artifact : list)
+		{
+			this.add(artifact);
+			artifact.setTypeList(this);
 		}
 	}
 	

@@ -21,17 +21,15 @@ public class ProblemArtifact implements IArtifact {
 	private String message; // additional details
 	private IFile file; // the file the artifact belongs to
 
-	private String path;
 	private ProblemArtifactTypeList myTypeList;
 	private List<TreeColumn> myColumnList;
 
-	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f,	String path) 
+	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f) 
 	{
 		this.title = t;
 		this.map = m;
 		this.message = me;
 		this.file = f;
-		this.path = path;
 	}
 
 	public ProblemArtifact(String t, int id, String me, String resource) {
@@ -86,8 +84,10 @@ public class ProblemArtifact implements IArtifact {
 		return title;
 	}
 
-	public String[] getDetails() {
-		return (String[]) map.values().toArray();
+	public String[] getDetails() 
+	{
+		final String[] arr = new String[map.values().size()];
+		return map.values().toArray(arr);
 	}
 
 	public List<TreeColumn> getColumnList() {
