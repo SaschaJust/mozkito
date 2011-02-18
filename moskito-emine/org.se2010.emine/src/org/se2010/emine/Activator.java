@@ -1,22 +1,15 @@
  package org.se2010.emine;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.core.JavaElement;
-import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.se2010.emine.artifacts.ConfigurationArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.EclipseEventHandler;
-import org.se2010.emine.events.EclipseEventHandler;
 import org.se2010.emine.events.EditorEvent;
 import org.se2010.emine.events.IEMineEvent;
 import org.se2010.emine.events.IEMineEventListener;
 import org.se2010.emine.events.ModificationEvent;
-import org.se2010.emine.events.reposuite.RepoSuiteEvent;
 import org.se2010.emine.events.reposuite.RepoSuiteListener;
-import org.se2010.emine.listeners.Controller;
 
 /**
  * The activator class controls the plug-in life cycle
