@@ -6,13 +6,13 @@ import java.util.List;
 import org.se2010.emine.artifacts.HighlightIconType;
 import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
-import org.se2010.emine.artifacts.SyntaxhighlightingArtifact;
+import org.se2010.emine.artifacts.SyntaxHighlightingArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.EditorEvent;
 import org.se2010.emine.events.IEMineEvent;
 import org.se2010.emine.events.IEMineEventListener;
 import org.se2010.emine.events.ModificationEvent;
-import org.se2010.emine.views.SyntaxhighlightingView;
+import org.se2010.emine.views.SyntaxHighlightingView;
 
 
 /**
@@ -58,8 +58,8 @@ public final class RepoSuiteListener implements IEMineEventListener
 			map.put(1, HighlightIconType.YELLOW);
 			
 			
-			SyntaxhighlightingArtifact syn = new SyntaxhighlightingArtifact("hopeitworks", file, map, "hello");
-			SyntaxhighlightingView view = new SyntaxhighlightingView();
+			SyntaxHighlightingArtifact syn = new SyntaxHighlightingArtifact("hopeitworks", file, map, "hello");
+			SyntaxHighlightingView view = new SyntaxHighlightingView();
 	        view.updateSyntaxhighlightingView(syn);    
 		}
 		else if (event instanceof ModificationEvent.ClassChangedEvent)

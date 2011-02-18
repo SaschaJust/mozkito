@@ -14,10 +14,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.Workbench;
 import org.se2010.emine.artifacts.HighlightIconType;
-import org.se2010.emine.artifacts.SyntaxhighlightingArtifact;
+import org.se2010.emine.artifacts.SyntaxHighlightingArtifact;
 
 
-public class SyntaxhighlightingView extends ArtifactView{
+public class SyntaxHighlightingView extends ArtifactView{
 
 	//TODO colorscala red to transparent
 	private static final String M_RED = "org.se2010.emine.red_marker";
@@ -30,7 +30,7 @@ public class SyntaxhighlightingView extends ArtifactView{
 	private static final String M_TRANS4 = "org.se2010.emine.trans4_marker";
 	private List<IFile> filelist = new LinkedList<IFile>();
 		
-	public void  updateSyntaxhighlightingView(SyntaxhighlightingArtifact artifact){
+	public void  updateSyntaxhighlightingView(SyntaxHighlightingArtifact artifact){
 		Map<Integer,HighlightIconType> map = artifact.getMap();
 		String message = artifact.getMessage();
 		

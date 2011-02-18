@@ -18,7 +18,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
 
-public class eMineProblemViewMarker extends ViewPart 
+public class EMineProblemViewMarker extends ViewPart 
 {
 
 	private TableViewer viewer;
