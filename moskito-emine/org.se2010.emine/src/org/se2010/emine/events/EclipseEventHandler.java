@@ -317,16 +317,15 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 				final String elemName  = affectedElem.getElementName();
 				final ModificationEvent.ClassChangedEvent evt = new ModificationEvent.ClassChangedEvent(clazzName, this.currentCU.getPath().toString());
 				
-				final StringBuilder pkgStrBuilder = this.getPackageNameFromCU(this.currentCU);
-				pkgStrBuilder.append(elemName);
+				final String methodName = clazzName + '.'  + elemName;
 				
 				if(affectedElem instanceof IField)
 				{
-					evt.addChangedField(pkgStrBuilder.toString());
+					evt.addChangedField(methodName);
 				}
 				else if(affectedElem instanceof IMethod)
 				{
-					evt.addChangedMethod(pkgStrBuilder.toString());
+					evt.addChangedMethod(methodName);
 				}
 				
 				EMineEventBus.getInstance().fireEvent(evt);
