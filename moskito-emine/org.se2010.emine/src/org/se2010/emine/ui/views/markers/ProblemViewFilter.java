@@ -11,8 +11,8 @@ public class ProblemViewFilter extends PatternFilter {
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		if (element instanceof ProblemArtifact) {
-			ProblemArtifact a = (ProblemArtifact) element;
-			for (int i = 0; i < a.getColumnList().size(); i++) {
+			ProblemArtifact artifact = (ProblemArtifact) element;
+			for (int i = 0; i < artifact.getColumnList().size(); i++) {
 				String labelText = ((ITableLabelProvider) ((StructuredViewer) viewer)
 						.getLabelProvider()).getColumnText(element, i);
 				if (labelText == null) {
