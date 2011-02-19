@@ -107,11 +107,11 @@ public class EMineProblemView extends ViewPart implements
 		m2.put("Please Note", "not dangerous");
 
 		ProblemArtifact a1 = new ProblemArtifact("Important Bug", m1, "oho",
-				null, null);
+				null);
 		ProblemArtifact a2 = new ProblemArtifact("Important Mail", m2, "ooo",
-				null, null);
+				null);
 		ProblemArtifact a3 = new ProblemArtifact("Important Rice", m1, "oho",
-				null, null);
+				null);
 		artifactList.add(a1);
 		artifactList.add(a2);
 		artifactList.add(a3);
@@ -196,7 +196,7 @@ public class EMineProblemView extends ViewPart implements
 	 * based on the content of the first artifact's content map
 	 */
 	private void createColumns(Tree tree) {
-		ProblemViewTableLabelProvider labelProvider = new ProblemViewTableLabelProvider();
+//		ProblemViewTableLabelProvider labelProvider = new ProblemViewTableLabelProvider();
 		// First two columns are fixed
 		TreeColumn tc0 = new TreeColumn(tree, SWT.LEFT, 0);
 		tc0.setAlignment(SWT.LEFT);
@@ -217,8 +217,8 @@ public class EMineProblemView extends ViewPart implements
 		// Rest of the columns depends on the keys of the properties map of the
 		// first Problem Artifact
 		if (!artifactList.isEmpty()) {
-			ProblemArtifact a = artifactList.get(0);
-			Iterator<String> it = a.getMap().keySet().iterator();
+			final ProblemArtifact artifact = artifactList.get(0);
+			Iterator<String> it = artifact.getMap().keySet().iterator();
 			int i = 2;
 
 			while (it.hasNext()) {
