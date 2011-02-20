@@ -3,33 +3,69 @@ package org.se2010.emine.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-
+/**
+ * {@link EditorEvent} represents all events relating to Eclipse the Java editor.
+ * 
+ * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+ * @version  1.0 02/2011
+ */
 public final class EditorEvent
 {
+	/**
+	 * {@link EditorEvent} is not intended to be instantiated 
+	 * (only the nested classes shall be created).
+	 */
 	private EditorEvent(){ }
 	
-	private static abstract class AEditorEvent  implements IEMineEvent
+	/**
+	 * {@link AEditorEvent} is the super class of all nested {@link EditorEvent}
+	 * classes.
+	 *  
+	 * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+	 * @version  1.0 02/2011
+	 */
+	private static abstract class AEditorEvent implements IEMineEvent
 	{
 		private final List<String> clazzes;
 		private final String       filePath;
 		
+		/**
+		 * Constructor of {@link AEditorEvent}
+		 * 
+		 * @param clazzes  list of fully qualified class names affected by this
+		 * 				   event
+		 * @param filePath file path of the affected compilation unit
+		 */
 		public AEditorEvent(final List<String> clazzes, final String filePath)
 		{
 			this.clazzes  = clazzes;
 			this.filePath = filePath;
 		}
 		
+		/**
+		 * Returns the file path of the affected compilation unit.
+		 * 
+		 * @return file path
+		 */
 		public String getFilePath()
 		{
 			return this.filePath;
 		}
 		
+		/**
+		 * Returns list of fully qualified class names affected by this
+		 * event.
+		 * 
+		 * @return list of fully qualified class names
+		 */
 		public List<String> getAffectedClazzes()
 		{
 			return new ArrayList<String>(this.clazzes);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() 
 		{
@@ -38,13 +74,29 @@ public final class EditorEvent
 		}
 	}
 	
+	/**
+	 * {@link EditorOpenedEvent} is triggered when an editor has been opened
+	 * 
+	 * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+	 * @version  1.0 02/2011
+	 */
 	public static final class EditorOpenedEvent extends AEditorEvent
 	{
+		/**
+		 * Constructor of {@link EditorOpenedEvent}
+		 * 
+		 * @param clazzes  list of fully qualified class names affected by this
+		 * 				   event
+		 * @param filePath file path of the affected compilation unit
+		 */
 		public EditorOpenedEvent(List<String> clazzes, final String filePath )
 		{
 			super(clazzes, filePath);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() 
 		{
@@ -52,14 +104,30 @@ public final class EditorEvent
 					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
-	
+
+	/**
+	 * {@link EditorClosedEvent} when an editor has been closed
+	 * 
+	 * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+	 * @version  1.0 02/2011
+	 */
 	public static final class EditorClosedEvent extends AEditorEvent
 	{
+		/**
+		 * Constructor of {@link EditorClosedEvent}
+		 * 
+		 * @param clazzes  list of fully qualified class names affected by this
+		 * 				   event
+		 * @param filePath file path of the affected compilation unit
+		 */
 		public EditorClosedEvent(final List<String> clazzes, final String filePath)
 		{
 			super(clazzes, filePath);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() 
 		{
@@ -67,14 +135,30 @@ public final class EditorEvent
 					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
-	
+
+	/**
+	 * {@link EditorActivatedEvent} is triggered when an editor has got focus 
+	 * 
+	 * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+	 * @version  1.0 02/2011
+	 */
 	public static final class EditorActivatedEvent extends AEditorEvent
 	{
+		/**
+		 * Constructor of {@link EditorActivatedEvent}
+		 * 
+		 * @param clazzes  list of fully qualified class names affected by this
+		 * 				   event
+		 * @param filePath file path of the affected compilation unit
+		 */
 		public EditorActivatedEvent(final List<String> clazzes, final String filePath)
 		{
 			super(clazzes, filePath);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() 
 		{
@@ -82,14 +166,30 @@ public final class EditorEvent
 					+ ", getAffectedClazzes()=" + getAffectedClazzes() + "]";
 		}
 	}
-	
+
+	/**
+	 * {@link EditorDeactivatedEvent} when an editor has lost focus
+	 * 
+	 * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+	 * @version  1.0 02/2011
+	 */
 	public static final class EditorDeactivatedEvent extends AEditorEvent
 	{
+		/**
+		 * Constructor of {@link EditorDeactivatedEvent}
+		 * 
+		 * @param clazzes  list of fully qualified class names affected by this
+		 * 				   event
+		 * @param filePath file path of the affected compilation unit
+		 */
 		public EditorDeactivatedEvent(final List<String> clazzes, final String filePath)
 		{
 			super(clazzes, filePath);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() 
 		{

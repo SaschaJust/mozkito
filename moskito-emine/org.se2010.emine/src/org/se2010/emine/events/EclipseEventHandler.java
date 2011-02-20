@@ -15,7 +15,7 @@ import org.eclipse.ui.part.FileEditorInput;
  *    <li>{@link EditorEvent.EditorOpenedEvent}</li>
  *    <ul><li> triggered when an editor has been opened </li></ul>
  *    <li>{@link EditorEvent.EditorActivatedEvent}</li>
- *    <ul><li> triggered when an editor has focus </li></ul>
+ *    <ul><li> triggered when an editor has got focus </li></ul>
  *    <li>{@link EditorEvent.EditorClosedEvent}</li>
  *    <ul><li> triggered when an editor has been closed </li></ul>
  *    <li>{@link EditorEvent.EditorDeactivatedEvent}</li>
