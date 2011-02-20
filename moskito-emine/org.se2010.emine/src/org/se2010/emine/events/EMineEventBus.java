@@ -5,6 +5,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Implementation of {@link IEMineEventBus}. {@link EMineEventBus} is designed
+ * according to Singleton design pattern as there must be only one {@link IEMineEventBus}
+ * instance at runtime and it must be accessible from everywhere. 
+ * 
+ * @TODO Change Singleton to Factory pattern for providing and maintaining {@link IEMineEventBus} instance
+ * 
+ * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+ * @version  1.0 02/2011
+ */
 public final class EMineEventBus implements IEMineEventBus
 {
 	private final Map<Class<? extends IEMineEvent>, List<IEMineEventListener>> listenerMap;
@@ -13,23 +23,36 @@ public final class EMineEventBus implements IEMineEventBus
 
 	private final Lock lock;
 
-	
+	/**
+	 * Private constructor
+	 */
 	private EMineEventBus() 
 	{	
 		this.listenerMap = new ConcurrentHashMap<Class<? extends IEMineEvent>, List<IEMineEventListener>>();
 		this.lock        = new ReentrantLock();
 	}
 	
+	/**
+	 * Provides {@link IEMineEventBus} instance (according to Singleton pattern)
+	 * 
+	 * @return {@link IEMineEventBus} instance
+	 */
 	public static IEMineEventBus getInstance()
 	{
 		return EMineEventBus.instance;				
 	}
 	
+	/**
+	 * Removes all registered listeners.
+	 */
 	public static void clear()
 	{
 		EMineEventBus.instance.listenerMap.clear();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void registerEventListener(final Class<? extends IEMineEvent> eventType,
 									  final IEMineEventListener 		 listener) 
@@ -75,7 +98,9 @@ public final class EMineEventBus implements IEMineEventBus
 		}
 	}
 	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void unregisterEventListener(final IEMineEventListener listener) 
 	{
@@ -92,6 +117,9 @@ public final class EMineEventBus implements IEMineEventBus
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void fireEvent(final IEMineEvent event) 
 	{
