@@ -8,7 +8,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * EclipseEventHandler is responsible for capturing all relevant events triggered by the Eclipse IDE and transforming
- * them to {@link IEMineEvent}s which are then sent via {@link EMineEventBus}. Currently, the following {@link IEMineEvent}s
+ * them to {@link IEMineEvent}s which are then sent via {@link IEMineEventBus}. Currently, the following {@link IEMineEvent}s
  * are sent:<br/>
  * <br/>
  * <ul>
@@ -32,7 +32,7 @@ import org.eclipse.ui.part.FileEditorInput;
  * <ul>
  * 		<li>
  * 			If a method or a field has been renamed within a file, a {@link ModificationEvent.ClassChangedEvent}
- * 			is sent via {@link EMineEventBus}. This event returns the old name as removed element and the new name
+ * 			is sent via {@link IEMineEventBus}. This event returns the old name as removed element and the new name
  * 			as added element. For example, if method <code>org.example.ClassA.doSth</code> is renamed to 
  * 			<code>org.example.ClassA.xxx</code>, {@link ModificationEvent.ClassChangedEvent#getRemovedMethods()}
  * 			returns <code>[org.example.ClassA.doSth]</code> and {@link ModificationEvent.ClassChangedEvent#getAddedMethods()}
@@ -40,13 +40,13 @@ import org.eclipse.ui.part.FileEditorInput;
  * 		</li> 
  * 		<li>
  * 			If, for example, within a method has been changed {@link ModificationEvent.ClassChangedEvent} is sent via
- * 			{@link EMineEventBus} where {@link ModificationEvent.ClassChangedEvent#getChangedMethods()} contains the name
+ * 			{@link IEMineEventBus} where {@link ModificationEvent.ClassChangedEvent#getChangedMethods()} contains the name
  * 			of the changed method.
  * 		</li> 
  * 		<li>
  * 			If a Class has been renamed or the class has been moved to another package, {@link ModificationEvent.ClassRemovedEvent}
  * 			with the old class name and {@link ModificationEvent.ClassAddedEvent} with the new name is sent via the
- * 			{@link EMineEventBus}.
+ * 			{@link IEMineEventBus}.
  * 		</li>
  * </ul>
  * 
@@ -309,7 +309,7 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 	
 	/**
 	 * Identifies all relevant changes of a affected {@link ICompilationUnit} 
-	 * and sends corresponding events via the {@link EMineEventBus}.
+	 * and sends corresponding events via the {@link IEMineEventBus}.
 	 * 
 	 * @param deltas   list of {@link IJavaElementDelta}s belonging to the affected {@link ICompilationUnit}
 	 */
