@@ -3,19 +3,16 @@ package org.se2010.emine.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.se2010.emine.artifacts.ConfigurationArtifact;
 import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.IEMineEventBus;
@@ -46,7 +43,9 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	 */
 	private final String[] VAR_PER_KEY = new String[] { "eMine_repos",
 			"_Drepository.user", "_Drepository.password", "_Drepository.uri",
-			"_vmArg" };
+			"_vmArg", "_repoName" };
+	
+	private static final String[] SUPPORTED_REPOS = new String[]{ "CVS","GIT","MERCURIAL","SUBVERSION" };
 
 	public PropertyPage() {
 		super();
@@ -297,27 +296,36 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		GridLayout tablayout = new GridLayout(2, false);
 		parent.setLayout(tablayout);
 
-		createDefaultLabel(parent, "User");
+		createDefaultLabel(parent, "User*");
 		PropertyTextField user = new PropertyTextField(repoName,
 				VAR_PER_KEY[1], "Username to access repository", parent,
 				SWT.WRAP | SWT.BORDER, data);
 		user.setText(getValue(repoName + VAR_PER_KEY[1]));
 		inputFields.add(user);
 
-		createDefaultLabel(parent, "Password");
+		createDefaultLabel(parent, "Password*");
 		PropertyTextField password = new PropertyTextField(repoName,
 				VAR_PER_KEY[2], "Password to access repository" + " "
 						+ repoName, parent, SWT.PASSWORD | SWT.BORDER, data);
 		password.setText(getValue(repoName + VAR_PER_KEY[2]));
 		inputFields.add(password);
 
-		createDefaultLabel(parent, "Repository-URI");
+		createDefaultLabel(parent, "Repository-URI*");
 		PropertyTextField uri = new PropertyTextField(repoName, VAR_PER_KEY[3],
 				"URI where the rcs repository is located" + " " + repoName,
 				parent, SWT.WRAP | SWT.BORDER, data);
 		uri.setText(getValue(repoName + VAR_PER_KEY[3]));
 		inputFields.add(uri);
 
+		createVMargFields(parent, repoName);
+			
+		createRepoDropdown(parent, repoName);
+		
+		
+	}
+	
+	protected void createVMargFields(Composite parent, String repoName){
+		
 		createDefaultLabel(parent, "VM-Arguments");
 		GridData localLayout = new GridData();
 		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
@@ -328,6 +336,27 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 						| SWT.V_SCROLL, localLayout);
 		vmarg.setText(getValue(repoName + VAR_PER_KEY[4]));
 		inputFields.add(vmarg);
+		
+	}
+	
+	protected void createRepoDropdown(Composite parent, String repoName){
+		
+		//String current = getValue(SUPPORTED_REPOS[5]);
+		
+//		if (current == null || current.contentEquals("")) {
+//			current=SUPPORTED_REPOS[0];
+//		}
+		
+		createDefaultLabel(parent, "Type of Repository*");
+		Combo repoConfig = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		
+		for(String repotype:SUPPORTED_REPOS) {
+		      repoConfig.add(repotype);
+		}
+		
+		repoConfig.setText(SUPPORTED_REPOS[0]);
+		repoConfig.setToolTipText("Type of the repository");
+		
 	}
 
 	/**
@@ -343,7 +372,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		try {
 
 			String result = res.getPersistentProperty(perKey);
-			if (result == null)
+			if (result == null || result.contentEquals(""))
 				return "";
 			return result;
 		} catch (CoreException e) {

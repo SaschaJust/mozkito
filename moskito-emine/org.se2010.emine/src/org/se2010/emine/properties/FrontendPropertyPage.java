@@ -41,7 +41,7 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
         hover.setLayout(hover_grid);
 
         Label hoverLabel = new Label(hover, SWT.NONE);
-        hoverLabel.setText("Hovertime in seconds" );
+        hoverLabel.setText("Hovertime [s]" );
 
         hovertime = new Text(hover, SWT.WRAP | SWT.BORDER);
         GridData tool_input = new GridData();
