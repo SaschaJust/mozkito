@@ -1,27 +1,75 @@
 package org.se2010.emine.events;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
+/**
+ * EclipseEventHandler is responsible for capturing all relevant events triggered by the Eclipse IDE and transforming
+ * them to {@link IEMineEvent}s which are then sent via {@link EMineEventBus}. Currently, the following {@link IEMineEvent}s
+ * are sent:<br/>
+ * <br/>
+ * <ul>
+ *    <li>{@link EditorEvent.EditorOpenedEvent}</li>
+ *    <ul><li> triggered when an editor has been opened </li></ul>
+ *    <li>{@link EditorEvent.EditorActivatedEvent}</li>
+ *    <ul><li> triggered when an editor has focus </li></ul>
+ *    <li>{@link EditorEvent.EditorClosedEvent}</li>
+ *    <ul><li> triggered when an editor has been closed </li></ul>
+ *    <li>{@link EditorEvent.EditorDeactivatedEvent}</li>
+ *	  <ul><li> triggered when an editor has lost focus </li></ul>
+ *    <li>{@link ModificationEvent.ClassChangedEvent}</li>
+ *    <ul><li> triggered when a class has changed such as a modification within a method </li></ul>
+ *    <li>{@link ModificationEvent.ClassAddedEvent}</li>
+ *    <ul><li> triggered when an editor has been added </li></ul>
+ *    <li>{@link ModificationEvent.ClassRemovedEvent}</li>
+ *    <ul><li> Triggered when an editor has been removed </li></ul>
+ * </ul>
+ * 
+ * <b>Note:</b>
+ * <ul>
+ * 		<li>
+ * 			If a method or a field has been renamed within a file, a {@link ModificationEvent.ClassChangedEvent}
+ * 			is sent via {@link EMineEventBus}. This event returns the old name as removed element and the new name
+ * 			as added element. For example, if method <code>org.example.ClassA.doSth</code> is renamed to 
+ * 			<code>org.example.ClassA.xxx</code>, {@link ModificationEvent.ClassChangedEvent#getRemovedMethods()}
+ * 			returns <code>[org.example.ClassA.doSth]</code> and {@link ModificationEvent.ClassChangedEvent#getAddedMethods()}
+ * 			returns <code>[org.example.ClassA.xxx]</code>.
+ * 		</li> 
+ * 		<li>
+ * 			If, for example, within a method has been changed {@link ModificationEvent.ClassChangedEvent} is sent via
+ * 			{@link EMineEventBus} where {@link ModificationEvent.ClassChangedEvent#getChangedMethods()} contains the name
+ * 			of the changed method.
+ * 		</li> 
+ * 		<li>
+ * 			If a Class has been renamed or the class has been moved to another package, {@link ModificationEvent.ClassRemovedEvent}
+ * 			with the old class name and {@link ModificationEvent.ClassAddedEvent} with the new name is sent via the
+ * 			{@link EMineEventBus}.
+ * 		</li>
+ * </ul>
+ * 
+ * 
+ * @author   Benjamin Friedrich (<a href="mailto:friedrich.benjamin@gmail.com">friedrich.benjamin@gmail.com</a>)
+ * @version  1.0 02/2011
+ */
 public final class EclipseEventHandler implements IPartListener, IBufferChangedListener, IElementChangedListener
 {
 	private ICompilationUnit currentCU;
 	
 	private static EclipseEventHandler instance;
 	
-	
-
-
+	/**
+	 * Private constructor to avoid instantiation. The only method which shall be callable is {@link #init()}.
+	 */
 	private EclipseEventHandler() {}
 	
+	
+	/**
+	 * Initializes the Eclipse EMine Eclipse event handling by registering itself as listener to the corresponding
+	 * Eclipse components. If {@link #init()} has already been called, {@link #init()} does nothing.
+	 */
 	synchronized
 	public static void init()
 	{
@@ -34,7 +82,13 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}
 	
-	
+	/**
+	 * Returns list of all {@link IJavaElementDelta}s which are affected by the
+	 * handled event.
+	 * 
+	 * @param   delta  root {@link IJavaElementDelta} to be traversed
+	 * @return  list of affected {@link IJavaElementDelta}s
+	 */
 	private ArrayList<IJavaElementDelta> getAffectedCUDeltas(IJavaElementDelta delta)
 	{
 		final ArrayList<IJavaElementDelta> cus = new ArrayList<IJavaElementDelta>();
@@ -59,7 +113,12 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}
 	
-	
+	/**
+	 * Extracts the package name of the given {@link ICompilationUnit}.
+	 * 
+	 * @param  cu  {@link ICompilationUnit} to be considered
+	 * @return package name
+	 */	
 	private StringBuilder getPackageNameFromCU(final ICompilationUnit cu)
 	{
 		final StringBuilder builder  = new StringBuilder();
@@ -73,7 +132,12 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		return builder;
 	}
 	
-	
+	/**
+	 * Extracts the fully qualified class name of the given {@link ICompilationUnit}.
+	 * 
+	 * @param  cu  {@link ICompilationUnit} to be considered
+	 * @return fully qualified class name
+	 */
 	private String extractClassNameFromCU(final ICompilationUnit cu)
 	{
 		final StringBuilder builder  = this.getPackageNameFromCU(cu);
@@ -84,7 +148,15 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		return builder.toString();
 	}
 	
-	
+	/**
+	 * Collects recursively all interesting deltas matching the given element type
+	 * and delta kinds.
+	 * 
+	 * @param deltas               Array of {@link IJavaElementDelta}s to be considered
+	 * @param kind                 {@link IJavaElementDelta#ADDED}, {@link IJavaElementDelta#REMOVED} or {@link IJavaElementDelta#CHANGED}
+	 * @param targetType           element type of the {@link IJavaElementDelta}s which shall only be considered 
+	 * @param interestingElements  target list in which the names of all interesting {@link IJavaElementDelta}s are collected
+	 */
 	private void collectInterestingDeltas(final IJavaElementDelta[] deltas,  final int kind, final int targetType, final ArrayList<String> interestingElements)
 	{
 		for(final IJavaElementDelta delta : deltas)
@@ -117,8 +189,13 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 			}
 		}		
 	}
-	
-	
+
+	/**
+	 * Handles package relating changes such as moving one or more
+	 * {@link ICompilationUnit}s to another package.
+	 *
+	 * @param delta {@link IJavaElementDelta}
+	 */
 	//TODO minimize complexity
 	private void handleChangedJavaModel(final IJavaElementDelta delta)
 	{
@@ -230,7 +307,12 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}		
 	}
 	
-	
+	/**
+	 * Identifies all relevant changes of a affected {@link ICompilationUnit} 
+	 * and sends corresponding events via the {@link EMineEventBus}.
+	 * 
+	 * @param deltas   list of {@link IJavaElementDelta}s belonging to the affected {@link ICompilationUnit}
+	 */
 	private void handleChangedCUs(final ArrayList<IJavaElementDelta> deltas )
 	{
 		for(final IJavaElementDelta delta : deltas)
@@ -246,7 +328,7 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 			}
 			else if(deltaKind == IJavaElementDelta.REMOVED)
 			{
-				final IEMineEvent evt       = new ModificationEvent.ClassRemovedEvent(clazzName, cu.getPath().toString());
+				final IEMineEvent evt = new ModificationEvent.ClassRemovedEvent(clazzName, cu.getPath().toString());
 				EMineEventBus.getInstance().fireEvent(evt);
 			}
 			else if(deltaKind == IJavaElementDelta.CHANGED)
@@ -282,7 +364,9 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void elementChanged(final ElementChangedEvent event)
 	{
@@ -302,8 +386,10 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 				}
 		}
 	}
-	
-	
+
+	/**
+	 * {@inheritDoc}
+	 */	
 	@Override
 	public void bufferChanged(final BufferChangedEvent event) 
 	{
@@ -337,7 +423,11 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}
 	
-	
+	/**
+	 * Extracts all class names of the current {@link ICompilationUnit}.
+	 * 
+	 * @return list of fully qualified class names
+	 */
 	private ArrayList<String> extractCorrespondingClasses()
 	{
 		final ArrayList<String> clazzesList = new ArrayList<String>();
@@ -358,7 +448,12 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		return clazzesList;
 	}
 	
-	
+	/**
+	 * Extracts the {@link ICompilationUnit} which belongs to the given {@link IWorkbenchPart}
+	 * and considers it as current {@link ICompilationUnit}.
+	 * 
+	 * @param part {@link IWorkbenchPart}
+	 */
 	private void extractCurrentCompilationUnit(final IWorkbenchPart part)
 	{
 		this.currentCU = null;
@@ -376,8 +471,9 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}	
 	}
 	
-	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void partOpened(IWorkbenchPart part) 
 	{
@@ -393,9 +489,9 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}		
 	
-	
-	
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void partClosed(final IWorkbenchPart part) 
 	{
@@ -410,10 +506,16 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 			EMineEventBus.getInstance().fireEvent(event);
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */	
 	@Override
 	public void partBroughtToTop(final IWorkbenchPart part) {	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void partActivated(final IWorkbenchPart part) 
 	{
@@ -438,7 +540,9 @@ public final class EclipseEventHandler implements IPartListener, IBufferChangedL
 		}
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void partDeactivated(final IWorkbenchPart part) 
 	{
