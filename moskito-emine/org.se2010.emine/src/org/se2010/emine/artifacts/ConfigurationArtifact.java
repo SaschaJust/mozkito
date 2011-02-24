@@ -2,6 +2,12 @@ package org.se2010.emine.artifacts;
 
 import org.se2010.emine.events.IEMineEvent;
 
+
+/**
+ * This Artifact is sent over the EventBus, if the user changes the back-end-configuration. 
+ * @author Amras
+ *
+ */
 public class ConfigurationArtifact implements IEMineEvent, IArtifact {
 
 	private String projectname;
@@ -88,6 +94,10 @@ public class ConfigurationArtifact implements IEMineEvent, IArtifact {
 
 	public String getDdatabase_user() {
 		return Ddatabase_user;
+	}
+	
+	public String getVMarg(){
+		return this.vmArg;
 	}
 
 
