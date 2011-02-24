@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -103,7 +104,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		Element thisElement = document.createElement("JavaMethodCall");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		nameElement.setNodeValue(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		nameElement.appendChild(textNode);
 		thisElement.appendChild(nameElement);
 		
 		return thisElement;
