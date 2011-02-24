@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
+import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -111,6 +112,51 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 			c = c.getParent();
 		}
 		return 0;
+	}
+	
+	/**
+	 * Checks if any of the given transactions was committed into this branch.
+	 * 
+	 * @param tIds
+	 *            the transaction ids to check for
+	 * @return A sorted set of transactions committed into this branch
+	 */
+	@Transient
+	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
+		//TODO add test case
+		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
+		for(String id : tIds){
+			RCSTransaction t = this.containsTransaction(id);
+			if(t != null){
+				result.add(t);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Checks if the given transaction id was committed in this branch. Returns
+	 * the RCSTransaction if found, otherwise <code>null</code>.
+	 * 
+	 * @param tId
+	 *            the t id
+	 * @return the transaction if found. Otherwise <code>null</code>
+	 */
+	@Transient
+	public RCSTransaction containsTransaction(final String tId) {
+		//TODO add test case
+		if (this.getBegin().getId().equals(tId)) {
+			return this.getBegin();
+		}
+		
+		RCSTransaction current = this.getEnd();
+		while(!current.equals(this.getBegin())){
+			if (current.getId().equals(tId)) {
+				return current;
+			}
+			current = current.getParent(this);
+		}
+		return null;
 	}
 	
 	/**
@@ -278,26 +324,27 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb .append("RCSBranch [id=");
-		sb .append(getGeneratedId());
-		sb .append(", name=");
-		sb .append(getName());
-		sb .append(", parent=");
-		if(getParent() != null){
-			sb .append(getParent());
-		}else{
-			sb .append("null");
+		sb.append("RCSBranch [id=");
+		sb.append(getGeneratedId());
+		sb.append(", name=");
+		sb.append(getName());
+		sb.append(", parent=");
+		if (getParent() != null) {
+			sb.append(getParent());
+		} else {
+			sb.append("null");
 		}
-		sb .append(", end=");
-		if(getEnd() != null){
-			sb .append(getEnd().getId());
-		}else{
-			sb .append("null");
+		sb.append(", end=");
+		if (getEnd() != null) {
+			sb.append(getEnd().getId());
+		} else {
+			sb.append("null");
 		}
 		sb.append(", mergedIn=");
 		sb.append(getMergedIn());
