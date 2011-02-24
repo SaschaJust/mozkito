@@ -4,21 +4,29 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 @Entity
 public class JavaElementLocation<T extends JavaElement> implements Comparable<JavaElementLocation<T>>, Annotated {
+	
+	public static enum LineCover {
+		DEFINITION, BODY, DEF_AND_BODY, FALSE
+	};
 	
 	/**
 	 * 
@@ -31,18 +39,30 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	private int               position;
 	private T                 element;
 	private String            filePath         = "<unknown>";
+	private int               bodyStartLine;
+	private Set<Integer>      commentLines     = new HashSet<Integer>();
 	
 	@SuppressWarnings("unused")
 	private JavaElementLocation() {
 	}
 	
 	public JavaElementLocation(@NotNull final T element, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, @NotNull final String filePath) {
+			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
+			@NotNull final String filePath) {
 		this.setElement(element);
 		this.setStartLine(startLine);
 		this.setEndLine(endLine);
 		this.setPosition(position);
 		this.setFilePath(filePath);
+		this.setBodyStartLine(bodyStartLine);
+	}
+	
+	@Transient
+	public void addCommentLines(final int from, final int to){
+		Condition.check(from <= to, "You must supply a closed interval.");
+		for(int i = from; i <= to; ++i){
+			this.commentLines .add(i);
+		}
 	}
 	
 	@Override
@@ -62,26 +82,70 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		}
 	}
 	
-	public boolean coversAllLines(final Collection<Integer> lines) {
+	public LineCover coversAllLines(final Collection<Integer> lines) {
+		//TODO add test case
+		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
-			if (!((getStartLine() <= line) && (getEndLine() >= line))) {
-				return false;
+			LineCover tmpLC = coversLine(line);
+			if (tmpLC.equals(LineCover.FALSE)) {
+				return tmpLC;
+			}
+			switch (lc) {
+				case DEF_AND_BODY:
+					break;
+				case BODY:
+					if (tmpLC.equals(LineCover.DEFINITION)) {
+						lc = LineCover.DEF_AND_BODY;
+					}
+				case DEFINITION:
+					if (tmpLC.equals(LineCover.BODY)) {
+						lc = LineCover.DEF_AND_BODY;
+					}
+				default:
+					lc = tmpLC;
+					break;
 			}
 		}
-		return true;
+		return lc;
 	}
 	
-	public boolean coversAnyLine(final Collection<Integer> lines) {
+	public LineCover coversAnyLine(final Collection<Integer> lines) {
+		//TODO add test case
+		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
-			if ((getStartLine() <= line) && (getEndLine() >= line)) {
-				return true;
+			LineCover tmpLC = coversLine(line);
+			if (!tmpLC.equals(LineCover.FALSE)) {
+				switch (lc) {
+					case DEF_AND_BODY:
+						return lc;
+					case BODY:
+						if (tmpLC.equals(LineCover.DEFINITION)) {
+							return LineCover.DEF_AND_BODY;
+						}
+						break;
+					case DEFINITION:
+						if (tmpLC.equals(LineCover.BODY)) {
+							return LineCover.DEF_AND_BODY;
+						}
+						break;
+					default:
+						lc = tmpLC;
+						break;
+				}
 			}
 		}
-		return false;
+		return lc;
 	}
 	
-	public boolean coversLine(final int line) {
-		return ((getStartLine() <= line) && (getEndLine() >= line));
+	public LineCover coversLine(final int line) {
+		//TODO add test case
+		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
+			if ((getBodyStartLine() > 0) && (line >= getBodyStartLine())) {
+				return LineCover.BODY;
+			}
+			return LineCover.DEFINITION;
+		}
+		return LineCover.FALSE;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -104,14 +168,15 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		} else if (!this.element.equals(other.element)) {
 			return false;
 		}
-		if (this.endLine != other.endLine) {
-			return false;
-		}
 		if (this.filePath == null) {
 			if (other.filePath != null) {
 				return false;
 			}
 		} else if (!this.filePath.equals(other.filePath)) {
+			return false;
+		}
+		//		if (!(getElement() instanceof JavaElementDefinition)) {
+		if (this.endLine != other.endLine) {
 			return false;
 		}
 		if (this.position != other.position) {
@@ -120,7 +185,17 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		if (this.startLine != other.startLine) {
 			return false;
 		}
+		//		}
 		return true;
+	}
+	
+	public int getBodyStartLine() {
+		return this.bodyStartLine;
+	}
+	
+	@ElementCollection
+	public Set<Integer> getCommentLines() {
+		return this.commentLines;
 	}
 	
 	@Type(type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
@@ -160,7 +235,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		thisElement.setAttribute("position", "" + getPosition());
 		
 		Element filePathElement = document.createElement("filePath");
-		filePathElement.setNodeValue(getFilePath());
+		Text textNode = document.createTextNode(getFilePath());
+		filePathElement.appendChild(textNode);
 		thisElement.appendChild(filePathElement);
 		
 		thisElement.appendChild(getElement().getXMLRepresentation(document));
@@ -173,10 +249,12 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.element == null) ? 0 : this.element.hashCode());
-		result = prime * result + this.endLine;
 		result = prime * result + ((this.filePath == null) ? 0 : this.filePath.hashCode());
-		result = prime * result + this.position;
-		result = prime * result + this.startLine;
+		if (!(getElement() instanceof JavaElementDefinition)) {
+			result = prime * result + this.endLine;
+			result = prime * result + this.position;
+			result = prime * result + this.startLine;
+		}
 		return result;
 	}
 	
@@ -185,6 +263,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		Set<Annotated> set = new HashSet<Annotated>();
 		set.add(this.getElement());
 		return set;
+	}
+	
+	protected void setBodyStartLine(final int bodyStartLine) {
+		this.bodyStartLine = bodyStartLine;
+	}
+	
+	protected void setCommentLines(final Set<Integer> commentLines) {
+		this.commentLines = commentLines;
 	}
 	
 	private void setElement(final T element) {

@@ -13,8 +13,12 @@ import java.util.Stack;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.LineComment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -23,10 +27,11 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
@@ -36,20 +41,21 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
  */
 public class PPATypeVisitor extends ASTVisitor {
 	
-	public static String                                      UNKNOWN_PACKAGE  = "<UNKNOWN>";
-	private static String[]                                   primTypes        = { "Class", "Character", "Byte",
+	public static String                                           UNKNOWN_PACKAGE  = "<UNKNOWN>";
+	private static String[]                                        primTypes        = { "Class", "Character", "Byte",
 		"Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
 		"Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
-	private final Stack<Tuple<JavaClassDefinition, Integer>>  classStack       = new Stack<Tuple<JavaClassDefinition, Integer>>();
-	private final Stack<Tuple<JavaMethodDefinition, Integer>> methodStack      = new Stack<Tuple<JavaMethodDefinition, Integer>>();
-	protected CompilationUnit                                 cu;
-	private final File                                        file;
-	protected String[]                                        packageFilter;
-	private String                                            packageName;
-	protected HashSet<String>                                 primitives;
-	private final Set<PPAVisitor>                             visitors         = new HashSet<PPAVisitor>();
-	private String                                            relativeFilePath = "";
-	private final JavaElementCache                            elementCache;
+	private final Stack<JavaElementLocation<JavaClassDefinition>>  classStack       = new Stack<JavaElementLocation<JavaClassDefinition>>();
+	private final Stack<JavaElementLocation<JavaMethodDefinition>> methodStack      = new Stack<JavaElementLocation<JavaMethodDefinition>>();
+	protected CompilationUnit                                      cu;
+	private final File                                             file;
+	protected String[]                                             packageFilter;
+	private String                                                 packageName;
+	protected HashSet<String>                                      primitives;
+	private final Set<PPAVisitor>                                  visitors         = new HashSet<PPAVisitor>();
+	private String                                                 relativeFilePath = "";
+	private final JavaElementCache                                 elementCache;
+	private ASTNode                                                previousNode     = null;
 	
 	/**
 	 * Instantiates a new pPA type visitor.
@@ -176,6 +182,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 			}
 		}
+		this.previousNode = node;
 	}
 	
 	/*
@@ -192,17 +199,41 @@ public class PPATypeVisitor extends ASTVisitor {
 		int endLine = this.cu.getLineNumber(node.getStartPosition() + node.getLength() - 1);
 		
 		if (!this.methodStack.isEmpty()) {
-			if (this.methodStack.peek().getSecond() < currentLine) {
+			if (this.methodStack.peek().getEndLine() < currentLine) {
 				this.methodStack.pop();
 			}
 		}
 		
 		while ((!this.classStack.isEmpty())
-				&& (this.cu.getLineNumber(node.getStartPosition()) > this.classStack.peek().getSecond())) {
+				&& (this.cu.getLineNumber(node.getStartPosition()) > this.classStack.peek().getEndLine())) {
 			this.classStack.pop();
 		}
 		
-		if (node instanceof TypeDeclaration) {
+		//mark comment in definitions and handle them when checking for covered lines
+		if (node instanceof Comment) {
+			int startline = this.cu.getLineNumber(node.getStartPosition());
+			int endline = this.cu.getLineNumber(node.getStartPosition() + node.getLength());
+			boolean markComment = true;
+			if (node instanceof LineComment) {
+				int previousLine = -1;
+				if (this.previousNode != null) {
+					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
+							+ this.previousNode.getLength());
+				}
+				if (previousLine == startline) {
+					markComment = false;
+				}
+			}
+			if (markComment) {
+				if (!this.methodStack.isEmpty()) {
+					this.methodStack.peek().addCommentLines(startline, endline);
+				}
+				if (!this.classStack.isEmpty()) {
+					this.classStack.peek().addCommentLines(startline, endline);
+				}
+			}
+			
+		} else if (node instanceof TypeDeclaration) {
 			
 			TypeDeclaration td = (TypeDeclaration) node;
 			
@@ -210,17 +241,30 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			if (!this.classStack.isEmpty()) {
 				//FOUND INNER CLASS: add parent to class definition
-				parent = this.classStack.peek().getFirst();
+				parent = this.classStack.peek().getElement();
 			}
 			
-			JavaClassDefinition classDef = this.elementCache.getClassDefinition(this.packageName + "."
-					+ td.getName().toString(), this.relativeFilePath, parent, currentLine, endLine,
-					td.getStartPosition(), this.packageName);
+			int startLine = currentLine;
+			if (td.getJavadoc() != null) {
+				int javaDocLength = td.getJavadoc().getLength();
+				int pos = node.getStartPosition() + javaDocLength + 1;
+				startLine = this.cu.getLineNumber(pos);
+			}
+			
+			@SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = td.bodyDeclarations();
+			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
+					+ " body declarations!");
+			BodyDeclaration bodyDeclaration = bodyDeclarations.get(0);
+			int bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
+			
+			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(
+					this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
+					endLine, bodyStartLine, td.getStartPosition(), this.packageName);
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
 						+ "` and class name `" + td.getName().toString() + "`");
 			}
-			this.classStack.push(new Tuple<JavaClassDefinition, Integer>(classDef, endLine));
+			this.classStack.push(classDefLoc);
 			
 			Type superClassType = td.getSuperclassType();
 			if (superClassType != null) {
@@ -230,7 +274,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					if (superClassName.startsWith("src.")) {
 						superClassName = superClassName.substring(4);
 					}
-					this.classStack.peek().getFirst().setSuperClassName(superClassName);
+					this.classStack.peek().getElement().setSuperClassName(superClassName);
 				}
 			}
 			
@@ -244,28 +288,43 @@ public class PPATypeVisitor extends ASTVisitor {
 				return;
 			}
 			
-			int anonCount = this.classStack.peek().getFirst().nextAnonCounter();
-			if (!this.classStack.peek().getFirst().getShortName()
-					.equals(this.classStack.peek().getFirst().getShortName() + "$" + anonCount)) {
+			AnonymousClassDeclaration acd = (AnonymousClassDeclaration) node;
+			@SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
+			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
+					+ " body declarations!");
+			BodyDeclaration bodyDeclaration = bodyDeclarations.get(0);
+			int bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
+			
+			int anonCount = this.classStack.peek().getElement().nextAnonCounter();
+			if (!this.classStack.peek().getElement().getShortName()
+					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
-				String parentName = this.classStack.peek().getFirst().getFullQualifiedName();
+				String parentName = this.classStack.peek().getElement().getFullQualifiedName();
 				if (parentName.contains("$")) {
 					int index = parentName.lastIndexOf("$");
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaClassDefinition classDef = this.elementCache.getClassDefinition(parentName + "$" + anonCount,
-						this.relativeFilePath, this.classStack.peek().getFirst(), currentLine, node.getStartPosition(),
-						endLine, this.packageName);
-				this.classStack.push(new Tuple<JavaClassDefinition, Integer>(classDef, endLine));
+				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
+						+ "$" + anonCount, this.relativeFilePath, this.classStack.peek().getElement(), currentLine,
+						node.getStartPosition(), endLine, bodyStartLine, this.packageName);
+				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
 			MethodDeclaration md = (MethodDeclaration) node;
 			
-			//only consider method signatures!
-			int bodyStartLine = this.cu.getLineNumber(md.getBody().getStartPosition());
-			if (endLine > bodyStartLine) {
-				endLine = bodyStartLine;
+			int startLine = currentLine;
+			
+			Block body = md.getBody();
+			int bodyStartLine = -1;
+			if (body != null) {
+				this.cu.getLineNumber(body.getStartPosition());
+			}
+			
+			if (md.getJavadoc() != null) {
+				int javaDocLength = md.getJavadoc().getLength();
+				int pos = node.getStartPosition() + javaDocLength + 1;
+				startLine = this.cu.getLineNumber(pos);
 			}
 			
 			if (this.classStack.isEmpty()) {
@@ -282,18 +341,17 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
-				JavaMethodDefinition methodDef = this.elementCache.getMethodDefinition(md.getName().toString(),
-						arguments,
-						this.getRelativeFilePath(), this.classStack.peek().getFirst(), currentLine, endLine,
-						node.getStartPosition());
+				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md
+						.getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
+						.getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);
 				
-				this.classStack.peek().getFirst().addMethod(methodDef);
+				this.classStack.peek().getElement().addMethod(methodDefLoc.getElement());
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {
 						Logger.warn("Adding method definition to method stack while stack is not empty. This is not impossible but happens rarely!");
 					}
 				}
-				this.methodStack.push(new Tuple<JavaMethodDefinition, Integer>(methodDef, endLine));
+				this.methodStack.push(methodDefLoc);
 			}
 		}
 		

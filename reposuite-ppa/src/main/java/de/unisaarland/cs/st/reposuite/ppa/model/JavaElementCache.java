@@ -73,16 +73,17 @@ public class JavaElementCache {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName, @NotNull final String file,
+	public JavaElementLocation<JavaClassDefinition> getClassDefinition(@NotNull final String fullQualifiedName,
+			@NotNull final String file,
 			final JavaClassDefinition parent, @NonNegative final int startLine, @NonNegative final int endLine,
-			@NonNegative final int position, @NotNull final String packageName) {
+			@NonNegative final int position, @NonNegative final int bodyStartLine, @NotNull final String packageName) {
 		
 		if (!classDefs.containsKey(fullQualifiedName)) {
 			classDefs.put(fullQualifiedName, new JavaClassDefinition(fullQualifiedName, parent, packageName));
 		}
-		JavaClassDefinition result = classDefs.get(fullQualifiedName);
-		this.classDefLocations.add(new JavaElementLocation<JavaClassDefinition>(result, startLine, endLine, position,
-				file));
+		JavaElementLocation<JavaClassDefinition> result = new JavaElementLocation<JavaClassDefinition>(classDefs.get(fullQualifiedName), startLine, endLine, position,
+				bodyStartLine, file);
+		this.classDefLocations.add(result);
 		return result;
 	}
 	
@@ -118,7 +119,8 @@ public class JavaElementCache {
 	 *            the position
 	 * @return the method call
 	 */
-	public JavaMethodCall getMethodCall(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
+	public JavaElementLocation<JavaMethodCall> getMethodCall(@NotNull final String fullQualifiedName,
+			@NotNull final List<String> signature,
 			@NotNull final String file, @NotNull final JavaElementDefinition parent, @NonNegative final int startLine,
 			@NonNegative final int endLine, @NonNegative final int position) {
 		
@@ -127,9 +129,9 @@ public class JavaElementCache {
 			methodCalls.put(cacheName, new JavaMethodCall(fullQualifiedName, signature));
 		}
 		//TODO add parent to location
-		JavaMethodCall methodCall = methodCalls.get(cacheName);
-		this.methodCallLocations.add(new JavaElementLocation<JavaMethodCall>(methodCall, startLine, endLine, position,
-				file));
+		JavaElementLocation<JavaMethodCall> methodCall = new JavaElementLocation<JavaMethodCall>(
+				methodCalls.get(cacheName), startLine, endLine, position, -1, file);
+		this.methodCallLocations.add(methodCall);
 		return methodCall;
 	}
 	
@@ -152,32 +154,31 @@ public class JavaElementCache {
 	 *            the position
 	 * @return the method definition
 	 */
-	public JavaMethodDefinition getMethodDefinition(@NotNull final String fullQualifiedName,
+	public JavaElementLocation<JavaMethodDefinition> getMethodDefinition(@NotNull final String fullQualifiedName,
 			@NotNull final List<String> signature, @NotNull final String file,
 			@NotNull final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position) {
+			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine) {
 		
-		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName,
-				signature);
+		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName, signature);
 		if (!methodDefs.containsKey(cacheName)) {
 			methodDefs.put(cacheName, new JavaMethodDefinition(fullQualifiedName, signature, parent));
 		}
-		JavaMethodDefinition result = methodDefs.get(cacheName);
+		JavaElementLocation<JavaMethodDefinition> result = new JavaElementLocation<JavaMethodDefinition>(
+		        methodDefs.get(cacheName), startLine, endLine, position, bodyStartLine, file);
 		
-		if (result.getParent() != parent) {
-			if (result.getParent() == null) {
-				result.setParent(parent);
+		if (result.getElement().getParent() != parent) {
+			if (result.getElement().getParent() == null) {
+				result.getElement().setParent(parent);
 			} else {
 				if (Logger.logError()) {
-					Logger.error("Trying to override parent of '" + result.getFullQualifiedName()
-							+ "'. This is not possible (already set to `" + result.getParent().fullQualifiedName
+					Logger.error("Trying to override parent of '" + result.getElement().getFullQualifiedName()
+							+ "'. This is not possible (already set to `" + result.getElement().getParent().fullQualifiedName
 							+ "`). Create new MethodDefinition first.", new RuntimeException());
 				}
 			}
 		}
 		
-		this.methodDefLocations.add(new JavaElementLocation<JavaMethodDefinition>(result, startLine, endLine, position,
-				file));
+		this.methodDefLocations.add(result);
 		return result;
 	}
 }

@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
@@ -120,7 +121,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		Element thisElement = document.createElement("JavaClassDefinition");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		nameElement.setNodeValue(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		nameElement.appendChild(textNode);
 		thisElement.appendChild(nameElement);
 		
 		return thisElement;

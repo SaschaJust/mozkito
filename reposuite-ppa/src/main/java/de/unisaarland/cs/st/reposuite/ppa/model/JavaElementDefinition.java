@@ -39,6 +39,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	/** The children. */
 	protected Map<String, JavaElementDefinition> children         = new HashMap<String, JavaElementDefinition>();
 	
+	
+	
 	/**
 	 * Instantiates a new java element definition.
 	 * 
@@ -76,6 +78,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 		return true;
 	}
 	
+	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -105,6 +109,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 		return true;
 	}
 	
+	
+
 	/**
 	 * Gets the children.
 	 * 
@@ -116,11 +122,14 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 		return this.children.values();
 	}
 	
+	
+	
 	/**
 	 * Gets the package name.
 	 * 
 	 * @return the package name
 	 */
+	@Override
 	@Transient
 	public String getPackageName() {
 		if (!super.getFullQualifiedName().contains(".")) {
@@ -156,6 +165,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 		return result;
 	}
 	
+	
+	
 	/**
 	 * Sets the children.
 	 * 
@@ -166,6 +177,8 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	private void setChildren(final Map<String, JavaElementDefinition> children) {
 		this.children = children;
 	}
+	
+	
 	
 	/**
 	 * Sets the parent.

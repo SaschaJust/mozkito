@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -110,9 +109,9 @@ public class JavaChangeOperation implements Annotated {
 	
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement(this.changeType.toString());
-		Attr revision = document.createAttribute("revision");
-		revision.setNodeValue(this.getRevision().getTransaction().getId());
-		thisElement.setAttributeNode(revision);
+		//		Attr revision = document.createAttribute("revision");
+		//		revision.setNodeValue(this.getRevision().getTransaction().getId());
+		//		thisElement.setAttributeNode(revision);
 		thisElement.appendChild(getChangedElementLocation().getXMLRepresentation(document));
 		return thisElement;
 	}
