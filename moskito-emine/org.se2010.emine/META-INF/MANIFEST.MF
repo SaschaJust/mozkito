@@ -10,15 +10,20 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.2",
  org.eclipse.ui.ide;bundle-version="3.5.2",
  org.eclipse.core.resources;bundle-version="3.5.2",
  org.eclipse.ui.views;bundle-version="3.4.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.se2010.emine;uses:="org.eclipse.ui.plugin,org.osgi.framework",
+ org.se2010.emine.artifacts,
+ org.se2010.emine.events,
+ org.se2010.emine.events.reposuite,
+ org.se2010.emine.listeners,
  org.se2010.emine.properties;
   uses:="org.eclipse.core.runtime,
    org.eclipse.ui,
    org.eclipse.ui.dialogs,
    org.eclipse.swt.widgets",
- org.se2010.emine.ui.views.markers;uses:="org.eclipse.ui.views.markers"
+ org.se2010.emine.ui.views.markers;uses:="org.eclipse.ui.views.markers",
+ org.se2010.emine.views
 Import-Package: org.eclipse.core.internal.resources,
  org.eclipse.jdt.core,
  org.eclipse.jdt.core.dom,
