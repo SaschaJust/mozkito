@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Emine
 Bundle-SymbolicName: org.se2010.emine;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: org.se2010.emine.Activator
 Bundle-Vendor: se2010
 Require-Bundle: org.eclipse.ui;bundle-version="3.5.2",
