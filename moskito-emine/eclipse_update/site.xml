@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.se2010.emine.feature_1.0.0.jar" id="org.se2010.emine.feature" version="1.0.0" os="linux,macosx,win32" nl="en_US" arch="x86,x86_64">
+      <category name="new_category_1"/>
+   </feature>
+   <category-def name="new_category_1" label="eMine">
+      <description>
+         The aim of &lt;i&gt;eMine&lt;/i&gt; is to provide an &lt;a href=&quot;http://www.eclipse.org/&quot;&gt;Eclipse&lt;/a&gt;
+plug-in as well as a framework for Mining Software Archives tool
+(MSA) developed by &lt;a href=&quot;http://www.st.cs.uni-saarland.de/&quot;&gt;Software
+Engineering Chair at the Saarland University&lt;/a&gt;.
+      </description>
+   </category-def>
+</site>
