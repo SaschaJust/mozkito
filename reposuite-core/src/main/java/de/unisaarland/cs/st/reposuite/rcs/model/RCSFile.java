@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
@@ -113,7 +114,28 @@ public class RCSFile implements Annotated {
 	@Transient
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
+		
 		while ((current != null) && !this.changedNames.containsKey(current.getId())) {
+			
+			//if current transaction is a merge
+			Set<RCSTransaction> currentParents = current.getParents();
+			if (currentParents.size() > 1) {
+				TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
+				//for each merged branch check if it contains any of the transaction ids
+				for (RCSTransaction p : currentParents) {
+					RCSBranch parentBranch = p.getBranch();
+					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.equals(RCSBranch.MASTER))) {
+						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
+					}
+				}
+				//if we found a branch that contains a transaction and got merged here
+				if(hits.size() > 0){
+					//mark it as hit and continue
+					current = hits.last();
+					continue;
+				}
+			}
+			
 			current = current.getParent(current.getBranch());
 		}
 		
