@@ -19,7 +19,6 @@ import org.se2010.emine.artifacts.SyntaxHighlightingArtifact;
 
 public class SyntaxHighlightingView extends ArtifactView{
 
-	//TODO colorscala red to transparent
 	private static final String M_RED = "org.se2010.emine.red_marker";
 	private static final String M_GREEN = "org.se2010.emine.green_marker";
 	private static final String M_YELLOW = "org.se2010.emine.yellow_marker";
@@ -30,6 +29,10 @@ public class SyntaxHighlightingView extends ArtifactView{
 	private static final String M_TRANS4 = "org.se2010.emine.trans4_marker";
 	private List<IFile> filelist = new LinkedList<IFile>();
 		
+/**
+ * 
+ * @param artifact the new artifact which containes the necissary information for highlighting
+ */
 	public void  updateSyntaxhighlightingView(SyntaxHighlightingArtifact artifact){
 		Map<Integer,HighlightIconType> map = artifact.getMap();
 		String message = artifact.getMessage();
@@ -37,7 +40,7 @@ public class SyntaxHighlightingView extends ArtifactView{
 		// changed by bfriedrich
 //		IFile file = artifact.getFile();
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IFile          file = root.getFile(new Path(artifact.getFile()));
+		IFile          file = root.getFile(new Path(artifact.getFile()));
 
 		
 		if (!filelist.contains(file)) filelist.add(file);
@@ -73,6 +76,13 @@ public class SyntaxHighlightingView extends ArtifactView{
 		}
 	}
 	
+	/**
+	 * 
+	 * @param file in which to place the markers
+	 * @param marker_type of the marker which is to set
+	 * @param message displayed on hover
+	 * @param lineNumber in which the marker should get placed
+	 */
 	private void addMarker(IFile file, String marker_type, String message, int lineNumber) {
 		try {
 			IMarker marker = file.createMarker(marker_type);
