@@ -120,10 +120,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author) {
-		Condition.notNull(id);
-		Condition.notNull(message);
-		Condition.notNull(timestamp);
-		Condition.notNull(author);
+		Condition.notNull(id, "id must not be null");
+		Condition.notNull(message, "message must not be null");
+		Condition.notNull(timestamp, "timestamp must not be null");
+		Condition.notNull(author, "author must not be null");
 		
 		setId(id);
 		setMessage(message);
@@ -177,7 +177,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Transient
 	@NoneNull
 	protected boolean addRevision(final RCSRevision revision) {
-		Condition.notNull(revision);
+		Condition.notNull(revision, "Revision must not be Null");
 		return getRevisions().add(revision);
 	}
 	
@@ -256,8 +256,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			} else if (getBranch().getEnd().getChild(getBranch()) == null) {
 				return 1;
 			} else {
-				return getBranch().getEnd().getChild(getBranch())
+				int r = getBranch().getEnd().getChild(getBranch())
 				.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+				if (r != 0) {
+					return r;
+				} else {
+					if (getTimestamp().isBefore(transaction.getTimestamp())) {
+						return -1;
+					} else if (getTimestamp().isAfter(transaction.getTimestamp())) {
+						return 1;
+					}
+					return 0;
+				}
 			}
 		}
 	}
@@ -341,7 +351,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * 
 	 * @return the java timestamp
 	 */
-	@Temporal (TemporalType.TIMESTAMP)
+	@SuppressWarnings("unused")
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	@Index (name = "idx_timestamp")
 	private Date getJavaTimestamp() {
@@ -376,7 +387,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				@Override
 				public boolean evaluate(final Object object) {
 					RCSTransaction transaction = (RCSTransaction) object;
-					return transaction.getBranch().equals(branch);
+					if (transaction.getBranch() == null) {
+						return false;
+					}
+					return transaction.getBranch().getName().equals(branch.getName());
 				}
 			});
 		}
