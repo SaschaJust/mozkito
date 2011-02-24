@@ -35,7 +35,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 //	private List<PropertyTextField> initFields = new ArrayList<PropertyTextField>();
 	
 	String projectName = "";
-	public static final String MSA_CORE_name = "Repo-panther";
+	public static final String MSA_CORE_name = "Repo-Panther";
 	/**
 	 * This field is used to identify the qualified names for storing in the workbench properties.<p>
 	 * <b> Don't ever touch the order of this array!</b> <p>
@@ -43,17 +43,25 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	 */
 	private final String[] VAR_PER_KEY = new String[] { "eMine_repos",
 			"_Drepository.user", "_Drepository.password", "_Drepository.uri",
-			"_vmArg", "_repoName" };
+			"_vmArg", "_Drepository_type", "_Dcache_size", "_Ddatabase_type", "Dlog_level" };
 	
 	private static final String[] SUPPORTED_REPOS = new String[]{ "CVS","GIT","MERCURIAL","SUBVERSION" };
-
+	private static final String[] SUPPORTED_DBS = new String[] {"POSTGRESQL","MYSQL"};
+	
+	Combo repoConfig;
+	Combo databaseConfig;
+	
 	public PropertyPage() {
 		super();
 		this.data = new GridData();
 		data.widthHint = TEXT_FIELD_WIDTH;
 		data.heightHint = TEXT_FIELD_HEIGHT;
-	}
 
+	}
+	
+	/**
+	 * This is the initial method to build the content of the property-page.
+	 */
 	protected Control createContents(Composite parent) {
 		
 		Composite backendpage = new Composite(parent, SWT.NONE);
@@ -74,78 +82,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	}
 
-	/**
-	 * This method implements the initialization page of the back-end-configuration.<p>
-	 * All describing labels AND text-fields are inititialized empty in a Grid-layout.
-	 * 
-	 * @param parent the graphical container, the page is bedded in.
-	 */
-//	private void createInitPage(Composite parent) {
-//
-//		GridLayout overview = new GridLayout(1, false);
-//		overview.verticalSpacing = 15;
-//		parent.setLayout(overview);
-//
-//		createDefaultLabel(parent,
-//				"Here you can provide a new repository for eMine.");
-//
-//		// creating data fields for a new type of repository
-//
-//		Composite initPage = new Composite(parent, SWT.NONE);
-//
-//		GridLayout initPageLayout = new GridLayout(2, false);
-//		initPageLayout.horizontalSpacing = 15;
-//		initPage.setLayout(initPageLayout);
-//
-//		createDefaultLabel(initPage, "Repository Name *");
-//
-//		PropertyTextField newRepo = new PropertyTextField(
-//				"",
-//				VAR_PER_KEY[0],
-//				"The name of the repository is used\nto store your values locally.",
-//				initPage, SWT.WRAP | SWT.BORDER, data);
-//		initFields.add(newRepo);
-//		
-//		createDefaultLabel(initPage, "User *");
-//
-//		PropertyTextField newUser = new PropertyTextField("", VAR_PER_KEY[1],
-//				"Username to access repository", initPage, SWT.WRAP
-//						| SWT.BORDER, data);
-//		initFields.add(newUser);
-//
-//
-//		createDefaultLabel(initPage, "Password *");
-//
-//		PropertyTextField newpw = new PropertyTextField("", VAR_PER_KEY[2],
-//				"Password to access repository", initPage, SWT.PASSWORD
-//						| SWT.BORDER, data);
-//		initFields.add(newpw);
-//
-//
-//		createDefaultLabel(initPage, "Repository Path *");
-//
-//		PropertyTextField newURI = new PropertyTextField("", VAR_PER_KEY[3],
-//				"URI where the rcs repository is located", initPage, SWT.WRAP
-//						| SWT.BORDER, data);
-//		initFields.add(newURI);
-//
-//
-//		createDefaultLabel(initPage, "VM Arguments");
-//
-//		GridData localLayout = new GridData();
-//		localLayout.heightHint = 3 * TEXT_FIELD_HEIGHT;
-//		localLayout.widthHint = TEXT_FIELD_WIDTH;
-//		PropertyTextField newVMarg = new PropertyTextField("", VAR_PER_KEY[4],
-//				"Provide additional flags to core", initPage, SWT.WRAP
-//						| SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, localLayout);
-//
-//		initFields.add(newVMarg);
-//
-//		// create Warning Message
-//
-//		createDefaultLabel(parent, "* necessary values");
-//
-//	}
+
 	
 	/**
 	 * creates a standardized label for back-end-page 
@@ -158,48 +95,6 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	}
 
-	/**
-	 * Stores any kind of new repository provided by the user in the back-end-property-interface.<p>
-	 * 
-	 * It checks crucial parts of provided information: <p>
-	 * * no separator symbol (e.g. ';') <br>
-	 * * no emptiness of as necessary marked information <br>
-	 * * no double occurrence of unique identifier (e.g. Repository Name)
-	 * @return: <b>true</b> indicates if storing process was successful or nothing was stored.
-	 *          <b>false</b> indicates that some input was malformed.
-	 */
-//	private boolean storeNewRepo() {
-//
-//		String newRepoName = initFields.get(0).getTextField().getText();
-//		if (newRepoName == null || newRepoName.contentEquals(""))
-//			return true;
-//
-//		String newUserName = initFields.get(1).getTextField().getText();
-//		String newPassword = initFields.get(2).getTextField().getText();
-//		String newUrl = initFields.get(3).getTextField().getText();
-//		String newVMarg = initFields.get(4).getTextField().getText();
-//		String repoList = getValue(VAR_PER_KEY[0]);
-//
-//		if (repoList.contains(newRepoName) || newRepoName.contains(";")
-//				|| newUserName.contentEquals("")
-//				|| newPassword.contentEquals("") || newUrl.contentEquals("")) {
-//			// TODO: some AlertMessage: Insufficient information provided
-//			return false;
-//		}
-//
-//		repoList += newRepoName + ";";
-//
-//		setValue(VAR_PER_KEY[0], repoList);
-//		setValue(newRepoName + VAR_PER_KEY[1], newUserName);
-//		setValue(newRepoName + VAR_PER_KEY[2], newPassword);
-//		setValue(newRepoName + VAR_PER_KEY[3], newUrl);
-//		storeVMarg(newRepoName + VAR_PER_KEY[4], newVMarg);
-//		
-//		fireChangeEvent(newRepoName);
-//
-//		return true;
-//
-//	}
 
 	/**
 	 * Actual saving of any changes made by the user in the interface. <p>
@@ -209,32 +104,33 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	private boolean saveChanges() {
 
 		boolean change = false;
-//		String changes = "";
-
-		final StringBuilder changes = new StringBuilder();
 		
 		for (PropertyTextField field : inputFields) {
 			String key = field.getVALUE_PROP_KEY();
 			String value = field.getTextField().getText();
-			String repo = field.getRepoName();
-
+			
 			if (!value.contentEquals(getValue(key))) {
 				if (key.contentEquals(VAR_PER_KEY[4])) {
 					storeVMarg(key, value);
-				} else {
-					setValue(key, value);
+					change = true;
+					continue;
 				}
-				change = true;
-				changes.append(repo).append(';');
-			}
-		}
-		
-		final String[] changed = changes.toString().split(";");
+				if (key.contentEquals(VAR_PER_KEY[6]))
+				{
+					int csize = Integer.valueOf(value);
+					setValue(key, String.valueOf(csize));
+					change = true;
+					continue;
+				}
+				
+				setValue(key, value);
 
-		for (final String repoName : changed) 
-		{
-			fireChangeEvent(repoName);
+			}
+
 		}
+		setValue(VAR_PER_KEY[5], repoConfig.getText());
+		setValue(VAR_PER_KEY[7], databaseConfig.getText());
+		fireChangeEvent(this.projectName);
 
 		return change;
 	}
@@ -242,12 +138,21 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	/**
 	 * fires a Configuration-Artifact via the <Code> EventBus</Code> to the MSA-Core.
 	 */
-	private void fireChangeEvent(String repoName) {
+	private void fireChangeEvent(String name) {
+		
+		String vmArg = getValue(name + VAR_PER_KEY[4]);
+		String repoType = getValue(VAR_PER_KEY[5]);
+		String csize = getValue(VAR_PER_KEY[6]);
+		int csizeInt = Integer.valueOf(csize);
+		String dbType = getValue(VAR_PER_KEY[7]);
+		String logLevel = getValue(VAR_PER_KEY[8]);
+
+		
 		ConfigurationArtifact artifact = new ConfigurationArtifact(this.projectName,
-				getValue(repoName + VAR_PER_KEY[1]), getValue(repoName
-						+ VAR_PER_KEY[2]), getValue(repoName
-						+ VAR_PER_KEY[3]), 0, null, null, null,
-				getValue(repoName + VAR_PER_KEY[4]));
+				getValue(name + VAR_PER_KEY[1]), getValue(name
+						+ VAR_PER_KEY[2]), getValue(name
+						+ VAR_PER_KEY[3]), csizeInt, dbType , logLevel, repoType ,
+				vmArg);
 		
 		 IEMineEventBus bus = EMineEventBus.getInstance();
 		 bus.fireEvent(artifact);
@@ -300,30 +205,45 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		PropertyTextField user = new PropertyTextField(repoName,
 				VAR_PER_KEY[1], "Username to access repository", parent,
 				SWT.WRAP | SWT.BORDER, data);
-		user.setText(getValue(repoName + VAR_PER_KEY[1]));
+		user.setText(getValue(VAR_PER_KEY[1]));
 		inputFields.add(user);
 
 		createDefaultLabel(parent, "Password*");
 		PropertyTextField password = new PropertyTextField(repoName,
 				VAR_PER_KEY[2], "Password to access repository" + " "
 						+ repoName, parent, SWT.PASSWORD | SWT.BORDER, data);
-		password.setText(getValue(repoName + VAR_PER_KEY[2]));
+		password.setText(getValue(VAR_PER_KEY[2]));
 		inputFields.add(password);
 
 		createDefaultLabel(parent, "Repository-URI*");
 		PropertyTextField uri = new PropertyTextField(repoName, VAR_PER_KEY[3],
 				"URI where the rcs repository is located" + " " + repoName,
 				parent, SWT.WRAP | SWT.BORDER, data);
-		uri.setText(getValue(repoName + VAR_PER_KEY[3]));
+		uri.setText(getValue(VAR_PER_KEY[3]));
 		inputFields.add(uri);
 
-		createVMargFields(parent, repoName);
-			
-		createRepoDropdown(parent, repoName);
+		createDefaultLabel(parent,"Loglevel");
+		PropertyTextField loglevel = new PropertyTextField(repoName, VAR_PER_KEY[8], "determines the log level", parent,  SWT.WRAP | SWT.BORDER, data);
+		loglevel.setText(getValue(VAR_PER_KEY[8]));
+		inputFields.add(loglevel);
 		
+		createDefaultLabel(parent, "Cachesize*");
+		PropertyTextField csize = new PropertyTextField(repoName, VAR_PER_KEY[6],"determines the cache size (number of logs) that are prefetched during reading", parent,  SWT.WRAP | SWT.BORDER, data);
+		csize.setText(getValue(VAR_PER_KEY[6]));
+		inputFields.add(csize);
+	
+		
+		
+		createRepoDropdown(parent, repoName);
+		createVMargFields(parent, repoName);
 		
 	}
 	
+	/**
+	 * The VM-argument field is a special field (size)
+	 * @param parent
+	 * @param repoName
+	 */
 	protected void createVMargFields(Composite parent, String repoName){
 		
 		createDefaultLabel(parent, "VM-Arguments");
@@ -339,25 +259,51 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 		
 	}
 	
+	/**
+	 * Creates the two Dropdown-Menus for DBType and REPOTYPE <br>
+	 * Per default (if no values were added yet) it displays the first entry from the respective List. 
+	 * @param parent
+	 * @param repoName
+	 */
 	protected void createRepoDropdown(Composite parent, String repoName){
 		
-		//String current = getValue(SUPPORTED_REPOS[5]);
+		String key = VAR_PER_KEY[5];
 		
-//		if (current == null || current.contentEquals("")) {
-//			current=SUPPORTED_REPOS[0];
-//		}
-		
-		createDefaultLabel(parent, "Type of Repository*");
-		Combo repoConfig = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		createDefaultLabel(parent, "Type of Repository");
+		repoConfig = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		
 		for(String repotype:SUPPORTED_REPOS) {
 		      repoConfig.add(repotype);
 		}
 		
-		repoConfig.setText(SUPPORTED_REPOS[0]);
+		String test = getValue(key);
+		if (test.contentEquals("")){
+			repoConfig.setText(SUPPORTED_REPOS[0]);
+		} else {
+			repoConfig.setText(test);
+		}
 		repoConfig.setToolTipText("Type of the repository");
 		
-	}
+		String dbKey = VAR_PER_KEY[7];
+		
+		createDefaultLabel(parent, "Type of Database");
+		databaseConfig = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		
+		for(String database:SUPPORTED_DBS){
+			databaseConfig.add(database);
+		}
+		
+		String dbTest = getValue(dbKey);
+		
+		if (dbTest.contentEquals("")){
+			databaseConfig.setText(SUPPORTED_DBS[0]);
+		} else {
+			databaseConfig.setText(dbTest);
+		}
+		
+		databaseConfig.setToolTipText("Type of the repository");
+		
+}
 
 	/**
 	 * This method encapsulates the IResource from project's workspace. <p>
@@ -367,6 +313,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	 */
 	protected String getValue(String key) {
 
+		
 		QualifiedName perKey = new QualifiedName(key, key);
 		IResource res = (IResource) getElement();
 		try {
@@ -397,10 +344,18 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	}
 
+	
+	/**
+	 * Overrides the perform button. If one field is entered wrongly, you can't exit.
+	 */
 	public boolean performOk() {
 
 		
-		saveChanges();
+		try {
+			saveChanges();
+		} catch (NumberFormatException e){
+			return false;
+		}
 		return super.performOk();
 
 	}

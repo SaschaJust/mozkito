@@ -42,11 +42,6 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
         hovertime.setLayoutData(tool_input);
         hovertime.setText("3");
         
-//        Composite ch_highl = new Composite(myComposite, SWT.NONE);
-//        BooleanFieldEditor highlight = new BooleanFieldEditor(
-//        		"BOOL","Enable Highlighting", ch_highl);
-//        Label empty = new Label(myComposite,SWT.NONE);
-//        Label empty2 = new Label(myComposite,SWT.NONE);
         Composite mch_highl = new Composite(myComposite, SWT.NONE);
         new RadioGroupFieldEditor("choice","  Highlight Servity:",1,
         		new String[][] { { "Info","choice1"}, {"Warning", "choice2"},

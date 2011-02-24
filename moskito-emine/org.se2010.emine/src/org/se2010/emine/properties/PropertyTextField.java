@@ -7,7 +7,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This class is serves as an extension for a normal Text field. <br>
+ * It uses a standard layout and provides a field for the Persistent Key (storing reason). 
+ * @author Amras
+ *
+ */
 public class PropertyTextField {
+	
 
 	String VALUE_PROP_KEY;
 	String repoName;
@@ -15,7 +22,7 @@ public class PropertyTextField {
 
 	public PropertyTextField(String repoName, String key, String tooltip,
 			Composite parent, int style, GridData layoutData) {
-		this.VALUE_PROP_KEY = repoName + key;
+		this.VALUE_PROP_KEY = key;
 		this.repoName = repoName;
 		this.textField = new Text(parent, style);
 		textField.setLayoutData(layoutData);
