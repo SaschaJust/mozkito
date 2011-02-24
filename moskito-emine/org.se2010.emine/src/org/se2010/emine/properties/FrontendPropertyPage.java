@@ -27,13 +27,6 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
 		
 		Composite myComposite = createDefaultComposite(parent);
 
-//        Label space0 = new Label(myComposite,SWT.NONE);
-//        Label space1 = new Label(myComposite,SWT.NONE);
-
-		
-//		Composite ch_tool = new Composite(myComposite, SWT.NONE);
-//		BooleanFieldEditor tooltip = new BooleanFieldEditor("BOOL",
-//       		"Enable Tooltip", ch_tool);
 
 		Composite hover = new Composite(myComposite,SWT.NONE);
 		GridLayout hover_grid = new GridLayout();
