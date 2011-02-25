@@ -258,7 +258,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(
 					this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
-					endLine, bodyStartLine, td.getStartPosition(), this.packageName);
+					endLine, td.getStartPosition(), bodyStartLine, this.packageName);
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
 						+ "` and class name `" + td.getName().toString() + "`");
@@ -317,7 +317,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			Block body = md.getBody();
 			int bodyStartLine = -1;
 			if (body != null) {
-				this.cu.getLineNumber(body.getStartPosition());
+				bodyStartLine = this.cu.getLineNumber(body.getStartPosition());
 			}
 			
 			if (md.getJavadoc() != null) {
@@ -340,6 +340,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
+
 				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md
 						.getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
 						.getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);
