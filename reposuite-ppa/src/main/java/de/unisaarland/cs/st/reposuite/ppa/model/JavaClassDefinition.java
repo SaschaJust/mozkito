@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -12,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
@@ -36,7 +38,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	
 	/** The anon counter. */
 	@Transient
-	private int                 anonCounter      = 0;
+	private final HashMap<Integer, Integer> anonCounters     = new HashMap<Integer, Integer>();
 	
 	/** The anonym class. */
 	private boolean             anonymClass      = false;
@@ -144,11 +146,16 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @return the int
 	 */
 	@Transient
-	public int nextAnonCounter() {
+	public int nextAnonCounter(final PPATypeVisitor v) {
 		if (this.anonymClass) {
-			return this.getTypedParent().nextAnonCounter();
+			return this.getTypedParent().nextAnonCounter(v);
 		} else {
-			return ++this.anonCounter;
+			int vId = System.identityHashCode(v);
+			if(!this.anonCounters.containsKey(vId)){
+				this.anonCounters.put(vId, 0);
+			}
+			this.anonCounters.put(vId, this.anonCounters.get(vId) + 1);
+			return this.anonCounters.get(vId);
 		}
 	}
 	

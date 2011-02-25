@@ -198,14 +198,13 @@ public class PPATypeVisitor extends ASTVisitor {
 		int currentLine = this.cu.getLineNumber(node.getStartPosition());
 		int endLine = this.cu.getLineNumber(node.getStartPosition() + node.getLength() - 1);
 		
-		if (!this.methodStack.isEmpty()) {
-			if (this.methodStack.peek().getEndLine() < currentLine) {
-				this.methodStack.pop();
-			}
+		while ((!this.methodStack.isEmpty()) && (this.methodStack.peek().getEndLine() < currentLine)) {
+			this.methodStack.pop();
 		}
 		
+		
 		while ((!this.classStack.isEmpty())
-				&& (this.cu.getLineNumber(node.getStartPosition()) > this.classStack.peek().getEndLine())) {
+				&& (currentLine > this.classStack.peek().getEndLine())) {
 			this.classStack.pop();
 		}
 		
@@ -295,7 +294,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			BodyDeclaration bodyDeclaration = bodyDeclarations.get(0);
 			int bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
 			
-			int anonCount = this.classStack.peek().getElement().nextAnonCounter();
+			int anonCount = this.classStack.peek().getElement().nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
 					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
@@ -307,7 +306,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				
 				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
 						+ "$" + anonCount, this.relativeFilePath, this.classStack.peek().getElement(), currentLine,
-						node.getStartPosition(), endLine, bodyStartLine, this.packageName);
+						endLine, node.getStartPosition(), bodyStartLine, this.packageName);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
