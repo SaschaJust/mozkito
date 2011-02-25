@@ -231,19 +231,6 @@ public class PPAUtils {
 					
 					Collection<JavaElementLocation<JavaElementDefinition>> modifiedDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
 					
-					Collection<JavaElementLocation<JavaElementDefinition>> removeDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
-					for (JavaElementLocation def : oldElems.getDefs(changedPath)) {
-						LineCover cover = def.coversAnyLine(oldLines);
-						switch (cover) {
-							case BODY:
-								modifiedDefCandidates.add(def);
-								break;
-							case DEF_AND_BODY:
-							case DEFINITION:
-								removeDefCandidates.add(def);
-								break;
-						}
-					}
 					Collection<JavaElementLocation<JavaElementDefinition>> addDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
 					for (JavaElementLocation def : newElems.getDefs(changedPath)) {
 						LineCover cover = def.coversAnyLine(newLines);
@@ -257,7 +244,21 @@ public class PPAUtils {
 								break;
 						}
 					}
+					Collection<JavaElementLocation<JavaElementDefinition>> removeDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
+					for (JavaElementLocation def : oldElems.getDefs(changedPath)) {
+						LineCover cover = def.coversAnyLine(oldLines);
+						switch (cover) {
+							case BODY:
+								modifiedDefCandidates.add(def);
+								break;
+							case DEF_AND_BODY:
+							case DEFINITION:
+								removeDefCandidates.add(def);
+								break;
+						}
+					}
 					
+
 					Collection<JavaElementLocation<JavaElementDefinition>> defsToRemove = new HashSet<JavaElementLocation<JavaElementDefinition>>();
 					Collection<JavaElementLocation<JavaElementDefinition>> defsToAdd = new HashSet<JavaElementLocation<JavaElementDefinition>>();
 					
@@ -322,7 +323,7 @@ public class PPAUtils {
 							}
 						}
 					}
-
+					
 					//method calls that are still present in their collections make up the operations
 					for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates
 							.values()) {
