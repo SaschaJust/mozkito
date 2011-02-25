@@ -24,7 +24,7 @@ public class ProblemArtifact implements IArtifact {
 	private ProblemArtifactTypeList myTypeList;
 	private List<TreeColumn> myColumnList;
 
-	public ProblemArtifact(String t, Map<String, String> m, String me, IFile f) 
+	public ProblemArtifact(String t, Map<String, String> m, String me,IFile f) 
 	{
 		this.title = t;
 		this.map = m;

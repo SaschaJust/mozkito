@@ -98,7 +98,7 @@ public class EMineProblemView extends ViewPart implements
 	@Override
 	public void createPartControl(Composite parent) {
 		// TEST
-		m1.put("Type", "Bug");
+	/*	m1.put("Type", "Bug");
 		m1.put("Title", "myID");
 		m1.put("Please Note", "highly dangerous");
 
@@ -129,7 +129,7 @@ public class EMineProblemView extends ViewPart implements
 		a2.setTypeList(lt2);
 		a3.setTypeList(lt1);
 		artifactsByType.add(lt1);
-		artifactsByType.add(lt2);
+		artifactsByType.add(lt2);*/
 
 		// create a filtered Tree in order to enable ...wow...filtering
 		FilteredTree ftree = new FilteredTree(parent, SWT.MULTI | SWT.FILL
@@ -151,9 +151,9 @@ public class EMineProblemView extends ViewPart implements
 		createColumns(artifactTree);
 		
 		//TEST 2
-		a1.setColumnList(columnList);
+		/*a1.setColumnList(columnList);
 		a2.setColumnList(columnList);
-		a3.setColumnList(columnList);
+		a3.setColumnList(columnList);*/
 		
 		
 		

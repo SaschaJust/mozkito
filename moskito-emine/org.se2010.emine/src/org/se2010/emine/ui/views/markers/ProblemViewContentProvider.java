@@ -108,7 +108,6 @@ public class ProblemViewContentProvider implements ITreeContentProvider,IEMineEv
 		
 		return getChildren(display);
 	}
-
 	@Override
 	public void onEvent(IEMineEvent event) {
 
