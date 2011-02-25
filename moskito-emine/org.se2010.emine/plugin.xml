@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
           <view
-         class="org.se2010.emine.ui.views.markers.eMineProblemViewMarker"
+         class="org.se2010.emine.ui.views.markers.EMineProblemViewMarker"
          icon="icons/problems_view.gif"
          id="org.se2010.emine.ui.views.markers.eMineProblemViewMarker"
          name="eMine Problem View">
