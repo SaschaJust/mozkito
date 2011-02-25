@@ -52,6 +52,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DiffUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -291,32 +292,37 @@ public class PPAUtils {
 						}
 					}
 					
-					//					for (String addedCallId : addCallCandidates.keySet()) {
-					//						if (removeCallCandidates.containsKey(addedCallId)) {
-					//							TreeSet<JavaElementLocation<JavaMethodCall>> delSet = removeCallCandidates.get(addedCallId);
-					//							TreeSet<JavaElementLocation<JavaMethodCall>> addSet = addCallCandidates.get(addedCallId);
-					//							for (JavaElementLocation<JavaMethodCall> addedCall : new TreeSet<JavaElementLocation<JavaMethodCall>>(
-					//									addCallCandidates.get(addedCallId))) {
-					//								//search the nearest deleted method call and remove both from their collections
-					//								JavaElementLocation<JavaMethodCall> ceiling = delSet.ceiling(addedCall);
-					//								int distance = ceiling.getPosition() - addedCall.getPosition();
-					//								if (distance != 0) {
-					//									JavaElementLocation<JavaMethodCall> floor = delSet.floor(addedCall);
-					//									if ((ceiling.getPosition() - addedCall.getPosition()) < distance) {
-					//										delSet.remove(floor);
-					//										addSet.remove(addedCall);
-					//									} else {
-					//										delSet.remove(ceiling);
-					//										addSet.remove(addedCall);
-					//									}
-					//								} else {
-					//									delSet.remove(ceiling);
-					//									addSet.remove(addedCall);
-					//								}
-					//							}
-					//						}
-					//					}
-					
+					//if a line was changed: detect added and removed calls that are most likely corresponding
+					for (String addedCallId : addCallCandidates.keySet()) {
+						if (removeCallCandidates.containsKey(addedCallId)) {
+							TreeSet<JavaElementLocation<JavaMethodCall>> delSet = removeCallCandidates.get(addedCallId);
+							TreeSet<JavaElementLocation<JavaMethodCall>> addSet = addCallCandidates.get(addedCallId);
+							for (JavaElementLocation<JavaMethodCall> addedCall : new TreeSet<JavaElementLocation<JavaMethodCall>>(
+									addCallCandidates.get(addedCallId))) {
+								JavaElementLocation<JavaMethodCall> ceiling = delSet.ceiling(addedCall);
+								JavaElementLocation<JavaMethodCall> floor = delSet.floor(addedCall);
+								Condition.check((ceiling != null) || (floor != null), "Must find a nearest element!");
+								JavaElementLocation<JavaMethodCall> correspondent = null;
+								if (ceiling == null) {
+									correspondent = floor;
+								} else if (floor == null) {
+									correspondent = ceiling;
+								} else {
+									int floorDist = Math.abs(addedCall.getPosition() - floor.getPosition());
+									int ceilingDist = Math.abs(addedCall.getPosition() - ceiling.getPosition());
+									if (floorDist < ceilingDist) {
+										correspondent = floor;
+									} else {
+										correspondent = ceiling;
+									}
+								}
+								Condition.check(correspondent != null, "Must have found correspondent");
+								delSet.remove(correspondent);
+								addSet.remove(addedCall);
+							}
+						}
+					}
+
 					//method calls that are still present in their collections make up the operations
 					for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates
 							.values()) {
