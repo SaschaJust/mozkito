@@ -48,15 +48,23 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		IBinding binding = null;
 		
+		int position = node.getStartPosition();
+		int thisLine = currentLine;
+		
 		String methodName = null;
 		if (node instanceof MethodInvocation) {
-			binding = ((MethodInvocation) node).resolveMethodBinding();
 			MethodInvocation mi = (MethodInvocation) node;
+			binding = mi.resolveMethodBinding();
 			methodName = mi.getName().toString();
+			int index = node.toString().indexOf(methodName);
+			position = position + index + 1;
+			thisLine = cu.getLineNumber(position);
 		} else if (node instanceof ClassInstanceCreation) {
 			binding = ((ClassInstanceCreation) node).resolveConstructorBinding();
+			methodName = "<init>";
 		} else if (node instanceof SuperConstructorInvocation) {
 			binding = ((SuperConstructorInvocation) node).resolveConstructorBinding();
+			methodName = "super";
 		} else {
 			return;
 		}
@@ -76,16 +84,17 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 				ss.append("\n\t");
 			}
 			ss.append("on line ");
-			ss.append(currentLine);
+			ss.append(thisLine);
 			if (Logger.logError()) {
 				Logger.error(ss.toString());
 			}
 			return;
 		}
 		IMethodBinding mBinding = (IMethodBinding) binding;
+		
 		String calledObject = mBinding.getDeclaringClass().getQualifiedName();
 		
-		if (calledObject.equals("UNKNOWN")) {
+		if (calledObject.equals("UNKNOWN") || calledObject.equals("")) {
 			StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation in revision ");
 			if (classContext != null) {
@@ -99,7 +108,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 				ss.append("\n\t");
 			}
 			ss.append("` on line ");
-			ss.append(currentLine);
+			ss.append(thisLine);
 			if (Logger.logError()) {
 				Logger.error(ss.toString());
 			}
@@ -121,16 +130,11 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			parent = methodContext.getElement();
 		}
 		
-		if (methodName == null) {
-			String[] tmp = calledObject.split("\\.");
-			methodName = tmp[tmp.length - 1];
-		}
-		
 		String filename = ppaVisitor.getRelativeFilePath();
 		
 		JavaElementLocation<JavaMethodCall> javaMethodCall = elementCache.getMethodCall(
 				calledObject + "." + methodName, arguments,
-				filename, parent, currentLine, currentLine, node.getStartPosition());
+				filename, parent, thisLine, thisLine, position);
 		
 		if (!this.methodCallsByFile.containsKey(filename)) {
 			this.methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
