@@ -2,26 +2,6 @@
 <javaChangeOperations>
 	<transaction id="f99a3ff4615653855c254874f3d4fe0d084f34d2">
 		<Added>
-			<JavaElementLocation endline="96" id="0" position="2507" startline="96">
-				<filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java
-				</filePath>
-				<JavaMethodDefinition>
-					<fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log(String,String)
-					</fullQualifiedName>
-				</JavaMethodDefinition>
-			</JavaElementLocation>
-		</Added>
-		<Deleted>
-			<JavaElementLocation endline="88" id="0" position="2445" startline="88">
-				<filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java
-				</filePath>
-				<JavaMethodDefinition>
-					<fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log()
-					</fullQualifiedName>
-				</JavaMethodDefinition>
-			</JavaElementLocation>
-		</Deleted>
-		<Added>
 			<JavaElementLocation endline="56" id="0" position="1078" startline="52">
 				<filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java
 				</filePath>
@@ -51,16 +31,6 @@
 				</JavaMethodDefinition>
 			</JavaElementLocation>
 		</Added>
-		<Deleted>
-			<JavaElementLocation endline="60" id="0" position="1152" startline="56">
-				<filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java
-				</filePath>
-				<JavaMethodDefinition>
-					<fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log()
-					</fullQualifiedName>
-				</JavaMethodDefinition>
-			</JavaElementLocation>
-		</Deleted>
 		<Added>
 			<JavaElementLocation endline="199" id="0" position="5108" startline="191">
 				<filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java

@@ -123,6 +123,7 @@ def main(argv=None):
             r = tree_compare(xroot[i].getchildren(), yroot[i].getchildren(), reporter=result.append)
             if not r :
                 print 'Difference report:\n%s\n' % '\n'.join(result)
+                return -1
         
     except Usage, err:
         print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)

@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<javaChangeOperations>
+  <transaction id="dfd5e8d5eb594e29f507896a744d2bdabfc55cdf">
+    <Modified>
+      <JavaElementLocation endline="175" id="0" position="5218" startline="155">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.clone(InputStream,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="593" id="0" position="13477" startline="573">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.toString()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="442" id="0" position="14868" startline="432">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getTransactionId(long)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="513" id="0" position="12150" startline="508">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.setJavaTimestamp(Date)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="453" id="0" position="15486" startline="450">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getWokingCopyLocation()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="346" id="0" position="8623" startline="343">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getMessage()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="148" id="0" position="4548" startline="133">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.checkoutPath(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="311" id="0" position="7888" startline="306">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getChildren()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="310" id="0" position="8612" startline="251">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getChangedPaths(String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added>
+      <JavaElementLocation endline="275" id="0" position="7264" startline="275">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.Object.getRevisions()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Modified>
+      <JavaElementLocation endline="420" id="0" position="14426" startline="417">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getRevDependencyIterator()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="403" id="0" position="9981" startline="400">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getTags()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="368" id="0" position="8748" startline="352">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getParent(RCSBranch)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="595" id="0" position="1397" startline="51">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="560" id="0" position="1707" startline="50">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="413" id="0" position="10088" startline="410">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getTimestamp()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="464" id="0" position="10229" startline="415">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.saveFirst()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="385" id="0" position="9563" startline="382">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getPersons()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="322" id="0" position="8196" startline="318">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getId()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added>
+      <JavaElementLocation endline="276" id="0" position="7310" startline="276">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision.getChangedFile()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Modified>
+      <JavaElementLocation endline="167" id="0" position="4357" startline="162">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.addParent(RCSTransaction)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="265" id="0" position="6835" startline="261">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getBranch()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="147" id="0" position="3973" startline="144">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.addAllTags(Collection&lt;String&gt;)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added>
+      <JavaElementLocation endline="279" id="0" position="7041" startline="272">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getChangedFiles()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Modified>
+      <JavaElementLocation endline="207" id="0" position="6338" startline="183">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.diff(String,String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added>
+      <JavaElementLocation endline="276" id="0" position="7297" startline="276">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.List.add(UNKNOWN)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Modified>
+      <JavaElementLocation endline="557" id="0" position="13099" startline="555">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.setTags(Set&lt;String&gt;)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="486" id="0" position="15696" startline="461">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="124" id="0" position="2762" startline="79">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.annotate(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="192" id="0" position="4914" startline="189">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.addTags(String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="359" id="0" position="11567" startline="335">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getFormerPathName(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="301" id="0" position="7361" startline="285">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getChild(RCSBranch)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="333" id="0" position="10934" startline="317">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getFirstRevisionId()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="377" id="0" position="12686" startline="366">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getHEADRevisionId()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="377" id="0" position="9275" startline="373">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getParents()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="430" id="0" position="14527" startline="422">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getTransactionCount()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="542" id="0" position="17092" startline="512">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.setup(URI,String,String,InputStream)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="415" id="0" position="13146" startline="379">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getRelativeTransactionId(String,long)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Modified>
+      <JavaElementLocation endline="395" id="0" position="9732" startline="392">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.getRevisions()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added>
+      <JavaElementLocation endline="274" id="0" position="7202" startline="274">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.LinkedList&lt;de.unisaarland.cs.st.reposuite.rcs.model.RCSFile&gt;.&lt;init&gt;()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Modified>
+      <JavaElementLocation endline="157" id="0" position="4152" startline="152">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/model/RCSTransaction.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction.addChild(RCSTransaction)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Modified>
+  </transaction>
+</javaChangeOperations>
