@@ -62,6 +62,7 @@ import org.se2010.emine.ui.views.markers.ProblemViewFilter;
 import org.se2010.emine.ui.views.markers.ProblemViewLabelProvider;
 import org.se2010.emine.ui.views.markers.ProblemViewTableLabelProvider;
 
+
 public class EMineProblemView extends ViewPart implements
 		ISelectionChangedListener {
 
@@ -81,6 +82,9 @@ public class EMineProblemView extends ViewPart implements
 
 	// The viewer for the treetable
 	private TreeViewer viewer;
+	
+	  private Action doubleClickAction;
+
 
 	// The comparator that enables sorting
 	private ProblemViewComparator comparator = new ProblemViewComparator();
@@ -175,6 +179,15 @@ public class EMineProblemView extends ViewPart implements
 
 		// Add sorting
 		viewer.setComparator(comparator);
+		
+		  getViewSite().setSelectionProvider(viewer);
+
+		    makeActions();
+
+		    // Create actions and connect them to the UI
+		    hookContextMenu();
+		    hookDoubleClickAction();
+		    contributeToActionBars();
 
 		// Add filtering
 		/*
@@ -261,8 +274,96 @@ public class EMineProblemView extends ViewPart implements
 		return selectionAdapter;
 	}
 
-	@Override
-	public void selectionChanged(SelectionChangedEvent event) {
-	}
+	 
+	
+	private void hookContextMenu() {
+	    MenuManager menuMgr = new MenuManager("#PopupMenu");
+	    menuMgr.setRemoveAllWhenShown(true);
+	    menuMgr.addMenuListener(new IMenuListener() {
+
+	      public void menuAboutToShow(IMenuManager manager) {
+	        EMineProblemView.this.fillContextMenu(manager);
+	      }
+	    });
+
+	    Menu menu = menuMgr.createContextMenu(viewer.getControl());
+	    viewer.getControl().setMenu(menu);
+
+	    // Register context menu for viewer/part with workbench
+	    // This allows for the possibility of external contributions
+	    getSite().registerContextMenu(menuMgr, viewer);
+
+	  }
+
+	  private void fillContextMenu(IMenuManager manager) {
+	    manager.add(doubleClickAction);
+	  //  manager.add(deleteMarkerAction);
+	    // Other plug-ins can contribute there actions here
+	    manager.add(new Separator("additions"));
+
+	  }
+	  
+	  private void contributeToActionBars() {
+	    IActionBars bars = getViewSite().getActionBars();
+	    
+	  }
+	  
+	  private void makeActions() {
+
+		    // Double-Click to open editor for resource identified by marker
+		    doubleClickAction = new Action() {
+
+		      public void run() {
+		        ISelection selection = viewer.getSelection();
+		        openEditor(selection);
+
+		      }
+		    };
+		    doubleClickAction.setText("Artifact Details");
+		    doubleClickAction.setToolTipText("Open file identified by marker");
+		    doubleClickAction.setImageDescriptor(PlatformUI.getWorkbench()
+		        .getSharedImages().getImageDescriptor(
+		            SharedImages.IMG_OPEN_MARKER));
+		    doubleClickAction.setEnabled(false);
+
+		   
+		    
+		  }
+	  
+	  
+	  void openEditor(ISelection selection) {
+
+		  
+
+		  }
+	  
+	  /**
+	   * Opens editor for the selected marker
+	   */
+	  private void hookDoubleClickAction() {
+	    viewer.addDoubleClickListener(new IDoubleClickListener() {
+
+	      public void doubleClick(DoubleClickEvent event) {
+	        openEditor(event.getSelection());
+	      }
+	    });
+	  }
+
+	  
+
+	  /**
+	   * Keeps the action state correct based on the viewer selection.
+	   * 
+	   * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	   */
+	  public void selectionChanged(SelectionChangedEvent event) {
+	    if (event.getSelection().isEmpty()) {
+	      doubleClickAction.setEnabled(false);
+	    } else {
+	      doubleClickAction.setEnabled(true);
+	    }
+
+	  }
+
 
 }
