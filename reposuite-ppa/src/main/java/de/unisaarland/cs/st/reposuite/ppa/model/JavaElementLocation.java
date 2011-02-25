@@ -49,6 +49,9 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public JavaElementLocation(@NotNull final T element, @NonNegative final int startLine,
 			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
 			@NotNull final String filePath) {
+		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
+		Condition.check(bodyStartLine <= endLine, "Body start line must be smaller or equal than end line");
+		Condition.check(bodyStartLine >= startLine, "Body start line must be greater or equal than end line");
 		this.setElement(element);
 		this.setStartLine(startLine);
 		this.setEndLine(endLine);
@@ -140,10 +143,13 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public LineCover coversLine(final int line) {
 		//TODO add test case
 		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
-			if ((getBodyStartLine() > 0) && (line >= getBodyStartLine())) {
-				return LineCover.BODY;
+			if (this.getElement() instanceof JavaMethodCall) {
+				return LineCover.DEFINITION;
 			}
-			return LineCover.DEFINITION;
+			if (getBodyStartLine() >= line) {
+				return LineCover.DEFINITION;
+			}
+			return LineCover.BODY;
 		}
 		return LineCover.FALSE;
 	}
@@ -175,17 +181,17 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		} else if (!this.filePath.equals(other.filePath)) {
 			return false;
 		}
-		//		if (!(getElement() instanceof JavaElementDefinition)) {
-		if (this.endLine != other.endLine) {
-			return false;
+		if (!(getElement() instanceof JavaElementDefinition)) {
+			if (this.endLine != other.endLine) {
+				return false;
+			}
+			if (this.position != other.position) {
+				return false;
+			}
+			if (this.startLine != other.startLine) {
+				return false;
+			}
 		}
-		if (this.position != other.position) {
-			return false;
-		}
-		if (this.startLine != other.startLine) {
-			return false;
-		}
-		//		}
 		return true;
 	}
 	
