@@ -10,8 +10,10 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -45,7 +47,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -53,6 +59,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 import org.se2010.emine.artifacts.ProblemArtifact;
 import org.se2010.emine.artifacts.ProblemArtifactTypeList;
@@ -332,9 +339,30 @@ public class EMineProblemView extends ViewPart implements
 	  
 	  
 	  void openEditor(ISelection selection) {
-
 		  
-
+		 // IFile input = new File("Artifact.html");
+		  //String afile = "/eMine_final/src/org/se2010/emine/views/Artifact.html";
+		   IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		   
+		   IFile file = root.getProject("test").getFile("Artifact.html");
+		   
+			//IFile  file = root.getFile(new Path(afile));
+//			
+//			IEditorInput editorInput = new FileEditorInput(file);
+//			IWorkbenchWindow window=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+//			IWorkbenchPage page = window.getActivePage();
+		   
+		    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		    
+		    try {
+		    	
+		    	//page.openEditor(editorInput, "");
+		    	
+		        IEditorPart openEditor = IDE.openEditor(page, file);
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		  }
 	  
 	  /**
