@@ -47,6 +47,7 @@ public class ProblemViewTableLabelProvider implements ITableLabelProvider {
 			switch(columnIndex){
 			case 0: return a.getTitle();
 			case 1: return a.getList().getType();
+			case 2 : return a.getResource();
 			default: 
 					return (a.getMap().get(a.getColumnList().get(columnIndex).getText()));
 			}

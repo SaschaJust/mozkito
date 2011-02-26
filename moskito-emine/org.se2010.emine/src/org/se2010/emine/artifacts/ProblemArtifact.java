@@ -1,35 +1,30 @@
 package org.se2010.emine.artifacts;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
 
 public class ProblemArtifact implements IArtifact {
 	private int id;
 	private String resource;
 
-	private String title; // serves as ID
-	private Map<String, String> map; // map of String categories->String
-										// properties
-	private String message; // additional details
-	private IFile file; // the file the artifact belongs to
-
+	private String title;
+	private Map<String, String> map; 
+	private String message; 
+	private IFile file; 
 	private ProblemArtifactTypeList myTypeList;
 	private List<TreeColumn> myColumnList;
 
-	public ProblemArtifact(String t, Map<String, String> m, String me,IFile f) 
+	public ProblemArtifact(String t, Map<String, String> m, String me,IFile f,String resource) 
 	{
 		this.title = t;
 		this.map = m;
 		this.message = me;
 		this.file = f;
+		this.setResource(resource);
 	}
 
 	public ProblemArtifact(String t, int id, String me, String resource) {
@@ -62,6 +57,7 @@ public class ProblemArtifact implements IArtifact {
 	public void setMap(Map<String, String> map) {
 		this.map = map;
 	}
+
 	
 	public Map<String, String> getMap()
 	{
@@ -93,6 +89,10 @@ public class ProblemArtifact implements IArtifact {
 	public List<TreeColumn> getColumnList() {
 		return myColumnList;
 	}
+	
+	/*
+	 *
+	 */
 
 	public void setColumnList(List<TreeColumn> myColumList) {
 		this.myColumnList = myColumList;

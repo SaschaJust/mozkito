@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -43,6 +44,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -166,6 +168,8 @@ public class EMineProblemView extends ViewPart implements
 		a2.setColumnList(columnList);
 		a3.setColumnList(columnList);*/
 		
+	
+		
 		
 		
 		// create map to get the relation type -> list of ProblemArtifacts with
@@ -220,7 +224,7 @@ public class EMineProblemView extends ViewPart implements
 		// First two columns are fixed
 		TreeColumn tc0 = new TreeColumn(tree, SWT.LEFT, 0);
 		tc0.setAlignment(SWT.LEFT);
-		tc0.setText("Title");
+		tc0.setText("Artifact Title");
 		tc0.setWidth(200);
 		tc0.setResizable(true);
 		tc0.addSelectionListener(getSelectionAdapter(tc0, 0));
@@ -228,11 +232,21 @@ public class EMineProblemView extends ViewPart implements
 
 		TreeColumn tc1 = new TreeColumn(tree, SWT.RIGHT, 1);
 		tc1.setAlignment(SWT.LEFT);
-		tc1.setText("Type");
+		tc1.setText("Artifact Type");
 		tc1.setWidth(200);
 		tc1.setResizable(true);
 		tc1.addSelectionListener(getSelectionAdapter(tc1, 1));
 		columnList.add(tc1);
+		
+		TreeColumn tc2 = new TreeColumn(tree, SWT.RIGHT, 1);
+		tc1.setAlignment(SWT.LEFT);
+		tc1.setText("Resource");
+		tc1.setWidth(200);
+		tc1.setResizable(true);
+		tc1.addSelectionListener(getSelectionAdapter(tc2, 2));
+		columnList.add(tc2);
+		
+		 
 
 		// Rest of the columns depends on the keys of the properties map of the
 		// first Problem Artifact

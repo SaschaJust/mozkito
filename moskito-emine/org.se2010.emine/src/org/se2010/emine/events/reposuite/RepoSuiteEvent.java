@@ -91,11 +91,11 @@ public class RepoSuiteEvent implements IEMineEvent{
 				m2.put("ResourceName", changedMethod.get(i));
 
 				ProblemArtifact a1 = new ProblemArtifact("Important Bug", m1, "oho",
-						null);
+						null,changedMethod.get(i));
 				ProblemArtifact a2 = new ProblemArtifact("Important Mail", m2, "ooo",
-						null);
+						null,changedMethod.get(i));
 				ProblemArtifact a3 = new ProblemArtifact("Important Rice", m1, "oho",
-						null);
+						null,changedMethod.get(i));
 				
 				
 				artifacts.add(a1);
