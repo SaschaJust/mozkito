@@ -361,7 +361,10 @@ public class EMineProblemView extends ViewPart implements
 		    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		    
 		    try {		    	
-		        IEditorPart openEditor = IDE.openEditor(page, file);
+		    	if(file.exists())
+		    	{
+			        IEditorPart openEditor = IDE.openEditor(page, file);
+		    	}
 			} catch (PartInitException e) {
 				e.printStackTrace();
 			}

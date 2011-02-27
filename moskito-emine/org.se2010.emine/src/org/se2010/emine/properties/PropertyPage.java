@@ -20,8 +20,9 @@ import org.se2010.emine.events.IEMineEventBus;
 /**
  * This class creates the whole back-end-configuration page and is responsible to show/store all <br>
  * information once provided by the user in a persistent and project-specific way.
- * @author Amras
- *
+ * 
+ * @author  Andreas Rau
+ * @version 02/2011 1.0
  */
 public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
@@ -32,7 +33,6 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
 	private List<String> reponames = new ArrayList<String>();
 	private List<PropertyTextField> inputFields = new ArrayList<PropertyTextField>();
-//	private List<PropertyTextField> initFields = new ArrayList<PropertyTextField>();
 	
 	String projectName = "";
 	public static final String MSA_CORE_name = "Repo-Panther";
@@ -167,7 +167,6 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 	private void storeVMarg(String perKeyName, String value) {
 		// TODO check and overwrite values
 		setValue(perKeyName, value);
-
 	}
 
 	/**

@@ -7,9 +7,8 @@ import org.se2010.emine.artifacts.IArtifact;
 
 public abstract class ArtifactView {
 	
-	//TODO should this wrapper class control the view classes?
-	//for this has it to hold an object of the respective classes?
-	//then TODO add the respective update methodes
+	protected abstract void checkViewProperties();
+	public abstract void clear();
 
 	private final List<IArtifact> artifacts;
 	
@@ -21,18 +20,4 @@ public abstract class ArtifactView {
 	public void addArtifact(IArtifact artifact){
 		artifacts.add(artifact);
 	}
-	
-	
-	public String extracteffectedname(){
-		//TODO need some argument to compute necessary stuff, what was this method for?
-		return null;
-	}
-	
-	
-	
-	protected abstract void checkViewProperties();
-	// TODO open question if this is handled in the controller class
-	public abstract void clear();
-	//TODO method vizualizeBackendConfiguration necessary??
-	
 }

@@ -1,82 +1,95 @@
 package org.se2010.emine.artifacts;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.TreeColumn;
 
 
-public class ProblemArtifact implements IArtifact {
-	private int id;
-	private String resource;
+public class ProblemArtifact implements IArtifact 
+{
+	private int 					id;
+	private String 					resource;
+	private String 					title;
+	private Map<String, String> 	map; 
+	private String 					message; 
+	private List<TreeColumn> 		myColumnList;
+	
+	private String groupName;
 
-	private String title;
-	private Map<String, String> map; 
-	private String message; 
-	private IFile file; 
-	private ProblemArtifactTypeList myTypeList;
-	private List<TreeColumn> myColumnList;
-
-	public ProblemArtifact(String t, Map<String, String> m, String me,IFile f,String resource) 
+	private ProblemArtifact(final int id, final String title, final String message, final String resource, final Map<String, String> map)
 	{
-		this.title = t;
-		this.map = m;
-		this.message = me;
-		this.file = f;
-		this.setResource(resource);
+		this.id           = id;
+		this.title        = title;
+		this.message      = message;
+		this.resource     = resource;
+		this.map          = map;
+		this.groupName    = "None";
+		this.myColumnList = new ArrayList<TreeColumn>();
+	}
+	
+	public ProblemArtifact(final String title, final Map<String,String> map, final String message, final String resource) 
+	{
+		this(-1, title, message, resource, map);
+	}
+	
+	
+	public ProblemArtifact(final String title, final int id, final String message, final String resource) 
+	{
+		this(id, title, message, resource, new HashMap<String, String>());
 	}
 
-	public ProblemArtifact(String t, int id, String me, String resource) {
-		this.title = t;
-		this.message = me;
-		this.setId(id);
-		this.setResource(resource);
+	
+	public String getGroupName()
+	{
+		return this.groupName;
 	}
-
-	public String getMessage() {
+	
+	public void setGroupName(final String groupName)
+	{
+		this.groupName = groupName;
+	}
+	
+	
+	public String getMessage() 
+	{
 		return message;
 	}
 
-	public void setId(int id) {
+	public void setId(int id) 
+	{
 		this.id = id;
 	}
 
-	public int getId() {
+	public int getId() 
+	{
 		return id;
 	}
 
-	public void setResource(String resource) {
+	public void setResource(String resource) 
+	{
 		this.resource = resource;
 	}
 
-	public String getResource() {
+	public String getResource() 
+	{
 		return resource;
 	}
 
-	public void setMap(Map<String, String> map) {
+	public void setMap(final Map<String, String> map) 
+	{
 		this.map = map;
 	}
 
 	
 	public Map<String, String> getMap()
 	{
-		return this.map;
+		return new HashMap<String, String>(map);
 	}
-
-	public IFile getFile() {
-		return file;
-	}
-
-	public void setTypeList(ProblemArtifactTypeList list) {
-		myTypeList = list;
-	}
-
-	public ProblemArtifactTypeList getList() {
-		return myTypeList;
-	}
-
-	public String getTitle() {
+	
+	public String getTitle() 
+	{
 		return title;
 	}
 
@@ -85,17 +98,14 @@ public class ProblemArtifact implements IArtifact {
 		final String[] arr = new String[map.values().size()];
 		return map.values().toArray(arr);
 	}
-
-	public List<TreeColumn> getColumnList() {
-		return myColumnList;
-	}
 	
-	/*
-	 *
-	 */
-
-	public void setColumnList(List<TreeColumn> myColumList) {
+	public void setColumnList(final List<TreeColumn> myColumList) 
+	{
 		this.myColumnList = myColumList;
 	}
 
+	public List<TreeColumn> getColumnList() 
+	{
+		return new ArrayList<TreeColumn>(myColumnList);
+	}
 }

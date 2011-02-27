@@ -28,7 +28,7 @@ public class ProblemArtifactTypeList implements List
 		for(final ProblemArtifact artifact : list)
 		{
 			this.add(artifact);
-			artifact.setTypeList(this);
+//			artifact.setTypeList(this);
 		}
 	}
 	

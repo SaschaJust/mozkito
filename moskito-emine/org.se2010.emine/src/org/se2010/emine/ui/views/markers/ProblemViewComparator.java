@@ -1,31 +1,27 @@
 package org.se2010.emine.ui.views.markers;
 
-import java.text.Collator;
-import java.util.Comparator;
-
-import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.ui.internal.dialogs.ViewComparator;
-import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.artifacts.ProblemArtifact;
 import org.se2010.emine.artifacts.ProblemArtifactTypeList;
 
-public class ProblemViewComparator extends ViewerComparator {
-	public ProblemViewComparator() {
+public class ProblemViewComparator extends ViewerComparator 
+{
+	private int propertyIndex;
+	private int direction;
 
+	private static final int DESCENDING = 1;
+	
+	public ProblemViewComparator() 
+	{
 		this.propertyIndex = 1;
 		direction = DESCENDING;
 	}
 
-	private int propertyIndex;
-	private static final int DESCENDING = 1;
-	private int direction = DESCENDING;
+
 
 	public void setColumn(int column) {
 		if (column == this.propertyIndex) {
@@ -41,7 +37,6 @@ public class ProblemViewComparator extends ViewerComparator {
 	/**
 	 * This function enables sorting by column.
 	 */
-
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);

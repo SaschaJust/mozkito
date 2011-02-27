@@ -9,9 +9,10 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This class is serves as an extension for a normal Text field. <br>
- * It uses a standard layout and provides a field for the Persistent Key (storing reason). 
- * @author Amras
- *
+ * It uses a standard layout and provides a field for the Persistent Key (storing reason).
+ *  
+ * @author  Andreas Rau
+ * @version 02/2011 1.0
  */
 public class PropertyTextField {
 	

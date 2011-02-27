@@ -1,7 +1,5 @@
 package org.se2010.emine.ui.views.markers;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -13,13 +11,11 @@ public class ProblemViewTableLabelProvider implements ITableLabelProvider {
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -45,8 +41,8 @@ public class ProblemViewTableLabelProvider implements ITableLabelProvider {
 		if (element instanceof ProblemArtifact) {
 			ProblemArtifact a = (ProblemArtifact) element;
 			switch(columnIndex){
-			case 0: return a.getTitle();
-			case 1: return a.getList().getType();
+			case 0:  return a.getTitle();
+			case 1:  return a.getGroupName();
 			case 2 : return a.getResource();
 			default: 
 					return (a.getMap().get(a.getColumnList().get(columnIndex).getText()));

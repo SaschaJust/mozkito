@@ -1,28 +1,27 @@
 package org.se2010.emine;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.se2010.emine.artifacts.ConfigurationArtifact;
-import org.se2010.emine.events.EMineEventBus;
 import org.se2010.emine.events.EclipseEventHandler;
-import org.se2010.emine.events.EditorEvent;
-import org.se2010.emine.events.IEMineEvent;
-import org.se2010.emine.events.IEMineEventListener;
-import org.se2010.emine.events.ModificationEvent;
-import org.se2010.emine.events.reposuite.RepoSuiteListener;
+import org.se2010.emine.views.SyntaxHighlightingListener;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
-
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.se2010.emine"; //$NON-NLS-1$
-
+public class Activator extends AbstractUIPlugin 
+{
 	// The shared instance
 	private static Activator plugin;
 	
-	//private EclipseEventHandler eHandler = null;
+	// The plug-in ID
+	public static final String PLUGIN_ID = "org.se2010.emine"; //$NON-NLS-1$
+	private static final String EXT_POINT_ID = "org.se2010.emine";
 	
 	/**
 	 * The constructor
@@ -30,6 +29,46 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
+	private void handleExtensions(final boolean activate) throws CoreException
+	{
+		final IExtensionRegistry      registry = Platform.getExtensionRegistry();
+		final IConfigurationElement[] config = registry.getConfigurationElementsFor(EXT_POINT_ID);
+		
+		for(final IConfigurationElement configElement : config)
+		{
+			
+			final Object o = configElement.createExecutableExtension("class");
+			if(o instanceof IActivator)
+			{
+				final ISafeRunnable runnable = new ISafeRunnable() 
+				{
+					@Override
+					public void handleException(final Throwable exception) 
+					{
+						System.err.println("Exception in client: " + exception);
+					}
+
+					@Override
+					public void run() throws Exception 
+					{
+						final IActivator activator = (IActivator) o;
+						
+						if(activate)
+						{
+							activator.start();
+						}
+						else
+						{
+							activator.stop();
+						}
+					}
+				};
+				
+				SafeRunner.run(runnable);
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
@@ -39,29 +78,16 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-	 EclipseEventHandler.init();
+		EclipseEventHandler.init();
+		this.handleExtensions(true);
 		
-		final IEMineEventListener listener = new IEMineEventListener() 
-		{
-			
-			public void onEvent(final IEMineEvent event) 
-			{
-				System.out.println("==== TEST LISTENER ====> " + event);
-			}
-		};
-
-		EMineEventBus.getInstance().registerEventListener(EditorEvent.EditorOpenedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(EditorEvent.EditorClosedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(EditorEvent.EditorActivatedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(EditorEvent.EditorDeactivatedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassAddedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassRemovedEvent.class, listener); 
-		EMineEventBus.getInstance().registerEventListener(ModificationEvent.ClassChangedEvent.class, listener);
-		EMineEventBus.getInstance().registerEventListener(ConfigurationArtifact.class, listener);
-		
-		new RepoSuiteListener();
-	//	new Controller();
+		final SyntaxHighlightingListener highlightingListener = new SyntaxHighlightingListener();
+		highlightingListener.registerOnEventBus();
 	}
+	
+	
+
+	
 	
 	public static void getEclipseEventHandler(){
 		
@@ -74,6 +100,8 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		
+		this.handleExtensions(false);
 	}
 
 	/**

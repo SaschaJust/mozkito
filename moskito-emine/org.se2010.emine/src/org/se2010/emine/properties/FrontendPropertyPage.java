@@ -1,6 +1,5 @@
 package org.se2010.emine.properties;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -26,8 +25,6 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
 	protected Control createContents(Composite parent) {
 		
 		Composite myComposite = createDefaultComposite(parent);
-
-
 		Composite hover = new Composite(myComposite,SWT.NONE);
 		GridLayout hover_grid = new GridLayout();
         hover_grid.numColumns = 2;
@@ -49,7 +46,6 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
         		}, mch_highl);
             
         return myComposite;
-
 	}
 	
     private Composite createDefaultComposite(Composite parent) {
@@ -68,7 +64,5 @@ public class FrontendPropertyPage extends org.eclipse.ui.dialogs.PropertyPage{
         composite.setLayoutData(data);
 
         return composite;
-}
-
-
+    }
 }
