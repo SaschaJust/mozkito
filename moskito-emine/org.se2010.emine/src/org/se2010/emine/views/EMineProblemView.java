@@ -222,7 +222,7 @@ public class EMineProblemView extends ViewPart implements
 	private void createColumns(Tree tree) {
 //		ProblemViewTableLabelProvider labelProvider = new ProblemViewTableLabelProvider();
 		// First two columns are fixed
-		TreeColumn tc0 = new TreeColumn(tree, SWT.LEFT, 0);
+		TreeColumn tc0 = new TreeColumn(tree, SWT.NONE, 0);
 		tc0.setAlignment(SWT.LEFT);
 		tc0.setText("Artifact Title");
 		tc0.setWidth(200);
@@ -230,7 +230,7 @@ public class EMineProblemView extends ViewPart implements
 		tc0.addSelectionListener(getSelectionAdapter(tc0, 0));
 		columnList.add(tc0);
 
-		TreeColumn tc1 = new TreeColumn(tree, SWT.RIGHT, 1);
+		TreeColumn tc1 = new TreeColumn(tree, SWT.NONE, 1);
 		tc1.setAlignment(SWT.LEFT);
 		tc1.setText("Artifact Type");
 		tc1.setWidth(200);
@@ -238,7 +238,7 @@ public class EMineProblemView extends ViewPart implements
 		tc1.addSelectionListener(getSelectionAdapter(tc1, 1));
 		columnList.add(tc1);
 		
-		TreeColumn tc2 = new TreeColumn(tree, SWT.RIGHT, 1);
+		TreeColumn tc2 = new TreeColumn(tree, SWT.NONE, 1);
 		tc1.setAlignment(SWT.LEFT);
 		tc1.setText("Resource");
 		tc1.setWidth(200);
@@ -353,28 +353,16 @@ public class EMineProblemView extends ViewPart implements
 	  
 	  
 	  void openEditor(ISelection selection) {
-		  
-		 // IFile input = new File("Artifact.html");
-		  //String afile = "/eMine_final/src/org/se2010/emine/views/Artifact.html";
+ 
 		   IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		   
 		   IFile file = root.getProject("test").getFile("Artifact.html");
-		   
-			//IFile  file = root.getFile(new Path(afile));
-//			
-//			IEditorInput editorInput = new FileEditorInput(file);
-//			IWorkbenchWindow window=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//			IWorkbenchPage page = window.getActivePage();
-		   
+		  
 		    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		    
-		    try {
-		    	
-		    	//page.openEditor(editorInput, "");
-		    	
+		    try {		    	
 		        IEditorPart openEditor = IDE.openEditor(page, file);
 			} catch (PartInitException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		  }
