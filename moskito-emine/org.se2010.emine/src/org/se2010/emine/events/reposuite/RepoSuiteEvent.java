@@ -6,8 +6,7 @@ import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.events.IEMineEvent;
 
 /**
- * Holds the artifacts which the corresponding view listen to 
- * and diplays accordingly
+ * Holds the artifacts which the corresponding view listen to and diplays accordingly
  * @author kaushikmukherjee
  *
  */
