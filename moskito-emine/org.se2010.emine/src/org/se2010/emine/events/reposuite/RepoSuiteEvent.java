@@ -5,6 +5,13 @@ import java.util.List;
 import org.se2010.emine.artifacts.IArtifact;
 import org.se2010.emine.events.IEMineEvent;
 
+/**
+ * Holds the artifacts which the corresponding view listen to 
+ * and diplays accordingly
+ * @author kaushikmukherjee
+ *
+ */
+
 public final class RepoSuiteEvent implements IEMineEvent
 {
         private final ArrayList<IArtifact> artifacts;

@@ -7,6 +7,13 @@ import java.util.Map;
 import org.eclipse.swt.widgets.TreeColumn;
 
 
+/**
+ * This Artifact is the object model that is diplayed in the problem View. 
+ *
+ * @author  Kaushik Mukerjee
+ * @version 02/2011 1.0
+ */
+
 public class ProblemArtifact implements IArtifact 
 {
 	private int 					id;
@@ -17,7 +24,16 @@ public class ProblemArtifact implements IArtifact
 	private List<TreeColumn> 		myColumnList;
 	
 	private String groupName;
-
+ 
+	
+    /**
+     * 
+     * @param id unique indentifier of the Artifact
+     * @param title message displayed in identifier
+     * @param message message to be displayed
+     * @param resource name of the file or method being edited
+     * @param map is a properties to store the type vs the artifact meant for extension of problem view
+     */
 	private ProblemArtifact(final int id, final String title, final String message, final String resource, final Map<String, String> map)
 	{
 		this.id           = id;

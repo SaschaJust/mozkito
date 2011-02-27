@@ -6,6 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * The part element of the Problem Artifact in the Tree Viewer.
+ * @author Marie
+ *
+ */
+
 public class ProblemArtifactTypeList implements List 
 {
 	private List<ProblemArtifact> myProblemArtifacts;

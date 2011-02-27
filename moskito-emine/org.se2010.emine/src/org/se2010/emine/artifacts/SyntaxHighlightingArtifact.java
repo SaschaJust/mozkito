@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+
+/**
+ * This class holds the details the details which are displayed in the Editor for
+ * Syntax Highlighting
+ * @author  Jenny
+ * @version 02/2011 1.0
+ */
 public class SyntaxHighlightingArtifact implements IArtifact{
 
 	private final String title;
