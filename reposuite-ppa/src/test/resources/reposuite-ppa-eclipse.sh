@@ -4,6 +4,8 @@ function clean_exit()
 {
     cd $script_dir$MAC_OS_ECLIPSE_ZIP_PARENT_PATH
     rm -rf eclipse
+    rm -rf /tmp/reposuite_28_01_2011.git
+    rm -rf /tmp/reposuite_28_01_2011.git.zip
     exit $1
 }
 
@@ -26,6 +28,11 @@ if [[ ! $script_dir == /* ]]
 then
     script_dir="$PWD/$script_dir"
 fi
+
+repo_zip=$script_dir"/reposuite_28_01_2011.git.zip"
+cp $repo_zip /tmp/ > /dev/null
+cd /tmp/
+unzip "reposuite_28_01_2011.git.zip"
 
 sys_env=`uname -a`
 if [[ $sys_env == Darwin* ]]
@@ -61,7 +68,7 @@ fi
 
 echo "TEST CASE 1 checking change operations for transaction f99a3ff4615653855c254874f3d4fe0d084f34d2 ... "
 cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/scratch/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2"
+VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2"
 ./eclipse $VMARGS
 
 if [ $? -ne 0 ]
@@ -83,7 +90,7 @@ rm -rf /tmp/ppa.xml
 
 echo "TEST CASE 2 checking change operations for transaction dfd5e8d5eb594e29f507896a744d2bdabfc55cdf ... "
 cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/scratch/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf"
+VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf"
 ./eclipse $VMARGS
 
 if [ $? -ne 0 ]
@@ -113,7 +120,7 @@ rm -rf /tmp/ppa2.xml
 
 echo "TEST CASE 3 checking change operations for transaction 0309f53f798d178aaf519333755c0f62500fcca9 ... "
 cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/scratch/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9"
+VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9"
 ./eclipse $VMARGS
 
 if [ $? -ne 0 ]
@@ -135,7 +142,7 @@ rm -rf /tmp/ppa3.xml
 
 echo "TEST CASE 4 checking change operations for transaction ff1ba504345e9df2b9feb0c678779945017236cc ... "
 cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/scratch/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc"
+VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc"
 ./eclipse $VMARGS
 
 if [ $? -ne 0 ]
