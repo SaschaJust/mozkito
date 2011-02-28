@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<javaChangeOperations>
+  <transaction id="0309f53f798d178aaf519333755c0f62500fcca9">
+    <Added>
+      <JavaElementLocation endline="26" id="0" position="650" startline="26">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.IOException.printStackTrace()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="41" id="0" position="1031" startline="41">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.Object.fileToLines(String)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="49" id="0" position="1378" startline="49">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>System.out.println(UNKNOWN)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="18" id="0" position="423" startline="18">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.LinkedList&lt;de.unisaarland.cs.st.reposuite.utils.String&gt;.&lt;init&gt;()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="38" id="0" position="694" startline="31">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.getLineNumbers(Chunk)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="50" id="0" position="1458" startline="50">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>UNKNOWNP.UNKNOWN.getSize()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="23" id="0" position="601" startline="23">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.List.add(String)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="47" id="0" position="1319" startline="47">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>difflib.Patch.getDeltas()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="29" id="0" position="335" startline="17">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.fileToLines(String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="52" id="0" position="957" startline="40">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.main(String[])</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="50" id="0" position="1445" startline="50">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>difflib.Delta.getRevised()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="33" id="0" position="837" startline="33">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>difflib.Chunk.getPosition()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="21" id="0" position="500" startline="21">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.BufferedReader.&lt;init&gt;(FileReader)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="22" id="0" position="568" startline="22">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.BufferedReader.readLine()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="53" id="0" position="307" startline="15">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="50" id="0" position="1431" startline="50">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>System.out.println(UNKNOWN)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="45" id="0" position="1246" startline="45">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>difflib.DiffUtils.diff(List,List)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="35" id="0" position="908" startline="35">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.HashSet.add(int)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="21" id="0" position="519" startline="21">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.FileReader.&lt;init&gt;(String)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="48" id="0" position="1348" startline="48">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>System.out.println(Delta)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="32" id="0" position="789" startline="32">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.HashSet&lt;de.unisaarland.cs.st.reposuite.utils.Integer&gt;.&lt;init&gt;()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="34" id="0" position="880" startline="34">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>difflib.Chunk.getSize()</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+    <Added>
+      <JavaElementLocation endline="42" id="0" position="1099" startline="42">
+        <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
+        <JavaMethodCall>
+          <fullQualifiedName>java.Object.fileToLines(String)</fullQualifiedName>
+        </JavaMethodCall>
+      </JavaElementLocation>
+    </Added>
+  </transaction>
+</javaChangeOperations>
