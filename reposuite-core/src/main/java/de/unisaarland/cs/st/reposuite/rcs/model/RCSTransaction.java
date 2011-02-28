@@ -241,19 +241,31 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			if (Logger.logDebug()) {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
-			if (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null) {
+			if ((transaction.getBranch().getEnd() == null)
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
-			return this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			int subresult = this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			if (subresult >= 0) {
+				return 1;
+			} else {
+				return -1;
+			}
 		} else if (transaction.getBranch().equals(RCSBranch.MASTER)) {
-			if (getBranch().getEnd().getChild(getBranch()) == null) {
+			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			}
-			return getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
-		} else {
-			if (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null) {
+			int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
+			if (sub_result <= 0) {
 				return -1;
-			} else if (getBranch().getEnd().getChild(getBranch()) == null) {
+			} else {
+				return 1;
+			}
+		} else {
+			if ((transaction.getBranch().getEnd() == null)
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
+				return -1;
+			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			} else {
 				int r = getBranch().getEnd().getChild(getBranch())
