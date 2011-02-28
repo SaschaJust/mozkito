@@ -87,7 +87,7 @@ public class HibernateTest {
 			
 			int i = 0;
 			for (Person person : persons) {
-				rcsTransaction = RCSTransaction.createTransaction("" + ++i, "test", new DateTime(), person);
+				rcsTransaction = RCSTransaction.createTransaction("" + ++i, "test", new DateTime(), person, "");
 				hibernateUtil.saveOrUpdate(rcsTransaction);
 			}
 			
@@ -180,7 +180,7 @@ public class HibernateTest {
 			
 			RCSFileManager fileManager = new RCSFileManager();
 			Person person = new Person("kim", null, null);
-			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person);
+			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
 			RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 			file.assignTransaction(rcsTransaction, "formerTest.java");
 			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);

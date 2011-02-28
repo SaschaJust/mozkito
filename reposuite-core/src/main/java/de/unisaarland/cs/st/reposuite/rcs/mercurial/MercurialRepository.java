@@ -708,7 +708,7 @@ public class MercurialRepository extends Repository {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(revID, previous, author, lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator),
-					date));
+			        date, ""));
 		}
 		return result;
 		

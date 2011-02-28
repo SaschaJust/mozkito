@@ -29,9 +29,9 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 @Entity
 @Table (name = "rcsrevision")
 @AssociationOverrides ({
-        @AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "file_id")),
-        @AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
-public class RCSRevision implements Annotated, Comparable<RCSRevision> {
+	@AssociationOverride (name = "primaryKey.changedFile", joinColumns = @JoinColumn (name = "file_id")),
+	@AssociationOverride (name = "primaryKey.transaction", joinColumns = @JoinColumn (name = "transaction_id")) })
+	public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**
 	 * 
@@ -144,6 +144,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Override
 	public String toString() {
 		return "RCSRevision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
-		        + ", changeType=" + getChangeType() + "]";
+		+ ", changeType=" + getChangeType() + "]";
 	}
 }

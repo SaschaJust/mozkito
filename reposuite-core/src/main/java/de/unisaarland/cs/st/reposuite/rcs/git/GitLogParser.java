@@ -11,6 +11,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
@@ -29,6 +30,8 @@ class GitLogParser {
 	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
+	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
+	
 	/**
 	 * Parses the list of log messages.
 	 * 
@@ -43,6 +46,7 @@ class GitLogParser {
 		
 		String currentID = null;
 		Person author = null;
+		String original_id = null;
 		String date = null;
 		boolean append = true;
 		StringBuilder message = new StringBuilder();
@@ -56,11 +60,12 @@ class GitLogParser {
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
 					}
-					result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
+					result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime, original_id));
 					currentID = null;
 					author = null;
 					date = null;
 					append = true;
+					original_id = null;
 					message = new StringBuilder();
 				}
 				String[] commitParts = line.split(" ");
@@ -99,6 +104,16 @@ class GitLogParser {
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {
 				if (line.trim().startsWith("git-svn-id")) {
+					
+					originalIdRegex.find(line);
+					if (originalIdRegex.getGroup("hit") != null) {
+						original_id = originalIdRegex.getGroup("hit").trim();
+					} else {
+						if (Logger.logDebug()) {
+							Logger.debug("Could not extract original if from line: " + line.trim());
+						}
+					}
+					
 					String tmpString = message.toString();
 					if (tmpString.length() > 2) {
 						tmpString = tmpString.substring(0, tmpString.length() - 2);
@@ -126,7 +141,7 @@ class GitLogParser {
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime));
+			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime, original_id));
 		}
 		Collections.reverse(result);
 		return result;

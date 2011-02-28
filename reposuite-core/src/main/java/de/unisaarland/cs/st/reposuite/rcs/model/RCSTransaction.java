@@ -72,8 +72,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	public static RCSTransaction createTransaction(final String id, final String message, final DateTime timestamp,
-			final Person author) {
-		return new RCSTransaction(id, message, timestamp, author);
+			final Person author, final String originalId) {
+		return new RCSTransaction(id, message, timestamp, author, originalId);
 	}
 	
 	/**
@@ -96,6 +96,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	private DateTime                timestamp;
 	private Set<String>             tags      = new HashSet<String>();
+	private String                  originalId;
 	
 	/**
 	 * used by Hibernate to create RCSTransaction instance.
@@ -119,16 +120,19 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the previous rcs transaction
 	 */
 	@NoneNull
-	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author) {
+	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
+			final String originalId) {
 		Condition.notNull(id, "id must not be null");
 		Condition.notNull(message, "message must not be null");
 		Condition.notNull(timestamp, "timestamp must not be null");
 		Condition.notNull(author, "author must not be null");
+		Condition.notNull(originalId, "originalId must not be null");
 		
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
 		setAuthor(author);
+		setOriginalId(originalId);
 		author.assignTransaction(this);
 		
 		if (Logger.logTrace()) {
@@ -383,6 +387,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return this.message;
 	}
 	
+	public String getOriginalId() {
+		return this.originalId;
+	}
+	
 	/**
 	 * @param branch
 	 * @return
@@ -561,6 +569,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	private void setMessage(final String message) {
 		this.message = message;
+	}
+	
+	private void setOriginalId(final String originalId) {
+		this.originalId = originalId;
 	}
 	
 	/**

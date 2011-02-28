@@ -63,26 +63,26 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 		
 		LogEntry entry;
 		
-		fileManager = new RCSFileManager();
+		this.fileManager = new RCSFileManager();
 		try {
 			while (!isShutdown() && ((entry = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing " + entry);
 				}
-				if (tids.contains(entry.getRevision())) {
+				if (this.tids.contains(entry.getRevision())) {
 					throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
-					        + entry.getRevision() + ")");
+							+ entry.getRevision() + ")");
 				}
 				
 				RCSTransaction rcsTransaction = RCSTransaction.createTransaction(entry.getRevision(),
-						entry.getMessage(), entry.getDateTime(), entry.getAuthor());
-				tids.add(entry.getRevision());
-				Map<String, ChangeType> changedPaths = repository.getChangedPaths(entry.getRevision());
+				        entry.getMessage(), entry.getDateTime(), entry.getAuthor(), entry.getOriginalId());
+				this.tids.add(entry.getRevision());
+				Map<String, ChangeType> changedPaths = this.repository.getChangedPaths(entry.getRevision());
 				for (String fileName : changedPaths.keySet()) {
 					RCSFile file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(),
+						file = this.fileManager.getFile(this.repository.getFormerPathName(rcsTransaction.getId(),
 								
 								fileName));
 						if (file == null) {
@@ -91,19 +91,19 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
 										+ changedPaths.get(fileName));
 							}
-							file = fileManager.getFile(fileName);
+							file = this.fileManager.getFile(fileName);
 							
 							if (file == null) {
-								file = fileManager.createFile(fileName, rcsTransaction);
+								file = this.fileManager.createFile(fileName, rcsTransaction);
 							}
 						} else {
 							file.assignTransaction(rcsTransaction, fileName);
 						}
 					} else {
-						file = fileManager.getFile(fileName);
+						file = this.fileManager.getFile(fileName);
 						
 						if (file == null) {
-							file = fileManager.createFile(fileName, rcsTransaction);
+							file = this.fileManager.createFile(fileName, rcsTransaction);
 						}
 					}
 					

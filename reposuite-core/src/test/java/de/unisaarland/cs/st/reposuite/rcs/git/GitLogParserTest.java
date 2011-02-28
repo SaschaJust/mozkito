@@ -63,4 +63,12 @@ public class GitLogParserTest {
 		assertEquals(null, regex.getGroup("lastname"));
 		assertEquals("just@b3cd8044-6b0a-409c-a07a-9925dc373c42", regex.getGroup("email"));
 	}
+	
+	@Test
+	public void testOriginalIdRegex() {
+		String s = "git-svn-id: http://svn.codehaus.org/jruby/trunk/jruby@7896 961051c9-f516-0410-bf72-c9f7e237a7b7";
+		GitLogParser.originalIdRegex.find(s);
+		assertTrue(GitLogParser.originalIdRegex.getGroup("hit") != null);
+		assertEquals("7896", GitLogParser.originalIdRegex.getGroup("hit").trim());
+	}
 }

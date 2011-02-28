@@ -20,9 +20,9 @@ public class RCSTransactionTest {
 	public void setUp() {
 		this.person1 = new Person("kim", "", "");
 		this.person2 = new Person("just", "", "");
-		this.x = new RCSTransaction("x", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1);
-		this.y = new RCSTransaction("y", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person2);
-		this.z = new RCSTransaction("z", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1);
+		this.x = new RCSTransaction("x", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1, "");
+		this.y = new RCSTransaction("y", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person2, "");
+		this.z = new RCSTransaction("z", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1, "");
 	}
 	
 	@Test
@@ -52,19 +52,19 @@ public class RCSTransactionTest {
 		 * Z
 		 */
 		
-		RCSTransaction a = new RCSTransaction("a", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1);
-		RCSTransaction b = new RCSTransaction("b", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1);
-		RCSTransaction c = new RCSTransaction("c", "", new DateTime("2000-01-03T00:00:01.000+00:00"), this.person1);
-		RCSTransaction d = new RCSTransaction("d", "", new DateTime("2000-01-04T00:00:01.000+00:00"), this.person1);
-		RCSTransaction e = new RCSTransaction("e", "", new DateTime("2000-01-05T00:00:01.000+00:00"), this.person1);
-		RCSTransaction f = new RCSTransaction("f", "", new DateTime("2000-01-06T00:00:01.000+00:00"), this.person1);
-		RCSTransaction g = new RCSTransaction("g", "", new DateTime("2000-01-07T00:00:01.000+00:00"), this.person1);
-		RCSTransaction h = new RCSTransaction("h", "", new DateTime("2000-01-08T00:00:01.000+00:00"), this.person1);
-		RCSTransaction i = new RCSTransaction("i", "", new DateTime("2000-01-09T00:00:01.000+00:00"), this.person1);
-		RCSTransaction j = new RCSTransaction("j", "", new DateTime("2000-01-10T00:00:01.000+00:00"), this.person1);
-		RCSTransaction k = new RCSTransaction("k", "", new DateTime("2000-01-11T00:00:01.000+00:00"), this.person1);
-		RCSTransaction l = new RCSTransaction("l", "", new DateTime("2000-01-12T00:00:01.000+00:00"), this.person1);
-		RCSTransaction m = new RCSTransaction("m", "", new DateTime("2000-01-13T00:00:01.000+00:00"), this.person1);
+		RCSTransaction a = new RCSTransaction("a", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction b = new RCSTransaction("b", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction c = new RCSTransaction("c", "", new DateTime("2000-01-03T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction d = new RCSTransaction("d", "", new DateTime("2000-01-04T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction e = new RCSTransaction("e", "", new DateTime("2000-01-05T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction f = new RCSTransaction("f", "", new DateTime("2000-01-06T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction g = new RCSTransaction("g", "", new DateTime("2000-01-07T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction h = new RCSTransaction("h", "", new DateTime("2000-01-08T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction i = new RCSTransaction("i", "", new DateTime("2000-01-09T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction j = new RCSTransaction("j", "", new DateTime("2000-01-10T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction k = new RCSTransaction("k", "", new DateTime("2000-01-11T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction l = new RCSTransaction("l", "", new DateTime("2000-01-12T00:00:01.000+00:00"), this.person1, "");
+		RCSTransaction m = new RCSTransaction("m", "", new DateTime("2000-01-13T00:00:01.000+00:00"), this.person1, "");
 		
 		RCSBranch branch_c = new RCSBranch("branch_a");
 		branch_c.setBegin(c);
@@ -332,7 +332,7 @@ public class RCSTransactionTest {
 		 * Z
 		 */
 		
-		RCSTransaction t = new RCSTransaction("t", "", new DateTime("2000-01-01T08:00:01.000+00:00"), this.person1);
+		RCSTransaction t = new RCSTransaction("t", "", new DateTime("2000-01-01T08:00:01.000+00:00"), this.person1, "");
 		
 		RCSBranch.MASTER.setBegin(this.z);
 		RCSBranch branch = new RCSBranch("branch");
@@ -375,7 +375,7 @@ public class RCSTransactionTest {
 		 */
 		
 		RCSBranch.MASTER.setBegin(new RCSTransaction("start", "", new DateTime("2008-01-01T00:00:01.000+00:00"),
-				this.person1));
+		        this.person1, ""));
 		RCSBranch openBranch = new RCSBranch("openBranch");
 		this.z.addChild(this.x);
 		this.x.addParent(this.z);

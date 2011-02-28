@@ -22,6 +22,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	protected LogEntry    previous;
 	protected String      revision;
 	protected Set<String> mergedBranches;
+	protected String      originalId;
 	
 	/**
 	 * Instantiates a new log entry.
@@ -38,7 +39,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 *            the date time
 	 */
 	public LogEntry(final String revision, final LogEntry previous, final Person author, final String message,
-	        final DateTime dateTime) {
+			final DateTime dateTime, final String originalId) {
 		Condition.notNull(revision);
 		Condition.notNull(author);
 		Condition.notNull(message);
@@ -49,6 +50,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.message = message;
 		this.previous = previous;
 		this.commitDate = dateTime;
+		this.originalId = originalId;
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -102,6 +104,14 @@ public class LogEntry implements Comparable<LogEntry> {
 		return this.message;
 	}
 	
+	public String getOriginalId(){
+		if (this.originalId != null) {
+			return this.originalId;
+		}
+		return "";
+	}
+	
+	
 	/**
 	 * Gets the revision.
 	 * 
@@ -110,7 +120,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	public String getRevision() {
 		return this.revision;
 	}
-	
 	
 	/**
 	 * @param mergedBranches
@@ -127,8 +136,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	@Override
 	public String toString() {
 		return "LogEntry [revision=" + this.revision + ", author=" + this.author + ", message="
-		        + StringEscapeUtils.escapeJava(this.message) + ", commitDate=" + this.commitDate + ", previous="
-		        + (this.previous != null ? this.previous.revision : "(null)") + "]";
+		+ StringEscapeUtils.escapeJava(this.message) + ", commitDate=" + this.commitDate + ", previous="
+		+ (this.previous != null ? this.previous.revision : "(null)") + "]";
 	}
 	
 }
