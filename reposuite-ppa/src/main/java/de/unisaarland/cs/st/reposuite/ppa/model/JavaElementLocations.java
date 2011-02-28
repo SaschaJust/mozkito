@@ -92,7 +92,11 @@ public class JavaElementLocations {
 	}
 	
 	public TreeSet<JavaElementLocation<JavaClassDefinition>> getClassDefs(final String filePath) {
-		return this.classDefs.get(filePath);
+		TreeSet<JavaElementLocation<JavaClassDefinition>> result = this.classDefs.get(filePath);
+		if (result == null) {
+			result = new TreeSet<JavaElementLocation<JavaClassDefinition>>();
+		}
+		return result;
 	}
 	
 	public Map<String, TreeSet<JavaElementLocation<JavaClassDefinition>>> getClassDefsByFile() {
@@ -204,7 +208,11 @@ public class JavaElementLocations {
 	}
 	
 	public TreeSet<JavaElementLocation<JavaMethodCall>> getMethodCalls(final String filePath) {
-		return this.methodCalls.get(filePath);
+		TreeSet<JavaElementLocation<JavaMethodCall>> result = this.methodCalls.get(filePath);
+		if (result == null) {
+			result = new TreeSet<JavaElementLocation<JavaMethodCall>>();
+		}
+		return result;
 	}
 	
 	public Map<String, TreeSet<JavaElementLocation<JavaMethodCall>>> getMethodCallsByFile() {
@@ -220,7 +228,11 @@ public class JavaElementLocations {
 	}
 	
 	public TreeSet<JavaElementLocation<JavaMethodDefinition>> getMethodDefs(final String filePath) {
-		return this.methodDefs.get(filePath);
+		TreeSet<JavaElementLocation<JavaMethodDefinition>> result =  this.methodDefs.get(filePath);
+		if (result == null) {
+			result = new TreeSet<JavaElementLocation<JavaMethodDefinition>>();
+		}
+		return result;
 	}
 	
 	public Map<String, TreeSet<JavaElementLocation<JavaMethodDefinition>>> getMethodDefsByFile() {
