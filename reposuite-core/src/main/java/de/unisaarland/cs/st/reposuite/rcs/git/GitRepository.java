@@ -11,7 +11,9 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,18 +51,21 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	protected static Charset           charset         = Charset.defaultCharset();
+	protected static Charset                charset         = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
 		}
 	}
-	protected static DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
-	protected static Regex             regex           = new Regex(
+	protected static DateTimeFormatter      dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static Regex                  regex           = new Regex(
 	".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
-	protected static Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
-	private GitRevDependencyIterator   revDepIter;
-	private File                       cloneDir;
+	protected static Regex                  formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	private GitRevDependencyIterator        revDepIter;
+	private File                            cloneDir;
+	private List<String>                    transactionIDs  = new LinkedList<String>();
+	
+	private final HashMap<String, LogEntry> logCache        = new HashMap<String, LogEntry>();
 	
 	/**
 	 * Instantiates a new git repository.
@@ -193,7 +198,7 @@ public class GitRepository extends Repository {
 		
 		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
-				baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
+		        baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -202,8 +207,7 @@ public class GitRepository extends Repository {
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
 		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + diffPath },
-				this.cloneDir,
-				null, new HashMap<String, String>());
+		        this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
 		}
@@ -371,8 +375,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public String getHEADRevisionId() {
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-parse", "master" },
-				this.cloneDir, null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list", "master",
+				"--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -388,7 +392,17 @@ public class GitRepository extends Repository {
 		
 		if (index == 0) {
 			return transactionId;
-		} else if (index < 0) {
+		}
+		
+		int fromIndex = this.transactionIDs.indexOf(transactionId);
+		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
+			return this.transactionIDs.get(this.transactionIDs.size() - 1);
+		}
+		
+		return this.transactionIDs.get((int) (fromIndex + index));
+		
+		/*
+		else if (index < 0) {
 			String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "-r", transactionId };
 			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 			if (response.getFirst() != 0) {
@@ -418,6 +432,7 @@ public class GitRepository extends Repository {
 				return lines.get((int) index - 1);
 			}
 		}
+		 */
 	}
 	
 	@Override
@@ -448,7 +463,8 @@ public class GitRepository extends Repository {
 	}
 	
 	/*
-	 * (non-Javadoc)
+	 * In case of git this method returns a file pointing to a bare
+	 * repository mirror!
 	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.rcs.Repository#getWokingCopyLocation()
@@ -468,27 +484,66 @@ public class GitRepository extends Repository {
 	@NoneNull
 	public List<LogEntry> log(@Length(min = 1) @HexString final String fromRevision,
 			@Length(min = 1) @HexString final String toRevision) {
+		
 		Condition.notNull(fromRevision, "Cannot get log info for NULL revision");
 		Condition.notNull(toRevision, "Cannot get log info for NULL revision");
+		
+		String toRev = toRevision;
+		if (toRevision.equals("HEAD")) {
+			toRev = this.getHEADRevisionId();
+		}
+		int fromIndex = this.transactionIDs.indexOf(fromRevision);
+		int toIndex = this.transactionIDs.indexOf(toRev);
+		
+		Condition.check(fromIndex >= 0, "Start transaction for log() is unknown!");
+		Condition.check(toIndex >= 0, "End transaction for log() is unknown!");
+		Condition.check(fromIndex <= toIndex, "cannot log from later revision to earlier one!");
 		
 		if ((fromRevision == null) || (toRevision == null)) {
 			return null;
 		}
 		
-		String revisionSelection = toRevision;
-		if (!fromRevision.equals(this.getFirstRevisionId())) {
-			revisionSelection = fromRevision + "^.." + revisionSelection;
-		}
+		List<LogEntry> result = new LinkedList<LogEntry>();
 		
+		String revisionSelection = fromRevision + "^.." + toRevision;
+		if (fromRevision.equals(this.getFirstRevisionId())) {
+			revisionSelection = toRevision;
+		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller",
 				"--branches", "--remotes", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=fuller --branches --remotes" + revisionSelection);
+			Logger.debug("############# git log --pretty=fuller --branches --remotes " + revisionSelection);
 		}
-		return GitLogParser.parse(response.getSecond());
+		for (LogEntry e : GitLogParser.parse(response.getSecond())) {
+			this.logCache.put(e.getRevision(), e);
+		}
+		
+		for (int i = fromIndex; i <= toIndex; ++i) {
+			String tId = this.transactionIDs.get(i);
+			
+			if (!this.logCache.containsKey(tId)) {
+				revisionSelection = tId + "^.." + tId;
+				if (i < 1) {
+					revisionSelection = tId;
+				}
+				response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches",
+						"--remotes", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
+				if (response.getFirst() != 0) {
+					return null;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("############# git log --pretty=fuller --branches --remotes " + revisionSelection);
+				}
+				result.addAll(GitLogParser.parse(response.getSecond()));
+			} else {
+				result.add(this.logCache.get(tId));
+			}
+			this.logCache.remove(tId);
+		}
+		return result;
 	}
 	
 	/*
@@ -545,6 +600,23 @@ public class GitRepository extends Repository {
 		}
 		
 		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision());
+		
+		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
+				"--pretty=format:%H", "--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
+		}
+		if (Logger.logDebug()) {
+			Logger.debug("############# git log --pretty=format:%H --branches --remotes");
+		}
+		this.transactionIDs = response.getSecond();
+		Collections.reverse(this.transactionIDs);
+		
+		Condition.check(this.getFirstRevisionId().equals(this.transactionIDs.get(0)),
+		"First revision ID and transaction ID list missmatch!");
+		Condition.check(this.getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+		"End revision ID and transaction ID list missmatch!");
+		
 	}
 	
 	/*

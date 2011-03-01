@@ -410,6 +410,14 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	public void testGetRelativeTransactionId(){
+		for (Repository repository : repositories) {
+			String endRevision = repository.getEndRevision();
+			assertEquals(endRevision, repository.getRelativeTransactionId(endRevision, 10));
+		}
+	}
+	
+	@Test
 	public void testLog() {
 		for (Repository repository : repositories) {
 			List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
