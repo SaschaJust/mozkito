@@ -14,7 +14,7 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 	
 	/** The hibernate. */
 	private final HibernateUtil hibernate;
-	
+	private int                 saveCount = 0;
 	
 	/**
 	 * Instantiates a new persisting change operation visitor.
@@ -41,6 +41,7 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 		}
 		this.hibernate.commitTransaction();
 		this.hibernate.beginTransaction();
+		this.saveCount = 0;
 	}
 	
 	/*
@@ -56,6 +57,15 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 			Logger.debug("SaveORUpdate: " + change.toString());
 		}
 		this.hibernate.saveOrUpdate(change);
+		++this.saveCount;
+		if (this.saveCount > 10000) {
+			if (Logger.logInfo()) {
+				Logger.info("Committing change operations");
+			}
+			this.hibernate.commitTransaction();
+			this.hibernate.beginTransaction();
+			this.saveCount = 0;
+		}
 	}
 	
 	/*

@@ -50,9 +50,13 @@ public class PPAUtils {
 			final Collection<ChangeOperationVisitor> visitors) {
 		
 		JavaElementCache.reset();
-		
+		int counter = 1;
+		int size = transaction.getRevisions().size();
 		for (RCSRevision revision : transaction.getRevisions()) {
-			
+			if (Logger.logInfo()) {
+				Logger.info("Processing revision " + counter + " / " + size + " ... ");
+				++counter;
+			}
 			switch (revision.getChangeType()) {
 				
 				case Added:
