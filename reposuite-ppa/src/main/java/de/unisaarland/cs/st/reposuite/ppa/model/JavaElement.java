@@ -4,8 +4,8 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
@@ -28,16 +28,14 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 */
 	private static final long serialVersionUID  = -8960043672858454394L;
-	
-	protected String          fullQualifiedName = "<unknown>";
-	
 	private String            shortName         = "<unknown>";
+	private JavaElementPrimaryKey primaryKey;
 	
 	@NoneNull
 	public JavaElement(final String fullQualifiedName) {
-		this.fullQualifiedName = fullQualifiedName;
 		String[] nameParts = fullQualifiedName.split("\\.");
 		this.shortName = nameParts[nameParts.length - 1];
+		this.setPrimaryKey(new JavaElementPrimaryKey(fullQualifiedName, this.getClass()));
 	}
 	
 	@Override
@@ -52,11 +50,11 @@ public abstract class JavaElement implements Annotated {
 			return false;
 		}
 		JavaElement other = (JavaElement) obj;
-		if (this.fullQualifiedName == null) {
-			if (other.fullQualifiedName != null) {
+		if (this.getFullQualifiedName() == null) {
+			if (other.getFullQualifiedName() != null) {
 				return false;
 			}
-		} else if (!this.fullQualifiedName.equals(other.fullQualifiedName)) {
+		} else if (!this.getFullQualifiedName().equals(other.getFullQualifiedName())) {
 			return false;
 		}
 		return true;
@@ -65,18 +63,23 @@ public abstract class JavaElement implements Annotated {
 	/**
 	 * @return the fullQualifiedName
 	 */
-	@Id
+	@Transient
 	public String getFullQualifiedName() {
-		return this.fullQualifiedName;
+		return this.primaryKey.getFullQualifiedName();
 	}
 	
 	@Transient
-	public String getPackageName(){
-		int index = this.fullQualifiedName.lastIndexOf(".");
-		if(index > 0){
-			return this.fullQualifiedName.substring(index);
+	public String getPackageName() {
+		int index = this.getFullQualifiedName().lastIndexOf(".");
+		if (index > 0) {
+			return this.getFullQualifiedName().substring(index);
 		}
 		return "";
+	}
+	
+	@EmbeddedId
+	public JavaElementPrimaryKey getPrimaryKey() {
+		return this.primaryKey;
 	}
 	
 	/**
@@ -92,13 +95,20 @@ public abstract class JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.fullQualifiedName == null) ? 0 : this.fullQualifiedName.hashCode());
+		result = prime * result + ((this.getFullQualifiedName() == null) ? 0 : this.getFullQualifiedName().hashCode());
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	private void setFullQualifiedName(final String fullQualifiedName) {
-		this.fullQualifiedName = fullQualifiedName;
+	/**
+	 * @return the fullQualifiedName
+	 */
+	@Transient
+	protected void setFullQualifiedName(final String name) {
+		this.primaryKey.setFullQualifiedName(name);
+	}
+	
+	private void setPrimaryKey(final JavaElementPrimaryKey primaryKey) {
+		this.primaryKey = primaryKey;
 	}
 	
 	@SuppressWarnings("unused")
@@ -108,6 +118,6 @@ public abstract class JavaElement implements Annotated {
 	
 	@Override
 	public String toString() {
-		return "JavaElement [fullQualifiedName=" + this.fullQualifiedName + ", shortName=" + this.shortName + "]";
+		return "JavaElement [fullQualifiedName=" + this.getFullQualifiedName() + ", shortName=" + this.shortName + "]";
 	}
 }

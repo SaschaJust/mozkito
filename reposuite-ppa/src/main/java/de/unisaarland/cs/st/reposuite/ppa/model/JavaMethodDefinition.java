@@ -84,14 +84,14 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 			@NotNull final JavaClassDefinition parent) {
 		
 		super(fullQualifiedName, parent);
+		this.setSignature(new ArrayList<String>(signature));
+		this.setFullQualifiedName(composeFullQualifiedName(parent, super.getFullQualifiedName(), signature));
 		if (parent != null) {
 			Condition.check(parent instanceof JavaClassDefinition,
 			"The parent of a method Definition has to be another class definition");
 			parent.addChild(this);
 		}
-		this.setSignature(new ArrayList<String>(signature));
-		this.fullQualifiedName = composeFullQualifiedName(parent, super.getFullQualifiedName(),
-				signature);
+		
 	}
 	
 	/*

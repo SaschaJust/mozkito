@@ -15,8 +15,6 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 	/** The hibernate. */
 	private final HibernateUtil hibernate;
 	
-	/** The seen transaction. */
-	private boolean             seenTransaction = false;
 	
 	/**
 	 * Instantiates a new persisting change operation visitor.
@@ -54,8 +52,10 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 	 */
 	@Override
 	public void visit(final JavaChangeOperation change) {
+		if (Logger.logDebug()) {
+			Logger.debug("SaveORUpdate: " + change.toString());
+		}
 		this.hibernate.saveOrUpdate(change);
-		
 	}
 	
 	/*
@@ -67,14 +67,10 @@ public class PersistingChangeOperationVisitor implements ChangeOperationVisitor 
 	 */
 	@Override
 	public void visit(final RCSTransaction transaction) {
-		if (this.seenTransaction) {
-			if (Logger.logInfo()) {
-				Logger.info("Committing change operations");
-			}
-			this.hibernate.commitTransaction();
-			this.hibernate.beginTransaction();
+		if (Logger.logInfo()) {
+			Logger.info("Committing change operations");
 		}
-		this.seenTransaction = true;
+		this.hibernate.commitTransaction();
+		this.hibernate.beginTransaction();
 	}
-	
 }

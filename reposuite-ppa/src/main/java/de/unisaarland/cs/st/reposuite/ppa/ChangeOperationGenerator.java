@@ -1,12 +1,10 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -52,14 +50,9 @@ public class ChangeOperationGenerator {
 				visitor.visit(transaction);
 			}
 			
-			Collection<JavaChangeOperation> changeOperations = PPAUtils.getChangeOperations(this.repo, transaction);
-			for (JavaChangeOperation op : changeOperations) {
-				for(ChangeOperationVisitor visitor : this.visitors){
-					visitor.visit(op);
-				}
-			}
+			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors);
 		}
-		for(ChangeOperationVisitor visitor : this.visitors){
+		for (ChangeOperationVisitor visitor : this.visitors) {
 			visitor.endVisit();
 		}
 	}

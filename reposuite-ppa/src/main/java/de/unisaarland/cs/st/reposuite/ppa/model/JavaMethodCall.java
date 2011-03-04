@@ -48,7 +48,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
 		super(fullQualifiedName);
 		this.signature = new ArrayList<String>(signature);
-		this.fullQualifiedName = composeFullQualifiedName(fullQualifiedName, signature);
+		this.setFullQualifiedName(composeFullQualifiedName(fullQualifiedName, signature));
 		int index = fullQualifiedName.lastIndexOf(".");
 		Condition.check(index < fullQualifiedName.length(),
 				"Could not determine called class name. Last index of `.` is not less than length of string: "

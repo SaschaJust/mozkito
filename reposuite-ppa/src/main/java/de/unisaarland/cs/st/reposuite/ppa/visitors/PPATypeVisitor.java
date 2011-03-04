@@ -250,11 +250,18 @@ public class PPATypeVisitor extends ASTVisitor {
 				startLine = this.cu.getLineNumber(pos);
 			}
 			
-			@SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = td.bodyDeclarations();
-			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
-					+ " body declarations!");
-			BodyDeclaration bodyDeclaration = bodyDeclarations.get(0);
-			int bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
+			int bodyStartIndex = td.toString().indexOf("{");
+			
+			if (bodyStartIndex < 1) {
+				if (Logger.logError()) {
+					Logger.error("COuld not find type declaration body start!");
+				}
+				return;
+			}
+			
+			bodyStartIndex = td.getStartPosition() + bodyStartIndex + 1;
+			
+			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(
 					this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
@@ -340,7 +347,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
-
+				
 				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md
 						.getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
 						.getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);

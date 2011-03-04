@@ -50,8 +50,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
 			@NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
-		Condition.check(bodyStartLine <= endLine, "Body start line must be smaller or equal than end line");
-		Condition.check(bodyStartLine >= startLine, "Body start line must be greater or equal than end line");
+		if (element instanceof JavaElementDefinition) {
+			Condition.check(bodyStartLine <= endLine,
+					"Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
+					+ " startLine=" + endLine);
+			Condition.check(bodyStartLine >= startLine,
+					"Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
+					+ " startLine=" + startLine);
+		}
 		this.setElement(element);
 		this.setStartLine(startLine);
 		this.setEndLine(endLine);
@@ -227,6 +233,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public int getPosition() {
 		return this.position;
 	}
+	
 	
 	public int getStartLine() {
 		return this.startLine;

@@ -8,10 +8,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
@@ -79,7 +80,7 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	}
 	
 	
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -110,14 +111,14 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	}
 	
 	
-
+	
 	/**
 	 * Gets the children.
 	 * 
 	 * @return the children
 	 */
 	@ElementCollection
-	@JoinTable(name = "children", joinColumns = { @JoinColumn(name = "child_id", nullable = false) })
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "primaryKey", fetch = FetchType.LAZY)
 	public Collection<JavaElementDefinition> getChildren() {
 		return this.children.values();
 	}
@@ -174,8 +175,10 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 *            the children
 	 */
 	@SuppressWarnings("unused")
-	private void setChildren(final Map<String, JavaElementDefinition> children) {
-		this.children = children;
+	private void setChildren(final Collection<JavaElementDefinition> children) {
+		for (JavaElementDefinition d : children) {
+			this.addChild(d);
+		}
 	}
 	
 	
