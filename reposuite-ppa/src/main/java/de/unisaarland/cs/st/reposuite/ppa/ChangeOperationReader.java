@@ -35,8 +35,14 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	public void run() {
 		Set<ChangeOperationVisitor> visitors = new HashSet<ChangeOperationVisitor>();
 		visitors.add(this);
+		int size = this.transactions.size();
+		int counter = 0;
 		while (!this.transactions.isEmpty()) {
 			RCSTransaction transaction = this.transactions.pop();
+			if (Logger.logInfo()) {
+				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
+						+ "/" + size + ")");
+			}
 			PPAUtils.generateChangeOperations(this.repository, transaction, visitors);
 		}
 		if (Logger.logInfo()) {
