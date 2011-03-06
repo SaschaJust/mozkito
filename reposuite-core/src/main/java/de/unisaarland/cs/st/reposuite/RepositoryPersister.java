@@ -5,6 +5,7 @@ package de.unisaarland.cs.st.reposuite;
 
 import java.util.concurrent.CountDownLatch;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -31,10 +32,13 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	 * @param settings
 	 * @param hibernateUtil
 	 */
-	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-			final HibernateUtil hibernateUtil) {
+	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		try {
+			this.hibernateUtil = HibernateUtil.getInstance(false);
+		} catch (UninitializedDatabaseException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
 	}
 	
 	/*
@@ -54,7 +58,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 		if (Logger.logInfo()) {
 			Logger.info("Starting " + getHandle());
 		}
-		hibernateUtil.beginTransaction();
+		this.hibernateUtil.beginTransaction();
 		RCSTransaction currentTransaction;
 		CountDownLatch currentLatch = new CountDownLatch(1);
 		Tuple<RCSTransaction, CountDownLatch> tuple;
@@ -70,21 +74,21 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 				}
 				
 				if (++i % 100 == 0) {
-					hibernateUtil.commitTransaction();
-					hibernateUtil.beginTransaction();
+					this.hibernateUtil.commitTransaction();
+					this.hibernateUtil.beginTransaction();
 				}
-				RCSTransaction foundTransaction = hibernateUtil.getSessionRCSTransaction(currentTransaction.getId());
+				RCSTransaction foundTransaction = this.hibernateUtil.getSessionRCSTransaction(currentTransaction.getId());
 				if (foundTransaction != null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Found dubplicate RCSTransaction within session. Abort!");
 						throw new UnrecoverableError("Found dubplicate RCSTransaction within session. Abort!");
 					}
 				} else {
-					hibernateUtil.save(currentTransaction);
+					this.hibernateUtil.save(currentTransaction);
 				}
 				currentLatch.countDown();
 			}
-			hibernateUtil.commitTransaction();
+			this.hibernateUtil.commitTransaction();
 			currentLatch.countDown();
 			if (Logger.logInfo()) {
 				Logger.info("RepositoryPersister done. Terminating... ");
