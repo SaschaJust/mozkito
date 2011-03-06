@@ -142,6 +142,10 @@ public class RCSFile implements Annotated {
 		if (current != null) {
 			return this.changedNames.get(current.getId());
 		} else {
+			if (Logger.logError()) {
+				Logger.error("Could not determine path for RCSFile (id=" + this.getGeneratedId() + ") for transaction "
+				        + transaction.getId());
+			}
 			return null;
 		}
 	}
