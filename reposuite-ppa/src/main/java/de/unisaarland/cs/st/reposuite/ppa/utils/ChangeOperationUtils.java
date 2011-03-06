@@ -49,7 +49,7 @@ public class ChangeOperationUtils {
 	
 	@NoneNull
 	protected static void generateChangeOperationsForAddedFile(final Repository repository, final RCSRevision revision,
-			final Collection<ChangeOperationVisitor> visitors) {
+	        final Collection<ChangeOperationVisitor> visitors) {
 		
 		String changedPath = filterChangedPath(revision.getChangedFile().getPath(revision.getTransaction()));
 		if (changedPath == null) {

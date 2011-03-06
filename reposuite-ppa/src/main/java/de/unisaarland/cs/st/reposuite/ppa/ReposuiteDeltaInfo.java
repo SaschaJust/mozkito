@@ -56,7 +56,7 @@ public class ReposuiteDeltaInfo {
 				null, false, true, false);
 		
 		settings.parseArguments();
-		this.hibernateUtil = this.databaseSettings.getValue();
+		this.hibernateUtil = this.databaseSettings.getValue(false);
 	}
 	
 	/**

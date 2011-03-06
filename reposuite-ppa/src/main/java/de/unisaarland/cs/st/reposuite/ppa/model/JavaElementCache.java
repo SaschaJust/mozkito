@@ -45,6 +45,8 @@ public class JavaElementCache {
 		methodCalls.clear();
 	}
 	
+	private final HibernateUtil                                  hibernateUtil;
+	
 	/** The class def locations. */
 	private final Set<JavaElementLocation<JavaClassDefinition>>  classDefLocations   = new HashSet<JavaElementLocation<JavaClassDefinition>>();
 	
@@ -58,7 +60,11 @@ public class JavaElementCache {
 	 * Instantiates a new java element cache.
 	 */
 	public JavaElementCache() {
-		
+		try {
+			this.hibernateUtil = HibernateUtil.getInstance(false);
+		} catch (UninitializedDatabaseException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
 	}
 	
 	/**
@@ -88,34 +94,22 @@ public class JavaElementCache {
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaClassDefinition(fullQualifiedName, parent, packageName);
-			try {
-				Criteria criteria = HibernateUtil.getInstance().createCriteria(JavaClassDefinition.class);
-				criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-				@SuppressWarnings("unchecked") List<JavaClassDefinition> list = criteria.list();
-				if (list.size() < 1) {
-					if (Logger.logDebug()) {
-						Logger.debug("Could not find JavaClassDefinition in DB. Creating new one. " + def.toString());
-					}
-				} else if (list.size() > 1) {
-					throw new UnrecoverableError(
-							"Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
-							+ def.getPrimaryKey().toString());
-				} else {
-					def = list.get(0);
+			Criteria criteria = this.hibernateUtil.createCriteria(JavaClassDefinition.class);
+			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
+			@SuppressWarnings("unchecked") List<JavaClassDefinition> list = criteria.list();
+			if (list.size() < 1) {
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find JavaClassDefinition in DB. Creating new one. " + def.toString());
 				}
-			} catch (UninitializedDatabaseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
+			} else if (list.size() > 1) {
+				throw new UnrecoverableError(
+						"Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
+						+ def.getPrimaryKey().toString());
+			} else {
+				def = list.get(0);
 			}
 			
 			if (classDefs.size() > 10000) {
-				try {
-					HibernateUtil.getInstance().commitTransaction();
-					HibernateUtil.getInstance().beginTransaction();
-				} catch (UninitializedDatabaseException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
 				classDefs.clear();
 			}
 			
@@ -171,34 +165,22 @@ public class JavaElementCache {
 		JavaMethodCall call = null;
 		if (!methodCalls.containsKey(cacheName)) {
 			call = new JavaMethodCall(fullQualifiedName, signature);
-			try {
-				Criteria criteria = HibernateUtil.getInstance().createCriteria(JavaMethodCall.class);
-				criteria.add(Restrictions.eq("primaryKey", call.getPrimaryKey()));
-				@SuppressWarnings("unchecked") List<JavaMethodCall> list = criteria.list();
-				if (list.size() < 1) {
-					if (Logger.logDebug()) {
-						Logger.debug("Could not find JavaMethodCall in DB. Creating new one. " + call.toString());
-					}
-				} else if (list.size() > 1) {
-					throw new UnrecoverableError(
-							"Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
-							+ call.getPrimaryKey().toString());
-				} else {
-					call = list.get(0);
+			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodCall.class);
+			criteria.add(Restrictions.eq("primaryKey", call.getPrimaryKey()));
+			@SuppressWarnings("unchecked") List<JavaMethodCall> list = criteria.list();
+			if (list.size() < 1) {
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find JavaMethodCall in DB. Creating new one. " + call.toString());
 				}
-			} catch (UninitializedDatabaseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
+			} else if (list.size() > 1) {
+				throw new UnrecoverableError(
+						"Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
+						+ call.getPrimaryKey().toString());
+			} else {
+				call = list.get(0);
 			}
 			
 			if (methodCalls.size() > 10000) {
-				try {
-					HibernateUtil.getInstance().commitTransaction();
-					HibernateUtil.getInstance().beginTransaction();
-				} catch (UninitializedDatabaseException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
 				methodCalls.clear();
 			}
 			
@@ -241,34 +223,22 @@ public class JavaElementCache {
 		if (!methodDefs.containsKey(cacheName)) {
 			
 			def = new JavaMethodDefinition(fullQualifiedName, signature, parent);
-			try {
-				Criteria criteria = HibernateUtil.getInstance().createCriteria(JavaMethodDefinition.class);
-				criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-				@SuppressWarnings("unchecked") List<JavaMethodDefinition> list = criteria.list();
-				if (list.size() < 1) {
-					if (Logger.logDebug()) {
-						Logger.debug("Could not find JavaMethodDefinition in DB. Creating new one. " + def.toString());
-					}
-				} else if (list.size() > 1) {
-					throw new UnrecoverableError(
-							"Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
-							+ def.getPrimaryKey().toString());
-				} else {
-					def = list.get(0);
+			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodDefinition.class);
+			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
+			@SuppressWarnings("unchecked") List<JavaMethodDefinition> list = criteria.list();
+			if (list.size() < 1) {
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find JavaMethodDefinition in DB. Creating new one. " + def.toString());
 				}
-			} catch (UninitializedDatabaseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
+			} else if (list.size() > 1) {
+				throw new UnrecoverableError(
+						"Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
+						+ def.getPrimaryKey().toString());
+			} else {
+				def = list.get(0);
 			}
 			
 			if (methodDefs.size() > 10000) {
-				try {
-					HibernateUtil.getInstance().commitTransaction();
-					HibernateUtil.getInstance().beginTransaction();
-				} catch (UninitializedDatabaseException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
 				methodDefs.clear();
 			}
 			

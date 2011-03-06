@@ -306,9 +306,21 @@ public class PPATypeVisitor extends ASTVisitor {
 			@SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
 					+ " body declarations!");
-			BodyDeclaration bodyDeclaration = bodyDeclarations.get(0);
-			int bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
 			
+			int bodyStartLine = currentLine;
+			int bodyStartIndex = acd.toString().indexOf("{");
+			
+			if (bodyStartIndex < 1) {
+				if (Logger.logError()) {
+					Logger.error("Could not find anonymous class declaration body start!");
+				}
+				return;
+			} else {
+				bodyStartIndex = acd.getStartPosition() + bodyStartIndex + 1;
+				bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
+			}
+			
+
 			int anonCount = this.classStack.peek().getElement().nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
 					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {

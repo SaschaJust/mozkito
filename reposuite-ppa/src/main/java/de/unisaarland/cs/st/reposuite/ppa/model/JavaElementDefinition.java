@@ -41,7 +41,9 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	/** The children. */
 	protected Map<String, JavaElementDefinition> children         = new HashMap<String, JavaElementDefinition>();
 	
-	
+	protected JavaElementDefinition() {
+		super();
+	}
 	
 	/**
 	 * Instantiates a new java element definition.

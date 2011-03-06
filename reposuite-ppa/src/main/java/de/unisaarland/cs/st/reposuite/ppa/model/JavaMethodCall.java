@@ -45,6 +45,11 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	private String                calledClassName   = "<unknown>";
 	
+	@SuppressWarnings("unused")
+	private JavaMethodCall() {
+		super();
+	}
+	
 	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
 		super(fullQualifiedName);
 		this.signature = new ArrayList<String>(signature);

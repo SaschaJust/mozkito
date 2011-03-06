@@ -133,11 +133,16 @@ public class HibernateUtil {
 		}
 	}
 	
+	@Deprecated
+	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
+		return getInstance(true);
+	}
+	
 	/**
 	 * @return
 	 * @throws UninitializedDatabaseException
 	 */
-	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
+	public static HibernateUtil getInstance(final boolean useInterceptor) throws UninitializedDatabaseException {
 		if (sessionFactory == null) {
 			throw new UninitializedDatabaseException();
 		}
@@ -146,7 +151,7 @@ public class HibernateUtil {
 		if (instances.containsKey(Thread.currentThread())) {
 			return instances.get(Thread.currentThread());
 		} else {
-			HibernateUtil util = new HibernateUtil();
+			HibernateUtil util = new HibernateUtil(useInterceptor);
 			instances.put(Thread.currentThread(), util);
 			return util;
 		}
@@ -177,11 +182,15 @@ public class HibernateUtil {
 	/**
 	 * 
 	 */
-	private HibernateUtil() {
+	private HibernateUtil(final boolean useInterceptor) {
 		Condition.notNull(sessionFactory, "");
-		HibernateInterceptor interceptor = new HibernateInterceptor(this);
-		this.session = sessionFactory.openSession(interceptor);
-		interceptor.loadEntities();
+		if (useInterceptor) {
+			HibernateInterceptor interceptor = new HibernateInterceptor(this);
+			this.session = sessionFactory.openSession(interceptor);
+			interceptor.loadEntities();
+		} else {
+			this.session = sessionFactory.openSession();
+		}
 	}
 	
 	/**

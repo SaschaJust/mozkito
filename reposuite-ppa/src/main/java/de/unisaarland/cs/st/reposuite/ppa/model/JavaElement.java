@@ -31,6 +31,10 @@ public abstract class JavaElement implements Annotated {
 	private String            shortName         = "<unknown>";
 	private JavaElementPrimaryKey primaryKey;
 	
+	protected JavaElement() {
+		
+	}
+	
 	@NoneNull
 	public JavaElement(final String fullQualifiedName) {
 		String[] nameParts = fullQualifiedName.split("\\.");

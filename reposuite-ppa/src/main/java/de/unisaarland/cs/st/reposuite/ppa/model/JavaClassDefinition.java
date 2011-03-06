@@ -43,6 +43,11 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	/** The anonym class. */
 	private boolean             anonymClass      = false;
 	
+	@SuppressWarnings("unused")
+	private JavaClassDefinition() {
+		super();
+	}
+	
 	/**
 	 * Instantiates a new java class definition.
 	 * 

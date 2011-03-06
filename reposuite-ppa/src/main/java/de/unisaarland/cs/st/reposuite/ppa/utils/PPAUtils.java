@@ -47,7 +47,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class PPAUtils {
 	
 	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors) {
+	        final Collection<ChangeOperationVisitor> visitors) {
 		
 		//JavaElementCache.reset();
 		int counter = 1;

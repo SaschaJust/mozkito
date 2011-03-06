@@ -62,6 +62,11 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	/** The signature. */
 	private List<String> signature;
 	
+	@SuppressWarnings("unused")
+	private JavaMethodDefinition() {
+		super();
+	}
+	
 	/**
 	 * Instantiates a new java method definition.
 	 * 

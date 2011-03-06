@@ -155,7 +155,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 			if (this.getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
 			}
-			if (getBodyStartLine() >= line) {
+			if ((getBodyStartLine() < 0) || (getBodyStartLine() >= line)) {
 				return LineCover.DEFINITION;
 			}
 			return LineCover.BODY;
