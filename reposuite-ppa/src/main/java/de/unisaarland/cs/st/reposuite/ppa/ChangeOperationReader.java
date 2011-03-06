@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.ppa;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -18,13 +17,13 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOperation> implements ChangeOperationVisitor {
 	
 	private final Repository repository;
-	private final Stack<RCSTransaction> transactions = new Stack<RCSTransaction>();
+	private final List<RCSTransaction> transactions;
 	
 	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 			final Repository repository, final List<RCSTransaction> transactions) {
 		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
 		this.repository = repository;
-		this.transactions.addAll(transactions);
+		this.transactions = transactions;
 	}
 	
 	@Override
@@ -37,8 +36,7 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		visitors.add(this);
 		int size = this.transactions.size();
 		int counter = 0;
-		while (!this.transactions.isEmpty()) {
-			RCSTransaction transaction = this.transactions.pop();
+		for (RCSTransaction transaction : this.transactions) {
 			if (Logger.logInfo()) {
 				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
 						+ "/" + size + ")");
