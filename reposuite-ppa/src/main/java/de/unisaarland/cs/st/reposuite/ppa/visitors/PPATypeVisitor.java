@@ -311,16 +311,15 @@ public class PPATypeVisitor extends ASTVisitor {
 			int bodyStartIndex = acd.toString().indexOf("{");
 			
 			if (bodyStartIndex < 1) {
-				if (Logger.logError()) {
-					Logger.error("Could not find anonymous class declaration body start!");
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find anonymous class declaration body start!");
 				}
-				return;
 			} else {
 				bodyStartIndex = acd.getStartPosition() + bodyStartIndex + 1;
 				bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			}
 			
-
+			
 			int anonCount = this.classStack.peek().getElement().nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
 					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
