@@ -32,7 +32,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	
 	@Override
 	public void endVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
-			@NotNull final ASTNode node, @NotNull final JavaElementLocation<JavaClassDefinition> classContext,
+	        @NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
 			final JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull final JavaElementCache elementCache) {
 	}
 	

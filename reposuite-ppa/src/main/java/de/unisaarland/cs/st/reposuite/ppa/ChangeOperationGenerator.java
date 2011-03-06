@@ -40,15 +40,19 @@ public class ChangeOperationGenerator {
 	 *            the transactions
 	 */
 	public void handleTransactions(final List<RCSTransaction> transactions) {
+		int size = transactions.size();
+		int counter = 0;
 		for (RCSTransaction transaction : transactions) {
 			
-			if (Logger.logInfo()) {
-				Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
-			}
-			
-			for(ChangeOperationVisitor visitor : this.visitors){
+			for (ChangeOperationVisitor visitor : this.visitors) {
 				visitor.visit(transaction);
 			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
+				        + "/" + size + ")");
+			}
+			
 			
 			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors);
 		}

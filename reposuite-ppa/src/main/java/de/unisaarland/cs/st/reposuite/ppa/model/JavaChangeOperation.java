@@ -3,10 +3,16 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 import java.util.Collection;
 import java.util.HashSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
@@ -69,6 +75,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the changed element
 	 */
 	@SuppressWarnings("rawtypes")
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
 		return this.changedElementLocation;
 	}
@@ -88,6 +95,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the change type
 	 */
+	@Enumerated(EnumType.ORDINAL)
 	public ChangeType getChangeType() {
 		return this.changeType;
 	}
@@ -103,6 +111,7 @@ public class JavaChangeOperation implements Annotated {
 		return this.id;
 	}
 	
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return this.revision;
 	}

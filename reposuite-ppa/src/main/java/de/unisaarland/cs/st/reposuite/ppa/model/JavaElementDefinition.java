@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -146,6 +147,7 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * 
 	 * @return the parent
 	 */
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	protected JavaElementDefinition getParent() {
 		return this.parent;
 	}

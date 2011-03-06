@@ -4,10 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
@@ -211,6 +214,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	}
 	
 	@Type(type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public T getElement() {
 		return this.element;
 	}

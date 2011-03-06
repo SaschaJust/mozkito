@@ -331,24 +331,30 @@ public class ChangeOperationUtils {
 								addCallCandidates.get(addedCallId))) {
 							JavaElementLocation<JavaMethodCall> ceiling = delSet.ceiling(addedCall);
 							JavaElementLocation<JavaMethodCall> floor = delSet.floor(addedCall);
-							Condition.check((ceiling != null) || (floor != null), "Must find a nearest element!");
-							JavaElementLocation<JavaMethodCall> correspondent = null;
-							if (ceiling == null) {
-								correspondent = floor;
-							} else if (floor == null) {
-								correspondent = ceiling;
-							} else {
-								int floorDist = Math.abs(addedCall.getPosition() - floor.getPosition());
-								int ceilingDist = Math.abs(addedCall.getPosition() - ceiling.getPosition());
-								if (floorDist < ceilingDist) {
+							if ((ceiling != null) || (floor != null)) {
+								JavaElementLocation<JavaMethodCall> correspondent = null;
+								if (ceiling == null) {
 									correspondent = floor;
-								} else {
+								} else if (floor == null) {
 									correspondent = ceiling;
+								} else {
+									int floorDist = Math.abs(addedCall.getPosition() - floor.getPosition());
+									int ceilingDist = Math.abs(addedCall.getPosition() - ceiling.getPosition());
+									if (floorDist < ceilingDist) {
+										correspondent = floor;
+									} else {
+										correspondent = ceiling;
+									}
 								}
+								Condition.check(correspondent != null, "Must have found correspondent");
+								if (correspondent == null) {
+									if (Logger.logError()) {
+										Logger.error("Must have found correspondent!");
+									}
+								}
+								delSet.remove(correspondent);
+								addSet.remove(addedCall);
 							}
-							Condition.check(correspondent != null, "Must have found correspondent");
-							delSet.remove(correspondent);
-							addSet.remove(addedCall);
 						}
 					}
 				}

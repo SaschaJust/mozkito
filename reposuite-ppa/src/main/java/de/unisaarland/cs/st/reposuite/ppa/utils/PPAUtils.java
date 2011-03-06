@@ -49,7 +49,7 @@ public class PPAUtils {
 	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
 			final Collection<ChangeOperationVisitor> visitors) {
 		
-		JavaElementCache.reset();
+		//JavaElementCache.reset();
 		int counter = 1;
 		int size = transaction.getRevisions().size();
 		for (RCSRevision revision : transaction.getRevisions()) {

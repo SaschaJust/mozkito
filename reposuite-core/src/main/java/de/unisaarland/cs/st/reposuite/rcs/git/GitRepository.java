@@ -51,6 +51,7 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
+	private String                          currentRevision = null;
 	protected static Charset                charset         = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
@@ -140,10 +141,14 @@ public class GitRepository extends Repository {
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
 		Condition.notNull(revision, "Checking ut requries revision");
 		
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
-				this.cloneDir, null, new HashMap<String, String>());
-		if (response.getFirst() != 0) {
-			return null;
+		
+		if ((this.currentRevision == null) || (!revision.equals(this.currentRevision))) {
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout", revision },
+					this.cloneDir, null, new HashMap<String, String>());
+			if (response.getFirst() != 0) {
+				return null;
+			}
+			this.currentRevision = revision;
 		}
 		File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
@@ -198,7 +203,7 @@ public class GitRepository extends Repository {
 		
 		// get the old version
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
-		        baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
+				baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -207,7 +212,7 @@ public class GitRepository extends Repository {
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
 		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + diffPath },
-		        this.cloneDir, null, new HashMap<String, String>());
+				this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
 		}

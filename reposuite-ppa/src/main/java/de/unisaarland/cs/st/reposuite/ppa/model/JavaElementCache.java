@@ -37,8 +37,8 @@ public class JavaElementCache {
 	 * Reset.
 	 */
 	public static void reset() {
-		if (Logger.logWarn()) {
-			Logger.warn("Resetting the JavaElementDefinitionCache!");
+		if (Logger.logDebug()) {
+			Logger.debug("Resetting the JavaElementDefinitionCache!");
 		}
 		classDefs.clear();
 		methodDefs.clear();
@@ -83,7 +83,7 @@ public class JavaElementCache {
 	public JavaElementLocation<JavaClassDefinition> getClassDefinition(@NotNull final String fullQualifiedName,
 			@NotNull final String file, final JavaClassDefinition parent, @NonNegative final int startLine,
 			@NonNegative final int endLine, @NonNegative final int position, @NonNegative final int bodyStartLine,
-	        @NotNull final String packageName) {
+			@NotNull final String packageName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -109,7 +109,7 @@ public class JavaElementCache {
 				}
 			}
 			
-			if (classDefs.size() > 1000) {
+			if (classDefs.size() > 10000) {
 				try {
 					HibernateUtil.getInstance().commitTransaction();
 					HibernateUtil.getInstance().beginTransaction();
@@ -192,7 +192,7 @@ public class JavaElementCache {
 				}
 			}
 			
-			if (methodCalls.size() > 1000) {
+			if (methodCalls.size() > 10000) {
 				try {
 					HibernateUtil.getInstance().commitTransaction();
 					HibernateUtil.getInstance().beginTransaction();
@@ -262,7 +262,7 @@ public class JavaElementCache {
 				}
 			}
 			
-			if (methodDefs.size() > 1000) {
+			if (methodDefs.size() > 10000) {
 				try {
 					HibernateUtil.getInstance().commitTransaction();
 					HibernateUtil.getInstance().beginTransaction();

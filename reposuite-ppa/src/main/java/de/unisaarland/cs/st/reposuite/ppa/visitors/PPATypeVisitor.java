@@ -137,7 +137,15 @@ public class PPATypeVisitor extends ASTVisitor {
 		super.endVisit(node);
 		for (PPAVisitor visitor : this.visitors) {
 			if (this.methodStack.isEmpty()) {
-				visitor.endVisit(this, this.cu, node, this.classStack.peek(), null, this.elementCache);
+				if (!this.classStack.isEmpty()) {
+					visitor.endVisit(this, this.cu, node, this.classStack.peek(), null, this.elementCache);
+				} else {
+					visitor.endVisit(this, this.cu, node, null, null, this.elementCache);
+					if (Logger.logDebug()) {
+						Logger.debug("Found empty classStack on compilation unit end in file: "
+								+ this.file.getAbsolutePath());
+					}
+				}
 			} else {
 				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
 						this.elementCache);
