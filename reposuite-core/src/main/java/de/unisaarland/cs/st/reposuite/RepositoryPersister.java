@@ -5,7 +5,6 @@ package de.unisaarland.cs.st.reposuite;
 
 import java.util.concurrent.CountDownLatch;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -32,13 +31,10 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	 * @param settings
 	 * @param hibernateUtil
 	 */
-	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings) {
+	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
+	        final HibernateUtil hibernateUtil) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
-		try {
-			this.hibernateUtil = HibernateUtil.getInstance(false);
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		}
+		this.hibernateUtil = hibernateUtil;
 	}
 	
 	/*

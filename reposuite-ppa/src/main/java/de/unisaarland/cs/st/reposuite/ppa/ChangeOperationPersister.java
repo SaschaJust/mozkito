@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -11,10 +13,13 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	
 	private final HibernateUtil hibernateUtil;
 	
-	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-			final HibernateUtil hibernateUtil) {
+	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
 		super(threadGroup, ChangeOperationPersister.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		try {
+			this.hibernateUtil = HibernateUtil.getInstance(false);
+		} catch (UninitializedDatabaseException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
 	}
 	
 	/*

@@ -126,7 +126,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			}
 			
 		} else {
-			new ChangeOperationPersister(this.threadPool.getThreadGroup(), getSettings(), this.hibernateUtil);
+			new ChangeOperationPersister(this.threadPool.getThreadGroup(), getSettings());
 		}
 	}
 	
