@@ -68,7 +68,7 @@ public class PPAXMLSink extends RepoSuiteSinkThread<JavaChangeOperation> {
 		
 		try {
 			while (!isShutdown() && ((currentOperation = read()) != null)) {
-				String transactionId = currentOperation.getRevision().getTransaction().getId();
+				String transactionId = currentOperation.getTransactionId();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);

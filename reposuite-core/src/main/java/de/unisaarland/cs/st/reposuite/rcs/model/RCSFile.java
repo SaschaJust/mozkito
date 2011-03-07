@@ -88,7 +88,7 @@ public class RCSFile implements Annotated {
 	@Index (name = "idx_fileid")
 	@Column (name = "id")
 	@GeneratedValue
-	private long getGeneratedId() {
+	public long getGeneratedId() {
 		return this.generatedId;
 	}
 	
@@ -144,7 +144,7 @@ public class RCSFile implements Annotated {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not determine path for RCSFile (id=" + this.getGeneratedId() + ") for transaction "
-				        + transaction.getId());
+						+ transaction.getId());
 			}
 			return null;
 		}

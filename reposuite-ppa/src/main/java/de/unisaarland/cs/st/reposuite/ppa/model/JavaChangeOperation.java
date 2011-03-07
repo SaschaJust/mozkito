@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
@@ -20,7 +19,6 @@ import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
@@ -44,8 +42,7 @@ public class JavaChangeOperation implements Annotated {
 	@SuppressWarnings("rawtypes")
 	private JavaElementLocation changedElementLocation;
 	
-	/** The revision. */
-	private RCSRevision         revision;
+	private String              transactionId;
 	
 	@SuppressWarnings("unused")
 	private JavaChangeOperation() {
@@ -63,10 +60,10 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@SuppressWarnings("rawtypes")
 	@NoneNull
-	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final String transactionId) {
 		setChangeType(type);
 		setChangedElementLocation(element);
-		setRevision(revision);
+		setTransactionId(transactionId);
 	}
 	
 	/**
@@ -86,7 +83,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the changed file
 	 */
 	@Transient
-	public String getChangedFile() {
+	public String getChangedPath() {
 		return this.changedElementLocation.getFilePath();
 	}
 	
@@ -111,9 +108,9 @@ public class JavaChangeOperation implements Annotated {
 		return this.id;
 	}
 	
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
-	public RCSRevision getRevision() {
-		return this.revision;
+	
+	public String getTransactionId() {
+		return this.transactionId;
 	}
 	
 	public Element getXMLRepresentation(final Document document) {
@@ -148,6 +145,7 @@ public class JavaChangeOperation implements Annotated {
 		this.changedElementLocation = changedElement;
 	}
 	
+	
 	/**
 	 * Sets the change type.
 	 * 
@@ -163,8 +161,8 @@ public class JavaChangeOperation implements Annotated {
 		this.id = id;
 	}
 	
-	private void setRevision(final RCSRevision revision) {
-		this.revision = revision;
+	public void setTransactionId(final String transactionId) {
+		this.transactionId = transactionId;
 	}
 	
 }
