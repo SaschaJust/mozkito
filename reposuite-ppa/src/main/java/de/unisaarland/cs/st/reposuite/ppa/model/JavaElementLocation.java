@@ -290,7 +290,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		this.commentLines = commentLines;
 	}
 	
-	private void setElement(final T element) {
+	@Deprecated
+	public void setElement(final T element) {
 		this.element = element;
 	}
 	

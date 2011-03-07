@@ -1,9 +1,13 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
+import org.hibernate.NonUniqueObjectException;
+
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PPAHibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -19,6 +23,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public void run() {
 		
@@ -58,7 +63,33 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 						lastTransactionId = currentTransactionId;
 						hibernateUtil.beginTransaction();
 					}
-					hibernateUtil.saveOrUpdate(currentOperation);
+					try {
+						hibernateUtil.saveOrUpdate(currentOperation);
+					} catch (NonUniqueObjectException e) {
+						JavaElement element = PPAHibernateUtil.getSessionJavaElement(hibernateUtil, currentOperation
+								.getChangedElementLocation().getElement());
+						if (element != null) {
+							currentOperation.getChangedElementLocation().setElement(element);
+							try {
+								hibernateUtil.saveOrUpdate(currentOperation);
+							} catch (NonUniqueObjectException e1) {
+								throw new UnrecoverableError(e1.getMessage(), e1);
+							}
+						} else {
+							element = PPAHibernateUtil.getJavaElement(hibernateUtil, currentOperation
+									.getChangedElementLocation().getElement());
+							if (element != null) {
+								currentOperation.getChangedElementLocation().setElement(element);
+								try {
+									hibernateUtil.saveOrUpdate(currentOperation);
+								} catch (NonUniqueObjectException e1) {
+									throw new UnrecoverableError(e1.getMessage(), e1);
+								}
+							} else {
+								throw new UnrecoverableError(e.getMessage(), e);
+							}
+						}
+					}
 				}
 				hibernateUtil.commitTransaction();
 				if (Logger.logInfo()) {

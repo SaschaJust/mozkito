@@ -307,6 +307,11 @@ public class HibernateUtil {
 		return list.get(0);
 	}
 	
+	protected Session getSession(){
+		return this.session;
+	}
+	
+	
 	@NoneNull
 	public RCSTransaction getSessionRCSTransaction(final String id){
 		
@@ -316,7 +321,6 @@ public class HibernateUtil {
 		}
 		return null;
 	}
-	
 	
 	/**
 	 * @param object
@@ -405,5 +409,5 @@ public class HibernateUtil {
 	public synchronized void update(final Annotated object) {
 		this.session.update(object);
 	}
-	
+
 }
