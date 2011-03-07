@@ -111,7 +111,7 @@ public class JavaChangeOperation implements Annotated {
 		return this.id;
 	}
 	
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return this.revision;
 	}
