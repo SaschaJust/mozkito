@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
@@ -52,6 +53,9 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	@Override
 	public void visit(final JavaChangeOperation change) {
 		try {
+			if (this.getOutputStorage().getNumReaders() < 1) {
+				throw new UnrecoverableError("No readers connected to output storage! Terminating!");
+			}
 			this.write(change);
 		} catch (InterruptedException e) {
 			if (Logger.logError()) {

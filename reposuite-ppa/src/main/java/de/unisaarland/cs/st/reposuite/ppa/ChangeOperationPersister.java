@@ -86,6 +86,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 									throw new UnrecoverableError(e1.getMessage(), e1);
 								}
 							} else {
+								this.getThreadGroup().interrupt();
 								throw new UnrecoverableError(e.getMessage(), e);
 							}
 						}

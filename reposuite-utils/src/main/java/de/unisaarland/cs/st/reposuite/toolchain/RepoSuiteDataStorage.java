@@ -14,36 +14,61 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
- * The {@link RepoSuiteDataStorage} elements are the node of a
- * {@link RepoSuiteToolchain} and used for the communication between the
- * threads.
+ * The {@link RepoSuiteDataStorage} elements are the node of a.
  * 
+ * @param <E>
+ *            the element type {@link RepoSuiteToolchain} and used for the
+ *            communication between the threads.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class RepoSuiteDataStorage<E> {
 	
+	/** The queue. */
 	private final Queue<Tuple<E, CountDownLatch>>             queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
+	
+	/** The writers. */
 	private final BlockingDeque<RepoSuiteGeneralThread<?, E>> writers = new LinkedBlockingDeque<RepoSuiteGeneralThread<?, E>>();
+	
+	/** The readers. */
 	private final BlockingDeque<RepoSuiteGeneralThread<E, ?>> readers = new LinkedBlockingDeque<RepoSuiteGeneralThread<E, ?>>();
+	
+	/** The cache size. */
 	private final int                                         cacheSize;
 	
+	/**
+	 * Instantiates a new repo suite data storage.
+	 */
 	public RepoSuiteDataStorage() {
 		this(3000);
 	}
 	
 	/**
+	 * Instantiates a new repo suite data storage.
+	 * 
 	 * @param cacheSize
+	 *            the cache size
 	 */
 	public RepoSuiteDataStorage(final int cacheSize) {
 		this.cacheSize = cacheSize;
 	}
 	
 	/**
+	 * Gets the num readers.
+	 * 
+	 * @return the num readers
+	 */
+	public int getNumReaders(){
+		return this.readers.size();
+	}
+	
+	/**
+	 * Read.
+	 * 
 	 * @return the next chunk of data in the queue. Can be null if no more data
 	 *         is available and there aren't any writers attached to this source
 	 *         anymore.
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	public Tuple<E, CountDownLatch> read() throws InterruptedException {
 		if (Logger.logTrace()) {
@@ -114,6 +139,8 @@ public class RepoSuiteDataStorage<E> {
 	}
 	
 	/**
+	 * Size.
+	 * 
 	 * @return the current size of the queue. This is guaranteed to be &ge; 0.
 	 */
 	public int size() {
@@ -172,7 +199,9 @@ public class RepoSuiteDataStorage<E> {
 	 * 
 	 * @param data
 	 *            may not be null
+	 * @return the count down latch
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	public CountDownLatch write(final E data) throws InterruptedException {
 		Condition.notNull(data, "Writing null data is not allowed.");
