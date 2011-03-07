@@ -206,6 +206,7 @@ public class HibernateUtil {
 	 * 
 	 */
 	public void commitTransaction() {
+		
 		if ((this.transaction != null) && this.transaction.isActive()) {
 			try {
 				this.transaction.commit();

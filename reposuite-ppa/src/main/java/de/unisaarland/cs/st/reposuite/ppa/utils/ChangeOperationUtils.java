@@ -78,22 +78,19 @@ public class ChangeOperationUtils {
 				new String[0]);
 		
 		for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
 		}
 		for (JavaElementLocation<JavaMethodDefinition> methDef : newElems.getMethodDefs(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
 		}
 		for (JavaElementLocation<JavaMethodCall> methCall : newElems.getMethodCalls(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
@@ -141,22 +138,19 @@ public class ChangeOperationUtils {
 				new String[0]);
 		
 		for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
 		}
 		for (JavaElementLocation<JavaMethodDefinition> methDef : oldElems.getMethodDefs(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
 		}
 		for (JavaElementLocation<JavaMethodCall> methCall : oldElems.getMethodCalls(changedPath)) {
-			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision.getTransaction()
-					.getId());
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision);
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
@@ -239,12 +233,10 @@ public class ChangeOperationUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision
-									.getTransaction().getId()));
+							operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
 							break;
 						case BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision
-									.getTransaction().getId()));
+							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
 							break;
 					}
 				}
@@ -256,12 +248,10 @@ public class ChangeOperationUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, revision
-									.getTransaction().getId()));
+							operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, revision));
 							break;
 						case BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision
-									.getTransaction().getId()));
+							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
 							break;
 					}
 				}
@@ -372,27 +362,22 @@ public class ChangeOperationUtils {
 				//method calls that are still present in their collections make up the operations
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToDelete) {
-						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision
-						        .getTransaction().getId()));
+						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
 					}
 				}
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToAdd : addCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToAdd) {
-						operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, revision.getTransaction()
-						        .getId()));
+						operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, revision));
 					}
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToDelete : defsToRemove) {
-					operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, revision
-					        .getTransaction().getId()));
+					operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToAdd : defsToAdd) {
-					operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, revision.getTransaction()
-					        .getId()));
+					operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefModified : modifiedDefCandidates) {
-					operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, revision
-					        .getTransaction().getId()));
+					operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, revision));
 				}
 			}
 		}

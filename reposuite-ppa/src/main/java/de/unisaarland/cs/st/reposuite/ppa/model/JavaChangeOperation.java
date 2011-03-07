@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.w3c.dom.Document;
@@ -19,6 +20,7 @@ import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
@@ -42,7 +44,7 @@ public class JavaChangeOperation implements Annotated {
 	@SuppressWarnings("rawtypes")
 	private JavaElementLocation changedElementLocation;
 	
-	private String              transactionId;
+	private RCSRevision         revision;
 	
 	@SuppressWarnings("unused")
 	private JavaChangeOperation() {
@@ -60,10 +62,10 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@SuppressWarnings("rawtypes")
 	@NoneNull
-	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final String transactionId) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
 		setChangeType(type);
 		setChangedElementLocation(element);
-		setTransactionId(transactionId);
+		setRevision(revision);
 	}
 	
 	/**
@@ -109,8 +111,9 @@ public class JavaChangeOperation implements Annotated {
 	}
 	
 	
-	public String getTransactionId() {
-		return this.transactionId;
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
+	public RCSRevision getRevision() {
+		return this.revision;
 	}
 	
 	public Element getXMLRepresentation(final Document document) {
@@ -134,6 +137,7 @@ public class JavaChangeOperation implements Annotated {
 		return set;
 	}
 	
+	
 	/**
 	 * Sets the changed element.
 	 * 
@@ -144,7 +148,6 @@ public class JavaChangeOperation implements Annotated {
 	private void setChangedElementLocation(final JavaElementLocation changedElement) {
 		this.changedElementLocation = changedElement;
 	}
-	
 	
 	/**
 	 * Sets the change type.
@@ -161,8 +164,9 @@ public class JavaChangeOperation implements Annotated {
 		this.id = id;
 	}
 	
-	public void setTransactionId(final String transactionId) {
-		this.transactionId = transactionId;
+	private void setRevision(final RCSRevision revision) {
+		this.revision = revision;
 	}
+	
 	
 }

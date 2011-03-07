@@ -27,13 +27,13 @@ public class ChangeOperations {
 				if (this.defOperations.get(ChangeType.Deleted).containsKey(op.getChangedElementLocation().getElement())) {
 					this.defOperations.get(ChangeType.Deleted).remove(op.getChangedElementLocation().getElement());
 					op = new JavaChangeOperation(ChangeType.Modified, op.getChangedElementLocation(),
-					        op.getTransactionId());
+ op.getRevision());
 				}
 			} else if (op.getChangeType().equals(ChangeType.Deleted)) {
 				if (this.defOperations.get(ChangeType.Added).containsKey(op.getChangedElementLocation().getElement())) {
 					this.defOperations.get(ChangeType.Added).remove(op.getChangedElementLocation().getElement());
 					op = new JavaChangeOperation(ChangeType.Modified, op.getChangedElementLocation(),
-					        op.getTransactionId());
+ op.getRevision());
 				}
 			}
 			this.defOperations.get(op.getChangeType()).put(op.getChangedElementLocation().getElement(), op);
