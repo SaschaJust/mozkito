@@ -277,9 +277,10 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	
 	@Override
 	public Collection<Annotated> saveFirst() {
-		Set<Annotated> set = new HashSet<Annotated>();
-		set.add(this.getElement());
-		return set;
+		//		Set<Annotated> set = new HashSet<Annotated>();
+		//		set.add(this.getElement());
+		//		return set;
+		return null;
 	}
 	
 	protected void setBodyStartLine(final int bodyStartLine) {
