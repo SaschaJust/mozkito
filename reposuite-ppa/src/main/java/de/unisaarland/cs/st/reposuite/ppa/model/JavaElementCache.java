@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PPAHibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
@@ -94,19 +92,15 @@ public class JavaElementCache {
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaClassDefinition(fullQualifiedName, parent, packageName);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaClassDefinition.class);
-			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaClassDefinition> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaClassDefinition in DB. Creating new one. " + def.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-						"Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+			JavaClassDefinition cachedDef = (JavaClassDefinition) PPAHibernateUtil.getSessionJavaElement(
+					this.hibernateUtil, def);
+			if (cachedDef != null) {
+				def = cachedDef;
 			} else {
-				def = list.get(0);
+				cachedDef = (JavaClassDefinition) PPAHibernateUtil.getJavaElement(this.hibernateUtil, def);
+				if (cachedDef != null) {
+					def = cachedDef;
+				}
 			}
 			
 			if (classDefs.size() > 10000) {
@@ -165,19 +159,15 @@ public class JavaElementCache {
 		JavaMethodCall call = null;
 		if (!methodCalls.containsKey(cacheName)) {
 			call = new JavaMethodCall(fullQualifiedName, signature);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodCall.class);
-			criteria.add(Restrictions.eq("primaryKey", call.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaMethodCall> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaMethodCall in DB. Creating new one. " + call.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-						"Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
-						+ call.getPrimaryKey().toString());
+			JavaMethodCall cachedCall = (JavaMethodCall) PPAHibernateUtil.getSessionJavaElement(this.hibernateUtil,
+					call);
+			if (cachedCall != null) {
+				call = cachedCall;
 			} else {
-				call = list.get(0);
+				cachedCall = (JavaMethodCall) PPAHibernateUtil.getJavaElement(this.hibernateUtil, call);
+				if (cachedCall != null) {
+					call = cachedCall;
+				}
 			}
 			
 			if (methodCalls.size() > 10000) {
@@ -221,21 +211,16 @@ public class JavaElementCache {
 		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName, signature);
 		JavaMethodDefinition def = null;
 		if (!methodDefs.containsKey(cacheName)) {
-			
 			def = new JavaMethodDefinition(fullQualifiedName, signature, parent);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodDefinition.class);
-			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaMethodDefinition> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaMethodDefinition in DB. Creating new one. " + def.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-						"Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+			JavaMethodDefinition cachedDef = (JavaMethodDefinition) PPAHibernateUtil.getSessionJavaElement(
+			        this.hibernateUtil, def);
+			if (cachedDef != null) {
+				def = cachedDef;
 			} else {
-				def = list.get(0);
+				cachedDef = (JavaMethodDefinition) PPAHibernateUtil.getJavaElement(this.hibernateUtil, def);
+				if (cachedDef != null) {
+					def = cachedDef;
+				}
 			}
 			
 			if (methodDefs.size() > 10000) {
