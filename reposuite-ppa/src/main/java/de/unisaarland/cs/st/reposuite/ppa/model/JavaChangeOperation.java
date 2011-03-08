@@ -168,5 +168,11 @@ public class JavaChangeOperation implements Annotated {
 		this.revision = revision;
 	}
 	
+	@Override
+	public String toString() {
+		return "JavaChangeOperation [id=" + this.id + ", changeType=" + this.changeType + ", changedElementLocation="
+		        + this.changedElementLocation.toString() + ", revision=" + this.revision.getTransaction().getId() + "]";
+	}
+	
 	
 }
