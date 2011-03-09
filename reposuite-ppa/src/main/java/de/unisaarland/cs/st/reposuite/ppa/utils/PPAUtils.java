@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.core.JavaProject;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -46,7 +47,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class PPAUtils {
 	
 	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors) {
+	        final Collection<ChangeOperationVisitor> visitors) {
 		
 		//JavaElementCache.reset();
 		int counter = 1;
@@ -251,19 +252,20 @@ public class PPAUtils {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
+		JavaElementCache elemCache = new JavaElementCache();
+		
 		CompilationUnit cu = getCU(file, ppaOptions);
 		if (cu != null) {
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter);
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter, elemCache);
 			typeVisitor.registerVisitor(methodCallVisitor);
 			cu.accept(typeVisitor);
-			return typeVisitor.getJavaElementLocations();
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not analyze file " + file.getAbsolutePath()
 						+ ". CompilationUnit cannot be created. Skipping ... ");
 			}
 		}
-		return new JavaElementLocations();
+		return elemCache.getJavaElementLocations();
 	}
 	
 	/**
@@ -309,6 +311,8 @@ public class PPAUtils {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
+		JavaElementCache elemCache = new JavaElementCache();
+		
 		while (fileIterator.hasNext()) {
 			File file = fileIterator.next();
 			CompilationUnit cu = getCU(file, ppaOptions);
@@ -319,13 +323,12 @@ public class PPAUtils {
 				}
 				continue;
 			}
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter);
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, file, filePrefixPath, packageFilter, elemCache);
 			typeVisitor.registerVisitor(methodCallVisitor);
 			cu.accept(typeVisitor);
-			return typeVisitor.getJavaElementLocations();
 		}
 		
-		return new JavaElementLocations();
+		return elemCache.getJavaElementLocations();
 	}
 	
 	/**

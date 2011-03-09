@@ -1,18 +1,18 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Criteria;
+import org.hibernate.NonUniqueObjectException;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PPAHibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -21,14 +21,6 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOperation> {
-	
-	/** The method calls by name. */
-	public static Map<String, JavaClassDefinition>  classDefs   = Collections
-	.synchronizedMap(new HashMap<String, JavaClassDefinition>());
-	public static Map<String, JavaMethodDefinition> methodDefs  = Collections
-	.synchronizedMap(new HashMap<String, JavaMethodDefinition>());
-	public static Map<String, JavaMethodCall>       methodCalls = Collections
-	.synchronizedMap(new HashMap<String, JavaMethodCall>());
 	
 	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
 		super(threadGroup, ChangeOperationPersister.class.getSimpleName(), settings);
@@ -43,7 +35,6 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	public void run() {
 		
 		try {
-			
 			HibernateUtil hibernateUtil = HibernateUtil.getInstance(false);
 			
 			if (!checkConnections()) {
@@ -57,27 +48,41 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 			if (Logger.logInfo()) {
 				Logger.info("Starting " + getHandle());
 			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("Filling cache ... ");
+			}
 			hibernateUtil.beginTransaction();
-			
-			//fill cache
-			Criteria criteria = hibernateUtil.createCriteria(JavaClassDefinition.class);
-			List<JavaClassDefinition> classList = criteria.list();
-			for (JavaClassDefinition def : classList) {
-				classDefs.put(def.getFullQualifiedName(), def);
-			}
-			criteria = hibernateUtil.createCriteria(JavaMethodDefinition.class);
-			List<JavaMethodDefinition> methodList = criteria.list();
-			for (JavaMethodDefinition def : methodList) {
-				methodDefs.put(def.getFullQualifiedName(), def);
-			}
-			criteria = hibernateUtil.createCriteria(JavaMethodCall.class);
-			List<JavaMethodCall> callList = criteria.list();
-			for (JavaMethodCall def : callList) {
-				methodCalls.put(def.getFullQualifiedName(), def);
-			}
-			
 			JavaChangeOperation currentOperation;
 			String lastTransactionId = "";
+			
+			Criteria criteria = hibernateUtil.createCriteria(JavaClassDefinition.class);
+			List<JavaClassDefinition> defs = criteria.list();
+			for (JavaClassDefinition def : defs) {
+				JavaElementCache.classDefs.put(def.getFullQualifiedName(), def);
+			}
+			criteria = hibernateUtil.createCriteria(JavaMethodDefinition.class);
+			List<JavaMethodDefinition> mDefs = criteria.list();
+			for (JavaMethodDefinition def : mDefs) {
+				JavaElementCache.methodDefs.put(def.getFullQualifiedName(), def);
+			}
+			criteria = hibernateUtil.createCriteria(JavaMethodCall.class);
+			List<JavaMethodCall> calls = criteria.list();
+			for (JavaMethodCall call : calls) {
+				JavaElementCache.methodCalls.put(call.getFullQualifiedName(), call);
+			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("done. Notify all ... ");
+			}
+			
+			synchronized (JavaElementCache.classDefs) {
+				JavaElementCache.classDefs.notifyAll();
+			}
+
+			if (Logger.logInfo()) {
+				Logger.info("done.");
+			}
 			
 			try {
 				while (!isShutdown() && ((currentOperation = read()) != null)) {
@@ -97,36 +102,34 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 						lastTransactionId = currentTransactionId;
 						hibernateUtil.beginTransaction();
 					}
-					
-					JavaElement currentElement = currentOperation.getChangedElementLocation().getElement();
-					
-					if (currentElement instanceof JavaClassDefinition) {
-						JavaClassDefinition def = (JavaClassDefinition) currentElement;
-						if (!classDefs.containsKey(def.getFullQualifiedName())) {
-							classDefs.put(def.getFullQualifiedName(), def);
+					try {
+						hibernateUtil.saveOrUpdate(currentOperation);
+					} catch (NonUniqueObjectException e) {
+						JavaElement element = PPAHibernateUtil.getSessionJavaElement(hibernateUtil, currentOperation
+								.getChangedElementLocation().getElement());
+						if (element != null) {
+							currentOperation.getChangedElementLocation().setElement(element);
+							try {
+								hibernateUtil.saveOrUpdate(currentOperation);
+							} catch (NonUniqueObjectException e1) {
+								throw new UnrecoverableError(e1.getMessage(), e1);
+							}
 						} else {
-							currentOperation.getChangedElementLocation().setElement(
-									classDefs.get(currentElement.getFullQualifiedName()));
-						}
-					} else if (currentElement instanceof JavaMethodDefinition) {
-						JavaMethodDefinition def = (JavaMethodDefinition) currentElement;
-						if (!methodDefs.containsKey(def.getFullQualifiedName())) {
-							methodDefs.put(def.getFullQualifiedName(), def);
-						} else {
-							currentOperation.getChangedElementLocation().setElement(
-									methodDefs.get(currentElement.getFullQualifiedName()));
-						}
-					} else if (currentElement instanceof JavaMethodCall) {
-						JavaMethodCall call = (JavaMethodCall) currentElement;
-						if (!methodCalls.containsKey(call.getFullQualifiedName())) {
-							methodCalls.put(call.getFullQualifiedName(), call);
-						} else {
-							currentOperation.getChangedElementLocation().setElement(
-									methodCalls.get(currentElement.getFullQualifiedName()));
+							element = PPAHibernateUtil.getJavaElement(hibernateUtil, currentOperation
+									.getChangedElementLocation().getElement());
+							if (element != null) {
+								currentOperation.getChangedElementLocation().setElement(element);
+								try {
+									hibernateUtil.saveOrUpdate(currentOperation);
+								} catch (NonUniqueObjectException e1) {
+									throw new UnrecoverableError(e1.getMessage(), e1);
+								}
+							} else {
+								this.getThreadGroup().interrupt();
+								throw new UnrecoverableError(e.getMessage(), e);
+							}
 						}
 					}
-					
-					hibernateUtil.saveOrUpdate(currentOperation);
 				}
 				hibernateUtil.commitTransaction();
 				if (Logger.logInfo()) {

@@ -66,7 +66,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @param packageName
 	 *            the package name
 	 */
-	public JavaClassDefinition(@NotNull final String fullQualifiedName, final JavaClassDefinition parent,
+	protected JavaClassDefinition(@NotNull final String fullQualifiedName, final JavaClassDefinition parent,
 			@NotNull final String packageName) {
 		
 		super(fullQualifiedName, parent);

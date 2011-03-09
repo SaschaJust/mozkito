@@ -7,6 +7,7 @@ import java.util.Set;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -19,14 +20,12 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	
 	private final Repository repository;
 	private final List<RCSTransaction> transactions;
-	private final String               startWith;
 	
 	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-			final Repository repository, final List<RCSTransaction> transactions, final String startWith) {
+			final Repository repository, final List<RCSTransaction> transactions) {
 		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
 		this.repository = repository;
 		this.transactions = transactions;
-		this.startWith = startWith;
 	}
 	
 	@Override
@@ -40,23 +39,15 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		int size = this.transactions.size();
 		int counter = 0;
 		
-		boolean consider = false;
-		if ((this.startWith == null) || (this.startWith.trim().equals(""))) {
-			consider = true;
+		synchronized (JavaElementCache.classDefs) {
+			try {
+				JavaElementCache.classDefs.wait();
+			} catch (InterruptedException e) {
+				throw new UnrecoverableError(e.getMessage(), e);
+			}
 		}
 		
 		for (RCSTransaction transaction : this.transactions) {
-			
-			if (!consider) {
-				if (transaction.getId().equals(this.startWith)) {
-					consider = true;
-					int index = this.transactions.indexOf(transaction);
-					size = size - index;
-					counter = 0;
-				} else {
-					continue;
-				}
-			}
 			if (Logger.logInfo()) {
 				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
 						+ "/" + size + ")");

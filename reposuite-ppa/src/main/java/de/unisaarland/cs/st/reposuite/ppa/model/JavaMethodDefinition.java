@@ -63,7 +63,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	private List<String> signature;
 	
 	@SuppressWarnings("unused")
-	public JavaMethodDefinition() {
+	private JavaMethodDefinition() {
 		super();
 	}
 	
@@ -85,7 +85,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 * @param endLine
 	 *            the end line
 	 */
-	public JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
+	protected JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
 			@NotNull final JavaClassDefinition parent) {
 		
 		super(fullQualifiedName, parent);

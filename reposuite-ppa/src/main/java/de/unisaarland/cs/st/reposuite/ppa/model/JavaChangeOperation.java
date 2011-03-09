@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -132,10 +131,10 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		HashSet<Annotated> set = new HashSet<Annotated>();
-		set.add(getChangedElementLocation());
-		return set;
-		//		return null;
+		//		HashSet<Annotated> set = new HashSet<Annotated>();
+		//		set.add(getChangedElementLocation());
+		//		return set;
+		return null;
 	}
 	
 	
@@ -167,12 +166,6 @@ public class JavaChangeOperation implements Annotated {
 	
 	private void setRevision(final RCSRevision revision) {
 		this.revision = revision;
-	}
-	
-	@Override
-	public String toString() {
-		return "JavaChangeOperation [id=" + this.id + ", changeType=" + this.changeType + ", changedElementLocation="
-		+ this.changedElementLocation.toString() + ", revision=" + this.revision.getTransaction().getId() + "]";
 	}
 	
 	

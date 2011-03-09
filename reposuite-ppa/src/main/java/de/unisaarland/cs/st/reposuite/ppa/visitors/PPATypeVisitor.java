@@ -26,10 +26,9 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -55,16 +54,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	protected HashSet<String>                                      primitives;
 	private final Set<PPAVisitor>                                  visitors         = new HashSet<PPAVisitor>();
 	private String                                                 relativeFilePath = "";
+	private final JavaElementCache                                 elementCache;
 	private ASTNode                                                previousNode     = null;
-	
-	/** The class def locations. */
-	private final Set<JavaElementLocation<JavaClassDefinition>>    classDefLocations   = new HashSet<JavaElementLocation<JavaClassDefinition>>();
-	
-	/** The method def locations. */
-	private final Set<JavaElementLocation<JavaMethodDefinition>>   methodDefLocations  = new HashSet<JavaElementLocation<JavaMethodDefinition>>();
-	
-	/** The method call locations. */
-	private final Set<JavaElementLocation<JavaMethodCall>>         methodCallLocations = new HashSet<JavaElementLocation<JavaMethodCall>>();
 	
 	/**
 	 * Instantiates a new pPA type visitor.
@@ -78,10 +69,11 @@ public class PPATypeVisitor extends ASTVisitor {
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final File file, final String filePathPrefix,
-			final String[] packageFilter) {
+			final String[] packageFilter, final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.file = file;
 		this.cu = cu;
+		this.elementCache = elementCache;
 		
 		if (file.getAbsolutePath().startsWith(filePathPrefix)) {
 			this.relativeFilePath = file.getAbsolutePath().substring(filePathPrefix.length());
@@ -106,10 +98,6 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
 	 * .CompilationUnit)
 	 */
-	
-	public boolean addMethodCallLocation(final JavaElementLocation<JavaMethodCall> loc) {
-		return this.methodCallLocations.add(loc);
-	}
 	
 	/**
 	 * Checks if a given object name passes the package filters set in
@@ -150,16 +138,17 @@ public class PPATypeVisitor extends ASTVisitor {
 		for (PPAVisitor visitor : this.visitors) {
 			if (this.methodStack.isEmpty()) {
 				if (!this.classStack.isEmpty()) {
-					visitor.endVisit(this, this.cu, node, this.classStack.peek(), null);
+					visitor.endVisit(this, this.cu, node, this.classStack.peek(), null, this.elementCache);
 				} else {
-					visitor.endVisit(this, this.cu, node, null, null);
+					visitor.endVisit(this, this.cu, node, null, null, this.elementCache);
 					if (Logger.logDebug()) {
 						Logger.debug("Found empty classStack on compilation unit end in file: "
 								+ this.file.getAbsolutePath());
 					}
 				}
 			} else {
-				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek());
+				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
+						this.elementCache);
 			}
 		}
 	}
@@ -177,14 +166,6 @@ public class PPATypeVisitor extends ASTVisitor {
 		return this.file;
 	}
 	
-	public JavaElementLocations getJavaElementLocations() {
-		JavaElementLocations javaElementLocations = new JavaElementLocations();
-		javaElementLocations.addAllClassDefs(this.classDefLocations);
-		javaElementLocations.addAllMethodDefs(this.methodDefLocations);
-		javaElementLocations.addAllMethodCalls(this.methodCallLocations);
-		return javaElementLocations;
-	}
-	
 	public String getRelativeFilePath() {
 		return this.relativeFilePath;
 	}
@@ -199,13 +180,13 @@ public class PPATypeVisitor extends ASTVisitor {
 		int currentLine = this.cu.getLineNumber(node.getStartPosition());
 		for (PPAVisitor visitor : this.visitors) {
 			if (this.classStack.isEmpty()) {
-				visitor.postVisit(this, this.cu, node, null, null, currentLine);
+				visitor.postVisit(this, this.cu, node, null, null, currentLine, this.elementCache);
 			} else {
 				if (this.methodStack.isEmpty()) {
-					visitor.postVisit(this, this.cu, node, this.classStack.peek(), null, currentLine);
+					visitor.postVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, this.elementCache);
 				} else {
 					visitor.postVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
-							currentLine);
+							currentLine, this.elementCache);
 				}
 			}
 		}
@@ -290,15 +271,14 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
-			JavaClassDefinition classDefinition = new JavaClassDefinition(this.packageName + "." + td.getName().toString(), parent, this.packageName);
-			JavaElementLocation<JavaClassDefinition> classDefLoc = new JavaElementLocation<JavaClassDefinition>(classDefinition, startLine,endLine, td.getStartPosition(), bodyStartLine,this.relativeFilePath);
-			
+			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(
+					this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
+					endLine, td.getStartPosition(), bodyStartLine, this.packageName);
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
 						+ "` and class name `" + td.getName().toString() + "`");
 			}
 			this.classStack.push(classDefLoc);
-			this.classDefLocations.add(classDefLoc);
 			
 			Type superClassType = td.getSuperclassType();
 			if (superClassType != null) {
@@ -350,11 +330,9 @@ public class PPATypeVisitor extends ASTVisitor {
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaClassDefinition classDefinition = new JavaClassDefinition(parentName
-						+ "$" + anonCount, this.classStack.peek().getElement(), this.packageName);
-				JavaElementLocation<JavaClassDefinition> classDefLoc = new JavaElementLocation<JavaClassDefinition>(classDefinition, currentLine,endLine, node.getStartPosition(), bodyStartLine,this.relativeFilePath);
-				this.classDefLocations.add(classDefLoc);
-				
+				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
+						+ "$" + anonCount, this.relativeFilePath, this.classStack.peek().getElement(), currentLine,
+						endLine, node.getStartPosition(), bodyStartLine, this.packageName);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
@@ -389,10 +367,9 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				
-				JavaMethodDefinition methodDefinition = new JavaMethodDefinition(md.getName().toString(), arguments,
-						this.classStack.peek().getElement());
-				JavaElementLocation<JavaMethodDefinition> methodDefLoc = new JavaElementLocation<JavaMethodDefinition>(methodDefinition, startLine, endLine, node.getStartPosition(), bodyStartLine,this.relativeFilePath);
-				this.methodDefLocations.add(methodDefLoc);
+				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md
+						.getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
+						.getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);
 				
 				this.classStack.peek().getElement().addMethod(methodDefLoc.getElement());
 				if (!this.methodStack.isEmpty()) {
@@ -406,13 +383,14 @@ public class PPATypeVisitor extends ASTVisitor {
 		
 		for (PPAVisitor visitor : this.visitors) {
 			if (this.classStack.isEmpty()) {
-				visitor.preVisit(this, this.cu, node, null, null, currentLine, endLine);
+				visitor.preVisit(this, this.cu, node, null, null, currentLine, endLine, this.elementCache);
 			} else {
 				if (this.methodStack.isEmpty()) {
-					visitor.preVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, endLine);
+					visitor.preVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, endLine,
+							this.elementCache);
 				} else {
 					visitor.preVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), currentLine,
-							endLine);
+							endLine, this.elementCache);
 				}
 			}
 		}

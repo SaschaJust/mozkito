@@ -35,6 +35,9 @@ public class ChangeOperationUtils {
 	
 	@NoneNull
 	private static String filterChangedPath(final String changedPath) {
+		if (changedPath == null) {
+			return null;
+		}
 		if (!changedPath.endsWith(".java")) {
 			if (Logger.logWarn()) {
 				Logger.warn("Ignoring non-Java file: " + changedPath);

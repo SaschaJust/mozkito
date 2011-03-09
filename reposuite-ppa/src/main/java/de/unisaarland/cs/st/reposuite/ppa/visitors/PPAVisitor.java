@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
@@ -23,8 +24,8 @@ public interface PPAVisitor {
 	 *            (might be null)
 	 */
 	void endVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
-			@NotNull JavaElementLocation<JavaClassDefinition> classContext,
-			JavaElementLocation<JavaMethodDefinition> methodContext);
+	        @NotNull JavaElementLocation<JavaClassDefinition> classContext,
+			JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull JavaElementCache elementCache);
 	
 	/**
 	 * @param cu
@@ -36,7 +37,8 @@ public interface PPAVisitor {
 	 */
 	void postVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
 			JavaElementLocation<JavaClassDefinition> classContext,
-			JavaElementLocation<JavaMethodDefinition> methodContext, @NonNegative int currentLine);
+	        JavaElementLocation<JavaMethodDefinition> methodContext,
+			@NonNegative int currentLine, @NotNull JavaElementCache elementCache);
 	
 	/**
 	 * @param cu
@@ -48,7 +50,7 @@ public interface PPAVisitor {
 	 */
 	void preVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
 			JavaElementLocation<JavaClassDefinition> classContext,
-			JavaElementLocation<JavaMethodDefinition> methodContext, @NonNegative int currentLine,
-			@NonNegative int endLine);
+	        JavaElementLocation<JavaMethodDefinition> methodContext,
+			@NonNegative int currentLine, @NonNegative int endLine, @NotNull JavaElementCache elementCache);
 	
 }

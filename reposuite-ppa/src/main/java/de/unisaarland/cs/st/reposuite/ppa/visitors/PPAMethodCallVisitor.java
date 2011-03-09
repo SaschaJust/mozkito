@@ -1,7 +1,11 @@
 package de.unisaarland.cs.st.reposuite.ppa.visitors;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -13,6 +17,8 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
@@ -22,16 +28,23 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 public class PPAMethodCallVisitor implements PPAVisitor {
 	
+	private final Map<String, Collection<JavaMethodCall>> methodCallsByFile = new HashMap<String, Collection<JavaMethodCall>>();
+	
 	@Override
 	public void endVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
-			@NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
-			final JavaElementLocation<JavaMethodDefinition> methodContext) {
+	        @NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
+			final JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull final JavaElementCache elementCache) {
+	}
+	
+	public Map<String, Collection<JavaMethodCall>> getMethodCallsByFile() {
+		return this.methodCallsByFile;
 	}
 	
 	@Override
 	public void postVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
 			@NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
-			final JavaElementLocation<JavaMethodDefinition> methodContext, @NonNegative final int currentLine) {
+			final JavaElementLocation<JavaMethodDefinition> methodContext, @NonNegative final int currentLine,
+			@NotNull final JavaElementCache elementCache) {
 		
 		IBinding binding = null;
 		
@@ -112,17 +125,21 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			arguments.add(args[i].getName());
 		}
 		
-		//		JavaElementDefinition parent = classContext.getElement();
-		//		if (methodContext != null) {
-		//			parent = methodContext.getElement();
-		//		}
+		JavaElementDefinition parent = classContext.getElement();
+		if (methodContext != null) {
+			parent = methodContext.getElement();
+		}
 		
 		String filename = ppaVisitor.getRelativeFilePath();
 		
-		JavaMethodCall methodCall = new JavaMethodCall(calledObject + "." + methodName, arguments);
-		JavaElementLocation<JavaMethodCall> javaMethodCallLoc = new JavaElementLocation<JavaMethodCall>(methodCall,
-				thisLine, thisLine, position, -1, filename);
-		ppaVisitor.addMethodCallLocation(javaMethodCallLoc);
+		JavaElementLocation<JavaMethodCall> javaMethodCall = elementCache.getMethodCall(
+				calledObject + "." + methodName, arguments,
+				filename, parent, thisLine, thisLine, position);
+		
+		if (!this.methodCallsByFile.containsKey(filename)) {
+			this.methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
+		}
+		this.methodCallsByFile.get(filename).add(javaMethodCall.getElement());
 		
 	}
 	
@@ -130,7 +147,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	public void preVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
 			@NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
 			final JavaElementLocation<JavaMethodDefinition> methodContext, @NonNegative final int currentLine,
-			@NonNegative final int endLine) {
+			@NonNegative final int endLine, @NotNull final JavaElementCache elementCache) {
 	}
 	
 }
