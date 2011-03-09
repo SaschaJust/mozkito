@@ -121,6 +121,8 @@ public class HibernateUtil {
 			properties.put("hibernate.connection.url", url);
 			properties.put("hibernate.hbm2ddl.auto", "update");
 			
+			//			properties.put("hibernate.show_sql", "true");
+			
 			properties.put("hibernate.connection.autocommit", "false");
 			properties.put("hibernate.show_sql", "false");
 			properties.put("hibernate.connection.driver_class", driver);
@@ -409,5 +411,5 @@ public class HibernateUtil {
 	public synchronized void update(final Annotated object) {
 		this.session.update(object);
 	}
-
+	
 }

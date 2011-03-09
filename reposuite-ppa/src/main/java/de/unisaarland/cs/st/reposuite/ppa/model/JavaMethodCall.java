@@ -50,7 +50,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		super();
 	}
 	
-	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
+	public JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
 		super(fullQualifiedName);
 		this.signature = new ArrayList<String>(signature);
 		this.setFullQualifiedName(composeFullQualifiedName(fullQualifiedName, signature));

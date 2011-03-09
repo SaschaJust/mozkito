@@ -22,6 +22,7 @@ import de.unisaarland.cs.st.reposuite.settings.FileArgument;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
@@ -36,6 +37,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	private final FileArgument        asXML;
 	private HibernateUtil             hibernateUtil;
 	private boolean                   shutdown;
+	private final StringArgument      startTransactionArg;
 	
 	public PPAToolChain() {
 		super(new RepositorySettings());
@@ -55,7 +57,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		this.asXML = new FileArgument(settings, "output.xml",
 				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
 				null, false, true, false);
-		
+		this.startTransactionArg = new StringArgument(settings, "startWith",
+				"ID of transaction to start with (inclusive).", null, false);
 		settings.parseArguments();
 	}
 	
@@ -89,7 +92,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		transactions.addAll(criteria.list());
 		
 		//generate the change operation reader
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions);
+		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
+		        this.startTransactionArg.getValue());
 		
 		//the xml file set, create XMLSinkThread. Otherwise the Hibernate persister thread
 		if (xmlFile != null) {

@@ -263,7 +263,7 @@ public class ChangeOperationUtils {
 				Collection<JavaElementLocation<JavaElementDefinition>> modifiedDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
 				
 				Collection<JavaElementLocation<JavaElementDefinition>> addDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
-				for (JavaElementLocation def : newElems.getDefs(changedPath)) {
+				for (JavaElementLocation def : newElems.getElements(changedPath)) {
 					LineCover cover = def.coversAnyLine(newLines);
 					switch (cover) {
 						case BODY:
@@ -276,7 +276,7 @@ public class ChangeOperationUtils {
 					}
 				}
 				Collection<JavaElementLocation<JavaElementDefinition>> removeDefCandidates = new HashSet<JavaElementLocation<JavaElementDefinition>>();
-				for (JavaElementLocation def : oldElems.getDefs(changedPath)) {
+				for (JavaElementLocation def : oldElems.getElements(changedPath)) {
 					LineCover cover = def.coversAnyLine(oldLines);
 					switch (cover) {
 						case BODY:

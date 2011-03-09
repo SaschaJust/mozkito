@@ -27,8 +27,8 @@ public abstract class JavaElement implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID  = -8960043672858454394L;
-	private String            shortName         = "<unknown>";
+	private static final long     serialVersionUID = -8960043672858454394L;
+	private String                shortName        = "<unknown>";
 	private JavaElementPrimaryKey primaryKey;
 	
 	protected JavaElement() {
@@ -102,6 +102,7 @@ public abstract class JavaElement implements Annotated {
 		result = prime * result + ((this.getFullQualifiedName() == null) ? 0 : this.getFullQualifiedName().hashCode());
 		return result;
 	}
+	
 	
 	/**
 	 * @return the fullQualifiedName

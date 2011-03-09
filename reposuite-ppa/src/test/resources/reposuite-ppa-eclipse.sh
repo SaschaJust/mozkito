@@ -83,9 +83,19 @@ if [ $? -ne 0 ]
 then
     echo "FAILED!"
     clean_exit $?
+fi
+
+./ppa_xml_diff.py -x /tmp/ppa.xml -y ppa_comp.xml
+
+if [ $? -ne 0 ]
+then
+    echo "FAILED!"
+    clean_exit $?
 else
     echo "done."
 fi
+
+
 rm -rf /tmp/ppa.xml
 
 echo "TEST CASE 2 checking change operations for transaction dfd5e8d5eb594e29f507896a744d2bdabfc55cdf ... "

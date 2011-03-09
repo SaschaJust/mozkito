@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.persistence;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
@@ -27,13 +26,8 @@ public class PPAHibernateUtil {
 		return elements.get(0);
 	}
 	
-	public static JavaElement getSessionJavaElement(final HibernateUtil hibernateUtil, final JavaElement e) {
-		Session session = hibernateUtil.getSession();
-		Object cached = session.get(JavaElement.class, e.getPrimaryKey());
-		if (cached != null) {
-			return (JavaElement) cached;
-		}
-		return null;
+	public static boolean sessionContains(final HibernateUtil hibernateUtil, final Object element) {
+		return hibernateUtil.getSession().contains(element);
 	}
 	
 }
