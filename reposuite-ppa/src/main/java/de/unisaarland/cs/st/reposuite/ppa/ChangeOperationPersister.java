@@ -59,7 +59,6 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 			}
 			hibernateUtil.beginTransaction();
 			
-			
 			//fill cache
 			Criteria criteria = hibernateUtil.createCriteria(JavaClassDefinition.class);
 			List<JavaClassDefinition> classList = criteria.list();
@@ -102,23 +101,25 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 					JavaElement currentElement = currentOperation.getChangedElementLocation().getElement();
 					
 					if (currentElement instanceof JavaClassDefinition) {
-						if (!classDefs.containsKey(currentElement.getFullQualifiedName())) {
-							classDefs.put(currentElement.getFullQualifiedName(), (JavaClassDefinition) currentElement);
+						JavaClassDefinition def = (JavaClassDefinition) currentElement;
+						if (!classDefs.containsKey(def.getFullQualifiedName())) {
+							classDefs.put(def.getFullQualifiedName(), def);
 						} else {
 							currentOperation.getChangedElementLocation().setElement(
 									classDefs.get(currentElement.getFullQualifiedName()));
 						}
 					} else if (currentElement instanceof JavaMethodDefinition) {
-						if (!methodDefs.containsKey(currentElement.getFullQualifiedName())) {
-							methodDefs
-							.put(currentElement.getFullQualifiedName(), (JavaMethodDefinition) currentElement);
+						JavaMethodDefinition def = (JavaMethodDefinition) currentElement;
+						if (!methodDefs.containsKey(def.getFullQualifiedName())) {
+							methodDefs.put(def.getFullQualifiedName(), def);
 						} else {
 							currentOperation.getChangedElementLocation().setElement(
 									methodDefs.get(currentElement.getFullQualifiedName()));
 						}
 					} else if (currentElement instanceof JavaMethodCall) {
-						if (!methodCalls.containsKey(currentElement.getFullQualifiedName())) {
-							methodCalls.put(currentElement.getFullQualifiedName(), (JavaMethodCall) currentElement);
+						JavaMethodCall call = (JavaMethodCall) currentElement;
+						if (!methodCalls.containsKey(call.getFullQualifiedName())) {
+							methodCalls.put(call.getFullQualifiedName(), call);
 						} else {
 							currentOperation.getChangedElementLocation().setElement(
 									methodCalls.get(currentElement.getFullQualifiedName()));
