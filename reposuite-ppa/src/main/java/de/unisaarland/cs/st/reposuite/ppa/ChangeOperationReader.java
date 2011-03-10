@@ -29,6 +29,8 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	/** The transactions. */
 	private final List<RCSTransaction> transactions;
 	
+	private final String                     startWith;
+	
 	/**
 	 * Instantiates a new change operation reader.
 	 * 
@@ -40,12 +42,16 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	 *            the repository
 	 * @param transactions
 	 *            the transactions
+	 * @param startWith
+	 *            the transaction is to start with. If null, start with the
+	 *            first transaction
 	 */
 	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-			final Repository repository, final List<RCSTransaction> transactions) {
+			final Repository repository, final List<RCSTransaction> transactions, final String startWith) {
 		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
 		this.repository = repository;
 		this.transactions = transactions;
+		this.startWith = startWith;
 	}
 	
 	/* (non-Javadoc)
@@ -72,8 +78,24 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 				throw new UnrecoverableError(e.getMessage(), e);
 			}
 		}
+		boolean consider = true;
+		if(this.startWith != null){
+			consider = false;
+		}
 		
 		for (RCSTransaction transaction : this.transactions) {
+			
+			if(!consider){
+				if(transaction.getId().equals(this.startWith)){
+					consider = true;
+					size = size - counter;
+					counter = 0;
+				}else{
+					++counter;
+					continue;
+				}
+			}
+			
 			if (Logger.logInfo()) {
 				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
 						+ "/" + size + ")");
