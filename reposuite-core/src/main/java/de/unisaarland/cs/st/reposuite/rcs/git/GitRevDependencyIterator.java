@@ -86,20 +86,20 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					parents.add(revFields[i]);
 				}
 				
-				if (!branches.containsKey(revId)) {
+				if (!this.branches.containsKey(revId)) {
 					if ((branchName == null) || branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
-						branches.put(revId, RCSBranch.MASTER);
+						this.branches.put(revId, RCSBranch.MASTER);
 					} else {
-						branches.put(revId, new RCSBranch(branchName));
+						this.branches.put(revId, new RCSBranch(branchName));
 					}
 				}
 				
 				Condition
-				.check(branches.containsKey(revId),
+				.check(this.branches.containsKey(revId),
 				"The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
 				
-				RCSBranch commitBranch = branches.get(revId);
-				branches.remove(revId);
+				RCSBranch commitBranch = this.branches.get(revId);
+				this.branches.remove(revId);
 				
 				//if this is a named branch change name of branch
 				if ((branchName != null) && (!commitBranch.equals(RCSBranch.MASTER))) {
@@ -113,20 +113,20 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				if (parents.size() > 0) {
 					String parent = parents.get(0);
-					if (!branches.containsKey(parent)) {
-						branches.put(parent, commitBranch);
+					if (!this.branches.containsKey(parent)) {
+						this.branches.put(parent, commitBranch);
 					} else {
-						if (commitBranch.compareTo(branches.get(parent)) < 0) {
-							branches.put(parent, commitBranch);
+						if (commitBranch.compareTo(this.branches.get(parent)) < 0) {
+							this.branches.put(parent, commitBranch);
 						}
 					}
 				}
 				for (int i = 1; i < parents.size(); ++i) {
 					String parent = parents.get(i);
 					RCSBranch newBranch = new RCSBranch(parent + "Branch", commitBranch);
-					if (!branches.containsKey(parent)) {
+					if (!this.branches.containsKey(parent)) {
 						//there is no later transaction within this new branch . Otherwise we would have seen the parent already
-						branches.put(parent, newBranch);
+						this.branches.put(parent, newBranch);
 						//set transaction to be merge transaction for new branch
 						newBranch.setMergedIn(revId);
 					}
@@ -143,7 +143,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				throw new UnrecoverableError(
 				"Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
 			}
-			depIter = depList.iterator();
+			this.depIter = depList.iterator();
 		} catch (Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
 					+ FileUtils.lineSeparator + e.getMessage(), e);
@@ -152,8 +152,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getDecorateListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--branches",
-				"--decorate=full", "--remotes", "--encoding=UTF-8", "--pretty=format:%H %d", revision }, cloneDir,
-				null, new HashMap<String, String>(), GitRepository.charset);
+				"--decorate=full", "--remotes", "--encoding=UTF-8", "--pretty=format:%H %d", "--topo-order",
+				this.revision }, this.cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
 			"Could not initialize DependencyIterator for Git repo. Could not get decorateList");
@@ -176,8 +176,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		 * closed at all (see above).
 		 */
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--branches",
-				"--decorate=full", "--remotes", "--encoding=UTF-8", "--pretty=format:%H", "--merges", revision },
-				cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
+				"--decorate=full", "--remotes", "--encoding=UTF-8", "--pretty=format:%H", "--merges", "--topo-order",
+				this.revision }, this.cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not fetch list of transactions merging branches.");
 		}
@@ -186,7 +186,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private List<String> getNonMergedBranches() {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "branch", "-a", "-l",
-				"--no-merged", revision }, cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
+				"--no-merged", this.revision }, this.cloneDir, null, new HashMap<String, String>(),
+				GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not fetch the non-merged branches for Git repo.");
 		}
@@ -195,12 +196,13 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getRevListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-				"--encoding=UTF-8", "--parents", "--branches", "--remotes", revision }, cloneDir, null,
+		        "--encoding=UTF-8", "--parents", "--branches", "--remotes", "--topo-order", this.revision },
+		        this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
 					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
-					+ revision + ".");
+					+ this.revision + ".");
 		}
 		File revListFile = FileUtils.createRandomFile();
 		BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));
@@ -214,7 +216,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	@Override
 	public boolean hasNext() {
-		return depIter.hasNext();
+		return this.depIter.hasNext();
 	}
 	
 	@Override
@@ -222,12 +224,12 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		if (!hasNext()) {
 			return null;
 		}
-		return depIter.next();
+		return this.depIter.next();
 	}
 	
 	@Override
 	public void remove() {
-		depIter.remove();
+		this.depIter.remove();
 	}
 	
 }

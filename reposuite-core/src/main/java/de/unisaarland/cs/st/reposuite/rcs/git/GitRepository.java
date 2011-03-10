@@ -515,12 +515,13 @@ public class GitRepository extends Repository {
 			revisionSelection = toRevision;
 		}
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller",
-				"--branches", "--remotes", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
+				"--branches", "--remotes", "--topo-order", revisionSelection }, this.cloneDir, null,
+				new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=fuller --branches --remotes " + revisionSelection);
+			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order" + revisionSelection);
 		}
 		for (LogEntry e : GitLogParser.parse(response.getSecond())) {
 			this.logCache.put(e.getRevision(), e);
@@ -535,12 +536,14 @@ public class GitRepository extends Repository {
 					revisionSelection = tId;
 				}
 				response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches",
-						"--remotes", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
+						"--remotes", "--topo-order", revisionSelection }, this.cloneDir, null,
+						new HashMap<String, String>());
 				if (response.getFirst() != 0) {
 					return null;
 				}
 				if (Logger.logDebug()) {
-					Logger.debug("############# git log --pretty=fuller --branches --remotes " + revisionSelection);
+					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order"
+					        + revisionSelection);
 				}
 				result.addAll(GitLogParser.parse(response.getSecond()));
 			} else {
