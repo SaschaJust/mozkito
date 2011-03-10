@@ -95,12 +95,12 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
-		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", dep.getId());
+		assertEquals("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8", dep.getId());
 		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_98d = dep.getCommitBranch();
+		RCSBranch branch_dee = dep.getCommitBranch();
 		parents = dep.getParents();
 		assertEquals(1, parents.size());
-		assertTrue(parents.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
+		assertTrue(parents.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
 		assertFalse(dep.isMerge());
 		
 		assertTrue(iter.hasNext());
@@ -115,16 +115,6 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
-		assertEquals("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8", dep.getId());
-		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_dee = dep.getCommitBranch();
-		parents = dep.getParents();
-		assertEquals(1, parents.size());
-		assertTrue(parents.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
-		assertFalse(dep.isMerge());
-		
-		assertTrue(iter.hasNext());
-		dep = iter.next();
 		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", dep.getId());
 		assertEquals(0, dep.getTagNames().size());
 		RCSBranch branch_cbc = dep.getCommitBranch();
@@ -132,6 +122,17 @@ public class GitRevDependencyIteratorTest {
 		assertEquals(1, parents.size());
 		assertTrue(parents.contains("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
 		assertFalse(dep.isMerge());
+		
+		assertTrue(iter.hasNext());
+		dep = iter.next();
+		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", dep.getId());
+		assertEquals(0, dep.getTagNames().size());
+		RCSBranch branch_98d = dep.getCommitBranch();
+		parents = dep.getParents();
+		assertEquals(1, parents.size());
+		assertTrue(parents.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
+		assertFalse(dep.isMerge());
+		
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
@@ -168,9 +169,9 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
-		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", dep.getId());
+		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", dep.getId());
 		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_1ac = dep.getCommitBranch();
+		RCSBranch branch_41a = dep.getCommitBranch();
 		parents = dep.getParents();
 		assertEquals(1, parents.size());
 		assertTrue(parents.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
@@ -178,9 +179,9 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
-		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", dep.getId());
+		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", dep.getId());
 		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_41a = dep.getCommitBranch();
+		RCSBranch branch_1ac = dep.getCommitBranch();
 		parents = dep.getParents();
 		assertEquals(1, parents.size());
 		assertTrue(parents.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
@@ -209,22 +210,32 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
-		assertEquals("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9", dep.getId());
-		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_d98 = dep.getCommitBranch();
-		parents = dep.getParents();
-		assertEquals(1, parents.size());
-		assertTrue(parents.contains("376adc0f9371129a76766f8030f2e576165358c1"));
-		assertFalse(dep.isMerge());
-		
-		assertTrue(iter.hasNext());
-		dep = iter.next();
 		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", dep.getId());
 		assertEquals(0, dep.getTagNames().size());
 		RCSBranch branch_9be = dep.getCommitBranch();
 		parents = dep.getParents();
 		assertEquals(1, parents.size());
 		assertTrue(parents.contains("637acf68104e7bdff8235fb2e1a254300ffea3cb"));
+		assertFalse(dep.isMerge());
+		
+		assertTrue(iter.hasNext());
+		dep = iter.next();
+		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", dep.getId());
+		assertEquals(0, dep.getTagNames().size());
+		RCSBranch branch_fe5 = dep.getCommitBranch();
+		parents = dep.getParents();
+		assertEquals(1, parents.size());
+		assertTrue(parents.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
+		assertFalse(dep.isMerge());
+		
+		assertTrue(iter.hasNext());
+		dep = iter.next();
+		assertEquals("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9", dep.getId());
+		assertEquals(0, dep.getTagNames().size());
+		RCSBranch branch_d98 = dep.getCommitBranch();
+		parents = dep.getParents();
+		assertEquals(1, parents.size());
+		assertTrue(parents.contains("376adc0f9371129a76766f8030f2e576165358c1"));
 		assertFalse(dep.isMerge());
 		
 		assertTrue(iter.hasNext());
@@ -237,17 +248,7 @@ public class GitRevDependencyIteratorTest {
 		assertTrue(parents.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
 		assertTrue(parents.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
 		assertTrue(dep.isMerge());
-		
-		assertTrue(iter.hasNext());
-		dep = iter.next();
-		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", dep.getId());
-		assertEquals(0, dep.getTagNames().size());
-		RCSBranch branch_fe5 = dep.getCommitBranch();
-		parents = dep.getParents();
-		assertEquals(1, parents.size());
-		assertTrue(parents.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
-		assertFalse(dep.isMerge());
-		
+
 		assertTrue(iter.hasNext());
 		dep = iter.next();
 		assertEquals("67635fe9efeb2fd3751df9ea67650c71e59e3df1", dep.getId());
