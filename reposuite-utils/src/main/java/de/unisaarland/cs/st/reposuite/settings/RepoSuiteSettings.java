@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
@@ -50,8 +49,6 @@ public class RepoSuiteSettings {
 	 */
 	@NoneNull
 	protected boolean addArgument(final RepoSuiteArgument argument) {
-		Condition.notNull(argument);
-		
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
