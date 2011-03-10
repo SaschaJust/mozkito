@@ -25,9 +25,7 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 @Entity
 public class JavaClassDefinition extends JavaElementDefinition implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = 945704236316941413L;
 	
 	/** The super class name. */
@@ -43,6 +41,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	/** The anonym class. */
 	private boolean             anonymClass      = false;
 	
+	/**
+	 * Instantiates a new java class definition.
+	 */
 	@SuppressWarnings("unused")
 	private JavaClassDefinition() {
 		super();
@@ -53,16 +54,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param file
-	 *            the file
-	 * @param timestamp
-	 *            the timestamp
 	 * @param parent
 	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
 	 * @param packageName
 	 *            the package name
 	 */
@@ -84,16 +77,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	/**
 	 * Adds the method.
 	 * 
-	 * @param methodName
-	 *            the method name
-	 * @param arguments
-	 *            the arguments
-	 * @param timestamp
-	 *            the timestamp
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
+	 * @param methodDef
+	 *            the method def
 	 * @return the java method definition
 	 */
 	public void addMethod(final JavaMethodDefinition methodDef) {
@@ -123,6 +108,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		return (JavaClassDefinition) super.getParent();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation(org.w3c.dom.Document)
+	 */
 	@Override
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement("JavaClassDefinition");
@@ -148,6 +136,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	/**
 	 * Next anon counter.
 	 * 
+	 * @param v
+	 *            the v
 	 * @return the int
 	 */
 	@Transient
@@ -164,6 +154,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		return new HashSet<Annotated>();

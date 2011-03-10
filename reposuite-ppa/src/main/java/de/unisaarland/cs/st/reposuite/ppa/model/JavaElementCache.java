@@ -18,7 +18,9 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
- * The Class JavaElementDefinitionCache.
+ * The Class JavaElementDefinitionCache. All instances extending JavaElement
+ * must be stored here. Careful! Instances must be created new or fetched within
+ * the persister.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
@@ -33,6 +35,7 @@ public class JavaElementCache {
 	/** The method calls by name. */
 	public static Map<String, JavaMethodCall>                    methodCalls         = new HashMap<String, JavaMethodCall>();
 	
+	/** The hibernate util. */
 	private final HibernateUtil                                  hibernateUtil;
 	
 	/** The class def locations. */
@@ -70,6 +73,8 @@ public class JavaElementCache {
 	 *            the end line
 	 * @param position
 	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
 	 * @param packageName
 	 *            the package name
 	 * @return the class definition
@@ -191,6 +196,8 @@ public class JavaElementCache {
 	 *            the end line
 	 * @param position
 	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
 	 * @return the method definition
 	 */
 	public JavaElementLocation<JavaMethodDefinition> getMethodDefinition(@NotNull final String fullQualifiedName,

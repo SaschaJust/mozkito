@@ -43,8 +43,12 @@ public class JavaChangeOperation implements Annotated {
 	@SuppressWarnings("rawtypes")
 	private JavaElementLocation changedElementLocation;
 	
+	/** The revision. */
 	private RCSRevision         revision;
 	
+	/**
+	 * Instantiates a new java change operation.
+	 */
 	@SuppressWarnings("unused")
 	private JavaChangeOperation() {
 	}
@@ -56,8 +60,8 @@ public class JavaChangeOperation implements Annotated {
 	 *            the type
 	 * @param element
 	 *            the element
-	 * @param line
-	 *            the line
+	 * @param revision
+	 *            the revision
 	 */
 	@SuppressWarnings("rawtypes")
 	@NoneNull
@@ -110,11 +114,23 @@ public class JavaChangeOperation implements Annotated {
 	}
 	
 	
+	/**
+	 * Gets the revision.
+	 * 
+	 * @return the revision
+	 */
 	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return this.revision;
 	}
 	
+	/**
+	 * Gets the xML representation.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return the xML representation
+	 */
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement(this.changeType.toString());
 		//		Attr revision = document.createAttribute("revision");
@@ -159,11 +175,23 @@ public class JavaChangeOperation implements Annotated {
 		this.changeType = changeType;
 	}
 	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the new id
+	 */
 	@SuppressWarnings("unused")
 	private void setId(final long id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Sets the revision.
+	 * 
+	 * @param revision
+	 *            the new revision
+	 */
 	private void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}

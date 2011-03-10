@@ -38,12 +38,16 @@ import org.eclipse.jdt.core.dom.PPABindingsUtil;
 import ca.mcgill.cs.swevo.ppa.SnippetUtil;
 import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
 
+/**
+ * The Class PPAResourceUtil.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class PPAResourceUtil {
 	
+	/** The Constant logger. */
 	private final static Logger logger = Logger
 	.getLogger(PPAResourceUtil.class);
-	
-	
 	
 	/**
 	 * <p>
@@ -53,7 +57,9 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param file
+	 *            the file
 	 * @throws CoreException
+	 *             the core exception
 	 */
 	public static void cleanUp(final IFile file) throws CoreException {
 		IFolder parentFolder = (IFolder) file.getParent();
@@ -71,14 +77,18 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param project
+	 *            the project
 	 * @param srcFile
+	 *            the src file
 	 * @param packageName
 	 *            Name of the package (e.g., com.foo)
 	 * @param destFileName
 	 *            Name of the compilation unit (e.g., Bar)
-	 * @return
+	 * @return the i file
 	 * @throws CoreException
+	 *             the core exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static IFile copyJavaSourceFile(final IProject project, final File srcFile,
 			final String packageName, final String destFileName) throws CoreException,
@@ -108,7 +118,9 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param project
+	 *            the project
 	 * @param srcFile
+	 *            the src file
 	 * @param packageName
 	 *            Name of the package (e.g., com.foo)
 	 * @param destFileName
@@ -117,9 +129,11 @@ public class PPAResourceUtil {
 	 *            True if the snippet could fit inside a class body (e.g.,
 	 *            contains a method declaration). False if it could fit inside a
 	 *            method body.
-	 * @return
+	 * @return the i file
 	 * @throws CoreException
+	 *             the core exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static IFile copyJavaSourceFileSnippet(final IProject project,
 			final File srcFile, final String packageName, final String destFileName,
@@ -151,7 +165,9 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param project
+	 *            the project
 	 * @param snippetContent
+	 *            the snippet content
 	 * @param packageName
 	 *            Name of the package (e.g., com.foo)
 	 * @param destFileName
@@ -160,9 +176,11 @@ public class PPAResourceUtil {
 	 *            True if the snippet could fit inside a class body (e.g.,
 	 *            contains a method declaration). False if it could fit inside a
 	 *            method body.
-	 * @return
+	 * @return the i file
 	 * @throws CoreException
+	 *             the core exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static IFile copyJavaSourceFileSnippet(final IProject project,
 			final String snippetContent, final String packageName, final String destFileName,
@@ -194,7 +212,8 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param file
-	 * @return
+	 *            the file
+	 * @return the content
 	 * @throws IOException
 	 *             If there were any IO related errors while reading the file.
 	 */
@@ -225,9 +244,12 @@ public class PPAResourceUtil {
 	 * </p>
 	 * 
 	 * @param srcFolder
+	 *            the src folder
 	 * @param packages
+	 *            the packages
 	 * @return The last folder (e.g., bar) created.
 	 * @throws CoreException
+	 *             the core exception
 	 */
 	public static IFolder getCreatePackageFolder(final IFolder srcFolder,
 			final String[] packages) throws CoreException {
@@ -252,8 +274,10 @@ public class PPAResourceUtil {
 	}
 	
 	/**
+	 * Checks if is empty.
 	 * 
 	 * @param folder
+	 *            the folder
 	 * @return true if the folder does not contain any resource and exists.
 	 */
 	public static boolean isEmpty(final IFolder folder) {
@@ -270,6 +294,13 @@ public class PPAResourceUtil {
 		return isEmpty;
 	}
 	
+	/**
+	 * Checks if is src folder.
+	 * 
+	 * @param parentFolder
+	 *            the parent folder
+	 * @return true, if is src folder
+	 */
 	private static boolean isSrcFolder(final IFolder parentFolder) {
 		return parentFolder.getName().equals("src");
 	}

@@ -16,11 +16,31 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * The Class ChangeOperationReader.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOperation> implements ChangeOperationVisitor {
 	
+	/** The repository. */
 	private final Repository repository;
+	
+	/** The transactions. */
 	private final List<RCSTransaction> transactions;
 	
+	/**
+	 * Instantiates a new change operation reader.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param repository
+	 *            the repository
+	 * @param transactions
+	 *            the transactions
+	 */
 	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 			final Repository repository, final List<RCSTransaction> transactions) {
 		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
@@ -28,10 +48,16 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		this.transactions = transactions;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor#endVisit()
+	 */
 	@Override
 	public void endVisit() {
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		Set<ChangeOperationVisitor> visitors = new HashSet<ChangeOperationVisitor>();
@@ -60,6 +86,9 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		finish();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor#visit(de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation)
+	 */
 	@Override
 	public void visit(final JavaChangeOperation change) {
 		try {
@@ -75,6 +104,9 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor#visit(de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction)
+	 */
 	@Override
 	public void visit(final RCSTransaction transaction) {
 	}

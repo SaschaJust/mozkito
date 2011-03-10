@@ -31,8 +31,21 @@ import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.InsertDelta;
 
+/**
+ * The Class ChangeOperationUtils.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ChangeOperationUtils {
 	
+	/**
+	 * Filter changed path. his method basically ensures that all file paths
+	 * have the sme format.
+	 * 
+	 * @param changedPath
+	 *            the changed path
+	 * @return the string
+	 */
 	@NoneNull
 	private static String filterChangedPath(final String changedPath) {
 		if (changedPath == null) {
@@ -50,6 +63,17 @@ public class ChangeOperationUtils {
 		return changedPath;
 	}
 	
+	/**
+	 * Generate change operations for added file. The generated change
+	 * operations will be passed to the given visitors.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param revision
+	 *            the revision
+	 * @param visitors
+	 *            the visitors
+	 */
 	@NoneNull
 	protected static void generateChangeOperationsForAddedFile(final Repository repository, final RCSRevision revision,
 			final Collection<ChangeOperationVisitor> visitors) {
@@ -100,6 +124,17 @@ public class ChangeOperationUtils {
 		}
 	}
 	
+	/**
+	 * Generate change operations for deleted file. The generated change
+	 * operations will be passed to the given visitors.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param revision
+	 *            the revision
+	 * @param visitors
+	 *            the visitors
+	 */
 	@NoneNull
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
 			final RCSRevision revision, final Collection<ChangeOperationVisitor> visitors) {
@@ -160,6 +195,17 @@ public class ChangeOperationUtils {
 		}
 	}
 	
+	/**
+	 * Generate change operations for modified file. The generated change
+	 * operations will be passed to the given visitors.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param revision
+	 *            the revision
+	 * @param visitors
+	 *            the visitors
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@NoneNull
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,

@@ -27,13 +27,38 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file
+ * (or prints the XML to stdout).
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class PPAXMLSink extends RepoSuiteSinkThread<JavaChangeOperation> {
 	
+	/** The document. */
 	private final Document             document;
+	
+	/** The operations element. */
 	private final Element              operationsElement;
+	
+	/** The out stream. */
 	private final OutputStream         outStream;
+	
+	/** The transaction elements. */
 	private final Map<String, Element> transactionElements = new HashMap<String, Element>();
 	
+	/**
+	 * Instantiates a new pPAXML sink.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param outStream
+	 *            the out stream
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 */
 	public PPAXMLSink(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 			final OutputStream outStream) throws ParserConfigurationException {
 		super(threadGroup, PPAXMLSink.class.getSimpleName(), settings);

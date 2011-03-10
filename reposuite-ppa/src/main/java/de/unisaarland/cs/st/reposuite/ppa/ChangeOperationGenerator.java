@@ -34,7 +34,7 @@ public class ChangeOperationGenerator {
 	}
 	
 	/**
-	 * Handle transactions and generate ChangeOperations
+	 * Handle transactions and generate ChangeOperations.
 	 * 
 	 * @param transactions
 	 *            the transactions
@@ -50,7 +50,7 @@ public class ChangeOperationGenerator {
 			
 			if (Logger.logInfo()) {
 				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
-				        + "/" + size + ")");
+						+ "/" + size + ")");
 			}
 			
 			

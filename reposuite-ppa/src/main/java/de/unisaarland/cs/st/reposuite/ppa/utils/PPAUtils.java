@@ -46,8 +46,19 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PPAUtils {
 	
+	/**
+	 * Generate change operations. The generated change operations will be
+	 * passed to the given visitors.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param transaction
+	 *            the transaction
+	 * @param visitors
+	 *            the visitors
+	 */
 	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
-	        final Collection<ChangeOperationVisitor> visitors) {
+			final Collection<ChangeOperationVisitor> visitors) {
 		
 		//JavaElementCache.reset();
 		int counter = 1;
@@ -247,6 +258,17 @@ public class PPAUtils {
 		return cus;
 	}
 	
+	/**
+	 * Gets the java element locations by file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param filePrefixPath
+	 *            the file prefix path
+	 * @param packageFilter
+	 *            the package filter
+	 * @return the java element locations by file
+	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File file, final String filePrefixPath,
 			final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
@@ -276,8 +298,6 @@ public class PPAUtils {
 	 *            the source dir
 	 * @param packageFilter
 	 *            the package filter
-	 * @param resetDefinitionCache
-	 *            the reset definition cache
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir, final String[] packageFilter) {
@@ -302,8 +322,6 @@ public class PPAUtils {
 	 *            the file prefix path
 	 * @param packageFilter
 	 *            the package filter
-	 * @param resetDefinitionCache
-	 *            the reset definition cache
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,

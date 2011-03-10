@@ -30,9 +30,7 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 @ForeignKey(name = "JAVA_ELEM_DEF")
 public abstract class JavaElementDefinition extends JavaElement implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long                    serialVersionUID = 1535115107166147270L;
 	
 	/** The parent. */
@@ -41,6 +39,9 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	/** The children. */
 	protected Map<String, JavaElementDefinition> children         = new HashMap<String, JavaElementDefinition>();
 	
+	/**
+	 * Instantiates a new java element definition.
+	 */
 	protected JavaElementDefinition() {
 		super();
 	}
@@ -50,14 +51,6 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param filePath
-	 *            the file path
-	 * @param timestamp
-	 *            the timestamp
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
 	 * @param parent
 	 *            the parent
 	 */
@@ -154,6 +147,11 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 		return this.parent;
 	}
 	
+	/**
+	 * Gets the typed parent.
+	 * 
+	 * @return the typed parent
+	 */
 	@Transient
 	public abstract JavaElementDefinition getTypedParent();
 	

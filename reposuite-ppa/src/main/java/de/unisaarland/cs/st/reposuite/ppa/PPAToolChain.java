@@ -27,16 +27,37 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * The Class PPAToolChain.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class PPAToolChain extends RepoSuiteToolchain {
 	
+	/** The thread pool. */
 	private final RepoSuiteThreadPool threadPool;
+	
+	/** The repo settings. */
 	private final RepositoryArguments repoSettings;
+	
+	/** The database settings. */
 	private final DatabaseArguments   databaseSettings;
+	
+	/** The test case transaction arg. */
 	private final ListArgument        testCaseTransactionArg;
+	
+	/** The as xml. */
 	private final FileArgument        asXML;
+	
+	/** The hibernate util. */
 	private HibernateUtil             hibernateUtil;
+	
+	/** The shutdown. */
 	private boolean                   shutdown;
 	
+	/**
+	 * Instantiates a new pPA tool chain.
+	 */
 	public PPAToolChain() {
 		super(new RepositorySettings());
 		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
@@ -59,6 +80,9 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		settings.parseArguments();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		if (!this.shutdown) {
@@ -72,6 +96,9 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setup() {

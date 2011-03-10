@@ -25,17 +25,16 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 @Entity
 public class JavaMethodDefinition extends JavaElementDefinition implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6574764154587254697L;
 	
 	/**
 	 * Compose full qualified name.
 	 * 
-	 * @param name
-	 *            the name
-	 * @param string
+	 * @param parent
+	 *            the parent
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
 	 * @return the string
@@ -62,6 +61,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	/** The signature. */
 	private List<String> signature;
 	
+	/**
+	 * Instantiates a new java method definition.
+	 */
 	@SuppressWarnings("unused")
 	private JavaMethodDefinition() {
 		super();
@@ -74,16 +76,8 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the full qualified name
 	 * @param signature
 	 *            the signature
-	 * @param file
-	 *            the file
-	 * @param timestamp
-	 *            the timestamp
 	 * @param parent
 	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
 	 */
 	protected JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
 			@NotNull final JavaClassDefinition parent) {
@@ -184,6 +178,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		HashSet<Annotated> set = new HashSet<Annotated>();
@@ -191,6 +188,12 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		return set;
 	}
 	
+	/**
+	 * Sets the signature.
+	 * 
+	 * @param signature
+	 *            the new signature
+	 */
 	private void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}

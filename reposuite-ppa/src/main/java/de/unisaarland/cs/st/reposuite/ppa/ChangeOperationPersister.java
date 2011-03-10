@@ -20,8 +20,21 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * The Class ChangeOperationPersister.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOperation> {
 	
+	/**
+	 * Instantiates a new change operation persister.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 */
 	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
 		super(threadGroup, ChangeOperationPersister.class.getSimpleName(), settings);
 	}
@@ -30,7 +43,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	@SuppressWarnings({ "deprecation", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void run() {
 		
@@ -79,7 +92,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 			synchronized (JavaElementCache.classDefs) {
 				JavaElementCache.classDefs.notifyAll();
 			}
-
+			
 			if (Logger.logInfo()) {
 				Logger.info("done.");
 			}

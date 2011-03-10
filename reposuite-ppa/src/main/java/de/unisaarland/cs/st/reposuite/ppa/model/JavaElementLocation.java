@@ -24,31 +24,83 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
+/**
+ * The Class JavaElementLocation.
+ * 
+ * @param <T>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @Entity
 public class JavaElementLocation<T extends JavaElement> implements Comparable<JavaElementLocation<T>>, Annotated {
 	
+	/**
+	 * The Enum LineCover.
+	 * 
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	public static enum LineCover {
-		DEFINITION, BODY, DEF_AND_BODY, FALSE
+		
+		/** The DEFINITION. */
+		DEFINITION,
+		/** The BODY. */
+		BODY,
+		/** The DE f_ an d_ body. */
+		DEF_AND_BODY,
+		/** The FALSE. */
+		FALSE
 	};
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4858435624572738026L;
 	
+	/** The id. */
 	private long              id;
+	
+	/** The start line. */
 	private int               startLine;
+	
+	/** The end line. */
 	private int               endLine;
+	
+	/** The position. */
 	private int               position;
+	
+	/** The element. */
 	private T                 element;
+	
+	/** The file path. */
 	private String            filePath         = "<unknown>";
+	
+	/** The body start line. */
 	private int               bodyStartLine;
+	
+	/** The comment lines. */
 	private Set<Integer>      commentLines     = new HashSet<Integer>();
 	
+	/**
+	 * Instantiates a new java element location.
+	 */
 	@SuppressWarnings("unused")
 	private JavaElementLocation() {
 	}
 	
+	/**
+	 * Instantiates a new java element location.
+	 * 
+	 * @param element
+	 *            the element
+	 * @param startLine
+	 *            the start line
+	 * @param endLine
+	 *            the end line
+	 * @param position
+	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
+	 * @param filePath
+	 *            the file path
+	 */
 	public JavaElementLocation(@NotNull final T element, @NonNegative final int startLine,
 			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
 			@NotNull final String filePath) {
@@ -69,6 +121,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		this.setBodyStartLine(bodyStartLine);
 	}
 	
+	/**
+	 * Adds the comment lines.
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 */
 	@Transient
 	public void addCommentLines(final int from, final int to){
 		Condition.check(from <= to, "You must supply a closed interval.");
@@ -77,6 +137,9 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final JavaElementLocation<T> other) {
 		if (this.getStartLine() < other.getStartLine()) {
@@ -94,8 +157,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		}
 	}
 	
+	/**
+	 * Covers all lines.
+	 * 
+	 * @param lines
+	 *            the lines
+	 * @return the line cover
+	 */
 	public LineCover coversAllLines(final Collection<Integer> lines) {
-		//TODO add test case
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
 			LineCover tmpLC = coversLine(line);
@@ -121,8 +190,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return lc;
 	}
 	
+	/**
+	 * Covers any line.
+	 * 
+	 * @param lines
+	 *            the lines
+	 * @return the line cover
+	 */
 	public LineCover coversAnyLine(final Collection<Integer> lines) {
-		//TODO add test case
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
 			LineCover tmpLC = coversLine(line);
@@ -149,8 +224,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return lc;
 	}
 	
+	/**
+	 * Covers line.
+	 * 
+	 * @param line
+	 *            the line
+	 * @return the line cover
+	 */
 	public LineCover coversLine(final int line) {
-		//TODO add test case
 		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
 			if (this.getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
@@ -163,6 +244,9 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return LineCover.FALSE;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
@@ -204,29 +288,59 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return true;
 	}
 	
+	/**
+	 * Gets the body start line.
+	 * 
+	 * @return the body start line
+	 */
 	public int getBodyStartLine() {
 		return this.bodyStartLine;
 	}
 	
+	/**
+	 * Gets the comment lines.
+	 * 
+	 * @return the comment lines
+	 */
 	@ElementCollection
 	public Set<Integer> getCommentLines() {
 		return this.commentLines;
 	}
 	
+	/**
+	 * Gets the element.
+	 * 
+	 * @return the element
+	 */
 	@Type(type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
 	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public T getElement() {
 		return this.element;
 	}
 	
+	/**
+	 * Gets the end line.
+	 * 
+	 * @return the end line
+	 */
 	public int getEndLine() {
 		return this.endLine;
 	}
 	
+	/**
+	 * Gets the file path.
+	 * 
+	 * @return the file path
+	 */
 	public String getFilePath() {
 		return this.filePath;
 	}
 	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
 	@Index(name = "idx_elemlocid")
 	@Id
 	@GeneratedValue
@@ -234,15 +348,32 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return this.id;
 	}
 	
+	/**
+	 * Gets the position.
+	 * 
+	 * @return the position
+	 */
 	public int getPosition() {
 		return this.position;
 	}
 	
 	
+	/**
+	 * Gets the start line.
+	 * 
+	 * @return the start line
+	 */
 	public int getStartLine() {
 		return this.startLine;
 	}
 	
+	/**
+	 * Gets the xML representation.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return the xML representation
+	 */
 	public Element getXMLRepresentation(final Document document){
 		Element thisElement = document.createElement("JavaElementLocation");
 		
@@ -261,6 +392,9 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return thisElement;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -275,6 +409,9 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		//		Set<Annotated> set = new HashSet<Annotated>();
@@ -283,40 +420,91 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return null;
 	}
 	
+	/**
+	 * Sets the body start line.
+	 * 
+	 * @param bodyStartLine
+	 *            the new body start line
+	 */
 	protected void setBodyStartLine(final int bodyStartLine) {
 		this.bodyStartLine = bodyStartLine;
 	}
 	
+	/**
+	 * Sets the comment lines.
+	 * 
+	 * @param commentLines
+	 *            the new comment lines
+	 */
 	protected void setCommentLines(final Set<Integer> commentLines) {
 		this.commentLines = commentLines;
 	}
 	
-	@Deprecated
+	/**
+	 * Sets the element. Careful! This can have nasty side effects when
+	 * persisting the JavaElementLocation using hibernate!
+	 * 
+	 * @param element
+	 *            the new element
+	 */
 	public void setElement(final T element) {
 		this.element = element;
 	}
 	
+	/**
+	 * Sets the end line.
+	 * 
+	 * @param endLine
+	 *            the new end line
+	 */
 	private void setEndLine(final int endLine) {
 		this.endLine = endLine;
 	}
 	
+	/**
+	 * Sets the file path.
+	 * 
+	 * @param filePath
+	 *            the new file path
+	 */
 	private void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
 	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the new id
+	 */
 	@SuppressWarnings("unused")
 	private void setId(final long id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Sets the position.
+	 * 
+	 * @param position
+	 *            the new position
+	 */
 	private void setPosition(final int position) {
 		this.position = position;
 	}
 	
+	/**
+	 * Sets the start line.
+	 * 
+	 * @param startLine
+	 *            the new start line
+	 */
 	private void setStartLine(final int startLine) {
 		this.startLine = startLine;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

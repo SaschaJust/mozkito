@@ -41,31 +41,60 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
  */
 public class PPATypeVisitor extends ASTVisitor {
 	
+	/** The UNKNOW n_ package. */
 	public static String                                           UNKNOWN_PACKAGE  = "<UNKNOWN>";
+	
+	/** The prim types. */
 	private static String[]                                        primTypes        = { "Class", "Character", "Byte",
 		"Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
 		"Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
+	
+	/** The class stack. */
 	private final Stack<JavaElementLocation<JavaClassDefinition>>  classStack       = new Stack<JavaElementLocation<JavaClassDefinition>>();
+	
+	/** The method stack. */
 	private final Stack<JavaElementLocation<JavaMethodDefinition>> methodStack      = new Stack<JavaElementLocation<JavaMethodDefinition>>();
+	
+	/** The cu. */
 	protected CompilationUnit                                      cu;
+	
+	/** The file. */
 	private final File                                             file;
+	
+	/** The package filter. */
 	protected String[]                                             packageFilter;
+	
+	/** The package name. */
 	private String                                                 packageName;
+	
+	/** The primitives. */
 	protected HashSet<String>                                      primitives;
+	
+	/** The visitors. */
 	private final Set<PPAVisitor>                                  visitors         = new HashSet<PPAVisitor>();
+	
+	/** The relative file path. */
 	private String                                                 relativeFilePath = "";
+	
+	/** The element cache. */
 	private final JavaElementCache                                 elementCache;
+	
+	/** The previous node. */
 	private ASTNode                                                previousNode     = null;
 	
 	/**
 	 * Instantiates a new pPA type visitor.
 	 * 
+	 * @param cu
+	 *            the cu
 	 * @param file
 	 *            the file
+	 * @param filePathPrefix
+	 *            the file path prefix
 	 * @param packageFilter
 	 *            the package filter
-	 * @throws CompilationUnitException
-	 *             the compilation unit exception
+	 * @param elementCache
+	 *            the element cache
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final File file, final String filePathPrefix,
@@ -132,6 +161,9 @@ public class PPATypeVisitor extends ASTVisitor {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.CompilationUnit)
+	 */
 	@Override
 	public void endVisit(final CompilationUnit node) {
 		super.endVisit(node);
@@ -162,17 +194,29 @@ public class PPATypeVisitor extends ASTVisitor {
 		return this.cu;
 	}
 	
+	/**
+	 * Gets the file.
+	 * 
+	 * @return the file
+	 */
 	public File getFile() {
 		return this.file;
 	}
 	
+	/**
+	 * Gets the relative file path.
+	 * 
+	 * @return the relative file path
+	 */
 	public String getRelativeFilePath() {
 		return this.relativeFilePath;
 	}
 	
 	/**
+	 * Post visit.
 	 * 
 	 * @param node
+	 *            the node
 	 */
 	@Override
 	public void postVisit(final ASTNode node) {
