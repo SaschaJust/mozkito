@@ -15,3 +15,5 @@ syntax: regexp
 syntax: regexp
 ^.metadata
 reposuite-.*/bin/*
+^bin
+^.DS_Store
