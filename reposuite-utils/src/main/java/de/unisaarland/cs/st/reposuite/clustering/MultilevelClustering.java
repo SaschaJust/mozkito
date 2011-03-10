@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class MultilevelPartitioning.
@@ -71,8 +71,8 @@ public class MultilevelClustering<T> {
 	 * @param collapseVisitor
 	 *            the collapse visitor
 	 */
-	public MultilevelClustering(@NotNull final Set<T> nodes,
-			@NotNull final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+	@NoneNull
+	public MultilevelClustering(final Set<T> nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
 			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
 		this.scoreVisitors = scoreVisitors;
@@ -91,9 +91,10 @@ public class MultilevelClustering<T> {
 	 * @param collapseVisitor
 	 *            the collapse visitor
 	 */
+	@NoneNull
 	public MultilevelClustering(final T[] nodes,
-			@NotNull final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+ final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);
@@ -118,7 +119,9 @@ public class MultilevelClustering<T> {
 			existingClusters.add(p1);
 			for (T t2 : this.matrix.get(t1).keySet()) {
 				Cluster<T> p2 = new VirtualCluster<T>(t2);
-				existingClusters.add(p2);
+				if (!existingClusters.contains(p2)) {
+					existingClusters.add(p2);
+				}
 				
 				Cluster<T> tmpCluster = new Cluster<T>(p1,p2,this.matrix.get(t1).get(t2));
 				scores.offer(tmpCluster);
@@ -149,8 +152,12 @@ public class MultilevelClustering<T> {
 			existingClusters.add(highestScore);
 		}
 		
-		return null;
 		
+		Set<Set<T>> result = new HashSet<Set<T>>();
+		for (Cluster<T> cluster : existingClusters) {
+			result.add(cluster.getAllElements());
+		}
+		return result;
 	}
 	
 	/**

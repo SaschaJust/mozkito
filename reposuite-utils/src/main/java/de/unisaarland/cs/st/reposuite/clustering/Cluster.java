@@ -1,5 +1,8 @@
 package de.unisaarland.cs.st.reposuite.clustering;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
@@ -48,8 +51,40 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Cluster other = (Cluster) obj;
+		if (this.children == null) {
+			if (other.children != null) {
+				return false;
+			}
+		} else if (!this.children.equals(other.children)) {
+			return false;
+		}
+		return true;
+	}
 	
-	
+	/**
+	 * Returns all elements that are contained within this cluster (incl. all sub-clusters).
+	 *
+	 * @return the all elements
+	 */
+	public Set<T> getAllElements(){
+		Set<T> result = new HashSet<T>();
+		result.addAll(this.children.getFirst().getAllElements());
+		result.addAll(this.children.getSecond().getAllElements());
+		return result;
+	}
 	
 	/**
 	 * Gets the elements.
@@ -60,8 +95,17 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		return this.children;
 	}
 	
+	
 	public double getScore() {
 		return this.score;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.children == null) ? 0 : this.children.hashCode());
+		return result;
 	}
 	
 	
