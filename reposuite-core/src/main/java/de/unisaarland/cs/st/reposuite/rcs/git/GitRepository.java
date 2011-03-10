@@ -543,7 +543,7 @@ public class GitRepository extends Repository {
 				}
 				if (Logger.logDebug()) {
 					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order"
-					        + revisionSelection);
+							+ revisionSelection);
 				}
 				result.addAll(GitLogParser.parse(response.getSecond()));
 			} else {
@@ -610,7 +610,8 @@ public class GitRepository extends Repository {
 		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision());
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--pretty=format:%H", "--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
+				"--pretty=format:%H", "--branches", "--remotes", "--topo-order" }, this.cloneDir, null,
+		        new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
 		}
