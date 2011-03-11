@@ -172,6 +172,9 @@ public class ChangeOperationUtils {
 		}
 		
 		//get the old elements
+		if (Logger.logDebug()) {
+			Logger.debug("Getting old elements");
+		}
 		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByFile(file, checkoutPath.getAbsolutePath(),
 				new String[0]);
 		

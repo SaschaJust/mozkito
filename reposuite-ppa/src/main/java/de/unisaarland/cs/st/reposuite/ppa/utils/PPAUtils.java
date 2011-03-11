@@ -71,14 +71,23 @@ public class PPAUtils {
 			switch (revision.getChangeType()) {
 				
 				case Added:
+					if (Logger.logDebug()) {
+						Logger.debug("Handling added file ... ");
+					}
 					ChangeOperationUtils.generateChangeOperationsForAddedFile(repository, revision, visitors);
 					break;
 					
 				case Deleted:
+					if (Logger.logDebug()) {
+						Logger.debug("Handling deleted file ... ");
+					}
 					ChangeOperationUtils.generateChangeOperationsForDeletedFile(repository, revision, visitors);
 					break;
 					
 				case Modified:
+					if (Logger.logDebug()) {
+						Logger.debug("Handling modified file ... ");
+					}
 					ChangeOperationUtils.generateChangeOperationsForModifiedFile(repository, revision, visitors);
 					break;
 			}
