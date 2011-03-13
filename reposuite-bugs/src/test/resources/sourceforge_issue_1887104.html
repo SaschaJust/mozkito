@@ -1,0 +1,725 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <!--SourceForge.net: Find and Build Open Source Software-->
+        <!--Copyright (c) 1999-2011 SourceForge, Inc. All rights reserved.-->
+        <!-- Create Server: sfs-web-11 -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="description" content="Get Joda - Time at SourceForge.net. Fast, secure and free downloads from the largest Open Source applications and software directory. Joda-Time provides a library of classes to replace the Java JDK Date and Time classes including formatting. It is based around the ISO8601 datetime standard, but also provides full support for other calendar systems, such as Gregorian and Buddhist." />
+        <meta name="keywords" content="Open Source, Development, Community, Source Code, Downloads, Software, Joda - Time, Data Formats, I18N (Internationalization), L10N (Localization)" />
+                        <title>SourceForge.net: Joda - Time: Detail: 1887104 - joda-time 1.5+ issues with roundFloor and DST</title>        <link href='//fonts.googleapis.com/css?family=Ubuntu:regular,bold' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+            @font-face {
+                font-family: "Pictos";
+                src: url('http://static.sourceforge.net/include/fonts/sftheme/pictos-web.eot');
+                src: local("☺"), url('http://static.sourceforge.net/include/fonts/sftheme/pictos-web.woff') format('woff'), url('http://static.sourceforge.net/include/fonts/sftheme/pictos-web.ttf') format('truetype'), url('http://static.sourceforge.net/include/fonts/sftheme/pictos-web.svg') format('svg');
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/style.php?secure=0&amp;1298809191" media="all" />
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/global.php?secure=0&amp;1298809191" media="all" />
+        
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/neotheme/sfx.css?1298809191" media="all" />
+                       <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/phoneix/table.php?secure=0&amp;1298809191" media="all" />
+                <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/phoneix/forms.css?secure=0&amp;1298809191" media="all" />
+                    <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/develop/droppy.php?secure=0&amp;1298809191" media="all" />
+                                        <!--   -->
+        <script type="text/javascript" src="http://static.sourceforge.net/include/js/sftheme/modernizr.custom.90514.js"></script>
+        <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery-1.3.2.min.js"></script>
+        <script type="text/javascript">
+            
+                jQuery.noConflict();
+            
+        </script>
+
+        <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery.cookie.js"></script>
+                        <script type='text/javascript'>
+          jQuery(function() {
+            jQuery('#fad19 p, .project_summary .downloadbar, .vertical_widget, .horizontal_widget').wrap('<div class="sc"><div class="l1"><div class="l2"><div class="l3"><div class="l4"></div></div></div></div></div>');
+          });
+        </script>
+                <script type="text/javascript" src="http://static.sourceforge.net/include/jquery/jquery.droppy.js"></script>
+        <script type="text/javascript" src="http://static.sourceforge.net/include/js/sylvester.js"></script>
+        <script type="text/javascript" src="http://static.sourceforge.net/include/js/pb.transformie.js"></script>
+        <script type='text/javascript'>
+            jQuery(function(){
+                jQuery('.b-hornav > li:last-child').addClass('last');
+                jQuery('.b-hornav > li').each(function() {
+                    jQuery('li[class!=disabled]', this).eq(0).addClass('first');
+                });
+                jQuery('.b-hornav').droppy({speed:0, delay:0});
+            });
+        </script>
+                <script type="text/javascript" src="http://static.sourceforge.net/include/c_jquerytabs.js"></script>
+
+        <script type="text/javascript">
+        
+            jQuery(function(){
+                jQuery('.vertical_widget_content ul.tab, #container2 ul.tab, #container3 ul.tab, #container4 ul.tab').tabs({ selected: 0 });
+            });
+        
+        </script>
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/include/jquery/jquery.tabs.css?secure=0&amp;1298809191" media="all" />
+            
+                                <script type="text/javascript" src="http://static.sourceforge.net/include/js/preferences.js"></script>
+            <script type="text/javascript">
+                            var sf_proj_home = 'http://sourceforge.net/projects/joda-time';
+                        var _visitor = "";
+            var jsonly = document.createElement('link');
+            jsonly.setAttribute('rel', 'stylesheet');
+            jsonly.setAttribute('type', 'text/css');
+            jsonly.setAttribute('href', 'http://static.sourceforge.net/css/phoneix/jsonly.css?secure=0&amp;1298809191');
+            document.getElementsByTagName('head')[0].appendChild(jsonly);
+                    </script>
+                                                                        <script type="text/javascript" src="http://static.sourceforge.net/include/c_jqueryform.js?secure=0&amp;1298809191"></script>
+        <!-- DoubleClick Random Number -->
+    <script type="text/javascript">var dfp_ord=Math.random()*10000000000000000; var dfp_tile = 1; var dfp_ptile = 1;</script>
+    <!-- End DoubleClick Random Number -->
+    <!-- After META tags -->
+                <script type="text/javascript" src="http://static.sourceforge.net/include/js/tracker_mod.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/tracker_mod.css" media="screen" title="SFx_tracker_mod" />
+                        <link href="http://static.sourceforge.net/css/phoneix/facebox.css" media="screen" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="http://static.sourceforge.net/include/c_modal.js"></script>
+                    
+        <script type="text/javascript" src="http://static.sourceforge.net/sfx.js"></script>
+        
+            <script type="text/javascript">
+                        var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-32013-6'], ['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            })();
+        </script>
+        </head>
+
+    <body id="c2" class="short-head">
+    <!--[if IE 7]><div id="ie7only"><![endif]-->
+    <!--[if IE 6]><div id="ie6only"><![endif]-->
+    <!--[if IE]><div id="ieonly"><![endif]-->
+        
+        <div id="doc3" class="view_artifact">
+            <header id="site-header">
+                <div class="wrapper">
+                    <a href="/" class="logo">
+                        <h1>SourceForge</h1>
+                    </a>
+                    <form method="get" action="/search/">
+                        <input type="text" id="words" name="q" placeholder="Find Open Source Software">
+                    </form>
+                    <nav>
+                                                <a href="/account/registration/">Register</a>
+                        <a href="/account/login.php">Log In</a>
+                                            </nav>
+                </div>
+            </header>
+            <div id="bd" class="inner-bd">
+                <div id="doc4" class="yui-t6">
+                                                            <div id="breadcrumbs">
+                                                    <a href="/">SourceForge.net</a>
+ &gt; <a href="/search/?" >Projects</a>
+ &gt; <a href="/projects/joda-time/" >Joda - Time</a>
+ &gt; <a href="/tracker/?group_id=97367" >Tracker</a>
+ &gt; <a href="/tracker/?group_id=97367&amp;atid=617889" >Bugs</a>
+ &gt; <a href="/tracker/?func=detail&amp;aid=1887104&amp;group_id=97367&amp;atid=617889"  class="selected">View</a>
+                                            </div>
+                    <!-- begin content -->
+            <a name="projectnav"></a>
+        <div id="project_nav_container">
+            <div class="b-proj__side">
+                
+                <a class="button button-donate" href="/project/project_donations.php?group_id=97367" title="Donate to this project"><span>Donate</span></a>
+
+                
+
+                
+
+                <!-- AddThis Button BEGIN -->
+                <a class="button button-share" onclick="return addthis_sendto()" onmouseout="addthis_close()" onmouseover="return addthis_open(this, '', '[URL]', '[TITLE]')" href="http://www.addthis.com/bookmark.php?v=250"><span>Share</span></a>
+                <script type="text/javascript">
+                var addthis_options = 'email, stumbleupon, reddit, slashdot, more';
+                var addthis_exclude = 'print';
+                var addthis_config = {"data_track_clickback":true};
+                </script>
+                <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=sfnet"></script>
+                <!-- AddThis Button END -->
+
+                <span class="award-bar"></span>
+            </div>
+            <h1>
+                <a href="/projects/joda-time/">Joda - Time</a>
+                            </h1>
+                    <div class="firstwave">
+                <ul class="b-hornav">
+                    <li id="menu_consume_summary"><a href="/projects/joda-time"><span><span>Summary</span></span></a></li>
+<li id="menu_consume_files"><a href="/projects/joda-time/files"><span><span>Files</span></span></a></li>
+<li id="menu_consume_reviews"><a href="/projects/joda-time/reviews"><span><span>Reviews</span></span></a></li>
+<li id="menu_project_support"><a href="/projects/joda-time/support"><span><span>Support</span></span></a></li>
+<li id="menu_project_develop"><a href="/projects/joda-time/develop"><span><span>Develop</span></span></a>
+<ul>
+<li id="menu_project_website"><a href="http://joda-time.sourceforge.net">Web Site</a></li>
+<li id="menu_project_screenshots" class="disabled" style="display: none;"><a href="/project/screenshots.php?group_id=97367">Screenshots</a></li>
+<li id="menu_project_news"><a href="/news/?group_id=97367">News</a></li>
+<li id="menu_stats"><a href="/project/stats/?group_id=97367&amp;ugn=joda-time">Project Statistics</a></li>
+<li id="menu_download_stats_dist"><a href="/downloads/joda-time/stats_timeline">Download Stats (Beta)</a></li>
+</ul>
+</li>
+<li id="menu_hostedapps" class="disabled tier" style="display: none;"><a href="/hostedapp/?group_id=97367"><span><span>Hosted&nbsp;Apps</span></span></a></li>
+<li id="menu_tracker" class="selected tier"><a href="/tracker/?group_id=97367"><span><span>Tracker</span></span></a>
+<ul>
+<li id="menu_tracker_617889"><a href="/tracker/?group_id=97367&amp;atid=617889">Bugs</a></li>
+<li id="menu_tracker_617892"><a href="/tracker/?group_id=97367&amp;atid=617892">Feature Requests</a></li>
+<li id="menu_tracker_stats" class="tools"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=tracker">Statistics for Trackers</a></li>
+<li id="menu_tracker_reports" class="disabled" style="display: none;"><a href="/tracker/reporting/?group_id=97367">Reporting for Trackers</a></li>
+<li id="menu_tracker_search"><a href="/search/?group_id=97367&amp;type_of_search=artifact">Search Trackers</a></li>
+</ul>
+<div class="diamond"></div></li>
+<li id="menu_mail"><a href="/mail/?group_id=97367"><span><span>Mailing&nbsp;Lists</span></span></a>
+<ul>
+<li id="menu_mail_search" class="tools"><a href="/search/?group_id=97367&amp;type_of_search=mlists">Search Mail Lists</a></li>
+</ul>
+</li>
+<li id="menu_forums"><a href="/projects/joda-time/forums"><span><span>Forums</span></span></a>
+<ul>
+<li id="menu_forum_337835"><a href="/projects/joda-time/forums/forum/337835">Open Discussion</a></li>
+<li id="menu_forums_stats" class="tools"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=forum">Statistics for Forums</a></li>
+<li id="menu_forums_search"><a href="/search/?group_id=97367&amp;type_of_search=forums">Search Forums</a></li>
+</ul>
+</li>
+<li id="menu_code"><a href="/scm/?type=svn&amp;group_id=97367"><span><span>Code</span></span></a>
+<ul>
+<li id="menu_git_about" class="disabled" style="display: none;"><a href="/scm/?type=git&amp;group_id=97367">Git</a></li>
+<li id="menu_git_browse" class="disabled" style="display: none;"><a href="http://joda-time.git.sourceforge.net/">Git Browse</a></li>
+<li id="menu_git_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=git">Git Statistics</a></li>
+<li id="menu_hg_about" class="disabled" style="display: none;"><a href="/scm/?type=hg&amp;group_id=97367">Mercurial</a></li>
+<li id="menu_hg_browse" class="disabled" style="display: none;"><a href="http://joda-time.hg.sourceforge.net/hgweb/joda-time/">Mercurial Browse</a></li>
+<li id="menu_hg_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=hg">Mercurial Statistics</a></li>
+<li id="menu_bzr_about" class="disabled" style="display: none;"><a href="/scm/?type=bzr&amp;group_id=97367">Bazaar</a></li>
+<li id="menu_bzr_browse" class="disabled" style="display: none;"><a href="http://joda-time.bzr.sourceforge.net/bzr/joda-time/">Bazaar Browse</a></li>
+<li id="menu_bzr_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=bzr">Bazaar Statistics</a></li>
+<li id="menu_cvs_about" class="disabled" style="display: none;"><a href="/scm/?type=cvs&amp;group_id=97367">CVS</a></li>
+<li id="menu_cvs_browse" class="disabled" style="display: none;"><a href="http://joda-time.cvs.sourceforge.net/joda-time/">CVS Browse</a></li>
+<li id="menu_cvs_stats" class="disabled" style="display: none;"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=cvs">CVS Statistics</a></li>
+<li id="menu_svn_about"><a href="/scm/?type=svn&amp;group_id=97367">SVN</a></li>
+<li id="menu_svn_browse"><a href="http://joda-time.svn.sourceforge.net/viewvc/joda-time/">SVN Browse</a></li>
+<li id="menu_svn_stats"><a href="/project/stats/detail.php?group_id=97367&amp;ugn=joda-time&amp;type=svn">SVN Statistics</a></li>
+</ul>
+</li>
+<li id="menu_newadmin" class="disabled tier" style="display: none;"><a href="/project/admin/?group_id=97367"><span><span>Project&nbsp;Admin</span></span></a>
+<ul>
+<li id="menu_editgroupinfo" class="disabled" style="display: none;"><a href="/project/admin/public_info.php?group_id=97367">Settings</a></li>
+<li id="menu_features" class="disabled" style="display: none;"><a href="/project/admin/features.php?group_id=97367">Features</a></li>
+<li id="menu_userperms" class="disabled" style="display: none;"><a href="/project/admin/project_membership.php?group_id=97367">Members</a></li>
+<li id="menu_stats_admin" class="disabled" style="display: none;"><a href="/project/admin/stats.php?group_id=97367">Analytics</a></li>
+</ul>
+</li>
+
+                </ul>
+            </div>
+                </div>
+        <div style="clear: both;"></div>
+                    <div class="subset">
+            <ul>
+                <li id="menu_add" class="begin tier"><a href="/tracker/?func=add&amp;group_id=97367&amp;atid=617889"><span><span>Add&nbsp;new</span></span></a></li>
+<li id="menu_browse" class="selected tier"><a href="/tracker/?func=browse&amp;group_id=97367&amp;atid=617889"><span><span>Browse</span></span></a><div class="diamond"></div></li>
+<li id="menu_reporting" class="disabled tier" style="display: none;"><a href="/tracker/reporting/?group_id=97367&amp;atid=617889"><span><span>Reporting</span></span></a></li>
+<li id="menu_admin" class="disabled tier" style="display: none;"><a href="/tracker/admin/?group_id=97367"><span><span>Admin</span></span></a></li>
+
+            </ul>
+            </div>
+            <div style="clear: both;"></div>
+            
+
+<script type="text/javascript">
+    <!--
+    
+    jQuery(document).ready(function() {
+        jQuery('.titlebar.toggle').append('<small class="arwd"></small>');
+        jQuery('.titlebar.toggle').toggle(
+            function () {
+                jQuery(this).find('small').removeClass('arwd').addClass('arwu');
+                jQuery(this).addClass('press');
+                jQuery(this).next('.hide').removeClass('hide').addClass('show').show();
+                jQuery.cookie(jQuery(this).attr('id')+'_expanded', 1, {path: '/', expires: 30});
+            }, 
+            function () {
+                jQuery(this).find('small').removeClass('arwu').addClass('arwd');
+                jQuery(this).removeClass('press');
+                jQuery(this).next('.show').removeClass('show').addClass('hide').hide();
+                jQuery.cookie(jQuery(this).attr('id')+'_expanded', '', {path: '/', expires: -1});
+            }
+        );
+
+        if (jQuery.cookie('commentbar_expanded')) { jQuery('#commentbar').click(); }
+        if (jQuery.cookie('filebar_expanded')) { jQuery('#filebar').click(); }
+        if (jQuery.cookie('changebar_expanded')) { jQuery('#changebar').click(); }
+        if (jQuery.cookie('assocbar_expanded')) { jQuery('#assocbar').click(); }
+        
+
+            });
+    //-->
+</script><h3 style="position: relative">Tracker: <!-- google_ad_section_start -->Bugs<!-- google_ad_section_end -->
+	<small style="position: absolute; top: 0; right: 0;">
+		<form action="#" method="post" name="tracker_monitor">
+			<input type="hidden" name="group_id" value="97367">
+			<input type="hidden" name="atid" value="617889">
+			<input type="hidden" name="func" value="monitor">
+			<input type="hidden" name="artifact_id" value="1887104">
+			<input type="submit" name="submit" id="tracker_monitor_submit" value="Monitor">
+		</form>
+	</small>
+</h3>
+<div id="yui-main">
+    <div class="yui-gc box">
+        <div class="yui-u first">
+            <span class="p8 box" style="float: left; padding: .2em .6em; font-size: 85%; margin: -.1em 1em 0 -.5em" title="Priority level - 8"><strong style="opacity: .5">8</strong></span>
+            <span><strong>joda-time 1.5+ issues with roundFloor and DST - ID: 1887104</strong></span>
+        </div>
+        <div class="yui-u" style="text-align: right; font-size: 85%; color: #555">
+            Last Update: Comment added ( <a href="/users/daliboz/" title="Jenni">daliboz</a> )
+        </div>
+    </div>
+    <div class="yui-g box" style="padding-top: 1em; background: #f5f5f5">
+        <label>Details:</label>
+            <p><!-- google_ad_section_start -->On versions 1.5+, using roundFloorCopy on one of the ambiguous times of the Fall DST change may cause a DateTime with the wrong hour to be returned.  Example:<br />
+<br />
+DateTime fallAmbig = new DateTime(&quot;2007-11-04T01:34:59-06:00&quot;);<br />
+        DateTime americaHour = fallAmbig.minuteOfHour().roundFloorCopy();<br />
+            System.out.println(&quot;New: &quot; + americaHour.withZone(DateTimeZone.forID(&quot;America/Chicago&quot;)));<br />
+<br />
+Produces: 2007-11-04T01:34:00.000-05:00<br />
+<br />
+instead of 2007-11-04T01:34:00.000-06:00<br />
+<br />
+<br />
+Tested with java 1.6 update 4, windows XP SP 2<!-- google_ad_section_end --></p>
+        <hr noshade="noshade" class="divider" />
+        <div class="yui-u first">
+            <label>Submitted:</label>
+                <p>Jenni ( <a href="/users/daliboz/" title="Jenni">daliboz</a>  ) - 2008-02-05 16:24:58 UTC</p>
+            <label>Priority:</label>
+                <p>8</p>
+            <label>Status:</label>
+                <p>Closed</p>
+            <label>Resolution:</label>
+                <p>None</p>
+        </div>
+        <div class="yui-u">
+            <label>Assigned:</label>
+                <p>Nobody/Anonymous</p>
+            <label>Category:</label>
+                <p><!-- google_ad_section_start -->None<!-- google_ad_section_end --></p>
+            <label>Group:</label>
+                <p>None</p>
+            <label>Visibility:</label>
+                <p>Public</p>
+        </div>
+    </div>
+    <br />
+
+    <script type="text/javascript">
+    <!--
+    
+    var showhidden = false;
+
+    jQuery(document).ready(function() {
+    	
+    	        
+
+        jQuery('#remove_comment_form').ajaxForm();
+
+		if(!jQuery.browser.msie || parseInt(jQuery.browser.version) != 6)
+		{
+			jQuery('.showhiddenlink').hide();
+
+			if(jQuery('.artifact_comment.hide').size() > 0)
+				jQuery('.show_hidden').show();
+
+			jQuery('.show_hidden').click(function () {
+				if(!showhidden)
+				{
+					jQuery('.artifact_comment.hide').fadeIn(1000);
+					jQuery('.show_hidden').attr('value', 'Hide Hidden Comments');
+					showhidden = true;
+				}
+				else
+				{
+					jQuery('.artifact_comment.hide').fadeOut(1000);
+					jQuery('.show_hidden').attr('value', 'Show Hidden Comments');
+					showhidden = false;
+				}
+			});
+		}
+    });
+    
+    //-->
+</script>
+
+<h4 class="titlebar toggle" id="commentbar">Comments ( 6 )</h4>
+<div class="hide">
+  <script type='text/javascript'>
+    SFX.tracker_mod.set_settings(617889, 1887104, 97367);
+  </script>
+    <div id="comment_ajax_feedback"></div>
+    <form action="/tracker/index.php" method="post" class="commentbox" style="margin: 1em 1em 1em">
+        <input type="hidden" name="group_id" value="97367" />
+        <input type="hidden" name="atid" value="617889" />
+        <input type="hidden" name="func" value="postaddcomment" />
+        <input type="hidden" name="artifact_id" value="1887104" />
+            </form>
+
+    <div id = "comment_table_container" >
+            <table class="comments">
+        <thead></thead>
+        <tfoot></tfoot>
+        <tbody>
+	  	<tr class="artifact_comment " id="artifact_comment_2670632" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2670632_adddate" value="1202760780" />
+					<p>
+						Date: 2008-02-11 20:13:00 UTC<br />
+						Sender: <a href="/users/daliboz/" title="Jenni">daliboz</a>
+					</p>
+				</div>
+				<div class="yui-u" style="background-color: #efffef">
+										<p><!-- google_ad_section_start --><br />
+Just noticed a difference for the Spring adjustment - though this may be a<br />
+separate conversation since it&#039;s not documented what &#039;should&#039; happen, and<br />
+the answer doesn&#039;t seem as &#039;easy&#039; as this one was:<br />
+<br />
+I noticed that when you use the DateTime.Property#roundFloorCopy on the<br />
+HourOfDay property in a zone like Australia/Lord_Howe where the DST offset<br />
+is less than an hour, the behavior has changed for the 1.5 series due to<br />
+the svn revision 1323 to fix this.  Post-svn revision 1323, the behavior is<br />
+the same as it was on 1.4, and it&#039;s not documented what &quot;should&quot; happen<br />
+when something like this is requested.  So I&#039;m not sure if 1.5 - 1.5.2 was<br />
+&#039;right&#039; or if 1.4 was &#039;right.&#039;  What are your thoughts?<br />
+<br />
+On 1.5 - pre-svn revision 1323:<br />
+Original: 2007-10-28T02:31:01.000+11:00<br />
+New: 2007-10-28T02:30:00.000+11:00<br />
+<br />
+On 1.4 and post-svn revision 1323:<br />
+Original: 2007-10-28T02:31:01.000+11:00<br />
+New: 2007-10-28T01:30:00.000+10:30<br />
+<br />
+Code to reproduce:<br />
+        DateTime aussieSpring = new<br />
+DateTime(&quot;2007-10-28T02:31:01+11:00&quot;).withZone(DateTimeZone.forID(&quot;Australia/Lord_Howe&quot;));<br />
+<br />
+        System.out.println(&quot;Rounding down hour of day:<br />
+Australia/Lord_Howe&quot;);<br />
+        DateTime australiaMinute =<br />
+aussieSpring.hourOfDay().roundFloorCopy();<br />
+        System.out.println(&quot;Original: &quot; +<br />
+aussieSpring.withZone(DateTimeZone.forID(&quot;Australia/Lord_Howe&quot;)));<br />
+        System.out.println(&quot;New: &quot; +<br />
+australiaMinute.withZone(DateTimeZone.forID(&quot;Australia/Lord_Howe&quot;)));<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr class="artifact_comment " id="artifact_comment_2670573" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2670573_adddate" value="1202757983" />
+					<p>
+						Date: 2008-02-11 19:26:23 UTC<br />
+						Sender: <a href="/users/daliboz/" title="Jenni">daliboz</a>
+					</p>
+				</div>
+				<div class="yui-u" style="background-color: #efffef">
+										<p><!-- google_ad_section_start --><br />
+Can confirm that this is passing our unit tests and &quot;black box&quot; with jar<br />
+built from svn revision 1323<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr class="artifact_comment " id="artifact_comment_2661926" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2661926_adddate" value="1202429612" />
+					<p>
+						Date: 2008-02-08 00:13:32 UTC<br />
+						Sender: <a href="/users/scolebourne/" title="Stephen Colebourne">scolebourne</a><a href="/help/icon_legend.php?context=group_admin&amp;uname=scolebourne&amp;this_group=97367&amp;return_to=%2F"><img src="http://a.fsdn.com/sf/images/images/icons/prj_adm.png" alt="Project Admin" width="16" height="16" /></a><a href="/help/icon_legend.php?context=user_wantsdonations&amp;user_id=408725&amp;return_to=%2F"><img src="http://a.fsdn.com/sf/images/images/icons/donate.png" alt="Accepting Donations" width="16" height="16" /></a>
+					</p>
+				</div>
+				<div class="yui-u">
+										<p><!-- google_ad_section_start --><br />
+Fixed in svn rv 1323. Bug affected time fields at DST cutover in Autumn,<br />
+but not date fields.<br />
+If you can build from svn and confirm the fix, that would be great.<br />
+<br />
+For the record, here is the correct failing code:<br />
+  DateTime fallAmbig = new DateTime(&quot;2007-11-04T01:59:59-06:00&quot;,<br />
+DateTimeZone.forID(&quot;America/Chicago&quot;));<br />
+  DateTime americaHour = fallAmbig.minuteOfHour().roundFloorCopy();<br />
+  System.out.println(&quot;Original: &quot; + fallAmbig);<br />
+  System.out.println(&quot;     New: &quot; + americaHour);<br />
+<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr class="artifact_comment " id="artifact_comment_2659081" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2659081_adddate" value="1202256270" />
+					<p>
+						Date: 2008-02-06 00:04:30 UTC<br />
+						Sender: <a href="/users/daliboz/" title="Jenni">daliboz</a>
+					</p>
+				</div>
+				<div class="yui-u" style="background-color: #efffef">
+										<p><!-- google_ad_section_start --><br />
+I&#039;ve tried this on 1.5, 1.5.1, and 1.5.2 with the same results.  <br />
+<br />
+I expected the roundFloor on the minute (second, or millisecond also) to<br />
+return the same hour that the time originally started in, since we&#039;re not<br />
+asking for an adjustment of that field/property.  We use this as a<br />
+&#039;rounding&#039; method for time to adjust precision on dates.  <br />
+<br />
+I&#039;ve also tried using withSecondSecondOfMinute/withMillisOfSecond to<br />
+manually zero out the fields, with the same result.<br />
+<br />
+This worked on 1.4 as I expected.<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr class="artifact_comment " id="artifact_comment_2658950" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2658950_adddate" value="1202251065" />
+					<p>
+						Date: 2008-02-05 22:37:45 UTC<br />
+						Sender: <a href="/users/scolebourne/" title="Stephen Colebourne">scolebourne</a><a href="/help/icon_legend.php?context=group_admin&amp;uname=scolebourne&amp;this_group=97367&amp;return_to=%2F"><img src="http://a.fsdn.com/sf/images/images/icons/prj_adm.png" alt="Project Admin" width="16" height="16" /></a><a href="/help/icon_legend.php?context=user_wantsdonations&amp;user_id=408725&amp;return_to=%2F"><img src="http://a.fsdn.com/sf/images/images/icons/donate.png" alt="Accepting Donations" width="16" height="16" /></a>
+					</p>
+				</div>
+				<div class="yui-u">
+										<p><!-- google_ad_section_start --><br />
+Are you using v1.5.2?<br />
+<br />
+Also, what do you consider to be the &#039;wrong&#039; time when it is ambiguous?<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr class="artifact_comment " id="artifact_comment_2658599" >
+		<td>
+			<div class="yui-gf">
+				<div class="yui-u first">
+					<input type="hidden" name="artifact_comment_2658599_adddate" value="1202230377" />
+					<p>
+						Date: 2008-02-05 16:52:57 UTC<br />
+						Sender: <a href="/users/daliboz/" title="Jenni">daliboz</a>
+					</p>
+				</div>
+				<div class="yui-u" style="background-color: #efffef">
+										<p><!-- google_ad_section_start --><br />
+bumping up priority.  Haven&#039;t found a workaround for this, calling<br />
+&#039;withMillisOfSecond&#039; and &#039;withSecondOfMinute&#039; seems to produce the same<br />
+issue.  We&#039;re having to upgrade to 1.5+ for other bug fixes and to handle<br />
+the new Australian DST rules.<br />
+<br />
+<br />
+<!-- google_ad_section_end --></p>
+				</div>
+			</div>
+		</td>
+	</tr>
+        </tbody>
+        </table>
+        	</div>
+    
+        </div>
+    
+<h4 class="titlebar toggle" id="filebar">Attached File ( 1 )</h4>
+<div class="hide">
+        
+<table width="100%" border="1" cellspacing="2" cellpadding="1" class="track">
+<thead>
+<tr bgcolor="#ffffff">
+<th align=middle><font color="#000000"><b>Filename<b></font></th>
+<th align=middle><font color="#000000"><b>Description<b></font></th>
+<th align=middle><font color="#000000"><b>Download<b></font></th>
+</tr></thead>
+
+    <tfoot></tfoot>
+    <tbody>
+                <tr>
+            <td>
+                <!-- google_ad_section_start -->RoundFloorDST.java<!-- google_ad_section_end -->
+            </td>
+            <td>
+                <!-- google_ad_section_start -->Test program that reproduces issue with 2 different methods<!-- google_ad_section_end -->
+            </td>
+            <td>
+                <a href="/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=265142&amp;aid=1887104">Download</a>
+            </td>
+        </tr>
+            </tbody>
+    </table>
+    
+    
+    </form>
+</div>
+    <h4 class="titlebar toggle" id="changebar">Changes ( 4 )</h4>
+<div class="hide">
+    
+<table width="100%" border="1" cellspacing="2" cellpadding="1" class="track">
+<thead>
+<tr bgcolor="#ffffff">
+<th align=middle><font color="#000000"><b>Field<b></font></th>
+<th align=middle><font color="#000000"><b>Old Value<b></font></th>
+<th align=middle><font color="#000000"><b>Date<b></font></th>
+<th align=middle><font color="#000000"><b>By<b></font></th>
+</tr></thead>
+
+    <tfoot></tfoot>
+    <tbody>
+            <tr class="even">
+            <td>
+                status_id
+            </td>
+            <td>
+                Open
+            </td>
+            <td>
+                2008-02-08 00:13:32 UTC
+            </td>
+            <td>
+                <a href="/users/scolebourne/" title="Stephen Colebourne">scolebourne</a>
+            </td>
+        </tr>
+            <tr>
+            <td>
+                close_date
+            </td>
+            <td>
+                -
+            </td>
+            <td>
+                2008-02-08 00:13:32 UTC
+            </td>
+            <td>
+                <a href="/users/scolebourne/" title="Stephen Colebourne">scolebourne</a>
+            </td>
+        </tr>
+            <tr class="even">
+            <td>
+                priority
+            </td>
+            <td>
+                5
+            </td>
+            <td>
+                2008-02-05 16:52:57 UTC
+            </td>
+            <td>
+                <a href="/users/daliboz/" title="Jenni">daliboz</a>
+            </td>
+        </tr>
+            <tr>
+            <td>
+                File Added
+            </td>
+            <td>
+                265142: RoundFloorDST.java
+            </td>
+            <td>
+                2008-02-05 16:24:59 UTC
+            </td>
+            <td>
+                <a href="/users/daliboz/" title="Jenni">daliboz</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+<br style="clear: both" />
+<br />
+
+            </div>
+        </div>
+
+    <footer id="site-footer">
+        <hr>
+        <nav>
+            <a href="/support/">Support</a>
+            <a href="/blog/">Blog</a>
+            <a href="http://twitter.com/sfnet_ops">Status</a>
+            <a href="http://p.sf.net/sourceforge/terms">Terms</a>
+            <a href="http://p.sf.net/sourceforge/privacy">Privacy</a>
+            <a href="http://geek.net/advertise/">Advertise</a>
+            <a href="/about">About</a>
+        </nav>
+        <div id="copyright">
+            &copy; 2011 <a href="http://geek.net" title="Network which provides and promotes Open Source software downloads, development, discussion and news.">Geeknet, Inc.</a>
+        </div>
+    </footer>
+        <!--[if lt IE 7 ]>
+    <script type="text/javascript" src="http://static.sourceforge.net/include/js/sftheme/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
+    <![endif]-->
+<!--[if IE]></div><![endif]-->
+<!--[if IE 6]></div><![endif]-->
+<!--[if IE 7]></div><![endif]-->
+
+    
+    <!-- Begin comScore Tag -->
+    <script>
+        document.write(unescape("%3Cscript src='" + (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js' %3E%3C/script%3E"));
+    </script>
+    <script>
+        COMSCORE.beacon({
+            c1:2,
+            c2:6035546,
+            c3:"",
+            c4:"",
+            c5:"",
+            c6:"",
+            c15:""
+        });
+    </script>
+    <noscript>
+        <img src="http://b.scorecardresearch.com/p?c1=2&amp;c2=6035546&amp;c3=&amp;c4=&amp;c5=&amp;c6=&amp;c15=&amp;cj=1" />
+    </noscript>
+    <!-- End comScore Tag -->
+    
+
+
+
+
+        </div>
+    </body>
+</html>
