@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -89,6 +90,10 @@ public class PPAXMLSink extends RepoSuiteSinkThread<JavaChangeOperation> {
 			Logger.info("Starting " + getHandle());
 		}
 		
+		synchronized (JavaElementCache.classDefs) {
+			JavaElementCache.classDefs.notifyAll();
+		}
+
 		JavaChangeOperation currentOperation;
 		
 		try {

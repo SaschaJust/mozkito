@@ -164,14 +164,14 @@ public class PPAUtils {
 			String packageName = getPackageFromFile(file);
 			IJavaProject javaProject = getProject(requestName);
 			
-			//			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName);
+			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName);
 			
-			IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName, fileName);
+			//IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName, fileName);
 			
-			//			copyThread.start();
+			copyThread.start();
 			
-			//			copyThread.join(60000);
-//			IFile newFile = copyThread.getIFile();
+			copyThread.join(60000);
+			IFile newFile = copyThread.getIFile();
 			if (newFile == null) {
 				if (Logger.logError()) {
 					Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
