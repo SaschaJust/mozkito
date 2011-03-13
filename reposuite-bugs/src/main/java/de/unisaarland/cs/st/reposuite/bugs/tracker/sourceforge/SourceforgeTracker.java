@@ -579,6 +579,13 @@ public class SourceforgeTracker extends Tracker {
 					list.add(oldValue);
 					list.add(newValue);
 					Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
+					
+					if (authorFullname != null) {
+						authorFullname = authorFullname.trim();
+					}
+					if (authorUsername != null) {
+						authorUsername = authorUsername.trim();
+					}
 					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
 							DateTimeUtils.parseDate(datetimeElement.getValue()), map));
 				}

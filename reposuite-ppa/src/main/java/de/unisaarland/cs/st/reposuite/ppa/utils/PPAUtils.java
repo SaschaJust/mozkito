@@ -46,6 +46,44 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PPAUtils {
 	
+	private static class CopyThread implements Runnable{
+		
+		private final IProject project;
+		private final File         file;
+		private final String       packagename;
+		private final String       filename;
+		private IFile          ifile = null;
+		
+		public CopyThread(final IProject project, final File file, final String packagename, final String filename) {
+			this.project = project;
+			this.file = file;
+			this.packagename = packagename;
+			this.filename = filename;
+		}
+		
+		public IFile getIFile(){
+			return this.ifile;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				this.ifile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
+						this.filename);
+			} catch (CoreException e) {
+				if (Logger.logError()) {
+					Logger.error("Could not import file into eclipse workspace", e);
+				}
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error("Could not import file into eclipse workspace", e);
+				}
+			}
+			
+		}
+		
+	}
+	
 	/**
 	 * Generate change operations. The generated change operations will be
 	 * passed to the given visitors.
@@ -125,7 +163,21 @@ public class PPAUtils {
 		try {
 			String packageName = getPackageFromFile(file);
 			IJavaProject javaProject = getProject(requestName);
-			IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName, fileName);
+			
+			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName);
+			Thread thread = new Thread(copyThread);
+			//IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName, fileName);
+			
+			thread.start();
+			
+			thread.join(60000);
+			IFile newFile = copyThread.getIFile();
+			if (newFile == null) {
+				if (Logger.logError()) {
+					Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
+				}
+				return null;
+			}
 			cu = getCU(newFile, options);
 		} catch (Exception e) {
 			if (Logger.logError()) {
