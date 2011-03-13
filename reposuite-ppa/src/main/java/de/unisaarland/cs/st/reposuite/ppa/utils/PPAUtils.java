@@ -52,24 +52,36 @@ public class PPAUtils {
 		private final File         file;
 		private final String       packagename;
 		private final String       filename;
-		private IFile          ifile = null;
+		private final PPAOptions      options;
+		private CompilationUnit cu;
 		
-		public CopyThread(final IProject project, final File file, final String packagename, final String filename) {
+		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
+				final PPAOptions options) {
 			this.project = project;
 			this.file = file;
 			this.packagename = packagename;
 			this.filename = filename;
+			this.options = options;
 		}
 		
-		public IFile getIFile(){
-			return this.ifile;
+		
+		
+		public CompilationUnit getCompilationUnit() {
+			return this.cu;
 		}
 		
 		@Override
 		public void run() {
 			try {
-				this.ifile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
+				IFile ifile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
 						this.filename);
+				if (ifile == null) {
+					if (Logger.logError()) {
+						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
+					}
+					return;
+				}
+				this.cu = getCU(ifile, this.options);
 			} catch (CoreException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not import file into eclipse workspace", e);
@@ -164,21 +176,20 @@ public class PPAUtils {
 			String packageName = getPackageFromFile(file);
 			IJavaProject javaProject = getProject(requestName);
 			
-			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName);
+			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName, options);
 			
 			//IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName, fileName);
 			
 			copyThread.start();
 			
-			copyThread.join(60000);
-			IFile newFile = copyThread.getIFile();
-			if (newFile == null) {
+			copyThread.join(120000);
+			cu = copyThread.getCompilationUnit();
+			if (cu == null) {
 				if (Logger.logError()) {
 					Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
 				}
 				return null;
 			}
-			cu = getCU(newFile, options);
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error("Error while getting CU from PPA", e);
