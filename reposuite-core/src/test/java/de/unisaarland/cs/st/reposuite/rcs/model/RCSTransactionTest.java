@@ -27,7 +27,7 @@ public class RCSTransactionTest {
 	
 	@Test
 	public void testCompareComplicated() {
-		/*
+		/* @formatter:off
 		 * M
 		 * |\    |
 		 * L \   |
@@ -323,7 +323,7 @@ public class RCSTransactionTest {
 	
 	@Test
 	public void testCompareInClosedBranch(){
-		/*
+		/*@formatter:off
 		 * Y
 		 * |\
 		 * T |
@@ -368,14 +368,14 @@ public class RCSTransactionTest {
 	@Test
 	public void testCompareInOpenBranch(){
 		
-		/*
+		/*@formatter:off
 		 * X Y
 		 * |/
 		 * Z
 		 */
 		
 		RCSBranch.MASTER.setBegin(new RCSTransaction("start", "", new DateTime("2008-01-01T00:00:01.000+00:00"),
-		        this.person1, ""));
+				this.person1, ""));
 		RCSBranch openBranch = new RCSBranch("openBranch");
 		this.z.addChild(this.x);
 		this.x.addParent(this.z);
@@ -395,7 +395,7 @@ public class RCSTransactionTest {
 	@Test
 	public void testCompareInSameBranch() {
 		
-		/*
+		/*@formatter:off
 		 * Y
 		 * |
 		 * X
