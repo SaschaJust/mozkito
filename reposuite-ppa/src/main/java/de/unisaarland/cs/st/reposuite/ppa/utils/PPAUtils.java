@@ -54,6 +54,7 @@ public class PPAUtils {
 		private final String       filename;
 		private final PPAOptions      options;
 		private CompilationUnit cu;
+		private IFile            iFile;
 		
 		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
 				final PPAOptions options) {
@@ -70,18 +71,22 @@ public class PPAUtils {
 			return this.cu;
 		}
 		
+		public IFile getIFile() {
+			return this.iFile;
+		}
+		
 		@Override
 		public void run() {
 			try {
-				IFile ifile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
+				this.iFile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
 						this.filename);
-				if (ifile == null) {
+				if (this.iFile == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
 					}
 					return;
 				}
-				this.cu = getCU(ifile, this.options);
+				this.cu = getCU(this.iFile, this.options);
 			} catch (CoreException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not import file into eclipse workspace", e);
@@ -91,7 +96,6 @@ public class PPAUtils {
 					Logger.error("Could not import file into eclipse workspace", e);
 				}
 			}
-			
 		}
 		
 	}
@@ -185,8 +189,16 @@ public class PPAUtils {
 			copyThread.join(120000);
 			cu = copyThread.getCompilationUnit();
 			if (cu == null) {
-				if (Logger.logError()) {
-					Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
+				IFile ifile = copyThread.getIFile();
+				if (ifile == null) {
+					if (Logger.logError()) {
+						Logger.error("Error while getting IFile from PPA. Timeout copy to workspace exceeded.");
+					}
+				} else {
+					if (Logger.logError()) {
+						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded. Trying without PPA");
+					}
+					return getCUNoPPA(ifile);
 				}
 				return null;
 			}
