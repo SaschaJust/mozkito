@@ -83,7 +83,7 @@ public class JiraTracker extends Tracker {
 		if (errorRegex.matches(rawReport.getContent())) {
 			return false;
 		}
-		if (!rawReport.getUri().toString().endsWith(".xml")) {
+		if (!(rawReport.getUri().toString().endsWith(".xml") || (rawReport.getUri().toString().endsWith(".xhtml")))) {
 			if (Logger.logWarn()) {
 				Logger.warn("The Jira rawRepo uri is not an xml file.");
 			}
@@ -194,7 +194,7 @@ public class JiraTracker extends Tracker {
 				}
 				
 				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
-						new DateTime(), "xhtml", sw.getBuffer().toString()));
+				                                               new DateTime(), "xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -259,7 +259,7 @@ public class JiraTracker extends Tracker {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
 					} else {
 						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-								+ "`. Used uri =`" + historyUrl + "`.");
+						             + "`. Used uri =`" + historyUrl + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}
@@ -292,7 +292,7 @@ public class JiraTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
 	throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
@@ -318,7 +318,7 @@ public class JiraTracker extends Tracker {
 				if (!rawContent.getFormat().toLowerCase().equals("xhtml")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-								+ rawContent.getFormat());
+						             + rawContent.getFormat());
 					}
 					return;
 				}
