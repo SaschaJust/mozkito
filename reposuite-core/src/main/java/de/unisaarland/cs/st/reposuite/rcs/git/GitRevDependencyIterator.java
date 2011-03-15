@@ -20,6 +20,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -158,7 +159,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			throw new UnrecoverableError(
 			"Could not initialize DependencyIterator for Git repo. Could not get decorateList");
 		}
-		File decorateListFile = FileUtils.createRandomFile();
+		File decorateListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		BufferedWriter decorateListWriter = new BufferedWriter(new FileWriter(decorateListFile));
 		for (String line : response.getSecond()) {
 			decorateListWriter.write(line);
@@ -204,7 +205,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
 					+ this.revision + ".");
 		}
-		File revListFile = FileUtils.createRandomFile();
+		File revListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));
 		for (String line : response.getSecond()) {
 			revListWriter.write(line);

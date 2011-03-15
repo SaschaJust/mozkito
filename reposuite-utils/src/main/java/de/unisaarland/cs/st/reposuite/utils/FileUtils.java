@@ -7,9 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -20,6 +24,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class FileUtils.
@@ -28,6 +33,10 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
  * 
  */
 public class FileUtils {
+	
+	public static enum FileShutdownAction {
+		KEEP, DELETE
+	}
 	
 	public static final String fileSeparator     = System.getProperty("file.separator");
 	public static final String lineSeparator     = System.getProperty("line.separator");
@@ -49,6 +58,15 @@ public class FileUtils {
 	public static final int    OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
 	public static final int    EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
 	
+	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
+	
+	public static void addToFileManager(final File file, final FileShutdownAction shutdownAction){
+		if (!fileManager.containsKey(shutdownAction)) {
+			fileManager.put(shutdownAction, new HashSet<File>());
+		}
+		fileManager.get(shutdownAction).add(file);
+	}
+	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the
 	 * command is not absolute, a PATH traversal search for the command is done.
@@ -59,12 +77,12 @@ public class FileUtils {
 	 * @throws ExternalExecutableException
 	 *             the external executable exception
 	 */
+	@NoneNull
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
-		Condition.notNull(command);
 		if (command.startsWith(FileUtils.fileSeparator)
 				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
 						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
-			// We got an absolut path here
+			// We got an absolute path here
 			File executable = new File(command);
 			if (!executable.exists()) {
 				throw new ExternalExecutableException("File `" + command + "` does not exist.");
@@ -92,14 +110,25 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-					+ pathVariable);
+			                                      + pathVariable);
 		}
 	}
 	
 	@NoneNull
 	public static void copyFileToDirectory(final File srcFile,
-			final File destDir) throws IOException {
+	                                       final File destDir,
+	                                       final FileShutdownAction shutdownAction) throws IOException {
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
+		
+		String filename = srcFile.getName();
+		File copiedFile = new File(destDir.getAbsolutePath()+FileUtils.fileSeparator+filename);
+		if(!copiedFile.exists()){
+			if (Logger.logWarn()) {
+				Logger.warn("Requested file copy operation (file "+srcFile.getAbsolutePath()+" into dir "+destDir.getAbsolutePath()+" might be incomplete!");
+			}
+		} else {
+			addToFileManager(copiedFile, shutdownAction);
+		}
 	}
 	
 	/**
@@ -115,7 +144,8 @@ public class FileUtils {
 	 *         existed or created. <code>null</code> otherwise.
 	 */
 	public static File createDir(final File parentDir,
-			final String name) {
+	                             final String name,
+	                             final FileShutdownAction shutdownAction) {
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
 		} catch (FilePermissionException e) {
@@ -131,14 +161,15 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath()
-							+ "`. Reason: directory exists already. Returning existing directory.");
+					            + parentDir.getAbsolutePath()
+					            + "`. Reason: directory exists already. Returning existing directory.");
 				}
+				addToFileManager(newDir, shutdownAction);
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+					             + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -146,13 +177,14 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				             + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
 			if (Logger.logInfo()) {
 				Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
 			}
+			addToFileManager(newDir, shutdownAction);
 			return newDir;
 		}
 	}
@@ -169,8 +201,9 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final File parentDir,
-			final String prefix,
-			final String suffix) {
+	                                   final String prefix,
+	                                   final String suffix,
+	                                   final FileShutdownAction shutdownAction) {
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
@@ -185,6 +218,7 @@ public class FileUtils {
 				}
 				return null;
 			}
+			addToFileManager(file, shutdownAction);
 			return file;
 		} catch (IOException e) {
 			if (Logger.logError()) {
@@ -204,8 +238,9 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final String prefix,
-			final String suffix) {
-		return createRandomDir(tmpDir, prefix, suffix);
+	                                   final String suffix,
+	                                   final FileShutdownAction shutdownAction) {
+		return createRandomDir(tmpDir, prefix, suffix, shutdownAction);
 	}
 	
 	/**
@@ -213,9 +248,11 @@ public class FileUtils {
 	 * 
 	 * @return the file
 	 */
-	public static File createRandomFile() {
+	public static File createRandomFile(final FileShutdownAction shutdownAction) {
 		try {
-			return File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
+			File file = File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
+			addToFileManager(file, shutdownAction);
+			return file;
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -235,6 +272,7 @@ public class FileUtils {
 	 */
 	public static void deleteDirectory(final File directory) throws IOException {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
+		removeFromFileManager(directory);
 	}
 	
 	/**
@@ -247,9 +285,8 @@ public class FileUtils {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public static void ensureFilePermissions(final File file,
-			int permissions) throws FilePermissionException {
-		Condition.notNull(file);
+	public static void ensureFilePermissions(@NotNull final File file,
+	                                         int permissions) throws FilePermissionException {
 		Condition.less(permissions, getMAX_PERM());
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
@@ -303,10 +340,15 @@ public class FileUtils {
 	 */
 	public static void forceDelete(final File file) throws IOException {
 		org.apache.commons.io.FileUtils.forceDelete(file);
+		fileManager.remove(file);
 	}
 	
 	/**
-	 * Force delete on exit.
+	 * @deprecated Does not work anyway. Reposuite now uses a file manager that
+	 *             deleted open file handles (marked to be deleted) at
+	 *             termination anyway. Usage is implicit when using ToolChain.
+	 * 
+	 *             Force delete on exit.
 	 * 
 	 * @param file
 	 *            the file
@@ -314,6 +356,7 @@ public class FileUtils {
 	 *             Signals that an I/O exception has occurred.
 	 * @see {@link org.apache.commons.io.FileUtils#forceDeleteOnExit(File)}
 	 */
+	@Deprecated
 	public static void forceDeleteOnExit(final File file) throws IOException {
 		org.apache.commons.io.FileUtils.forceDeleteOnExit(file);
 	}
@@ -345,6 +388,14 @@ public class FileUtils {
 	 */
 	public static LineIterator getLineIterator(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.lineIterator(file);
+	}
+	
+	public static Map<FileShutdownAction, Set<File>> getManagedOpenFiles() {
+		Map<FileShutdownAction, Set<File>> openFiles = new HashMap<FileShutdownAction, Set<File>>();
+		for (FileShutdownAction key : fileManager.keySet()) {
+			openFiles.put(key, new HashSet<File>(fileManager.get(key)));
+		}
+		return openFiles;
 	}
 	
 	/**
@@ -426,8 +477,8 @@ public class FileUtils {
 	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
 	public static Collection<File> listFiles(final File directory,
-			final String[] extensions,
-			final boolean recursive) {
+	                                         final String[] extensions,
+	                                         final boolean recursive) {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
@@ -435,6 +486,48 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}
 	
+	
+	private static void removeFromFileManager(final File file) {
+		for(FileShutdownAction key : fileManager.keySet()){
+			fileManager.get(key).remove(file);
+		}
+	}
+	
+	public static void shutdown() {
+		Set<File> filesToDelete = fileManager.get(FileShutdownAction.DELETE);
+		if (filesToDelete == null) {
+			return;
+		}
+		for (File f : filesToDelete) {
+			if (f.exists()) {
+				if (f.isDirectory()) {
+					try {
+						if (Logger.logDebug()) {
+							Logger.debug("Deleting directory: " + f.getAbsolutePath());
+						}
+						deleteDirectory(f);
+					} catch (IOException e) {
+						if (Logger.logWarn()) {
+							Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
+						}
+					}
+				} else {
+					if (Logger.logDebug()) {
+						Logger.debug("Deleting file: " + f.getAbsolutePath());
+					}
+					if (!f.delete()) {
+						try {
+							FileUtils.forceDelete(f);
+						} catch (IOException e) {
+							if (Logger.logWarn()) {
+								Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Unzips a given file to the specified directory.
@@ -445,11 +538,9 @@ public class FileUtils {
 	 *            the target directory, not null
 	 * @return true on success, false otherwise
 	 */
+	@NoneNull
 	public static boolean unzip(final File zipFile,
-			final File directory) {
-		Condition.notNull(zipFile);
-		Condition.notNull(directory);
-		
+	                            final File directory) {
 		try {
 			ensureFilePermissions(zipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -471,7 +562,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-						+ FileUtils.fileSeparator + entry.getName()));
+				                                                     + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);

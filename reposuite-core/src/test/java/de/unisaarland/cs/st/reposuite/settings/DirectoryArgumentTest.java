@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 
 public class DirectoryArgumentTest {
 	
@@ -32,7 +33,7 @@ public class DirectoryArgumentTest {
 	@Test
 	public void testRequiredExistsCreate() {
 		RepositorySettings settings = new RepositorySettings();
-		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
+		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
 		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, true);
 		try {
@@ -47,7 +48,7 @@ public class DirectoryArgumentTest {
 	@Test
 	public void testRequiredExistsNoCreate() {
 		RepositorySettings settings = new RepositorySettings();
-		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir");
+		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
 		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
 		        true, false);
 		try {

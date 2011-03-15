@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
@@ -32,6 +33,7 @@ import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -94,7 +96,22 @@ public class RepositoryTest {
 			fail();
 		}
 		
-		//TODO delete all reposuite* directories and files from /tmp/
+		// delete all reposuite directories and files
+		Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
+		Set<File> set = openFiles.get(FileShutdownAction.DELETE);
+		if (set != null) {
+			for (File f : set) {
+				try {
+					if (f.isFile()) {
+						FileUtils.forceDelete(f);
+					} else {
+						FileUtils.deleteDirectory(f);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@BeforeClass
@@ -143,10 +160,10 @@ public class RepositoryTest {
 				File urlFile = new File(url.toURI());
 				
 				if (type.equals(RepositoryType.SUBVERSION)) {
-					tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "");
+					tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "",
+					                                         FileShutdownAction.DELETE);
 					try {
 						Integer returnValue = 0;
-						FileUtils.forceDeleteOnExit(tmpDirectory);
 						if (Logger.logDebug()) {
 							Logger.debug("Creating " + type.toString() + " repository at: "
 									+ tmpDirectory.getAbsolutePath());

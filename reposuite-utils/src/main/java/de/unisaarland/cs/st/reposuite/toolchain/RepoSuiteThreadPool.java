@@ -16,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -62,18 +63,18 @@ public class RepoSuiteThreadPool {
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> buildGraph(final Type source,
-	        Set<Tuple<Type, Type>> filterSet, Set<Tuple<Type, Type>> transformerSet, Set<Tuple<Type, Type>> sinkSet) {
+	                                                                                          Set<Tuple<Type, Type>> filterSet, Set<Tuple<Type, Type>> transformerSet, Set<Tuple<Type, Type>> sinkSet) {
 		LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> list = new LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>>();
 		
 		HashSet<Tuple<Type, Type>> validFilter = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(filterSet,
-		        new Predicate() {
-			        
-			        @Override
-			        public boolean evaluate(final Object object) {
-				        Tuple<Type, Type> element = (Tuple<Type, Type>) object;
-				        return (element.getFirst().equals(source));
-			        }
-		        }));
+		                                                                                               new Predicate() {
+			
+			@Override
+			public boolean evaluate(final Object object) {
+				Tuple<Type, Type> element = (Tuple<Type, Type>) object;
+				return (element.getFirst().equals(source));
+			}
+		}));
 		if (!validFilter.isEmpty()) {
 			for (Tuple<Type, Type> tuple : validFilter) {
 				Type newSource = tuple.getSecond();
@@ -81,11 +82,11 @@ public class RepoSuiteThreadPool {
 				filterSet.remove(tuple);
 				
 				LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> graph = buildGraph(newSource,
-				        filterSet, transformerSet, sinkSet);
+				                                                                                          filterSet, transformerSet, sinkSet);
 				
 				if (graph != null) {
 					list.add(new Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>(
-					        RepoSuiteFilterThread.class, tuple));
+							RepoSuiteFilterThread.class, tuple));
 					list.addAll(graph);
 					return list;
 				} else {
@@ -95,14 +96,14 @@ public class RepoSuiteThreadPool {
 		}
 		
 		HashSet<Tuple<Type, Type>> validTransformer = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(
-		        transformerSet, new Predicate() {
-			        
-			        @Override
-			        public boolean evaluate(final Object object) {
-				        Tuple<Type, Type> element = (Tuple<Type, Type>) object;
-				        return (element.getFirst().equals(source));
-			        }
-		        }));
+		                                                                                                    transformerSet, new Predicate() {
+		                                                                                                    	
+		                                                                                                    	@Override
+		                                                                                                    	public boolean evaluate(final Object object) {
+		                                                                                                    		Tuple<Type, Type> element = (Tuple<Type, Type>) object;
+		                                                                                                    		return (element.getFirst().equals(source));
+		                                                                                                    	}
+		                                                                                                    }));
 		if (!validTransformer.isEmpty()) {
 			for (Tuple<Type, Type> tuple : validTransformer) {
 				Type newSource = tuple.getSecond();
@@ -110,11 +111,11 @@ public class RepoSuiteThreadPool {
 				transformerSet.remove(tuple);
 				
 				LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> graph = buildGraph(newSource,
-				        filterSet, transformerSet, sinkSet);
+				                                                                                          filterSet, transformerSet, sinkSet);
 				
 				if (graph != null) {
 					list.add(new Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>(
-					        RepoSuiteTransformerThread.class, tuple));
+							RepoSuiteTransformerThread.class, tuple));
 					list.addAll(graph);
 					return list;
 				} else {
@@ -124,14 +125,14 @@ public class RepoSuiteThreadPool {
 		}
 		
 		HashSet<Tuple<Type, Type>> validSink = new HashSet<Tuple<Type, Type>>(CollectionUtils.select(sinkSet,
-		        new Predicate() {
-			        
-			        @Override
-			        public boolean evaluate(final Object object) {
-				        Tuple<Type, Type> element = (Tuple<Type, Type>) object;
-				        return (element.getFirst().equals(source));
-			        }
-		        }));
+		                                                                                             new Predicate() {
+			
+			@Override
+			public boolean evaluate(final Object object) {
+				Tuple<Type, Type> element = (Tuple<Type, Type>) object;
+				return (element.getFirst().equals(source));
+			}
+		}));
 		if (!validSink.isEmpty()) {
 			for (Tuple<Type, Type> tuple : validSink) {
 				Type newSource = tuple.getSecond();
@@ -139,11 +140,11 @@ public class RepoSuiteThreadPool {
 				sinkSet.remove(tuple);
 				
 				LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> graph = buildGraph(newSource,
-				        filterSet, transformerSet, sinkSet);
+				                                                                                          filterSet, transformerSet, sinkSet);
 				
 				if (graph != null) {
 					list.add(new Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>(RepoSuiteSinkThread.class,
-					        tuple));
+							tuple));
 					list.addAll(graph);
 					return list;
 				} else {
@@ -192,7 +193,7 @@ public class RepoSuiteThreadPool {
 			} else if (thread instanceof RepoSuiteTransformerThread) {
 				RepoSuiteTransformerThread<?, ?> transformerThread = (RepoSuiteTransformerThread<?, ?>) thread;
 				tuple = new Tuple<Type, Type>(getInputClassType(transformerThread),
-				        getOutputClassType(transformerThread));
+						getOutputClassType(transformerThread));
 				if (!transformerThreads.containsKey(tuple)) {
 					transformerThreads.put(tuple, new LinkedList<RepoSuiteTransformerThread<?, ?>>());
 				}
@@ -216,7 +217,7 @@ public class RepoSuiteThreadPool {
 			
 			if (Logger.logError()) {
 				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
-				        + JavaUtils.collectionToString(sourceThreads.keySet()));
+				             + JavaUtils.collectionToString(sourceThreads.keySet()));
 			}
 			throw new Shutdown();
 		}
@@ -225,7 +226,7 @@ public class RepoSuiteThreadPool {
 			
 			if (Logger.logError()) {
 				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
-				        + JavaUtils.collectionToString(sinkThreads.keySet()));
+				             + JavaUtils.collectionToString(sinkThreads.keySet()));
 			}
 			throw new Shutdown();
 		}
@@ -234,10 +235,10 @@ public class RepoSuiteThreadPool {
 		Tuple<Type, Type> source = sourceThreads.keySet().iterator().next();
 		LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> graph = new LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>>();
 		Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>> sourceTuple = new Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>(
-		        RepoSuiteSourceThread.class, source);
+				RepoSuiteSourceThread.class, source);
 		graph.add(sourceTuple);
 		LinkedList<Tuple<Class<? extends RepoSuiteThread>, Tuple<Type, Type>>> build = buildGraph(source.getSecond(),
-		        filterThreads.keySet(), transformerThreads.keySet(), sinkThreads.keySet());
+		                                                                                          filterThreads.keySet(), transformerThreads.keySet(), sinkThreads.keySet());
 		if (build != null) {
 			graph.addAll(build);
 			
@@ -317,7 +318,7 @@ public class RepoSuiteThreadPool {
 	private Type getOutputClassType(final RepoSuiteThread thread) {
 		ParameterizedType type = (ParameterizedType) thread.getClass().getGenericSuperclass();
 		return (type.getActualTypeArguments().length > 1 ? type.getActualTypeArguments()[1] : type
-		        .getActualTypeArguments()[0]);
+		                                                 .getActualTypeArguments()[0]);
 	}
 	
 	/**
@@ -336,5 +337,8 @@ public class RepoSuiteThreadPool {
 		}
 		
 		this.threads.shutdown();
+		
+		FileUtils.shutdown();
+
 	}
 }

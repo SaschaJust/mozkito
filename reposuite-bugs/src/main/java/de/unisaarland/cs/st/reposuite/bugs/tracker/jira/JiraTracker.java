@@ -36,6 +36,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
@@ -384,7 +385,7 @@ public class JiraTracker extends Tracker {
 					}
 					return;
 				}
-				this.overalXML = FileUtils.createRandomFile();
+				this.overalXML = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 				FileOutputStream writer = new FileOutputStream(this.overalXML);
 				writer.write(rawContent.getContent().getBytes());
 				writer.flush();

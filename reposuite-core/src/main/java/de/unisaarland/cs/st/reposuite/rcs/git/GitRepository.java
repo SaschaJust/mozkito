@@ -5,7 +5,6 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -32,6 +31,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -168,17 +168,14 @@ public class GitRepository extends Repository {
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git", new String[] { "clone", "-n", "-q",
 				getUri().toString(), destDir }, this.cloneDir, inputStream, new HashMap<String, String>());
 		if (returnValue.getFirst() == 0) {
+
 			this.cloneDir = new File(destDir);
 			if (!this.cloneDir.exists()) {
 				throw new UnrecoverableError("Could not clone git repository `" + getUri().toString()
 						+ "` to directory `" + destDir + "`" + FileUtils.lineSeparator
 						+ "Used command: `git clone -n -q " + getUri().toString() + " " + destDir + "`");
 			}
-			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
-			} catch (IOException e) {
-				throw new UnrecoverableError(e.getMessage(), e);
-			}
+			FileUtils.addToFileManager(cloneDir, FileShutdownAction.DELETE);
 			return true;
 		}
 		return false;

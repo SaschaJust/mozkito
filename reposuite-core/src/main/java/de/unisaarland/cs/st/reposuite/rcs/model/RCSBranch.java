@@ -123,7 +123,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
-		//TODO add test case
 		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
 		for(String id : tIds){
 			RCSTransaction t = this.containsTransaction(id);
@@ -144,7 +143,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public RCSTransaction containsTransaction(final String tId) {
-		//TODO add test case
 		if (this.getBegin().getId().equals(tId)) {
 			return this.getBegin();
 		}

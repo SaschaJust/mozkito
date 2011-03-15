@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 
 public class FileArgumentTest {
 	
@@ -20,7 +21,7 @@ public class FileArgumentTest {
 	
 	@Before
 	public void setUp() {
-		this.dir = FileUtils.createDir(tmpDir, "fileargumenttestdir");
+		this.dir = FileUtils.createDir(tmpDir, "fileargumenttestdir", FileShutdownAction.DELETE);
 		this.file = new File(tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "fileargumenttestfile");
 	}
 	

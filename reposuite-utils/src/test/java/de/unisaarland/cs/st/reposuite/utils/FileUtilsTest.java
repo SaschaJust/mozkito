@@ -11,6 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
+
 public class FileUtilsTest {
 	
 	private static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -21,11 +23,11 @@ public class FileUtilsTest {
 	@Test
 	public void exists() {
 		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
-				+ "reposuiteFileUtilsTestDir");
+		                        + "reposuiteFileUtilsTestDir");
 		if (!this.nameDir.mkdirs()) {
 			fail();
 		}
-		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir");
+		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(this.nameDir.getAbsolutePath(), newDir.getAbsolutePath());
 		assertEquals(this.nameDir, newDir);
 	}
@@ -33,7 +35,7 @@ public class FileUtilsTest {
 	@Test
 	public void existsAsFile() {
 		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
-				+ "reposuiteFileUtilsTestDir");
+		                        + "reposuiteFileUtilsTestDir");
 		try {
 			if (!this.nameDir.createNewFile()) {
 				fail();
@@ -42,7 +44,7 @@ public class FileUtilsTest {
 			e.printStackTrace();
 			fail();
 		}
-		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir");
+		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(null, newDir);
 	}
 	
@@ -53,7 +55,7 @@ public class FileUtilsTest {
 		while (file.exists()) {
 			file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, chars));
 		}
-		File newDir = FileUtils.createDir(file, "reposuiteFileUtilsTestDir");
+		File newDir = FileUtils.createDir(file, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(null, newDir);
 	}
 	

@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,6 +29,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
@@ -50,9 +54,29 @@ public class GoogleTrackerTest {
 		assertEquals("webtoolkit", groups.get(1).getMatch());
 	}
 	
+	@AfterClass
+	public static void afterClass() {
+		// delete all reposuite directories and files
+		Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
+		Set<File> set = openFiles.get(FileShutdownAction.DELETE);
+		if (set != null) {
+			for (File f : set) {
+				try {
+					if (f.isFile()) {
+						FileUtils.forceDelete(f);
+					} else {
+						FileUtils.deleteDirectory(f);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	@Test
 	public void testTracker() {
-		File cacheDir = FileUtils.createRandomDir("test", "googletracker");
+		File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);
 		try {
 			if (System.getProperties().contains("test.skipnet")) {
 				return;
@@ -77,7 +101,6 @@ public class GoogleTrackerTest {
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));
 			assertEquals("DevPlugin", report.getCategory());
 			
-			//TODO
 			assertEquals(60,report.getComments().size());
 			
 			assertEquals(null,report.getComponent());
@@ -85,7 +108,6 @@ public class GoogleTrackerTest {
 					report.getCreationTimestamp()));
 			assertEquals(null, report.getExpectedBehavior());
 			
-			// TODO
 			assertTrue(report.getHistory() != null);
 			assertEquals(2, report.getHistory().size());
 			

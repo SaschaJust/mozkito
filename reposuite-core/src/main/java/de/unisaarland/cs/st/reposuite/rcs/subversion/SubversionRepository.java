@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite.rcs.subversion;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.CodeSource;
@@ -53,7 +52,9 @@ import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -91,12 +92,11 @@ public class SubversionRepository extends Repository {
 	 * java.lang.String)
 	 */
 	@Override
+	@NoneNull
 	public List<AnnotationEntry> annotate(final String filePath, final String revision) {
-		Condition.check(this.initialized);
-		Condition.notNull(filePath);
-		Condition.notNull(revision);
-		Condition.greater(filePath.length(), 0);;
-		Condition.greater(revision.length(), 0);;
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.greater(filePath.length(), 0, "The filePath must not be the empty string");
+		Condition.greater(revision.length(), 0, "the revision must not be an ampty string");
 		
 		SVNURL relativePath;
 		try {
@@ -130,10 +130,10 @@ public class SubversionRepository extends Repository {
 	 *            alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision
 	 */
+	@NoneNull
 	private SVNRevision buildRevision(final String revision) {
-		Condition.check(this.initialized);
-		Condition.notNull(revision);
-		Condition.greater(revision.length(), 0);;
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.greater(revision.length(), 0, "the revision must not be an ampty string");;
 		
 		SVNRevision svnRevision;
 		
@@ -144,7 +144,7 @@ public class SubversionRepository extends Repository {
 			svnRevision = SVNRevision.parse(revision.toUpperCase());
 		}
 		
-		Condition.notNull(svnRevision);
+		Condition.notNull(svnRevision, "Cannot operate on svn repository set tu Null");
 		
 		try {
 			if (svnRevision.getNumber() < 0) {
@@ -188,26 +188,17 @@ public class SubversionRepository extends Repository {
 	 * String, java.lang.String)
 	 */
 	@Override
+	@NoneNull
 	public File checkoutPath(final String relativeRepoPath, final String revision) {
-		Condition.check(this.initialized);
-		Condition.notNull(relativeRepoPath);
-		Condition.notNull(revision);
-		Condition.greater(relativeRepoPath.length(), 0);;
-		Condition.greater(revision.length(), 0);;
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.greater(relativeRepoPath.length(), 0, "the relative path must not be an ampty string");
+		Condition.greater(revision.length(), 0, "the revision must not be an ampty string");
 		
 		this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
-				"reposuite_clone_" + DateTimeUtils.currentTimeMillis());
+		                                            "reposuite_clone_" + DateTimeUtils.currentTimeMillis(),
+		                                            FileShutdownAction.DELETE);
 		
-		Condition.notNull(this.workingDirectory);
-		
-		try {
-			FileUtils.forceDeleteOnExit(this.workingDirectory);
-		} catch (IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			return null;
-		}
+		Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
 		
 		SVNURL checkoutPath;
 		try {
@@ -237,14 +228,12 @@ public class SubversionRepository extends Repository {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
+	@NoneNull
 	public Collection<Delta> diff(final String filePath, final String baseRevision, final String revisedRevision) {
-		Condition.check(this.initialized);
-		Condition.notNull(filePath);
-		Condition.greater(filePath.length(), 0);;
-		Condition.notNull(baseRevision);
-		Condition.notNull(revisedRevision);
-		Condition.greater(baseRevision.length(), 0);;
-		Condition.greater(revisedRevision.length(), 0);;
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.greater(filePath.length(), 0, "The filePath must not be the empty string");
+		Condition.greater(baseRevision.length(), 0, "the base revision must not be an ampty string");
+		Condition.greater(revisedRevision.length(), 0, "the revised revision must not be an ampty string");
 		
 		try {
 			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
@@ -305,10 +294,10 @@ public class SubversionRepository extends Repository {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@NoneNull
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
-		Condition.check(this.initialized);
-		Condition.notNull(revision);
-		Condition.greater(revision.length(), 0);;
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.greater(revision.length(), 0, "the revised revision must not be an ampty string");
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
@@ -361,14 +350,14 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		Condition.check(this.initialized);
-		Condition.notNull(this.startRevision);
-		Condition.greater(this.startRevision.getNumber(), 0l);;
-		
+		Condition.check(this.initialized, "Cannot operate on non-initialized instance!");
+		Condition.notNull(this.startRevision, "Cannot operate when start revision not set");
+		Condition.greater(startRevision.getNumber(), 0l, "The startRevision must not be the empty string");
 		return this.startRevision.toString();
 	}
 	
 	@Override
+	@NoneNull
 	public String getFormerPathName(final String revision, final String pathName) {
 		Condition.check(this.initialized);
 		Condition.notNull(revision);

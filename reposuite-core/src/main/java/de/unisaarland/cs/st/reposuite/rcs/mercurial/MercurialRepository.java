@@ -34,6 +34,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -276,13 +277,7 @@ public class MercurialRepository extends Repository {
 				}
 				return false;
 			}
-			try {
-				FileUtils.forceDeleteOnExit(this.cloneDir);
-			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage());
-				}
-			}
+			FileUtils.addToFileManager(this.cloneDir, FileShutdownAction.DELETE);
 			cacheHashes();
 			return true;
 		}
