@@ -3,9 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
-import org.jdom.Document;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
+import org.jdom.Document;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -20,9 +20,9 @@ public class XmlReport extends RawReport {
 	 * @param rawReport
 	 * @param document
 	 */
+	@NoneNull
 	public XmlReport(final RawReport rawReport, final Document document) {
 		super(rawReport.getId(), rawReport);
-		Condition.notNull(document);
 		this.document = document;
 	}
 	

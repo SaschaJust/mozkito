@@ -20,18 +20,17 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.Trimmed;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotAllNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotEmpty;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.ParameterConditions;
-import de.unisaarland.cs.st.reposuite.utils.specification.Return;
-import de.unisaarland.cs.st.reposuite.utils.specification.Trimmed;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -59,14 +58,9 @@ public class Person implements Annotated {
 	 * @param collisions
 	 * @return
 	 */
-	@NoneNull (spec = "When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
-	@Return (checks = ParameterConditions.NotNull)
+	@NoneNull ("When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	public static Person merge(final Person keeper,
-			@NotEmpty ("Merging with an empty collection makes no sense.") final Collection<Person> collisions) {
-		Condition.notNull(keeper);
-		Condition.noneNull(collisions);
-		Condition.notEmpty(collisions);
-		
+	                           @NotEmpty ("Merging with an empty collection makes no sense.") @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Collection<Person> collisions) {
 		for (Person merged : collisions) {
 			merge(keeper, merged);
 		}
@@ -79,12 +73,9 @@ public class Person implements Annotated {
 	 * @param from
 	 * @return
 	 */
-	@NoneNull (spec = "When merging two Person entities, neither target nor merged person may be null.")
+	@NoneNull ("When merging two Person entities, neither target nor merged person may be null.")
 	public static Person merge(final Person keeper,
-			final Person from) {
-		Condition.notNull(keeper);
-		Condition.notNull(from);
-		
+	                           final Person from) {
 		keeper.addAllEmails(from.getEmailAddresses());
 		keeper.addAllFullnames(from.getFullnames());
 		keeper.addAllUsernames(from.getUsernames());
@@ -112,20 +103,20 @@ public class Person implements Annotated {
 	 * @param fullname
 	 * @param email
 	 */
-	@NotAllNull ("Creating a person with only (null) values makes no sense.")
 	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
-		Condition.check((username != null) || (fullname != null) || (email != null));
+		Condition.check((username != null) || (fullname != null) || (email != null),
+		                "Creating a person with only (null) values makes no sense.");
 		
 		if (fullname != null) {
-			Condition.equals(fullname.trim(), fullname);
+			CompareCondition.equals(fullname.trim(), fullname, "Data has to be trimmed.");
 		}
 		
 		if (username != null) {
-			Condition.equals(username.trim(), username);
+			CompareCondition.equals(username.trim(), username, "Data has to be trimmed.");
 		}
 		
 		if (email != null) {
-			Condition.equals(email.trim(), email);
+			CompareCondition.equals(email.trim(), email, "Data has to be trimmed.");
 		}
 		
 		addUsername(username);
@@ -138,8 +129,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void addAllEmails(@NotNull final Set<String> emails) {
-		Condition.notNull(emails);
-		
 		this.emailAddresses.addAll(emails);
 	}
 	
@@ -148,8 +137,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void addAllFullnames(@NotNull final Set<String> fullnames) {
-		Condition.notNull(fullnames);
-		
 		getFullnames().addAll(fullnames);
 	}
 	
@@ -158,8 +145,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
-		Condition.notNull(transactions);
-		
 		getTransactions().addAll(transactions);
 	}
 	
@@ -168,8 +153,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void addAllUsernames(@NotNull final Set<String> usernames) {
-		Condition.notNull(usernames);
-		
 		getUsernames().addAll(usernames);
 	}
 	
@@ -212,8 +195,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	protected void assignTransaction(@NotNull final RCSTransaction transaction) {
-		Condition.notNull(transaction);
-		
 		this.transactions.add(transaction);
 	}
 	
@@ -319,13 +300,13 @@ public class Person implements Annotated {
 		int result = 1;
 		result = prime * result + ((this.emailAddresses.isEmpty())
 				? 0
-						: this.emailAddresses.iterator().next().hashCode());
+				: this.emailAddresses.iterator().next().hashCode());
 		result = prime * result + ((this.fullnames.isEmpty())
 				? 0
-						: this.fullnames.iterator().next().hashCode());
+				: this.fullnames.iterator().next().hashCode());
 		result = prime * result + ((this.usernames.isEmpty())
 				? 0
-						: this.usernames.iterator().next().hashCode());
+				: this.usernames.iterator().next().hashCode());
 		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
 		// >>> 32));
 		return result;
@@ -337,8 +318,6 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public boolean matches(@NotNull final Person person) {
-		Condition.notNull(person);
-		
 		if (!CollectionUtils.intersection(getEmailAddresses(), person.getEmailAddresses()).isEmpty()) {
 			return true;
 		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {

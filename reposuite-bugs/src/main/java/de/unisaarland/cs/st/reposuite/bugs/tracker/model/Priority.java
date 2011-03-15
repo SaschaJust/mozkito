@@ -29,6 +29,10 @@ public enum Priority implements Annotated {
 		return this.id;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
+	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		return null;

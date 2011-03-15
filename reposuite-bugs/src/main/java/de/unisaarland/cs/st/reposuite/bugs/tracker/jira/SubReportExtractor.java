@@ -2,17 +2,21 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
 import java.util.List;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.jdom.Element;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class SubReportExtractor {
 	
+	/**
+	 * @param element
+	 * @param idToSearch
+	 * @return
+	 */
+	@NoneNull
 	public static Element extract(final Element element, final Long idToSearch) {
-		Condition.notNull(element);
-		Condition.notNull(idToSearch);
-		
 		if (element.getName().equals("rss")) {
 			return extract(element.getChild("channel", element.getNamespace()), idToSearch);
 		} else if (element.getName().equals("channel")) {

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class MultilevelPartitioning.
@@ -73,7 +73,7 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final Set<T> nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
@@ -93,8 +93,8 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes,
- final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	                            final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);

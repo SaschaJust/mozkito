@@ -16,11 +16,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -58,15 +58,11 @@ import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 	
 	@NoneNull
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
-		Condition.notNull(rcsTransaction);
-		Condition.notNull(rcsFile);
-		Condition.notNull(changeType);
-		
 		setPrimaryKey(new RevisionPrimaryKey(rcsFile, rcsTransaction));
 		
-		Condition.notNull(this.primaryKey);
-		Condition.notNull(getTransaction());
-		Condition.notNull(getChangedFile());
+		Condition.notNull(this.primaryKey, "Primary key may never be null after creation.");
+		Condition.notNull(getTransaction(), "Transaction may never be null after creation.");
+		Condition.notNull(getChangedFile(), "Changed file may never be null after creation.");
 		
 		getTransaction().addRevision(this);
 		setChangeType(changeType);

@@ -8,8 +8,8 @@ import java.util.Collection;
 
 import javax.persistence.Embeddable;
 
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -23,8 +23,8 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	private int               commentId        = -1;
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -2568891675198367976L;
 	
 	/**
@@ -37,9 +37,7 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	 * @param reportId
 	 * @param commentId
 	 */
-	CommentPrimaryKey(final long reportId, final int commentId) {
-		Condition.greater(commentId, 0);
-		
+	CommentPrimaryKey(final long reportId, @Positive final int commentId) {
 		setReportId(reportId);
 		setCommentId(commentId);
 	}

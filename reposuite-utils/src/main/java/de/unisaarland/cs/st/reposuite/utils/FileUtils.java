@@ -13,13 +13,16 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class FileUtils.
@@ -59,8 +62,7 @@ public class FileUtils {
 	 * @throws ExternalExecutableException
 	 *             the external executable exception
 	 */
-	public static String checkExecutable(final String command) throws ExternalExecutableException {
-		Condition.notNull(command);
+	public static String checkExecutable(@NotNull final String command) throws ExternalExecutableException {
 		if (command.startsWith(FileUtils.fileSeparator)
 				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
 						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
@@ -92,13 +94,18 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-					+ pathVariable);
+			                                      + pathVariable);
 		}
 	}
 	
+	/**
+	 * @param srcFile
+	 * @param destDir
+	 * @throws IOException
+	 */
 	@NoneNull
 	public static void copyFileToDirectory(final File srcFile,
-			final File destDir) throws IOException {
+	                                       final File destDir) throws IOException {
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 	}
 	
@@ -115,7 +122,7 @@ public class FileUtils {
 	 *         existed or created. <code>null</code> otherwise.
 	 */
 	public static File createDir(final File parentDir,
-			final String name) {
+	                             final String name) {
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
 		} catch (FilePermissionException e) {
@@ -131,14 +138,14 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath()
-							+ "`. Reason: directory exists already. Returning existing directory.");
+					            + parentDir.getAbsolutePath()
+					            + "`. Reason: directory exists already. Returning existing directory.");
 				}
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-							+ parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+					             + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -146,7 +153,7 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-						+ parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				             + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
@@ -169,8 +176,8 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final File parentDir,
-			final String prefix,
-			final String suffix) {
+	                                   final String prefix,
+	                                   final String suffix) {
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
@@ -204,7 +211,7 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final String prefix,
-			final String suffix) {
+	                                   final String suffix) {
 		return createRandomDir(tmpDir, prefix, suffix);
 	}
 	
@@ -247,10 +254,10 @@ public class FileUtils {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public static void ensureFilePermissions(final File file,
-			int permissions) throws FilePermissionException {
-		Condition.notNull(file);
-		Condition.less(permissions, getMAX_PERM());
+	public static void ensureFilePermissions(@NotNull final File file,
+	                                         int permissions) throws FilePermissionException {
+		CompareCondition.less(permissions, getMAX_PERM(),
+		"Filepermission alias must be less then the maximum known alias bitmask.");
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
@@ -426,8 +433,8 @@ public class FileUtils {
 	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
 	public static Collection<File> listFiles(final File directory,
-			final String[] extensions,
-			final boolean recursive) {
+	                                         final String[] extensions,
+	                                         final boolean recursive) {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
@@ -445,11 +452,9 @@ public class FileUtils {
 	 *            the target directory, not null
 	 * @return true on success, false otherwise
 	 */
+	@NoneNull
 	public static boolean unzip(final File zipFile,
-			final File directory) {
-		Condition.notNull(zipFile);
-		Condition.notNull(directory);
-		
+	                            final File directory) {
 		try {
 			ensureFilePermissions(zipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -471,7 +476,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-						+ FileUtils.fileSeparator + entry.getName()));
+				                                                     + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);

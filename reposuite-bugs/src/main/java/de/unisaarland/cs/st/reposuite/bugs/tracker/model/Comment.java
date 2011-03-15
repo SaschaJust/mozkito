@@ -23,12 +23,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
+
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -39,8 +41,8 @@ import de.unisaarland.cs.st.reposuite.utils.Condition;
 public class Comment implements Annotated, Comparable<Comment> {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -2410349441783888667L;
 	private long              generatedId;
 	
@@ -66,12 +68,8 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 * @param timestamp
 	 * @param message
 	 */
-	public Comment(final int id, final Person author, final DateTime timestamp, final String message) {
-		Condition.greater(id, 0);
-		Condition.notNull(author);
-		Condition.notNull(timestamp);
-		Condition.notNull(message);
-		
+	@NoneNull
+	public Comment(@Positive final int id, final Person author, final DateTime timestamp, final String message) {
 		setAuthor(author);
 		setTimestamp(timestamp);
 		setMessage(message);

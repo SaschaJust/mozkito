@@ -71,19 +71,19 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		this.databaseSettings = settings.setDatabaseArgs(false);
 		settings.setLoggerArg(true);
 		this.testCaseTransactionArg = new ListArgument(settings, "testCaseTransactions",
-				"List of transactions that will be passed for test case purposes. "
-				+ "If this option is set, this module will start in test case mode. "
-				+ "If will generate change operations to specified transactions, only;"
-				+ "outputting result as XML either to sdtout (if option -DasXML not set) "
-				+ "or to specified XML file.", null, false);
+		                                               "List of transactions that will be passed for test case purposes. "
+		                                               + "If this option is set, this module will start in test case mode. "
+		                                               + "If will generate change operations to specified transactions, only;"
+		                                               + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                                               + "or to specified XML file.", null, false);
 		
 		this.asXML = new FileArgument(settings, "output.xml",
-				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
-				null, false, true, false);
+		                              "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+		                              null, false, true, false);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
-				"Use this transaction ID as the first one.",
-				null, false);
+		                                       "Use this transaction ID as the first one.",
+		                                       null, false);
 		
 		settings.parseArguments();
 	}
@@ -110,7 +110,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setup() {
-		this.hibernateUtil = this.databaseSettings.getValue(false);
+		this.hibernateUtil = this.databaseSettings.getValue();
 		File xmlFile = this.asXML.getValue();
 		Repository repository = this.repoSettings.getValue();
 		
@@ -126,7 +126,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		
 		//generate the change operation reader
 		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
-				this.startWithArg.getValue());
+		                          this.startWithArg.getValue());
 		
 		//the xml file set, create XMLSinkThread. Otherwise the Hibernate persister thread
 		if (xmlFile != null) {
@@ -142,13 +142,13 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-								+ "Writing to sstdout!");
+						             + "Writing to sstdout!");
 					}
 					stdout = true;
 				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-								+ "Writing to sstdout!");
+						             + "Writing to sstdout!");
 					}
 					stdout = true;
 				}

@@ -6,7 +6,8 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 
@@ -25,12 +26,9 @@ public class RawReport extends RawContent {
 	 * @param rawContent
 	 *            not null
 	 */
-	public RawReport(final long id, final RawContent rawContent) {
+	public RawReport(@Positive final long id, @NotNull final RawContent rawContent) {
 		super(rawContent.getUri(), rawContent.getMd5(), rawContent.getFetchTime(), rawContent.getFormat(), rawContent
-		        .getContent());
-		Condition.greater(id, 0l);
-		Condition.notNull(rawContent);
-		
+		      .getContent());
 		this.id = id;
 	}
 	

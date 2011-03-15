@@ -14,10 +14,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -47,8 +47,7 @@ public class RepoSuiteSettings {
 	 * @return <code>true</code> if the argument could be added.
 	 *         <code>False</code> otherwise.
 	 */
-	@NoneNull
-	protected boolean addArgument(final RepoSuiteArgument argument) {
+	protected boolean addArgument(@NotNull final RepoSuiteArgument argument) {
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
@@ -195,13 +194,13 @@ public class RepoSuiteSettings {
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-							+ "` does not exists. Ignoring ...");
+					            + "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-							+ "` is a directory. Ignoring ...");
+					            + "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;
 			}
@@ -258,7 +257,7 @@ public class RepoSuiteSettings {
 	protected void setField(final String argument, final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
-					+ "The argument is not part of the current argument set.");
+			                               + "The argument is not part of the current argument set.");
 		}
 		this.arguments.get(argument).setStringValue(value);
 	}
@@ -311,8 +310,8 @@ public class RepoSuiteSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-						arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
-								arg.toString()));
+				                                arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
+				                                                                                   arg.toString()));
 				
 			}
 		}

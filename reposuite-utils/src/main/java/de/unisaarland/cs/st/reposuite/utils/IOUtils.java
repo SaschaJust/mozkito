@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -46,8 +48,7 @@ public class IOUtils {
 	 * @throws UnsupportedProtocolException
 	 * @throws FetchException
 	 */
-	public static RawContent fetch(final URI uri) throws UnsupportedProtocolException, FetchException {
-		Condition.notNull(uri);
+	public static RawContent fetch(@NotNull final URI uri) throws UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
 			return fetchHttp(uri);
 		} else if (uri.getScheme().equals("https")) {
@@ -67,9 +68,10 @@ public class IOUtils {
 	 * @throws FetchException
 	 * @throws UnsupportedProtocolException
 	 */
-	public static RawContent fetch(final URI uri, final String username, final String password) throws FetchException,
-	        UnsupportedProtocolException {
-		Condition.notNull(uri);
+	public static RawContent fetch(@NotNull final URI uri,
+	                               final String username,
+	                               final String password) throws FetchException,
+	UnsupportedProtocolException {
 		if (uri.getScheme().equals("http")) {
 			return fetchHttp(uri, username, password);
 		} else if (uri.getScheme().equals("https")) {
@@ -105,11 +107,11 @@ public class IOUtils {
 			reader.close();
 			
 			return new RawContent(uri, md.digest(builder.toString().getBytes()), new DateTime(file.lastModified()),
-			        "xhtml", builder.toString());
+			                      "xhtml", builder.toString());
 			
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
-			        + "` failed.", e);
+			                         + "` failed.", e);
 		}
 	}
 	
@@ -139,10 +141,10 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			        contentType.getValue(), content.toString());
+			                      contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
-			        + "` failed.", e);
+			                         + "` failed.", e);
 		}
 	}
 	
@@ -154,7 +156,7 @@ public class IOUtils {
 	 * @throws FetchException
 	 */
 	public static RawContent fetchHttp(final URI uri, final String username, final String password)
-	        throws FetchException {
+	throws FetchException {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -164,7 +166,7 @@ public class IOUtils {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-			        new UsernamePasswordCredentials(username, password));
+			                             new UsernamePasswordCredentials(username, password));
 			httpClient.setCredentialsProvider(credsProvider);
 			
 			HttpGet request = new HttpGet(uri);
@@ -181,10 +183,10 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			        contentType.getValue(), content.toString());
+			                      contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
-			        + "` failed.", e);
+			                         + "` failed.", e);
 		}
 	}
 	
@@ -205,7 +207,7 @@ public class IOUtils {
 	 * @throws FetchException
 	 */
 	public static RawContent fetchHttps(final URI uri, final String username, final String password)
-	        throws FetchException {
+	throws FetchException {
 		return fetchHttp(uri, username, password);
 	}
 	
@@ -215,9 +217,7 @@ public class IOUtils {
 	 * @throws LoadingException
 	 * @throws FilePermissionException
 	 */
-	public static Storable load(final File file) throws LoadingException, FilePermissionException {
-		Condition.notNull(file);
-		
+	public static Storable load(@NotNull final File file) throws LoadingException, FilePermissionException {
 		Storable object;
 		
 		FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
@@ -232,13 +232,13 @@ public class IOUtils {
 			object.setCached(file.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			throw new LoadingException("File `" + file.getAbsolutePath()
-			        + "` could not be found when trying to load object.");
+			                           + "` could not be found when trying to load object.");
 		} catch (IOException e) {
 			throw new LoadingException(e.getClass().getName() + " occurred when reading from file: `"
-			        + file.getAbsolutePath() + "`.", e);
+			                           + file.getAbsolutePath() + "`.", e);
 		} catch (ClassNotFoundException e) {
 			throw new LoadingException("Corresponding class was not found when loading object from file: `"
-			        + file.getAbsolutePath() + "`.", e);
+			                           + file.getAbsolutePath() + "`.", e);
 		} finally {
 			try {
 				if (ois != null) {
@@ -258,11 +258,11 @@ public class IOUtils {
 	 * @throws StoringException
 	 * @throws FilePermissionException
 	 */
-	public static void store(final Storable object, final File directory, final String fileName, final boolean overwrite)
-	        throws StoringException, FilePermissionException {
-		Condition.notNull(object);
-		Condition.notNull(directory);
-		
+	public static void store(@NotNull final Storable object,
+	                         @NotNull final File directory,
+	                         final String fileName,
+	                         final boolean overwrite)
+	throws StoringException, FilePermissionException {
 		FileUtils.ensureFilePermissions(directory, FileUtils.ACCESSIBLE_DIR | FileUtils.WRITABLE);
 		
 		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
@@ -291,7 +291,7 @@ public class IOUtils {
 			throw new StoringException("Could not create file `" + fileName + "`.", e);
 		} catch (IOException e) {
 			throw new StoringException(e.getClass().getSimpleName() + " occurred when trying to write `" + fileName
-			        + "`.", e);
+			                           + "`.", e);
 		} finally {
 			if (oos != null) {
 				try {

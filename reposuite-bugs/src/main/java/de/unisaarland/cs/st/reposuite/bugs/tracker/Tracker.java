@@ -11,6 +11,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kanuni.conditions.StringCondition;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -25,7 +31,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -41,13 +46,13 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
 public abstract class Tracker {
 	
 	protected final TrackerType type             = TrackerType.valueOf(this
-	                                                     .getClass()
-	                                                     .getSimpleName()
-	                                                     .substring(
-	                                                             0,
-	                                                             this.getClass().getSimpleName().length()
-	                                                                     - Tracker.class.getSimpleName().length())
-	                                                     .toUpperCase());
+	                                                                   .getClass()
+	                                                                   .getSimpleName()
+	                                                                   .substring(
+	                                                                              0,
+	                                                                              this.getClass().getSimpleName().length()
+	                                                                              - Tracker.class.getSimpleName().length())
+	                                                                              .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -68,12 +73,12 @@ public abstract class Tracker {
 	 * 
 	 */
 	public Tracker() {
-		Condition.check(!this.initialized);
-		Condition.notNull(this.bugIds);
-		Condition.notNull(bugIdPlaceholder);
-		Condition.greater(bugIdPlaceholder.length(), 0);
-		Condition.notNull(bugIdRegex);
-		Condition.greater(bugIdRegex.getPattern().length(), 0);
+		Condition.check(!this.initialized, "The tracker must NOT be initialized at this point in time.");
+		Condition.notNull(this.bugIds, "The bugId container must be initialized.");
+		Condition.notNull(bugIdPlaceholder, "bugIdPlaceholder must be set.");
+		StringCondition.notEmpty(bugIdPlaceholder, "bugIdPlaceholder must not be empty");
+		Condition.notNull(bugIdRegex, "bugIdRegex must be set.");
+		StringCondition.notEmpty(bugIdRegex.getPattern(), "bugIdRegex must not be empty");
 	}
 	
 	/**
@@ -93,9 +98,7 @@ public abstract class Tracker {
 	 *            the bug report without further processing
 	 * @return true if no error occurred
 	 */
-	public boolean checkRAW(final RawReport rawReport) {
-		Condition.notNull(rawReport);
-		
+	public boolean checkRAW(@NotNull final RawReport rawReport) {
 		boolean retval = true;
 		return retval;
 	}
@@ -112,9 +115,7 @@ public abstract class Tracker {
 	 *            the XML document representing a bug report
 	 * @return true if no error occurred
 	 */
-	public boolean checkXML(final XmlReport xmlReport) {
-		Condition.notNull(xmlReport);
-		
+	public boolean checkXML(@NotNull final XmlReport xmlReport) {
 		return xmlReport.getDocument().getRootElement() != null;
 	}
 	
@@ -147,7 +148,7 @@ public abstract class Tracker {
 	 */
 	public File getFileForContent(final long id) {
 		return new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + getHandle() + "_"
-		        + this.fetchURI.getHost() + "_content_" + id);
+		                + this.fetchURI.getHost() + "_content_" + id);
 	}
 	
 	/**
@@ -318,17 +319,19 @@ public abstract class Tracker {
 	 * @throws InvalidParameterException
 	 */
 	
-	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	        throws InvalidParameterException {
-		Condition.notNull(fetchURI);
+	public void setup(@NotNull final URI fetchURI,
+	                  final URI overviewURI,
+	                  final String pattern,
+	                  final String username,
+	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
-		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
-		        password);
+		                "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
+		                password);
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		        "`startAt` must be null or > 0, but is: %s", startAt);
+		                "`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+		                "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
@@ -362,12 +365,10 @@ public abstract class Tracker {
 	 * @param content
 	 * @return
 	 */
-	public boolean writeContentToFile(final RawContent content, final String fileName) {
-		Condition.notNull(content);
-		Condition.notNull(fileName);
-		Condition.greater(fileName.length(), 0);
-		Condition.notNull(this.cacheDir);
-		Condition.check(isInitialized());
+	@NoneNull
+	public boolean writeContentToFile(final RawContent content,
+	                                  @NotEmpty final String fileName) {
+		Condition.check(isInitialized(), "The tracker has to be initialized before using this method.");
 		
 		try {
 			IOUtils.store(content, this.cacheDir, fileName, true);

@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.io.LineIterator;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
@@ -18,12 +21,10 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 public class GitRevDependencyIterator implements RevDependencyIterator {
 	
@@ -146,7 +147,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			this.depIter = depList.iterator();
 		} catch (Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
-					+ FileUtils.lineSeparator + e.getMessage(), e);
+			                             + FileUtils.lineSeparator + e.getMessage(), e);
 		}
 	}
 	
@@ -196,13 +197,13 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getRevListFile() throws IOException {
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		        "--encoding=UTF-8", "--parents", "--branches", "--remotes", "--topo-order", this.revision },
-		        this.cloneDir, null,
+				"--encoding=UTF-8", "--parents", "--branches", "--remotes", "--topo-order", this.revision },
+				this.cloneDir, null,
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
-					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
-					+ this.revision + ".");
+			                             "Could not initialize DependencyIterator for Git repo: could not get revList using revision"
+			                             + this.revision + ".");
 		}
 		File revListFile = FileUtils.createRandomFile();
 		BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));

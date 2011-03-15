@@ -7,6 +7,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.compare.EqualsInt;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
@@ -31,22 +34,17 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 * @param fetchTime
 	 *            not null
 	 * @param format
-	 *            not null, 2 &lt; <code>format.length</code> &lt; 6
+	 *            not null
 	 * @param document
 	 *            will be null in most cases
 	 * @param content
 	 *            not null, 0 &lt; <code>content.length</code>
 	 */
-	public RawContent(final URI uri, final byte[] md5, final DateTime fetchTime, final String format,
-	        final String content) {
+	@NoneNull
+	public RawContent(final URI uri, @EqualsInt (ref = 16) final byte[] md5, final DateTime fetchTime,
+	                  final String format,
+	                  final String content) {
 		super();
-		Condition.notNull(uri);
-		Condition.notNull(md5);
-		Condition.equals(md5.length, 16);
-		Condition.notNull(fetchTime);
-		Condition.notNull(format);
-		Condition.greater(format.length(), 2);
-		Condition.notNull(content);
 		
 		this.uri = uri;
 		this.md5 = md5;
@@ -138,7 +136,7 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		builder.append(this.format);
 		builder.append(", content=");
 		builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10 ? this.content
-		        .substring(0, 10) : this.content)));
+		                                                                                                      .substring(0, 10) : this.content)));
 		builder.append("]");
 		return builder.toString();
 	}
