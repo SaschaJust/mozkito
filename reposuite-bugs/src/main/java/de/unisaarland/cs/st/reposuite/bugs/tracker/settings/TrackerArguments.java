@@ -29,13 +29,20 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 	protected TrackerArguments(final RepoSuiteSettings settings, final boolean isRequired) {
 		super();
 		
-		addArgument(new URIArgument(settings, "tracker.fetchURI", "Where to find the data.", null, isRequired));
-		addArgument(new URIArgument(settings, "tracker.overviewURI", "Base url of the tracker", null, false));
-		addArgument(new StringArgument(settings, "tracker.pattern",
-				"The filename pattern the bugs have to match to be accepted", null, false));
+		addArgument(new URIArgument(settings, "tracker.fetchURI",
+		                            "Basis URI used to fecth the reports (must not contain the bug ID placeholder).",
+		                            null, isRequired));
+		addArgument(new URIArgument(settings, "tracker.overviewURI",
+		                            "URI pointing to the overview URL that contains the relevant bug IDs.", null, false));
+		addArgument(new StringArgument(
+		                               settings,
+		                               "tracker.pattern",
+		                               "The filename pattern the bugs have to match to be accepted. Thus will be appended to the fetchURI and should contain the bug ID placeholder.",
+		                               null, false));
 		addArgument(new EnumArgument(settings, "tracker.type",
-				"The filename pattern the bugs have to match to be accepted", null, isRequired,
-				JavaUtils.enumToArray(TrackerType.BUGZILLA)));
+		                             "The type of the bug tracker to analyze (possible values are: BUGZILLA (default), ISSUEZILLA, JIRA, SOURCEFORGE, GOOGLE.",
+		                             null, isRequired,
+		                             JavaUtils.enumToArray(TrackerType.BUGZILLA)));
 		addArgument(new MaskedStringArgument(settings, "tracker.user", "Username to access tracker", null, false));
 		addArgument(new MaskedStringArgument(settings, "tracker.password", "Password to access tracker", null, false));
 		addArgument(new LongArgument(settings, "tracker.start", "BugID to start with", "1", false));
@@ -56,32 +63,45 @@ public class TrackerArguments extends RepoSuiteArgumentSet {
 			return null;
 		}
 		
-		TrackerType trackerType = TrackerType
-		.valueOf(arguments.get("tracker.type").getValue().toString().toUpperCase());
+		TrackerType trackerType = TrackerType.valueOf(arguments.get("tracker.type").getValue().toString().toUpperCase());
 		try {
 			Class<? extends Tracker> trackerHandler = TrackerFactory.getTrackerHandler(trackerType);
 			Tracker tracker = trackerHandler.newInstance();
 			
-			URI fetchURIArg = (URI) (arguments.get("tracker.fetchURI") != null ? arguments.get("tracker.fetchURI")
-					.getValue() : null);
-			URI overviewURIArg = (URI) (arguments.get("tracker.overviewURI") != null ? arguments.get(
-			"tracker.overviewURI").getValue() : null);
+			URI fetchURIArg = (URI) (arguments.get("tracker.fetchURI") != null
+					? arguments.get("tracker.fetchURI")
+					.getValue()
+					: null);
+			URI overviewURIArg = (URI) (arguments.get("tracker.overviewURI") != null
+					? arguments.get("tracker.overviewURI")
+					.getValue()
+					: null);
 			
-			String patternArg = (String) (arguments.get("tracker.pattern") != null ? arguments.get("tracker.pattern")
-					.getValue() : null);
-			String usernameArg = (String) (arguments.get("tracker.username") != null ? arguments
-					.get("tracker.username").getValue() : null);
-			String passwordArg = (String) (arguments.get("tracker.password") != null ? arguments
-					.get("tracker.password").getValue() : null);
-			Long startArg = (Long) (arguments.get("tracker.start") != null ? arguments.get("tracker.start").getValue()
+			String patternArg = (String) (arguments.get("tracker.pattern") != null
+					? arguments.get("tracker.pattern")
+					.getValue()
 					: null);
-			Long stopArg = (Long) (arguments.get("tracker.stop") != null ? arguments.get("tracker.stop").getValue()
+			String usernameArg = (String) (arguments.get("tracker.username") != null
+					? arguments.get("tracker.username")
+					.getValue()
 					: null);
-			String cacheDirArg = (String) (arguments.get("tracker.cachedir") != null ? arguments
-					.get("tracker.cachedir").getValue() : null);
+			String passwordArg = (String) (arguments.get("tracker.password") != null
+					? arguments.get("tracker.password")
+					.getValue()
+					: null);
+			Long startArg = (Long) (arguments.get("tracker.start") != null
+					? arguments.get("tracker.start").getValue()
+					: null);
+			Long stopArg = (Long) (arguments.get("tracker.stop") != null
+					? arguments.get("tracker.stop").getValue()
+					: null);
+			String cacheDirArg = (String) (arguments.get("tracker.cachedir") != null
+					? arguments.get("tracker.cachedir")
+					.getValue()
+					: null);
 			
 			tracker.setup(fetchURIArg, overviewURIArg, patternArg, usernameArg, passwordArg, startArg, stopArg,
-					cacheDirArg);
+			              cacheDirArg);
 			return tracker;
 		} catch (Exception e) {
 			if (Logger.logError()) {
