@@ -40,6 +40,7 @@ import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class JiraTracker.
@@ -72,8 +73,8 @@ public class JiraTracker extends Tracker {
 	 * .String)
 	 */
 	@Override
+	@NoneNull
 	public boolean checkRAW(final RawReport rawReport) {
-		Condition.notNull(rawReport);
 		if (!super.checkRAW(rawReport)) {
 			return false;
 		}
@@ -97,15 +98,46 @@ public class JiraTracker extends Tracker {
 		if (!super.checkXML(xmlReport)) {
 			return false;
 		}
-		if (!xmlReport.getDocument().getRootElement().getName().equals("rss")) {
+		
+		Element rootElement = xmlReport.getDocument().getRootElement();
+		
+		if (rootElement == null) {
+			if (Logger.logError()) {
+				Logger.error("Root element is <null>");
+			}
 			return false;
 		}
-		if (xmlReport.getDocument().getRootElement().getChildren("channel").size() != 1) {
+		
+		if (!rootElement.getName().equals("rss")) {
+			if (Logger.logError()) {
+				Logger.error("Name of root element is not `rss`");
+			}
 			return false;
 		}
-		@SuppressWarnings ("unchecked") List<Element> items = xmlReport.getDocument().getRootElement()
-		.getChildren("channel");
-		if (items.get(0).getChildren("item").size() != 1) {
+		
+		@SuppressWarnings ("rawtypes")
+		List children = rootElement.getChildren("channel", rootElement.getNamespace());
+		
+		if (children == null) {
+			if (Logger.logError()) {
+				Logger.error("No `channel` children.");
+			}
+			return false;
+		}
+		
+		if (children.size() != 1) {
+			if (Logger.logError()) {
+				Logger.error("No `channel` children.");
+			}
+			return false;
+		}
+		
+		@SuppressWarnings ("unchecked")
+		List<Element> items = rootElement.getChildren("channel", rootElement.getNamespace());
+		if (items.get(0).getChildren("item", rootElement.getNamespace()).size() != 1) {
+			if (Logger.logError()) {
+				Logger.error("No `item` children.");
+			}
 			return false;
 		}
 		return true;
@@ -118,11 +150,12 @@ public class JiraTracker extends Tracker {
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
+	@NoneNull
 	public XmlReport createDocument(final RawReport rawReport) {
-		Condition.notNull(rawReport);
+		
 		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder();
+			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 			Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
@@ -149,16 +182,38 @@ public class JiraTracker extends Tracker {
 	 * net.URI)
 	 */
 	@Override
+	@NoneNull
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
-		Condition.notNull(uri);
-		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder));
-		
+		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder), "URI must contain bugIdPlaceHolder");
+		Condition.check(!uri.toString().endsWith(FileUtils.fileSeparator), "file should not end with "
+		                + FileUtils.fileSeparator);
 		if (this.overalXML == null) {
 			// fetch source from net
+			
+			String filename = uri.toString();
+			int index = filename.lastIndexOf(FileUtils.fileSeparator);
+			filename = filename.substring(index + 1);
+			
+			// check cacheDir if exists already
+			if (this.cacheDir != null) {
+				File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+				if (cacheFile.exists()) {
+					if (Logger.logInfo()) {
+						Logger.info("Fetching report `" + uri.toString() + "` from cache directory ... ");
+					}
+					RawReport source = super.fetchSource(cacheFile.toURI());
+					return source;
+				}
+			}
 			if (Logger.logInfo()) {
 				Logger.info("Fetching report `" + uri.toString() + "` from net ... ");
 			}
 			RawReport source = super.fetchSource(uri);
+			// write to disk
+			if (this.cacheDir != null) {
+				this.writeContentToFile(source, this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			}
+			
 			if (Logger.logInfo()) {
 				Logger.info("done");
 			}
@@ -175,12 +230,12 @@ public class JiraTracker extends Tracker {
 				return super.fetchSource(uri);
 			}
 			try {
-				SAXBuilder parser = new SAXBuilder();
+				SAXBuilder parser = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 				Document document = parser.build(this.overalXML);
 				Element element = SubReportExtractor.extract(document.getRootElement(), idToFetch);
-				Element rss = new Element("rss");
+				Element rss = new Element("rss", element.getNamespace());
 				rss.setAttribute("version", "0.92");
-				Element channel = new Element("channel");
+				Element channel = new Element("channel", element.getNamespace());
 				channel.addContent(element);
 				rss.addContent(channel);
 				document = new Document(rss);
@@ -230,15 +285,17 @@ public class JiraTracker extends Tracker {
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	@Override
+	@NoneNull
 	public Report parse(final XmlReport rawReport) {
-		Condition.notNull(rawReport);
 		
 		if (Logger.logInfo()) {
 			Logger.info("Parsing report with id `" + rawReport.getId() + "` ... ");
 		}
 		
 		Report bugReport = new Report();
-		Element itemElement = rawReport.getDocument().getRootElement().getChild("channel").getChild("item");
+		Element itemElement = rawReport.getDocument().getRootElement();
+		itemElement = itemElement.getChild("channel", itemElement.getNamespace());
+		itemElement = itemElement.getChild("item", itemElement.getNamespace());
 		JiraXMLParser.handleRoot(bugReport, itemElement);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
@@ -291,9 +348,14 @@ public class JiraTracker extends Tracker {
 	 * java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	throws InvalidParameterException {
+	public void setup(final URI fetchURI,
+	                  final URI overviewURI,
+	                  final String pattern,
+	                  final String username,
+	                  final String password,
+	                  final Long startAt,
+	                  final Long stopAt,
+	                  final String cacheDirPath) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");

@@ -48,7 +48,7 @@ public class JiraXMLParser {
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
-			final String attribute, final String value) {
+	                                    final String attribute, final String value) {
 		@SuppressWarnings ("unchecked") List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
@@ -56,7 +56,7 @@ public class JiraXMLParser {
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
-				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+		                                 + value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
 	}
 	
 	protected static Priority getPriority(final String prioString) {
@@ -150,7 +150,7 @@ public class JiraXMLParser {
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-							+ rootElement.getName() + ">.");
+					             + rootElement.getName() + ">.");
 				}
 				return;
 			}
@@ -220,7 +220,7 @@ public class JiraXMLParser {
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
 						HistoryElement hElement = new HistoryElement(author, timestamp,
-						        new HashMap<String, Tuple<?, ?>>());
+						                                             new HashMap<String, Tuple<?, ?>>());
 						
 						for (Element tr : trs) {
 							if (tr == null) {
@@ -273,15 +273,15 @@ public class JiraXMLParser {
 				List<Element> links = issueLinkType.getChildren();
 				for (Element link : links) {
 					if (link.getName().equals("inwardlinks") || link.getName().equals("outwardlinks")) {
-						List<Element> issueLinks = link.getChildren("issuelink");
+						List<Element> issueLinks = link.getChildren("issuelink", link.getNamespace());
 						for (Element issueLink : issueLinks) {
-							Element issueKey = issueLink.getChild("issuekey");
+							Element issueKey = issueLink.getChild("issuekey", issueLink.getNamespace());
 							if (issueKey != null) {
 								List<RegexGroup> groups = idRegex.find(issueKey.getText());
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
-												+ ". Cannot determine report id. Abort!");
+										             + ". Cannot determine report id. Abort!");
 									}
 									return;
 								}
@@ -312,7 +312,7 @@ public class JiraXMLParser {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-								+ ". Cannot determine report id. Abort!");
+						             + ". Cannot determine report id. Abort!");
 					}
 					return;
 				}
@@ -374,7 +374,7 @@ public class JiraXMLParser {
 					report.setLastUpdateTimestamp(dateTime);
 				}
 			} else if (element.getName().equals("comments")) {
-				handleComments(element.getChildren("comment"), report);
+				handleComments(element.getChildren("comment", element.getNamespace()), report);
 			} else if (element.getName().equals("issuelinks")) {
 				handleIssueLinks(element.getChildren(), report);
 			} else if (element.getName().equals("resolved")) {

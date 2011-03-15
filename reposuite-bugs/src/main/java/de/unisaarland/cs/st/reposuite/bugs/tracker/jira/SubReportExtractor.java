@@ -14,9 +14,10 @@ public class SubReportExtractor {
 		Condition.notNull(idToSearch);
 		
 		if (element.getName().equals("rss")) {
-			return extract(element.getChild("channel"), idToSearch);
+			return extract(element.getChild("channel", element.getNamespace()), idToSearch);
 		} else if (element.getName().equals("channel")) {
-			@SuppressWarnings ("unchecked") List<Element> items = element.getChildren("item");
+			@SuppressWarnings ("unchecked")
+			List<Element> items = element.getChildren("item", element.getNamespace());
 			for (Element item : items) {
 				Element match = extract(item, idToSearch);
 				if (match != null) {
@@ -24,8 +25,8 @@ public class SubReportExtractor {
 				}
 			}
 		} else if (element.getName().equals("item")) {
-			if (element.getChild("title") != null) {
-				String title = element.getChild("title").getText().trim();
+			if (element.getChild("title", element.getNamespace()) != null) {
+				String title = element.getChild("title", element.getNamespace()).getText().trim();
 				List<RegexGroup> groups = JiraIDExtractor.idRegex.find(title);
 				if ((groups.size() == 2) && (groups.get(1).getMatch().equals(idToSearch.toString()))) {
 					return element;
