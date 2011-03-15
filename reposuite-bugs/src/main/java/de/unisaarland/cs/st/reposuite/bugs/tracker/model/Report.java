@@ -48,8 +48,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class Report implements Annotated, Comparable<Report> {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long  serialVersionUID = 3241584366125944268L;
 	private long               id               = -1l;
 	private String             category;
@@ -174,7 +174,9 @@ public class Report implements Annotated, Comparable<Report> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
-		return getCreationTimestamp() != null ? getCreationTimestamp().toDate() : null;
+		return getCreationTimestamp() != null
+		                                     ? getCreationTimestamp().toDate()
+		                                     : null;
 	}
 	
 	/**
@@ -242,7 +244,9 @@ public class Report implements Annotated, Comparable<Report> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
-		return getLastFetch() != null ? getLastFetch().toDate() : null;
+		return getLastFetch() != null
+		                             ? getLastFetch().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -252,7 +256,9 @@ public class Report implements Annotated, Comparable<Report> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
-		return getLastUpdateTimestamp() != null ? getLastUpdateTimestamp().toDate() : null;
+		return getLastUpdateTimestamp() != null
+		                                       ? getLastUpdateTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -311,7 +317,9 @@ public class Report implements Annotated, Comparable<Report> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
-		return getResolutionTimestamp() != null ? getResolutionTimestamp().toDate() : null;
+		return getResolutionTimestamp() != null
+		                                       ? getResolutionTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -462,7 +470,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
-		this.creationTimestamp = creationTimestamp != null ? new DateTime(creationTimestamp) : null;
+		this.creationTimestamp = creationTimestamp != null
+		                                                  ? new DateTime(creationTimestamp)
+		                                                  : null;
 	}
 	
 	/**
@@ -526,7 +536,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
-		this.lastFetch = lastFetch != null ? new DateTime(lastFetch) : null;
+		this.lastFetch = lastFetch != null
+		                                  ? new DateTime(lastFetch)
+		                                  : null;
 	}
 	
 	/**
@@ -534,7 +546,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
-		this.lastUpdateTimestamp = date != null ? new DateTime(date) : null;
+		this.lastUpdateTimestamp = date != null
+		                                       ? new DateTime(date)
+		                                       : null;
 	}
 	
 	/**
@@ -585,7 +599,9 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
-		this.resolutionTimestamp = date != null ? new DateTime(date) : null;
+		this.resolutionTimestamp = date != null
+		                                       ? new DateTime(date)
+		                                       : null;
 	}
 	
 	/**
@@ -688,12 +704,26 @@ public class Report implements Annotated, Comparable<Report> {
 		} catch (UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
-		return "BugReport [id=" + this.id + ", assignedTo=" + getAssignedTo() + ", category=" + this.category
-		        + ", comments=" + (this.comments != null ? this.comments.size() : 0) + ", description="
-		        + this.description.substring(0, this.description.length() > 10 ? 10 : this.description.length() - 1)
+		return "BugReport [id="
+		        + this.id
+		        + ", assignedTo="
+		        + getAssignedTo()
+		        + ", category="
+		        + this.category
+		        + ", comments="
+		        + (this.comments != null
+		                                ? this.comments.size()
+		                                : 0)
+		        + ", description="
+		        + this.description.substring(0,
+		                                     this.description.length() > 10
+		                                                                   ? 10
+		                                                                   : Math.max(this.description.length() - 1, 0))
 		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
 		        + ", submitter=" + getSubmitter() + ", subject="
-		        + this.subject.substring(0, this.subject.length() > 10 ? 10 : this.subject.length() - 1)
+		        + this.subject.substring(0, this.subject.length() > 10
+		                                                              ? 10
+		                                                              : Math.max(this.subject.length() - 1, 0))
 		        + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
 		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
 		        + "]";
