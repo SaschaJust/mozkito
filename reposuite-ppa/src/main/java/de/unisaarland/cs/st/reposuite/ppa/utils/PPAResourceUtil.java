@@ -101,11 +101,15 @@ public class PPAResourceUtil {
 		
 		file = packageFolder.getFile(destFileName);
 		if (!file.exists()) {
-			file.create(new FileInputStream(srcFile), IFile.FORCE,
+			FileInputStream stream = new FileInputStream(srcFile);
+			file.create(stream, IFile.FORCE,
 					new NullProgressMonitor());
+			stream.close();
 		} else {
-			file.setContents(new FileInputStream(srcFile), IFile.FORCE,
+			FileInputStream stream = new FileInputStream(srcFile);
+			file.setContents(stream, IFile.FORCE,
 					new NullProgressMonitor());
+			stream.close();
 		}
 		
 		return file;

@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -86,6 +87,12 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				null, false);
 		
 		settings.parseArguments();
+		
+		if (Logger.logInfo()) {
+			Logger.info("Using workspace "
+			        + ResourcesPlugin.getWorkspace().getRoot().getFullPath().toFile().getAbsolutePath());
+		}
+
 	}
 	
 	/* (non-Javadoc)
