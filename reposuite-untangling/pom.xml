@@ -12,4 +12,11 @@
 	<properties>
 		<moduleName>untangling</moduleName>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-ppa</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
