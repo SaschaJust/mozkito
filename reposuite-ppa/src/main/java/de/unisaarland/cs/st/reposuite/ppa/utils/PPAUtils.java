@@ -452,8 +452,8 @@ public class PPAUtils {
 		}
 		
 		for (IFile iFile : iFiles.keySet()) {
-			if (Logger.logInfo()) {
-				Logger.info("Getting CU for file: " + iFile.getLocation().toOSString());
+			if (Logger.logDebug()) {
+				Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
 			}
 			CompilationUnit cu = getCU(iFile, options);
 			if (cu == null) {
