@@ -5,7 +5,9 @@ package jregex;
 
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -23,10 +25,11 @@ public class NamedPattern extends Pattern {
 		super(pattern, flags);
 	}
 	
-	public String getGroupName(final int index) {
-		Condition.greaterOrEqual(index, 0);
-		Condition.notNull(this.memregs);
-		Condition.less(index, this.memregs);
+	public String getGroupName(@NotNegative final int index) {
+		Condition.notNull(this.memregs,
+		"Requesting memory register for groups when no groups are active violates setup.");
+		CompareCondition.less(index, this.memregs,
+		"Index of group has to be less then the number of active memory registers.");
 		
 		@SuppressWarnings ("unchecked") Set<String> keySet = this.namedGroupMap.keySet();
 		for (String groupName : keySet) {

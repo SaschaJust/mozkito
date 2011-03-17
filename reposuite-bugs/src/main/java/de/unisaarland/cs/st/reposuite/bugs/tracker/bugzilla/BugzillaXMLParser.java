@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -27,7 +30,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -43,6 +45,10 @@ public class BugzillaXMLParser {
 	protected static Regex     siblingRegex = new Regex("bug\\s+({sibling}\\d+)");
 	protected static Regex     dateRegex    = new Regex("yyyy-MM-dd HH:mm:ss Z");
 	
+	/**
+	 * @param string
+	 * @return
+	 */
 	protected static Priority getPriority(final String string) {
 		String priorityString = string.toUpperCase();
 		if (priorityString.equals("P1")) {
@@ -60,6 +66,10 @@ public class BugzillaXMLParser {
 		}
 	}
 	
+	/**
+	 * @param string
+	 * @return
+	 */
 	protected static Resolution getResolution(final String string) {
 		String resString = string.toUpperCase();
 		if (resString.equals("FIXED")) {
@@ -109,6 +119,10 @@ public class BugzillaXMLParser {
 		}
 	}
 	
+	/**
+	 * @param string
+	 * @return
+	 */
 	protected static Status getStatus(final String string) {
 		String statusString = string.toUpperCase();
 		if (statusString.equals("UNCONFIRMED")) {
@@ -130,11 +144,23 @@ public class BugzillaXMLParser {
 		}
 	}
 	
+	/**
+	 * @param historyUri
+	 * @param report
+	 * @throws UnsupportedProtocolException
+	 * @throws FetchException
+	 * @throws JDOMException
+	 * @throws IOException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
+	@NoneNull
 	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
-	        FetchException, JDOMException, IOException, SecurityException, NoSuchFieldException {
-		Condition.notNull(historyUri);
-		Condition.notNull(report);
-		
+	FetchException,
+	JDOMException,
+	IOException,
+	SecurityException,
+	NoSuchFieldException {
 		RawContent rawContent = IOUtils.fetch(historyUri);
 		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 		SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
@@ -145,7 +171,7 @@ public class BugzillaXMLParser {
 		if (!rootElement.getName().equals("html")) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-				        + rootElement.getName() + ">.");
+				             + rootElement.getName() + ">.");
 			}
 			return;
 		}
@@ -160,7 +186,7 @@ public class BugzillaXMLParser {
 		@SuppressWarnings ("unchecked") List<Element> bodyChildren = body.getChildren();
 		for (Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
-			        && (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
+					&& (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
 				Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
@@ -178,7 +204,7 @@ public class BugzillaXMLParser {
 				}
 				
 				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr",
-				        namespace));
+				                                                                                             namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
@@ -193,13 +219,13 @@ public class BugzillaXMLParser {
 					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
-							        + tds.size());
+							             + tds.size());
 						}
 						return;
 					} else if (tds.size() < 3) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 3 table columns, found :"
-							        + tds.size());
+							             + tds.size());
 						}
 						return;
 					}
@@ -285,10 +311,9 @@ public class BugzillaXMLParser {
 		}
 	}
 	
+	@NoneNull
 	private static void handleLongDesc(final Report report, final Element rootElement) {
-		Condition.notNull(report);
-		Condition.notNull(rootElement);
-		Condition.check(rootElement.getName().equals("long_desc"));
+		Condition.check(rootElement.getName().equals("long_desc"), "The root element must be 'long_desc'.");
 		
 		Element who = rootElement.getChild("who");
 		Person author = null;
@@ -348,10 +373,13 @@ public class BugzillaXMLParser {
 		}
 	}
 	
+	/**
+	 * @param report
+	 * @param rootElement
+	 */
+	@NoneNull
 	public static void handleRoot(final Report report, final Element rootElement) {
-		Condition.notNull(report);
-		Condition.notNull(rootElement);
-		Condition.check(rootElement.getName().equals("bug"));
+		Condition.check(rootElement.getName().equals("bug"), "The root element must be 'bug'.");
 		
 		report.setType(Type.BUG);
 		
@@ -363,7 +391,7 @@ public class BugzillaXMLParser {
 				} catch (NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Bugzilla bug id `" + element.getText()
-						        + "` cannot be interpreted as an long. Abort parsing.");
+						             + "` cannot be interpreted as an long. Abort parsing.");
 					}
 					return;
 				}
@@ -372,7 +400,7 @@ public class BugzillaXMLParser {
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
-						        + "` cannot be interpreted as timestamp. Ignoring.");
+						            + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setCreationTimestamp(creationTime);
@@ -384,7 +412,7 @@ public class BugzillaXMLParser {
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla modification time `" + element.getText()
-						        + "` cannot be interpreted as timestamp. Ignoring.");
+						            + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setLastUpdateTimestamp(modificationTime);

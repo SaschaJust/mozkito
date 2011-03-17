@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -20,7 +22,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
@@ -30,6 +31,12 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 public class BugzillaTracker extends Tracker {
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#checkRAW(de.unisaarland
+	 * .cs.st.reposuite.bugs.tracker.RawReport)
+	 */
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
 		if (!super.checkRAW(rawReport)) {
@@ -45,6 +52,12 @@ public class BugzillaTracker extends Tracker {
 		return false;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#checkXML(de.unisaarland
+	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 */
 	@Override
 	public boolean checkXML(final XmlReport xmlReport) {
 		if (!super.checkXML(xmlReport)) {
@@ -61,10 +74,14 @@ public class BugzillaTracker extends Tracker {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#createDocument(de
+	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
+	 */
 	@Override
-	public XmlReport createDocument(final RawReport rawReport) {
-		Condition.notNull(rawReport);
-		
+	public XmlReport createDocument(@NotNull final RawReport rawReport) {
 		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
 			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
@@ -89,10 +106,14 @@ public class BugzillaTracker extends Tracker {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#parse(de.unisaarland
+	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 */
 	@Override
-	public Report parse(final XmlReport rawReport) {
-		Condition.notNull(rawReport);
-		
+	public Report parse(@NotNull final XmlReport rawReport) {
 		Report bugReport = new Report();
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("bug");
 		BugzillaXMLParser.handleRoot(bugReport, itemElement);
@@ -114,7 +135,7 @@ public class BugzillaTracker extends Tracker {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
 					} else {
 						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-								+ "`. Used uri =`" + uriString + "`.");
+						             + "`. Used uri =`" + uriString + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}

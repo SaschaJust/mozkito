@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/reposuite-core/src/main/java/core/Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/tmp/reposuite_core.log"/>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="core.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-core"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=GIT -Dheadless -Drepository.uri=file:///Users/just/jruby_git_repo_03_07_2010/git_repo_03_07_2010 -Djava.system.class.loader=net.ownhero.dev.kanuni.loader.KanuniClassloader -ea -Ddebug -Dlog.level=debug -DdisableCrashEmail=true"/>
+</launchConfiguration>

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -14,8 +17,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class JavaElementDefinitionCache. All instances extending JavaElement
@@ -52,7 +53,7 @@ public class JavaElementCache {
 	 */
 	public JavaElementCache() {
 		try {
-			this.hibernateUtil = HibernateUtil.getInstance(false);
+			this.hibernateUtil = HibernateUtil.getInstance();
 		} catch (UninitializedDatabaseException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
@@ -80,9 +81,13 @@ public class JavaElementCache {
 	 * @return the class definition
 	 */
 	public JavaElementLocation<JavaClassDefinition> getClassDefinition(@NotNull final String fullQualifiedName,
-			@NotNull final String file, final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, @NonNegative final int bodyStartLine,
-			@NotNull final String packageName) {
+	                                                                   @NotNull final String file,
+	                                                                   final JavaClassDefinition parent,
+	                                                                   @NotNegative final int startLine,
+	                                                                   @NotNegative final int endLine,
+	                                                                   @NotNegative final int position,
+	                                                                   @NotNegative final int bodyStartLine,
+	                                                                   @NotNull final String packageName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -96,8 +101,8 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+				                             "Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
+				                             + def.getPrimaryKey().toString());
 			} else {
 				def = list.get(0);
 			}
@@ -146,9 +151,11 @@ public class JavaElementCache {
 	 * @return the method call
 	 */
 	public JavaElementLocation<JavaMethodCall> getMethodCall(@NotNull final String fullQualifiedName,
-			@NotNull final List<String> signature, @NotNull final String file,
-			@NotNull final JavaElementDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position) {
+	                                                         @NotNull final List<String> signature, @NotNull final String file,
+	                                                         @NotNull final JavaElementDefinition parent,
+	                                                         @NotNegative final int startLine,
+	                                                         @NotNegative final int endLine,
+	                                                         @NotNegative final int position) {
 		
 		String cacheName = JavaMethodCall.composeFullQualifiedName(fullQualifiedName, signature);
 		JavaMethodCall call = null;
@@ -163,8 +170,8 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
-						+ call.getPrimaryKey().toString());
+				                             "Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
+				                             + call.getPrimaryKey().toString());
 			} else {
 				call = list.get(0);
 			}
@@ -201,9 +208,12 @@ public class JavaElementCache {
 	 * @return the method definition
 	 */
 	public JavaElementLocation<JavaMethodDefinition> getMethodDefinition(@NotNull final String fullQualifiedName,
-			@NotNull final List<String> signature, @NotNull final String file,
-			@NotNull final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine) {
+	                                                                     @NotNull final List<String> signature, @NotNull final String file,
+	                                                                     @NotNull final JavaClassDefinition parent,
+	                                                                     @NotNegative final int startLine,
+	                                                                     @NotNegative final int endLine,
+	                                                                     @NotNegative final int position,
+	                                                                     final int bodyStartLine) {
 		
 		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName, signature);
 		JavaMethodDefinition def = null;
@@ -219,8 +229,8 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+				                             "Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
+				                             + def.getPrimaryKey().toString());
 			} else {
 				def = list.get(0);
 			}
@@ -238,9 +248,9 @@ public class JavaElementCache {
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Trying to override parent of '" + result.getElement().getFullQualifiedName()
-							+ "'. This is not possible (already set to `"
-							+ result.getElement().getParent().getFullQualifiedName()
-							+ "`). Create new MethodDefinition first.", new RuntimeException());
+					             + "'. This is not possible (already set to `"
+					             + result.getElement().getParent().getFullQualifiedName()
+					             + "`). Create new MethodDefinition first.", new RuntimeException());
 				}
 			}
 		}

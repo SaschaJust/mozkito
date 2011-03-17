@@ -27,6 +27,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
@@ -35,7 +38,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComp
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -88,9 +90,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param comment
 	 */
 	@Transient
-	public void addComment(final Comment comment) {
-		Condition.notNull(comment);
-		Condition.notNull(this.comments);
+	public void addComment(@NotNull final Comment comment) {
+		Condition.notNull(this.comments,
+		"The container holding the comments must be initialized before adding a comment to the report.");
 		
 		boolean retval = this.comments.add(comment);
 		comment.setBugReport(this);
@@ -101,9 +103,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param historyElement
 	 */
 	@Transient
-	public void addHistoryElement(final HistoryElement historyElement) {
-		Condition.notNull(historyElement);
-		Condition.notNull(this.history);
+	public void addHistoryElement(@NotNull final HistoryElement historyElement) {
+		Condition.notNull(this.history, "The history handler must not be null when adding a history element.");
 		this.history.add(historyElement);
 		historyElement.setBugReport(this);
 	}
@@ -112,9 +113,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param sibling
 	 */
 	@Transient
-	public void addSibling(final Long sibling) {
-		Condition.notNull(sibling);
-		Condition.notNull(this.siblings);
+	public void addSibling(@NotNull final Long sibling) {
+		Condition.notNull(this.siblings, "The sibling handler must not be null when adding a sibling.");
 		this.siblings.add(sibling);
 	}
 	
@@ -175,8 +175,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
-		                                     ? getCreationTimestamp().toDate()
-		                                     : null;
+		? getCreationTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -245,8 +245,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return getLastFetch() != null
-		                             ? getLastFetch().toDate()
-		                             : null;
+		? getLastFetch().toDate()
+		: null;
 	}
 	
 	/**
@@ -257,8 +257,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
-		                                       ? getLastUpdateTimestamp().toDate()
-		                                       : null;
+		? getLastUpdateTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -318,8 +318,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
-		                                       ? getResolutionTimestamp().toDate()
-		                                       : null;
+		? getResolutionTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -471,8 +471,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		this.creationTimestamp = creationTimestamp != null
-		                                                  ? new DateTime(creationTimestamp)
-		                                                  : null;
+		? new DateTime(creationTimestamp)
+		: null;
 	}
 	
 	/**
@@ -537,8 +537,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		this.lastFetch = lastFetch != null
-		                                  ? new DateTime(lastFetch)
-		                                  : null;
+		? new DateTime(lastFetch)
+		: null;
 	}
 	
 	/**
@@ -547,8 +547,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
 		this.lastUpdateTimestamp = date != null
-		                                       ? new DateTime(date)
-		                                       : null;
+		? new DateTime(date)
+		: null;
 	}
 	
 	/**
@@ -600,8 +600,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
 		this.resolutionTimestamp = date != null
-		                                       ? new DateTime(date)
-		                                       : null;
+		? new DateTime(date)
+		: null;
 	}
 	
 	/**
@@ -705,28 +705,28 @@ public class Report implements Annotated, Comparable<Report> {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		        + this.id
-		        + ", assignedTo="
-		        + getAssignedTo()
-		        + ", category="
-		        + this.category
-		        + ", comments="
-		        + (this.comments != null
-		                                ? this.comments.size()
-		                                : 0)
-		        + ", description="
-		        + this.description.substring(0,
-		                                     this.description.length() > 10
-		                                                                   ? 10
-		                                                                   : Math.max(this.description.length() - 1, 0))
-		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
-		        + ", submitter=" + getSubmitter() + ", subject="
-		        + this.subject.substring(0, this.subject.length() > 10
-		                                                              ? 10
-		                                                              : Math.max(this.subject.length() - 1, 0))
-		        + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
-		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
-		        + "]";
+		+ this.id
+		+ ", assignedTo="
+		+ getAssignedTo()
+		+ ", category="
+		+ this.category
+		+ ", comments="
+		+ (this.comments != null
+				? this.comments.size()
+				: 0)
+				+ ", description="
+				+ this.description.substring(0,
+				                             this.description.length() > 10
+				                             ? 10
+				                             : Math.max(this.description.length() - 1, 0))
+				                             + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+				                             + ", submitter=" + getSubmitter() + ", subject="
+				                             + this.subject.substring(0, this.subject.length() > 10
+				                                                      ? 10
+				                                                      : Math.max(this.subject.length() - 1, 0))
+				                                                      + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
+				                                                      + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
+				                                                      + "]";
 	}
 	
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
@@ -13,7 +15,6 @@ import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class GitLogParser.
@@ -71,14 +72,14 @@ class GitLogParser {
 				String[] commitParts = line.split(" ");
 				if (commitParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-							+ ". Abort parsing.");
+					                             + ". Abort parsing.");
 				}
 				currentID = commitParts[1].trim();
 			} else if (line.startsWith("Author:")) {
 				String[] authorParts = line.split(":");
 				if (authorParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-							+ ". Abort parsing.");
+					                             + ". Abort parsing.");
 				}
 				String username = null;
 				String fullname = null;
@@ -99,7 +100,7 @@ class GitLogParser {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-							+ ". Abort parsing.");
+					                             + ". Abort parsing.");
 				}
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {

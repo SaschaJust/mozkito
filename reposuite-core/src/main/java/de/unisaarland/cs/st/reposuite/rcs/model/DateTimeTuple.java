@@ -10,17 +10,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Embeddable
 public class DateTimeTuple implements Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = 8037500943691455328L;
 	private DateTime          oldValue;
 	private DateTime          newValue;
@@ -36,10 +37,8 @@ public class DateTimeTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public DateTimeTuple(final Date oldValue, final Date newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(new DateTime(oldValue));
 		setNewValue(new DateTime(newValue));
 	}
@@ -48,10 +47,8 @@ public class DateTimeTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public DateTimeTuple(final DateTime oldValue, final DateTime newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}

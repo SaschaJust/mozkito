@@ -17,14 +17,16 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class FileUtils.
@@ -114,10 +116,16 @@ public class FileUtils {
 		}
 	}
 	
+	/**
+	 * @param srcFile
+	 * @param destDir
+	 * @throws IOException
+	 */
 	@NoneNull
 	public static void copyFileToDirectory(final File srcFile,
 	                                       final File destDir,
 	                                       final FileShutdownAction shutdownAction) throws IOException {
+		
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 		
 		String filename = srcFile.getName();
@@ -146,6 +154,7 @@ public class FileUtils {
 	public static File createDir(final File parentDir,
 	                             final String name,
 	                             final FileShutdownAction shutdownAction) {
+		
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
 		} catch (FilePermissionException e) {
@@ -204,6 +213,7 @@ public class FileUtils {
 	                                   final String prefix,
 	                                   final String suffix,
 	                                   final FileShutdownAction shutdownAction) {
+		
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
@@ -238,9 +248,11 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final String prefix,
+	                                   
 	                                   final String suffix,
 	                                   final FileShutdownAction shutdownAction) {
 		return createRandomDir(tmpDir, prefix, suffix, shutdownAction);
+		
 	}
 	
 	/**
@@ -287,7 +299,9 @@ public class FileUtils {
 	 */
 	public static void ensureFilePermissions(@NotNull final File file,
 	                                         int permissions) throws FilePermissionException {
-		Condition.less(permissions, getMAX_PERM());
+		CompareCondition.less(permissions, getMAX_PERM(),
+		"Filepermission alias must be less then the maximum known alias bitmask.");
+		
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");

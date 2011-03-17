@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -50,11 +53,9 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DiffUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.InsertDelta;
@@ -77,7 +78,7 @@ public class PPAUtils {
 		private IFile            iFile;
 		
 		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
-		        final PPAOptions options) {
+		                  final PPAOptions options) {
 			this.project = project;
 			this.file = file;
 			this.packagename = packagename;
@@ -116,6 +117,12 @@ public class PPAUtils {
 			}
 		}
 		
+	}
+	
+	public static void cleanupWorkspace() throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		workspace.getRoot().clearHistory(new NullProgressMonitor());
 	}
 	
 	/**
@@ -161,7 +168,7 @@ public class PPAUtils {
 		
 		for (RCSRevision revision : changedFilePaths.keySet()) {
 			String changedPath = changedFilePaths.get(revision);
-
+			
 			switch (revision.getChangeType()) {
 				case Added:
 					JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newRevs2CUs.get(revision),
@@ -217,472 +224,7 @@ public class PPAUtils {
 			}
 			
 		}
-
-	}
-	
-	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
-	                                                                        final RCSTransaction transaction,
-	                                                                        Map<RCSRevision, String> changedFilePaths) {
-		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
-		Map<File, RCSRevision> files2Revisions = new HashMap<File, RCSRevision>();
 		
-		File oldCheckoutFile = repository.checkoutPath("/", transaction.getId());
-		if (!oldCheckoutFile.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
-				        + ". Ignoring!");
-			}
-			return result;
-		}
-		
-		List<File> filesToAnalyze = new LinkedList<File>();
-		for (RCSRevision rev : changedFilePaths.keySet()) {
-			String changedFileName = changedFilePaths.get(rev);
-			File tmpFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedFileName);
-			if (!tmpFile.exists()) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find checked out file " + tmpFile.getAbsolutePath()
-					        + " (might be added in next revision?)");
-				}
-				continue;
-			}
-			files2Revisions.put(tmpFile, rev);
-			filesToAnalyze.add(tmpFile);
-		}
-		
-		Map<File, CompilationUnit> cus = PPAUtils.getCUs(filesToAnalyze, new PPAOptions());
-		for (File file : cus.keySet()) {
-			result.put(files2Revisions.get(file), cus.get(file));
-		}
-		return result;
-	}
-	
-	/**
-	 * Gets the cU.
-	 * 
-	 * @param file
-	 *            the file
-	 * @param options
-	 *            the options
-	 * @return the cU
-	 */
-	public static CompilationUnit getCU(final File file,
-	                                    final PPAOptions options) {
-		return getCU(file, options, Thread.currentThread().getName());
-	}
-	
-	/**
-	 * Gets the cU.
-	 * 
-	 * @param file
-	 *            the file
-	 * @param options
-	 *            the options
-	 * @param requestName
-	 *            the request name
-	 * @return the cU
-	 */
-	public static CompilationUnit getCU(final File file,
-	                                    final PPAOptions options,
-	                                    final String requestName) {
-		CompilationUnit cu = null;
-		String fileName = file.getName();
-		
-		try {
-			String packageName = getPackageFromFile(file);
-			IJavaProject javaProject = getProject(requestName);
-			
-			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName, options);
-			
-			// IFile newFile =
-			// PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(),
-			// file, packageName, fileName);
-			
-			copyThread.start();
-			
-			copyThread.join(120000);
-			cu = copyThread.getCompilationUnit();
-			if (cu == null) {
-				IFile ifile = copyThread.getIFile();
-				if (ifile == null) {
-					if (Logger.logError()) {
-						Logger.error("Error while getting IFile from PPA. Timeout copy to workspace exceeded.");
-					}
-				} else {
-					if (Logger.logError()) {
-						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded. Trying without PPA");
-					}
-					return getCUNoPPA(ifile);
-				}
-				return null;
-			}
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error("Error while getting CU from PPA", e);
-			}
-		}
-		
-		return cu;
-	}
-	
-	/**
-	 * Gets the cU.
-	 * 
-	 * @param file
-	 *            the file
-	 * @param options
-	 *            the options
-	 * @return the cU
-	 */
-	public static CompilationUnit getCU(final IFile file,
-	                                    final PPAOptions options) {
-		CompilationUnit cu = null;
-		try {
-			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
-			PPATypeRegistry registry = new PPATypeRegistry((JavaProject) JavaCore.create(icu.getUnderlyingResource()
-			                                                                                .getProject()));
-			ASTNode node = null;
-			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
-			parser2.setStatementsRecovery(true);
-			parser2.setResolveBindings(true);
-			parser2.setSource(icu);
-			node = parser2.createAST(null);
-			PPAEngine ppaEngine = new PPAEngine(registry, options);
-			
-			cu = (CompilationUnit) node;
-			
-			ppaEngine.addUnitToProcess(cu);
-			ppaEngine.doPPA();
-			ppaEngine.reset();
-		} catch (JavaModelException jme) {
-			// Retry with the file version.
-			if (Logger.logWarn()) {
-				Logger.warn("Warning while getting CU from PPA");
-			}
-			if (Logger.logDebug()) {
-				Logger.debug("Exception", jme);
-			}
-			cu = getCU(file.getLocation().toFile(), options);
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error("Error while getting CU from PPA", e);
-			}
-		}
-		
-		return cu;
-	}
-	
-	/**
-	 * Gets the cU no ppa.
-	 * 
-	 * @param file
-	 *            the file
-	 * @return the cU no ppa
-	 */
-	public static CompilationUnit getCUNoPPA(final IFile file) {
-		CompilationUnit cu = null;
-		try {
-			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
-			ASTNode node = null;
-			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
-			parser2.setStatementsRecovery(true);
-			parser2.setResolveBindings(true);
-			parser2.setSource(icu);
-			node = parser2.createAST(null);
-			cu = (CompilationUnit) node;
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error("Error while getting CU without PPA", e);
-			}
-		}
-		
-		return cu;
-	}
-	
-	/**
-	 * Gets the c us.
-	 * 
-	 * @param files
-	 *            the files
-	 * @param options
-	 *            the options
-	 * @return the c us
-	 */
-	public static Map<File, CompilationUnit> getCUs(final List<File> files,
-	                                                final PPAOptions options) {
-		return getCUs(files, options, Thread.currentThread().getName());
-	}
-	
-	/**
-	 * Gets the c us.
-	 * 
-	 * @param files
-	 *            the files
-	 * @param options
-	 *            the options
-	 * @param requestName
-	 *            the request name
-	 * @return the c us
-	 */
-	public static Map<File, CompilationUnit> getCUs(final List<File> files,
-	                                                final PPAOptions options,
-	                                                final String requestName) {
-		Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
-		Map<IFile, File> iFiles = new HashMap<IFile, File>();
-		try {
-			cleanupWorkspace();
-		} catch (CoreException e1) {
-			if (Logger.logWarn()) {
-				Logger.warn(e1.getMessage(), e1);
-			}
-		}
-		for (File file : files) {
-			String fileName = file.getName();
-			try {
-				String packageName = getPackageFromFile(file);
-				IJavaProject javaProject = getProject(requestName);
-				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-				                                                   fileName);
-				iFiles.put(newFile, file);
-			} catch (Exception e) {
-				if (Logger.logError()) {
-					Logger.error("Error while getting IFile from PPA", e);
-				}
-			}
-		}
-		
-		for (IFile iFile : iFiles.keySet()) {
-			if (Logger.logDebug()) {
-				Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
-			}
-			CompilationUnit cu = getCU(iFile, options);
-			if (cu == null) {
-				cu = getCUNoPPA(iFile);
-			}
-			cus.put(iFiles.get(iFile), cu);
-		}
-
-		return cus;
-	}
-	
-	/**
-	 * Gets the java element locations by file.
-	 * 
-	 * @param file
-	 *            the file
-	 * @param filePrefixPath
-	 *            the file prefix path
-	 * @param packageFilter
-	 *            the package filter
-	 * @return the java element locations by file
-	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File file,
-	                                                                 final String filePrefixPath,
-	                                                                 final String[] packageFilter) {
-		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
-		PPAOptions ppaOptions = new PPAOptions();
-		
-		JavaElementCache elemCache = new JavaElementCache();
-		
-		if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
-			if (Logger.logError()) {
-				Logger.error("File name does not start with specified filePrefixPath");
-			}
-		} else {
-			
-			CompilationUnit cu = getCU(file, ppaOptions);
-			if (cu != null) {
-				
-				String relativePath = file.getAbsolutePath().substring(filePrefixPath.length());
-				if (relativePath.startsWith(FileUtils.fileSeparator)) {
-					relativePath = relativePath.substring(1);
-				}
-				
-				PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
-				typeVisitor.registerVisitor(methodCallVisitor);
-				cu.accept(typeVisitor);
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Could not analyze file " + file.getAbsolutePath()
-					        + ". CompilationUnit cannot be created. Skipping ... ");
-				}
-			}
-		}
-		return elemCache.getJavaElementLocations();
-	}
-	
-	/**
-	 * Gets the java element locations by file.
-	 * 
-	 * @param file
-	 *            the file
-	 * @param filePrefixPath
-	 *            the file prefix path
-	 * @param packageFilter
-	 *            the package filter
-	 * @return the java element locations by file
-	 */
-	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
-	                                                               String relativePath,
-	                                                               final String[] packageFilter) {
-		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
-		
-		JavaElementCache elemCache = new JavaElementCache();
-		
-		if (cu != null) {
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
-			typeVisitor.registerVisitor(methodCallVisitor);
-			cu.accept(typeVisitor);
-		} else {
-			if (Logger.logError()) {
-				Logger.error("Could not analyze file " + relativePath
-				        + ". CompilationUnit cannot be created. Skipping ... ");
-			}
-		}
-		return elemCache.getJavaElementLocations();
-	}
-	
-	/**
-	 * Gets the java method elements of all java files within
-	 * <code>sourceDir</code>.
-	 * 
-	 * @param sourceDir
-	 *            the source dir
-	 * @param packageFilter
-	 *            the package filter
-	 * @return the java method elements
-	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
-	                                                                 final String[] packageFilter) {
-		
-		try {
-			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
-			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter);
-		} catch (IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return new JavaElementLocations();
-	}
-	
-	/**
-	 * Gets the java method elements of all files covered by the iterator.
-	 * 
-	 * @param fileIterator
-	 *            the file iterator
-	 * @param filePrefixPath
-	 *            the file prefix path
-	 * @param packageFilter
-	 *            the package filter
-	 * @return the java method elements
-	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
-	                                                                 final String filePrefixPath,
-	                                                                 final String[] packageFilter) {
-		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
-		PPAOptions ppaOptions = new PPAOptions();
-		
-		JavaElementCache elemCache = new JavaElementCache();
-		
-		while (fileIterator.hasNext()) {
-			File file = fileIterator.next();
-			CompilationUnit cu = getCU(file, ppaOptions);
-			if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
-				if (Logger.logError()) {
-					Logger.error("File name does not start with specified filePrefixPath");
-				}
-				continue;
-			}
-			if (cu == null) {
-				if (Logger.logError()) {
-					Logger.error("Could not analyze file " + file.getAbsolutePath()
-					        + ". CompilationUnit cannot be created. Skipping ... ");
-				}
-				continue;
-			}
-
-			String relativePath = file.getAbsolutePath().substring(filePrefixPath.length());
-			if (relativePath.startsWith(FileUtils.fileSeparator)) {
-				relativePath = relativePath.substring(1);
-			}
-			
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
-			typeVisitor.registerVisitor(methodCallVisitor);
-			cu.accept(typeVisitor);
-		}
-		
-		return elemCache.getJavaElementLocations();
-	}
-	
-	/**
-	 * Gets the package from file.
-	 * 
-	 * @param file
-	 *            the file
-	 * @return the package from file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static String getPackageFromFile(final File file) throws IOException {
-		String packageName = "";
-		PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
-		parser2.setStatementsRecovery(true);
-		parser2.setResolveBindings(true);
-		parser2.setSource(PPAResourceUtil.getContent(file).toCharArray());
-		CompilationUnit cu = (CompilationUnit) parser2.createAST(null);
-		PackageDeclaration pDec = cu.getPackage();
-		if (pDec != null) {
-			packageName = pDec.getName().getFullyQualifiedName();
-		}
-		return packageName;
-	}
-	
-	public static void cleanupWorkspace() throws CoreException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-		workspace.getRoot().clearHistory(new NullProgressMonitor());
-	}
-
-	/**
-	 * Gets the project.
-	 * 
-	 * @param name
-	 *            the name
-	 * @return the project
-	 */
-	private static IJavaProject getProject(final String name) {
-		IJavaProject project = null;
-		try {
-			IProject javaProject = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (!javaProject.exists()) {
-				javaProject.create(new NullProgressMonitor());
-				javaProject.open(IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
-				IProjectDescription description = javaProject.getDescription();
-				String[] natures = description.getNatureIds();
-				String[] newNatures = new String[natures.length + 1];
-				System.arraycopy(natures, 0, newNatures, 0, natures.length);
-				newNatures[natures.length] = JavaCore.NATURE_ID;
-				description.setNatureIds(newNatures);
-				javaProject.setDescription(description, new NullProgressMonitor());
-				
-				project = JavaCore.create(javaProject);
-			} else {
-				project = (IJavaProject) javaProject.getNature(JavaCore.NATURE_ID);
-			}
-			if (!javaProject.isOpen()) {
-				javaProject.open(IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
-			}
-			IFolder folder = javaProject.getFolder("src");
-			if (!folder.exists()) {
-				folder.create(true, true, new NullProgressMonitor());
-			}
-		} catch (CoreException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return project;
 	}
 	
 	/**
@@ -819,7 +361,7 @@ public class PPAUtils {
 						TreeSet<JavaElementLocation<JavaMethodCall>> delSet = removeCallCandidates.get(addedCallId);
 						TreeSet<JavaElementLocation<JavaMethodCall>> addSet = addCallCandidates.get(addedCallId);
 						for (JavaElementLocation<JavaMethodCall> addedCall : new TreeSet<JavaElementLocation<JavaMethodCall>>(
-						                                                                                                      addCallCandidates.get(addedCallId))) {
+								addCallCandidates.get(addedCallId))) {
 							JavaElementLocation<JavaMethodCall> ceiling = delSet.ceiling(addedCall);
 							JavaElementLocation<JavaMethodCall> floor = delSet.floor(addedCall);
 							if ((ceiling != null) || (floor != null)) {
@@ -878,6 +420,465 @@ public class PPAUtils {
 				visitor.visit(op);
 			}
 		}
+	}
+	
+	/**
+	 * Gets the cU.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param options
+	 *            the options
+	 * @return the cU
+	 */
+	public static CompilationUnit getCU(final File file,
+	                                    final PPAOptions options) {
+		return getCU(file, options, Thread.currentThread().getName());
+	}
+	
+	/**
+	 * Gets the cU.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param options
+	 *            the options
+	 * @param requestName
+	 *            the request name
+	 * @return the cU
+	 */
+	public static CompilationUnit getCU(final File file,
+	                                    final PPAOptions options,
+	                                    final String requestName) {
+		CompilationUnit cu = null;
+		String fileName = file.getName();
+		
+		try {
+			String packageName = getPackageFromFile(file);
+			IJavaProject javaProject = getProject(requestName);
+			
+			CopyThread copyThread = new CopyThread(javaProject.getProject(), file, packageName, fileName, options);
+			
+			// IFile newFile =
+			// PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(),
+			// file, packageName, fileName);
+			
+			copyThread.start();
+			
+			copyThread.join(120000);
+			cu = copyThread.getCompilationUnit();
+			if (cu == null) {
+				IFile ifile = copyThread.getIFile();
+				if (ifile == null) {
+					if (Logger.logError()) {
+						Logger.error("Error while getting IFile from PPA. Timeout copy to workspace exceeded.");
+					}
+				} else {
+					if (Logger.logError()) {
+						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded. Trying without PPA");
+					}
+					return getCUNoPPA(ifile);
+				}
+				return null;
+			}
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error("Error while getting CU from PPA", e);
+			}
+		}
+		
+		return cu;
+	}
+	
+	/**
+	 * Gets the cU.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param options
+	 *            the options
+	 * @return the cU
+	 */
+	public static CompilationUnit getCU(final IFile file,
+	                                    final PPAOptions options) {
+		CompilationUnit cu = null;
+		try {
+			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
+			PPATypeRegistry registry = new PPATypeRegistry((JavaProject) JavaCore.create(icu.getUnderlyingResource()
+			                                                                             .getProject()));
+			ASTNode node = null;
+			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+			parser2.setStatementsRecovery(true);
+			parser2.setResolveBindings(true);
+			parser2.setSource(icu);
+			node = parser2.createAST(null);
+			PPAEngine ppaEngine = new PPAEngine(registry, options);
+			
+			cu = (CompilationUnit) node;
+			
+			ppaEngine.addUnitToProcess(cu);
+			ppaEngine.doPPA();
+			ppaEngine.reset();
+		} catch (JavaModelException jme) {
+			// Retry with the file version.
+			if (Logger.logWarn()) {
+				Logger.warn("Warning while getting CU from PPA");
+			}
+			if (Logger.logDebug()) {
+				Logger.debug("Exception", jme);
+			}
+			cu = getCU(file.getLocation().toFile(), options);
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error("Error while getting CU from PPA", e);
+			}
+		}
+		
+		return cu;
+	}
+	
+	/**
+	 * Gets the cU no ppa.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the cU no ppa
+	 */
+	public static CompilationUnit getCUNoPPA(final IFile file) {
+		CompilationUnit cu = null;
+		try {
+			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
+			ASTNode node = null;
+			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+			parser2.setStatementsRecovery(true);
+			parser2.setResolveBindings(true);
+			parser2.setSource(icu);
+			node = parser2.createAST(null);
+			cu = (CompilationUnit) node;
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error("Error while getting CU without PPA", e);
+			}
+		}
+		
+		return cu;
+	}
+	
+	/**
+	 * Gets the c us.
+	 * 
+	 * @param files
+	 *            the files
+	 * @param options
+	 *            the options
+	 * @return the c us
+	 */
+	public static Map<File, CompilationUnit> getCUs(final List<File> files,
+	                                                final PPAOptions options) {
+		return getCUs(files, options, Thread.currentThread().getName());
+	}
+	
+	/**
+	 * Gets the c us.
+	 * 
+	 * @param files
+	 *            the files
+	 * @param options
+	 *            the options
+	 * @param requestName
+	 *            the request name
+	 * @return the c us
+	 */
+	public static Map<File, CompilationUnit> getCUs(final List<File> files,
+	                                                final PPAOptions options,
+	                                                final String requestName) {
+		Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
+		Map<IFile, File> iFiles = new HashMap<IFile, File>();
+		try {
+			cleanupWorkspace();
+		} catch (CoreException e1) {
+			if (Logger.logWarn()) {
+				Logger.warn(e1.getMessage(), e1);
+			}
+		}
+		for (File file : files) {
+			String fileName = file.getName();
+			try {
+				String packageName = getPackageFromFile(file);
+				IJavaProject javaProject = getProject(requestName);
+				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
+				                                                   fileName);
+				iFiles.put(newFile, file);
+			} catch (Exception e) {
+				if (Logger.logError()) {
+					Logger.error("Error while getting IFile from PPA", e);
+				}
+			}
+		}
+		
+		for (IFile iFile : iFiles.keySet()) {
+			if (Logger.logDebug()) {
+				Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
+			}
+			CompilationUnit cu = getCU(iFile, options);
+			if (cu == null) {
+				cu = getCUNoPPA(iFile);
+			}
+			cus.put(iFiles.get(iFile), cu);
+		}
+		
+		return cus;
+	}
+	
+	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
+	                                                                        final RCSTransaction transaction,
+	                                                                        final Map<RCSRevision, String> changedFilePaths) {
+		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
+		Map<File, RCSRevision> files2Revisions = new HashMap<File, RCSRevision>();
+		
+		File oldCheckoutFile = repository.checkoutPath("/", transaction.getId());
+		if (!oldCheckoutFile.exists()) {
+			if (Logger.logError()) {
+				Logger.error("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
+				             + ". Ignoring!");
+			}
+			return result;
+		}
+		
+		List<File> filesToAnalyze = new LinkedList<File>();
+		for (RCSRevision rev : changedFilePaths.keySet()) {
+			String changedFileName = changedFilePaths.get(rev);
+			File tmpFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedFileName);
+			if (!tmpFile.exists()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find checked out file " + tmpFile.getAbsolutePath()
+					             + " (might be added in next revision?)");
+				}
+				continue;
+			}
+			files2Revisions.put(tmpFile, rev);
+			filesToAnalyze.add(tmpFile);
+		}
+		
+		Map<File, CompilationUnit> cus = PPAUtils.getCUs(filesToAnalyze, new PPAOptions());
+		for (File file : cus.keySet()) {
+			result.put(files2Revisions.get(file), cus.get(file));
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the java element locations by file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param filePrefixPath
+	 *            the file prefix path
+	 * @param packageFilter
+	 *            the package filter
+	 * @return the java element locations by file
+	 */
+	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
+	                                                               final String relativePath,
+	                                                               final String[] packageFilter) {
+		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
+		
+		JavaElementCache elemCache = new JavaElementCache();
+		
+		if (cu != null) {
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+			typeVisitor.registerVisitor(methodCallVisitor);
+			cu.accept(typeVisitor);
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Could not analyze file " + relativePath
+				             + ". CompilationUnit cannot be created. Skipping ... ");
+			}
+		}
+		return elemCache.getJavaElementLocations();
+	}
+	
+	/**
+	 * Gets the java element locations by file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param filePrefixPath
+	 *            the file prefix path
+	 * @param packageFilter
+	 *            the package filter
+	 * @return the java element locations by file
+	 */
+	public static JavaElementLocations getJavaElementLocationsByFile(final File file,
+	                                                                 final String filePrefixPath,
+	                                                                 final String[] packageFilter) {
+		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
+		PPAOptions ppaOptions = new PPAOptions();
+		
+		JavaElementCache elemCache = new JavaElementCache();
+		
+		if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
+			if (Logger.logError()) {
+				Logger.error("File name does not start with specified filePrefixPath");
+			}
+		} else {
+			
+			CompilationUnit cu = getCU(file, ppaOptions);
+			if (cu != null) {
+				
+				String relativePath = file.getAbsolutePath().substring(filePrefixPath.length());
+				if (relativePath.startsWith(FileUtils.fileSeparator)) {
+					relativePath = relativePath.substring(1);
+				}
+				
+				PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+				typeVisitor.registerVisitor(methodCallVisitor);
+				cu.accept(typeVisitor);
+			} else {
+				if (Logger.logError()) {
+					Logger.error("Could not analyze file " + file.getAbsolutePath()
+					             + ". CompilationUnit cannot be created. Skipping ... ");
+				}
+			}
+		}
+		return elemCache.getJavaElementLocations();
+	}
+	
+	/**
+	 * Gets the java method elements of all java files within
+	 * <code>sourceDir</code>.
+	 * 
+	 * @param sourceDir
+	 *            the source dir
+	 * @param packageFilter
+	 *            the package filter
+	 * @return the java method elements
+	 */
+	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
+	                                                                 final String[] packageFilter) {
+		
+		try {
+			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
+			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter);
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		return new JavaElementLocations();
+	}
+	
+	/**
+	 * Gets the java method elements of all files covered by the iterator.
+	 * 
+	 * @param fileIterator
+	 *            the file iterator
+	 * @param filePrefixPath
+	 *            the file prefix path
+	 * @param packageFilter
+	 *            the package filter
+	 * @return the java method elements
+	 */
+	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
+	                                                                 final String filePrefixPath,
+	                                                                 final String[] packageFilter) {
+		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
+		PPAOptions ppaOptions = new PPAOptions();
+		
+		JavaElementCache elemCache = new JavaElementCache();
+		
+		while (fileIterator.hasNext()) {
+			File file = fileIterator.next();
+			CompilationUnit cu = getCU(file, ppaOptions);
+			if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
+				if (Logger.logError()) {
+					Logger.error("File name does not start with specified filePrefixPath");
+				}
+				continue;
+			}
+			if (cu == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not analyze file " + file.getAbsolutePath()
+					             + ". CompilationUnit cannot be created. Skipping ... ");
+				}
+				continue;
+			}
+			
+			String relativePath = file.getAbsolutePath().substring(filePrefixPath.length());
+			if (relativePath.startsWith(FileUtils.fileSeparator)) {
+				relativePath = relativePath.substring(1);
+			}
+			
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+			typeVisitor.registerVisitor(methodCallVisitor);
+			cu.accept(typeVisitor);
+		}
+		
+		return elemCache.getJavaElementLocations();
+	}
+	
+	/**
+	 * Gets the package from file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the package from file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static String getPackageFromFile(final File file) throws IOException {
+		String packageName = "";
+		PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+		parser2.setStatementsRecovery(true);
+		parser2.setResolveBindings(true);
+		parser2.setSource(PPAResourceUtil.getContent(file).toCharArray());
+		CompilationUnit cu = (CompilationUnit) parser2.createAST(null);
+		PackageDeclaration pDec = cu.getPackage();
+		if (pDec != null) {
+			packageName = pDec.getName().getFullyQualifiedName();
+		}
+		return packageName;
+	}
+	
+	/**
+	 * Gets the project.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return the project
+	 */
+	private static IJavaProject getProject(final String name) {
+		IJavaProject project = null;
+		try {
+			IProject javaProject = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (!javaProject.exists()) {
+				javaProject.create(new NullProgressMonitor());
+				javaProject.open(IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
+				IProjectDescription description = javaProject.getDescription();
+				String[] natures = description.getNatureIds();
+				String[] newNatures = new String[natures.length + 1];
+				System.arraycopy(natures, 0, newNatures, 0, natures.length);
+				newNatures[natures.length] = JavaCore.NATURE_ID;
+				description.setNatureIds(newNatures);
+				javaProject.setDescription(description, new NullProgressMonitor());
+				
+				project = JavaCore.create(javaProject);
+			} else {
+				project = (IJavaProject) javaProject.getNature(JavaCore.NATURE_ID);
+			}
+			if (!javaProject.isOpen()) {
+				javaProject.open(IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
+			}
+			IFolder folder = javaProject.getFolder("src");
+			if (!folder.exists()) {
+				folder.create(true, true, new NullProgressMonitor());
+			}
+		} catch (CoreException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+		return project;
 	}
 	
 }

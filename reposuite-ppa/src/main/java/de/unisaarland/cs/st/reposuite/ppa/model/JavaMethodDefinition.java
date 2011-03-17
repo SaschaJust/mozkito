@@ -9,13 +9,14 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class JavaMethodDefinition.
@@ -40,7 +41,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 * @return the string
 	 */
 	public static String composeFullQualifiedName(final JavaClassDefinition parent, final String methodName,
-			final List<String> signature) {
+	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(parent.getFullQualifiedName());
@@ -80,7 +81,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the parent
 	 */
 	protected JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
-			@NotNull final JavaClassDefinition parent) {
+	                               @NotNull final JavaClassDefinition parent) {
 		
 		super(fullQualifiedName, parent);
 		this.setSignature(new ArrayList<String>(signature));

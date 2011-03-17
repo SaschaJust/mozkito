@@ -27,6 +27,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
@@ -37,9 +40,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
@@ -72,7 +73,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	public static RCSTransaction createTransaction(final String id, final String message, final DateTime timestamp,
-			final Person author, final String originalId) {
+	                                               final Person author, final String originalId) {
 		return new RCSTransaction(id, message, timestamp, author, originalId);
 	}
 	
@@ -121,7 +122,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
-			final String originalId) {
+	                         final String originalId) {
 		Condition.notNull(id, "id must not be null");
 		Condition.notNull(message, "message must not be null");
 		Condition.notNull(timestamp, "timestamp must not be null");
@@ -328,7 +329,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		if (branch.getEnd().equals(this)) {
 			return getChildren().isEmpty()
 			? null
-					: getChildren().iterator().next();
+			: getChildren().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(this.children, new Predicate() {
 				
@@ -374,7 +375,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private Date getJavaTimestamp() {
 		return getTimestamp() != null
 		? getTimestamp().toDate()
-				: null;
+		: null;
 	}
 	
 	/**
@@ -400,7 +401,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		if (branch.getBegin().equals(this)) {
 			return getParents().isEmpty()
 			? null
-					: getParents().iterator().next();
+			: getParents().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(this.parents, new Predicate() {
 				

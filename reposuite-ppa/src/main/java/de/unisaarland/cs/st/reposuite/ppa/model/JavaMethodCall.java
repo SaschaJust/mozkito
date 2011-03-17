@@ -9,12 +9,13 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.conditions.StringCondition;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 /**
  * The Class JavaMethodCall.
@@ -26,7 +27,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2885710604331995125L;
-
+	
 	/**
 	 * Compose full qualified name.
 	 * 
@@ -81,9 +82,10 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		this.signature = new ArrayList<String>(signature);
 		this.setFullQualifiedName(composeFullQualifiedName(fullQualifiedName, signature));
 		int index = fullQualifiedName.lastIndexOf(".");
-		Condition.check(index < fullQualifiedName.length(),
-				"Could not determine called class name. Last index of `.` is not less than length of string: "
-				+ fullQualifiedName);
+		StringCondition.minLength(fullQualifiedName,
+		                          index + 1,
+		                          "Could not determine called class name. Last index of `.` is not less than length of string: %s",
+		                          fullQualifiedName);
 		this.calledPackageName = fullQualifiedName.substring(0, index);
 		this.calledClassName = fullQualifiedName.substring(index+1, fullQualifiedName.length());
 		

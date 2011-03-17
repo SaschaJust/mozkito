@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -43,7 +47,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -57,7 +60,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public class GoogleTracker extends Tracker {
 	
 	protected static Regex        fetchRegex    = new Regex(
-	                                                    "https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
+	"https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
 	private String                projectName;
 	private ProjectHostingService service;
 	
@@ -96,7 +99,8 @@ public class GoogleTracker extends Tracker {
 	 */
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
-		Condition.check(rawReport instanceof GoogleRawContent);
+		Condition.check(rawReport instanceof GoogleRawContent,
+		"The rawReport has to be an instance of GoogleRawContent.");
 		return (GoogleRawContent) rawReport;
 	}
 	
@@ -115,7 +119,7 @@ public class GoogleTracker extends Tracker {
 			IssuesFeed resultFeed = this.service.query(iQuery, IssuesFeed.class);
 			List<IssuesEntry> entries = resultFeed.getEntries();
 			
-			Condition.check(entries.size() == 1);
+			CollectionCondition.minSize(entries, 1, "There has to be at least one entry in the issue list.");
 			
 			IssuesEntry issuesEntry = entries.get(0);
 			
@@ -182,7 +186,8 @@ public class GoogleTracker extends Tracker {
 	 */
 	@Override
 	public Report parse(final XmlReport xmlReport) {
-		Condition.check(xmlReport instanceof GoogleRawContent);
+		Condition.check(xmlReport instanceof GoogleRawContent,
+		"The xmlReport has to be an instance of GoogleRawContent.");
 		
 		GoogleRawContent issue = (GoogleRawContent) xmlReport;
 		Report report = new Report();
@@ -210,7 +215,7 @@ public class GoogleTracker extends Tracker {
 				report.setPriority(Priority.UNKNOWN);
 				if (Logger.logWarn()) {
 					Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-							+ "`. Setting prioroty to UNKNOWN.");
+					            + "`. Setting prioroty to UNKNOWN.");
 				}
 			}
 		}
@@ -299,7 +304,7 @@ public class GoogleTracker extends Tracker {
 			report.setType(Type.UNKNOWN);
 			if (Logger.logWarn()) {
 				Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
-				        + "`. Setting type to UNKNOWN.");
+				            + "`. Setting type to UNKNOWN.");
 			}
 		}
 		report.setVersion(issue.getVersion());
@@ -319,7 +324,7 @@ public class GoogleTracker extends Tracker {
 			
 			try {
 				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/"
-						+ report.getId() + "/comments/full/" + (++counter));
+				                      + report.getId() + "/comments/full/" + (++counter));
 				ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
 				IssueCommentsEntry commentEntry = service.getEntry(feedUrl, IssueCommentsEntry.class);
 				TextContent textContent = (TextContent) commentEntry.getContent();
@@ -330,7 +335,7 @@ public class GoogleTracker extends Tracker {
 				}
 				com.google.gdata.data.DateTime published = commentEntry.getPublished();
 				DateTime createDate = new DateTime(published.getValue(), DateTimeZone.forOffsetHours(published
-				        .getTzShift()));
+				                                                                                     .getTzShift()));
 				
 				Person author = unknownPerson;
 				List<com.google.gdata.data.Person> authors = commentEntry.getAuthors();
@@ -415,7 +420,7 @@ public class GoogleTracker extends Tracker {
 					
 					if (updates.getOwnerUpdate() != null) {
 						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
-						        .getValue(), null, null));
+						                                                              .getValue(), null, null));
 					}
 					
 					if (updates.getStatus() != null) {
@@ -504,16 +509,17 @@ public class GoogleTracker extends Tracker {
 	 */
 	@Override
 	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	        throws InvalidParameterException {
+	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
 		Condition.check(groups != null,
-				"Google code fetch uri should have the following format: " + fetchRegex.getPattern());
+		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
 		Condition.check(groups.size() == 2,
-				"Google code fetch uri should have the following format: " + fetchRegex.getPattern());
-		Condition.check(groups.get(1).getName().equals("project"));
+		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
+		CompareCondition.equals(groups.get(1).getName(), "project", "The name of the first group has to be 'project'.");
+
 		this.projectName = groups.get(1).getMatch();
 		
 		try {

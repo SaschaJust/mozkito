@@ -5,15 +5,15 @@ import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Embeddable
 public class IntegerTuple implements Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -7376689941623465731L;
 	private Integer           oldValue;
 	private Integer           newValue;
@@ -29,10 +29,8 @@ public class IntegerTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public IntegerTuple(final Integer oldValue, final Integer newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}

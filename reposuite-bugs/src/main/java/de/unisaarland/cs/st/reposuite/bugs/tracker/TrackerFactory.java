@@ -31,13 +31,13 @@ public class TrackerFactory {
 		// ======== Tracker handlers ========
 		try {
 			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
-			        Tracker.class.getPackage(), Tracker.class);
+			                                                                                  Tracker.class.getPackage(), Tracker.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addTrackerHandler(
-				        (TrackerType) klass.getMethod("getTrackerType", new Class<?>[0]).invoke(
-				                klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
-				        (Class<? extends Tracker>) klass);
+				                  (TrackerType) klass.getMethod("getTrackerType", new Class<?>[0]).invoke(
+				                                                                                          klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
+				                                                                                          (Class<? extends Tracker>) klass);
 			}
 		} catch (InvocationTargetException e) {
 			if (Logger.logError()) {
@@ -45,7 +45,7 @@ public class TrackerFactory {
 				// TrackerType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error("You probably missed to add an enum constant to " + TrackerType.getHandle()
-					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+					             + ". Error was: " + e.getCause().getMessage(), e.getCause());
 				} else {
 					Logger.error(e.getMessage(), e);
 				}
@@ -59,8 +59,12 @@ public class TrackerFactory {
 		}
 	}
 	
+	/**
+	 * @param trackerIdentifier
+	 * @param trackerClass
+	 */
 	private static void addTrackerHandler(final TrackerType trackerIdentifier,
-	        final Class<? extends Tracker> trackerClass) {
+	                                      final Class<? extends Tracker> trackerClass) {
 		assert (trackerIdentifier != null);
 		assert (trackerClass != null);
 		assert (trackerHandlers.get(trackerIdentifier) == null);
@@ -87,7 +91,7 @@ public class TrackerFactory {
 	 *             registry
 	 */
 	public static Class<? extends Tracker> getTrackerHandler(final TrackerType trackerIdentifier)
-	        throws UnregisteredTrackerTypeException {
+	throws UnregisteredTrackerTypeException {
 		assert (trackerIdentifier != null);
 		
 		if (Logger.logInfo()) {
@@ -98,7 +102,7 @@ public class TrackerFactory {
 		
 		if (trackerClass == null) {
 			throw new UnregisteredTrackerTypeException("Unsupported repository type `" + trackerIdentifier.toString()
-			        + "`");
+			                                           + "`");
 		} else {
 			return trackerClass;
 		}

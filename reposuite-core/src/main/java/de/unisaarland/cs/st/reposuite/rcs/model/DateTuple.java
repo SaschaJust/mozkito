@@ -6,15 +6,15 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Embeddable
 public class DateTuple implements Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = 3390413969735964533L;
 	private Date              oldValue;
 	private Date              newValue;
@@ -30,10 +30,8 @@ public class DateTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public DateTuple(final Date oldValue, final Date newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}

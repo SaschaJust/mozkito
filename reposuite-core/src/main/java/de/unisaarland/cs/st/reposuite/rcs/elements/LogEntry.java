@@ -2,11 +2,12 @@ package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -38,13 +39,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @param dateTime
 	 *            the date time
 	 */
-	public LogEntry(final String revision, final LogEntry previous, final Person author, final String message,
-			final DateTime dateTime, final String originalId) {
-		Condition.notNull(revision);
-		Condition.notNull(author);
-		Condition.notNull(message);
-		Condition.notNull(dateTime);
-		
+	public LogEntry(@NotNull final String revision, final LogEntry previous, @NotNull final Person author,
+	        @NotNull final String message, @NotNull final DateTime dateTime, final String originalId) {
 		this.revision = revision;
 		this.author = author;
 		this.message = message;

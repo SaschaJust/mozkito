@@ -6,8 +6,8 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Embeddable
 public class StringTuple implements Annotated {
@@ -16,8 +16,8 @@ public class StringTuple implements Annotated {
 	private String            newValue;
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -268313983915960230L;
 	
 	/**
@@ -31,10 +31,8 @@ public class StringTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public StringTuple(final String oldValue, final String newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}

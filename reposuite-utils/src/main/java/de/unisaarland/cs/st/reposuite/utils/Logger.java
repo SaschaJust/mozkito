@@ -1,5 +1,9 @@
 package de.unisaarland.cs.st.reposuite.utils;
 
+import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.LoggerFactory;
 
@@ -104,18 +108,18 @@ public class Logger {
 	private static void debug(final String message,
 	                          final Object[] arguments,
 	                          final Throwable t,
-	                          final int offset) {
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		        || (arguments == null));
+		                || (arguments == null),
+		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)));
-		Condition.greater(offset, 2);
-		Condition.check(logDebug());
+		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		Condition.notNull(ret.getFirst());
-		Condition.notNull(ret.getSecond());
+		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -227,19 +231,19 @@ public class Logger {
 	private static void error(final String message,
 	                          final Object[] arguments,
 	                          final Throwable t,
-	                          final int offset) {
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		        || (arguments == null));
+		                || (arguments == null),
+		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)));
-		Condition.greater(offset, 2);
-		Condition.check(logError());
+		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
 			Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
-			Condition.notNull(ret.getFirst());
-			Condition.notNull(ret.getSecond());
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 			
 			if (arguments != null) {
 				if (arguments.length >= 2) {
@@ -385,19 +389,19 @@ public class Logger {
 	private static void info(final String message,
 	                         final Object[] arguments,
 	                         final Throwable t,
-	                         final int offset) {
+	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		        || (arguments == null));
+		                || (arguments == null),
+		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)));
-		Condition.greater(offset, 2);
-		Condition.check(logInfo());
+		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
 			Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
-			Condition.notNull(ret.getFirst());
-			Condition.notNull(ret.getSecond());
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 			
 			if (arguments != null) {
 				if (arguments.length == 2) {
@@ -494,13 +498,13 @@ public class Logger {
 	 *         instance and the exact calling location (class, method, line
 	 *         number). Both entries are guaranteed to not be null
 	 */
-	private static Tuple<org.slf4j.Logger, String> tags(final int offset) {
-		Condition.greater(offset, 1);
+	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
 		Throwable throwable = new Throwable();
-		Condition.notNull(throwable);
-		
 		throwable.fillInStackTrace();
-		Condition.greater(throwable.getStackTrace().length, offset);
+		
+		CompareCondition.greater(throwable.getStackTrace().length,
+		                         offset,
+		"The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
 		
 		Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
 		String methodName = throwable.getStackTrace()[offset].getMethodName();
@@ -508,11 +512,11 @@ public class Logger {
 		
 		org.slf4j.Logger logger = LoggerFactory.getLogger(className);
 		
-		Condition.notNull(lineNumber);
-		Condition.greater(lineNumber, 0);
-		Condition.notNull(methodName);
-		Condition.notNull(className);
-		Condition.notNull(logger);
+		Condition.notNull(lineNumber, "Linenumber determined from stacktrace must never be null.");
+		CompareCondition.greater(lineNumber, 0, "Determined line number has to be always greater than 0.");
+		Condition.notNull(methodName, "Methodname determined from stacktrace must never be null.");
+		Condition.notNull(className, "Classname determined from stacktrace must never be null.");
+		Condition.notNull(logger, "Requested logger must never be null.");
 		
 		return new Tuple<org.slf4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
 	}
@@ -598,18 +602,18 @@ public class Logger {
 	private static void trace(final String message,
 	                          final Object[] arguments,
 	                          final Throwable t,
-	                          final int offset) {
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		        || (arguments == null));
+		                || (arguments == null),
+		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)));
-		Condition.greater(offset, 2);
-		Condition.check(logTrace());
+		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(logTrace(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
-		Condition.notNull(ret.getFirst());
-		Condition.notNull(ret.getSecond());
+		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 		
 		if (arguments != null) {
 			if (arguments.length == 2) {
@@ -721,19 +725,19 @@ public class Logger {
 	private static void warn(final String message,
 	                         final Object[] arguments,
 	                         final Throwable t,
-	                         final int offset) {
+	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		        || (arguments == null));
+		                || (arguments == null),
+		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)));
-		Condition.greater(offset, 2);
-		Condition.check(logWarn());
+		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
 			Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
-			Condition.notNull(ret.getFirst());
-			Condition.notNull(ret.getSecond());
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 			
 			if (arguments != null) {
 				if (arguments.length == 2) {
