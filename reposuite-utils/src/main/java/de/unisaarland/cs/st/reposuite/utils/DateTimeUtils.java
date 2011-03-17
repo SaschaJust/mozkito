@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -19,7 +23,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateTimeUtils {
 	
 	private static final Regex               timestampRegex = new Regex(
-	                                                                "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?(({z}\\s+[A-Za-z]{3,4})|({Z}\\s+[+-]\\d{4}))?");
+	"({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?(({z}\\s+[A-Za-z]{3,4})|({Z}\\s+[+-]\\d{4}))?");
 	
 	static {
 		DateTimeZone.setDefault(DateTimeZone.UTC);
@@ -174,9 +178,8 @@ public class DateTimeUtils {
 	 *            the datetime string, not null
 	 * @return the date time
 	 */
+	@NoneNull
 	public static DateTime parseDate(final String dateTimeString, final Regex pattern) {
-		Condition.notNull(dateTimeString);
-		Condition.notNull(pattern);
 		// Condition.greaterOrEqual(dateTimeString.length(),
 		// "yyyy-MM-dd HH:mm".length());
 		
@@ -187,7 +190,7 @@ public class DateTimeUtils {
 			// with time zone abbreviation
 			if (Logger.logTrace()) {
 				Logger.trace("Parsing date `" + find.get(0).getMatch() + "` with: "
-						+ JavaUtils.collectionToString(find));
+				             + JavaUtils.collectionToString(find));
 			}
 			StringBuilder patternBuilder = new StringBuilder();
 			StringBuilder dateBuilder = new StringBuilder();
@@ -208,7 +211,7 @@ public class DateTimeUtils {
 			
 			if (Logger.logTrace()) {
 				Logger.trace("GOT: " + dateTimeString + ", formatted to: " + dateBuilder.toString() + ", pattern: "
-						+ patternBuilder.toString());
+				             + patternBuilder.toString());
 			}
 			
 			DateTimeFormatter dtf = DateTimeFormat.forPattern(patternBuilder.toString());
@@ -231,9 +234,7 @@ public class DateTimeUtils {
 	 *            the abbreviation
 	 * @return the offset to UTC in +/-#### format
 	 */
-	public static final String timeZoneAbbreviationToUTCOffset(final String timezone) {
-		Condition.notNull(timezone);
-		Condition.greater(timezone.length(), 2);
+	public static final String timeZoneAbbreviationToUTCOffset(@NotNull @GreaterInt (ref = 2) final String timezone) {
 		
 		return timezones.get(timezone);
 	}

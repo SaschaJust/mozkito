@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.visitors;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -28,9 +32,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class PPATypeVisitor.
@@ -44,8 +46,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	
 	/** The prim types. */
 	private static String[]                                        primTypes        = { "Class", "Character", "Byte",
-	        "Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
-	        "Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
+		"Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
+		"Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
 	
 	/** The class stack. */
 	private final Stack<JavaElementLocation<JavaClassDefinition>>  classStack       = new Stack<JavaElementLocation<JavaClassDefinition>>();
@@ -82,8 +84,6 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * 
 	 * @param cu
 	 *            the cu
-	 * @param file
-	 *            the file
 	 * @param filePathPrefix
 	 *            the file path prefix
 	 * @param packageFilter
@@ -92,13 +92,14 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the element cache
 	 */
 	@NoneNull
-	public PPATypeVisitor(final CompilationUnit cu, final String relativeFilePath, final String[] packageFilter,
-	        final JavaElementCache elementCache) {
+	public PPATypeVisitor(final CompilationUnit cu, final String filePathPrefix,
+	                      final String[] packageFilter, final JavaElementCache elementCache) {
+		
 		this.packageFilter = packageFilter;
 		this.cu = cu;
 		this.elementCache = elementCache;
 		
-		this.relativeFilePath = relativeFilePath;
+		this.relativeFilePath = this.relativeFilePath;
 		
 		PackageDeclaration packageDecl = this.cu.getPackage();
 		if (packageDecl != null) {
@@ -243,7 +244,8 @@ public class PPATypeVisitor extends ASTVisitor {
 				int previousLine = -1;
 				if (this.previousNode != null) {
 					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
-					        + this.previousNode.getLength());
+					                                     
+					                                     + this.previousNode.getLength());
 				}
 				if (previousLine == startline) {
 					markComment = false;
@@ -289,10 +291,11 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
+			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(this.packageName
-			                                                                                                    + "."
-			                                                                                                    + td.getName()
-			                                                                                                        .toString(),
+			                                                                                            + "."
+			                                                                                            + td.getName()
+			                                                                                            .toString(),
 			                                                                                            this.relativeFilePath,
 			                                                                                            parent,
 			                                                                                            startLine,
@@ -323,7 +326,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of anonymous class outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 				return;
 			}
@@ -332,7 +335,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			@SuppressWarnings ("unchecked")
 			List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
-			        + " body declarations!");
+			                + " body declarations!");
 			
 			int bodyStartLine = currentLine;
 			int bodyStartIndex = acd.toString().indexOf("{");
@@ -348,7 +351,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int anonCount = this.classStack.peek().getElement().nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
-			                    .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
+					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
 				String parentName = this.classStack.peek().getElement().getFullQualifiedName();
 				if (parentName.contains("$")) {
@@ -357,11 +360,11 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
-				                                                                                                    + "$"
-				                                                                                                    + anonCount,
+				                                                                                            + "$"
+				                                                                                            + anonCount,
 				                                                                                            this.relativeFilePath,
 				                                                                                            this.classStack.peek()
-				                                                                                                           .getElement(),
+				                                                                                            .getElement(),
 				                                                                                            currentLine,
 				                                                                                            endLine,
 				                                                                                            node.getStartPosition(),
@@ -389,7 +392,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of method outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 			} else {
 				List<String> arguments = new ArrayList<String>();
@@ -403,11 +406,11 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md.getName()
-				                                                                                                 .toString(),
+				                                                                                               .toString(),
 				                                                                                               arguments,
 				                                                                                               this.getRelativeFilePath(),
 				                                                                                               this.classStack.peek()
-				                                                                                                              .getElement(),
+				                                                                                               .getElement(),
 				                                                                                               startLine,
 				                                                                                               endLine,
 				                                                                                               node.getStartPosition(),

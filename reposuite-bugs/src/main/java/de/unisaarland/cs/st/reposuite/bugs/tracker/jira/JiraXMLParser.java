@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -25,7 +28,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -133,12 +135,19 @@ public class JiraXMLParser {
 		}
 	}
 	
+	/**
+	 * @param historyUri
+	 * @param report
+	 * @throws UnsupportedProtocolException
+	 * @throws JDOMException
+	 * @throws IOException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
 	@SuppressWarnings ("unchecked")
+	@NoneNull
 	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
 	JDOMException, IOException, SecurityException, NoSuchFieldException {
-		Condition.notNull(historyUri);
-		Condition.notNull(report);
-		
 		try {
 			RawContent rawContent = IOUtils.fetch(historyUri);
 			BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
@@ -263,11 +272,13 @@ public class JiraXMLParser {
 		
 	}
 	
+	/**
+	 * @param elements
+	 * @param report
+	 */
 	@SuppressWarnings ("unchecked")
+	@NoneNull
 	private static void handleIssueLinks(final List<Element> elements, final Report report) {
-		Condition.notNull(elements);
-		Condition.notNull(report);
-		
 		for (Element issueLinkType : elements) {
 			if (issueLinkType.getName().equals("issuelinktype")) {
 				List<Element> links = issueLinkType.getChildren();
@@ -296,10 +307,9 @@ public class JiraXMLParser {
 	}
 	
 	@SuppressWarnings ("unchecked")
+	@NoneNull
 	public static void handleRoot(final Report report, final Element root) {
-		Condition.notNull(report);
-		Condition.notNull(root);
-		Condition.equals(root.getName(), "item");
+		CompareCondition.equals(root.getName(), "item", "The root element has to be 'item'.");
 		
 		List<Element> children = root.getChildren();
 		for (Element element : children) {

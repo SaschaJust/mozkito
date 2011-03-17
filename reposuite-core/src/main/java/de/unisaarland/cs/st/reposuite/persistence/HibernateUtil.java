@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
@@ -27,10 +31,8 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -112,7 +114,7 @@ public class HibernateUtil {
 	 * @throws HibernateException
 	 */
 	public static void createSessionFactory(final String host, final String database, final String user,
-			final String password, final String type, final String driver) throws HibernateException {
+	                                        final String password, final String type, final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
 			+ "?useUnicode=true&characterEncoding=UTF-8";
@@ -135,16 +137,12 @@ public class HibernateUtil {
 		}
 	}
 	
-	@Deprecated
-	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
-		return getInstance(true);
-	}
 	
 	/**
 	 * @return
 	 * @throws UninitializedDatabaseException
 	 */
-	public static HibernateUtil getInstance(final boolean useInterceptor) throws UninitializedDatabaseException {
+	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
 		if (sessionFactory == null) {
 			throw new UninitializedDatabaseException();
 		}
@@ -153,7 +151,7 @@ public class HibernateUtil {
 		if (instances.containsKey(Thread.currentThread())) {
 			return instances.get(Thread.currentThread());
 		} else {
-			HibernateUtil util = new HibernateUtil(useInterceptor);
+			HibernateUtil util = new HibernateUtil();
 			instances.put(Thread.currentThread(), util);
 			return util;
 		}
@@ -184,15 +182,9 @@ public class HibernateUtil {
 	/**
 	 * 
 	 */
-	private HibernateUtil(final boolean useInterceptor) {
+	private HibernateUtil() {
 		Condition.notNull(sessionFactory, "");
-		if (useInterceptor) {
-			HibernateInterceptor interceptor = new HibernateInterceptor(this);
-			this.session = sessionFactory.openSession(interceptor);
-			interceptor.loadEntities();
-		} else {
-			this.session = sessionFactory.openSession();
-		}
+		this.session = sessionFactory.openSession();
 	}
 	
 	/**
@@ -245,8 +237,7 @@ public class HibernateUtil {
 	 * @return the criteria
 	 */
 	@NoneNull
-	public SQLQuery createSQLQuery(final String query) {
-		Condition.notNull(query);
+	public SQLQuery createSQLQuery(@NotNull final String query) {
 		return this.session.createSQLQuery(query);
 	}
 	
@@ -261,9 +252,6 @@ public class HibernateUtil {
 	 */
 	@NoneNull
 	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
-		Condition.notNull(query);
-		Condition.notNull(clazz);
-		
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
 			SQLQuery hibernateQuery = this.session.createSQLQuery(query);
 			if (hibernateQuery == null) {

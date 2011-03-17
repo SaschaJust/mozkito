@@ -14,6 +14,11 @@ import jregex.NamedPattern;
 import jregex.PatternSyntaxException;
 import jregex.RETokenizer;
 import jregex.Replacer;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.MinSize;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -48,11 +53,8 @@ public class Regex {
 	 * @param pattern
 	 * @return
 	 */
-	public static boolean checkRegex(final String pattern) {
+	public static boolean checkRegex(@NotNull("Patterns to be checked by checkRegex may not be null.") @MinSize(min=1, value = "Patterns to be checked by checkRegex may have to be strings of length > 0.") final String pattern) {
 		// avoid captured positive look ahead
-		Condition.notNull(pattern, "Patterns to be checked by checkRegex may have to be strings of length > 0.");
-		Condition.minSize(pattern, 1, "Patterns to be checked by checkRegex may have to be strings of length > 0.");
-		
 		if (Logger.logTrace()) {
 			Logger.trace("Checking pattern: " + pattern);
 		}
@@ -61,7 +63,7 @@ public class Regex {
 			
 			if (Logger.logWarn()) {
 				Logger.warn(Regex.class.getSimpleName()
-				        + "does not support posix character classes like: [:alpha:], [:punct:], etc...");
+				            + "does not support posix character classes like: [:alpha:], [:punct:], etc...");
 			}
 			return false;
 		}
@@ -150,7 +152,7 @@ public class Regex {
 			
 			if (Logger.logWarn()) {
 				Logger.warn("Capturing negative lookahead groups is not supported. Affected groups: "
-				        + JavaUtils.collectionToString(findAll));
+				            + JavaUtils.collectionToString(findAll));
 			}
 			return false;
 		}
@@ -198,14 +200,8 @@ public class Regex {
 	 *            to be checked against
 	 * @return the {@link String} representation of the matching pattern
 	 */
-	public static String findLongestMatchingPattern(String pattern, final String text) {
-		Condition
-		        .notNull(text,
-		                "When trying to find the longest matching pattern to a given text, the text is required to be a non-null string.");
-		Condition
-		        .notNull(pattern,
-		                "When trying to find the longest matching pattern to a given text, the pattern is required to be a non-null string.");
-		
+	public static String findLongestMatchingPattern(@NotNull ("When trying to find the longest matching pattern to a given text, the pattern is required to be a non-null string.") String pattern,
+	                                                @NotNull ("When trying to find the longest matching pattern to a given text, the text is required to be a non-null string.") final String text) {
 		Regex regex = new Regex("placeholder");
 		regex.setPattern(pattern);
 		Regex bsReplacer = new Regex("\\\\+$");
@@ -252,9 +248,8 @@ public class Regex {
 	 * @param namedPattern
 	 * @param flags
 	 */
-	public Regex(final String pattern, final int flags) {
-		Condition.notNull(pattern);
-		Condition.greater(pattern.length(), 0);
+	public Regex(@NotNull final String pattern, final int flags) {
+		CompareCondition.greater(pattern.length(), 0, "We don't accept empty patterns.");
 		
 		try {
 			this.pattern = new NamedPattern(pattern, flags);
@@ -298,8 +293,7 @@ public class Regex {
 	 *            the text to be analyzed
 	 * @return a {@link List} of {@link RegexGroup} representing the matches.
 	 */
-	public List<RegexGroup> find(final String text) {
-		Condition.notNull(text);
+	public List<RegexGroup> find(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -308,7 +302,7 @@ public class Regex {
 			
 			for (int i = 0; i < this.matcher.groupCount(); ++i) {
 				this.matches.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i, this.pattern
-				        .getGroupName(i)));
+				                                .getGroupName(i)));
 				
 				if (this.pattern.getGroupName(i) != null) {
 					this.groupNames.put(this.pattern.getGroupName(i), i);
@@ -327,8 +321,7 @@ public class Regex {
 	 * @see Regex#find(String)
 	 * @return a {@link List} of {@link List}s of {@link RegexGroup}
 	 */
-	public List<List<RegexGroup>> findAll(final String text) {
-		Condition.notNull(text);
+	public List<List<RegexGroup>> findAll(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -342,7 +335,7 @@ public class Regex {
 			
 			for (int i = 1; i < match.groupCount(); ++i) {
 				matches.add(new RegexGroup(this.pattern.toString(), text, match.group(i), i, this.pattern
-				        .getGroupName(i)));
+				                           .getGroupName(i)));
 				if (this.pattern.getGroupName(i) != null) {
 					this.groupNames.put(this.pattern.getGroupName(i), i);
 				}
@@ -362,8 +355,7 @@ public class Regex {
 	 *            the text to be scanned
 	 * @return a list of single element lists containing a {@link RegexGroup}
 	 */
-	public List<List<RegexGroup>> findAllPossibleMatches(final String text) {
-		Condition.notNull(text);
+	public List<List<RegexGroup>> findAllPossibleMatches(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -452,8 +444,7 @@ public class Regex {
 	 * @param text
 	 * @return
 	 */
-	public boolean matches(final String text) {
-		Condition.notNull(text);
+	public boolean matches(@NotNull final String text) {
 		reset();
 		
 		find(text);
@@ -467,8 +458,7 @@ public class Regex {
 	 *            the text to be matched
 	 * @return if there is a full match
 	 */
-	public boolean matchesFull(final String text) {
-		Condition.notNull(text);
+	public boolean matchesFull(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -490,8 +480,7 @@ public class Regex {
 	 *            the text to be analyzed
 	 * @return if the text is a prefix of a matching string
 	 */
-	public boolean prefixMatches(final String text) {
-		Condition.notNull(text);
+	public boolean prefixMatches(@NotNull final String text) {
 		reset();
 		
 		Matcher matcher = this.pattern.matcher();
@@ -506,8 +495,7 @@ public class Regex {
 	 *            the base text
 	 * @return the reduced string
 	 */
-	public String removeAll(final String text) {
-		Condition.notNull(text);
+	public String removeAll(@NotNull final String text) {
 		reset();
 		
 		this.replacer = this.pattern.replacer("");
@@ -525,14 +513,13 @@ public class Regex {
 	 * @param replacement
 	 * @return
 	 */
+	@NoneNull
 	public String replaceAll(final String text, final String replacement) {
-		Condition.notNull(text);
-		Condition.notNull(replacement);
-		// we do not allow references/patterns in this method
-		Condition.isNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement), null);
-		// this is done to ensure matches are not replaced by themselves
+		Condition.isNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement),
+		"We do not allow references/patterns in this method");
 		Condition.check((find(text) == null)
-		        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
+		                || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)),
+		"This is done to ensure matches are not replaced by themselves");
 		
 		reset();
 		
@@ -542,35 +529,6 @@ public class Regex {
 		return returnString;
 	}
 	
-	/**
-	 * Replaces all occurrences of the pattern in the text with the given
-	 * pattern. Example:<br />
-	 * <code>Pattern p=new Pattern("(\\d\\d):(\\d\\d):(\\d\\d)");
-	 * Replacer r=p.replacer("[hour=$1, minute=$2, second=$3]");
-	 * //see also the constructor Replacer(Pattern,String,boolean)
-	 * String result=r.replace("the time is 10:30:01");
-	 * //gives "the time is [hour=10, minute=30, second=01]"</code>
-	 * 
-	 * @param text
-	 * @param replacement
-	 * @return
-	 */
-	public String replaceAllWithPattern(final String text, final String replacement) {
-		Condition.notNull(text);
-		Condition.notNull(replacement);
-		// this is done to ensure matches are not replaced by themselves
-		Condition.check((find(text) == null)
-		        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)));
-		// we do enforce references/patterns in this method
-		Condition.notNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement));
-		reset();
-		
-		this.replacer = this.pattern.replacer(replacement);
-		String returnString = this.replacer.replace(text);
-		this.matched = !returnString.equals(text);
-		
-		return returnString;
-	}
 	
 	/**
 	 * Resets storage to guarantee consistent getter outputs.
@@ -588,9 +546,7 @@ public class Regex {
 	 * @param pattern
 	 *            the pattern to set
 	 */
-	private void setPattern(final String pattern) {
-		Condition.notNull(pattern);
-		Condition.greater(pattern.length(), 0);
+	private void setPattern(@NotNull @MinSize (min = 0) final String pattern) {
 		try {
 			this.pattern = new NamedPattern(pattern);
 		} catch (ArrayIndexOutOfBoundsException e) {

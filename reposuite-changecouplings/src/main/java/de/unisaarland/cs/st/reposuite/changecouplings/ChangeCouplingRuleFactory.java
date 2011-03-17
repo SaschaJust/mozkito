@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 
@@ -15,8 +17,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * A factory for creating ChangeCouplingRule objects.
@@ -40,9 +40,7 @@ public class ChangeCouplingRuleFactory {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static List<ChangeCouplingRule> getChangeCouplingRules(final RCSTransaction transaction,
-			final int minSupport, final int minConfidence) {
-		
-		Condition.notNull(transaction);
+	                                                              final int minSupport, final int minConfidence) {
 		
 		try {
 			
@@ -77,10 +75,10 @@ public class ChangeCouplingRuleFactory {
 			tablename = "reposuite_cc_" + tablename;
 			
 			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "','" + tablename
-					+ "')");
+			                           + "')");
 			SQLQuery ccRulesQuery = hibernateUtil
 			.createSQLQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
-					+ tablename);
+			                + tablename);
 			List<Object[]> list = ccRulesQuery.list();
 			if (list == null) {
 				return null;

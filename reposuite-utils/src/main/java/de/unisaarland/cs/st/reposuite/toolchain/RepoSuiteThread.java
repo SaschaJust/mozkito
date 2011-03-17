@@ -6,9 +6,13 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.checks.Check;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
@@ -50,11 +54,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
 	 */
+	@NoneNull
 	public RepoSuiteThread(final RepoSuiteThreadGroup threadGroup, final String name, final RepoSuiteSettings settings) {
 		super(threadGroup, name);
-		Condition.notNull(threadGroup);
-		Condition.notNull(name);
-		Condition.notNull(settings);
 		
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
@@ -78,14 +80,14 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		}
 		setShutdown(false);
 		
-		Condition.equals(hasInputConnector(),
-				this.inputStorage != null,
-				"Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
-				hasInputConnector(), this.inputStorage != null);
-		Condition.equals(hasInputConnector(),
-				this.inputStorage != null,
-				"Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-				hasOutputConnector(), this.outputStorage != null);
+		CompareCondition.equals(hasInputConnector(),
+		                        this.inputStorage != null,
+		                        "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+		                        hasInputConnector(), this.inputStorage != null);
+		CompareCondition.equals(hasInputConnector(),
+		                        this.inputStorage != null,
+		                        "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+		                        hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(settings, "`settings` must not be null.");
 		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
@@ -116,7 +118,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		if (retval && this.knownThreads.isEmpty()) {
 			if (Logger.logError()) {
 				Logger.error(getHandle()
-						+ " has known connections, but knownThreads is empty. This should never happen.");
+				             + " has known connections, but knownThreads is empty. This should never happen.");
 			}
 			retval = false;
 		}
@@ -153,8 +155,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
-	public final boolean connectInput(final RepoSuiteGeneralThread<?, K> thread) {
-		Condition.notNull(thread);
+	public final boolean connectInput(@NotNull final RepoSuiteGeneralThread<?, K> thread) {
 		
 		if (hasInputConnector()) {
 			this.inputThreads.add(thread);
@@ -181,9 +182,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
-	public final boolean connectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
-		Condition.notNull(thread);
-		
+	public final boolean connectOutput(@NotNull final RepoSuiteGeneralThread<V, ?> thread) {
 		if (hasOutputConnector()) {
 			this.outputThreads.add(thread);
 			this.knownThreads.add(thread);
@@ -209,9 +208,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
-	public final void disconnectInput(final RepoSuiteGeneralThread<?, K> thread) {
-		Condition.notNull(thread);
-		
+	public final void disconnectInput(@NotNull final RepoSuiteGeneralThread<?, K> thread) {
 		if (hasInputConnector()) {
 			if (this.inputThreads.contains(thread)) {
 				this.inputThreads.remove(thread);
@@ -236,9 +233,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
-	public final void disconnectOutput(final RepoSuiteGeneralThread<V, ?> thread) {
-		Condition.notNull(thread);
-		
+	public final void disconnectOutput(@NotNull final RepoSuiteGeneralThread<V, ?> thread) {
 		if (hasOutputConnector()) {
 			if (this.outputThreads.contains(thread)) {
 				this.outputThreads.remove(thread);
@@ -322,9 +317,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @return the size of the input storage
 	 */
 	protected final int inputSize() {
-		Condition.notNull(this.inputStorage);
-		Condition.notNull(this.inputStorage);
-		Condition.check(hasInputConnector());
+		Check.notNull(this.inputStorage,
+		"When requesting the inputSize, there has to be already an inputStorage attached");
+		Check.check(hasInputConnector(), "When requesting the inputSize, there has to exist an inputConnector");
 		
 		return this.inputStorage.size();
 	}
@@ -388,9 +383,9 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * @return the size of the output storage
 	 */
 	protected final int outputSize() {
-		Condition.notNull(this.outputStorage);
-		Condition.notNull(this.outputStorage);
-		Condition.check(hasOutputConnector());
+		Check.notNull(this.outputStorage,
+		"When requesting the inputSize, there has to be already an outputStorage attached");
+		Check.check(hasOutputConnector(), "When requesting the outputSize, there has to exist an outputConnector");
 		
 		return this.outputStorage.size();
 	}
@@ -427,9 +422,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
 	 */
 	@Override
-	public final void setInputStorage(final RepoSuiteDataStorage<K> storage) {
-		Condition.notNull(storage);
-		
+	public final void setInputStorage(@NotNull final RepoSuiteDataStorage<K> storage) {
 		if (hasInputConnector()) {
 			this.inputStorage = storage;
 			storage.registerOutput(this);
@@ -443,9 +436,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
 	 */
 	@Override
-	public final void setOutputStorage(final RepoSuiteDataStorage<V> storage) {
-		Condition.notNull(storage);
-		
+	public final void setOutputStorage(@NotNull final RepoSuiteDataStorage<V> storage) {
 		if (hasOutputConnector()) {
 			this.outputStorage = storage;
 			storage.registerInput(this);
@@ -519,7 +510,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
-				hasOutputConnector());
+		                hasOutputConnector());
 		if (Logger.logTrace()) {
 			Logger.trace("writing data: " + data);
 		}

@@ -8,14 +8,15 @@ import java.util.regex.Pattern;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class JavaClassDefinition.
@@ -60,7 +61,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 *            the package name
 	 */
 	protected JavaClassDefinition(@NotNull final String fullQualifiedName, final JavaClassDefinition parent,
-			@NotNull final String packageName) {
+	                              @NotNull final String packageName) {
 		
 		super(fullQualifiedName, parent);
 		if (parent != null) {

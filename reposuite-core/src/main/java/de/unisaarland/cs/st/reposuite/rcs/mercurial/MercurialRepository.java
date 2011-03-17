@@ -17,6 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
@@ -32,15 +37,11 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
-import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -131,7 +132,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public List<AnnotationEntry> annotate(final String filePath,
-			final String revision) {
+	                                      final String revision) {
 		Condition.notNull(filePath, "Annotation of null path not possible");
 		Condition.notNull(revision, "Annotation requires revision");
 		if ((filePath == null) || (revision == null)) {
@@ -228,7 +229,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public File checkoutPath(final String relativeRepoPath,
-			final String revision) {
+	                         final String revision) {
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
 		Condition.notNull(revision, "Checking ut requries revision");
 		
@@ -240,8 +241,8 @@ public class MercurialRepository extends Repository {
 		}
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg",
-				new String[] { "update", "-C", revision },
-				this.cloneDir, null, null);
+		                                                                new String[] { "update", "-C", revision },
+		                                                                this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -265,7 +266,7 @@ public class MercurialRepository extends Repository {
 	 * @return true, if successful
 	 */
 	private boolean clone(final InputStream inputStream,
-			final String destDir) {
+	                      final String destDir) {
 		Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
 				getUri().toString(), destDir }, this.cloneDir, inputStream, null);
 		if (returnValue.getFirst() == 0) {
@@ -273,7 +274,7 @@ public class MercurialRepository extends Repository {
 			if (!this.cloneDir.exists()) {
 				if (Logger.logError()) {
 					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-							+ destDir + "`");
+					             + destDir + "`");
 				}
 				return false;
 			}
@@ -292,8 +293,8 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public Collection<Delta> diff(final String filePath,
-			final String baseRevision,
-			final String revisedRevision) {
+	                              final String baseRevision,
+	                              final String revisedRevision) {
 		Condition.notNull(filePath, "Cannot diff NULL path");
 		Condition.notNull(baseRevision, "cannot compare to NULL revision");
 		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
@@ -312,7 +313,7 @@ public class MercurialRepository extends Repository {
 		List<String> original = response.getSecond();
 		List<String> revised = new ArrayList<String>(0);
 		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
-				this.cloneDir, null, null);
+		                                   this.cloneDir, null, null);
 		if (response.getFirst() == 0) {
 			revised = response.getSecond();
 		}
@@ -330,7 +331,7 @@ public class MercurialRepository extends Repository {
 	public String gatherToolInformation() {
 		StringBuilder builder = new StringBuilder();
 		Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
-				FileUtils.tmpDir, null, null);
+		                                                               FileUtils.tmpDir, null, null);
 		if (execute.getFirst() != 0) {
 			builder.append(getHandle()).append(" could not determine `hg` version. (Error code: ")
 			.append(execute.getFirst()).append(").");
@@ -470,7 +471,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public String getFormerPathName(final String revision,
-			final String pathName) {
+	                                final String pathName) {
 		Condition.notNull(revision, "Cannot get former path name of null revision");
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
@@ -532,7 +533,7 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId,
-			final long index) {
+	                                       final long index) {
 		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
 		
 		if (index == 0) {
@@ -596,7 +597,7 @@ public class MercurialRepository extends Repository {
 	 * @see de.unisaarland.cs.st.reposuite.rcs.Repository#getTransactionId(long)
 	 */
 	@Override
-	public String getTransactionId(@NonNegative final long index) {
+	public String getTransactionId(@NotNegative final long index) {
 		
 		String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
@@ -622,7 +623,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public List<LogEntry> log(final String fromRevision,
-			final String toRevision) {
+	                          final String toRevision) {
 		
 		ArrayList<LogEntry> result = new ArrayList<LogEntry>();
 		if ((toRevision == null) || (fromRevision == null)) {
@@ -696,14 +697,14 @@ public class MercurialRepository extends Repository {
 			String[] dateString = lineParts[2].split(" ");
 			
 			DateTime date = new DateTime(Long.valueOf(dateString[0]).longValue() * 1000,
-					DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
+			                             DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
 			
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
 			result.add(new LogEntry(revID, previous, author, lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator),
-			        date, ""));
+			                        date, ""));
 		}
 		return result;
 		
@@ -715,8 +716,8 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-			final String startRevision,
-			final String endRevision) {
+	                  final String startRevision,
+	                  final String endRevision) {
 		setup(address, startRevision, endRevision, null);
 	}
 	
@@ -733,9 +734,9 @@ public class MercurialRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(final URI address,
-			final String startRevision,
-			final String endRevision,
-			final InputStream inputStream) {
+	                   final String startRevision,
+	                   final String endRevision,
+	                   final InputStream inputStream) {
 		
 		setup(address);
 		
@@ -746,7 +747,7 @@ public class MercurialRepository extends Repository {
 		if (!clone(null, hgName)) {
 			if (Logger.logError()) {
 				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
-						+ "`");
+				             + "`");
 				throw new RuntimeException();
 			}
 		}
@@ -772,11 +773,11 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public void setup(final URI address,
-			final String startRevision,
-			final String endRevision,
-			final String username,
-			final String password) {
+	                  final String startRevision,
+	                  final String endRevision,
+	                  final String username,
+	                  final String password) {
 		setup(Repository.encodeUsername(address, username), startRevision, endRevision,
-				new ByteArrayInputStream(password.getBytes()));
+		      new ByteArrayInputStream(password.getBytes()));
 	}
 }

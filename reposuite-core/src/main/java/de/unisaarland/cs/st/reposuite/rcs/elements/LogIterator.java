@@ -6,8 +6,10 @@ package de.unisaarland.cs.st.reposuite.rcs.elements;
 import java.util.Iterator;
 import java.util.List;
 
+import net.ownhero.dev.kanuni.annotations.compare.NotEqualsInt;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -26,11 +28,8 @@ public class LogIterator implements Iterator<LogEntry> {
 	private List<LogEntry>   nextEntries  = null;
 	private boolean          seenEnd      = false;
 	
-	public LogIterator(final Repository repository, final String startRevision, final String endRevision,
-			final int cacheSize) {
-		Condition.notNull(repository);
-		Condition.notEquals(cacheSize, 0);
-		
+	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision,
+	                   @NotEqualsInt (ref = 0) final int cacheSize) {
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
 		} else if (startRevision.equals("HEAD")) {
@@ -47,7 +46,7 @@ public class LogIterator implements Iterator<LogEntry> {
 		
 		this.repository = repository;
 		this.cacheSize = cacheSize;
-
+		
 		String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2 - 1);
 		this.currentEntries = repository.log(this.startRevision, relativeTransactionId);
 		

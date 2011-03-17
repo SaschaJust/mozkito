@@ -48,7 +48,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	public void run() {
 		
 		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance(false);
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			
 			if (!checkConnections()) {
 				return;
@@ -119,7 +119,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 						hibernateUtil.saveOrUpdate(currentOperation);
 					} catch (NonUniqueObjectException e) {
 						JavaElement element = PPAHibernateUtil.getSessionJavaElement(hibernateUtil, currentOperation
-								.getChangedElementLocation().getElement());
+						                                                             .getChangedElementLocation().getElement());
 						if (element != null) {
 							currentOperation.getChangedElementLocation().setElement(element);
 							try {
@@ -129,7 +129,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 							}
 						} else {
 							element = PPAHibernateUtil.getJavaElement(hibernateUtil, currentOperation
-									.getChangedElementLocation().getElement());
+							                                          .getChangedElementLocation().getElement());
 							if (element != null) {
 								currentOperation.getChangedElementLocation().setElement(element);
 								try {

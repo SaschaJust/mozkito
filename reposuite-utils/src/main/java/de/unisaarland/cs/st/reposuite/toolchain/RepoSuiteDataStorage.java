@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import de.unisaarland.cs.st.reposuite.utils.Condition;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
@@ -106,9 +106,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void registerInput(final RepoSuiteGeneralThread<?, E> writerThread) {
-		Condition.notNull(writerThread, "Registering null objects is not allowed.");
-		
+	public void registerInput(@NotNull("Registering null objects is not allowed.") final RepoSuiteGeneralThread<?, E> writerThread) {
 		if (Logger.logInfo()) {
 			Logger.info("Registering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
 		}
@@ -125,9 +123,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void registerOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
-		Condition.notNull(readerThread, "Registering null objects is not allowed.");
-		
+	public void registerOutput(@NotNull ("Registering null objects is not allowed.") final RepoSuiteGeneralThread<E, ?> readerThread) {
 		if (Logger.logInfo()) {
 			Logger.info("Registering output " + ((RepoSuiteThread<E, ?>) readerThread).getName());
 		}
@@ -155,9 +151,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void unregisterInput(final RepoSuiteGeneralThread<?, E> writerThread) {
-		Condition.notNull(writerThread);
-		
+	public void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final RepoSuiteGeneralThread<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
 			if (Logger.logInfo()) {
 				Logger.info("Unregistering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
@@ -178,9 +172,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void unregisterOutput(final RepoSuiteGeneralThread<E, ?> readerThread) {
-		Condition.notNull(readerThread);
-		
+	public void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final RepoSuiteGeneralThread<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			
 			if (Logger.logInfo()) {
@@ -203,9 +195,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public CountDownLatch write(final E data) throws InterruptedException {
-		Condition.notNull(data, "Writing null data is not allowed.");
-		
+	public CountDownLatch write(@NotNull ("Writing null data is now allowed.") final E data) throws InterruptedException {
 		if (Logger.logTrace()) {
 			Logger.trace("Entering write method.");
 		}

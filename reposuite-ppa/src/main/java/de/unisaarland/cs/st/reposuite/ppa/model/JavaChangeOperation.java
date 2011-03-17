@@ -14,13 +14,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class JavaChangeOperation.

@@ -5,13 +5,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -31,14 +32,15 @@ public final class RepositoryFactory {
 	static {
 		// ======== Repository handlers ========
 		try {
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
-					Repository.class.getPackage(), Repository.class);
+			Package package1 = Repository.class.getPackage();
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                  Repository.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addRepositoryHandler(
-						(RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0]).invoke(
-								klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
-								(Class<? extends Repository>) klass);
+				                     (RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0]).invoke(
+				                                                                                                   klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
+				                                                                                                   (Class<? extends Repository>) klass);
 			}
 		} catch (InvocationTargetException e) {
 			if (Logger.logError()) {
@@ -46,7 +48,7 @@ public final class RepositoryFactory {
 				// RepositoryType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
-							+ ". Error was: " + e.getCause().getMessage(), e.getCause());
+					             + ". Error was: " + e.getCause().getMessage(), e.getCause());
 				} else {
 					Logger.error(e.getMessage(), e);
 				}
@@ -70,7 +72,7 @@ public final class RepositoryFactory {
 	 *            class object implementing {@link Repository}, not null
 	 */
 	private static void addRepositoryHandler(@NotNull final RepositoryType repositoryIdentifier,
-			@NotNull final Class<? extends Repository> repositoryClass) {
+	                                         @NotNull final Class<? extends Repository> repositoryClass) {
 		Condition.isNull(repositoryHandlers.get(repositoryIdentifier),
 		"The should not be a reposiotry with the same identifier already");
 		
@@ -84,7 +86,7 @@ public final class RepositoryFactory {
 		
 		Condition.notNull(repositoryHandlers.get(repositoryIdentifier),
 		"The must be a repository with the identifier just been created and assigned.");
-		Condition.equals(repositoryHandlers.get(repositoryIdentifier), repositoryClass,
+		CompareCondition.equals(repositoryHandlers.get(repositoryIdentifier), repositoryClass,
 		"The must be a repository with the identifier just been created and assigned.");
 	}
 	
@@ -111,7 +113,7 @@ public final class RepositoryFactory {
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
-					+ repositoryIdentifier.toString() + "`");
+			                                              + repositoryIdentifier.toString() + "`");
 		} else {
 			return repositoryClass;
 		}

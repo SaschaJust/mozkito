@@ -13,6 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
@@ -33,10 +36,10 @@ public class CommandExecutor extends Thread {
 	}
 	
 	public static Tuple<Integer, List<String>> execute(final String command, final String[] arguments, final File dir,
-	        final InputStream input, final Map<String, String> environment) {
+	                                                   final InputStream input, final Map<String, String> environment) {
 		return execute(command, arguments, dir, input, environment, Charset.defaultCharset());
 	}
-
+	
 	/**
 	 * Executes a command with the given arguments in the specified directory.
 	 * Input to the program is piped from `input` if present.
@@ -56,10 +59,12 @@ public class CommandExecutor extends Thread {
 	 * @return a tuple with the program's exit code and a list of lines
 	 *         representing the output of the program
 	 */
-	public static Tuple<Integer, List<String>> execute(String command, final String[] arguments, final File dir,
-	        final InputStream input, final Map<String, String> environment, final Charset charset) {
-		Condition.notNull(command);
-		Condition.check((arguments == null) || (arguments.length > 0));
+	public static Tuple<Integer, List<String>> execute(@NotNull String command,
+	                                                   final String[] arguments,
+	                                                   final File dir,
+	                                                   final InputStream input, final Map<String, String> environment, final Charset charset) {
+		Condition.check((arguments == null) || (arguments.length > 0),
+		                "The specified arguments have to be either null or have to contain at least 1 argument.");
 		
 		// merge command and arguments to one list
 		List<String> lineElements = new LinkedList<String>();
@@ -100,16 +105,16 @@ public class CommandExecutor extends Thread {
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Executing: [command:"
-			        + command
-			        + "][arguments:"
-			        + StringEscapeUtils.escapeJava(Arrays.toString(arguments))
-			        + "][workingdir:"
-			        + (dir != null ? dir.getAbsolutePath() : "(null)")
-			        + "][input:"
-			        + (input != null ? "present" : "omitted")
-			        + "][environment:"
-			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
-			                .getenv())) + "]");
+			             + command
+			             + "][arguments:"
+			             + StringEscapeUtils.escapeJava(Arrays.toString(arguments))
+			             + "][workingdir:"
+			             + (dir != null ? dir.getAbsolutePath() : "(null)")
+			             + "][input:"
+			             + (input != null ? "present" : "omitted")
+			             + "][environment:"
+			             + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
+			                                                                                      .getenv())) + "]");
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -175,7 +180,7 @@ public class CommandExecutor extends Thread {
 					stringBuilder.append((input != null ? "present" : "omitted"));
 					stringBuilder.append("][environment:");
 					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils
-					        .mapToString(environment != null ? environment : System.getenv())));
+					                                                  .mapToString(environment != null ? environment : System.getenv())));
 					stringBuilder.append("] failed with exitCode: ");
 					stringBuilder.append(returnValue);
 					Logger.error(stringBuilder.toString());
@@ -236,7 +241,7 @@ public class CommandExecutor extends Thread {
 	 * @param pipe
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
-			final BufferedReader pipe) {
+	                        final BufferedReader pipe) {
 		if (Logger.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}

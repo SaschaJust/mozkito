@@ -8,15 +8,15 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 
 @Embeddable
 public class PersonTuple implements Annotated {
 	
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -8692461784697718949L;
 	private PersonContainer   oldValue;
 	private PersonContainer   newValue;
@@ -32,10 +32,8 @@ public class PersonTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public PersonTuple(final Person oldValue, final Person newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue("oldValue", oldValue);
 		setNewValue("newValue", newValue);
 	}
@@ -45,9 +43,6 @@ public class PersonTuple implements Annotated {
 	 * @param newValue
 	 */
 	public PersonTuple(final PersonContainer oldValue, final PersonContainer newValue) {
-		Condition.notNull(oldValue);
-		Condition.notNull(newValue);
-		
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}

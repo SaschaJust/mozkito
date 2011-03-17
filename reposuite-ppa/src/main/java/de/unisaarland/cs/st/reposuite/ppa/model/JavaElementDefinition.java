@@ -16,10 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.hibernate.annotations.ForeignKey;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
  * The Class JavaElementDefinition.
