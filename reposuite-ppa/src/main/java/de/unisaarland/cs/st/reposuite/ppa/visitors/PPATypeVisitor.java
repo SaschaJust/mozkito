@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -29,10 +32,8 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class PPATypeVisitor.
@@ -98,7 +99,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final File file, final String filePathPrefix,
-			final String[] packageFilter, final JavaElementCache elementCache) {
+	                      final String[] packageFilter, final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.file = file;
 		this.cu = cu;
@@ -175,12 +176,12 @@ public class PPATypeVisitor extends ASTVisitor {
 					visitor.endVisit(this, this.cu, node, null, null, this.elementCache);
 					if (Logger.logDebug()) {
 						Logger.debug("Found empty classStack on compilation unit end in file: "
-								+ this.file.getAbsolutePath());
+						             + this.file.getAbsolutePath());
 					}
 				}
 			} else {
 				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
-						this.elementCache);
+				                 this.elementCache);
 			}
 		}
 	}
@@ -230,7 +231,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					visitor.postVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, this.elementCache);
 				} else {
 					visitor.postVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
-							currentLine, this.elementCache);
+					                  currentLine, this.elementCache);
 				}
 			}
 		}
@@ -269,7 +270,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				int previousLine = -1;
 				if (this.previousNode != null) {
 					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
-							+ this.previousNode.getLength());
+					                                     + this.previousNode.getLength());
 				}
 				if (previousLine == startline) {
 					markComment = false;
@@ -316,11 +317,11 @@ public class PPATypeVisitor extends ASTVisitor {
 			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(
-					this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
-					endLine, td.getStartPosition(), bodyStartLine, this.packageName);
+			                                                                                            this.packageName + "." + td.getName().toString(), this.relativeFilePath, parent, startLine,
+			                                                                                            endLine, td.getStartPosition(), bodyStartLine, this.packageName);
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
-						+ "` and class name `" + td.getName().toString() + "`");
+				             + "` and class name `" + td.getName().toString() + "`");
 			}
 			this.classStack.push(classDefLoc);
 			
@@ -341,7 +342,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of anonymous class outside a proper class in line" + currentLine
-							+ ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 				return;
 			}
@@ -349,7 +350,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			AnonymousClassDeclaration acd = (AnonymousClassDeclaration) node;
 			@SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
-					+ " body declarations!");
+			                + " body declarations!");
 			
 			int bodyStartLine = currentLine;
 			int bodyStartIndex = acd.toString().indexOf("{");
@@ -375,8 +376,8 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
-						+ "$" + anonCount, this.relativeFilePath, this.classStack.peek().getElement(), currentLine,
-						endLine, node.getStartPosition(), bodyStartLine, this.packageName);
+				                                                                                            + "$" + anonCount, this.relativeFilePath, this.classStack.peek().getElement(), currentLine,
+				                                                                                            endLine, node.getStartPosition(), bodyStartLine, this.packageName);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
@@ -399,7 +400,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of method outside a proper class in line" + currentLine
-							+ ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 			} else {
 				List<String> arguments = new ArrayList<String>();
@@ -412,8 +413,8 @@ public class PPATypeVisitor extends ASTVisitor {
 				
 				
 				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md
-						.getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
-						.getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);
+				                                                                                               .getName().toString(), arguments, this.getRelativeFilePath(), this.classStack.peek()
+				                                                                                               .getElement(), startLine, endLine, node.getStartPosition(), bodyStartLine);
 				
 				this.classStack.peek().getElement().addMethod(methodDefLoc.getElement());
 				if (!this.methodStack.isEmpty()) {
@@ -431,10 +432,10 @@ public class PPATypeVisitor extends ASTVisitor {
 			} else {
 				if (this.methodStack.isEmpty()) {
 					visitor.preVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, endLine,
-							this.elementCache);
+					                 this.elementCache);
 				} else {
 					visitor.preVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), currentLine,
-							endLine, this.elementCache);
+					                 endLine, this.elementCache);
 				}
 			}
 		}

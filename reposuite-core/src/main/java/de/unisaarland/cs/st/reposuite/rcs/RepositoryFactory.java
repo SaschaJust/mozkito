@@ -32,8 +32,9 @@ public final class RepositoryFactory {
 	static {
 		// ======== Repository handlers ========
 		try {
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
-			                                                                                  Repository.class.getPackage(), Repository.class);
+			Package package1 = Repository.class.getPackage();
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                  Repository.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				addRepositoryHandler(

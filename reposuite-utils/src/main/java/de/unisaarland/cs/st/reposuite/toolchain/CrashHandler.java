@@ -49,10 +49,10 @@ public class CrashHandler extends ThreadGroup {
 		
 		{
 			put("mail.smtp.host",
-					"mail.st.cs.uni-saarland.de");
+			    "mail.st.cs.uni-saarland.de");
 			put("mail.transport.protocol", "smtp");
 			put("mail.to",
-					"project_reposuite@st.cs.uni-saarland.de");
+			    "project_reposuite@st.cs.uni-saarland.de");
 			put("mail.subject", "RepoSuite Crash Report");
 			put("mail.sender.name", "RepoSuite Client");
 			put("mail.sender.address",
@@ -226,7 +226,7 @@ public class CrashHandler extends ThreadGroup {
 	protected String getRepoSuiteSettings() {
 		return (this.application != null)
 		? this.application.getSettings().toString()
-				: "";
+		: "";
 	}
 	
 	private String getRuntimeInformation() {
@@ -273,7 +273,7 @@ public class CrashHandler extends ThreadGroup {
 	protected String getToolInformation() {
 		return (this.application != null)
 		? this.application.getSettings().getToolInformation()
-				: "";
+		: "";
 	}
 	
 	/**
@@ -291,7 +291,7 @@ public class CrashHandler extends ThreadGroup {
 					
 					if (current.getName().endsWith(FileUtils.fileSeparator + "pom.xml")) {
 						InputStream inputStream = CrashHandler.class.getResourceAsStream(FileUtils.fileSeparator
-								+ current.getName());
+						                                                                 + current.getName());
 						BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 						String line;
 						boolean capturing = false;
@@ -352,18 +352,18 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	private void sendReport(final String report) {
 		if ((System.getProperty("disableCrashEmail") == null)
-		        || (System.getProperty("disableCrashEmail").toLowerCase().equals("false"))) {
+				|| (System.getProperty("disableCrashEmail").toLowerCase().equals("false"))) {
 			try {
 				Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);
 				Transport transport = session.getTransport();
 				MimeMessage message = new MimeMessage(session);
 				message.setSubject(CrashHandler.mailProps.getProperty("mail.subject"));
 				message.addRecipient(Message.RecipientType.TO,
-						new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
+				                     new InternetAddress(CrashHandler.mailProps.getProperty("mail.to")));
 				message.setFrom(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-						CrashHandler.mailProps.getProperty("mail.sender.name")));
+				                                    CrashHandler.mailProps.getProperty("mail.sender.name")));
 				message.setSender(new InternetAddress(CrashHandler.mailProps.getProperty("mail.sender.address"),
-						CrashHandler.mailProps.getProperty("mail.sender.name")));
+				                                      CrashHandler.mailProps.getProperty("mail.sender.name")));
 				message.setContent(report, "text/plain");
 				transport.connect();
 				transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
@@ -388,18 +388,19 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0,
-			final Throwable arg1) {
+	                                           final Throwable arg1) {
 		if (!CrashHandler.executed) {
 			CrashHandler.executed = true;
 			
 			if ((arg1 == null) || (arg1 instanceof Shutdown)) {
 				if (Logger.logInfo()) {
 					Logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
-							+ arg1.getMessage());
+					            + arg1.getMessage());
 				}
 			} else {
 				if (Logger.logError()) {
 					Logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
+					Logger.error(arg1.getMessage());
 				}
 				
 				String crashReport = getCrashReport(arg1);
@@ -431,7 +432,7 @@ public class CrashHandler extends ThreadGroup {
 	 * @return
 	 */
 	private String visit(final ThreadGroup group,
-			final int level) {
+	                     final int level) {
 		// Get threads in `group'
 		StringBuilder builder = new StringBuilder();
 		int numThreads = group.activeCount();

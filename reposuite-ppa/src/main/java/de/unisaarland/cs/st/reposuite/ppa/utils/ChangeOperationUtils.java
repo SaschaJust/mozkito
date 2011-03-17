@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
@@ -23,10 +26,8 @@ import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.DiffUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.InsertDelta;
@@ -76,7 +77,7 @@ public class ChangeOperationUtils {
 	 */
 	@NoneNull
 	protected static void generateChangeOperationsForAddedFile(final Repository repository, final RCSRevision revision,
-			final Collection<ChangeOperationVisitor> visitors) {
+	                                                           final Collection<ChangeOperationVisitor> visitors) {
 		
 		String changedPath = filterChangedPath(revision.getChangedFile().getPath(revision.getTransaction()));
 		if (changedPath == null) {
@@ -102,7 +103,7 @@ public class ChangeOperationUtils {
 		
 		//get the new elements
 		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByFile(file, checkoutPath.getAbsolutePath(),
-				new String[0]);
+		                                                                       new String[0]);
 		
 		for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
@@ -137,7 +138,7 @@ public class ChangeOperationUtils {
 	 */
 	@NoneNull
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
-			final RCSRevision revision, final Collection<ChangeOperationVisitor> visitors) {
+	                                                             final RCSRevision revision, final Collection<ChangeOperationVisitor> visitors) {
 		
 		String changedPath = filterChangedPath(revision.getChangedFile().getPath(revision.getTransaction()));
 		if (changedPath == null) {
@@ -149,7 +150,7 @@ public class ChangeOperationUtils {
 		if (parentTransaction == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not generate ChangeOperations for deleted file " + changedPath + " in transation "
-						+ transaction.getId() + ". The parent transaction could not be found! Ignoring!");
+				             + transaction.getId() + ". The parent transaction could not be found! Ignoring!");
 			}
 			return;
 		}
@@ -176,7 +177,7 @@ public class ChangeOperationUtils {
 			Logger.debug("Getting old elements");
 		}
 		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByFile(file, checkoutPath.getAbsolutePath(),
-				new String[0]);
+		                                                                       new String[0]);
 		
 		for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
@@ -212,7 +213,7 @@ public class ChangeOperationUtils {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@NoneNull
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
-			final RCSRevision revision, final Collection<ChangeOperationVisitor> visitors) {
+	                                                              final RCSRevision revision, final Collection<ChangeOperationVisitor> visitors) {
 		
 		String changedPath = filterChangedPath(revision.getChangedFile().getPath(revision.getTransaction()));
 		if (changedPath == null) {
@@ -224,7 +225,7 @@ public class ChangeOperationUtils {
 		if (parentTransaction == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not generate ChangeOperations for deleted file " + changedPath + " in transation "
-						+ transaction.getId() + ". The parent transaction could not be found! Ignoring!");
+				             + transaction.getId() + ". The parent transaction could not be found! Ignoring!");
 			}
 			return;
 		}
@@ -234,7 +235,7 @@ public class ChangeOperationUtils {
 		if (!oldCheckoutFile.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
-						+ ". Ignoring!");
+				             + ". Ignoring!");
 			}
 			return;
 		}
@@ -243,13 +244,13 @@ public class ChangeOperationUtils {
 		if (!oldFile.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not access old version of modified file for analysis: " + oldFile.getAbsolutePath()
-						+ ". Ignoring!");
+				             + ". Ignoring!");
 			}
 			return;
 		}
 		
 		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByFile(oldFile,
-				oldCheckoutFile.getAbsolutePath(), new String[0]);
+		                                                                       oldCheckoutFile.getAbsolutePath(), new String[0]);
 		
 		//update working copy to current transaction
 		File checkoutFile = repository.checkoutPath("/", transaction.getId());
@@ -264,13 +265,13 @@ public class ChangeOperationUtils {
 		if (!newFile.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not access old version of modified file for analysis: " + newFile.getAbsolutePath()
-						+ ". Ignoring!");
+				             + ". Ignoring!");
 			}
 			return;
 		}
 		
 		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByFile(newFile,
-				oldCheckoutFile.getAbsolutePath(), new String[0]);
+		                                                                       oldCheckoutFile.getAbsolutePath(), new String[0]);
 		
 		//generate diff
 		Collection<Delta> diff = repository.diff(changedPath, parentTransaction.getId(), transaction.getId());
@@ -354,7 +355,7 @@ public class ChangeOperationUtils {
 						if (!cover.equals(LineCover.FALSE)) {
 							if (!removeCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
 								removeCallCandidates.put(call.getElement().getFullQualifiedName(),
-										new TreeSet<JavaElementLocation<JavaMethodCall>>());
+								                         new TreeSet<JavaElementLocation<JavaMethodCall>>());
 							}
 							removeCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
 						}
@@ -367,7 +368,7 @@ public class ChangeOperationUtils {
 						if (!cover.equals(LineCover.FALSE)) {
 							if (!addCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
 								addCallCandidates.put(call.getElement().getFullQualifiedName(),
-										new TreeSet<JavaElementLocation<JavaMethodCall>>());
+								                      new TreeSet<JavaElementLocation<JavaMethodCall>>());
 							}
 							addCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
 						}

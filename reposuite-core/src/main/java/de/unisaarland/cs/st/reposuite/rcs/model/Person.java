@@ -24,7 +24,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.Trimmed;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -106,19 +105,6 @@ public class Person implements Annotated {
 	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense.");
-		
-		if (fullname != null) {
-			CompareCondition.equals(fullname.trim(), fullname, "Data has to be trimmed.");
-		}
-		
-		if (username != null) {
-			CompareCondition.equals(username.trim(), username, "Data has to be trimmed.");
-		}
-		
-		if (email != null) {
-			CompareCondition.equals(email.trim(), email, "Data has to be trimmed.");
-		}
-		
 		addUsername(username);
 		addFullname(fullname);
 		addEmail(email);
