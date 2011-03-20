@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -36,6 +37,7 @@ public class Core extends RepoSuiteToolchain {
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
 	private boolean                   shutdown;
+	private HibernateUtil             hibernateUtil;
 	
 	public Core() {
 		super(new RepositorySettings());
@@ -80,11 +82,27 @@ public class Core extends RepoSuiteToolchain {
 	public void setup() {
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
-		HibernateUtil hibernateUtil = this.databaseSettings.getValue();
+		if (this.databaseSettings.getValue() != null) {
+			try {
+				this.hibernateUtil = HibernateUtil.getInstance(this);
+			} catch (UninitializedDatabaseException e) {
+				
+				if (Logger.logError()) {
+					Logger.error("Database connection could not be established.", e);
+				}
+				shutdown();
+			}
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Missing database settings.");
+			}
+			
+			shutdown();
+		}
 		Repository repository = this.repoSettings.getValue();
 		this.logSettings.getValue();
 		
-		if (hibernateUtil != null) {
+		if (this.hibernateUtil != null) {
 			String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
 			                                                                     ? repository.getHEAD()
 			                                                                     : repository.getStartRevision();
@@ -95,7 +113,7 @@ public class Core extends RepoSuiteToolchain {
 			if (Logger.logInfo()) {
 				Logger.info("Checking for persistent transactions (" + start + ".." + end + ").");
 			}
-			Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+			Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
 			criteria.add(Restrictions.eq("id", start));
 			@SuppressWarnings ("unchecked")
 			List<RCSTransaction> startTransactions = criteria.list();
@@ -107,7 +125,7 @@ public class Core extends RepoSuiteToolchain {
 						Logger.debug("Found start transaction in persistence storage.");
 					}
 					
-					criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+					criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
 					criteria.add(Restrictions.eq("id", end));
 					@SuppressWarnings ("unchecked")
 					List<RCSTransaction> endTransactions = criteria.list();
@@ -122,7 +140,7 @@ public class Core extends RepoSuiteToolchain {
 						}
 						shutdown();
 					} else {
-						criteria = hibernateUtil.createCriteria(RCSTransaction.class);
+						criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
 						criteria.addOrder(Order.desc("id"));
 						@SuppressWarnings ("unchecked")
 						List<RCSTransaction> maxTransactions = criteria.list();
@@ -161,10 +179,11 @@ public class Core extends RepoSuiteToolchain {
 		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
-		if (hibernateUtil != null) {
+		if (this.hibernateUtil != null) {
 			new RepositoryGraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                           repository, hibernateUtil);
-			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), hibernateUtil);
+			                           repository, this.hibernateUtil);
+			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
+			                        this.hibernateUtil);
 		} else {
 			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}

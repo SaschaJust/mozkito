@@ -124,9 +124,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Transient
 	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
 		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
-		for(String id : tIds){
+		for (String id : tIds) {
 			RCSTransaction t = this.containsTransaction(id);
-			if(t != null){
+			if (t != null) {
 				result.add(t);
 			}
 		}
@@ -148,7 +148,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		}
 		
 		RCSTransaction current = this.getEnd();
-		while(!current.equals(this.getBegin())){
+		while (!current.equals(this.getBegin())) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
@@ -200,6 +200,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return RCSBranch.class.getSimpleName();
 	}
 	
+	/**
+	 * @return the name of the branch this branch was merged in (if any)
+	 */
 	public String getMergedIn() {
 		return this.mergedIn;
 	}
@@ -215,7 +218,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return this.name;
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private boolean getOpen() {
 		return this.open;
 	}
@@ -238,11 +241,17 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return getParent() != null;
 	}
 	
+	/**
+	 * @return
+	 */
 	@Transient
 	public boolean isOpen() {
 		return this.open;
 	}
 	
+	/**
+	 * 
+	 */
 	@Transient
 	public void markOpen() {
 		this.mergedIn = null;
@@ -322,7 +331,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

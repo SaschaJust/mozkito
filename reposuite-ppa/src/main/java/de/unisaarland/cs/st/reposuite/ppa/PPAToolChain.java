@@ -14,6 +14,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
 import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -90,9 +91,9 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Using workspace "
-			        + ResourcesPlugin.getWorkspace().getRoot().getFullPath().toFile().getAbsolutePath());
+			            + ResourcesPlugin.getWorkspace().getRoot().getFullPath().toFile().getAbsolutePath());
 		}
-
+		
 	}
 	
 	/* (non-Javadoc)
@@ -117,7 +118,24 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setup() {
-		this.hibernateUtil = this.databaseSettings.getValue();
+		if ( this.databaseSettings.getValue() != null) {
+			try {
+				this.hibernateUtil = HibernateUtil.getInstance(this);
+			} catch (UninitializedDatabaseException e) {
+				
+				if (Logger.logError()) {
+					Logger.error("Database connection could not be established.", e);
+				}
+				shutdown();
+			}
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Missing database settings.");
+			}
+			
+			shutdown();
+		}
+		
 		File xmlFile = this.asXML.getValue();
 		Repository repository = this.repoSettings.getValue();
 		

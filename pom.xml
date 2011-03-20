@@ -45,15 +45,15 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>reposuite-bugs</module>
+		<module>reposuite-utils</module>
 		<module>reposuite-core</module>
-		<module>reposuite-tracker</module>
+		<module>reposuite-bugs</module>
+		<module>reposuite-persons</module>
 		<module>reposuite-mapping</module>
 		<module>reposuite-nalatra</module>
 		<module>reposuite-fixindchanges</module>
 		<module>reposuite-genealogies</module>
 		<module>reposuite-untangling</module>
-		<module>reposuite-utils</module>
 		<module>reposuite-changecouplings</module>
 		<module>reposuite-ppa</module>
 	</modules>

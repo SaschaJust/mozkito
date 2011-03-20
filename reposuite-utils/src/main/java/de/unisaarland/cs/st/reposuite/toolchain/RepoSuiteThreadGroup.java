@@ -22,6 +22,7 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	
 	private final Collection<RepoSuiteThread<?, ?>> threads = new LinkedList<RepoSuiteThread<?, ?>>();
 	private final RepoSuiteSettings                 settings;
+	private final RepoSuiteToolchain                toolchain;
 	
 	/**
 	 * The only valid constructor of {@link RepoSuiteThreadGroup}
@@ -33,6 +34,7 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	public RepoSuiteThreadGroup(final String name, final RepoSuiteToolchain toolchain) {
 		super(name);
 		CrashHandler.init(toolchain);
+		this.toolchain = toolchain;
 		this.settings = toolchain.getSettings();
 	}
 	
@@ -59,6 +61,13 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 		return this.threads;
 	}
 	
+	/**
+	 * @return the toolchain
+	 */
+	public final RepoSuiteToolchain getToolchain() {
+		return this.toolchain;
+	}
+	
 	protected String getToolInformation() {
 		return this.settings.getToolInformation();
 	}
@@ -82,7 +91,7 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 		super.uncaughtException(t, e);
 		if (Logger.logError()) {
 			Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
-			        + ". Message: " + e.getMessage(), e);
+			             + ". Message: " + e.getMessage(), e);
 			Logger.error("Shutting down.");
 		}
 		shutdown();

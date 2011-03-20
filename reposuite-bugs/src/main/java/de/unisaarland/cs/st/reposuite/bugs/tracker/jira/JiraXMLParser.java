@@ -356,20 +356,28 @@ public class JiraXMLParser {
 			} else if (element.getName().equals("assignee")) {
 				String username = element.getAttributeValue("username");
 				if ((username != null) && (!username.equals("-1"))) {
+					username = username.trim();
 					String name = element.getText();
 					if (name.equals(username)) {
 						report.setAssignedTo(new Person(username, null, null));
 					} else {
+						if (name != null) {
+							name = name.trim();
+						}
 						report.setAssignedTo(new Person(username, name, null));
 					}
 				}
 			} else if (element.getName().equals("reporter")) {
 				String username = element.getAttributeValue("username");
 				if ((username != null) && (!username.equals("-1"))) {
+					username = username.trim();
 					String name = element.getText();
 					if (name.equals(username)) {
 						report.setSubmitter(new Person(username, null, null));
 					} else {
+						if (name != null) {
+							name = name.trim();
+						}
 						report.setSubmitter(new Person(username, name, null));
 					}
 				}

@@ -13,7 +13,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 
 import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -40,12 +39,13 @@ public class ChangeCouplingRuleFactory {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static List<ChangeCouplingRule> getChangeCouplingRules(final RCSTransaction transaction,
-	                                                              final int minSupport, final int minConfidence) {
+	                                                              final int minSupport,
+	                                                              final int minConfidence,
+	                                                              final HibernateUtil hibernateUtil) {
 		
 		try {
 			
 			List<ChangeCouplingRule> result = new LinkedList<ChangeCouplingRule>();
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			
 			if (!HibernateUtil.getType().toLowerCase().equals("postgresql")) {
 				throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases!");
@@ -75,10 +75,9 @@ public class ChangeCouplingRuleFactory {
 			tablename = "reposuite_cc_" + tablename;
 			
 			hibernateUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "','" + tablename
-			                           + "')");
-			SQLQuery ccRulesQuery = hibernateUtil
-			.createSQLQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
-			                + tablename);
+			        + "')");
+			SQLQuery ccRulesQuery = hibernateUtil.createSQLQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
+			        + tablename);
 			List<Object[]> list = ccRulesQuery.list();
 			if (list == null) {
 				return null;
@@ -100,8 +99,6 @@ public class ChangeCouplingRuleFactory {
 			
 			Collections.sort(result);
 			return result;
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
 		} catch (HibernateException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		} catch (SQLException e) {

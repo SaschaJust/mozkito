@@ -30,6 +30,8 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -137,22 +139,40 @@ public class HibernateUtil {
 		}
 	}
 	
-	
 	/**
 	 * @return
 	 * @throws UninitializedDatabaseException
 	 */
 	public static HibernateUtil getInstance() throws UninitializedDatabaseException {
+		return getInstance(null);
+	}
+	
+	/**
+	 * @return
+	 * @throws UninitializedDatabaseException
+	 */
+	public static HibernateUtil getInstance(final RepoSuiteToolchain toolchain) throws UninitializedDatabaseException {
 		if (sessionFactory == null) {
 			throw new UninitializedDatabaseException();
 		}
 		
-		// FIXME this should be a toolchain instead of a thread
-		if (instances.containsKey(Thread.currentThread())) {
-			return instances.get(Thread.currentThread());
+		RepoSuiteToolchain reposuiteToolchain = null;
+		try {
+			if (toolchain != null) {
+				reposuiteToolchain = toolchain;
+			} else {
+				reposuiteToolchain = ((RepoSuiteThreadGroup) Thread.currentThread().getThreadGroup()).getToolchain();
+			}
+		} catch (ClassCastException e) {
+			throw new UnrecoverableError(HibernateUtil.class.getCanonicalName()
+			                             + " cannot be used without a corresponding toolchain.");
+		}
+		
+		if (instances.containsKey(reposuiteToolchain)) {
+			return instances.get(reposuiteToolchain);
 		} else {
 			HibernateUtil util = new HibernateUtil();
-			instances.put(Thread.currentThread(), util);
+			instances.put(reposuiteToolchain, util);
 			return util;
 		}
 	}

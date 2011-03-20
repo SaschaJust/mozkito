@@ -38,9 +38,9 @@ public class Bugs extends RepoSuiteToolchain {
 		this.databaseArguments = settings.setDatabaseArgs(false);
 		this.logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		        false);
+		                    false);
 		new LongArgument(settings, "cache.size",
-		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		
 		settings.parseArguments();
 	}
@@ -73,9 +73,9 @@ public class Bugs extends RepoSuiteToolchain {
 		if (this.databaseArguments.getValue() != null) {
 			HibernateUtil hibernateUtil;
 			try {
-				hibernateUtil = HibernateUtil.getInstance();
+				hibernateUtil = HibernateUtil.getInstance(this);
 				new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker,
-				        hibernateUtil);
+				                     hibernateUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

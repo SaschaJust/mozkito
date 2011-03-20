@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -180,7 +181,16 @@ public class HibernateTest {
 	public void testSaveRCSFile() {
 		HibernateUtil hibernateUtil;
 		try {
-			hibernateUtil = HibernateUtil.getInstance();
+			hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
+				
+				@Override
+				public void setup() {
+				}
+				
+				@Override
+				public void shutdown() {
+				}
+			});
 			
 			RCSFileManager fileManager = new RCSFileManager();
 			Person person = new Person("kim", null, null);

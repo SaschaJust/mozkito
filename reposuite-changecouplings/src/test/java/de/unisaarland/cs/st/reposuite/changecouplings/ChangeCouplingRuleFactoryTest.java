@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.changecouplings;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -23,7 +22,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 
 public class ChangeCouplingRuleFactoryTest {
 	
@@ -64,7 +63,16 @@ public class ChangeCouplingRuleFactoryTest {
 		Person person = new Person("kim", "", "");
 		
 		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
+				
+				@Override
+				public void setup() {
+				}
+				
+				@Override
+				public void shutdown() {
+				}
+			});
 			hibernateUtil.beginTransaction();
 			
 			// ###transaction 1
@@ -114,8 +122,9 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			hibernateUtil.commitTransaction();
 			
-			List<ChangeCouplingRule> changeCouplingRules = ChangeCouplingRuleFactory.getChangeCouplingRules(
-					rcsTransaction3, 1, 0);
+			List<ChangeCouplingRule> changeCouplingRules = ChangeCouplingRuleFactory.getChangeCouplingRules(rcsTransaction3,
+			                                                                                                1, 0,
+			                                                                                                hibernateUtil);
 			assertEquals(8, changeCouplingRules.size());
 			ChangeCouplingRule rule = changeCouplingRules.get(0);
 			assertEquals(1, rule.getPremise().length);

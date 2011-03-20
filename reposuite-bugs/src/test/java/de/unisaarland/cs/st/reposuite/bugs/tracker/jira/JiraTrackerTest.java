@@ -334,7 +334,7 @@ public class JiraTrackerTest {
 			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(42l));
 			XmlReport xmlReport = tracker.createDocument(rawReport);
 			tracker.checkXML(xmlReport);
-			Report report = tracker.parse(xmlReport);
+			tracker.parse(xmlReport);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

@@ -8,7 +8,7 @@ import java.net.URI;
 import java.util.Arrays;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.compare.EqualsInt;
+import net.ownhero.dev.kanuni.annotations.simple.Size;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
@@ -41,7 +41,8 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 *            not null, 0 &lt; <code>content.length</code>
 	 */
 	@NoneNull
-	public RawContent(final URI uri, @EqualsInt (ref = 16) final byte[] md5, final DateTime fetchTime,
+	public RawContent(final URI uri, @Size (size = 16, value = "A MD5 hashsum has to be of size 16.") final byte[] md5,
+	        final DateTime fetchTime,
 	                  final String format,
 	                  final String content) {
 		super();

@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.ppa.visitors;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,7 +70,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	private final Set<PPAVisitor>                                  visitors         = new HashSet<PPAVisitor>();
 	
 	/** The relative file path. */
-	private String                                                 relativeFilePath = "";
+	private final String                                                 relativeFilePath = "";
 	
 	/** The element cache. */
 	private final JavaElementCache                                 elementCache;
@@ -98,8 +97,6 @@ public class PPATypeVisitor extends ASTVisitor {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
 		this.elementCache = elementCache;
-		
-		this.relativeFilePath = this.relativeFilePath;
 		
 		PackageDeclaration packageDecl = this.cu.getPackage();
 		if (packageDecl != null) {

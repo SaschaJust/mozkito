@@ -2,11 +2,9 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.util.Map;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.DatabaseType;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -40,7 +38,7 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public HibernateUtil getValue() {
+	public Boolean getValue() {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
@@ -54,15 +52,6 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		                                   .toString(), arguments.get("database.password").getValue().toString(),
 		                                   arguments.get("database.type").getValue().toString(), arguments.get("database.driver").getValue()
 		                                   .toString());
-		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			return hibernateUtil;
-		} catch (UninitializedDatabaseException e) {
-			
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return null;
-		}
+		return true;
 	}
 }

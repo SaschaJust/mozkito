@@ -1,29 +1,28 @@
 package de.unisaarland.cs.st.reposuite.changecouplings;
 
+import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
+
 /**
  * The Class ChangeCouplings.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ChangeCouplings extends Thread {
+public class ChangeCouplings extends RepoSuiteToolchain {
 	
-	/**
-	 * Instantiates a new change couplings.
-	 * 
-	 * @param args
-	 *            the args
-	 */
-	public ChangeCouplings(final String[] args) {
-		// TODO Auto-generated constructor stub
+	public ChangeCouplings() {
+		super(new RepositorySettings());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
 	@Override
-	public void run() {
+	public void setup() {
 		// TODO Auto-generated method stub
-		super.run();
+		
+	}
+	
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
 	}
 }
