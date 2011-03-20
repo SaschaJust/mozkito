@@ -21,11 +21,6 @@
 			<artifactId>reposuite-utils</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-bugs</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 	<properties>
 		<moduleName>persons</moduleName>

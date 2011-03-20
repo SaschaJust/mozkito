@@ -10,6 +10,23 @@
 	<artifactId>reposuite-mapping</artifactId>
 	<packaging>jar</packaging>
 	<name>reposuite-mapping</name>
+	<dependencies>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-core</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-utils</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-bugs</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 	<properties>
 		<moduleName>mapping</moduleName>
 	</properties>

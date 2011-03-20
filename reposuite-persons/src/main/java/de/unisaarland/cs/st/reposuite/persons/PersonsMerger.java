@@ -236,6 +236,7 @@ public class PersonsMerger extends
 			if (Logger.logInfo()) {
 				Logger.info("Storing new person objects (" + this.remap.keySet().size() + ").");
 			}
+			
 			this.hibernateUtil.beginTransaction();
 			for (Person person : this.remap.keySet()) {
 				this.hibernateUtil.save(person);
