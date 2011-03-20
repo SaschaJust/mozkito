@@ -81,7 +81,7 @@ public class Persons extends RepoSuiteToolchain {
 		}
 		
 		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings());
+		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
 		new PersonsWriter(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
 	}
 	

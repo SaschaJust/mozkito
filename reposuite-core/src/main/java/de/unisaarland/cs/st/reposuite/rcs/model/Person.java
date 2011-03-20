@@ -263,7 +263,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the transactions
 	 */
-	@ManyToMany (cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@ManyToMany (cascade = { CascadeType.DETACH }, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
 		return this.transactions;
 	}
@@ -285,14 +285,14 @@ public class Person implements Annotated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.emailAddresses.isEmpty())
-				? 0
-				: this.emailAddresses.iterator().next().hashCode());
+		                                                          ? 0
+		                                                          : this.emailAddresses.iterator().next().hashCode());
 		result = prime * result + ((this.fullnames.isEmpty())
-				? 0
-				: this.fullnames.iterator().next().hashCode());
+		                                                     ? 0
+		                                                     : this.fullnames.iterator().next().hashCode());
 		result = prime * result + ((this.usernames.isEmpty())
-				? 0
-				: this.usernames.iterator().next().hashCode());
+		                                                     ? 0
+		                                                     : this.usernames.iterator().next().hashCode());
 		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
 		// >>> 32));
 		return result;
@@ -310,7 +310,7 @@ public class Person implements Annotated {
 			return true;
 		} else {
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
-					|| (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
+			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
 			} else {
 				return false;

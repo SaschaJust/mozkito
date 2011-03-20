@@ -3,19 +3,22 @@
  */
 package de.unisaarland.cs.st.reposuite.persons;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class PersonsWriter extends RepoSuiteSinkThread<PersonContainer> {
+public class PersonsWriter extends RepoSuiteSinkThread<HashMap<Person, HashSet<PersonContainer>>> {
 	
 	private final HibernateUtil hibernateUtil;
 	
@@ -26,7 +29,7 @@ public class PersonsWriter extends RepoSuiteSinkThread<PersonContainer> {
 	 * @param hibernateUtil
 	 */
 	public PersonsWriter(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	                     final HibernateUtil hibernateUtil) {
+	        final HibernateUtil hibernateUtil) {
 		super(threadGroup, PersonsWriter.class.getSimpleName(), settings);
 		this.hibernateUtil = hibernateUtil;
 	}
@@ -47,22 +50,21 @@ public class PersonsWriter extends RepoSuiteSinkThread<PersonContainer> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			PersonContainer personContainer;
+			HashMap<Person, HashSet<PersonContainer>> remap;
 			this.hibernateUtil.beginTransaction();
-			int i = 0;
-			
-			while (!isShutdown() && ((personContainer = read()) != null)) {
+			while (!isShutdown() && ((remap = read()) != null)) {
 				
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + personContainer);
+				for (Person person : remap.keySet()) {
+					HashSet<PersonContainer> set = remap.get(person);
+					
+					if (Logger.logInfo()) {
+						Logger.info("Updating personcontainers (" + set.size() + ") for " + person + ".");
+					}
+					
+					for (PersonContainer container2 : set) {
+						this.hibernateUtil.update(container2);
+					}
 				}
-				
-				if (++i % 15 == 0) {
-					this.hibernateUtil.commitTransaction();
-					this.hibernateUtil.beginTransaction();
-				}
-				
-				this.hibernateUtil.saveOrUpdate(personContainer);
 			}
 			this.hibernateUtil.commitTransaction();
 			finish();
