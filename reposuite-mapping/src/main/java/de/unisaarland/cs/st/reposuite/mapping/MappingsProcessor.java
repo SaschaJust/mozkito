@@ -3,6 +3,12 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
@@ -19,6 +25,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
 	
 	private final HibernateUtil hibernateUtil;
+	private final MapScore      zeroScore = new MapScore(null, null);
 	
 	/**
 	 * @param threadGroup
@@ -50,8 +57,28 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 			RCSTransaction transaction = null;
 			
 			while (!isShutdown() && ((transaction = read()) != null)) {
-				MappingFinder.getCandidates(transaction);
+				List<Long> candidates = MappingFinder.getCandidates(transaction);
 				
+				if (!candidates.isEmpty()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Fetching candidates (" + candidates.size() + ").");
+					}
+					
+					Criteria criteria = this.hibernateUtil.createCriteria(Report.class);
+					criteria.add(Restrictions.in("id", candidates));
+					
+					for (Report report : (List<Report>) criteria.list()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Processing mapping for " + transaction.getId() + " to " + report.getId()
+							        + ".");
+						}
+						
+						MapScore score = MappingFinder.score(transaction, report);
+						if (score.compareTo(this.zeroScore) > 0) {
+							write(score);
+						}
+					}
+				}
 			}
 			finish();
 		} catch (Exception e) {

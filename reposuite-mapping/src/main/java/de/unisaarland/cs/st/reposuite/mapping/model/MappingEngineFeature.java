@@ -28,6 +28,10 @@ public class MappingEngineFeature implements Annotated {
 	String                                           fqClassName;
 	private static Map<String, Class<MappingEngine>> cache            = new HashMap<String, Class<MappingEngine>>();
 	
+	@SuppressWarnings ("unused")
+	private MappingEngineFeature() {
+	}
+	
 	public MappingEngineFeature(final double confidence, final String fieldName, final String substring,
 	        final Class<MappingEngine> mappingEngine) {
 		this.confidence = confidence;

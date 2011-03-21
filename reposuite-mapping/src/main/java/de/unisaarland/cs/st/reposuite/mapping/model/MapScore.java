@@ -12,10 +12,16 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -27,7 +33,9 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
  *
  */
 @Entity
-public class MapScore implements Annotated {
+public class MapScore implements Annotated, Comparable<MapScore> {
+	
+	private int                generatedId;
 	
 	private static final long  serialVersionUID = -8606759070008468513L;
 	
@@ -38,6 +46,11 @@ public class MapScore implements Annotated {
 	double                     totalConfidence  = 0.0d;
 	
 	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
+	
+	@SuppressWarnings ("unused")
+	private MapScore() {
+		
+	}
 	
 	/**
 	 * @param transaction
@@ -63,6 +76,15 @@ public class MapScore implements Annotated {
 		this.features.add(new MappingEngineFeature(confidence, fieldName, relevantString, mappingEngine));
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final MapScore arg0) {
+		return Double.compare(this.totalConfidence, arg0.totalConfidence);
+	}
+	
 	/**
 	 * @return the features
 	 */
@@ -73,8 +95,20 @@ public class MapScore implements Annotated {
 	}
 	
 	/**
+	 * @return the generatedId
+	 */
+	@SuppressWarnings ("unused")
+	@Id
+	@Index (name = "idx_scoreid")
+	@GeneratedValue
+	private int getGeneratedId() {
+		return this.generatedId;
+	}
+	
+	/**
 	 * @return the report
 	 */
+	@Cascade (value = {})
 	public Report getReport() {
 		return this.report;
 	}
@@ -104,6 +138,7 @@ public class MapScore implements Annotated {
 	/**
 	 * @return the transaction
 	 */
+	@Cascade (value = {})
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}
@@ -122,6 +157,14 @@ public class MapScore implements Annotated {
 	 */
 	public void setFeatures(final List<MappingEngineFeature> features) {
 		this.features = features;
+	}
+	
+	/**
+	 * @param generatedId the generatedId to set
+	 */
+	@SuppressWarnings ("unused")
+	private void setGeneratedId(final int generatedId) {
+		this.generatedId = generatedId;
 	}
 	
 	/**
