@@ -11,6 +11,13 @@ package de.unisaarland.cs.st.reposuite.clustering;
 public interface MultilevelClusteringScoreVisitor<T> {
 	
 	/**
+	 * Returns the highest possible score value
+	 * 
+	 * @return
+	 */
+	public double getMaxPossibleScore();
+	
+	/**
 	 * Gets the new score by manipulating the given score.
 	 * 
 	 * @param ts
@@ -20,5 +27,4 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	 * @return the new (manipulated) score
 	 */
 	public double getScore(final T t1, final T t2, double oldScore);
-	
 }
