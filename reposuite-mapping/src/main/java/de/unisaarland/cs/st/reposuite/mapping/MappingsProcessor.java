@@ -3,34 +3,31 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-
+import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
+public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
 	
 	private final HibernateUtil hibernateUtil;
 	
 	/**
 	 * @param threadGroup
-	 * @param name
 	 * @param settings
 	 * @param hibernateUtil 
 	 */
-	public MappingsReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public MappingsProcessor(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final HibernateUtil hibernateUtil) {
-		super(threadGroup, MappingsReader.class.getSimpleName(), settings);
+		super(threadGroup, MappingsProcessor.class.getSimpleName(), settings);
 		this.hibernateUtil = hibernateUtil;
 	}
 	
@@ -50,18 +47,12 @@ public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
-			@SuppressWarnings ("unchecked")
-			List<RCSTransaction> list = criteria.list();
+			RCSTransaction transaction = null;
 			
-			for (RCSTransaction transaction : list) {
-				if (Logger.logDebug()) {
-					Logger.debug("Providing " + transaction.getId() + ".");
-				}
+			while (!isShutdown() && ((transaction = read()) != null)) {
+				MappingFinder.getCandidates(transaction);
 				
-				write(transaction);
 			}
-			
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {
@@ -70,5 +61,4 @@ public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
 			shutdown();
 		}
 	}
-	
 }

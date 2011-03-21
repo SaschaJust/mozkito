@@ -13,7 +13,6 @@ import net.ownhero.dev.kanuni.conditions.MapCondition;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
@@ -248,23 +247,14 @@ public class PersonsMerger extends
 			}
 			int commitIndex = 0;
 			this.hibernateUtil.beginTransaction();
-			Person person2 = null;
-			try {
-				for (Person person : this.deletes) {
-					person2 = person;
-					this.hibernateUtil.delete(person);
-					if (commitIndex % 1000 == 0) {
-						this.hibernateUtil.commitTransaction();
-						this.hibernateUtil.beginTransaction();
-					}
-				}
-				this.hibernateUtil.commitTransaction();
-			} catch (Throwable t) {
-				
-				if (Logger.logError()) {
-					Logger.error("Cannot delete: " + person2);
+			for (Person person : this.deletes) {
+				this.hibernateUtil.delete(person);
+				if (commitIndex % 1000 == 0) {
+					this.hibernateUtil.commitTransaction();
+					this.hibernateUtil.beginTransaction();
 				}
 			}
+			this.hibernateUtil.commitTransaction();
 			
 			finish();
 		} catch (Exception e) {

@@ -8,6 +8,6 @@ package de.unisaarland.cs.st.reposuite.mapping.engines;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class TimestampEngine implements MappingEngine {
+public class RegexMappingEngine implements MappingEngine {
 	
 }

@@ -18,8 +18,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
@@ -61,121 +59,6 @@ public class HibernateTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-	
-	/**
-	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}
-	 */
-	// @Test
-	// public void testMergePerson() {
-	//
-	// HibernateUtil hibernateUtil;
-	// try {
-	// hibernateUtil = HibernateUtil.getInstance();
-	// Criteria criteria = hibernateUtil.createCriteria(Person.class);
-	// int personCount = criteria.list().size();
-	//
-	// Person[] persons = new Person[] { new Person("just", null, null),
-	// new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new
-	// Person(null, "Sascha Just", null),
-	// new Person("just", "Sascha Just", null),
-	// new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
-	//
-	// RCSTransaction rcsTransaction = null;
-	//
-	// hibernateUtil.beginTransaction();
-	//
-	// int i = 0;
-	// for (Person person : persons) {
-	// rcsTransaction = RCSTransaction.createTransaction("" + ++i, "test", new
-	// DateTime(), person, "");
-	// hibernateUtil.saveOrUpdate(rcsTransaction);
-	// }
-	//
-	// hibernateUtil.commitTransaction();
-	//
-	// criteria = hibernateUtil.createCriteria(Person.class);
-	// @SuppressWarnings ("unchecked")
-	// List<Person> list = criteria.list();
-	// Person person = (Person) CollectionUtils.find(list, new Predicate() {
-	//
-	// @Override
-	// public boolean evaluate(final Object object) {
-	// Person p = (Person) object;
-	// return (p.getUsernames().size() == 1) &&
-	// p.getUsernames().iterator().next().equals("just");
-	// }
-	// });
-	//
-	// assertTrue(!list.isEmpty());
-	// assertEquals(personCount + 1, list.size());
-	// assertEquals(1, person.getUsernames().size());
-	// assertEquals("just", person.getUsernames().iterator().next());
-	// assertEquals(1, person.getEmailAddresses().size());
-	// assertEquals("sascha.just@st.cs.uni-saarland.de",
-	// person.getEmailAddresses().iterator().next());
-	// assertEquals(1, person.getFullnames().size());
-	// assertEquals("Sascha Just", person.getFullnames().iterator().next());
-	// assertEquals(persons.length, person.getTransactions().size());
-	// for (Person p : persons) {
-	// if (p != person) {
-	// assertEquals(0, p.getTransactions().size());
-	// }
-	// }
-	// } catch (UninitializedDatabaseException e) {
-	// fail();
-	// }
-	// }
-	//
-	// @Test
-	// public void testMergePersonSingleContainer() {
-	// HibernateUtil hibernateUtil;
-	// try {
-	// hibernateUtil = HibernateUtil.getInstance();
-	// Criteria criteria = hibernateUtil.createCriteria(Person.class);
-	// int personCount = criteria.list().size();
-	//
-	// PersonContainer personContainer = new PersonContainer();
-	// Person[] persons = new Person[] { new Person("pan", null, null),
-	// new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new
-	// Person(null, "Peter Pan", null),
-	// new Person("pan", "Peter Pan", null),
-	// new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
-	//
-	// for (int i = 0; i < persons.length; ++i) {
-	// personContainer.add("contrib_" + i, persons[i]);
-	// }
-	//
-	// hibernateUtil.beginTransaction();
-	// hibernateUtil.save(personContainer);
-	// hibernateUtil.commitTransaction();
-	//
-	// criteria = hibernateUtil.createCriteria(Person.class);
-	// @SuppressWarnings ("unchecked")
-	// List<Person> list = criteria.list();
-	// Person person = (Person) CollectionUtils.find(list, new Predicate() {
-	//
-	// @Override
-	// public boolean evaluate(final Object object) {
-	// Person p = (Person) object;
-	// return (p.getUsernames().size() == 1) &&
-	// p.getUsernames().iterator().next().equals("pan");
-	// }
-	// });
-	//
-	// assertTrue(!list.isEmpty());
-	// assertEquals(personCount + 1, list.size());
-	// assertEquals(1, person.getUsernames().size());
-	// assertEquals("pan", person.getUsernames().iterator().next());
-	// assertEquals(1, person.getEmailAddresses().size());
-	// assertEquals("peter.pan@st.cs.uni-saarland.de",
-	// person.getEmailAddresses().iterator().next());
-	// assertEquals(1, person.getFullnames().size());
-	// assertEquals("Peter Pan", person.getFullnames().iterator().next());
-	//
-	// } catch (UninitializedDatabaseException e) {
-	// fail();
-	// }
-	// }
 	
 	@Test
 	public void testSaveRCSFile() {

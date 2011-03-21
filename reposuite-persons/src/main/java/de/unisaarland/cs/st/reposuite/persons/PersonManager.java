@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.rcs.model;
+package de.unisaarland.cs.st.reposuite.persons;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +14,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**

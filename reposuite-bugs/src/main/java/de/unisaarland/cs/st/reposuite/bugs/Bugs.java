@@ -59,6 +59,10 @@ public class Bugs extends RepoSuiteToolchain {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
+	 */
 	@Override
 	public void setup() {
 		Tracker tracker = this.trackerArguments.getValue();
