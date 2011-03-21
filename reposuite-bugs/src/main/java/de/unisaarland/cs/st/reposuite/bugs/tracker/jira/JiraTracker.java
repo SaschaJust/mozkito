@@ -221,7 +221,7 @@ public class JiraTracker extends Tracker {
 			return source;
 		} else {
 			// fetch source from local file
-			
+			// FIXME this fails because elements do not start with RSS tag
 			if (Logger.logInfo()) {
 				Logger.info("Fetching report `" + uri.toString() + "` from local overview xml file ... ");
 			}
