@@ -98,7 +98,7 @@
 			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://own-hero.net:8081/nexus/content/groups/public</url>
+			<url>https://nexus.own-hero.net/content/groups/public</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -113,7 +113,7 @@
 			</snapshots>
 			<id>own-hero.net</id>
 			<name>own-hero.net local Repositories</name>
-			<url>http://own-hero.net:8081/nexus/content/groups/own-hero.net</url>
+			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>

@@ -19,7 +19,6 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -108,7 +107,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the report
 	 */
-	@Cascade (value = {})
+	// @Cascade (value = {})
+	@Transient
 	public Report getReport() {
 		return this.report;
 	}
@@ -138,7 +138,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the transaction
 	 */
-	@Cascade (value = {})
+	// @Cascade (value = {})
+	@Transient
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}

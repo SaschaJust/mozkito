@@ -61,7 +61,7 @@ public class MappingsPersister extends RepoSuiteSinkThread<MapScore> {
 					this.hibernateUtil.beginTransaction();
 				}
 				
-				this.hibernateUtil.saveOrUpdate(score);
+				this.hibernateUtil.save(score);
 			}
 			this.hibernateUtil.commitTransaction();
 			finish();

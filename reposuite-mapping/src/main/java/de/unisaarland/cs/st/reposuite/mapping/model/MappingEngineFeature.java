@@ -28,10 +28,19 @@ public class MappingEngineFeature implements Annotated {
 	String                                           fqClassName;
 	private static Map<String, Class<MappingEngine>> cache            = new HashMap<String, Class<MappingEngine>>();
 	
+	/**
+	 * 
+	 */
 	@SuppressWarnings ("unused")
 	private MappingEngineFeature() {
 	}
 	
+	/**
+	 * @param confidence
+	 * @param fieldName
+	 * @param substring
+	 * @param mappingEngine
+	 */
 	public MappingEngineFeature(final double confidence, final String fieldName, final String substring,
 	        final Class<MappingEngine> mappingEngine) {
 		this.confidence = confidence;
@@ -127,6 +136,25 @@ public class MappingEngineFeature implements Annotated {
 	 */
 	public void setSubstring(final String substring) {
 		this.substring = substring;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MappingEngineFeature [confidence=");
+		builder.append(this.confidence);
+		builder.append(", fieldName=");
+		builder.append(this.fieldName);
+		builder.append(", substring=");
+		builder.append(this.substring);
+		builder.append(", fqClassName=");
+		builder.append(this.fqClassName);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

@@ -67,7 +67,13 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 					Criteria criteria = this.hibernateUtil.createCriteria(Report.class);
 					criteria.add(Restrictions.in("id", candidates));
 					
-					for (Report report : (List<Report>) criteria.list()) {
+					@SuppressWarnings ("unchecked")
+					List<Report> list = criteria.list();
+					int size = list.size();
+					Report report = null;
+					
+					for (int i = 0; i < size; ++i) {
+						report = list.get(i);
 						if (Logger.logDebug()) {
 							Logger.debug("Processing mapping for " + transaction.getId() + " to " + report.getId()
 							        + ".");
