@@ -22,6 +22,7 @@ import org.w3c.dom.Text;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.specification.NonNegative;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
 
 /**
@@ -50,6 +51,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		/** The FALSE. */
 		FALSE
 	};
+	
+	private JavaElementRelation parentRelation;
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4858435624572738026L;
@@ -102,16 +105,16 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the file path
 	 */
 	public JavaElementLocation(@NotNull final T element, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
-			@NotNull final String filePath) {
+	                           @NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine,
+	                           @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		if (element instanceof JavaElementDefinition) {
 			Condition.check(bodyStartLine <= endLine,
-					"Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
-					+ " startLine=" + endLine);
+			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
+			                + " startLine=" + endLine);
 			Condition.check(bodyStartLine >= startLine,
-					"Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
-					+ " startLine=" + startLine);
+			                "Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
+			                + " startLine=" + startLine);
 		}
 		this.setElement(element);
 		this.setStartLine(startLine);
@@ -130,7 +133,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the to
 	 */
 	@Transient
-	public void addCommentLines(final int from, final int to){
+	public void addCommentLines(@NonNegative final int from,
+	                            @NonNegative final int to) {
 		Condition.check(from <= to, "You must supply a closed interval.");
 		for(int i = from; i <= to; ++i){
 			this.commentLines .add(i);
@@ -141,6 +145,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
+	@NoneNull
 	public int compareTo(final JavaElementLocation<T> other) {
 		if (this.getStartLine() < other.getStartLine()) {
 			return -1;
@@ -164,6 +169,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the lines
 	 * @return the line cover
 	 */
+	@NoneNull
 	public LineCover coversAllLines(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
@@ -197,6 +203,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the lines
 	 * @return the line cover
 	 */
+	@NoneNull
 	public LineCover coversAnyLine(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
@@ -231,7 +238,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the line
 	 * @return the line cover
 	 */
-	public LineCover coversLine(final int line) {
+	public LineCover coversLine(@NonNegative final int line) {
 		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
 			if (this.getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
@@ -348,6 +355,12 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return this.id;
 	}
 	
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public JavaElementRelation getParentRelation() {
+		return parentRelation;
+	}
+	
+	
 	/**
 	 * Gets the position.
 	 * 
@@ -356,7 +369,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public int getPosition() {
 		return this.position;
 	}
-	
 	
 	/**
 	 * Gets the start line.
@@ -374,6 +386,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the document
 	 * @return the xML representation
 	 */
+	@NoneNull
 	public Element getXMLRepresentation(final Document document){
 		Element thisElement = document.createElement("JavaElementLocation");
 		
@@ -436,6 +449,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param commentLines
 	 *            the new comment lines
 	 */
+	@NoneNull
 	protected void setCommentLines(final Set<Integer> commentLines) {
 		this.commentLines = commentLines;
 	}
@@ -447,6 +461,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param element
 	 *            the new element
 	 */
+	@NoneNull
 	public void setElement(final T element) {
 		this.element = element;
 	}
@@ -467,6 +482,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param filePath
 	 *            the new file path
 	 */
+	@NoneNull
 	private void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
@@ -480,6 +496,11 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	@SuppressWarnings("unused")
 	private void setId(final long id) {
 		this.id = id;
+	}
+	
+	@NoneNull
+	public void setParentRelation(JavaElementRelation parentRelation) {
+		this.parentRelation = parentRelation;
 	}
 	
 	/**

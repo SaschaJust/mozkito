@@ -15,6 +15,7 @@ import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class JavaMethodCall.
@@ -26,7 +27,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2885710604331995125L;
-
+	
 	/**
 	 * Compose full qualified name.
 	 * 
@@ -36,7 +37,9 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 *            the signature
 	 * @return the string
 	 */
-	public static String composeFullQualifiedName(final String fullQualifiedName, final List<String> signature){
+	@NoneNull
+	public static String composeFullQualifiedName(final String fullQualifiedName,
+	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(fullQualifiedName);
 		sb.append("(");
@@ -76,14 +79,16 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param signature
 	 *            the signature
 	 */
+	@NoneNull
 	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
+		// TODO add check on fullqualified name
 		super(fullQualifiedName);
 		this.signature = new ArrayList<String>(signature);
-		this.setFullQualifiedName(composeFullQualifiedName(fullQualifiedName, signature));
+		this.setFullQualifiedName(fullQualifiedName);
 		int index = fullQualifiedName.lastIndexOf(".");
 		Condition.check(index < fullQualifiedName.length(),
-				"Could not determine called class name. Last index of `.` is not less than length of string: "
-				+ fullQualifiedName);
+		                "Could not determine called class name. Last index of `.` is not less than length of string: "
+		                + fullQualifiedName);
 		this.calledPackageName = fullQualifiedName.substring(0, index);
 		this.calledClassName = fullQualifiedName.substring(index+1, fullQualifiedName.length());
 		
@@ -157,13 +162,27 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation(org.w3c.dom.Document)
 	 */
 	@Override
+	@NoneNull
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement("JavaMethodCall");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
 		Text textNode = document.createTextNode(this.getFullQualifiedName());
 		nameElement.appendChild(textNode);
+		
+		Element parentElement = document.createElement("parent");
+		for (JavaElementRelation rel : getParentRelations().values()) {
+			parentElement.appendChild(rel.getXMLRepresentation(document));
+		}
+		
+		Element childElement = document.createElement("children");
+		for (JavaElementRelation rel : getChildRelations().values()) {
+			childElement.appendChild(rel.getXMLRepresentation(document));
+		}
+		
 		thisElement.appendChild(nameElement);
+		thisElement.appendChild(parentElement);
+		thisElement.appendChild(childElement);
 		
 		return thisElement;
 	}
@@ -183,6 +202,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 *            the new called class name
 	 */
 	@SuppressWarnings("unused")
+	@NoneNull
 	private void setCalledClassName(final String calledClassName) {
 		this.calledClassName = calledClassName;
 	}
@@ -193,10 +213,13 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param calledPackageName
 	 *            the new called package name
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
+	@NoneNull
 	private void setCalledPackageName(final String calledPackageName) {
 		this.calledPackageName = calledPackageName;
 	}
+	
+	
 	
 	/**
 	 * Sets the signature.
@@ -205,6 +228,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 *            the new signature
 	 */
 	@SuppressWarnings("unused")
+	@NoneNull
 	private void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}

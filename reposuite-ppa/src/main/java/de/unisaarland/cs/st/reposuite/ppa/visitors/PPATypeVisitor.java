@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementRelation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.Condition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -44,8 +45,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	
 	/** The prim types. */
 	private static String[]                                        primTypes        = { "Class", "Character", "Byte",
-	        "Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
-	        "Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
+		"Short", "Integer", "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper",
+		"Thread", "ClassLoader", "Color", "AbstractCollectionConverter", "ObjectTree" };
 	
 	/** The class stack. */
 	private final Stack<JavaElementLocation<JavaClassDefinition>>  classStack       = new Stack<JavaElementLocation<JavaClassDefinition>>();
@@ -92,8 +93,9 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the element cache
 	 */
 	@NoneNull
-	public PPATypeVisitor(final CompilationUnit cu, final String relativeFilePath, final String[] packageFilter,
-	        final JavaElementCache elementCache) {
+	public PPATypeVisitor(final CompilationUnit cu,
+	                      final String relativeFilePath, final String[] packageFilter,
+	                      final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
 		this.elementCache = elementCache;
@@ -243,7 +245,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				int previousLine = -1;
 				if (this.previousNode != null) {
 					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
-					        + this.previousNode.getLength());
+					                                     + this.previousNode.getLength());
 				}
 				if (previousLine == startline) {
 					markComment = false;
@@ -290,19 +292,24 @@ public class PPATypeVisitor extends ASTVisitor {
 			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(this.packageName
-			                                                                                                    + "."
-			                                                                                                    + td.getName()
-			                                                                                                        .toString(),
+			                                                                                            + "."
+			                                                                                            + td.getName()
+			                                                                                            .toString(),
 			                                                                                            this.relativeFilePath,
-			                                                                                            parent,
 			                                                                                            startLine,
 			                                                                                            endLine,
 			                                                                                            td.getStartPosition(),
 			                                                                                            bodyStartLine,
 			                                                                                            this.packageName);
+			
+			if (parent != null) {
+				JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
+				classDefLoc.setParentRelation(relation);
+			}
+			
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
-				        + "` and class name `" + td.getName().toString() + "`");
+				             + "` and class name `" + td.getName().toString() + "`");
 			}
 			this.classStack.push(classDefLoc);
 			
@@ -323,7 +330,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of anonymous class outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 				return;
 			}
@@ -332,7 +339,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			@SuppressWarnings ("unchecked")
 			List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
-			        + " body declarations!");
+			                + " body declarations!");
 			
 			int bodyStartLine = currentLine;
 			int bodyStartIndex = acd.toString().indexOf("{");
@@ -348,7 +355,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int anonCount = this.classStack.peek().getElement().nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
-			                    .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
+					.equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
 				String parentName = this.classStack.peek().getElement().getFullQualifiedName();
 				if (parentName.contains("$")) {
@@ -356,17 +363,21 @@ public class PPATypeVisitor extends ASTVisitor {
 					parentName = parentName.substring(0, index);
 				}
 				
+				JavaClassDefinition parent = this.classStack.peek().getElement();
+				
 				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
-				                                                                                                    + "$"
-				                                                                                                    + anonCount,
+				                                                                                            + "$"
+				                                                                                            + anonCount,
 				                                                                                            this.relativeFilePath,
-				                                                                                            this.classStack.peek()
-				                                                                                                           .getElement(),
 				                                                                                            currentLine,
 				                                                                                            endLine,
 				                                                                                            node.getStartPosition(),
 				                                                                                            bodyStartLine,
 				                                                                                            this.packageName);
+				if (parent != null) {
+					JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
+					classDefLoc.setParentRelation(relation);
+				}
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
@@ -389,7 +400,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of method outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 			} else {
 				List<String> arguments = new ArrayList<String>();
@@ -402,18 +413,26 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
-				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md.getName()
-				                                                                                                 .toString(),
+				JavaClassDefinition parent = this.classStack.peek().getElement();
+				String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, md.getName().toString(),
+				                                                                 arguments);
+				
+				
+				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(cacheName,
 				                                                                                               arguments,
 				                                                                                               this.getRelativeFilePath(),
-				                                                                                               this.classStack.peek()
-				                                                                                                              .getElement(),
 				                                                                                               startLine,
 				                                                                                               endLine,
 				                                                                                               node.getStartPosition(),
 				                                                                                               bodyStartLine);
 				
-				this.classStack.peek().getElement().addMethod(methodDefLoc.getElement());
+				if (parent != null) {
+					JavaElementRelation relation = this.classStack.peek().getElement()
+					.addMethod(methodDefLoc.getElement());
+					methodDefLoc.setParentRelation(relation);
+				}
+				
+				
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {
 						Logger.warn("Adding method definition to method stack while stack is not empty. This is not impossible but happens rarely!");

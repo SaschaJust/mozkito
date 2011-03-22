@@ -14,8 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Condition;
-import de.unisaarland.cs.st.reposuite.utils.specification.NotNull;
+import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**
  * The Class JavaMethodDefinition.
@@ -39,8 +38,10 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the signature
 	 * @return the string
 	 */
-	public static String composeFullQualifiedName(final JavaClassDefinition parent, final String methodName,
-			final List<String> signature) {
+	@NoneNull
+	public static String composeFullQualifiedName(final JavaClassDefinition parent,
+	                                              final String methodName,
+	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(parent.getFullQualifiedName());
@@ -64,7 +65,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	/**
 	 * Instantiates a new java method definition.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private JavaMethodDefinition() {
 		super();
 	}
@@ -76,26 +77,17 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 *            the full qualified name
 	 * @param signature
 	 *            the signature
-	 * @param parent
-	 *            the parent
 	 */
-	protected JavaMethodDefinition(@NotNull final String fullQualifiedName, @NotNull final List<String> signature,
-			@NotNull final JavaClassDefinition parent) {
-		
-		super(fullQualifiedName, parent);
+	@NoneNull
+	protected JavaMethodDefinition(final String fullQualifiedName, final List<String> signature) {
+		// TODO add condition check that fullQualifiedName contains (,) and .
+		super(fullQualifiedName);
 		this.setSignature(new ArrayList<String>(signature));
-		this.setFullQualifiedName(composeFullQualifiedName(parent, super.getFullQualifiedName(), signature));
-		if (parent != null) {
-			Condition.check(parent instanceof JavaClassDefinition,
-			"The parent of a method Definition has to be another class definition");
-			parent.addChild(this);
-		}
-		
+		this.setFullQualifiedName(fullQualifiedName);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#equals
 	 * (java.lang.Object)
@@ -134,7 +126,6 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#getTypedParent
 	 * ()
@@ -142,12 +133,16 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	@Override
 	@Transient
 	public JavaClassDefinition getTypedParent() {
-		return (JavaClassDefinition) super.getParent();
+		
+		if (this.getParentRelations().isEmpty()) {
+			return null;
+		}
+		JavaElementRelation parent = this.getParentRelations().values().iterator().next();
+		return (JavaClassDefinition) parent.getParent();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
 	 * (org.w3c.dom.Document)
@@ -159,14 +154,27 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		Element nameElement = document.createElement("fullQualifiedName");
 		Text textNode = document.createTextNode(this.getFullQualifiedName());
 		nameElement.appendChild(textNode);
+		
+		Element parentElement = document.createElement("parent");
+		if (!this.getParentRelations().isEmpty()) {
+			JavaElementRelation relation = this.getParentRelations().values().iterator().next();
+			parentElement.appendChild(relation.getXMLRepresentation(document));
+		}
+		
+		Element childElement = document.createElement("children");
+		for (JavaElementRelation rel : getChildRelations().values()) {
+			childElement.appendChild(rel.getXMLRepresentation(document));
+		}
+		
 		thisElement.appendChild(nameElement);
+		thisElement.appendChild(parentElement);
+		thisElement.appendChild(childElement);
 		
 		return thisElement;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#hashCode()
 	 */
@@ -174,26 +182,30 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((getSignature() == null) ? 0 : getSignature().hashCode());
+		result = prime * result + ((getSignature() == null)
+				? 0
+				: getSignature().hashCode());
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
 		HashSet<Annotated> set = new HashSet<Annotated>();
-		set.add(this.getParent());
+		set.add(this.getTypedParent());
 		return set;
 	}
 	
 	/**
-	 * Sets the signature.
+	 * Sets the signature. Used by Hibernate only
 	 * 
 	 * @param signature
 	 *            the new signature
 	 */
+	@NoneNull
 	private void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}

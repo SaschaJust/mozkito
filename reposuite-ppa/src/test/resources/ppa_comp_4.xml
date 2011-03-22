@@ -6,6 +6,10 @@
         <filePath>reposuite-delta/src/main/java/extrev/Main.java</filePath>
         <JavaMethodDefinition>
           <fullQualifiedName>extrev.Main.main(String[])</fullQualifiedName>
+          <parent>
+            <JavaElementRelation added="" child="extrev.Main.main(String[])" deleted=" ff1ba504345e9df2b9feb0c678779945017236cc" parent="extrev.Main"/>
+          </parent>
+          <children/>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Deleted>
@@ -14,6 +18,10 @@
         <filePath>reposuite-delta/src/main/java/extrev/Main.java</filePath>
         <JavaClassDefinition>
           <fullQualifiedName>extrev.Main</fullQualifiedName>
+          <parent/>
+          <children>
+            <JavaElementRelation added="" child="extrev.Main.main(String[])" deleted=" ff1ba504345e9df2b9feb0c678779945017236cc" parent="extrev.Main"/>
+          </children>
         </JavaClassDefinition>
       </JavaElementLocation>
     </Deleted>

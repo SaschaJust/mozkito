@@ -80,13 +80,13 @@ public class JavaElementCache {
 	 * @return the class definition
 	 */
 	public JavaElementLocation<JavaClassDefinition> getClassDefinition(@NotNull final String fullQualifiedName,
-			@NotNull final String file, final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, @NonNegative final int bodyStartLine,
-			@NotNull final String packageName) {
+	                                                                   @NotNull final String file, @NonNegative final int startLine,
+	                                                                   @NonNegative final int endLine, @NonNegative final int position, @NonNegative final int bodyStartLine,
+	                                                                   @NotNull final String packageName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
-			def = new JavaClassDefinition(fullQualifiedName, parent, packageName);
+			def = new JavaClassDefinition(fullQualifiedName, packageName);
 			Criteria criteria = this.hibernateUtil.createCriteria(JavaClassDefinition.class);
 			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
 			@SuppressWarnings("unchecked") List<JavaClassDefinition> list = criteria.list();
@@ -96,8 +96,8 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+				                             "Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
+				                             + def.getPrimaryKey().toString());
 			} else {
 				def = list.get(0);
 			}
@@ -146,14 +146,14 @@ public class JavaElementCache {
 	 * @return the method call
 	 */
 	public JavaElementLocation<JavaMethodCall> getMethodCall(@NotNull final String fullQualifiedName,
-			@NotNull final List<String> signature, @NotNull final String file,
-			@NotNull final JavaElementDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position) {
+	                                                         @NotNull final List<String> signature, @NotNull final String file,
+	                                                         @NotNull final JavaElementDefinition parent, @NonNegative final int startLine,
+	                                                         @NonNegative final int endLine, @NonNegative final int position) {
 		
 		String cacheName = JavaMethodCall.composeFullQualifiedName(fullQualifiedName, signature);
 		JavaMethodCall call = null;
 		if (!methodCalls.containsKey(cacheName)) {
-			call = new JavaMethodCall(fullQualifiedName, signature);
+			call = new JavaMethodCall(cacheName, signature);
 			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodCall.class);
 			criteria.add(Restrictions.eq("primaryKey", call.getPrimaryKey()));
 			@SuppressWarnings("unchecked") List<JavaMethodCall> list = criteria.list();
@@ -163,8 +163,8 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
-						+ call.getPrimaryKey().toString());
+				                             "Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
+				                             + call.getPrimaryKey().toString());
 			} else {
 				call = list.get(0);
 			}
@@ -201,15 +201,14 @@ public class JavaElementCache {
 	 * @return the method definition
 	 */
 	public JavaElementLocation<JavaMethodDefinition> getMethodDefinition(@NotNull final String fullQualifiedName,
-			@NotNull final List<String> signature, @NotNull final String file,
-			@NotNull final JavaClassDefinition parent, @NonNegative final int startLine,
-			@NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine) {
+	                                                                     @NotNull final List<String> signature, @NotNull final String file,
+	                                                                     @NonNegative final int startLine,
+	                                                                     @NonNegative final int endLine, @NonNegative final int position, final int bodyStartLine) {
 		
-		String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, fullQualifiedName, signature);
 		JavaMethodDefinition def = null;
-		if (!methodDefs.containsKey(cacheName)) {
+		if (!methodDefs.containsKey(fullQualifiedName)) {
 			
-			def = new JavaMethodDefinition(fullQualifiedName, signature, parent);
+			def = new JavaMethodDefinition(fullQualifiedName, signature);
 			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodDefinition.class);
 			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
 			@SuppressWarnings("unchecked") List<JavaMethodDefinition> list = criteria.list();
@@ -219,31 +218,18 @@ public class JavaElementCache {
 				}
 			} else if (list.size() > 1) {
 				throw new UnrecoverableError(
-						"Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
-						+ def.getPrimaryKey().toString());
+				                             "Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
+				                             + def.getPrimaryKey().toString());
 			} else {
 				def = list.get(0);
 			}
 			
-			methodDefs.put(cacheName, def);
+			methodDefs.put(fullQualifiedName, def);
 		} else {
-			def = methodDefs.get(cacheName);
+			def = methodDefs.get(fullQualifiedName);
 		}
 		JavaElementLocation<JavaMethodDefinition> result = new JavaElementLocation<JavaMethodDefinition>(def,
 				startLine, endLine, position, bodyStartLine, file);
-		
-		if (result.getElement().getParent() != parent) {
-			if (result.getElement().getParent() == null) {
-				result.getElement().setParent(parent);
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Trying to override parent of '" + result.getElement().getFullQualifiedName()
-							+ "'. This is not possible (already set to `"
-							+ result.getElement().getParent().getFullQualifiedName()
-							+ "`). Create new MethodDefinition first.", new RuntimeException());
-				}
-			}
-		}
 		
 		this.methodDefLocations.add(result);
 		return result;
