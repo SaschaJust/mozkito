@@ -91,6 +91,12 @@ public class MultilevelClusteringTest {
 		}
 		
 		@Override
+		public double getMaxPossibleScore() {
+			return 0;
+		}
+		
+		
+		@Override
 		public double getScore(final Cluster<String> newCluster, final Cluster<String> otherCluster) {
 			double d = 1000d;
 			for(String s : newCluster.getAllElements()){
@@ -107,7 +113,6 @@ public class MultilevelClusteringTest {
 				return 1d / d;
 			}
 		}
-		
 		
 		@Override
 		public double getScore(final String t1, final String t2, final double oldScore) {
@@ -127,6 +132,11 @@ public class MultilevelClusteringTest {
 	MultilevelClusteringCollapseVisitor<Integer> {
 		
 		private int counter = 0;
+		
+		@Override
+		public double getMaxPossibleScore() {
+			return 0;
+		}
 		
 		@Override
 		public double getScore(final Cluster<Integer> newCluster, final Cluster<Integer> otherCluster) {
