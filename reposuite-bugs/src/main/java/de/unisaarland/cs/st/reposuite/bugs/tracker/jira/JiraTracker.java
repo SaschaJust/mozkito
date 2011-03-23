@@ -222,7 +222,8 @@ public class JiraTracker extends Tracker {
 			return source;
 		} else {
 			// fetch source from local file
-			
+			// FIXME fix bug that arises when bugs are extracted from overview
+			// XML (rss tag missing)
 			if (Logger.logInfo()) {
 				Logger.info("Fetching report `" + uri.toString() + "` from local overview xml file ... ");
 			}
