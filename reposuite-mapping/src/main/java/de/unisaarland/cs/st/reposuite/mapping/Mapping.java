@@ -8,6 +8,7 @@ import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
@@ -57,6 +58,7 @@ public class Mapping extends RepoSuiteToolchain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
+		// TODO properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		
 		if (this.databaseArguments.getValue() != null) {
 			HibernateUtil hibernateUtil;
@@ -64,7 +66,17 @@ public class Mapping extends RepoSuiteToolchain {
 				hibernateUtil = HibernateUtil.getInstance(this);
 				new MappingsReader(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
 				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
+				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(),
+				                      HibernateUtil.getInstance(new RepoSuiteToolchain((RepoSuiteSettings) null) {
+					                      
+					                      @Override
+					                      public void setup() {
+					                      }
+					                      
+					                      @Override
+					                      public void shutdown() {
+					                      }
+				                      }));
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {
@@ -72,7 +84,6 @@ public class Mapping extends RepoSuiteToolchain {
 				}
 				shutdown();
 			}
-			
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Database arguments not valid. Aborting...");

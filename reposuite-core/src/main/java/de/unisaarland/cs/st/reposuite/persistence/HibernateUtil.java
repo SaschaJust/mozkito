@@ -115,17 +115,21 @@ public class HibernateUtil {
 	 * @param driver
 	 * @throws HibernateException
 	 */
-	public static void createSessionFactory(final String host, final String database, final String user,
-	                                        final String password, final String type, final String driver) throws HibernateException {
+	public static void createSessionFactory(final String host,
+	                                        final String database,
+	                                        final String user,
+	                                        final String password,
+	                                        final String type,
+	                                        final String driver) throws HibernateException {
 		try {
 			String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database
-			+ "?useUnicode=true&characterEncoding=UTF-8";
+			        + "?useUnicode=true&characterEncoding=UTF-8";
 			
 			Properties properties = new Properties();
 			properties.put("hibernate.connection.url", url);
 			properties.put("hibernate.hbm2ddl.auto", "update");
 			
-			//			properties.put("hibernate.show_sql", "true");
+			// properties.put("hibernate.show_sql", "true");
 			
 			properties.put("hibernate.connection.autocommit", "false");
 			properties.put("hibernate.show_sql", "false");
@@ -161,11 +165,13 @@ public class HibernateUtil {
 			if (toolchain != null) {
 				reposuiteToolchain = toolchain;
 			} else {
+				// TODO this will fail badly when called from something else
+				// then a ReposuiteThread
 				reposuiteToolchain = ((RepoSuiteThreadGroup) Thread.currentThread().getThreadGroup()).getToolchain();
 			}
 		} catch (ClassCastException e) {
 			throw new UnrecoverableError(HibernateUtil.class.getCanonicalName()
-			                             + " cannot be used without a corresponding toolchain.");
+			        + " cannot be used without a corresponding toolchain.");
 		}
 		
 		if (instances.containsKey(reposuiteToolchain)) {
@@ -271,7 +277,8 @@ public class HibernateUtil {
 	 * @return the criteria
 	 */
 	@NoneNull
-	public SQLQuery createSQLQuery(final String query, final Class<?> clazz) {
+	public SQLQuery createSQLQuery(final String query,
+	                               final Class<?> clazz) {
 		if (Arrays.asList(clazz.getInterfaces()).contains(Annotated.class)) {
 			SQLQuery hibernateQuery = this.session.createSQLQuery(query);
 			if (hibernateQuery == null) {
@@ -308,7 +315,8 @@ public class HibernateUtil {
 	public RCSTransaction fetchRCSTransaction(final String id) throws LoadingException {
 		
 		Criteria parentCriteria = this.createCriteria(RCSTransaction.class).add(Restrictions.eq("id", id));
-		@SuppressWarnings("unchecked") List<RCSTransaction> list = parentCriteria.list();
+		@SuppressWarnings ("unchecked")
+		List<RCSTransaction> list = parentCriteria.list();
 		if (list.isEmpty()) {
 			throw new LoadingException("Could not fetch RCSTrabsaction with id `" + id + "`");
 		} else if (list.size() > 1) {
@@ -317,16 +325,15 @@ public class HibernateUtil {
 		return list.get(0);
 	}
 	
-	protected Session getSession(){
+	protected Session getSession() {
 		return this.session;
 	}
 	
-	
 	@NoneNull
-	public RCSTransaction getSessionRCSTransaction(final String id){
+	public RCSTransaction getSessionRCSTransaction(final String id) {
 		
 		Object cached = this.session.get(RCSTransaction.class, id);
-		if(cached != null){
+		if (cached != null) {
 			return (RCSTransaction) cached;
 		}
 		return null;

@@ -37,7 +37,6 @@ public class MappingsPersister extends RepoSuiteSinkThread<MapScore> {
 	@Override
 	public void run() {
 		try {
-			
 			if (!checkConnections() || !checkNotShutdown()) {
 				return;
 			}
@@ -56,7 +55,7 @@ public class MappingsPersister extends RepoSuiteSinkThread<MapScore> {
 					Logger.debug("Storing " + score);
 				}
 				
-				if (++i % 15 == 0) {
+				if (++i % 50 == 0) {
 					this.hibernateUtil.commitTransaction();
 					this.hibernateUtil.beginTransaction();
 				}

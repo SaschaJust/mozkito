@@ -34,11 +34,11 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 public class History implements Annotated {
 	
 	/**
-     * 
-     */
-	private static final long         serialVersionUID = 1720480073428317973L;
-	private long                      id;
-	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
+	 * 
+	 */
+	private static final long               serialVersionUID = 1720480073428317973L;
+	private long                            id;
+	private final SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
 	
 	/**
 	 * @param element
@@ -88,7 +88,8 @@ public class History implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public History get(final DateTime from, final DateTime to) {
+	public History get(final DateTime from,
+	                   final DateTime to) {
 		History history = new History();
 		Iterator<HistoryElement> iterator = this.elements.iterator();
 		while (iterator.hasNext()) {
@@ -205,7 +206,8 @@ public class History implements Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setElements(final SortedSet<HistoryElement> elements) {
-		this.elements = elements;
+		this.elements.clear();
+		this.elements.addAll(elements);
 	}
 	
 	/**

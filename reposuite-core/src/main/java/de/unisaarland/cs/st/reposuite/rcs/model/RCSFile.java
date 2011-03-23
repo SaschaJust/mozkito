@@ -36,9 +36,9 @@ public class RCSFile implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long   serialVersionUID = 7232712367403624199L;
-	private long                generatedId;
-	private Map<String, String> changedNames     = new HashMap<String, String>();
+	private static final long         serialVersionUID = 7232712367403624199L;
+	private long                      generatedId;
+	private final Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance
@@ -68,7 +68,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction,
-			final String pathName) {
+	                              final String pathName) {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
@@ -117,20 +117,22 @@ public class RCSFile implements Annotated {
 		
 		while ((current != null) && !this.changedNames.containsKey(current.getId())) {
 			
-			//if current transaction is a merge
+			// if current transaction is a merge
 			Set<RCSTransaction> currentParents = current.getParents();
 			if (currentParents.size() > 1) {
 				TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
-				//for each merged branch check if it contains any of the transaction ids
+				// for each merged branch check if it contains any of the
+				// transaction ids
 				for (RCSTransaction p : currentParents) {
 					RCSBranch parentBranch = p.getBranch();
 					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.equals(RCSBranch.MASTER))) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
 				}
-				//if we found a branch that contains a transaction and got merged here
-				if(hits.size() > 0){
-					//mark it as hit and continue
+				// if we found a branch that contains a transaction and got
+				// merged here
+				if (hits.size() > 0) {
+					// mark it as hit and continue
 					current = hits.last();
 					continue;
 				}
@@ -144,7 +146,7 @@ public class RCSFile implements Annotated {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not determine path for RCSFile (id=" + this.getGeneratedId() + ") for transaction "
-						+ transaction.getId());
+				        + transaction.getId());
 			}
 			return null;
 		}
@@ -166,7 +168,8 @@ public class RCSFile implements Annotated {
 	
 	@SuppressWarnings ("unused")
 	private void setChangedNames(final Map<String, String> changedNames) {
-		this.changedNames = new HashMap<String, String>(changedNames);
+		this.changedNames.clear();
+		this.changedNames.putAll(changedNames);
 	}
 	
 	/**
@@ -185,7 +188,7 @@ public class RCSFile implements Annotated {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-		+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }

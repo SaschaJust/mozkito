@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -83,13 +82,13 @@ public class Person implements Annotated {
 		return keeper;
 	}
 	
-	private long                generatedId;
+	private long                      generatedId;
 	
-	private Set<String>         usernames      = new TreeSet<String>();
-	private Set<String>         emailAddresses = new TreeSet<String>();
-	private Set<String>         fullnames      = new TreeSet<String>();
+	private final Set<String>         usernames      = new TreeSet<String>();
+	private final Set<String>         emailAddresses = new TreeSet<String>();
+	private final Set<String>         fullnames      = new TreeSet<String>();
 	
-	private Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
+	private final Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
 	
 	/**
 	 * Default constructor used by Hibernate
@@ -263,7 +262,7 @@ public class Person implements Annotated {
 	/**
 	 * @return the transactions
 	 */
-	@ManyToMany (cascade = { CascadeType.DETACH }, fetch = FetchType.LAZY)
+	@ManyToMany (cascade = {}, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
 		return this.transactions;
 	}
@@ -333,7 +332,8 @@ public class Person implements Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setEmailAddresses(final Set<String> emailAddresses) {
-		this.emailAddresses = emailAddresses;
+		this.emailAddresses.clear();
+		this.emailAddresses.addAll(emailAddresses);
 	}
 	
 	/**
@@ -341,7 +341,8 @@ public class Person implements Annotated {
 	 *            the fullnames to set
 	 */
 	protected void setFullnames(final Set<String> fullnames) {
-		this.fullnames = fullnames;
+		this.fullnames.clear();
+		this.fullnames.addAll(fullnames);
 	}
 	
 	/**
@@ -357,7 +358,8 @@ public class Person implements Annotated {
 	 *            the transactions to set
 	 */
 	protected void setTransactions(final Set<RCSTransaction> transactions) {
-		this.transactions = new HashSet<RCSTransaction>(transactions);
+		this.transactions.clear();
+		this.transactions.addAll(transactions);
 	}
 	
 	/**
@@ -365,7 +367,8 @@ public class Person implements Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setUsernames(final Set<String> usernames) {
-		this.usernames = usernames;
+		this.usernames.clear();
+		this.usernames.addAll(usernames);
 	}
 	
 	/*

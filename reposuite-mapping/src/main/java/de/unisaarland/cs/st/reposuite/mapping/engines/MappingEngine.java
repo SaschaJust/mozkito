@@ -11,10 +11,10 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public interface MappingEngine {
+public abstract class MappingEngine {
 	
-	public void score(RCSTransaction transaction,
-	                  Report report,
-	                  MapScore score);
+	public abstract void score(RCSTransaction transaction,
+	                           Report report,
+	                           MapScore score);
 	
 }

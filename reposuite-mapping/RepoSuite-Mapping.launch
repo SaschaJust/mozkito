@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/reposuite-mapping/src/main/java/mapping/Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mapping.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-DKanuniDebug"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-mapping"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.system.class.loader=net.ownhero.dev.kanuni.loader.KanuniClassloader -ea -Ddebug -Dlog.level=debug -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Ddatabase.name=reposuite_xstream_may2011 -Ddatabase.host=quentin.cs.uni-saarland.de  -Ddatabse.type=PostgreSQL -DdisableCrashEmail"/>
+</launchConfiguration>

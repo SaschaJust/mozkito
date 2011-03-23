@@ -52,35 +52,35 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * 
 	 */
-	private static final long  serialVersionUID = 3241584366125944268L;
-	private long               id               = -1l;
-	private String             category;
-	private SortedSet<Comment> comments         = new TreeSet<Comment>();
-	private String             description;
-	private Severity           severity;
-	private Priority           priority;
-	private Resolution         resolution;
-	private String             subject;
-	private SortedSet<Long>    siblings         = new TreeSet<Long>();
-	private History            history          = new History();
-	private Status             status;
-	private Type               type;
-	private DateTime           creationTimestamp;
-	private DateTime           resolutionTimestamp;
-	private DateTime           lastUpdateTimestamp;
-	private DateTime           lastFetch;
-	private String             version;
-	private String             summary;
-	private String             observedBehavior;
-	private String             expectedBehavior;
-	private String             stepsToReproduce;
-	private String             component;
-	private String             product;
-	private byte[]             hash             = new byte[33];
+	private static final long        serialVersionUID = 3241584366125944268L;
+	private long                     id               = -1l;
+	private String                   category;
+	private final SortedSet<Comment> comments         = new TreeSet<Comment>();
+	private String                   description;
+	private Severity                 severity;
+	private Priority                 priority;
+	private Resolution               resolution;
+	private String                   subject;
+	private final SortedSet<Long>    siblings         = new TreeSet<Long>();
+	private History                  history          = new History();
+	private Status                   status;
+	private Type                     type;
+	private DateTime                 creationTimestamp;
+	private DateTime                 resolutionTimestamp;
+	private DateTime                 lastUpdateTimestamp;
+	private DateTime                 lastFetch;
+	private String                   version;
+	private String                   summary;
+	private String                   observedBehavior;
+	private String                   expectedBehavior;
+	private String                   stepsToReproduce;
+	private String                   component;
+	private String                   product;
+	private byte[]                   hash             = new byte[33];
 	// assignedTo
 	// submitter
 	// resolver
-	private PersonContainer    personContainer  = new PersonContainer();
+	private PersonContainer          personContainer  = new PersonContainer();
 	
 	public Report() {
 		super();
@@ -92,7 +92,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public void addComment(@NotNull final Comment comment) {
 		Condition.notNull(this.comments,
-		"The container holding the comments must be initialized before adding a comment to the report.");
+		                  "The container holding the comments must be initialized before adding a comment to the report.");
 		
 		boolean retval = this.comments.add(comment);
 		comment.setBugReport(this);
@@ -175,8 +175,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
-		? getCreationTimestamp().toDate()
-		: null;
+		                                     ? getCreationTimestamp().toDate()
+		                                     : null;
 	}
 	
 	/**
@@ -216,7 +216,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the history
 	 */
-	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public History getHistory() {
 		return this.history;
 	}
@@ -245,8 +245,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return getLastFetch() != null
-		? getLastFetch().toDate()
-		: null;
+		                             ? getLastFetch().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -257,8 +257,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
-		? getLastUpdateTimestamp().toDate()
-		: null;
+		                                       ? getLastUpdateTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -318,8 +318,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
-		? getResolutionTimestamp().toDate()
-		: null;
+		                                       ? getResolutionTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -458,7 +458,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the comments to set
 	 */
 	public void setComments(final SortedSet<Comment> comments) {
-		this.comments = comments;
+		this.comments.clear();
+		this.comments.addAll(comments);
 	}
 	
 	public void setComponent(final String component) {
@@ -471,8 +472,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		this.creationTimestamp = creationTimestamp != null
-		? new DateTime(creationTimestamp)
-		: null;
+		                                                  ? new DateTime(creationTimestamp)
+		                                                  : null;
 	}
 	
 	/**
@@ -537,8 +538,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		this.lastFetch = lastFetch != null
-		? new DateTime(lastFetch)
-		: null;
+		                                  ? new DateTime(lastFetch)
+		                                  : null;
 	}
 	
 	/**
@@ -547,8 +548,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
 		this.lastUpdateTimestamp = date != null
-		? new DateTime(date)
-		: null;
+		                                       ? new DateTime(date)
+		                                       : null;
 	}
 	
 	/**
@@ -600,8 +601,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
 		this.resolutionTimestamp = date != null
-		? new DateTime(date)
-		: null;
+		                                       ? new DateTime(date)
+		                                       : null;
 	}
 	
 	/**
@@ -632,7 +633,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the siblings to set
 	 */
 	public void setSiblings(final SortedSet<Long> siblings) {
-		this.siblings = siblings;
+		this.siblings.clear();
+		this.siblings.addAll(siblings);
 	}
 	
 	/**
@@ -705,28 +707,28 @@ public class Report implements Annotated, Comparable<Report> {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		+ this.id
-		+ ", assignedTo="
-		+ getAssignedTo()
-		+ ", category="
-		+ this.category
-		+ ", comments="
-		+ (this.comments != null
-				? this.comments.size()
-				: 0)
-				+ ", description="
-				+ this.description.substring(0,
-				                             this.description.length() > 10
-				                             ? 10
-				                             : Math.max(this.description.length() - 1, 0))
-				                             + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
-				                             + ", submitter=" + getSubmitter() + ", subject="
-				                             + this.subject.substring(0, this.subject.length() > 10
-				                                                      ? 10
-				                                                      : Math.max(this.subject.length() - 1, 0))
-				                                                      + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
-				                                                      + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
-				                                                      + "]";
+		        + this.id
+		        + ", assignedTo="
+		        + getAssignedTo()
+		        + ", category="
+		        + this.category
+		        + ", comments="
+		        + (this.comments != null
+		                                ? this.comments.size()
+		                                : 0)
+		        + ", description="
+		        + this.description.substring(0,
+		                                     this.description.length() > 10
+		                                                                   ? 10
+		                                                                   : Math.max(this.description.length() - 1, 0))
+		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+		        + ", submitter=" + getSubmitter() + ", subject="
+		        + this.subject.substring(0, this.subject.length() > 10
+		                                                              ? 10
+		                                                              : Math.max(this.subject.length() - 1, 0))
+		        + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
+		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
+		        + "]";
 	}
 	
 }

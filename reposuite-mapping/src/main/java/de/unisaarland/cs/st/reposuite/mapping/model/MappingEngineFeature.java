@@ -21,12 +21,12 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Embeddable
 public class MappingEngineFeature implements Annotated {
 	
-	private static final long                        serialVersionUID = 4097360257338824107L;
-	double                                           confidence;
-	String                                           fieldName;
-	String                                           substring;
-	String                                           fqClassName;
-	private static Map<String, Class<MappingEngine>> cache            = new HashMap<String, Class<MappingEngine>>();
+	private static final long                                  serialVersionUID = 4097360257338824107L;
+	double                                                     confidence;
+	String                                                     fieldName;
+	String                                                     substring;
+	String                                                     fqClassName;
+	private static Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
 	 * 
@@ -42,11 +42,14 @@ public class MappingEngineFeature implements Annotated {
 	 * @param mappingEngine
 	 */
 	public MappingEngineFeature(final double confidence, final String fieldName, final String substring,
-	        final Class<MappingEngine> mappingEngine) {
+	        final Class<? extends MappingEngine> mappingEngine) {
 		this.confidence = confidence;
 		this.fieldName = fieldName;
 		this.substring = substring;
 		this.fqClassName = mappingEngine.getCanonicalName();
+		if (!cache.containsKey(this.fqClassName)) {
+			cache.put(this.fqClassName, mappingEngine);
+		}
 	}
 	
 	/**
@@ -60,7 +63,7 @@ public class MappingEngineFeature implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public Class<MappingEngine> getEngine() {
+	public Class<? extends MappingEngine> getEngine() {
 		try {
 			if (cache.containsKey(this.fqClassName)) {
 				return cache.get(this.fqClassName);

@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.mapping;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -16,6 +17,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -42,6 +44,7 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		try {
@@ -57,23 +60,18 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 			RCSTransaction transaction = null;
 			
 			while (!isShutdown() && ((transaction = read()) != null)) {
-				List<Long> candidates = MappingFinder.getCandidates(transaction);
+				Set<Long> candidates = MappingFinder.getCandidates(transaction);
 				
 				if (!candidates.isEmpty()) {
 					if (Logger.logDebug()) {
-						Logger.debug("Fetching candidates (" + candidates.size() + ").");
+						Logger.debug("Fetching candidates (" + candidates.size() + ") "
+						        + JavaUtils.collectionToString(candidates));
 					}
 					
 					Criteria criteria = this.hibernateUtil.createCriteria(Report.class);
 					criteria.add(Restrictions.in("id", candidates));
 					
-					@SuppressWarnings ("unchecked")
-					List<Report> list = criteria.list();
-					int size = list.size();
-					Report report = null;
-					
-					for (int i = 0; i < size; ++i) {
-						report = list.get(i);
+					for (Report report : (List<Report>) criteria.list()) {
 						if (Logger.logDebug()) {
 							Logger.debug("Processing mapping for " + transaction.getId() + " to " + report.getId()
 							        + ".");
@@ -81,7 +79,16 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 						
 						MapScore score = MappingFinder.score(transaction, report);
 						if (score.compareTo(this.zeroScore) > 0) {
+							if (Logger.logInfo()) {
+								Logger.info("Providing for store operation: " + transaction.getId() + " -> "
+								        + report.getId() + " (score: " + score + ").");
+							}
 							write(score);
+						} else {
+							if (Logger.logDebug()) {
+								Logger.debug("Discarding " + transaction.getId() + " -> " + report.getId()
+								        + " due to non-positive score (" + score + ").");
+							}
 						}
 					}
 				}

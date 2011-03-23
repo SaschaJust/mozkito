@@ -5,9 +5,10 @@ package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
@@ -28,8 +29,8 @@ public class MappingFinder {
 	static {
 		try {
 			Package package1 = MappingEngine.class.getPackage();
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesOfInterface(package1,
-			                                                                               MappingEngine.class);
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                  MappingEngine.class);
 			
 			for (Class<?> klass : classesExtendingClass) {
 				
@@ -50,8 +51,8 @@ public class MappingFinder {
 	 * @param transaction
 	 * @return
 	 */
-	public static List<Long> getCandidates(final RCSTransaction transaction) {
-		LinkedList<Long> candidates = new LinkedList<Long>();
+	public static Set<Long> getCandidates(final RCSTransaction transaction) {
+		Set<Long> candidates = new HashSet<Long>();
 		
 		Regex pattern = new Regex("({id}\\d{2,})");
 		List<List<RegexGroup>> findAll = pattern.findAll(transaction.getMessage());

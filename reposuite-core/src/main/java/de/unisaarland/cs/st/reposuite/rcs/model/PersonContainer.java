@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,9 +33,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * 
 	 */
-	private static final long   serialVersionUID = -5061178255449904475L;
-	private Map<String, Person> map              = new HashMap<String, Person>();
-	private long                generatedId;
+	private static final long         serialVersionUID = -5061178255449904475L;
+	private final Map<String, Person> map              = new HashMap<String, Person>();
+	private long                      generatedId;
 	
 	/**
 	 * 
@@ -90,7 +91,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * @return the map
 	 */
-	@ManyToMany (cascade = CascadeType.ALL)
+	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Map<String, Person> getMap() {
 		return this.map;
 	}
@@ -161,7 +162,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setMap(final Map<String, Person> map) {
-		this.map = map;
+		this.map.clear();
+		this.map.putAll(map);
 	}
 	
 	/**

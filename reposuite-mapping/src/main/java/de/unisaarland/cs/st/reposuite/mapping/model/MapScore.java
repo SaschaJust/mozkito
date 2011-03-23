@@ -10,10 +10,14 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
@@ -70,7 +74,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	public void addFeature(final double confidence,
 	                       @NotNull @NotEmpty final String fieldName,
 	                       @NotNull @NotEmpty final String relevantString,
-	                       @NotNull final Class<MappingEngine> mappingEngine) {
+	                       @NotNull final Class<? extends MappingEngine> mappingEngine) {
 		this.totalConfidence += confidence;
 		this.features.add(new MappingEngineFeature(confidence, fieldName, relevantString, mappingEngine));
 	}
@@ -88,7 +92,6 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @return the features
 	 */
 	@ElementCollection
-	// FIXME
 	public List<MappingEngineFeature> getFeatures() {
 		return this.features;
 	}
@@ -107,8 +110,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the report
 	 */
-	// @Cascade (value = {})
-	@Transient
+	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+	@JoinColumn (nullable = false)
 	public Report getReport() {
 		return this.report;
 	}
@@ -117,8 +120,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @return a set of {@link MappingEngine} classes that were used for this scoring
 	 */
 	@Transient
-	public Set<Class<MappingEngine>> getScoringEngines() {
-		HashSet<Class<MappingEngine>> engines = new HashSet<Class<MappingEngine>>();
+	public Set<Class<? extends MappingEngine>> getScoringEngines() {
+		HashSet<Class<? extends MappingEngine>> engines = new HashSet<Class<? extends MappingEngine>>();
 		
 		for (MappingEngineFeature feature : this.features) {
 			engines.add(feature.getEngine());
@@ -138,8 +141,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the transaction
 	 */
-	// @Cascade (value = {})
-	@Transient
+	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+	@JoinColumn (nullable = false)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}
@@ -157,7 +160,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @param features the features to set
 	 */
 	public void setFeatures(final List<MappingEngineFeature> features) {
-		this.features = features;
+		this.features.clear();
+		this.features.addAll(features);
 	}
 	
 	/**
