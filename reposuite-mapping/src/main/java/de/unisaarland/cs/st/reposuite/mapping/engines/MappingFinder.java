@@ -69,7 +69,7 @@ public class MappingFinder {
 	/**
 	 * @param transaction
 	 * @param report
-	 * @return
+	 * @return the computed scoring for transaction/report relation
 	 */
 	public static MapScore score(final RCSTransaction transaction,
 	                             final Report report) {

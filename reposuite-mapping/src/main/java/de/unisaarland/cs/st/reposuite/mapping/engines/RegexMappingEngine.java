@@ -17,6 +17,14 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 public class RegexMappingEngine extends MappingEngine {
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
+	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
+	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 */
 	@Override
 	public void score(final RCSTransaction transaction,
 	                  final Report report,

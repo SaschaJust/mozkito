@@ -13,5 +13,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="core.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-core"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=GIT -Dheadless -Drepository.uri=file:///Users/just/jruby_git_repo_03_07_2010/git_repo_03_07_2010 -Djava.system.class.loader=net.ownhero.dev.kanuni.loader.KanuniClassloader -ea -Ddebug -Dlog.level=debug -DdisableCrashEmail=true"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:kanuni-0.1-SNAPSHOT-jar-with-dependencies.jar -ea -Dlog.level=debug -Drepository.type=GIT -Dheadless -Drepository.uri=file:///Users/just/jruby_git_repo_03_07_2010/git_repo_03_07_2010 -ea -Ddebug -Dlog.level=debug -DdisableCrashEmail=true"/>
 </launchConfiguration>
