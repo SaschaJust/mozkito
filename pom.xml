@@ -84,6 +84,8 @@
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
 			<version>0.1-SNAPSHOT</version>
+			<!-- <scope>system</scope>
+			<systemPath>${java.home}/../lib/kanuni.jar</systemPath> -->
 		</dependency>
 	</dependencies>
 	<repositories>
@@ -103,17 +105,44 @@
 		</repository>
 		<repository>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-			<id>own-hero.net</id>
-			<name>own-hero.net local Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
+			<id>own-hero.net-snapshots</id>
+			<name>own-hero.net snapshots</name>
+			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>own-hero.net-releases</id>
+			<name>own-hero.net releases</name>
+			<url>https://nexus.own-hero.net/content/groups/releases</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>own-hero.net-dev</id>
+			<name>own-hero.net dev</name>
+			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
