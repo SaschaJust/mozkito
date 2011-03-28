@@ -8,6 +8,13 @@ function clean_exit()
     rm -rf /tmp/reposuite_28_01_2011.git.zip
     exit $1
 }
+function compare()
+{
+    cd $script_dir
+    r=`java -jar jexamxml.jar $1 $2`
+    if [[ $r == *"not identical"* ]]; then return 0; fi
+    return 1
+}
 
 MAC_OS_ECLIPSE_PATH='/../../../../reposuite-ppa-product/bin/mac/eclipse/eclipse.app/Contents/MacOS/'
 MAC_OS_ECLIPSE_ZIP_PARENT_PATH='/../../../../reposuite-ppa-product/bin/mac/'
@@ -76,56 +83,43 @@ then
     clean_exit $?
 fi
 
-cd $script_dir
-./ppa_xml_diff.py -x ppa_comp.xml -y /tmp/ppa.xml
+compare ppa_comp.xml /tmp/ppa.xml
 
-if [ $? -ne 0 ]
+if [ $? -ne 1 ]
 then
     echo "FAILED!"
     clean_exit $?
 fi
-
-./ppa_xml_diff.py -x /tmp/ppa.xml -y ppa_comp.xml
-
-if [ $? -ne 0 ]
-then
-    echo "FAILED!"
-    clean_exit $?
-else
-    echo "done."
-fi
-
 
 rm -rf /tmp/ppa.xml
 
-echo "TEST CASE 2 checking change operations for transaction dfd5e8d5eb594e29f507896a744d2bdabfc55cdf ... "
-cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf"
-./eclipse $VMARGS
-
-if [ $? -ne 0 ]
-then
-    clean_exit $?
-fi
-
-cd $script_dir
-./ppa_xml_diff.py -x ppa_comp_2.xml -y /tmp/ppa2.xml
-
-if [ $? -ne 0 ]
-then
-    echo "checking for alternative XML file. This is a non-deterministic bug in PPA ..."
-    ./ppa_xml_diff.py -x ppa_comp_2_altern.xml -y /tmp/ppa2.xml
-    if [ $? -ne 0 ]
-    then
-        echo "FAILED!"
-        clean_exit $?
-    else
-        echo "done."
-    fi
-else
-    echo "done."
-fi
-rm -rf /tmp/ppa2.xml
+# echo "TEST CASE 2 checking change operations for transaction dfd5e8d5eb594e29f507896a744d2bdabfc55cdf ... "
+# cd $ECLIPSE_PATH
+# VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf"
+# ./eclipse $VMARGS
+# 
+# if [ $? -ne 0 ]
+# then
+#     clean_exit $?
+# fi
+# 
+# compare ppa_comp_2.xml /tmp/ppa2.xml
+# 
+# if [ $? -ne 1 ]
+# then
+#     echo "checking for alternative XML file. This is a non-deterministic bug in PPA ..."
+#     compare ppa_comp_2_altern.xml /tmp/ppa2.xml
+#     if [ $? -ne 1 ]
+#     then
+#         echo "FAILED!"
+#         clean_exit $?
+#     else
+#         echo "done."
+#     fi
+# else
+#     echo "done."
+# fi
+# rm -rf /tmp/ppa2.xml
 
 
 echo "TEST CASE 3 checking change operations for transaction 0309f53f798d178aaf519333755c0f62500fcca9 ... "
@@ -138,10 +132,9 @@ then
     clean_exit $?
 fi
 
-cd $script_dir
-./ppa_xml_diff.py -x ppa_comp_3.xml -y /tmp/ppa3.xml
+compare ppa_comp_3.xml /tmp/ppa3.xml
 
-if [ $? -ne 0 ]
+if [ $? -ne 1 ]
 then
     echo "FAILED!"
     clean_exit $?
@@ -160,10 +153,9 @@ then
     clean_exit $?
 fi
 
-cd $script_dir
-./ppa_xml_diff.py -x ppa_comp_4.xml -y /tmp/ppa4.xml
+compare ppa_comp_4.xml /tmp/ppa4.xml
 
-if [ $? -ne 0 ]
+if [ $? -ne 1 ]
 then
     echo "FAILED!"
     clean_exit $?

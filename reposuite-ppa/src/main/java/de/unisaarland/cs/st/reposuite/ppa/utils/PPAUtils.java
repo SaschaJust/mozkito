@@ -27,24 +27,22 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
-import org.eclipse.jdt.core.dom.PPAEngine;
-import org.eclipse.jdt.core.dom.PPATypeRegistry;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
-import org.eclipse.jdt.internal.core.JavaProject;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
+import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation.LineCover;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementRelation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
@@ -145,6 +143,8 @@ public class PPAUtils {
 		Map<RCSRevision, CompilationUnit> oldRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
 		Map<RCSRevision, CompilationUnit> newRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
 		
+		ChangeOperations operations = new ChangeOperations();
+		
 		for (RCSRevision revision : transaction.getRevisions()) {
 			String changedPath = revision.getChangedFile().getPath(transaction);
 			if (!changedPath.endsWith(".java")) {
@@ -173,21 +173,34 @@ public class PPAUtils {
 				case Added:
 					JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newRevs2CUs.get(revision),
 					                                                                     changedPath, new String[0]);
-					
 					for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
+						operations.add(op);
+						JavaElementRelation parentRelation = classDef.getParentRelation();
+						if(parentRelation != null){
+							parentRelation.addStart(transaction);
 						}
+						
 					}
 					for (JavaElementLocation<JavaMethodDefinition> methDef : newElems.getMethodDefs(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision);
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
+						operations.add(op);
+						
+						JavaElementRelation parentRelation = methDef.getParentRelation();
+						if(parentRelation != null){
+							parentRelation.addStart(transaction);
 						}
 					}
 					for (JavaElementLocation<JavaMethodCall> methCall : newElems.getMethodCalls(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision);
+						operations.add(op);
+						
+						JavaElementRelation parentRelation = methCall.getParentRelation();
+						if(parentRelation != null){
+							parentRelation.addStart(transaction);
+						}
+					}
+					for (JavaChangeOperation op : operations.getOperations()) {
 						for (ChangeOperationVisitor visitor : visitors) {
 							visitor.visit(op);
 						}
@@ -204,18 +217,34 @@ public class PPAUtils {
 					
 					for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
+						operations.add(op);
+						
+						JavaElementRelation parentRelation = classDef.getParentRelation();
+						if (parentRelation != null) {
+							parentRelation.addEnd(transaction);
 						}
 					}
 					for (JavaElementLocation<JavaMethodDefinition> methDef : oldElems.getMethodDefs(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision);
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
+						operations.add(op);
+						
+						JavaElementRelation parentRelation = methDef.getParentRelation();
+						if (parentRelation != null) {
+							parentRelation.addEnd(transaction);
 						}
+						
 					}
 					for (JavaElementLocation<JavaMethodCall> methCall : oldElems.getMethodCalls(changedPath)) {
 						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision);
+						operations.add(op);
+						
+						JavaElementRelation parentRelation = methCall.getParentRelation();
+						if (parentRelation != null) {
+							parentRelation.addEnd(transaction);
+						}
+						
+					}
+					for (JavaChangeOperation op : operations.getOperations()) {
 						for (ChangeOperationVisitor visitor : visitors) {
 							visitor.visit(op);
 						}
@@ -254,7 +283,7 @@ public class PPAUtils {
 		// generate diff
 		Collection<Delta> diff = repository.diff(changedPath, transaction.getParent(transaction.getBranch()).getId(),
 		                                         transaction.getId());
-		List<JavaChangeOperation> operations = new LinkedList<JavaChangeOperation>();
+		ChangeOperations operations = new ChangeOperations();
 		for (Delta delta : diff) {
 			
 			if (delta instanceof DeleteDelta) {
@@ -265,6 +294,10 @@ public class PPAUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
+							JavaElementRelation parentRelation = javaElem.getParentRelation();
+							if (parentRelation != null) {
+								parentRelation.addEnd(transaction);
+							}
 							operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
 							break;
 						case BODY:
@@ -280,6 +313,10 @@ public class PPAUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
+							JavaElementRelation parentRelation = javaElem.getParentRelation();
+							if (parentRelation != null) {
+								parentRelation.addStart(transaction);
+							}
 							operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, revision));
 							break;
 						case BODY:
@@ -396,18 +433,34 @@ public class PPAUtils {
 				// up the operations
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToDelete) {
+						JavaElementRelation parentRelation = methodCall.getParentRelation();
+						if (parentRelation != null) {
+							parentRelation.addEnd(transaction);
+						}
 						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
 					}
 				}
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToAdd : addCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToAdd) {
+						JavaElementRelation parentRelation = methodCall.getParentRelation();
+						if (parentRelation != null) {
+							parentRelation.addStart(transaction);
+						}
 						operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, revision));
 					}
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToDelete : defsToRemove) {
+					JavaElementRelation parentRelation = methodDefToDelete.getParentRelation();
+					if (parentRelation != null) {
+						parentRelation.addEnd(transaction);
+					}
 					operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToAdd : defsToAdd) {
+					JavaElementRelation parentRelation = methodDefToAdd.getParentRelation();
+					if (parentRelation != null) {
+						parentRelation.addStart(transaction);
+					}
 					operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefModified : modifiedDefCandidates) {
@@ -415,7 +468,7 @@ public class PPAUtils {
 				}
 			}
 		}
-		for (JavaChangeOperation op : operations) {
+		for (JavaChangeOperation op : operations.getOperations()) {
 			for (ChangeOperationVisitor visitor : visitors) {
 				visitor.visit(op);
 			}
@@ -502,37 +555,50 @@ public class PPAUtils {
 	public static CompilationUnit getCU(final IFile file,
 	                                    final PPAOptions options) {
 		CompilationUnit cu = null;
+		
 		try {
-			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
-			PPATypeRegistry registry = new PPATypeRegistry((JavaProject) JavaCore.create(icu.getUnderlyingResource()
-			                                                                             .getProject()));
-			ASTNode node = null;
-			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
-			parser2.setStatementsRecovery(true);
-			parser2.setResolveBindings(true);
-			parser2.setSource(icu);
-			node = parser2.createAST(null);
-			PPAEngine ppaEngine = new PPAEngine(registry, options);
-			
-			cu = (CompilationUnit) node;
-			
-			ppaEngine.addUnitToProcess(cu);
-			ppaEngine.doPPA();
-			ppaEngine.reset();
-		} catch (JavaModelException jme) {
-			// Retry with the file version.
-			if (Logger.logWarn()) {
-				Logger.warn("Warning while getting CU from PPA");
-			}
-			if (Logger.logDebug()) {
-				Logger.debug("Exception", jme);
-			}
-			cu = getCU(file.getLocation().toFile(), options);
-		} catch (Exception e) {
+			PPACUThread ppacuThread = new PPACUThread(file, options);
+			Thread t = new Thread(ppacuThread);
+			t.run();
+			t.join(30000);
+			cu = ppacuThread.getCU();
+		} catch (InterruptedException e1) {
 			if (Logger.logError()) {
-				Logger.error("Error while getting CU from PPA", e);
+				Logger.error("Error while getting CU using PPA.", e1);
 			}
 		}
+		// try {
+		// ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
+		// PPATypeRegistry registry = new PPATypeRegistry((JavaProject)
+		// JavaCore.create(icu.getUnderlyingResource()
+		// .getProject()));
+		// ASTNode node = null;
+		// PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+		// parser2.setStatementsRecovery(true);
+		// parser2.setResolveBindings(true);
+		// parser2.setSource(icu);
+		// node = parser2.createAST(null);
+		// PPAEngine ppaEngine = new PPAEngine(registry, options);
+		//
+		// cu = (CompilationUnit) node;
+		//
+		// ppaEngine.addUnitToProcess(cu);
+		// ppaEngine.doPPA();
+		// ppaEngine.reset();
+		// } catch (JavaModelException jme) {
+		// // Retry with the file version.
+		// if (Logger.logWarn()) {
+		// Logger.warn("Warning while getting CU from PPA");
+		// }
+		// if (Logger.logDebug()) {
+		// Logger.debug("Exception", jme);
+		// }
+		//
+		// } catch (Exception e) {
+		// if (Logger.logError()) {
+		// Logger.error("Error while getting CU from PPA", e);
+		// }
+		// }
 		
 		return cu;
 	}
@@ -620,6 +686,17 @@ public class PPAUtils {
 			if (Logger.logDebug()) {
 				Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
 			}
+			// PPACUThread ppacuThread = new PPACUThread(iFile, options);
+			// Thread t = new Thread(ppacuThread);
+			// t.run();
+			// try {
+			// t.join(30000);
+			// } catch (InterruptedException e) {
+			// if (Logger.logWarn()) {
+			// Logger.warn(e.getMessage(), e);
+			// }
+			// }
+			// CompilationUnit cu = ppacuThread.getCU();
 			CompilationUnit cu = getCU(iFile, options);
 			if (cu == null) {
 				cu = getCUNoPPA(iFile);
@@ -632,7 +709,7 @@ public class PPAUtils {
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction transaction,
-	                                                                        final Map<RCSRevision, String> changedFilePaths) {
+	                                                                        Map<RCSRevision, String> changedFilePaths) {
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
 		Map<File, RCSRevision> files2Revisions = new HashMap<File, RCSRevision>();
 		
@@ -679,7 +756,7 @@ public class PPAUtils {
 	 * @return the java element locations by file
 	 */
 	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
-	                                                               final String relativePath,
+	                                                               String relativePath,
 	                                                               final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		

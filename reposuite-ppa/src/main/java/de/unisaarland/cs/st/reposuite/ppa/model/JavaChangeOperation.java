@@ -72,13 +72,28 @@ public class JavaChangeOperation implements Annotated {
 		setRevision(revision);
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		JavaChangeOperation other = (JavaChangeOperation) obj;
+		if (changedElementLocation == null) {
+			if (other.changedElementLocation != null) return false;
+		} else if (!changedElementLocation.equals(other.changedElementLocation)) return false;
+		if (revision == null) {
+			if (other.revision != null) return false;
+		} else if (!revision.equals(other.revision)) return false;
+		return true;
+	}
+	
 	/**
 	 * Gets the changed element.
 	 * 
 	 * @return the changed element
 	 */
-	@SuppressWarnings("rawtypes")
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@SuppressWarnings ("rawtypes")
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
 		return this.changedElementLocation;
 	}
@@ -114,7 +129,6 @@ public class JavaChangeOperation implements Annotated {
 		return this.id;
 	}
 	
-	
 	/**
 	 * Gets the revision.
 	 * 
@@ -124,6 +138,7 @@ public class JavaChangeOperation implements Annotated {
 	public RCSRevision getRevision() {
 		return this.revision;
 	}
+	
 	
 	/**
 	 * Gets the xML representation.
@@ -139,6 +154,19 @@ public class JavaChangeOperation implements Annotated {
 		//		thisElement.setAttributeNode(revision);
 		thisElement.appendChild(getChangedElementLocation().getXMLRepresentation(document));
 		return thisElement;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((changedElementLocation == null)
+				? 0
+				: changedElementLocation.hashCode());
+		result = prime * result + ((revision == null)
+				? 0
+				: revision.hashCode());
+		return result;
 	}
 	
 	/*
@@ -196,6 +224,5 @@ public class JavaChangeOperation implements Annotated {
 	private void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}
-	
 	
 }

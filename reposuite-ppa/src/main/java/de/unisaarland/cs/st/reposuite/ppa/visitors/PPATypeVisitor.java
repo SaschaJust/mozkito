@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementRelation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -70,7 +71,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	private final Set<PPAVisitor>                                  visitors         = new HashSet<PPAVisitor>();
 	
 	/** The relative file path. */
-	private final String                                                 relativeFilePath = "";
+	private String                                                 relativeFilePath = "";
 	
 	/** The element cache. */
 	private final JavaElementCache                                 elementCache;
@@ -83,6 +84,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * 
 	 * @param cu
 	 *            the cu
+	 * @param file
+	 *            the file
 	 * @param filePathPrefix
 	 *            the file path prefix
 	 * @param packageFilter
@@ -91,12 +94,14 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the element cache
 	 */
 	@NoneNull
-	public PPATypeVisitor(final CompilationUnit cu, final String filePathPrefix,
-	                      final String[] packageFilter, final JavaElementCache elementCache) {
-		
+	public PPATypeVisitor(final CompilationUnit cu,
+	                      final String relativeFilePath, final String[] packageFilter,
+	                      final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
 		this.elementCache = elementCache;
+		
+		this.relativeFilePath = relativeFilePath;
 		
 		PackageDeclaration packageDecl = this.cu.getPackage();
 		if (packageDecl != null) {
@@ -241,7 +246,6 @@ public class PPATypeVisitor extends ASTVisitor {
 				int previousLine = -1;
 				if (this.previousNode != null) {
 					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
-					                                     
 					                                     + this.previousNode.getLength());
 				}
 				if (previousLine == startline) {
@@ -288,21 +292,25 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int bodyStartLine = this.cu.getLineNumber(bodyStartIndex);
 			
-			
 			JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(this.packageName
 			                                                                                            + "."
 			                                                                                            + td.getName()
 			                                                                                            .toString(),
 			                                                                                            this.relativeFilePath,
-			                                                                                            parent,
 			                                                                                            startLine,
 			                                                                                            endLine,
 			                                                                                            td.getStartPosition(),
 			                                                                                            bodyStartLine,
 			                                                                                            this.packageName);
+			
+			if (parent != null) {
+				JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
+				classDefLoc.setParentRelation(relation);
+			}
+			
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
-				        + "` and class name `" + td.getName().toString() + "`");
+				             + "` and class name `" + td.getName().toString() + "`");
 			}
 			this.classStack.push(classDefLoc);
 			
@@ -356,17 +364,21 @@ public class PPATypeVisitor extends ASTVisitor {
 					parentName = parentName.substring(0, index);
 				}
 				
+				JavaClassDefinition parent = this.classStack.peek().getElement();
+				
 				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
 				                                                                                            + "$"
 				                                                                                            + anonCount,
 				                                                                                            this.relativeFilePath,
-				                                                                                            this.classStack.peek()
-				                                                                                            .getElement(),
 				                                                                                            currentLine,
 				                                                                                            endLine,
 				                                                                                            node.getStartPosition(),
 				                                                                                            bodyStartLine,
 				                                                                                            this.packageName);
+				if (parent != null) {
+					JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
+					classDefLoc.setParentRelation(relation);
+				}
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
@@ -402,18 +414,26 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
-				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(md.getName()
-				                                                                                               .toString(),
+				JavaClassDefinition parent = this.classStack.peek().getElement();
+				String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, md.getName().toString(),
+				                                                                 arguments);
+				
+				
+				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(cacheName,
 				                                                                                               arguments,
 				                                                                                               this.getRelativeFilePath(),
-				                                                                                               this.classStack.peek()
-				                                                                                               .getElement(),
 				                                                                                               startLine,
 				                                                                                               endLine,
 				                                                                                               node.getStartPosition(),
 				                                                                                               bodyStartLine);
 				
-				this.classStack.peek().getElement().addMethod(methodDefLoc.getElement());
+				if (parent != null) {
+					JavaElementRelation relation = this.classStack.peek().getElement()
+					.addMethod(methodDefLoc.getElement());
+					methodDefLoc.setParentRelation(relation);
+				}
+				
+				
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {
 						Logger.warn("Adding method definition to method stack while stack is not empty. This is not impossible but happens rarely!");

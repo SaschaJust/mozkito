@@ -118,22 +118,15 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setup() {
-		if ( this.databaseSettings.getValue() != null) {
-			try {
-				this.hibernateUtil = HibernateUtil.getInstance(this);
-			} catch (UninitializedDatabaseException e) {
-				
-				if (Logger.logError()) {
-					Logger.error("Database connection could not be established.", e);
-				}
-				shutdown();
-			}
-		} else {
+		if (!this.databaseSettings.getValue()) {
 			if (Logger.logError()) {
-				Logger.error("Missing database settings.");
+				Logger.error("Could not connect to database!");
 			}
-			
-			shutdown();
+		}
+		try {
+			this.hibernateUtil = HibernateUtil.getInstance(this);
+		} catch (UninitializedDatabaseException e1) {
+			throw new UnrecoverableError(e1);
 		}
 		
 		File xmlFile = this.asXML.getValue();

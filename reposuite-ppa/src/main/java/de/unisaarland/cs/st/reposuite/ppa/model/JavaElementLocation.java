@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -52,6 +53,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		FALSE
 	};
 	
+	private JavaElementRelation parentRelation;
+	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4858435624572738026L;
 	
@@ -82,7 +85,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	/**
 	 * Instantiates a new java element location.
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private JavaElementLocation() {
 	}
 	
@@ -103,7 +106,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the file path
 	 */
 	public JavaElementLocation(@NotNull final T element, @NotNegative final int startLine,
-	                           @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
+	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
 	                           @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		if (element instanceof JavaElementDefinition) {
@@ -131,19 +134,19 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the to
 	 */
 	@Transient
-	public void addCommentLines(final int from,
-	                            final int to) {
+	public void addCommentLines(@NotNegative final int from,
+	                            @NotNegative final int to) {
 		Condition.check(from <= to, "You must supply a closed interval.");
-		for (int i = from; i <= to; ++i) {
-			this.commentLines.add(i);
+		for(int i = from; i <= to; ++i){
+			this.commentLines .add(i);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
+	@NoneNull
 	public int compareTo(final JavaElementLocation<T> other) {
 		if (this.getStartLine() < other.getStartLine()) {
 			return -1;
@@ -167,6 +170,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the lines
 	 * @return the line cover
 	 */
+	@NoneNull
 	public LineCover coversAllLines(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
@@ -200,6 +204,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the lines
 	 * @return the line cover
 	 */
+	@NoneNull
 	public LineCover coversAnyLine(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
 		for (int line : lines) {
@@ -234,7 +239,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the line
 	 * @return the line cover
 	 */
-	public LineCover coversLine(final int line) {
+	public LineCover coversLine(@NotNegative final int line) {
 		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
 			if (this.getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
@@ -247,11 +252,10 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return LineCover.FALSE;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -316,8 +320,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * 
 	 * @return the element
 	 */
-	@Type (type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@Type(type = "de.unisaarland.cs.st.reposuite.ppa.model.JavaElement")
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public T getElement() {
 		return this.element;
 	}
@@ -345,12 +349,18 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * 
 	 * @return the id
 	 */
-	@Index (name = "idx_elemlocid")
+	@Index(name = "idx_elemlocid")
 	@Id
 	@GeneratedValue
 	public long getId() {
 		return this.id;
 	}
+	
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public JavaElementRelation getParentRelation() {
+		return parentRelation;
+	}
+	
 	
 	/**
 	 * Gets the position.
@@ -377,7 +387,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the document
 	 * @return the xML representation
 	 */
-	public Element getXMLRepresentation(final Document document) {
+	@NoneNull
+	public Element getXMLRepresentation(final Document document){
 		Element thisElement = document.createElement("JavaElementLocation");
 		
 		thisElement.setAttribute("id", "" + getId());
@@ -395,20 +406,15 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return thisElement;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.element == null)
-				? 0
-				: this.element.hashCode());
-		result = prime * result + ((this.filePath == null)
-				? 0
-				: this.filePath.hashCode());
+		result = prime * result + ((this.element == null) ? 0 : this.element.hashCode());
+		result = prime * result + ((this.filePath == null) ? 0 : this.filePath.hashCode());
 		if (!(getElement() instanceof JavaElementDefinition)) {
 			result = prime * result + this.endLine;
 			result = prime * result + this.position;
@@ -417,15 +423,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return result;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		// Set<Annotated> set = new HashSet<Annotated>();
-		// set.add(this.getElement());
-		// return set;
+		//		Set<Annotated> set = new HashSet<Annotated>();
+		//		set.add(this.getElement());
+		//		return set;
 		return null;
 	}
 	
@@ -445,6 +450,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param commentLines
 	 *            the new comment lines
 	 */
+	@NoneNull
 	protected void setCommentLines(final Set<Integer> commentLines) {
 		this.commentLines = commentLines;
 	}
@@ -456,6 +462,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param element
 	 *            the new element
 	 */
+	@NoneNull
 	public void setElement(final T element) {
 		this.element = element;
 	}
@@ -476,6 +483,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param filePath
 	 *            the new file path
 	 */
+	@NoneNull
 	private void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
@@ -486,9 +494,14 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param id
 	 *            the new id
 	 */
-	@SuppressWarnings ("unused")
+	@SuppressWarnings("unused")
 	private void setId(final long id) {
 		this.id = id;
+	}
+	
+	@NoneNull
+	public void setParentRelation(JavaElementRelation parentRelation) {
+		this.parentRelation = parentRelation;
 	}
 	
 	/**
@@ -511,8 +524,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		this.startLine = startLine;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

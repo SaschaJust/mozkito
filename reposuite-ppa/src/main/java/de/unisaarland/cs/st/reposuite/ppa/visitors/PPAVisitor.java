@@ -34,12 +34,9 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void endVisit(@NotNull PPATypeVisitor ppaVisitor,
-	              @NotNull CompilationUnit cu,
-	              @NotNull ASTNode node,
+	void endVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
 	              @NotNull JavaElementLocation<JavaClassDefinition> classContext,
-	              JavaElementLocation<JavaMethodDefinition> methodContext,
-	              @NotNull JavaElementCache elementCache);
+	              JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull JavaElementCache elementCache);
 	
 	/**
 	 * Post visit.
@@ -59,9 +56,7 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void postVisit(@NotNull PPATypeVisitor ppaVisitor,
-	               @NotNull CompilationUnit cu,
-	               @NotNull ASTNode node,
+	void postVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
 	               JavaElementLocation<JavaClassDefinition> classContext,
 	               JavaElementLocation<JavaMethodDefinition> methodContext,
 	               @NotNegative int currentLine,
@@ -87,9 +82,7 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void preVisit(@NotNull PPATypeVisitor ppaVisitor,
-	              @NotNull CompilationUnit cu,
-	              @NotNull ASTNode node,
+	void preVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
 	              JavaElementLocation<JavaClassDefinition> classContext,
 	              JavaElementLocation<JavaMethodDefinition> methodContext,
 	              @NotNegative int currentLine,

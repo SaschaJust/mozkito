@@ -39,6 +39,10 @@ def xml_compare(x1, x2, reporter=None):
                 reporter('x2 has an attribute x1 is missing: %s'
                          % name)
             return False
+    if x1.text is None:
+        x1.text = ""
+    if x2.text is None:
+        x2.text = ""
     if not x1.text.strip() == x2.text.strip():
         if reporter:
             reporter('text: %r != %r' % (x1.text, x2.text))

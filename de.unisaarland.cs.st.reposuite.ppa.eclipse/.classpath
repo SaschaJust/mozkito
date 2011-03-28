@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/kanuni-0.1-SNAPSHOT-jar-with-dependencies.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/difflib-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jta-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/postgresql-9.0-801.jdbc4.jar"/>
