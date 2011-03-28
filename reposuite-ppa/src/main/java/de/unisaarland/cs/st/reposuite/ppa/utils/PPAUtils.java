@@ -6,9 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -34,6 +33,7 @@ import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -138,14 +138,22 @@ public class PPAUtils {
 	                                            final RCSTransaction transaction,
 	                                            final Collection<ChangeOperationVisitor> visitors) {
 		
-		Map<RCSRevision, String> changedFilePaths = new HashMap<RCSRevision, String>();
-		
 		Map<RCSRevision, CompilationUnit> oldRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
 		Map<RCSRevision, CompilationUnit> newRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
 		
 		ChangeOperations operations = new ChangeOperations();
 		
+		
+		
+		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
+		if (parentTransaction != null) {
+			// get the old compilationUnits
+			oldRevs2CUs = getCUsForTransaction(repository, parentTransaction);
+		}
+		newRevs2CUs = getCUsForTransaction(repository, transaction);
+		
 		for (RCSRevision revision : transaction.getRevisions()) {
+			
 			String changedPath = revision.getChangedFile().getPath(transaction);
 			if (changedPath == null) {
 				continue;
@@ -159,21 +167,13 @@ public class PPAUtils {
 			if (changedPath.startsWith("/")) {
 				changedPath = changedPath.substring(1);
 			}
-			changedFilePaths.put(revision, changedPath);
-		}
-		
-		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
-		if (parentTransaction != null) {
-			// get the old compilationUnits
-			oldRevs2CUs = getCUsForTransaction(repository, parentTransaction, changedFilePaths);
-		}
-		newRevs2CUs = getCUsForTransaction(repository, transaction, changedFilePaths);
-		
-		for (RCSRevision revision : changedFilePaths.keySet()) {
-			String changedPath = changedFilePaths.get(revision);
 			
 			switch (revision.getChangeType()) {
 				case Added:
+					if (!newRevs2CUs.containsKey(revision)) {
+						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
+						        + " not found in newRevs!");
+					}
 					JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newRevs2CUs.get(revision),
 					                                                                     changedPath, new String[0]);
 					for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
@@ -210,11 +210,24 @@ public class PPAUtils {
 					}
 					break;
 				case Modified:
+					if (!newRevs2CUs.containsKey(revision)) {
+						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
+						        + " not found in newRev!");
+					}
+					if (!oldRevs2CUs.containsKey(revision)) {
+						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
+						        + " not found in oldRevs!");
+					}
+					
 					generateChangeOperationsForModifiedFile(repository, transaction, revision,
 					                                        oldRevs2CUs.get(revision), newRevs2CUs.get(revision),
 					                                        changedPath, visitors);
 					break;
 				case Deleted:
+					if (!oldRevs2CUs.containsKey(revision)) {
+						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
+						        + " not found in oldRevs!");
+					}
 					JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldRevs2CUs.get(revision),
 					                                                                     changedPath, new String[0]);
 					
@@ -642,7 +655,7 @@ public class PPAUtils {
 	 *            the options
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final List<File> files,
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
 	                                                final PPAOptions options) {
 		return getCUs(files, options, Thread.currentThread().getName());
 	}
@@ -658,7 +671,7 @@ public class PPAUtils {
 	 *            the request name
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final List<File> files,
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
 	                                                final PPAOptions options,
 	                                                final String requestName) {
 		Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
@@ -711,10 +724,8 @@ public class PPAUtils {
 	}
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
-	                                                                        final RCSTransaction transaction,
-	                                                                        Map<RCSRevision, String> changedFilePaths) {
+	                                                                        final RCSTransaction transaction) {
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
-		Map<File, RCSRevision> files2Revisions = new HashMap<File, RCSRevision>();
 		
 		File oldCheckoutFile = repository.checkoutPath("/", transaction.getId());
 		if (!oldCheckoutFile.exists()) {
@@ -725,10 +736,23 @@ public class PPAUtils {
 			return result;
 		}
 		
-		List<File> filesToAnalyze = new LinkedList<File>();
-		for (RCSRevision rev : changedFilePaths.keySet()) {
-			String changedFileName = changedFilePaths.get(rev);
-			File tmpFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedFileName);
+		Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
+		for (RCSRevision revision : transaction.getRevisions()) {
+			String changedPath = revision.getChangedFile().getPath(transaction);
+			if (changedPath == null) {
+				continue;
+			}
+			if (!changedPath.endsWith(".java")) {
+				if (Logger.logWarn()) {
+					Logger.warn("Ignoring non-Java file: " + changedPath);
+				}
+				continue;
+			}
+			if (changedPath.startsWith("/")) {
+				changedPath = changedPath.substring(1);
+			}
+			
+			File tmpFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
 			if (!tmpFile.exists()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Could not find checked out file " + tmpFile.getAbsolutePath()
@@ -736,13 +760,13 @@ public class PPAUtils {
 				}
 				continue;
 			}
-			files2Revisions.put(tmpFile, rev);
-			filesToAnalyze.add(tmpFile);
+			filesToAnalyze.put(tmpFile, revision);
 		}
 		
-		Map<File, CompilationUnit> cus = PPAUtils.getCUs(filesToAnalyze, new PPAOptions());
-		for (File file : cus.keySet()) {
-			result.put(files2Revisions.get(file), cus.get(file));
+		Map<File, CompilationUnit> cus = PPAUtils.getCUs(filesToAnalyze.keySet(), new PPAOptions());
+		
+		for (Entry<File, CompilationUnit> entry : cus.entrySet()) {
+			result.put(filesToAnalyze.get(entry.getKey()), entry.getValue());
 		}
 		return result;
 	}
@@ -758,6 +782,7 @@ public class PPAUtils {
 	 *            the package filter
 	 * @return the java element locations by file
 	 */
+	@NoneNull
 	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
 	                                                               String relativePath,
 	                                                               final String[] packageFilter) {

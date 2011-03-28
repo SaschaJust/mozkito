@@ -8,15 +8,10 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaElementDefinitionCache. All instances extending JavaElement
@@ -145,21 +140,6 @@ public class JavaElementCache {
 		JavaMethodCall call = null;
 		if (!methodCalls.containsKey(cacheName)) {
 			call = new JavaMethodCall(cacheName, signature);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodCall.class);
-			criteria.add(Restrictions.eq("primaryKey", call.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaMethodCall> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaMethodCall in DB. Creating new one. " + call.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-				                             "Found more than one JavaMethodCall with primary key in DB. This should be impossible! key = "
-				                             + call.getPrimaryKey().toString());
-			} else {
-				call = list.get(0);
-			}
-			
 			methodCalls.put(cacheName, call);
 		} else {
 			call = methodCalls.get(cacheName);
@@ -202,21 +182,6 @@ public class JavaElementCache {
 		if (!methodDefs.containsKey(fullQualifiedName)) {
 			
 			def = new JavaMethodDefinition(fullQualifiedName, signature);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaMethodDefinition.class);
-			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaMethodDefinition> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaMethodDefinition in DB. Creating new one. " + def.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-				                             "Found more than one JavaMethodDefinition with primary key in DB. This should be impossible! key = "
-				                             + def.getPrimaryKey().toString());
-			} else {
-				def = list.get(0);
-			}
-			
 			methodDefs.put(fullQualifiedName, def);
 		} else {
 			def = methodDefs.get(fullQualifiedName);

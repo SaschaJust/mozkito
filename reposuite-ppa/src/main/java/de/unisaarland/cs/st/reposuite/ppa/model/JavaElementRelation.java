@@ -53,6 +53,7 @@ public class JavaElementRelation implements Annotated {
 	 * @param child
 	 *            the child
 	 */
+	@NoneNull
 	public JavaElementRelation(JavaElement parent, JavaElement child) {
 		this.setParent(parent);
 		this.setChild(child);
