@@ -91,21 +91,6 @@ public class JavaElementCache {
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaClassDefinition(fullQualifiedName, packageName);
-			Criteria criteria = this.hibernateUtil.createCriteria(JavaClassDefinition.class);
-			criteria.add(Restrictions.eq("primaryKey", def.getPrimaryKey()));
-			@SuppressWarnings("unchecked") List<JavaClassDefinition> list = criteria.list();
-			if (list.size() < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find JavaClassDefinition in DB. Creating new one. " + def.toString());
-				}
-			} else if (list.size() > 1) {
-				throw new UnrecoverableError(
-				                             "Found more than one JavaClassDefinition with primary key in DB. This should be impossible! key = "
-				                             + def.getPrimaryKey().toString());
-			} else {
-				def = list.get(0);
-			}
-			
 			classDefs.put(fullQualifiedName, def);
 		} else {
 			def = classDefs.get(fullQualifiedName);
