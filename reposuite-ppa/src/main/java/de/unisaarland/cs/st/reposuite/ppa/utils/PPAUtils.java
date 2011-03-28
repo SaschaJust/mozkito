@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -171,8 +170,9 @@ public class PPAUtils {
 			switch (revision.getChangeType()) {
 				case Added:
 					if (!newRevs2CUs.containsKey(revision)) {
-						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
-						        + " not found in newRevs!");
+						if (Logger.logError()) {
+							Logger.error("Could not get compilation unit for added revision " + revision.toString());
+						}
 					}
 					JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newRevs2CUs.get(revision),
 					                                                                     changedPath, new String[0]);
@@ -211,22 +211,24 @@ public class PPAUtils {
 					break;
 				case Modified:
 					if (!newRevs2CUs.containsKey(revision)) {
-						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
-						        + " not found in newRev!");
+						if (Logger.logError()) {
+							Logger.error("Could not get compilation unit for added revision " + revision.toString());
+						}
 					}
 					if (!oldRevs2CUs.containsKey(revision)) {
-						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
-						        + " not found in oldRevs!");
+						if (Logger.logError()) {
+							Logger.error("Could not get compilation unit for removed revision " + revision.toString());
+						}
 					}
-					
 					generateChangeOperationsForModifiedFile(repository, transaction, revision,
 					                                        oldRevs2CUs.get(revision), newRevs2CUs.get(revision),
 					                                        changedPath, visitors);
 					break;
 				case Deleted:
 					if (!oldRevs2CUs.containsKey(revision)) {
-						throw new UnrecoverableError("Compilation unit for revision " + revision.toString()
-						        + " not found in oldRevs!");
+						if (Logger.logError()) {
+							Logger.error("Could not get compilation unit for removed revision " + revision.toString());
+						}
 					}
 					JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldRevs2CUs.get(revision),
 					                                                                     changedPath, new String[0]);
@@ -725,6 +727,8 @@ public class PPAUtils {
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction transaction) {
+		
+		Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
 		
 		File oldCheckoutFile = repository.checkoutPath("/", transaction.getId());
@@ -735,6 +739,8 @@ public class PPAUtils {
 			}
 			return result;
 		}
+		
+		String requestName = Thread.currentThread().getName();
 		
 		Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
 		for (RCSRevision revision : transaction.getRevisions()) {
@@ -752,21 +758,33 @@ public class PPAUtils {
 				changedPath = changedPath.substring(1);
 			}
 			
-			File tmpFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
-			if (!tmpFile.exists()) {
+			File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
+			if (!file.exists()) {
 				if (Logger.logDebug()) {
-					Logger.debug("Could not find checked out file " + tmpFile.getAbsolutePath()
+					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
 					             + " (might be added in next revision?)");
 				}
 				continue;
 			}
-			filesToAnalyze.put(tmpFile, revision);
+			filesToAnalyze.put(file, revision);
+			
+			String fileName = file.getName();
+			try {
+				String packageName = getPackageFromFile(file);
+				IJavaProject javaProject = getProject(requestName);
+				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
+				                                                   fileName);
+				ifiles.put(revision, newFile);
+			} catch (Exception e) {
+				if (Logger.logError()) {
+					Logger.error("Error while getting IFile from PPA", e);
+				}
+			}
 		}
 		
-		Map<File, CompilationUnit> cus = PPAUtils.getCUs(filesToAnalyze.keySet(), new PPAOptions());
-		
-		for (Entry<File, CompilationUnit> entry : cus.entrySet()) {
-			result.put(filesToAnalyze.get(entry.getKey()), entry.getValue());
+		for (Entry<RCSRevision, IFile> entry : ifiles.entrySet()) {
+			CompilationUnit cu = getCU(entry.getValue(), new PPAOptions());
+			result.put(entry.getKey(), cu);
 		}
 		return result;
 	}
