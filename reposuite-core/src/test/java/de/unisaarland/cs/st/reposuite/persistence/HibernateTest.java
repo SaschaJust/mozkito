@@ -18,6 +18,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
@@ -78,6 +79,7 @@ public class HibernateTest {
 			RCSFileManager fileManager = new RCSFileManager();
 			Person person = new Person("kim", null, null);
 			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
+			rcsTransaction.setBranch(RCSBranch.MASTER);
 			RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 			file.assignTransaction(rcsTransaction, "formerTest.java");
 			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);

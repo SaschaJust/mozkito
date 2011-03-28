@@ -5,6 +5,7 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -34,7 +35,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * 
 	 */
 	private static final long         serialVersionUID = -5061178255449904475L;
-	private final Map<String, Person> map              = new HashMap<String, Person>();
+	private Map<String, Person> map              = new HashMap<String, Person>();
 	private long                      generatedId;
 	
 	/**
@@ -91,7 +92,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * @return the map
 	 */
-	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	private Map<String, Person> getMap() {
 		return this.map;
 	}
@@ -145,7 +146,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		return null;
+		Collection<Annotated> first = new LinkedList<Annotated>();
+		first.addAll(getPersons());
+		return first;
 	}
 	
 	/**
@@ -162,8 +165,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setMap(final Map<String, Person> map) {
-		this.map.clear();
-		this.map.putAll(map);
+		// this.map.clear();
+		// this.map.putAll(map);
+		this.map = map;
 	}
 	
 	/**

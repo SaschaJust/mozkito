@@ -95,12 +95,12 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private String                        id;
 	private String                        message;
 	
-	private final Set<RCSTransaction>     children  = new HashSet<RCSTransaction>();
-	private final Set<RCSTransaction>     parents   = new HashSet<RCSTransaction>();
+	private Set<RCSTransaction>     children  = new HashSet<RCSTransaction>();
+	private Set<RCSTransaction>       parents   = new HashSet<RCSTransaction>();
 	private RCSBranch                     branch    = RCSBranch.MASTER;
-	private final Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
+	private Collection<RCSRevision>   revisions = new LinkedList<RCSRevision>();
 	private DateTime                      timestamp;
-	private final Set<String>             tags      = new HashSet<String>();
+	private Set<String>               tags      = new HashSet<String>();
 	private String                        originalId;
 	
 	/**
@@ -126,7 +126,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
-	        final String originalId) {
+	                         final String originalId) {
 		Condition.notNull(id, "id must not be null");
 		Condition.notNull(message, "message must not be null");
 		Condition.notNull(timestamp, "timestamp must not be null");
@@ -253,7 +253,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
 			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
 			int subresult = this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
@@ -274,13 +274,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			}
 		} else {
 			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			} else {
 				int r = getBranch().getEnd().getChild(getBranch())
-				                   .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+				.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 				if (r != 0) {
 					return r;
 				} else {
@@ -334,8 +334,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public RCSTransaction getChild(final RCSBranch branch) {
 		if (branch.getEnd().equals(this)) {
 			return getChildren().isEmpty()
-			                              ? null
-			                              : getChildren().iterator().next();
+			? null
+			: getChildren().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(this.children, new Predicate() {
 				
@@ -380,8 +380,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Index (name = "idx_timestamp")
 	private Date getJavaTimestamp() {
 		return getTimestamp() != null
-		                             ? getTimestamp().toDate()
-		                             : null;
+		? getTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -406,8 +406,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public RCSTransaction getParent(final RCSBranch branch) {
 		if (branch.getBegin().equals(this)) {
 			return getParents().isEmpty()
-			                             ? null
-			                             : getParents().iterator().next();
+			? null
+			: getParents().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(this.parents, new Predicate() {
 				
@@ -435,7 +435,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the persons
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
 		return this.persons;
 	}
@@ -484,6 +484,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		}));
 		
 		ret.add(this.persons);
+		ret.add(this.getBranch());
 		// ret.add(getBranch());
 		//
 		// for (Collection<Annotated> coll : (Collection<Collection<Annotated>>)
@@ -542,8 +543,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the children to set
 	 */
 	public void setChildren(final Set<RCSTransaction> children) {
-		this.children.clear();
-		this.children.addAll(children);
+		this.children = children;
 	}
 	
 	/**
@@ -565,8 +565,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date date) {
 		this.timestamp = date != null
-		                             ? new DateTime(date)
-		                             : null;
+		? new DateTime(date)
+		: null;
 	}
 	
 	/**
@@ -588,8 +588,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the parents to set
 	 */
 	public void setParents(final Set<RCSTransaction> parents) {
-		this.parents.clear();
-		this.parents.addAll(parents);
+		this.parents = parents;
 	}
 	
 	/**
@@ -608,16 +607,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setRevisions(final List<RCSRevision> revisions) {
-		this.revisions.clear();
-		this.revisions.addAll(revisions);
+		this.revisions = revisions;
 	}
 	
 	/**
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		this.tags.clear();
-		this.tags.addAll(tagName);
+		this.tags = tagName;
 	}
 	
 	/**

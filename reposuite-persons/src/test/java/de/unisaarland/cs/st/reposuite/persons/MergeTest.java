@@ -68,6 +68,12 @@ public class MergeTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		// set JavaVM arguments
+		Properties sysProperties = System.getProperties();
+		sysProperties.setProperty("database.user", "miner");
+		sysProperties.setProperty("database.password", "miner");
+		sysProperties.setProperty("database.name", "reposuiteTestPersons");
+		sysProperties.setProperty("database.host", "quentin.cs.uni-saarland.de");
 	}
 	
 	/**
@@ -99,9 +105,9 @@ public class MergeTest {
 			int personCount = criteria.list().size();
 			
 			Person[] persons = new Person[] { new Person("just", null, null),
-			        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
-			        new Person("just", "Sascha Just", null),
-			        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
+					new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
+					new Person("just", "Sascha Just", null),
+					new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
 			
 			RCSTransaction rcsTransaction = null;
 			
@@ -116,7 +122,6 @@ public class MergeTest {
 			hibernateUtil.commitTransaction();
 			
 			Persons personsMerger = new Persons();
-			// TODO set JavaVM arguments
 			personsMerger.run();
 			
 			criteria = hibernateUtil.createCriteria(Person.class);
@@ -154,15 +159,24 @@ public class MergeTest {
 	public void testMergePersonSingleContainer() {
 		HibernateUtil hibernateUtil;
 		try {
-			hibernateUtil = HibernateUtil.getInstance();
+			hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
+				
+				@Override
+				public void setup() {
+				}
+				
+				@Override
+				public void shutdown() {
+				}
+			});
 			Criteria criteria = hibernateUtil.createCriteria(Person.class);
 			int personCount = criteria.list().size();
 			
 			PersonContainer personContainer = new PersonContainer();
 			Person[] persons = new Person[] { new Person("pan", null, null),
-			        new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new Person(null, "Peter Pan", null),
-			        new Person("pan", "Peter Pan", null),
-			        new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
+					new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new Person(null, "Peter Pan", null),
+					new Person("pan", "Peter Pan", null),
+					new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
 			
 			for (int i = 0; i < persons.length; ++i) {
 				personContainer.add("contrib_" + i, persons[i]);
@@ -173,7 +187,6 @@ public class MergeTest {
 			hibernateUtil.commitTransaction();
 			
 			Persons personsMerger = new Persons();
-			// TODO set JavaVM arguments
 			personsMerger.run();
 			
 			criteria = hibernateUtil.createCriteria(Person.class);

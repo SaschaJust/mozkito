@@ -64,7 +64,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 		Condition.notNull(getTransaction(), "Transaction may never be null after creation.");
 		Condition.notNull(getChangedFile(), "Changed file may never be null after creation.");
 		
-		getTransaction().addRevision(this);
+		boolean success = getTransaction().addRevision(this);
+		Condition.check(success, "Revision could not be registered at transaction");
 		setChangeType(changeType);
 		
 		if (Logger.logTrace()) {
