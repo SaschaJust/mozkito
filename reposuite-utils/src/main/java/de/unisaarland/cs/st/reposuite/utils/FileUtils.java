@@ -510,9 +510,6 @@ public class FileUtils {
 	public static void shutdown() {
 		Set<File> filesToDelete = new HashSet<File>();
 		filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
-		if (filesToDelete == null) {
-			return;
-		}
 		for (File f : filesToDelete) {
 			if (f.exists()) {
 				if (f.isDirectory()) {

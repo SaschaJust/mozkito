@@ -147,6 +147,9 @@ public class PPAUtils {
 		
 		for (RCSRevision revision : transaction.getRevisions()) {
 			String changedPath = revision.getChangedFile().getPath(transaction);
+			if (changedPath == null) {
+				continue;
+			}
 			if (!changedPath.endsWith(".java")) {
 				if (Logger.logWarn()) {
 					Logger.warn("Ignoring non-Java file: " + changedPath);
