@@ -147,9 +147,9 @@ public class PPAUtils {
 		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
 		if (parentTransaction != null) {
 			// get the old compilationUnits
-			oldRevs2CUs = getCUsForTransaction(repository, parentTransaction);
+			oldRevs2CUs = getCUsForTransaction(repository, parentTransaction, ChangeType.Deleted);
 		}
-		newRevs2CUs = getCUsForTransaction(repository, transaction);
+		newRevs2CUs = getCUsForTransaction(repository, transaction, ChangeType.Added);
 		
 		for (RCSRevision revision : transaction.getRevisions()) {
 			
@@ -726,7 +726,8 @@ public class PPAUtils {
 	}
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
-	                                                                        final RCSTransaction transaction) {
+	                                                                        final RCSTransaction transaction,
+	                                                                        ChangeType changeType) {
 		
 		Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
@@ -744,6 +745,17 @@ public class PPAUtils {
 		
 		Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
 		for (RCSRevision revision : transaction.getRevisions()) {
+			
+			if (changeType.equals(ChangeType.Added)) {
+				if (revision.getChangeType().equals(ChangeType.Deleted)) {
+					continue;
+				}
+			} else if (changeType.equals(ChangeType.Deleted)) {
+				if (revision.getChangeType().equals(ChangeType.Added)) {
+					continue;
+				}
+			}
+			
 			String changedPath = revision.getChangedFile().getPath(transaction);
 			if (changedPath == null) {
 				continue;
