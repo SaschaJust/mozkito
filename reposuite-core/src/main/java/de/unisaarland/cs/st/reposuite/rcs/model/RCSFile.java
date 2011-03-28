@@ -38,7 +38,7 @@ public class RCSFile implements Annotated {
 	 */
 	private static final long         serialVersionUID = 7232712367403624199L;
 	private long                      generatedId;
-	private final Map<String, String> changedNames     = new HashMap<String, String>();
+	private Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
 	 * used by Hibernate to create a {@link RCSFile} instance
@@ -146,7 +146,7 @@ public class RCSFile implements Annotated {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not determine path for RCSFile (id=" + this.getGeneratedId() + ") for transaction "
-				        + transaction.getId());
+				             + transaction.getId());
 			}
 			return null;
 		}
@@ -168,8 +168,7 @@ public class RCSFile implements Annotated {
 	
 	@SuppressWarnings ("unused")
 	private void setChangedNames(final Map<String, String> changedNames) {
-		this.changedNames.clear();
-		this.changedNames.putAll(changedNames);
+		this.changedNames = changedNames;
 	}
 	
 	/**
@@ -188,7 +187,7 @@ public class RCSFile implements Annotated {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }
