@@ -117,7 +117,7 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the child relations
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany (cascade = {}, fetch = FetchType.LAZY)
 	@MapKey (name = "child")
 	public Map<JavaElement, JavaElementRelation> getChildRelations() {
 		return childRelations;
@@ -165,7 +165,7 @@ public abstract class JavaElement implements Annotated {
 		return "";
 	}
 	
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	@MapKey (name = "parent")
 	public Map<JavaElement, JavaElementRelation> getParentRelations() {
 		return parentRelations;
