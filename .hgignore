@@ -18,3 +18,4 @@ reposuite-.*/bin/*
 ^bin
 ^.DS_Store
 de.unisaarland.cs.st.reposuite.ppa.eclipse/lib/kanuni-0.1-SNAPSHOT-jar-with-dependencies.jar
+reposuite-ppa-product/bin/linux/eclipse.zip
