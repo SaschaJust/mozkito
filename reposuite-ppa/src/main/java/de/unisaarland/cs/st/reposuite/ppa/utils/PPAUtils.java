@@ -158,8 +158,8 @@ public class PPAUtils {
 				continue;
 			}
 			if (!changedPath.endsWith(".java")) {
-				if (Logger.logWarn()) {
-					Logger.warn("Ignoring non-Java file: " + changedPath);
+				if (Logger.logDebug()) {
+					Logger.debug("Ignoring non-Java file: " + changedPath);
 				}
 				continue;
 			}
@@ -777,7 +777,7 @@ public class PPAUtils {
 				ifiles.put(revision, newFile);
 			} catch (Exception e) {
 				if (Logger.logError()) {
-					Logger.error("Error while getting IFile from PPA", e);
+					Logger.error("Error while getting IFile from PPA for revision " + revision.toString(), e);
 				}
 			}
 		}

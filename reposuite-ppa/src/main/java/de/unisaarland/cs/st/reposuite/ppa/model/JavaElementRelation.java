@@ -102,7 +102,7 @@ public class JavaElementRelation implements Annotated {
 	 * 
 	 * @return the child
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public JavaElement getChild() {
 		return child;
 	}
@@ -128,7 +128,7 @@ public class JavaElementRelation implements Annotated {
 	 * 
 	 * @return the parent
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaElement getParent() {
 		return parent;
 	}
