@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementRelation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -94,8 +93,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the element cache
 	 */
 	@NoneNull
-	public PPATypeVisitor(final CompilationUnit cu,
-	                      final String relativeFilePath, final String[] packageFilter,
+	public PPATypeVisitor(final CompilationUnit cu, final String relativeFilePath, final String[] packageFilter,
 	                      final JavaElementCache elementCache) {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
@@ -265,13 +263,6 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			TypeDeclaration td = (TypeDeclaration) node;
 			
-			JavaClassDefinition parent = null;
-			
-			if (!this.classStack.isEmpty()) {
-				// FOUND INNER CLASS: add parent to class definition
-				parent = this.classStack.peek().getElement();
-			}
-			
 			int startLine = currentLine;
 			if (td.getJavadoc() != null) {
 				int javaDocLength = td.getJavadoc().getLength();
@@ -302,11 +293,6 @@ public class PPATypeVisitor extends ASTVisitor {
 			                                                                                            td.getStartPosition(),
 			                                                                                            bodyStartLine,
 			                                                                                            this.packageName);
-			
-			if (parent != null) {
-				JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
-				classDefLoc.setParentRelation(relation);
-			}
 			
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
@@ -364,21 +350,17 @@ public class PPATypeVisitor extends ASTVisitor {
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaClassDefinition parent = this.classStack.peek().getElement();
-				
-				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getClassDefinition(parentName
-				                                                                                            + "$"
-				                                                                                            + anonCount,
-				                                                                                            this.relativeFilePath,
-				                                                                                            currentLine,
-				                                                                                            endLine,
-				                                                                                            node.getStartPosition(),
-				                                                                                            bodyStartLine,
-				                                                                                            this.packageName);
-				if (parent != null) {
-					JavaElementRelation relation = classDefLoc.getElement().addParent(parent);
-					classDefLoc.setParentRelation(relation);
-				}
+				JavaElementLocation<JavaClassDefinition> classDefLoc = this.elementCache.getAnonymousClassDefinition(classStack.peek()
+				                                                                                                     .getElement(),
+				                                                                                                     parentName
+				                                                                                                     + "$"
+				                                                                                                     + anonCount,
+				                                                                                                     this.relativeFilePath,
+				                                                                                                     currentLine,
+				                                                                                                     endLine,
+				                                                                                                     node.getStartPosition(),
+				                                                                                                     bodyStartLine,
+				                                                                                                     this.packageName);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
@@ -418,7 +400,6 @@ public class PPATypeVisitor extends ASTVisitor {
 				String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, md.getName().toString(),
 				                                                                 arguments);
 				
-				
 				JavaElementLocation<JavaMethodDefinition> methodDefLoc = this.elementCache.getMethodDefinition(cacheName,
 				                                                                                               arguments,
 				                                                                                               this.getRelativeFilePath(),
@@ -426,13 +407,6 @@ public class PPATypeVisitor extends ASTVisitor {
 				                                                                                               endLine,
 				                                                                                               node.getStartPosition(),
 				                                                                                               bodyStartLine);
-				
-				if (parent != null) {
-					JavaElementRelation relation = this.classStack.peek().getElement()
-					.addMethod(methodDefLoc.getElement());
-					methodDefLoc.setParentRelation(relation);
-				}
-				
 				
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {

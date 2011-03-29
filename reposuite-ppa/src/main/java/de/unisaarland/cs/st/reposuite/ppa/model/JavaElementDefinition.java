@@ -58,12 +58,4 @@ public abstract class JavaElementDefinition extends JavaElement implements Annot
 			return super.getFullQualifiedName().substring(0, index);
 		}
 	}
-	
-	/**
-	 * Gets the typed parent.
-	 * 
-	 * @return the typed parent
-	 */
-	@Transient
-	public abstract JavaElementDefinition getTypedParent();
 }

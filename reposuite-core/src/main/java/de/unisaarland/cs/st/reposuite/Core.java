@@ -84,7 +84,7 @@ public class Core extends RepoSuiteToolchain {
 		// they could rely on data loading
 		if (this.databaseSettings.getValue() != null) {
 			try {
-				this.hibernateUtil = HibernateUtil.getInstance(this);
+				this.hibernateUtil = HibernateUtil.getInstance();
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {
@@ -104,11 +104,11 @@ public class Core extends RepoSuiteToolchain {
 		
 		if (this.hibernateUtil != null) {
 			String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
-			                                                                     ? repository.getHEAD()
-			                                                                     : repository.getStartRevision();
+			? repository.getHEAD()
+			: repository.getStartRevision();
 			String end = repository.getEndRevision().equalsIgnoreCase("HEAD")
-			                                                                 ? repository.getHEAD()
-			                                                                 : repository.getEndRevision();
+			? repository.getHEAD()
+			: repository.getEndRevision();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Checking for persistent transactions (" + start + ".." + end + ").");
@@ -136,7 +136,7 @@ public class Core extends RepoSuiteToolchain {
 						}
 						if (Logger.logWarn()) {
 							Logger.warn("Nothing to do. Transactions from " + start + " to " + end
-							        + " are already persisten.");
+							            + " are already persisten.");
 						}
 						shutdown();
 					} else {
@@ -150,8 +150,8 @@ public class Core extends RepoSuiteToolchain {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Transactions known from " + startTransaction.getId() + " to "
-								        + maxPersistentTransaction.getId() + ". Skipping and fetching "
-								        + maxPersistentTransaction.getId() + " to " + repository.getEndRevision() + ".");
+								            + maxPersistentTransaction.getId() + ". Skipping and fetching "
+								            + maxPersistentTransaction.getId() + " to " + repository.getEndRevision() + ".");
 							}
 							
 							if (Logger.logError()) {

@@ -63,7 +63,7 @@ public class Persons extends RepoSuiteToolchain {
 		
 		if (this.databaseArguments.getValue() != null) {
 			try {
-				hibernateUtil = HibernateUtil.getInstance(this);
+				hibernateUtil = HibernateUtil.getInstance();
 			} catch (UninitializedDatabaseException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);

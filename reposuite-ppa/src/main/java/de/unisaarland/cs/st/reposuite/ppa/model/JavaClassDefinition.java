@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -14,9 +17,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaClassDefinition.
@@ -42,6 +45,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	/** The anonym class. */
 	private boolean             anonymClass      = false;
 	
+	private JavaClassDefinition             parent;
+	
 	/**
 	 * Instantiates a new java class definition.
 	 */
@@ -59,41 +64,35 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final String fullQualifiedName, final String packageName) {
-		
+	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName, final String packageName) {
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
+		setParent(parent);
 	}
 	
 	/**
-	 * Adds the method.
+	 * Instantiates a new java class definition.
 	 * 
-	 * @param methodDef
-	 *            the method def
-	 * @return
-	 * @return the java method definition
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param packageName
+	 *            the package name
 	 */
-	@Transient
 	@NoneNull
-	public JavaElementRelation addMethod(final JavaMethodDefinition methodDef) {
-		return methodDef.addParent(this);
-	}
-	
-	@Override
-	public JavaElementRelation addParent(JavaElement parent){
-		if(this.getParentRelations().isEmpty()){
-			return super.addParent(parent);
-		}else{
-			if (Logger.logWarn()) {
-				Logger.warn("Cannot add parent to JavaElement "+this.toString()+". Parent set already.");
-			}
-			return getParentRelations().get(0);
+	protected JavaClassDefinition(final String fullQualifiedName, final String packageName) {
+		
+		super(fullQualifiedName);
+		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
 	}
 	
-	
+	@ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+	public JavaClassDefinition getParent() {
+		return parent;
+	}
 	
 	/**
 	 * Gets the super class name.
@@ -103,22 +102,6 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	@SuppressWarnings("unused")
 	private String getSuperClassName() {
 		return this.superClassName;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#getParent
-	 * ()
-	 */
-	@Override
-	@Transient
-	public JavaClassDefinition getTypedParent() {
-		if (this.getParentRelations().isEmpty()) {
-			return null;
-		}
-		JavaElementRelation parent = this.getParentRelations().values().iterator().next();
-		return (JavaClassDefinition) parent.getParent();
 	}
 	
 	/* (non-Javadoc)
@@ -132,24 +115,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		Element nameElement = document.createElement("fullQualifiedName");
 		Text textNode = document.createTextNode(this.getFullQualifiedName());
 		nameElement.appendChild(textNode);
-		
 		thisElement.appendChild(nameElement);
-		
-		Element parentElement = document.createElement("parent");
-		if (!this.getParentRelations().isEmpty()) {
-			JavaElementRelation relation = this.getParentRelations().values().iterator().next();
-			parentElement.appendChild(relation.getXMLRepresentation(document));
-		}
-		thisElement.appendChild(parentElement);
-		
-		Element childElement = document.createElement("children");
-		for (JavaElementRelation rel : getChildRelations().values()) {
-			childElement.appendChild(rel.getXMLRepresentation(document));
-		}
-		
-		
-		thisElement.appendChild(childElement);
-		
 		return thisElement;
 	}
 	
@@ -158,8 +124,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * 
 	 * @return true, if is anonym class
 	 */
-	@SuppressWarnings("unused")
-	private boolean isAnonymClass() {
+	public boolean isAnonymClass() {
 		return this.anonymClass;
 	}
 	
@@ -174,8 +139,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	@Transient
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
-		if (this.anonymClass) {
-			return this.getTypedParent().nextAnonCounter(v);
+		if (this.isAnonymClass()) {
+			return parent.nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
 			if(!this.anonCounters.containsKey(vId)){
@@ -206,6 +171,10 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		this.anonymClass = anonymClass;
 	}
 	
+	private void setParent(JavaClassDefinition parent) {
+		this.parent = parent;
+	}
+	
 	/**
 	 * Sets the super class name.
 	 * 
@@ -228,19 +197,10 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		sb.append(this.superClassName);
 		sb.append(", anonymClass=");
 		sb.append(this.anonymClass);
-		sb.append(", childrenSize=");
-		sb.append(super.getChildRelations().size());
-		
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
 		sb.append(getShortName());
-		sb.append(", parent=");
-		if (getTypedParent() != null) {
-			sb.append(getTypedParent().getFullQualifiedName());
-		} else {
-			sb.append("null");
-		}
 		return sb.toString();
 	}
 	
@@ -256,8 +216,6 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		sb.append(this.superClassName);
 		sb.append(", anonymClass=");
 		sb.append(this.anonymClass);
-		sb.append(", childrenSize=");
-		sb.append(super.getChildRelations().size());
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");

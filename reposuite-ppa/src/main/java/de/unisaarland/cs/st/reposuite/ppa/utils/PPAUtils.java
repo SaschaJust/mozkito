@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -41,7 +42,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation.LineCover;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementRelation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
@@ -53,6 +53,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.DiffUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.InsertDelta;
@@ -137,26 +138,21 @@ public class PPAUtils {
 	                                            final RCSTransaction transaction,
 	                                            final Collection<ChangeOperationVisitor> visitors) {
 		
-		Map<RCSRevision, CompilationUnit> oldRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
-		Map<RCSRevision, CompilationUnit> newRevs2CUs = new HashMap<RCSRevision, CompilationUnit>();
+		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
+		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
+		Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
 		
-		ChangeOperations operations = new ChangeOperations();
-		
-		
-		
+		String requestName = Thread.currentThread().getName();
+		IJavaProject javaProject = getProject(requestName);
 		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
-		if (parentTransaction != null) {
-			// get the old compilationUnits
-			oldRevs2CUs = getCUsForTransaction(repository, parentTransaction, ChangeType.Deleted);
-		}
-		newRevs2CUs = getCUsForTransaction(repository, transaction, ChangeType.Added);
 		
-		for (RCSRevision revision : transaction.getRevisions()) {
+		for (RCSRevision rev : transaction.getRevisions()) {
 			
-			String changedPath = revision.getChangedFile().getPath(transaction);
+			String changedPath = rev.getChangedFile().getPath(transaction);
 			if (changedPath == null) {
 				continue;
 			}
+			changedPath = new String(changedPath);
 			if (!changedPath.endsWith(".java")) {
 				if (Logger.logDebug()) {
 					Logger.debug("Ignoring non-Java file: " + changedPath);
@@ -167,111 +163,178 @@ public class PPAUtils {
 				changedPath = changedPath.substring(1);
 			}
 			
-			switch (revision.getChangeType()) {
+			switch (rev.getChangeType()) {
 				case Added:
-					if (!newRevs2CUs.containsKey(revision)) {
-						if (Logger.logError()) {
-							Logger.error("Could not get compilation unit for added revision " + revision.toString());
-						}
-					}
-					JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newRevs2CUs.get(revision),
-					                                                                     changedPath, new String[0]);
-					for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
-						operations.add(op);
-						JavaElementRelation parentRelation = classDef.getParentRelation();
-						if(parentRelation != null){
-							parentRelation.addStart(transaction);
-						}
-						
-					}
-					for (JavaElementLocation<JavaMethodDefinition> methDef : newElems.getMethodDefs(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision);
-						operations.add(op);
-						
-						JavaElementRelation parentRelation = methDef.getParentRelation();
-						if(parentRelation != null){
-							parentRelation.addStart(transaction);
-						}
-					}
-					for (JavaElementLocation<JavaMethodCall> methCall : newElems.getMethodCalls(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision);
-						operations.add(op);
-						
-						JavaElementRelation parentRelation = methCall.getParentRelation();
-						if(parentRelation != null){
-							parentRelation.addStart(transaction);
-						}
-					}
-					for (JavaChangeOperation op : operations.getOperations()) {
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
-						}
-					}
+					addRevs.put(rev, changedPath);
 					break;
 				case Modified:
-					if (!newRevs2CUs.containsKey(revision)) {
-						if (Logger.logError()) {
-							Logger.error("Could not get compilation unit for added revision " + revision.toString());
-						}
-					}
-					if (!oldRevs2CUs.containsKey(revision)) {
-						if (Logger.logError()) {
-							Logger.error("Could not get compilation unit for removed revision " + revision.toString());
-						}
-					}
-					generateChangeOperationsForModifiedFile(repository, transaction, revision,
-					                                        oldRevs2CUs.get(revision), newRevs2CUs.get(revision),
-					                                        changedPath, visitors);
+					modifyRevs.put(rev, changedPath);
 					break;
 				case Deleted:
-					if (!oldRevs2CUs.containsKey(revision)) {
-						if (Logger.logError()) {
-							Logger.error("Could not get compilation unit for removed revision " + revision.toString());
-						}
-					}
-					JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldRevs2CUs.get(revision),
-					                                                                     changedPath, new String[0]);
-					
-					for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
-						operations.add(op);
-						
-						JavaElementRelation parentRelation = classDef.getParentRelation();
-						if (parentRelation != null) {
-							parentRelation.addEnd(transaction);
-						}
-					}
-					for (JavaElementLocation<JavaMethodDefinition> methDef : oldElems.getMethodDefs(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision);
-						operations.add(op);
-						
-						JavaElementRelation parentRelation = methDef.getParentRelation();
-						if (parentRelation != null) {
-							parentRelation.addEnd(transaction);
-						}
-						
-					}
-					for (JavaElementLocation<JavaMethodCall> methCall : oldElems.getMethodCalls(changedPath)) {
-						JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision);
-						operations.add(op);
-						
-						JavaElementRelation parentRelation = methCall.getParentRelation();
-						if (parentRelation != null) {
-							parentRelation.addEnd(transaction);
-						}
-						
-					}
-					for (JavaChangeOperation op : operations.getOperations()) {
-						for (ChangeOperationVisitor visitor : visitors) {
-							visitor.visit(op);
-						}
-					}
+					deleteRevs.put(rev, changedPath);
 					break;
 			}
-			
 		}
 		
+		// handle the removed files first
+		if (parentTransaction != null) {
+			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+			if (!oldCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
+				                             + ". Ignoring!");
+			}
+			
+			// first copy files!
+			Map<RCSRevision, Tuple<IFile,String>> iFiles = new HashMap<RCSRevision, Tuple<IFile,String>>();
+			for (Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
+				File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+				if (!file.exists()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Could not find checked out file " + file.getAbsolutePath()
+						             + " (might be added in next revision?)");
+					}
+					continue;
+				}
+				try {
+					String packageName = getPackageFromFile(file);
+					IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
+					                                                   file.getName());
+					iFiles.put(entry.getKey(), new Tuple<IFile, String>(newFile, entry.getValue()));
+				} catch (Exception e) {
+					if (Logger.logError()) {
+						Logger.error("Error while getting IFile from PPA for revision " + entry.getKey().toString(), e);
+					}
+				}
+			}
+			for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
+				CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
+				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
+				                                       .getSecond(),
+				                                       visitors);
+			}
+		}
+		
+		// handle added files
+		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
+		if (!newCheckoutFile.exists()) {
+			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
+			                             + ". Ignoring!");
+		}
+		
+		// first copy files!
+		Map<RCSRevision, Tuple<IFile, String>> iFiles = new HashMap<RCSRevision, Tuple<IFile, String>>();
+		for (Entry<RCSRevision, String> entry : addRevs.entrySet()) {
+			File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			if (!file.exists()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
+					             + " (might be added in next revision?)");
+				}
+				continue;
+			}
+			try {
+				String packageName = getPackageFromFile(file);
+				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
+				                                                   file.getName());
+				iFiles.put(entry.getKey(), new Tuple<IFile, String>(newFile, entry.getValue()));
+			} catch (Exception e) {
+				if (Logger.logError()) {
+					Logger.error("Error while getting IFile from PPA for revision " + entry.getKey().toString(), e);
+				}
+			}
+		}
+		for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
+			CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
+			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
+			                                     .getSecond(),
+			                                     visitors);
+		}
+		
+		// handle modified files
+		for (Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
+			
+			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+			
+			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+			if (!oldCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: "
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+			}
+			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
+			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+			
+			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
+			if (!newCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: "
+				                             + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+			}
+			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			CompilationUnit newCU = getCU(newFile, new PPAOptions());
+			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
+			                                        entry.getValue(), visitors);
+		}
+	}
+	
+	private static void generateChangeOperationsForAddedFile(Repository repository,
+	                                                         RCSTransaction transaction,
+	                                                         RCSRevision revision,
+	                                                         CompilationUnit cu,
+	                                                         String changedPath,
+	                                                         Collection<ChangeOperationVisitor> visitors) {
+		ChangeOperations operations = new ChangeOperations();
+		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath,
+		                                                                     new String[0]);
+		for (JavaElementLocation<JavaClassDefinition> classDef : newElems.getClassDefs(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
+			operations.add(op);
+			
+		}
+		for (JavaElementLocation<JavaMethodDefinition> methDef : newElems.getMethodDefs(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision);
+			operations.add(op);
+		}
+		for (JavaElementLocation<JavaMethodCall> methCall : newElems.getMethodCalls(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision);
+			operations.add(op);
+		}
+		for (JavaChangeOperation op : operations.getOperations()) {
+			for (ChangeOperationVisitor visitor : visitors) {
+				visitor.visit(op);
+			}
+		}
+		
+	}
+	
+	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
+	                                                             final RCSTransaction transaction,
+	                                                             final RCSRevision revision,
+	                                                             final CompilationUnit cu,
+	                                                             final String changedPath,
+	                                                             final Collection<ChangeOperationVisitor> visitors) {
+		
+		ChangeOperations operations = new ChangeOperations();
+		
+		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0]);
+		
+		for (JavaElementLocation<JavaClassDefinition> classDef : oldElems.getClassDefs(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
+			operations.add(op);
+		}
+		for (JavaElementLocation<JavaMethodDefinition> methDef : oldElems.getMethodDefs(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision);
+			operations.add(op);
+		}
+		for (JavaElementLocation<JavaMethodCall> methCall : oldElems.getMethodCalls(changedPath)) {
+			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision);
+			operations.add(op);
+		}
+		for (JavaChangeOperation op : operations.getOperations()) {
+			for (ChangeOperationVisitor visitor : visitors) {
+				visitor.visit(op);
+			}
+		}
 	}
 	
 	/**
@@ -290,13 +353,10 @@ public class PPAUtils {
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
 	                                                              final RCSTransaction transaction,
 	                                                              final RCSRevision revision,
-	                                                              final CompilationUnit oldCU,
-	                                                              final CompilationUnit newCU,
+	                                                              final JavaElementLocations oldElems,
+	                                                              final JavaElementLocations newElems,
 	                                                              final String changedPath,
 	                                                              final Collection<ChangeOperationVisitor> visitors) {
-		
-		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, changedPath, new String[0]);
-		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, changedPath, new String[0]);
 		
 		// generate diff
 		Collection<Delta> diff = repository.diff(changedPath, transaction.getParent(transaction.getBranch()).getId(),
@@ -312,10 +372,6 @@ public class PPAUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
-							JavaElementRelation parentRelation = javaElem.getParentRelation();
-							if (parentRelation != null) {
-								parentRelation.addEnd(transaction);
-							}
 							operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
 							break;
 						case BODY:
@@ -331,10 +387,6 @@ public class PPAUtils {
 					switch (cover) {
 						case DEFINITION:
 						case DEF_AND_BODY:
-							JavaElementRelation parentRelation = javaElem.getParentRelation();
-							if (parentRelation != null) {
-								parentRelation.addStart(transaction);
-							}
 							operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, revision));
 							break;
 						case BODY:
@@ -451,34 +503,18 @@ public class PPAUtils {
 				// up the operations
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToDelete : removeCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToDelete) {
-						JavaElementRelation parentRelation = methodCall.getParentRelation();
-						if (parentRelation != null) {
-							parentRelation.addEnd(transaction);
-						}
 						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
 					}
 				}
 				for (TreeSet<JavaElementLocation<JavaMethodCall>> methodCallsToAdd : addCallCandidates.values()) {
 					for (JavaElementLocation<JavaMethodCall> methodCall : methodCallsToAdd) {
-						JavaElementRelation parentRelation = methodCall.getParentRelation();
-						if (parentRelation != null) {
-							parentRelation.addStart(transaction);
-						}
 						operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, revision));
 					}
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToDelete : defsToRemove) {
-					JavaElementRelation parentRelation = methodDefToDelete.getParentRelation();
-					if (parentRelation != null) {
-						parentRelation.addEnd(transaction);
-					}
 					operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefToAdd : defsToAdd) {
-					JavaElementRelation parentRelation = methodDefToAdd.getParentRelation();
-					if (parentRelation != null) {
-						parentRelation.addStart(transaction);
-					}
 					operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, revision));
 				}
 				for (JavaElementLocation<JavaElementDefinition> methodDefModified : modifiedDefCandidates) {
@@ -760,9 +796,10 @@ public class PPAUtils {
 			if (changedPath == null) {
 				continue;
 			}
+			changedPath = new String(changedPath);
 			if (!changedPath.endsWith(".java")) {
-				if (Logger.logWarn()) {
-					Logger.warn("Ignoring non-Java file: " + changedPath);
+				if (Logger.logDebug()) {
+					Logger.debug("Ignoring non-Java file: " + changedPath);
 				}
 				continue;
 			}
@@ -1015,5 +1052,4 @@ public class PPAUtils {
 		}
 		return project;
 	}
-	
 }

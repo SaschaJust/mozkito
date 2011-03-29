@@ -22,7 +22,6 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 
 public class ChangeCouplingRuleFactoryTest {
 	
@@ -63,16 +62,7 @@ public class ChangeCouplingRuleFactoryTest {
 		Person person = new Person("kim", "", "");
 		
 		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
-				
-				@Override
-				public void setup() {
-				}
-				
-				@Override
-				public void shutdown() {
-				}
-			});
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			hibernateUtil.beginTransaction();
 			
 			// ###transaction 1

@@ -2,12 +2,10 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
@@ -128,23 +126,6 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition#getTypedParent
-	 * ()
-	 */
-	@Override
-	@Transient
-	public JavaClassDefinition getTypedParent() {
-		
-		if (this.getParentRelations().isEmpty()) {
-			return null;
-		}
-		JavaElementRelation parent = this.getParentRelations().values().iterator().next();
-		return (JavaClassDefinition) parent.getParent();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
 	 * (org.w3c.dom.Document)
 	 */
@@ -156,21 +137,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		Text textNode = document.createTextNode(this.getFullQualifiedName());
 		nameElement.appendChild(textNode);
 		
-		Element parentElement = document.createElement("parent");
-		if (!this.getParentRelations().isEmpty()) {
-			JavaElementRelation relation = this.getParentRelations().values().iterator().next();
-			parentElement.appendChild(relation.getXMLRepresentation(document));
-		}
-		
-		Element childElement = document.createElement("children");
-		for (JavaElementRelation rel : getChildRelations().values()) {
-			childElement.appendChild(rel.getXMLRepresentation(document));
-		}
-		
 		thisElement.appendChild(nameElement);
-		thisElement.appendChild(parentElement);
-		thisElement.appendChild(childElement);
-		
 		return thisElement;
 	}
 	
@@ -189,15 +156,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		return result;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		HashSet<Annotated> set = new HashSet<Annotated>();
-		set.add(this.getTypedParent());
-		return set;
+		return null;
 	}
 	
 	/**

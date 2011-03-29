@@ -25,7 +25,6 @@ import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -91,16 +90,7 @@ public class MergeTest {
 		
 		HibernateUtil hibernateUtil;
 		try {
-			hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
-				
-				@Override
-				public void setup() {
-				}
-				
-				@Override
-				public void shutdown() {
-				}
-			});
+			hibernateUtil = HibernateUtil.getInstance();
 			Criteria criteria = hibernateUtil.createCriteria(Person.class);
 			int personCount = criteria.list().size();
 			
@@ -159,16 +149,7 @@ public class MergeTest {
 	public void testMergePersonSingleContainer() {
 		HibernateUtil hibernateUtil;
 		try {
-			hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
-				
-				@Override
-				public void setup() {
-				}
-				
-				@Override
-				public void shutdown() {
-				}
-			});
+			hibernateUtil = HibernateUtil.getInstance();
 			Criteria criteria = hibernateUtil.createCriteria(Person.class);
 			int personCount = criteria.list().size();
 			

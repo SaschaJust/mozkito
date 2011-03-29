@@ -8,9 +8,6 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
 
 /**
@@ -31,9 +28,6 @@ public class JavaElementCache {
 	/** The method calls by name. */
 	public static Map<String, JavaMethodCall>                    methodCalls         = new HashMap<String, JavaMethodCall>();
 	
-	/** The hibernate util. */
-	private final HibernateUtil                                  hibernateUtil;
-	
 	/** The class def locations. */
 	private final Set<JavaElementLocation<JavaClassDefinition>>  classDefLocations   = new HashSet<JavaElementLocation<JavaClassDefinition>>();
 	
@@ -47,11 +41,54 @@ public class JavaElementCache {
 	 * Instantiates a new java element cache.
 	 */
 	public JavaElementCache() {
-		try {
-			this.hibernateUtil = HibernateUtil.getInstance();
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
+		
+	}
+	
+	/**
+	 * Gets the class definition.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param file
+	 *            the file
+	 * @param parent
+	 *            the parent
+	 * @param startLine
+	 *            the start line
+	 * @param endLine
+	 *            the end line
+	 * @param position
+	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
+	 * @param packageName
+	 *            the package name
+	 * @return the class definition
+	 */
+	public JavaElementLocation<JavaClassDefinition> getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
+	                                                                            @NotNull final String fullQualifiedName,
+	                                                                            @NotNull final String file,
+	                                                                            @NotNegative final int startLine,
+	                                                                            @NotNegative final int endLine,
+	                                                                            @NotNegative final int position,
+	                                                                            @NotNegative final int bodyStartLine,
+	                                                                            @NotNull final String packageName) {
+		
+		JavaClassDefinition def = null;
+		if (!classDefs.containsKey(fullQualifiedName)) {
+			def = new JavaClassDefinition(parent, fullQualifiedName, packageName);
+			classDefs.put(fullQualifiedName, def);
+		} else {
+			def = classDefs.get(fullQualifiedName);
 		}
+		JavaElementLocation<JavaClassDefinition> result = new JavaElementLocation<JavaClassDefinition>(def, startLine,
+				endLine,
+				position,
+				bodyStartLine,
+				file);
+		this.classDefLocations.add(result);
+		
+		return result;
 	}
 	
 	/**

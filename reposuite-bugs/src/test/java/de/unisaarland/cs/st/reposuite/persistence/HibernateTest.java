@@ -17,7 +17,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
@@ -72,16 +71,7 @@ public class HibernateTest {
 	@Test
 	public void testOrphanPerson() {
 		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance(new RepoSuiteToolchain(null) {
-				
-				@Override
-				public void setup() {
-				}
-				
-				@Override
-				public void shutdown() {
-				}
-			});
+			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
 			
 			Person submitter = new Person("yokolet", "Yoko Harada", null);
 			Person historyAuthor1 = new Person("yokolet", null, null);
@@ -93,20 +83,20 @@ public class HibernateTest {
 			
 			report.addHistoryElement(new HistoryElement(historyAuthor1, new DateTime(),
 			                                            new HashMap<String, Tuple<?, ?>>() {
-				                                            
-				                                            {
-					                                            put("status", new Tuple<Status, Status>(Status.NEW,
-					                                                                                    Status.CLOSED));
-				                                            }
-			                                            }));
+				
+				{
+					put("status", new Tuple<Status, Status>(Status.NEW,
+							Status.CLOSED));
+				}
+			}));
 			report.addHistoryElement(new HistoryElement(historyAuthor2, new DateTime(),
 			                                            new HashMap<String, Tuple<?, ?>>() {
-				                                            
-				                                            {
-					                                            put("status", new Tuple<Status, Status>(Status.NEW,
-					                                                                                    Status.CLOSED));
-				                                            }
-			                                            }));
+				
+				{
+					put("status", new Tuple<Status, Status>(Status.NEW,
+							Status.CLOSED));
+				}
+			}));
 			
 			report.addComment(new Comment(2, commentAuthor2, new DateTime(), "comment2"));
 			

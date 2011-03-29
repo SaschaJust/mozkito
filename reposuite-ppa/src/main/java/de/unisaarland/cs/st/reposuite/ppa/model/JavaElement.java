@@ -4,19 +4,10 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -25,7 +16,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * The Class JavaElement.
@@ -41,12 +31,6 @@ public abstract class JavaElement implements Annotated {
 	
 	/** The primary key. */
 	private JavaElementPrimaryKey                       primaryKey;
-	
-	/** The parents. */
-	private Map<JavaElement, JavaElementRelation> parentRelations  = new HashMap<JavaElement, JavaElementRelation>();
-	
-	/** The child relations. */
-	private Map<JavaElement, JavaElementRelation>       childRelations   = new HashMap<JavaElement, JavaElementRelation>();
 	
 	/**
 	 * Instantiates a new java element.
@@ -66,40 +50,6 @@ public abstract class JavaElement implements Annotated {
 		this.setPrimaryKey(new JavaElementPrimaryKey(fullQualifiedName, this.getClass()));
 	}
 	
-	/**
-	 * Adds the child relation. The method assumes that the passed relation can
-	 * be added without further merging!
-	 * 
-	 * @param rel
-	 *            the rel
-	 */
-	protected void addChildRelation(JavaElementRelation childRelation){
-		if (!childRelations.containsKey(childRelation.getChild())) {
-			childRelations.put(childRelation.getChild(), childRelation);
-		}
-	}
-	
-	/**
-	 * Adds a parent relation containing this element as child and the given
-	 * other element as parent.
-	 * 
-	 * @param child
-	 *            the child
-	 * @return the java element relation
-	 */
-	@NoneNull
-	@Transient
-	public JavaElementRelation addParent(JavaElement parent) {
-		if (getParentRelations().containsKey(parent)) {
-			return this.getParentRelations().get(parent);
-		} else {
-			JavaElementRelation rel = new JavaElementRelation(parent, this);
-			getParentRelations().put(parent, rel);
-			parent.addChildRelation(rel);
-			return rel;
-		}
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
@@ -110,35 +60,6 @@ public abstract class JavaElement implements Annotated {
 			if (other.primaryKey != null) return false;
 		} else if (!primaryKey.equals(other.primaryKey)) return false;
 		return true;
-	}
-	
-	/**
-	 * Gets the child relations.
-	 * 
-	 * @return the child relations
-	 */
-	@OneToMany (cascade = {}, fetch = FetchType.LAZY)
-	@MapKey (name = "child")
-	public Map<JavaElement, JavaElementRelation> getChildRelations() {
-		return childRelations;
-	}
-	
-	/**
-	 * Gets the child relations.
-	 * 
-	 * @param when
-	 *            the when
-	 * @return the child relations
-	 */
-	@Transient
-	public Set<JavaElement> getChildRelations(RCSTransaction when) {
-		Set<JavaElement> result = new HashSet<JavaElement>();
-		for (JavaElementRelation child : this.getChildRelations().values()) {
-			if (child.isValid(when)) {
-				result.add(child.getChild());
-			}
-		}
-		return result;
 	}
 	
 	/**
@@ -163,12 +84,6 @@ public abstract class JavaElement implements Annotated {
 			return this.getFullQualifiedName().substring(index);
 		}
 		return "";
-	}
-	
-	@OneToMany (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
-	@MapKey (name = "parent")
-	public Map<JavaElement, JavaElementRelation> getParentRelations() {
-		return parentRelations;
 	}
 	
 	/**
@@ -212,17 +127,6 @@ public abstract class JavaElement implements Annotated {
 	}
 	
 	/**
-	 * Sets the child relations.
-	 * 
-	 * @param relations
-	 *            the new child relations
-	 */
-	@SuppressWarnings ("unused")
-	private void setChildRelations(Map<JavaElement, JavaElementRelation> relations) {
-		this.childRelations = relations;
-	}
-	
-	/**
 	 * Sets the full qualified name.
 	 * 
 	 * @param name
@@ -234,10 +138,6 @@ public abstract class JavaElement implements Annotated {
 		this.primaryKey.setFullQualifiedName(name);
 	}
 	
-	@SuppressWarnings ("unused")
-	private void setParentRelations(Map<JavaElement, JavaElementRelation> parentRelations) {
-		this.parentRelations = parentRelations;
-	}
 	
 	/**
 	 * Sets the primary key.

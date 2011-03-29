@@ -2,7 +2,6 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -170,21 +169,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		Element nameElement = document.createElement("fullQualifiedName");
 		Text textNode = document.createTextNode(this.getFullQualifiedName());
 		nameElement.appendChild(textNode);
-		
-		Element parentElement = document.createElement("parent");
-		for (JavaElementRelation rel : getParentRelations().values()) {
-			parentElement.appendChild(rel.getXMLRepresentation(document));
-		}
-		
-		Element childElement = document.createElement("children");
-		for (JavaElementRelation rel : getChildRelations().values()) {
-			childElement.appendChild(rel.getXMLRepresentation(document));
-		}
-		
 		thisElement.appendChild(nameElement);
-		thisElement.appendChild(parentElement);
-		thisElement.appendChild(childElement);
-		
 		return thisElement;
 	}
 	
@@ -193,7 +178,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		return new HashSet<Annotated>();
+		return null;
 	}
 	
 	/**
@@ -208,6 +193,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		this.calledClassName = calledClassName;
 	}
 	
+	
+	
 	/**
 	 * Sets the called package name.
 	 * 
@@ -219,8 +206,6 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	private void setCalledPackageName(final String calledPackageName) {
 		this.calledPackageName = calledPackageName;
 	}
-	
-	
 	
 	/**
 	 * Sets the signature.

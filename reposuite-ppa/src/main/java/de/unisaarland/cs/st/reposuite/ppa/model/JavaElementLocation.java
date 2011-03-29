@@ -53,8 +53,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		FALSE
 	};
 	
-	private JavaElementRelation parentRelation;
-	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4858435624572738026L;
 	
@@ -106,7 +104,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 *            the file path
 	 */
 	public JavaElementLocation(@NotNull final T element, @NotNegative final int startLine,
-	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
+	                           @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
 	                           @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		if (element instanceof JavaElementDefinition) {
@@ -356,11 +354,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		return this.id;
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public JavaElementRelation getParentRelation() {
-		return parentRelation;
-	}
-	
 	
 	/**
 	 * Gets the position.
@@ -428,9 +421,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 */
 	@Override
 	public Collection<Annotated> saveFirst() {
-		//		Set<Annotated> set = new HashSet<Annotated>();
-		//		set.add(this.getElement());
-		//		return set;
 		return null;
 	}
 	
@@ -499,10 +489,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		this.id = id;
 	}
 	
-	@NoneNull
-	public void setParentRelation(JavaElementRelation parentRelation) {
-		this.parentRelation = parentRelation;
-	}
 	
 	/**
 	 * Sets the position.

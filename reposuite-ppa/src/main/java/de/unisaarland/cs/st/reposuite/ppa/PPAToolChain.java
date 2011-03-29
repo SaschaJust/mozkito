@@ -124,7 +124,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			}
 		}
 		try {
-			this.hibernateUtil = HibernateUtil.getInstance(this);
+			this.hibernateUtil = HibernateUtil.getInstance();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}

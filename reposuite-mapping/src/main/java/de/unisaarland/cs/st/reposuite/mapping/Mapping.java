@@ -8,7 +8,6 @@ import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
@@ -63,20 +62,10 @@ public class Mapping extends RepoSuiteToolchain {
 		if (this.databaseArguments.getValue() != null) {
 			HibernateUtil hibernateUtil;
 			try {
-				hibernateUtil = HibernateUtil.getInstance(this);
+				hibernateUtil = HibernateUtil.getInstance();
 				new MappingsReader(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
 				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(),
-				                      HibernateUtil.getInstance(new RepoSuiteToolchain((RepoSuiteSettings) null) {
-					                      
-					                      @Override
-					                      public void setup() {
-					                      }
-					                      
-					                      @Override
-					                      public void shutdown() {
-					                      }
-				                      }));
+				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(), HibernateUtil.getInstance());
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {
