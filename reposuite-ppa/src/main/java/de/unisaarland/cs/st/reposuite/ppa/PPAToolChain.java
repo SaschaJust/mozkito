@@ -20,8 +20,8 @@ import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
-import de.unisaarland.cs.st.reposuite.settings.FileArgument;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
+import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
@@ -50,7 +50,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	private final ListArgument        testCaseTransactionArg;
 	
 	/** The as xml. */
-	private final FileArgument        asXML;
+	private final OutputFileArgument  asXML;
 	
 	/** The hibernate util. */
 	private HibernateUtil             hibernateUtil;
@@ -79,9 +79,11 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		                                               + "outputting result as XML either to sdtout (if option -DasXML not set) "
 		                                               + "or to specified XML file.", null, false);
 		
-		this.asXML = new FileArgument(settings, "output.xml",
-		                              "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                              null, false, true, false);
+		this.asXML = new OutputFileArgument(
+		                                    settings,
+		                                    "output.xml",
+		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+		                                    null, false, true);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
 		                                       "Use this transaction ID as the first one.",

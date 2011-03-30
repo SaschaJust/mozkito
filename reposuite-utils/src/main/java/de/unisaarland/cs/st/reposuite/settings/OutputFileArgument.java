@@ -11,10 +11,11 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class FileArgument extends RepoSuiteArgument {
+public class OutputFileArgument extends RepoSuiteArgument {
 	
-	private boolean mustExist = false;
+	// FIXME write test cases
 	private boolean overwrite = false;
+	private boolean selfWritten = false;
 	
 	/**
 	 * Constructor for FileArgument. Besides the obvious and general
@@ -39,11 +40,10 @@ public class FileArgument extends RepoSuiteArgument {
 	 *            Set to true if you want to ensure that the file at given
 	 *            location must already exist.
 	 */
-	public FileArgument(final RepoSuiteSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean overwrite, final boolean mustExist) {
+	public OutputFileArgument(final RepoSuiteSettings settings, final String name, final String description,
+	                          final String defaultValue, final boolean isRequired, final boolean overwrite) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
-		this.mustExist = mustExist;
 	}
 	
 	/*
@@ -52,6 +52,8 @@ public class FileArgument extends RepoSuiteArgument {
 	 */
 	@Override
 	public File getValue() {
+		// FIME seprate input and output files. Fix the mustExist and overwrite
+		// conbinations!
 		if (this.stringValue == null) {
 			return null;
 		}
@@ -60,16 +62,26 @@ public class FileArgument extends RepoSuiteArgument {
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is a directory. Expected file. Abort.");
+				             + "` is a directory. Expected file. Abort.");
 			}
 			throw new Shutdown();
 		}
-		if (file.exists() && (!this.overwrite)) {
-			if (Logger.logError()) {
-				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` exists already. Please remove file or choose different argument value.");
+		if (file.exists() && (!this.overwrite) && (!selfWritten)) {
+			if (this.isRequired()) {
+				if (Logger.logError()) {
+					
+					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+					             + "` exists already. Please remove file or choose different argument value.");
+				}
+				throw new Shutdown();
+			} else {
+				if (Logger.logWarn()) {
+					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
+					            + "` exists already and cannot be overwritten. Ignoring argument!.");
+				}
+				return null;
 			}
-			throw new Shutdown();
+			
 		} else if (file.exists() && (this.overwrite)) {
 			
 			if (Logger.logDebug()) {
@@ -98,30 +110,32 @@ public class FileArgument extends RepoSuiteArgument {
 				}
 				
 			}
-		} else {
+		} else if (!selfWritten) {
 			// file does not exist so far
-			if (this.mustExist) {
-				if (Logger.logError()) {
-					Logger.error("Specified file `" + file.getAbsolutePath() + "` for argument `" + getName()
-					        + "` must exist but does not exist. Abort.");
-				}
-				throw new Shutdown();
-			} else {
-				try {
-					if (!file.createNewFile()) {
-						if (Logger.logError()) {
-							Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
-						}
-						throw new Shutdown();
-					}
-				} catch (IOException e) {
+			try {
+				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
-						Logger.error(e.getMessage());
 					}
+					if(this.isRequired()){
+						throw new Shutdown();
+					} else {
+						return null;
+					}
+				}
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+					Logger.error(e.getMessage());
+				}
+				if(this.isRequired()){
+					throw new Shutdown();
+				} else {
+					return null;
 				}
 			}
 		}
+		selfWritten = true;
 		return file;
 	}
 }

@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class LoggerArguments extends RepoSuiteArgumentSet {
 	
-	private final FileArgument logConfig;
+	private final InputFileArgument logConfig;
 	private final EnumArgument logLevel;
 	
 	/**
@@ -26,8 +26,8 @@ public class LoggerArguments extends RepoSuiteArgumentSet {
 		}
 		
 		this.logLevel = new EnumArgument(settings, "log.level", "determines the log level", "WARN", false, argEnums);
-		this.logConfig = new FileArgument(settings, "log.config", "Configuration file for the logging engine", null,
-		        false, false, true);
+		this.logConfig = new InputFileArgument(settings, "log.config", "Configuration file for the logging engine",
+		                                       null, false);
 	}
 	
 	/*
