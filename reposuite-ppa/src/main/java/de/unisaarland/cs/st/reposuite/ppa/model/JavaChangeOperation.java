@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -73,7 +72,7 @@ public class JavaChangeOperation implements Annotated {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
@@ -134,7 +133,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the revision
 	 */
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return this.revision;
 	}
