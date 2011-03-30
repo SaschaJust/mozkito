@@ -262,7 +262,6 @@ public class GitRevDependencyIteratorTest {
 		assertFalse(iter.hasNext());
 		
 		
-		//TODO check merging transaction
 		//check braches and branch hierarchy
 		assertFalse(branch_e52.hasParent());
 		assertEquals(RCSBranch.MASTER, branch_e52);
