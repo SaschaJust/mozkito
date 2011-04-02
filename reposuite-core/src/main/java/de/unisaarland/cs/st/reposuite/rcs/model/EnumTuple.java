@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
-
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,15 +48,6 @@ public class EnumTuple implements Annotated {
 	@Enumerated (EnumType.ORDINAL)
 	public Enum<?> getOldValue() {
 		return this.oldValue;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

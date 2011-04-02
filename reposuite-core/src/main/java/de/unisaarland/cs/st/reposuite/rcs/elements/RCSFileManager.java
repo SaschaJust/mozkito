@@ -1,7 +1,10 @@
-package de.unisaarland.cs.st.reposuite.rcs.model;
+package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

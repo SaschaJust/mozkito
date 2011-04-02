@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -50,15 +49,6 @@ public class DateTuple implements Annotated {
 	@Basic
 	public Date getOldValue() {
 		return this.oldValue;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

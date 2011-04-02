@@ -40,29 +40,30 @@ public class FileUtils {
 		KEEP, DELETE
 	}
 	
-	public static final String fileSeparator     = System.getProperty("file.separator");
-	public static final String lineSeparator     = System.getProperty("line.separator");
-	public static final String pathSeparator     = System.getProperty("path.separator");
-	public static final File   tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
+	public static final String                        fileSeparator     = System.getProperty("file.separator");
+	public static final String                        lineSeparator     = System.getProperty("line.separator");
+	public static final String                        pathSeparator     = System.getProperty("path.separator");
+	public static final File                          tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
 	
-	private static int         MAX_PERM          = 0;
+	private static int                                MAX_PERM          = 0;
 	
-	public static final int    EXECUTABLE        = (int) Math.pow(2, MAX_PERM++);
-	public static final int    WRITABLE          = (int) Math.pow(2, MAX_PERM++);
-	public static final int    READABLE          = (int) Math.pow(2, MAX_PERM++);
-	public static final int    FILE              = (int) Math.pow(2, MAX_PERM++);
-	public static final int    DIRECTORY         = (int) Math.pow(2, MAX_PERM++);
-	public static final int    EXISTING          = (int) Math.pow(2, MAX_PERM++);
-	public static final int    ACCESSIBLE_DIR    = EXISTING | DIRECTORY | READABLE | EXECUTABLE;
-	public static final int    WRITABLE_DIR      = ACCESSIBLE_DIR | WRITABLE;
-	public static final int    READABLE_FILE     = EXISTING | FILE | READABLE;
-	public static final int    WRITABLE_FILE     = FILE | WRITABLE;
-	public static final int    OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
-	public static final int    EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
+	public static final int                           EXECUTABLE        = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           WRITABLE          = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           READABLE          = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           FILE              = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           DIRECTORY         = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           EXISTING          = (int) Math.pow(2, MAX_PERM++);
+	public static final int                           ACCESSIBLE_DIR    = EXISTING | DIRECTORY | READABLE | EXECUTABLE;
+	public static final int                           WRITABLE_DIR      = ACCESSIBLE_DIR | WRITABLE;
+	public static final int                           READABLE_FILE     = EXISTING | FILE | READABLE;
+	public static final int                           WRITABLE_FILE     = FILE | WRITABLE;
+	public static final int                           OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
+	public static final int                           EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
 	
 	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
 	
-	public static void addToFileManager(final File file, final FileShutdownAction shutdownAction){
+	public static void addToFileManager(final File file,
+	                                    final FileShutdownAction shutdownAction) {
 		if (!fileManager.containsKey(shutdownAction)) {
 			fileManager.put(shutdownAction, new HashSet<File>());
 		}
@@ -82,8 +83,8 @@ public class FileUtils {
 	@NoneNull
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
 		if (command.startsWith(FileUtils.fileSeparator)
-				|| ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
-						&& (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
+		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
 			// We got an absolute path here
 			File executable = new File(command);
 			if (!executable.exists()) {
@@ -112,7 +113,7 @@ public class FileUtils {
 			}
 			
 			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-			                                      + pathVariable);
+			        + pathVariable);
 		}
 	}
 	
@@ -129,10 +130,11 @@ public class FileUtils {
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 		
 		String filename = srcFile.getName();
-		File copiedFile = new File(destDir.getAbsolutePath()+FileUtils.fileSeparator+filename);
-		if(!copiedFile.exists()){
+		File copiedFile = new File(destDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+		if (!copiedFile.exists()) {
 			if (Logger.logWarn()) {
-				Logger.warn("Requested file copy operation (file "+srcFile.getAbsolutePath()+" into dir "+destDir.getAbsolutePath()+" might be incomplete!");
+				Logger.warn("Requested file copy operation (file " + srcFile.getAbsolutePath() + " into dir "
+				        + destDir.getAbsolutePath() + " might be incomplete!");
 			}
 		} else {
 			addToFileManager(copiedFile, shutdownAction);
@@ -170,15 +172,15 @@ public class FileUtils {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Did not create directory `" + name + "` in parent directory `"
-					            + parentDir.getAbsolutePath()
-					            + "`. Reason: directory exists already. Returning existing directory.");
+					        + parentDir.getAbsolutePath()
+					        + "`. Reason: directory exists already. Returning existing directory.");
 				}
 				addToFileManager(newDir, shutdownAction);
 				return newDir;
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not create directory `" + name + "` in parent directory `"
-					             + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
 				}
 				return null;
 			}
@@ -186,7 +188,7 @@ public class FileUtils {
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
 				Logger.error("Could not create directory `" + name + "` in parent directory `"
-				             + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
+				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
 		} else {
@@ -300,8 +302,7 @@ public class FileUtils {
 	public static void ensureFilePermissions(@NotNull final File file,
 	                                         int permissions) throws FilePermissionException {
 		CompareCondition.less(permissions, getMAX_PERM(),
-		"Filepermission alias must be less then the maximum known alias bitmask.");
-		
+		                      "Filepermission alias must be less then the maximum known alias bitmask.");
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
@@ -387,7 +388,9 @@ public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Iterator<File> getFileIterator(final File directory, final String[] extensions, final boolean recursive) throws IOException {
+	public static Iterator<File> getFileIterator(final File directory,
+	                                             final String[] extensions,
+	                                             final boolean recursive) throws IOException {
 		return org.apache.commons.io.FileUtils.iterateFiles(directory, extensions, recursive);
 	}
 	
@@ -460,10 +463,11 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir, final String name) {
+			public boolean accept(final File dir,
+			                      final String name) {
 				return false;
 			}
-		}, new IOFileFilter(){
+		}, new IOFileFilter() {
 			
 			@Override
 			public boolean accept(final File file) {
@@ -471,7 +475,8 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir, final String name) {
+			public boolean accept(final File dir,
+			                      final String name) {
 				return true;
 			}
 			
@@ -500,39 +505,40 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}
 	
-	
 	private static void removeFromFileManager(final File file) {
-		for(FileShutdownAction key : fileManager.keySet()){
+		for (FileShutdownAction key : fileManager.keySet()) {
 			fileManager.get(key).remove(file);
 		}
 	}
 	
 	public static void shutdown() {
 		Set<File> filesToDelete = new HashSet<File>();
-		filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
-		for (File f : filesToDelete) {
-			if (f.exists()) {
-				if (f.isDirectory()) {
-					try {
-						if (Logger.logDebug()) {
-							Logger.debug("Deleting directory: " + f.getAbsolutePath());
-						}
-						deleteDirectory(f);
-					} catch (IOException e) {
-						if (Logger.logWarn()) {
-							Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
-						}
-					}
-				} else {
-					if (Logger.logDebug()) {
-						Logger.debug("Deleting file: " + f.getAbsolutePath());
-					}
-					if (!f.delete()) {
+		if (fileManager.containsKey(FileShutdownAction.DELETE)) {
+			filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
+			for (File f : filesToDelete) {
+				if (f.exists()) {
+					if (f.isDirectory()) {
 						try {
-							FileUtils.forceDelete(f);
+							if (Logger.logDebug()) {
+								Logger.debug("Deleting directory: " + f.getAbsolutePath());
+							}
+							deleteDirectory(f);
 						} catch (IOException e) {
 							if (Logger.logWarn()) {
-								Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
+								Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
+							}
+						}
+					} else {
+						if (Logger.logDebug()) {
+							Logger.debug("Deleting file: " + f.getAbsolutePath());
+						}
+						if (!f.delete()) {
+							try {
+								FileUtils.forceDelete(f);
+							} catch (IOException e) {
+								if (Logger.logWarn()) {
+									Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
+								}
 							}
 						}
 					}
@@ -574,7 +580,7 @@ public class FileUtils {
 				byte data[] = new byte[BUFFER];
 				// write the files to the disk
 				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-				                                                     + FileUtils.fileSeparator + entry.getName()));
+				        + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 					dest.write(data, 0, count);

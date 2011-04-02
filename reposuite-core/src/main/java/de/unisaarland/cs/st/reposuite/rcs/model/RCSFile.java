@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,8 +35,8 @@ public class RCSFile implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long         serialVersionUID = 7232712367403624199L;
-	private long                      generatedId;
+	private static final long   serialVersionUID = 7232712367403624199L;
+	private long                generatedId;
 	private Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
@@ -50,8 +49,8 @@ public class RCSFile implements Annotated {
 	/**
 	 * @param path
 	 */
-	RCSFile(final String path, final RCSTransaction transaction) {
-		this.changedNames.put(transaction.getId(), path);
+	public RCSFile(final String path, final RCSTransaction transaction) {
+		getChangedNames().put(transaction.getId(), path);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -105,7 +104,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public String getLatestPath() {
-		return this.changedNames.get(new TreeSet<String>(this.changedNames.keySet()).last());
+		return getChangedNames().get(new TreeSet<String>(getChangedNames().keySet()).last());
 	}
 	
 	/**
@@ -115,7 +114,7 @@ public class RCSFile implements Annotated {
 	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		
-		while ((current != null) && !this.changedNames.containsKey(current.getId())) {
+		while ((current != null) && !getChangedNames().containsKey(current.getId())) {
 			
 			// if current transaction is a merge
 			Set<RCSTransaction> currentParents = current.getParents();
@@ -142,11 +141,11 @@ public class RCSFile implements Annotated {
 		}
 		
 		if (current != null) {
-			return this.changedNames.get(current.getId());
+			return getChangedNames().get(current.getId());
 		} else {
 			if (Logger.logError()) {
-				Logger.error("Could not determine path for RCSFile (id=" + this.getGeneratedId() + ") for transaction "
-				             + transaction.getId());
+				Logger.error("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
+				        + transaction.getId());
 			}
 			return null;
 		}
@@ -158,12 +157,6 @@ public class RCSFile implements Annotated {
 	@Transient
 	public boolean saved() {
 		return getGeneratedId() != 0;
-	}
-	
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	@SuppressWarnings ("unused")
@@ -187,7 +180,7 @@ public class RCSFile implements Annotated {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-		+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }

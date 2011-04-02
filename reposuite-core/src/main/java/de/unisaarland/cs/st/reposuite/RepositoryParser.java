@@ -11,8 +11,8 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
@@ -30,8 +30,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTransaction> {
 	
-	private final Repository repository;
-	private RCSFileManager   fileManager;
+	private final Repository  repository;
+	private RCSFileManager    fileManager;
 	private final Set<String> tids = new HashSet<String>();
 	
 	/**
@@ -41,14 +41,13 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 	 * @param repository
 	 */
 	public RepositoryParser(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-			final Repository repository) {
+	        final Repository repository) {
 		super(threadGroup, RepositoryParser.class.getSimpleName(), settings);
 		this.repository = repository;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -71,11 +70,14 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 				}
 				if (this.tids.contains(entry.getRevision())) {
 					throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
-							+ entry.getRevision() + ")");
+					        + entry.getRevision() + ")");
 				}
 				
 				RCSTransaction rcsTransaction = RCSTransaction.createTransaction(entry.getRevision(),
-				        entry.getMessage(), entry.getDateTime(), entry.getAuthor(), entry.getOriginalId());
+				                                                                 entry.getMessage(),
+				                                                                 entry.getDateTime(),
+				                                                                 entry.getAuthor(),
+				                                                                 entry.getOriginalId());
 				this.tids.add(entry.getRevision());
 				Map<String, ChangeType> changedPaths = this.repository.getChangedPaths(entry.getRevision());
 				for (String fileName : changedPaths.keySet()) {
@@ -83,13 +85,13 @@ public class RepositoryParser extends RepoSuiteTransformerThread<LogEntry, RCSTr
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
 						file = this.fileManager.getFile(this.repository.getFormerPathName(rcsTransaction.getId(),
-								
-								fileName));
+
+						fileName));
 						if (file == null) {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-										+ changedPaths.get(fileName));
+								        + changedPaths.get(fileName));
 							}
 							file = this.fileManager.getFile(fileName);
 							

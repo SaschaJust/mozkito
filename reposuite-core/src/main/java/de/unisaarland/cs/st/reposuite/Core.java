@@ -3,17 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
@@ -37,7 +29,7 @@ public class Core extends RepoSuiteToolchain {
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
 	private boolean                   shutdown;
-	private HibernateUtil             hibernateUtil;
+	private PersistenceUtil           persistenceUtil;
 	
 	public Core() {
 		super(new RepositorySettings());
@@ -80,13 +72,16 @@ public class Core extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void setup() {
+		this.logSettings.getValue();
+		
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
 		if (this.databaseSettings.getValue() != null) {
 			try {
-				this.hibernateUtil = HibernateUtil.getInstance();
-			} catch (UninitializedDatabaseException e) {
-				
+				this.persistenceUtil = (PersistenceUtil) PersistenceManager.getMiddleware().getMethod("getInstance")
+				                                                           .invoke(null);
+			} catch (Exception e) {
+				e.printStackTrace();
 				if (Logger.logError()) {
 					Logger.error("Database connection could not be established.", e);
 				}
@@ -99,91 +94,95 @@ public class Core extends RepoSuiteToolchain {
 			
 			shutdown();
 		}
-		Repository repository = this.repoSettings.getValue();
-		this.logSettings.getValue();
 		
-		if (this.hibernateUtil != null) {
-			String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
-			? repository.getHEAD()
-			: repository.getStartRevision();
-			String end = repository.getEndRevision().equalsIgnoreCase("HEAD")
-			? repository.getHEAD()
-			: repository.getEndRevision();
-			
-			if (Logger.logInfo()) {
-				Logger.info("Checking for persistent transactions (" + start + ".." + end + ").");
-			}
-			Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
-			criteria.add(Restrictions.eq("id", start));
-			@SuppressWarnings ("unchecked")
-			List<RCSTransaction> startTransactions = criteria.list();
-			if ((startTransactions != null) && (startTransactions.size() > 0)) {
-				RCSTransaction startTransaction = startTransactions.get(0);
-				if (startTransaction != null) {
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Found start transaction in persistence storage.");
-					}
-					
-					criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
-					criteria.add(Restrictions.eq("id", end));
-					@SuppressWarnings ("unchecked")
-					List<RCSTransaction> endTransactions = criteria.list();
-					
-					if ((endTransactions != null) && (endTransactions.size() > 0) && (endTransactions.get(0) != null)) {
-						if (Logger.logDebug()) {
-							Logger.debug("Found end transaction in persistence storage.");
-						}
-						if (Logger.logWarn()) {
-							Logger.warn("Nothing to do. Transactions from " + start + " to " + end
-							            + " are already persisten.");
-						}
-						shutdown();
-					} else {
-						criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
-						criteria.addOrder(Order.desc("id"));
-						@SuppressWarnings ("unchecked")
-						List<RCSTransaction> maxTransactions = criteria.list();
-						if ((maxTransactions != null) && (maxTransactions.size() > 0)) {
-							RCSTransaction maxPersistentTransaction = maxTransactions.get(0);
-							repository.setStartRevision(maxPersistentTransaction.getId());
-							
-							if (Logger.logWarn()) {
-								Logger.warn("Transactions known from " + startTransaction.getId() + " to "
-								            + maxPersistentTransaction.getId() + ". Skipping and fetching "
-								            + maxPersistentTransaction.getId() + " to " + repository.getEndRevision() + ".");
-							}
-							
-							if (Logger.logError()) {
-								Logger.error("UNSUPPORTED RESUME FOUND. PLEASE FIX THE CODE.");
-							}
-							
-							throw new UnrecoverableError();
-							// repository.setStartTransaction(maxPersistentTransaction.getParents());
-							// hibernateUtil.delete(maxPersistentTransaction);
-						} else {
-							
-							if (Logger.logError()) {
-								Logger.error("Could not find max transaction although persitent transactions were found. Aborting.");
-							}
-							
-							shutdown();
-						}
-					}
-					
-				}
-			}
-		}
+		Repository repository = this.repoSettings.getValue();
+		
+		// TODO i din't think we can resume repository mining at all.
+		// if (this.persistenceUtil != null) {
+		// String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
+		// ? repository.getHEAD()
+		// : repository.getStartRevision();
+		// String end = repository.getEndRevision().equalsIgnoreCase("HEAD")
+		// ? repository.getHEAD()
+		// : repository.getEndRevision();
+		//
+		// if (Logger.logInfo()) {
+		// Logger.info("Checking for persistent transactions (" + start + ".." +
+		// end + ").");
+		// }
+		//
+		// RCSTransaction startTransaction =
+		// persistenceUtil.fetchRCSTransaction(start);
+		// if (startTransaction != null) {
+		//
+		// if (Logger.logDebug()) {
+		// Logger.debug("Found start transaction in persistence storage.");
+		// }
+		//
+		// criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
+		// criteria.add(Restrictions.eq("id", end));
+		// @SuppressWarnings ("unchecked")
+		// List<RCSTransaction> endTransactions = criteria.list();
+		//
+		// if ((endTransactions != null) && (endTransactions.size() > 0) &&
+		// (endTransactions.get(0) != null)) {
+		// if (Logger.logDebug()) {
+		// Logger.debug("Found end transaction in persistence storage.");
+		// }
+		// if (Logger.logWarn()) {
+		// Logger.warn("Nothing to do. Transactions from " + start + " to " +
+		// end
+		// + " are already persisten.");
+		// }
+		// shutdown();
+		// } else {
+		// criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
+		// criteria.addOrder(Order.desc("id"));
+		// @SuppressWarnings ("unchecked")
+		// List<RCSTransaction> maxTransactions = criteria.list();
+		// if ((maxTransactions != null) && (maxTransactions.size() > 0)) {
+		// RCSTransaction maxPersistentTransaction = maxTransactions.get(0);
+		// repository.setStartRevision(maxPersistentTransaction.getId());
+		//
+		// if (Logger.logWarn()) {
+		// Logger.warn("Transactions known from " + startTransaction.getId() +
+		// " to "
+		// + maxPersistentTransaction.getId() + ". Skipping and fetching "
+		// + maxPersistentTransaction.getId() + " to " +
+		// repository.getEndRevision() + ".");
+		// }
+		//
+		// if (Logger.logError()) {
+		// Logger.error("UNSUPPORTED RESUME FOUND. PLEASE FIX THE CODE.");
+		// }
+		//
+		// throw new UnrecoverableError();
+		// //
+		// repository.setStartTransaction(maxPersistentTransaction.getParents());
+		// // persistenceUtil.delete(maxPersistentTransaction);
+		// } else {
+		//
+		// if (Logger.logError()) {
+		// Logger.error("Could not find max transaction although persitent transactions were found. Aborting.");
+		// }
+		//
+		// shutdown();
+		// }
+		// }
+		//
+		//
+		// }
+		// }
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
-		if (this.hibernateUtil != null) {
+		if (this.persistenceUtil != null) {
 			new RepositoryGraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                           repository, this.hibernateUtil);
+			                           repository, this.persistenceUtil);
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                        this.hibernateUtil);
+			                        this.persistenceUtil);
 		} else {
 			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}

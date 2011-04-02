@@ -5,7 +5,6 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -34,9 +33,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * 
 	 */
-	private static final long         serialVersionUID = -5061178255449904475L;
+	private static final long   serialVersionUID = -5061178255449904475L;
 	private Map<String, Person> map              = new HashMap<String, Person>();
-	private long                      generatedId;
+	private long                generatedId;
 	
 	/**
 	 * 
@@ -63,7 +62,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Transient
 	public boolean contains(final String key) {
-		return this.map.containsKey(key);
+		return getMap().containsKey(key);
 	}
 	
 	/*
@@ -75,7 +74,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	@Transient
 	public Person get(final String id) {
-		return this.getMap().get(id);
+		return getMap().get(id);
 	}
 	
 	/**
@@ -102,7 +101,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Transient
 	public Collection<Person> getPersons() {
-		return this.map.values();
+		return getMap().values();
 	}
 	
 	/*
@@ -113,7 +112,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	public Collection<Person> interceptorTargets() {
-		return this.getMap().values();
+		return getMap().values();
 	}
 	
 	/**
@@ -121,7 +120,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Transient
 	public boolean isEmpty() {
-		return this.map.isEmpty();
+		return getMap().isEmpty();
 	}
 	
 	/*
@@ -133,22 +132,11 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	public void replace(final Person from,
 	                    final Person to) {
-		for (String key : this.map.keySet()) {
+		for (String key : getMap().keySet()) {
 			if (getMap().get(key).equals(from)) {
 				getMap().put(key, to);
 			}
 		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		Collection<Annotated> first = new LinkedList<Annotated>();
-		first.addAll(getPersons());
-		return first;
 	}
 	
 	/**
@@ -165,8 +153,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setMap(final Map<String, Person> map) {
-		// this.map.clear();
-		// this.map.putAll(map);
 		this.map = map;
 	}
 	
@@ -175,7 +161,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Transient
 	public int size() {
-		return this.map.size();
+		return getMap().size();
 	}
 	
 	/*
@@ -186,9 +172,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PersonContainer [generatedId=");
-		builder.append(this.generatedId);
+		builder.append(getGeneratedId());
 		builder.append(", map=");
-		builder.append(JavaUtils.mapToString(this.map));
+		builder.append(JavaUtils.mapToString(getMap()));
 		builder.append("]");
 		return builder.toString();
 	}
@@ -197,9 +183,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * @param reference
 	 */
 	public void update(final Person reference) {
-		for (String key : this.map.keySet()) {
-			if (this.map.get(key).matches(reference)) {
-				this.map.put(key, reference);
+		for (String key : getMap().keySet()) {
+			if (getMap().get(key).matches(reference)) {
+				getMap().put(key, reference);
 			}
 		}
 	}

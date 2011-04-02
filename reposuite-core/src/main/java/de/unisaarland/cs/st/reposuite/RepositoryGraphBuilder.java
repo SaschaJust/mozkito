@@ -8,9 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import de.unisaarland.cs.st.reposuite.exceptions.LoadingException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
@@ -28,16 +27,16 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 	
 	private final Repository                  repository;
-	private final HibernateUtil               hibernateUtil;
+	private final PersistenceUtil             persistenceUtil;
 	private final Map<String, RevDependency>  reverseDependencies = new HashMap<String, RevDependency>();
 	private final Map<String, String>         latest              = new HashMap<String, String>();
 	private final Map<String, RCSTransaction> cached              = new HashMap<String, RCSTransaction>();
 	
 	public RepositoryGraphBuilder(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
-			final Repository repository, final HibernateUtil hibernateUtil) {
+	        final Repository repository, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, RepositoryGraphBuilder.class.getSimpleName(), settings);
 		this.repository = repository;
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	@Override
@@ -78,14 +77,12 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				for (String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
 					if (!this.cached.containsKey(parent)) {
-						parentTransaction = this.hibernateUtil.getSessionRCSTransaction(parent);
 						try {
-							if (parentTransaction == null) {
-								parentTransaction = this.hibernateUtil.fetchRCSTransaction(parent);
-							}
-						} catch (LoadingException e) {
+							parentTransaction = this.persistenceUtil.fetchRCSTransaction(parent);
+						} catch (ArrayIndexOutOfBoundsException e) {
 							throw new UnrecoverableError(
-									"Got child of parent that is not cached an cannot be loaded anymore.", e);
+							                             "Got child of parent that is not cached an cannot be loaded anymore.",
+							                             e);
 						}
 						if (parentTransaction != null) {
 							this.cached.put(parentTransaction.getId(), parentTransaction);
@@ -98,7 +95,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 					} else {
 						if (Logger.logError()) {
 							Logger.error("Got child `" + rcsTransaction.getId()
-									+ "` of unknown parent. This should not happen.");
+							        + "` of unknown parent. This should not happen.");
 						}
 						throw new UnrecoverableEntryException("Got child of unknown parent. This should not happen.");
 					}
@@ -138,7 +135,7 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 							latch.await();
 							
 							parentTransaction.addChild(rcsTransaction);
-							this.hibernateUtil.update(this.cached.remove(parentTransaction.getId()));
+							this.persistenceUtil.update(this.cached.remove(parentTransaction.getId()));
 							// remove branch from cache
 							this.latest.remove(parentTransaction.getBranch().getName());
 							
@@ -152,8 +149,10 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				if (this.cached.containsKey(this.latest.get(revdep.getCommitBranch().getName()))) {
 					latch.await();
 					this.cached.get(this.latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
-					this.hibernateUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
+					this.persistenceUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
 				}
+				
+				latch.await();
 				
 				// add transaction to cache
 				this.cached.put(rcsTransaction.getId(), rcsTransaction);
@@ -168,12 +167,14 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 			latch.await();
 			
 			// persist all remaining cached transactions
-			this.hibernateUtil.commitTransaction();
-			this.hibernateUtil.beginTransaction();
+			this.persistenceUtil.commitTransaction();
+			this.persistenceUtil.beginTransaction();
 			for (RCSTransaction transaction : this.cached.values()) {
-				this.hibernateUtil.update(transaction);
+				this.persistenceUtil.update(transaction);
 			}
-			this.hibernateUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
+			
+			this.cached.clear();
 			
 			finish();
 		} catch (Exception e) {

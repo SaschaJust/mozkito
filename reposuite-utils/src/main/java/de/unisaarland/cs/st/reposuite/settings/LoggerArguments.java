@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+import java.net.URL;
+
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -10,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class LoggerArguments extends RepoSuiteArgumentSet {
 	
 	private final InputFileArgument logConfig;
-	private final EnumArgument logLevel;
+	private final EnumArgument      logLevel;
 	
 	/**
 	 * @param settings
@@ -39,6 +41,11 @@ public class LoggerArguments extends RepoSuiteArgumentSet {
 	public Boolean getValue() {
 		if (this.logConfig.getValue() != null) {
 			Logger.readConfiguration(this.logConfig.getValue().getAbsolutePath());
+		} else {
+			URL url = Logger.class.getResource("log4j.properties");
+			if (url != null) {
+				Logger.readConfiguration(url);
+			}
 		}
 		
 		if (this.logLevel.getValue() != null) {

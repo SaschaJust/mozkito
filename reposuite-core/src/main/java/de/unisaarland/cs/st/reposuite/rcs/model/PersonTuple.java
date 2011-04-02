@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -63,15 +61,6 @@ public class PersonTuple implements Annotated {
 		return this.oldValue;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @param newValue
 	 *            the newValue to set
@@ -85,7 +74,8 @@ public class PersonTuple implements Annotated {
 	 * @param newValue
 	 */
 	@Transient
-	public void setNewValue(final String key, final Person newValue) {
+	public void setNewValue(final String key,
+	                        final Person newValue) {
 		this.newValue = new PersonContainer();
 		getNewValue().add(key, newValue);
 	}
@@ -103,7 +93,8 @@ public class PersonTuple implements Annotated {
 	 * @param oldValue
 	 */
 	@Transient
-	public void setOldValue(final String key, final Person oldValue) {
+	public void setOldValue(final String key,
+	                        final Person oldValue) {
 		this.oldValue = new PersonContainer();
 		getOldValue().add(key, oldValue);
 	}

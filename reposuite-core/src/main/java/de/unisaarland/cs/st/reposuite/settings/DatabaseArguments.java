@@ -1,10 +1,13 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.persistence.DatabaseType;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -12,12 +15,15 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
  */
 public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
+	private final RepositorySettings settings;
+	
 	/**
 	 * @param settings
 	 * @param isRequired
 	 */
 	protected DatabaseArguments(final RepositorySettings settings, final boolean isRequired) {
 		super();
+		this.settings = settings;
 		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
 		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
 		                                     "miner", isRequired));
@@ -26,10 +32,11 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		addArgument(new MaskedStringArgument(settings, "database.password", "Password for database. Default: miner",
 		                                     "miner", isRequired));
 		addArgument(new EnumArgument(settings, "database.type", "Possible values: "
-		                             + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
+		        + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
 		                             JavaUtils.enumToArray(DatabaseType.POSTGRESQL)));
 		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
 		                               "org.postgresql.Driver", isRequired));
+		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
 	}
 	
 	/*
@@ -42,16 +49,38 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		Map<String, RepoSuiteArgument> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
-		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(), arguments
-		                      .get("database.type").getValue(), arguments.get("database.driver").getValue())) {
+		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
+		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue())) {
 			return null;
 		}
 		
-		HibernateUtil.createSessionFactory(arguments.get("database.host").getValue().toString(),
-		                                   arguments.get("database.name").getValue().toString(), arguments.get("database.user").getValue()
-		                                   .toString(), arguments.get("database.password").getValue().toString(),
-		                                   arguments.get("database.type").getValue().toString(), arguments.get("database.driver").getValue()
-		                                   .toString());
+		try {
+			@SuppressWarnings ("unchecked")
+			Class<PersistenceUtil> middlewareClass = (Class<PersistenceUtil>) Class.forName(PersistenceUtil.class.getPackage()
+			                                                                                                     .getName()
+			        + "." + arguments.get("database.middleware").getValue() + "Util");
+			Method method = middlewareClass.getMethod("createSessionFactory", String.class, String.class, String.class,
+			                                          String.class, String.class, String.class);
+			method.invoke(null, arguments.get("database.host").getValue().toString(), arguments.get("database.name")
+			                                                                                   .getValue().toString(),
+			              arguments.get("database.user").getValue().toString(), arguments.get("database.password")
+			                                                                             .getValue().toString(),
+			              arguments.get("database.type").getValue().toString(), arguments.get("database.driver")
+			                                                                             .getValue().toString());
+			PersistenceManager.registerMiddleware(middlewareClass);
+			this.settings.addToolInformation(middlewareClass.getSimpleName(), middlewareClass.newInstance()
+			                                                                                 .getToolInformation());
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				System.err.println("Could not initialize database middleware "
+				        + arguments.get("database.middleware").getValue() + ".");
+				e.printStackTrace();
+				Logger.error("Could not initialize database middleware "
+				        + arguments.get("database.middleware").getValue() + ".", e);
+			}
+			return null;
+		}
+		
 		return true;
 	}
 }

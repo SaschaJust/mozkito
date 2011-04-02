@@ -84,8 +84,6 @@
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
 			<version>0.1-SNAPSHOT</version>
-			<!-- <scope>system</scope>
-			<systemPath>${java.home}/../lib/kanuni.jar</systemPath> -->
 		</dependency>
 	</dependencies>
 	<repositories>

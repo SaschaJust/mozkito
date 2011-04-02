@@ -254,18 +254,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public void markOpen() {
-		this.mergedIn = null;
+		setMergedIn(null);
 		setOpen(true);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**
