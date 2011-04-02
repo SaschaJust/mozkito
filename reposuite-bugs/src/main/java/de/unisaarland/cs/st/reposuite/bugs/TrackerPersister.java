@@ -6,7 +6,7 @@ package de.unisaarland.cs.st.reposuite.bugs;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -17,16 +17,16 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 	
-	private final HibernateUtil hibernateUtil;
+	private final PersistenceUtil persistenceUtil;
 	
 	/**
 	 * @param threadGroup
-	 * @param hibernateUtil
+	 * @param persistenceUtil
 	 */
 	public TrackerPersister(final RepoSuiteThreadGroup threadGroup, final TrackerSettings settings,
-	        final Tracker tracker, final HibernateUtil hibernateUtil) {
+	        final Tracker tracker, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, TrackerPersister.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 			}
 			
 			Report bugReport;
-			this.hibernateUtil.beginTransaction();
+			this.persistenceUtil.beginTransaction();
 			int i = 0;
 			
 			while (!isShutdown() && ((bugReport = read()) != null)) {
@@ -52,13 +52,13 @@ public class TrackerPersister extends RepoSuiteSinkThread<Report> {
 				}
 				
 				if (++i % 15 == 0) {
-					this.hibernateUtil.commitTransaction();
-					this.hibernateUtil.beginTransaction();
+					this.persistenceUtil.commitTransaction();
+					this.persistenceUtil.beginTransaction();
 				}
 				
-				this.hibernateUtil.saveOrUpdate(bugReport);
+				this.persistenceUtil.saveOrUpdate(bugReport);
 			}
-			this.hibernateUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {

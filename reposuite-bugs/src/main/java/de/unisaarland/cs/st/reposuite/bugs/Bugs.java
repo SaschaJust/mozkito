@@ -7,7 +7,8 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
@@ -75,11 +76,11 @@ public class Bugs extends RepoSuiteToolchain {
 		new TrackerParser(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
 		
 		if (this.databaseArguments.getValue() != null) {
-			HibernateUtil hibernateUtil;
+			PersistenceUtil persistenceUtil;
 			try {
-				hibernateUtil = HibernateUtil.getInstance();
+				persistenceUtil = PersistenceManager.getUtil();
 				new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker,
-				                     hibernateUtil);
+				                     persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

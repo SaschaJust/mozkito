@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -45,11 +44,8 @@ public class Comment implements Annotated, Comparable<Comment> {
 	 */
 	private static final long serialVersionUID = -2410349441783888667L;
 	private long              generatedId;
-	
 	private DateTime          timestamp;
-	
 	private String            message;
-	
 	private Report            bugReport;
 	private int               id;
 	private PersonContainer   personContainer  = new PersonContainer();
@@ -99,7 +95,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getAuthor() {
-		return this.personContainer.get("author");
+		return getPersonContainer().get("author");
 	}
 	
 	/**
@@ -162,17 +158,12 @@ public class Comment implements Annotated, Comparable<Comment> {
 		return this.timestamp;
 	}
 	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @param author
 	 *            the author to set
 	 */
 	public void setAuthor(final Person author) {
-		this.personContainer.add("author", author);
+		getPersonContainer().add("author", author);
 	}
 	
 	/**
@@ -201,7 +192,9 @@ public class Comment implements Annotated, Comparable<Comment> {
 	
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date timestamp) {
-		this.timestamp = new DateTime(timestamp);
+		this.timestamp = timestamp == null
+		                                  ? null
+		                                  : new DateTime(timestamp);
 	}
 	
 	/**
@@ -242,7 +235,9 @@ public class Comment implements Annotated, Comparable<Comment> {
 		builder.append(", author=");
 		builder.append(getAuthor());
 		builder.append(", message=");
-		builder.append(getMessage().length() > 10 ? getMessage().substring(0, 10) : getMessage());
+		builder.append(getMessage().length() > 10
+		                                         ? getMessage().substring(0, 10)
+		                                         : getMessage());
 		builder.append(", bugReport=");
 		builder.append(getBugReport().getId());
 		builder.append("]");

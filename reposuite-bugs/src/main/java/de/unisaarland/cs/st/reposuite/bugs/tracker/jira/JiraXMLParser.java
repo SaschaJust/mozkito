@@ -18,13 +18,13 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Resolution;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Status;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Type;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;

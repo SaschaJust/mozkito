@@ -78,8 +78,7 @@ public class Core extends RepoSuiteToolchain {
 		// they could rely on data loading
 		if (this.databaseSettings.getValue() != null) {
 			try {
-				this.persistenceUtil = (PersistenceUtil) PersistenceManager.getMiddleware().getMethod("getInstance")
-				                                                           .invoke(null);
+				this.persistenceUtil = PersistenceManager.getUtil();
 			} catch (Exception e) {
 				e.printStackTrace();
 				if (Logger.logError()) {

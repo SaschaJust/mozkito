@@ -69,22 +69,22 @@ public class OpenJPATest {
 			persistenceUtil.commitTransaction();
 			
 			@SuppressWarnings ("unchecked")
-			List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
+			List<RCSFile> fileList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
 			assertEquals(1, fileList.size());
 			assertEquals(file, fileList.get(0));
 			
 			@SuppressWarnings ("unchecked")
-			List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+			List<Person> personList = (List<Person>) persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
 			assertFalse(personList.isEmpty());
 			assertTrue(personList.contains(person));
 			
 			@SuppressWarnings ("unchecked")
-			List<RCSFile> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
+			List<RCSFile> revisionList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
 			assertEquals(1, revisionList.size());
 			assertEquals(revision, revisionList.get(0));
 			
 			@SuppressWarnings ("unchecked")
-			List<RCSFile> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
+			List<RCSFile> transactionList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
 			assertFalse(transactionList.isEmpty());
 			assertTrue(transactionList.contains(rcsTransaction));
 		} catch (UninitializedDatabaseException e) {

@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -36,16 +35,16 @@ public class History implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long               serialVersionUID = 1720480073428317973L;
-	private long                            id;
-	private final SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
+	private static final long         serialVersionUID = 1720480073428317973L;
+	private long                      id;
+	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
 	
 	/**
 	 * @param element
 	 */
 	@Transient
 	public void add(final HistoryElement element) {
-		this.elements.add(element);
+		getElements().add(element);
 	}
 	
 	/**
@@ -55,7 +54,7 @@ public class History implements Annotated {
 	@Transient
 	public History after(final DateTime dateTime) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			if (element.getTimestamp().isAfter(dateTime)) {
@@ -72,7 +71,7 @@ public class History implements Annotated {
 	@Transient
 	public History before(final DateTime dateTime) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			if (element.getTimestamp().isBefore(dateTime)) {
@@ -91,7 +90,7 @@ public class History implements Annotated {
 	public History get(final DateTime from,
 	                   final DateTime to) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			if ((element.getTimestamp().compareTo(from) >= 0) && (element.getTimestamp().compareTo(to) <= 0)) {
@@ -108,7 +107,7 @@ public class History implements Annotated {
 	@Transient
 	public History get(final long bugId) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			if (element.getBugReport().getId() == bugId) {
@@ -125,7 +124,7 @@ public class History implements Annotated {
 	@Transient
 	public History get(final Person author) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			if (element.getAuthor().equals(author)) {
@@ -142,7 +141,7 @@ public class History implements Annotated {
 	@Transient
 	public History get(final String field) {
 		History history = new History();
-		Iterator<HistoryElement> iterator = this.elements.iterator();
+		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
 			history.add(element.getForField(field));
@@ -173,14 +172,14 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public boolean isEmpty() {
-		return this.elements.isEmpty();
+		return getElements().isEmpty();
 	}
 	
 	/**
 	 * @return
 	 */
 	public Iterator<HistoryElement> iterator() {
-		return this.elements.iterator();
+		return getElements().iterator();
 	}
 	
 	/**
@@ -188,16 +187,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public HistoryElement last() {
-		return this.elements.last();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
+		return getElements().last();
 	}
 	
 	/**
@@ -206,8 +196,7 @@ public class History implements Annotated {
 	 */
 	@SuppressWarnings ("unused")
 	private void setElements(final SortedSet<HistoryElement> elements) {
-		this.elements.clear();
-		this.elements.addAll(elements);
+		this.elements = elements;
 	}
 	
 	/**
@@ -222,7 +211,7 @@ public class History implements Annotated {
 	 * @return
 	 */
 	public int size() {
-		return this.elements.size();
+		return getElements().size();
 	}
 	
 	/*

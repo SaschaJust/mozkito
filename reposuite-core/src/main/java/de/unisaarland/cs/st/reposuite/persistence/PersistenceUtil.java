@@ -11,13 +11,13 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public interface PersistenceUtil<T> {
+public interface PersistenceUtil {
 	
 	public void beginTransaction();
 	
 	public void commitTransaction();
 	
-	public Criteria<T> createCriteria(final Class<T> clazz);
+	public Criteria<?> createCriteria(final Class<?> clazz);
 	
 	public void delete(final Annotated object);
 	
@@ -29,7 +29,7 @@ public interface PersistenceUtil<T> {
 	
 	public String getType();
 	
-	public List<T> load(final Criteria<T> criteria);
+	public List<?> load(final Criteria<?> criteria);
 	
 	public void save(final Annotated object);
 	

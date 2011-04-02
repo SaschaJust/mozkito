@@ -34,13 +34,14 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class OpenJPAUtil<T> implements PersistenceUtil<T> {
+public class OpenJPAUtil implements PersistenceUtil {
 	
 	private static OpenJPAEntityManagerFactory factory;
 	
 	/**
 	 * @param properties
 	 */
+	@SuppressWarnings ("deprecation")
 	static void createSessionFactory(final Properties properties) {
 		if (factory == null) {
 			
@@ -141,12 +142,13 @@ public class OpenJPAUtil<T> implements PersistenceUtil<T> {
 		}
 	}
 	
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
-	public Criteria<T> createCriteria(final Class<T> clazz) {
+	public Criteria createCriteria(final Class<?> clazz) {
 		OpenJPACriteriaBuilder builder = factory.getCriteriaBuilder();
-		OpenJPACriteriaQuery<T> query = factory.getCriteriaBuilder().createQuery(clazz);
-		Root<T> root = query.from(clazz);
-		Criteria<T> criteria = new Criteria<T>(root, builder, query);
+		OpenJPACriteriaQuery<?> query = factory.getCriteriaBuilder().createQuery(clazz);
+		Root<?> root = query.from(clazz);
+		Criteria criteria = new Criteria(root, builder, query);
 		return criteria;
 	}
 	
@@ -189,6 +191,7 @@ public class OpenJPAUtil<T> implements PersistenceUtil<T> {
 		return query.getResultList().get(0);
 	}
 	
+	@SuppressWarnings ("deprecation")
 	@Override
 	public String getToolInformation() {
 		OpenJPAConfiguration configuration = factory.getConfiguration();
@@ -229,9 +232,10 @@ public class OpenJPAUtil<T> implements PersistenceUtil<T> {
 	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#load(javax
 	 * .persistence.criteria.CriteriaQuery)
 	 */
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
-	public List<T> load(final Criteria<T> criteria) {
-		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
+	public List load(final Criteria criteria) {
+		TypedQuery query = this.entityManager.createQuery(criteria.getQuery());
 		return query.getResultList();
 	}
 	
