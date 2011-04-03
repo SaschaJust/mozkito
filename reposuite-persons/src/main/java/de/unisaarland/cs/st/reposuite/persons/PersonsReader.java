@@ -6,15 +6,13 @@ package de.unisaarland.cs.st.reposuite.persons;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.hibernate.Criteria;
-
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -22,18 +20,18 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PersonsReader extends RepoSuiteSourceThread<PersonContainer> {
 	
-	private final HibernateUtil hibernateUtil;
+	private final PersistenceUtil persistenceUtil;
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
-	 * @param hibernateUtil
+	 * @param persistenceUtil
 	 */
 	public PersonsReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	                     final HibernateUtil hibernateUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, PersonsReader.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
@@ -53,9 +51,8 @@ public class PersonsReader extends RepoSuiteSourceThread<PersonContainer> {
 			}
 			
 			PersonContainer personContainer;
-			Criteria criteria = this.hibernateUtil.createCriteria(PersonContainer.class);
-			@SuppressWarnings ("unchecked")
-			List<PersonContainer> containerList = criteria.list();
+			Criteria<PersonContainer> criteria = this.persistenceUtil.createCriteria(PersonContainer.class);
+			List<PersonContainer> containerList = this.persistenceUtil.load(criteria);
 			ListIterator<PersonContainer> iterator = containerList.listIterator();
 			
 			while (!isShutdown() && iterator.hasNext() && ((personContainer = iterator.next()) != null)) {

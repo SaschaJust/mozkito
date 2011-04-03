@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.persistence;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -33,8 +34,15 @@ public class OpenJPATest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Logger.setLogLevel(LogLevel.OFF);
-		OpenJPAUtil.createSessionFactory("quentin.cs.uni-saarland.de", "reposuiteTest", "miner", "miner", "PostgreSQL",
-		                                 "org.postgresql.Driver");
+		Properties properties = new Properties();
+		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", "miner");
+		properties.put("openjpa.ConnectionPassword", "miner");
+		
+		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	/**
@@ -67,7 +75,7 @@ public class OpenJPATest {
 	@Test
 	public void testOrphanPerson() {
 		try {
-			PersistenceUtil hibernateUtil = PersistenceManager.getUtil();
+			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
 			
 			Person submitter = new Person("yokolet", "Yoko Harada", null);
 			Person historyAuthor1 = new Person("yokolet", null, null);
@@ -96,9 +104,9 @@ public class OpenJPATest {
 			
 			report.addComment(new Comment(2, commentAuthor2, new DateTime(), "comment2"));
 			
-			hibernateUtil.beginTransaction();
-			hibernateUtil.save(report);
-			hibernateUtil.commitTransaction();
+			persistenceUtil.beginTransaction();
+			persistenceUtil.save(report);
+			persistenceUtil.commitTransaction();
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

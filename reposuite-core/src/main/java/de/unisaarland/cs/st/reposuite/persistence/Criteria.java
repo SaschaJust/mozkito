@@ -3,6 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.util.Collection;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -48,6 +50,12 @@ public class Criteria<T> {
 	 */
 	public Root<T> getRoot() {
 		return this.root;
+	}
+	
+	public Criteria<T> in(final String column,
+	                      final Collection<?> values) {
+		this.query.where(this.builder.in(this.root.get(column)).in(values));
+		return this;
 	}
 	
 	/**

@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.hibernate.annotations.ForeignKey;
+import org.persistence middleware.annotations.ForeignKey;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 

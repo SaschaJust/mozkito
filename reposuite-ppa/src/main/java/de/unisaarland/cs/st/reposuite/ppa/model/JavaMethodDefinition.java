@@ -162,7 +162,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	}
 	
 	/**
-	 * Sets the signature. Used by Hibernate only
+	 * Sets the signature. Used by persistence middleware only
 	 * 
 	 * @param signature
 	 *            the new signature

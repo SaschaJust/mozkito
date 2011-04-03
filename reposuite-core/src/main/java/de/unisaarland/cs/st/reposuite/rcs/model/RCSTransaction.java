@@ -34,7 +34,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.hibernate.annotations.Index;
+import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
@@ -101,7 +101,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private String                  originalId;
 	
 	/**
-	 * used by Hibernate to create RCSTransaction instance.
+	 * used by PersistenceUtil to create RCSTransaction instance.
 	 */
 	protected RCSTransaction() {
 		
@@ -434,7 +434,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * 
 	 * @return the revisions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
 		return this.revisions;
 	}

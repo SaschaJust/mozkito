@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -39,8 +40,15 @@ public class OpenJPATest {
 	@BeforeClass
 	public static void beforeClass() {
 		Logger.setLogLevel(LogLevel.OFF);
-		OpenJPAUtil.createSessionFactory("quentin.cs.uni-saarland.de", "reposuiteTest", "miner", "miner", "PostgreSQL",
-		                                 "org.postgresql.Driver");
+		Properties properties = new Properties();
+		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", "miner");
+		properties.put("openjpa.ConnectionPassword", "miner");
+		
+		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	@Before
@@ -68,23 +76,19 @@ public class OpenJPATest {
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 			persistenceUtil.commitTransaction();
 			
-			@SuppressWarnings ("unchecked")
-			List<RCSFile> fileList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
+			List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
 			assertEquals(1, fileList.size());
 			assertEquals(file, fileList.get(0));
 			
-			@SuppressWarnings ("unchecked")
-			List<Person> personList = (List<Person>) persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+			List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
 			assertFalse(personList.isEmpty());
 			assertTrue(personList.contains(person));
 			
-			@SuppressWarnings ("unchecked")
-			List<RCSFile> revisionList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
+			List<RCSRevision> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
 			assertEquals(1, revisionList.size());
 			assertEquals(revision, revisionList.get(0));
 			
-			@SuppressWarnings ("unchecked")
-			List<RCSFile> transactionList = (List<RCSFile>) persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
+			List<RCSTransaction> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
 			assertFalse(transactionList.isEmpty());
 			assertTrue(transactionList.contains(rcsTransaction));
 		} catch (UninitializedDatabaseException e) {

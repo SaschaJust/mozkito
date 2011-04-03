@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +22,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.hibernate.annotations.Index;
+import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
@@ -145,15 +144,6 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	@JoinColumn (nullable = false)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
-	}
-	
-	/**
-	 * @return
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

@@ -42,7 +42,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @param properties
 	 */
 	@SuppressWarnings ("deprecation")
-	static void createSessionFactory(final Properties properties) {
+	public static void createSessionFactory(final Properties properties) {
 		if (factory == null) {
 			
 			factory = OpenJPAPersistence.createEntityManagerFactory("Reposuite", null, properties);
@@ -142,14 +142,30 @@ public class OpenJPAUtil implements PersistenceUtil {
 		}
 	}
 	
-	@SuppressWarnings ({ "rawtypes", "unchecked" })
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#createCriteria
+	 * (java.lang.Class)
+	 */
 	@Override
-	public Criteria createCriteria(final Class<?> clazz) {
+	public <T> Criteria<T> createCriteria(final Class<T> clazz) {
 		OpenJPACriteriaBuilder builder = factory.getCriteriaBuilder();
-		OpenJPACriteriaQuery<?> query = factory.getCriteriaBuilder().createQuery(clazz);
-		Root<?> root = query.from(clazz);
-		Criteria criteria = new Criteria(root, builder, query);
+		OpenJPACriteriaQuery<T> query = factory.getCriteriaBuilder().createQuery(clazz);
+		Root<T> root = query.from(clazz);
+		Criteria<T> criteria = new Criteria<T>(root, builder, query);
 		return criteria;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#createQuery
+	 * (java.lang.String)
+	 */
+	@Override
+	public Query createQuery(final String query) {
+		return this.entityManager.createQuery(query);
 	}
 	
 	/*
@@ -232,10 +248,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#load(javax
 	 * .persistence.criteria.CriteriaQuery)
 	 */
-	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
-	public List load(final Criteria criteria) {
-		TypedQuery query = this.entityManager.createQuery(criteria.getQuery());
+	public <T> List<T> load(final Criteria<T> criteria) {
+		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
 		return query.getResultList();
 	}
 	

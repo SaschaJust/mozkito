@@ -15,37 +15,40 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.utils.LogLevel;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class ChangeCouplingRuleFactoryTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		HibernateUtil.shutdown();
-		
+		try {
+			OpenJPAUtil.getInstance().shutdown();
+		} catch (UninitializedDatabaseException e) {
+		}
 	}
 	
 	@BeforeClass
 	public static void beforeClass() {
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest?useUnicode=true&characterEncoding=UTF-8";
-		
+		Logger.setLogLevel(LogLevel.OFF);
 		Properties properties = new Properties();
-		properties.put("hibernate.connection.url", url);
-		properties.put("hibernate.hbm2ddl.auto", "update");
-		properties.put("hibernate.connection.autocommit", "false");
-		properties.put("hibernate.show_sql", "false");
-		properties.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-		properties.put("hibernate.connection.username", "miner");
-		properties.put("hibernate.connection.password", "miner");
-		properties.put("hibernate.hbm2ddl.auto", "create-drop");
+		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", "miner");
+		properties.put("openjpa.ConnectionPassword", "miner");
 		
-		HibernateUtil.createSessionFactory(properties);
+		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	@Before
@@ -62,8 +65,8 @@ public class ChangeCouplingRuleFactoryTest {
 		Person person = new Person("kim", "", "");
 		
 		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			hibernateUtil.beginTransaction();
+			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+			persistenceUtil.beginTransaction();
 			
 			// ###transaction 1
 			
@@ -80,7 +83,7 @@ public class ChangeCouplingRuleFactoryTest {
 			fileC.assignTransaction(rcsTransaction, "C.java");
 			new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
 			
-			hibernateUtil.saveOrUpdate(rcsTransaction);
+			persistenceUtil.saveOrUpdate(rcsTransaction);
 			
 			// ### transaction 2
 			
@@ -90,7 +93,7 @@ public class ChangeCouplingRuleFactoryTest {
 			RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
 			fileC.assignTransaction(rcsTransaction2, "D.java");
 			new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
-			hibernateUtil.saveOrUpdate(rcsTransaction2);
+			persistenceUtil.saveOrUpdate(rcsTransaction2);
 			
 			// ### transaction 3
 			
@@ -100,7 +103,7 @@ public class ChangeCouplingRuleFactoryTest {
 			fileC.assignTransaction(rcsTransaction3, "C.java");
 			new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
 			new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
-			hibernateUtil.saveOrUpdate(rcsTransaction3);
+			persistenceUtil.saveOrUpdate(rcsTransaction3);
 			
 			// ### transaction 4
 			
@@ -108,13 +111,13 @@ public class ChangeCouplingRuleFactoryTest {
 			new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 			new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 			new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
-			hibernateUtil.saveOrUpdate(rcsTransaction4);
+			persistenceUtil.saveOrUpdate(rcsTransaction4);
 			
-			hibernateUtil.commitTransaction();
+			persistenceUtil.commitTransaction();
 			
 			List<ChangeCouplingRule> changeCouplingRules = ChangeCouplingRuleFactory.getChangeCouplingRules(rcsTransaction3,
 			                                                                                                1, 0,
-			                                                                                                hibernateUtil);
+			                                                                                                persistenceUtil);
 			assertEquals(8, changeCouplingRules.size());
 			ChangeCouplingRule rule = changeCouplingRules.get(0);
 			assertEquals(1, rule.getPremise().length);

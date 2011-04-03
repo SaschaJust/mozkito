@@ -10,13 +10,13 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import org.persistence middleware.Criteria;
+import org.persistence middleware.criterion.Restrictions;
 
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
@@ -52,8 +52,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	/** The as xml. */
 	private final OutputFileArgument  asXML;
 	
-	/** The hibernate util. */
-	private HibernateUtil             hibernateUtil;
+	/** The persistence middleware util. */
+	private PersistenceUtil             persistenceUtil;
 	
 	/** The shutdown. */
 	private boolean                   shutdown;
@@ -126,7 +126,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			}
 		}
 		try {
-			this.hibernateUtil = HibernateUtil.getInstance();
+			this.persistenceUtil = PersistenceUtil.getInstance();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
@@ -136,7 +136,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		
 		//get the transactions to be processed
 		List<RCSTransaction> transactions = new LinkedList<RCSTransaction>();
-		Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
+		Criteria criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
 		HashSet<String> transactionLimit = this.testCaseTransactionArg.getValue();
 		if (transactionLimit != null) {
 			criteria.add(Restrictions.in("id", transactionLimit));
@@ -148,7 +148,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
 		                          this.startWithArg.getValue());
 		
-		//the xml file set, create XMLSinkThread. Otherwise the Hibernate persister thread
+		//the xml file set, create XMLSinkThread. Otherwise the persistence middleware persister thread
 		if (xmlFile != null) {
 			boolean stdout = false;
 			if (!xmlFile.canWrite()) {

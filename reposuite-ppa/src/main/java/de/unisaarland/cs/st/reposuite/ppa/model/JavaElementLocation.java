@@ -18,8 +18,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Type;
+import org.persistence middleware.annotations.Index;
+import org.persistence middleware.annotations.Type;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -447,7 +447,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	
 	/**
 	 * Sets the element. Careful! This can have nasty side effects when
-	 * persisting the JavaElementLocation using hibernate!
+	 * persisting the JavaElementLocation using persistence middleware!
 	 * 
 	 * @param element
 	 *            the new element

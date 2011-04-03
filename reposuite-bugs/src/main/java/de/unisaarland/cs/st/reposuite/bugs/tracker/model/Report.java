@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,8 +29,6 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
@@ -58,7 +57,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private static final long  serialVersionUID = 3241584366125944268L;
 	private long               id               = -1l;
 	private String             category;
-	private SortedSet<Comment> comments         = new TreeSet<Comment>();
+	private SortedSet<Comment> comments         = new TreeSet<Comment>(new CommentComparator());
 	private String             description;
 	private Severity           severity;
 	private Priority           priority;
@@ -156,7 +155,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the comments
 	 */
-	@Sort (type = SortType.COMPARATOR, comparator = CommentComparator.class)
+	@OrderBy
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
 		return this.comments;
@@ -354,7 +353,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return the siblings
 	 */
 	@ElementCollection
-	@Sort (type = SortType.NATURAL)
+	@OrderBy
 	public SortedSet<Long> getSiblings() {
 		return this.siblings;
 	}

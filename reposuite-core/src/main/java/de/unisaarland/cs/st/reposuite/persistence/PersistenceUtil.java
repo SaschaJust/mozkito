@@ -5,6 +5,8 @@ package de.unisaarland.cs.st.reposuite.persistence;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -17,7 +19,9 @@ public interface PersistenceUtil {
 	
 	public void commitTransaction();
 	
-	public Criteria<?> createCriteria(final Class<?> clazz);
+	public <T> Criteria<T> createCriteria(final Class<T> clazz);
+	
+	public Query createQuery(final String query);
 	
 	public void delete(final Annotated object);
 	
@@ -29,7 +33,7 @@ public interface PersistenceUtil {
 	
 	public String getType();
 	
-	public List<?> load(final Criteria<?> criteria);
+	public <T> List<T> load(final Criteria<T> criteria);
 	
 	public void save(final Annotated object);
 	

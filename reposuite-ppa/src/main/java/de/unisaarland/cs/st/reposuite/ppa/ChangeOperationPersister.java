@@ -2,11 +2,11 @@ package de.unisaarland.cs.st.reposuite.ppa;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
+import org.persistence middleware.Criteria;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
@@ -60,27 +60,27 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 		if (Logger.logInfo()) {
 			Logger.info("Filling cache ... ");
 		}
-		HibernateUtil hibernateUtil;
+		PersistenceUtil persistenceUtil;
 		try {
-			hibernateUtil = HibernateUtil.getInstance();
+			persistenceUtil = PersistenceUtil.getInstance();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
-		hibernateUtil.beginTransaction();
+		persistenceUtil.beginTransaction();
 		JavaChangeOperation currentOperation;
 		String lastTransactionId = "";
 		
-		Criteria criteria = hibernateUtil.createCriteria(JavaClassDefinition.class);
+		Criteria criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
 		List<JavaClassDefinition> defs = criteria.list();
 		for (JavaClassDefinition def : defs) {
 			JavaElementCache.classDefs.put(def.getFullQualifiedName(), def);
 		}
-		criteria = hibernateUtil.createCriteria(JavaMethodDefinition.class);
+		criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
 		List<JavaMethodDefinition> mDefs = criteria.list();
 		for (JavaMethodDefinition def : mDefs) {
 			JavaElementCache.methodDefs.put(def.getFullQualifiedName(), def);
 		}
-		criteria = hibernateUtil.createCriteria(JavaMethodCall.class);
+		criteria = persistenceUtil.createCriteria(JavaMethodCall.class);
 		List<JavaMethodCall> calls = criteria.list();
 		for (JavaMethodCall call : calls) {
 			JavaElementCache.methodCalls.put(call.getFullQualifiedName(), call);
@@ -111,13 +111,13 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 					lastTransactionId = currentTransactionId;
 				}
 				if (!currentTransactionId.equals(lastTransactionId)) {
-					hibernateUtil.commitTransaction();
+					persistenceUtil.commitTransaction();
 					lastTransactionId = currentTransactionId;
-					hibernateUtil.beginTransaction();
+					persistenceUtil.beginTransaction();
 				}
-				hibernateUtil.saveOrUpdate(currentOperation);
+				persistenceUtil.saveOrUpdate(currentOperation);
 			}
-			hibernateUtil.commitTransaction();
+			persistenceUtil.commitTransaction();
 			if (Logger.logInfo()) {
 				Logger.info("ChangeOperationPersister done. Terminating... ");
 			}

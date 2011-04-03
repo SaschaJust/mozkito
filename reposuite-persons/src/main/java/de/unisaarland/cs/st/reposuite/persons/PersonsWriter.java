@@ -6,7 +6,7 @@ package de.unisaarland.cs.st.reposuite.persons;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -20,18 +20,18 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PersonsWriter extends RepoSuiteSinkThread<HashMap<Person, HashSet<PersonContainer>>> {
 	
-	private final HibernateUtil hibernateUtil;
+	private final PersistenceUtil persistenceUtil;
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
-	 * @param hibernateUtil
+	 * @param persistenceUtil
 	 */
 	public PersonsWriter(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	        final HibernateUtil hibernateUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, PersonsWriter.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
@@ -51,7 +51,7 @@ public class PersonsWriter extends RepoSuiteSinkThread<HashMap<Person, HashSet<P
 			}
 			
 			HashMap<Person, HashSet<PersonContainer>> remap;
-			this.hibernateUtil.beginTransaction();
+			this.persistenceUtil.beginTransaction();
 			while (!isShutdown() && ((remap = read()) != null)) {
 				
 				for (Person person : remap.keySet()) {
@@ -62,11 +62,11 @@ public class PersonsWriter extends RepoSuiteSinkThread<HashMap<Person, HashSet<P
 					}
 					
 					for (PersonContainer container2 : set) {
-						this.hibernateUtil.update(container2);
+						this.persistenceUtil.update(container2);
 					}
 				}
 			}
-			this.hibernateUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {

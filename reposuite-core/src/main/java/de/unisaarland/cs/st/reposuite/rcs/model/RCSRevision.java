@@ -53,7 +53,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	private RCSFile            changedFile;
 	
 	/**
-	 * used by Hibernate to instantiate a {@link RCSRevision} object
+	 * used by PersistenceUtil to instantiate a {@link RCSRevision} object
 	 */
 	protected RCSRevision() {
 		

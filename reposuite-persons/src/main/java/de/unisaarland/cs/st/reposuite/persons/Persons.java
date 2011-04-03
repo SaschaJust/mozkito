@@ -5,7 +5,8 @@ package de.unisaarland.cs.st.reposuite.persons;
 
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -59,11 +60,11 @@ public class Persons extends RepoSuiteToolchain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		HibernateUtil hibernateUtil = null;
+		PersistenceUtil persistenceUtil = null;
 		
 		if (this.databaseArguments.getValue() != null) {
 			try {
-				hibernateUtil = HibernateUtil.getInstance();
+				persistenceUtil = PersistenceManager.getUtil();
 			} catch (UninitializedDatabaseException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -80,9 +81,9 @@ public class Persons extends RepoSuiteToolchain {
 			shutdown();
 		}
 		
-		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-		new PersonsWriter(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
+		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+		new PersonsWriter(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 	}
 	
 	/*

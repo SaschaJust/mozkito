@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.MapCondition;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -28,14 +28,14 @@ public class PersonsMerger extends
 	
 	PersonManager                             personManager;
 	HashMap<Person, HashSet<PersonContainer>> remap         = new HashMap<Person, HashSet<PersonContainer>>();
-	HibernateUtil                             hibernateUtil = null;
+	PersistenceUtil                             persistenceUtil = null;
 	List<Person>                              deletes       = new LinkedList<Person>();
 	
 	public PersonsMerger(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	        final HibernateUtil hibernateUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, PersonsMerger.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
-		this.personManager = new PersonManager(hibernateUtil);
+		this.persistenceUtil = persistenceUtil;
+		this.personManager = new PersonManager(persistenceUtil);
 	}
 	
 	// private PersonContainer findPerson(final Person person) {
@@ -147,7 +147,7 @@ public class PersonsMerger extends
 							
 							Person.merge(keeper, collisions);
 							
-							// this.hibernateUtil.beginTransaction();
+							// this.persistenceUtil.beginTransaction();
 							for (Person collider : collisions) {
 								if (Logger.logDebug()) {
 									Logger.debug("Deleting collision " + collider + ".");
@@ -155,12 +155,12 @@ public class PersonsMerger extends
 								this.personManager.delete(collider);
 								this.remap.remove(collider);
 								collider.clearTransaction();
-								// this.hibernateUtil.delete(collider);
+								// this.persistenceUtil.delete(collider);
 							}
 							if (Logger.logDebug()) {
 								Logger.debug("Saving merged person " + keeper + ".");
 							}
-							// this.hibernateUtil.save(keeper);
+							// this.persistenceUtil.save(keeper);
 							
 							if (Logger.logDebug()) {
 								Logger.debug("Replacing person " + person + " by " + keeper + ".");
@@ -186,13 +186,13 @@ public class PersonsMerger extends
 								if (Logger.logDebug()) {
 									Logger.debug("Updating referencing entity.");
 								}
-								// this.hibernateUtil.update(tmpContainer);
+								// this.persistenceUtil.update(tmpContainer);
 							}
 							if (Logger.logDebug()) {
 								Logger.debug("Committing to database.");
 							}
 							
-							// this.hibernateUtil.commitTransaction();
+							// this.persistenceUtil.commitTransaction();
 						}
 					} else {
 						// new Person
@@ -236,25 +236,25 @@ public class PersonsMerger extends
 				Logger.info("Storing new person objects (" + this.remap.keySet().size() + ").");
 			}
 			
-			this.hibernateUtil.beginTransaction();
+			this.persistenceUtil.beginTransaction();
 			for (Person person : this.remap.keySet()) {
-				this.hibernateUtil.save(person);
+				this.persistenceUtil.save(person);
 			}
-			this.hibernateUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Deleting old persons (" + this.deletes.size() + ").");
 			}
 			int commitIndex = 0;
-			this.hibernateUtil.beginTransaction();
+			this.persistenceUtil.beginTransaction();
 			for (Person person : this.deletes) {
-				this.hibernateUtil.delete(person);
+				this.persistenceUtil.delete(person);
 				if (commitIndex % 1000 == 0) {
-					this.hibernateUtil.commitTransaction();
-					this.hibernateUtil.beginTransaction();
+					this.persistenceUtil.commitTransaction();
+					this.persistenceUtil.beginTransaction();
 				}
 			}
-			this.hibernateUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
 			
 			finish();
 		} catch (Exception e) {

@@ -14,10 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.HistoryElementComparator;
@@ -37,7 +36,7 @@ public class History implements Annotated {
 	 */
 	private static final long         serialVersionUID = 1720480073428317973L;
 	private long                      id;
-	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>();
+	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>(new HistoryElementComparator());
 	
 	/**
 	 * @param element
@@ -152,7 +151,7 @@ public class History implements Annotated {
 	/**
 	 * @return the elements
 	 */
-	@Sort (type = SortType.COMPARATOR, comparator = HistoryElementComparator.class)
+	@OrderBy
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public SortedSet<HistoryElement> getElements() {
 		return this.elements;

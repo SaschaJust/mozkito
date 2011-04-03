@@ -65,7 +65,7 @@ public class HistoryElement implements Annotated, Comparable<HistoryElement> {
 	private PersonContainer            personContainer     = new PersonContainer();
 	
 	/**
-	 * used by hibernate
+	 * used by PersistenceUtil
 	 */
 	protected HistoryElement() {
 		

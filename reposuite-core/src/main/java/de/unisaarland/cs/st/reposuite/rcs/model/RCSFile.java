@@ -18,7 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
+import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -40,7 +40,7 @@ public class RCSFile implements Annotated {
 	private Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
-	 * used by Hibernate to create a {@link RCSFile} instance
+	 * used by PersistenceUtil to create a {@link RCSFile} instance
 	 */
 	protected RCSFile() {
 		

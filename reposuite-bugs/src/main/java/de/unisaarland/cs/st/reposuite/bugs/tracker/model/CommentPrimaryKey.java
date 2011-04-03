@@ -27,7 +27,7 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	private static final long serialVersionUID = -2568891675198367976L;
 	
 	/**
-	 * used by hibernate
+	 * used by PersistenceUtil
 	 */
 	protected CommentPrimaryKey() {
 	}
