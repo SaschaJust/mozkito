@@ -218,11 +218,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return this.name;
 	}
 	
-	@SuppressWarnings ("unused")
-	private boolean getOpen() {
-		return this.open;
-	}
-	
 	/**
 	 * Gets the parent.
 	 * 
@@ -289,6 +284,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.generatedId = generatedId;
 	}
 	
+	/**
+	 * @param mergedIn
+	 */
 	public void setMergedIn(final String mergedIn) {
 		if (!isOpen()) {
 			this.mergedIn = mergedIn;

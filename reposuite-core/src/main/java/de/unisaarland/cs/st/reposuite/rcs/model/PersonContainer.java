@@ -14,7 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.openjpa.persistence.jdbc.Index;
@@ -51,9 +51,12 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	@Transient
-	public void add(final String id,
-	                final Person person) {
-		this.getMap().put(id, person);
+	public Person add(final String id,
+	                  final Person person) {
+		Map<String, Person> map = getMap();
+		Person ret = map.put(id, person);
+		setMap(map);
+		return ret;
 	}
 	
 	/**
@@ -91,7 +94,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * @return the map
 	 */
-	@ManyToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	private Map<String, Person> getMap() {
 		return this.map;
 	}

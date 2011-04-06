@@ -129,7 +129,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		setTimestamp(timestamp);
 		setAuthor(author);
 		setOriginalId(originalId);
-		author.assignTransaction(this);
+		getAuthor().assignTransaction(this);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -142,30 +142,46 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param tagNames the tag names
 	 */
 	@Transient
-	public void addAllTags(final Collection<String> tagNames) {
-		getTags().addAll(tagNames);
+	public boolean addAllTags(final Collection<String> tagNames) {
+		boolean ret = false;
+		Set<String> tags = getTags();
+		ret = tags.addAll(tagNames);
+		setTags(tags);
+		return ret;
 	}
 	
 	/**
 	 * @param rcsTransaction
 	 */
 	@Transient
-	public void addChild(final RCSTransaction rcsTransaction) {
+	public boolean addChild(final RCSTransaction rcsTransaction) {
 		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this);
+		boolean ret = false;
 		
 		if (!getChildren().contains(rcsTransaction)) {
-			getChildren().add(rcsTransaction);
+			Set<RCSTransaction> children = getChildren();
+			ret = children.add(rcsTransaction);
+			setChildren(children);
 		}
+		
+		return ret;
 	}
 	
 	/**
 	 * @param parentTransaction
 	 */
 	@Transient
-	public void addParent(final RCSTransaction parentTransaction) {
+	public boolean addParent(final RCSTransaction parentTransaction) {
+		CompareCondition.notEquals(parentTransaction, this, "a transaction may never be a parent of its own: %s", this);
+		boolean ret = false;
+		
 		if (!getParents().contains(parentTransaction)) {
-			getParents().add(parentTransaction);
+			Set<RCSTransaction> parents = getParents();
+			ret = parents.add(parentTransaction);
+			setParents(parents);
 		}
+		
+		return ret;
 	}
 	
 	/**
@@ -178,17 +194,24 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	protected boolean addRevision(@NotNull final RCSRevision revision) {
-		return getRevisions().add(revision);
+		Collection<RCSRevision> revisions = getRevisions();
+		boolean ret = revisions.add(revision);
+		setRevisions(revisions);
+		return ret;
 	}
 	
 	/**
-	 * Adds the tags.
+	 * Adds the tag.
 	 *
 	 * @param tagName the tag name
 	 */
 	@Transient
-	public void addTags(final String tagName) {
-		getTags().add(tagName);
+	public boolean addTag(@NotNull final String tagName) {
+		boolean ret = false;
+		Set<String> tags = getTags();
+		tags.add(tagName);
+		setTags(tags);
+		return ret;
 	}
 	
 	/*
@@ -383,6 +406,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return this.message;
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getOriginalId() {
 		return this.originalId;
 	}
@@ -543,8 +569,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param revisions
 	 *            the revisions to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setRevisions(final List<RCSRevision> revisions) {
+	private void setRevisions(final Collection<RCSRevision> revisions) {
 		this.revisions = revisions;
 	}
 	

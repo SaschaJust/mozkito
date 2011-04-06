@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.persistence;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +16,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.apache.openjpa.conf.OpenJPAConfiguration;
-import org.apache.openjpa.enhance.ManagedClassSubclasser;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
-import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -41,21 +37,30 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/**
 	 * @param properties
 	 */
-	@SuppressWarnings ("deprecation")
 	public static void createSessionFactory(final Properties properties) {
 		if (factory == null) {
 			
 			factory = OpenJPAPersistence.createEntityManagerFactory("Reposuite", null, properties);
-			try {
-				Collection<Class<?>> annotatedClasses = ClassFinder.getClassesOfInterface(Core.class.getPackage(),
-				                                                                          Annotated.class);
-				ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(), annotatedClasses, null);
-			} catch (Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				throw new RuntimeException();
-			}
+			// FIXME
+			// try {
+			// Collection<Class<?>> annotatedClasses =
+			// ClassFinder.getClassesOfInterface(Core.class.getPackage(),
+			// Annotated.class);
+			//
+			// if (Logger.logInfo()) {
+			// for (Class<?> c : annotatedClasses) {
+			// Logger.info("Registering persistence entity: " +
+			// c.getCanonicalName());
+			// }
+			// }
+			// ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(),
+			// annotatedClasses, null);
+			// } catch (Exception e) {
+			// if (Logger.logError()) {
+			// Logger.error(e.getMessage(), e);
+			// }
+			// throw new RuntimeException(e);
+			// }
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn("Session factory already exists. Skipping creating.");
@@ -286,8 +291,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void shutdown() {
-		this.entityManager.close();
-		factory.close();
+		for (Thread t : provider.keySet()) {
+			provider.get(t).entityManager.close();
+		}
+		
+		if (factory.isOpen()) {
+			factory.close();
+			factory = null;
+		}
 	}
 	
 	/*

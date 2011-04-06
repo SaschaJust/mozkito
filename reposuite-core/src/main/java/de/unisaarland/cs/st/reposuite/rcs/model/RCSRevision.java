@@ -3,10 +3,13 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
@@ -67,7 +70,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		setPrimaryKey(new RevisionPrimaryKey(rcsFile, rcsTransaction));
 		
 		boolean success = getTransaction().addRevision(this);
-		Condition.check(success, "Revision could not be registered at transaction");
+		Condition.check(success, "Revision could not be registered at transaction.");
+		Condition.check(getTransaction().getRevisions().contains(this),
+		                "Revision could not be registered at transaction.");
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -135,8 +140,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	/**
 	 * @return the changedFile
 	 */
-	@ManyToOne
+	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@MapsId ("changedFileId")
+	@JoinColumn (name = "changedFileId", nullable = false)
 	public RCSFile getChangedFile() {
 		return this.changedFile;
 	}
@@ -157,8 +163,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	/**
 	 * @return the transaction
 	 */
-	@ManyToOne
+	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@MapsId ("transactionId")
+	@JoinColumn (name = "transactionId", nullable = false)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}

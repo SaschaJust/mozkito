@@ -15,14 +15,19 @@
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.StringTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.A</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.B</class>
         <properties>
         	<property name="openjpa.Log" value="slf4j" />
         	<property name="openjpa.Multithreaded" value="true" />
             <property name="openjpa.jdbc.SynchronizeMappings" value="validate" />
-            <property name="openjpa.ConnectionURL" value="jdbc:postgres://quentin.cs.uni-saarland.de/miner" />
+            <property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest" />
             <property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver" />
             <property name="openjpa.ConnectionPassword" value="miner" />
             <property name="openjpa.ConnectionUserName" value="miner" />
+            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+            <property name="openjpa.Log" value="SQL=TRACE"/>
+			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72"/>
         </properties>
     </persistence-unit>
 </persistence>

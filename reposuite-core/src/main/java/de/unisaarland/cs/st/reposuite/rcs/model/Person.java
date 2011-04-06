@@ -90,7 +90,7 @@ public class Person implements Annotated {
 	private Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
 	
 	/**
-	 * Default constructor used by persitence middleware
+	 * Default constructor used by persistence middleware
 	 */
 	protected Person() {
 	}
@@ -112,62 +112,90 @@ public class Person implements Annotated {
 	 * @param emails
 	 */
 	@Transient
-	public void addAllEmails(@NotNull final Set<String> emails) {
-		getEmailAddresses().addAll(emails);
+	public boolean addAllEmails(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> emails) {
+		boolean ret = false;
+		Set<String> addresses = getEmailAddresses();
+		ret = addresses.addAll(emails);
+		setEmailAddresses(addresses);
+		return ret;
 	}
 	
 	/**
 	 * @param fullnames
 	 */
 	@Transient
-	public void addAllFullnames(@NotNull final Set<String> fullnames) {
-		getFullnames().addAll(fullnames);
+	public boolean addAllFullnames(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> fullnames) {
+		boolean ret = false;
+		Set<String> names = getFullnames();
+		ret = names.addAll(fullnames);
+		setEmailAddresses(names);
+		return ret;
 	}
 	
 	/**
 	 * @param transactions
 	 */
 	@Transient
-	public void addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
-		getTransactions().addAll(transactions);
+	public boolean addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
+		boolean ret = false;
+		Set<RCSTransaction> rcstransactions = getTransactions();
+		ret = rcstransactions.addAll(transactions);
+		setTransactions(rcstransactions);
+		return ret;
 	}
 	
 	/**
 	 * @param usernames
 	 */
 	@Transient
-	public void addAllUsernames(@NotNull final Set<String> usernames) {
-		getUsernames().addAll(usernames);
+	public boolean addAllUsernames(@NotNull final Set<String> usernames) {
+		boolean ret = false;
+		Set<String> names = getUsernames();
+		ret = names.addAll(usernames);
+		setEmailAddresses(names);
+		return ret;
 	}
 	
 	/**
 	 * @param email
 	 */
 	@Transient
-	public void addEmail(final String email) {
+	public boolean addEmail(final String email) {
+		boolean ret = false;
 		if (email != null) {
-			getEmailAddresses().add(email);
+			Set<String> addresses = getEmailAddresses();
+			ret = addresses.add(email);
+			setEmailAddresses(addresses);
 		}
+		return ret;
 	}
 	
 	/**
 	 * @param fullname
 	 */
 	@Transient
-	public void addFullname(final String fullname) {
+	public boolean addFullname(final String fullname) {
+		boolean ret = false;
 		if (fullname != null) {
-			getFullnames().add(fullname);
+			Set<String> names = getFullnames();
+			ret = names.add(fullname);
+			setFullnames(names);
 		}
+		return ret;
 	}
 	
 	/**
 	 * @param username
 	 */
 	@Transient
-	public void addUsername(final String username) {
+	public boolean addUsername(final String username) {
+		boolean ret = false;
 		if (username != null) {
-			getUsernames().add(username);
+			Set<String> names = getUsernames();
+			ret = names.add(username);
+			setUsernames(names);
 		}
+		return ret;
 	}
 	
 	/**
@@ -178,8 +206,11 @@ public class Person implements Annotated {
 	 *            the transaction
 	 */
 	@Transient
-	protected void assignTransaction(@NotNull final RCSTransaction transaction) {
-		getTransactions().add(transaction);
+	protected boolean assignTransaction(@NotNull final RCSTransaction transaction) {
+		Set<RCSTransaction> transactions = getTransactions();
+		boolean ret = transactions.add(transaction);
+		setTransactions(transactions);
+		return ret;
 	}
 	
 	/**
@@ -187,7 +218,7 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void clearTransaction() {
-		getTransactions().clear();
+		setTransactions(new HashSet<RCSTransaction>());
 	}
 	
 	/*
@@ -241,7 +272,7 @@ public class Person implements Annotated {
 	@Index (name = "idx_personid")
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	private long getGeneratedId() {
+	protected long getGeneratedId() {
 		return this.generatedId;
 	}
 	
@@ -350,7 +381,6 @@ public class Person implements Annotated {
 	/**
 	 * @param usernames
 	 */
-	@SuppressWarnings ("unused")
 	private void setUsernames(final Set<String> usernames) {
 		this.usernames = usernames;
 	}
