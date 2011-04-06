@@ -2,10 +2,10 @@ package de.unisaarland.cs.st.reposuite.ppa;
 
 import java.util.List;
 
-import org.persistence middleware.Criteria;
-
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
@@ -24,7 +24,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOperation> {
 	
-	
 	/**
 	 * Instantiates a new change operation persister.
 	 * 
@@ -41,7 +40,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings ({ "unchecked" })
 	@Override
 	public void run() {
 		
@@ -62,7 +61,7 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 		}
 		PersistenceUtil persistenceUtil;
 		try {
-			persistenceUtil = PersistenceUtil.getInstance();
+			persistenceUtil = PersistenceManager.getUtil();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
@@ -70,18 +69,19 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 		JavaChangeOperation currentOperation;
 		String lastTransactionId = "";
 		
+		@SuppressWarnings ("rawtypes")
 		Criteria criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
-		List<JavaClassDefinition> defs = criteria.list();
+		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
 		for (JavaClassDefinition def : defs) {
 			JavaElementCache.classDefs.put(def.getFullQualifiedName(), def);
 		}
 		criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
-		List<JavaMethodDefinition> mDefs = criteria.list();
+		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria);
 		for (JavaMethodDefinition def : mDefs) {
 			JavaElementCache.methodDefs.put(def.getFullQualifiedName(), def);
 		}
 		criteria = persistenceUtil.createCriteria(JavaMethodCall.class);
-		List<JavaMethodCall> calls = criteria.list();
+		List<JavaMethodCall> calls = persistenceUtil.load(criteria);
 		for (JavaMethodCall call : calls) {
 			JavaElementCache.methodCalls.put(call.getFullQualifiedName(), call);
 		}

@@ -2,10 +2,6 @@ package de.unisaarland.cs.st.reposuite.persistence;
 
 import java.util.List;
 
-import org.persistence middleware.Criteria;
-import org.persistence middleware.Session;
-import org.persistence middleware.criterion.Restrictions;
-
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -25,10 +21,11 @@ public class PPAPersistenceUtil {
 	 *            the e
 	 * @return the java element
 	 */
-	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil, final JavaElement e) {
-		Criteria criteria = persistenceUtil.createCriteria(e.getClass());
-		criteria.add(Restrictions.eq("primaryKey", e.getPrimaryKey()));
-		@SuppressWarnings("unchecked") List<JavaElement> elements = criteria.list();
+	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil,
+	                                         final JavaElement e) {
+		Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
+		criteria.eq("primaryKey", e.getPrimaryKey());
+		List<? extends JavaElement> elements = persistenceUtil.load(criteria);
 		if (elements.isEmpty()) {
 			return null;
 		}
@@ -50,12 +47,12 @@ public class PPAPersistenceUtil {
 	 *            the e
 	 * @return the session java element
 	 */
-	public static JavaElement getSessionJavaElement(final PersistenceUtil persistenceUtil, final JavaElement e) {
-		Session session = persistenceUtil.getSession();
-		Object cached = session.get(JavaElement.class, e.getPrimaryKey());
-		if (cached != null) {
-			return (JavaElement) cached;
-		}
+	public static JavaElement getSessionJavaElement(final PersistenceUtil persistenceUtil,
+	                                                final JavaElement e) {
+		// Object cached = session.get(JavaElement.class, e.getPrimaryKey());
+		// if (cached != null) {
+		// return (JavaElement) cached;
+		// }
 		return null;
 	}
 	

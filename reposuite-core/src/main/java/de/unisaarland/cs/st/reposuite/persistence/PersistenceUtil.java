@@ -25,6 +25,8 @@ public interface PersistenceUtil {
 	
 	public void delete(final Annotated object);
 	
+	public void executeNativeQuery(final String query);
+	
 	public void executeQuery(final String query);
 	
 	public RCSTransaction fetchRCSTransaction(final String id);

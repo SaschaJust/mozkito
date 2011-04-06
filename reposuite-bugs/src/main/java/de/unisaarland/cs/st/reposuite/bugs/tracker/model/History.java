@@ -17,6 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.HistoryElementComparator;
@@ -42,8 +45,12 @@ public class History implements Annotated {
 	 * @param element
 	 */
 	@Transient
-	public void add(final HistoryElement element) {
-		getElements().add(element);
+	public boolean add(@NotNull final HistoryElement element) {
+		boolean ret = false;
+		SortedSet<HistoryElement> elements = getElements();
+		ret = elements.add(element);
+		setElements(elements);
+		return ret;
 	}
 	
 	/**
@@ -51,7 +58,7 @@ public class History implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public History after(final DateTime dateTime) {
+	public History after(@NotNull final DateTime dateTime) {
 		History history = new History();
 		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
@@ -68,7 +75,7 @@ public class History implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public History before(final DateTime dateTime) {
+	public History before(@NotNull final DateTime dateTime) {
 		History history = new History();
 		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
@@ -86,6 +93,7 @@ public class History implements Annotated {
 	 * @return
 	 */
 	@Transient
+	@NoneNull
 	public History get(final DateTime from,
 	                   final DateTime to) {
 		History history = new History();
@@ -193,7 +201,6 @@ public class History implements Annotated {
 	 * @param elements
 	 *            the elements to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setElements(final SortedSet<HistoryElement> elements) {
 		this.elements = elements;
 	}
@@ -209,6 +216,7 @@ public class History implements Annotated {
 	/**
 	 * @return
 	 */
+	@Transient
 	public int size() {
 		return getElements().size();
 	}

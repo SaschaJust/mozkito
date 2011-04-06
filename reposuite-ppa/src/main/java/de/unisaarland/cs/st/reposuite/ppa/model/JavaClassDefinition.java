@@ -1,8 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
@@ -30,27 +28,27 @@ import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 public class JavaClassDefinition extends JavaElementDefinition implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long   serialVersionUID = 945704236316941413L;
+	private static final long               serialVersionUID = 945704236316941413L;
 	
 	/** The super class name. */
-	private String              superClassName   = null;
+	private String                          superClassName   = null;
 	
 	/** The Constant anonCheck. */
-	private final static String anonCheck        = ".*\\$\\d+";
+	private final static String             anonCheck        = ".*\\$\\d+";
 	
 	/** The anon counter. */
 	@Transient
 	private final HashMap<Integer, Integer> anonCounters     = new HashMap<Integer, Integer>();
 	
 	/** The anonym class. */
-	private boolean             anonymClass      = false;
+	private boolean                         anonymClass      = false;
 	
 	private JavaClassDefinition             parent;
 	
 	/**
 	 * Instantiates a new java class definition.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private JavaClassDefinition() {
 		super();
 	}
@@ -64,7 +62,8 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName, final String packageName) {
+	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName,
+	        final String packageName) {
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
@@ -89,9 +88,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		}
 	}
 	
-	@ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/**
@@ -99,13 +98,16 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * 
 	 * @return the super class name
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private String getSuperClassName() {
 		return this.superClassName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation(org.w3c.dom.Document)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
+	 * (org.w3c.dom.Document)
 	 */
 	@Override
 	@NoneNull
@@ -140,23 +142,15 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
 		if (this.isAnonymClass()) {
-			return parent.nextAnonCounter(v);
+			return this.parent.nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
-			if(!this.anonCounters.containsKey(vId)){
+			if (!this.anonCounters.containsKey(vId)) {
 				this.anonCounters.put(vId, 0);
 			}
 			this.anonCounters.put(vId, this.anonCounters.get(vId) + 1);
 			return this.anonCounters.get(vId);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return new HashSet<Annotated>();
 	}
 	
 	/**
@@ -165,13 +159,13 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @param anonymClass
 	 *            the new anonym class
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	@NoneNull
 	private void setAnonymClass(final boolean anonymClass) {
 		this.anonymClass = anonymClass;
 	}
 	
-	private void setParent(JavaClassDefinition parent) {
+	private void setParent(final JavaClassDefinition parent) {
 		this.parent = parent;
 	}
 	
@@ -206,7 +200,6 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#toString()
 	 */
 	@Override

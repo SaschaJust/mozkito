@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -151,14 +150,9 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((getSignature() == null)
-				? 0
-				: getSignature().hashCode());
+		                                                   ? 0
+		                                                   : getSignature().hashCode());
 		return result;
-	}
-	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

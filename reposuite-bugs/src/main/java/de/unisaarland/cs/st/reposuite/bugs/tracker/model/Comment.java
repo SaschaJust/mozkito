@@ -145,7 +145,7 @@ public class Comment implements Annotated, Comparable<Comment> {
 	/**
 	 * @return the personContainer
 	 */
-	@OneToOne
+	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	protected PersonContainer getPersonContainer() {
 		return this.personContainer;
 	}

@@ -68,8 +68,8 @@ public class ChangeCouplingRuleFactory {
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
 		tablename = "reposuite_cc_" + tablename;
 		
-		persistenceUtil.executeQuery("select reposuite_changecouplings('" + transaction.getId() + "','" + tablename
-		        + "')");
+		persistenceUtil.executeNativeQuery("select reposuite_changecouplings('" + transaction.getId() + "','"
+		        + tablename + "')");
 		Query ccRulesQuery = persistenceUtil.createQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
 		        + tablename);
 		List<Object[]> list = ccRulesQuery.getResultList();
@@ -89,7 +89,7 @@ public class ChangeCouplingRuleFactory {
 			}
 		}
 		
-		persistenceUtil.executeQuery("DROP TABLE " + tablename);
+		persistenceUtil.executeNativeQuery("DROP TABLE " + tablename);
 		
 		Collections.sort(result);
 		return result;

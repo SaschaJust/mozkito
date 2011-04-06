@@ -39,7 +39,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	public static void createSessionFactory(final Properties properties) {
 		if (factory == null) {
-			
+			if (type == null) {
+				String url = (String) properties.get("openjpa.ConnectionURL");
+				type = url.split(":")[1];
+			}
 			factory = OpenJPAPersistence.createEntityManagerFactory("Reposuite", null, properties);
 			// FIXME
 			// try {
@@ -119,7 +122,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	private static String                   type;
 	private static Map<Thread, OpenJPAUtil> provider = new HashMap<Thread, OpenJPAUtil>();
 	
-	public OpenJPAUtil() {
+	private OpenJPAUtil() {
 		this.entityManager = factory.createEntityManager();
 	}
 	
@@ -182,6 +185,18 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public void delete(final Annotated object) {
 		this.entityManager.remove(object);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#executeNativeQuery
+	 * (java.lang.String)
+	 */
+	@Override
+	public void executeNativeQuery(final String queryString) {
+		Query nativeQuery = this.entityManager.createNativeQuery(queryString);
+		nativeQuery.executeUpdate();
 	}
 	
 	/*

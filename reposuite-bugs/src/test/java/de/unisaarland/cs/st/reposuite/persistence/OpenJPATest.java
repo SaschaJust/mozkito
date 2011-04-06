@@ -75,7 +75,7 @@ public class OpenJPATest {
 	@Test
 	public void testOrphanPerson() {
 		try {
-			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+			PersistenceUtil persistenceUtil = OpenJPAUtil.getInstance();
 			
 			Person submitter = new Person("yokolet", "Yoko Harada", null);
 			Person historyAuthor1 = new Person("yokolet", null, null);
@@ -108,6 +108,7 @@ public class OpenJPATest {
 			persistenceUtil.save(report);
 			persistenceUtil.commitTransaction();
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

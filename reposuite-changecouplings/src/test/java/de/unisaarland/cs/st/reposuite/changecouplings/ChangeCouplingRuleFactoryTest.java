@@ -16,7 +16,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
@@ -65,7 +64,7 @@ public class ChangeCouplingRuleFactoryTest {
 		Person person = new Person("kim", "", "");
 		
 		try {
-			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+			PersistenceUtil persistenceUtil = OpenJPAUtil.getInstance();
 			persistenceUtil.beginTransaction();
 			
 			// ###transaction 1
@@ -165,7 +164,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 		} catch (UninitializedDatabaseException e) {
 			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		
 	}

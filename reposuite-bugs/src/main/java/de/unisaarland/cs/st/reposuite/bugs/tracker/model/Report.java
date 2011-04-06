@@ -90,34 +90,46 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * @param comment
+	 * @return 
 	 */
 	@Transient
-	public void addComment(@NotNull final Comment comment) {
+	public boolean addComment(@NotNull final Comment comment) {
 		Condition.notNull(getComments(),
 		                  "The container holding the comments must be initialized before adding a comment to the report.");
 		
-		boolean retval = getComments().add(comment);
+		SortedSet<Comment> comments = getComments();
+		boolean ret = comments.add(comment);
+		setComments(comments);
 		comment.setBugReport(this);
-		Condition.check(retval, "Could not add comment with id %s (already existing).", comment.getId());
+		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
+		return ret;
 	}
 	
 	/**
 	 * @param historyElement
+	 * @return 
 	 */
 	@Transient
-	public void addHistoryElement(@NotNull final HistoryElement historyElement) {
+	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
 		Condition.notNull(getHistory(), "The history handler must not be null when adding a history element.");
-		getHistory().add(historyElement);
+		History history = getHistory();
+		boolean ret = history.add(historyElement);
+		setHistory(history);
 		historyElement.setBugReport(this);
+		return ret;
 	}
 	
 	/**
 	 * @param sibling
+	 * @return 
 	 */
 	@Transient
-	public void addSibling(@NotNull final Long sibling) {
+	public boolean addSibling(@NotNull final Long sibling) {
 		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
-		getSiblings().add(sibling);
+		SortedSet<Long> siblings = getSiblings();
+		boolean ret = siblings.add(sibling);
+		setSiblings(siblings);
+		return ret;
 	}
 	
 	/*
