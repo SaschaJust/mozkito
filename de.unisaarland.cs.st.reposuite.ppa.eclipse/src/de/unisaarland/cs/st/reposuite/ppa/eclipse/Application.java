@@ -33,7 +33,7 @@ public class Application implements IApplication {
 		
 		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppa);
 		
-		PPA.Main.main(new String[0]);
+		ppa.Main.main(new String[0]);
 		return IApplication.EXIT_OK;
 	}
 	
