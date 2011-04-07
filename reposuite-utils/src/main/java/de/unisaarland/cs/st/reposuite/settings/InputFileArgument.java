@@ -50,6 +50,7 @@ public class InputFileArgument extends RepoSuiteArgument {
 		if (this.stringValue == null) {
 			return null;
 		}
+		
 		File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
