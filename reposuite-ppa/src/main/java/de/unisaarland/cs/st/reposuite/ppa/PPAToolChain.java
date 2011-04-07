@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -19,6 +18,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
@@ -48,6 +48,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	
 	/** The test case transaction arg. */
 	private final ListArgument        testCaseTransactionArg;
+	
+	private final BooleanArgument     ppaArg;
 	
 	/** The as xml. */
 	private final OutputFileArgument  asXML;
@@ -79,6 +81,9 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		                                               + "outputting result as XML either to sdtout (if option -DasXML not set) "
 		                                               + "or to specified XML file.", null, false);
 		
+		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
+		                                  "false", false);
+		
 		this.asXML = new OutputFileArgument(
 		                                    settings,
 		                                    "output.xml",
@@ -90,12 +95,6 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		                                       null, false);
 		
 		settings.parseArguments();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Using workspace "
-			            + ResourcesPlugin.getWorkspace().getRoot().getFullPath().toFile().getAbsolutePath());
-		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -146,7 +145,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		
 		//generate the change operation reader
 		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
-		                          this.startWithArg.getValue());
+		                          this.startWithArg.getValue(), this.ppaArg.getValue());
 		
 		//the xml file set, create XMLSinkThread. Otherwise the Hibernate persister thread
 		if (xmlFile != null) {

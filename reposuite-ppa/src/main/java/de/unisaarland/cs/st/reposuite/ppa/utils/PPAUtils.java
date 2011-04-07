@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -133,6 +134,7 @@ public class PPAUtils {
 	 *            the transaction
 	 * @param visitors
 	 *            the visitors
+	 * @param usePPA
 	 */
 	public static void generateChangeOperations(final Repository repository,
 	                                            final RCSTransaction transaction,
@@ -180,12 +182,12 @@ public class PPAUtils {
 		if (parentTransaction != null) {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
-				throw new UnrecoverableError("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
-				                             + ". Ignoring!");
+				throw new UnrecoverableError("Could not access checkout directory: "
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			
 			// first copy files!
-			Map<RCSRevision, Tuple<IFile,String>> iFiles = new HashMap<RCSRevision, Tuple<IFile,String>>();
+			Map<RCSRevision, Tuple<IFile, String>> iFiles = new HashMap<RCSRevision, Tuple<IFile, String>>();
 			for (Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
 				File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 				if (!file.exists()) {
@@ -277,12 +279,12 @@ public class PPAUtils {
 		}
 	}
 	
-	private static void generateChangeOperationsForAddedFile(Repository repository,
-	                                                         RCSTransaction transaction,
-	                                                         RCSRevision revision,
-	                                                         CompilationUnit cu,
-	                                                         String changedPath,
-	                                                         Collection<ChangeOperationVisitor> visitors) {
+	private static void generateChangeOperationsForAddedFile(final Repository repository,
+	                                                         final RCSTransaction transaction,
+	                                                         final RCSRevision revision,
+	                                                         final CompilationUnit cu,
+	                                                         final String changedPath,
+	                                                         final Collection<ChangeOperationVisitor> visitors) {
 		ChangeOperations operations = new ChangeOperations();
 		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath,
 		                                                                     new String[0]);
@@ -529,6 +531,104 @@ public class PPAUtils {
 		}
 	}
 	
+	public static void generateChangeOperationsNOPPA(final Repository repository,
+	                                                 final RCSTransaction transaction,
+	                                                 final Collection<ChangeOperationVisitor> visitors) {
+		
+		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
+		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
+		Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
+		
+		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
+		
+		for (RCSRevision rev : transaction.getRevisions()) {
+			
+			String changedPath = rev.getChangedFile().getPath(transaction);
+			if (changedPath == null) {
+				continue;
+			}
+			changedPath = new String(changedPath);
+			if (!changedPath.endsWith(".java")) {
+				if (Logger.logDebug()) {
+					Logger.debug("Ignoring non-Java file: " + changedPath);
+				}
+				continue;
+			}
+			if (changedPath.startsWith("/")) {
+				changedPath = changedPath.substring(1);
+			}
+			
+			switch (rev.getChangeType()) {
+				case Added:
+					addRevs.put(rev, changedPath);
+					break;
+				case Modified:
+					modifyRevs.put(rev, changedPath);
+					break;
+				case Deleted:
+					deleteRevs.put(rev, changedPath);
+					break;
+			}
+		}
+		
+		// handle the removed files first
+		if (parentTransaction != null) {
+			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+			if (!oldCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
+				                             + ". Ignoring!");
+			}
+			
+			for (Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
+				File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+				CompilationUnit cu = getCUNoPPA(file);
+				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
+				                                       visitors);
+			}
+		}
+		
+		// handle added files
+		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
+		if (!newCheckoutFile.exists()) {
+			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
+			                             + ". Ignoring!");
+		}
+		
+		for (Entry<RCSRevision, String> entry : addRevs.entrySet()) {
+			File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			CompilationUnit cu = getCUNoPPA(file);
+			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
+			                                     visitors);
+		}
+		
+		// handle modified files
+		for (Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
+			
+			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+			
+			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+			if (!oldCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: "
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+			}
+			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			CompilationUnit oldCU = getCUNoPPA(oldFile);
+			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+			
+			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
+			if (!newCheckoutFile.exists()) {
+				throw new UnrecoverableError("Could not access checkout directory: "
+				                             + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+			}
+			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			CompilationUnit newCU = getCUNoPPA(newFile);
+			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
+			                                        entry.getValue(), visitors);
+		}
+		
+	}
+	
 	/**
 	 * Gets the cU.
 	 * 
@@ -664,6 +764,33 @@ public class PPAUtils {
 	 *            the file
 	 * @return the cU no ppa
 	 */
+	public static CompilationUnit getCUNoPPA(final File file) {
+		CompilationUnit cu = null;
+		try {
+			String content = FileUtils.readFileToString(file);
+			ASTNode node = null;
+			ASTParser parser = ASTParser.newParser(AST.JLS3);
+			parser.setStatementsRecovery(true);
+			parser.setResolveBindings(true);
+			parser.setSource(content.toCharArray());
+			node = parser.createAST(null);
+			cu = (CompilationUnit) node;
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error("Error while getting CU without PPA", e);
+			}
+		}
+		
+		return cu;
+	}
+	
+	/**
+	 * Gets the cU no ppa.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the cU no ppa
+	 */
 	public static CompilationUnit getCUNoPPA(final IFile file) {
 		CompilationUnit cu = null;
 		try {
@@ -763,7 +890,7 @@ public class PPAUtils {
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction transaction,
-	                                                                        ChangeType changeType) {
+	                                                                        final ChangeType changeType) {
 		
 		Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
@@ -851,7 +978,7 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
-	                                                               String relativePath,
+	                                                               final String relativePath,
 	                                                               final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		

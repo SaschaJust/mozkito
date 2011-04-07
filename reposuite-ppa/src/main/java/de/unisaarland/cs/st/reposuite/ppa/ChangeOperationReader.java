@@ -31,6 +31,8 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	
 	private final String                     startWith;
 	
+	private boolean                    usePPA;
+	
 	/**
 	 * Instantiates a new change operation reader.
 	 * 
@@ -45,10 +47,17 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	 * @param startWith
 	 *            the transaction is to start with. If null, start with the
 	 *            first transaction
+	 * @param ppa
 	 */
 	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-			final Repository repository, final List<RCSTransaction> transactions, final String startWith) {
+	                             final Repository repository, final List<RCSTransaction> transactions, final String startWith,
+	                             final Boolean usePPA) {
 		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
+		if (usePPA == null) {
+			this.usePPA = true;
+		} else {
+			this.usePPA = usePPA;
+		}
 		this.repository = repository;
 		this.transactions = transactions;
 		this.startWith = startWith;
@@ -98,9 +107,13 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 			
 			if (Logger.logInfo()) {
 				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
-						+ "/" + size + ")");
+				            + "/" + size + ")");
 			}
-			PPAUtils.generateChangeOperations(this.repository, transaction, visitors);
+			if (this.usePPA) {
+				PPAUtils.generateChangeOperations(this.repository, transaction, visitors);
+			} else {
+				PPAUtils.generateChangeOperationsNOPPA(this.repository, transaction, visitors);
+			}
 		}
 		if (Logger.logInfo()) {
 			Logger.info("All done. Finishing.");
