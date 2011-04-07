@@ -28,10 +28,10 @@ public class Application implements IApplication {
 		+ "reposuite-utils-0.1-SNAPSHOT.jar";
 		String core = baseDir + "-core" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
 		+ "reposuite-core-0.1-SNAPSHOT.jar";
-		String ppa = baseDir + "-ppa" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
+		String ppaStr = baseDir + "-ppa" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
 		+ "reposuite-ppa-0.1-SNAPSHOT.jar";
 		
-		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppa);
+		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppaStr);
 		
 		ppa.Main.main(new String[0]);
 		return IApplication.EXIT_OK;
