@@ -71,12 +71,11 @@ public class JavaElementCache {
 	                                                                            @NotNegative final int startLine,
 	                                                                            @NotNegative final int endLine,
 	                                                                            @NotNegative final int position,
-	                                                                            @NotNegative final int bodyStartLine,
-	                                                                            @NotNull final String packageName) {
+	                                                                            @NotNegative final int bodyStartLine) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
-			def = new JavaClassDefinition(parent, fullQualifiedName, packageName);
+			def = new JavaClassDefinition(parent, fullQualifiedName);
 			classDefs.put(fullQualifiedName, def);
 		} else {
 			def = classDefs.get(fullQualifiedName);

@@ -359,8 +359,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				                                                                                                     currentLine,
 				                                                                                                     endLine,
 				                                                                                                     node.getStartPosition(),
-				                                                                                                     bodyStartLine,
-				                                                                                                     this.packageName);
+				                                                                                                     bodyStartLine);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {

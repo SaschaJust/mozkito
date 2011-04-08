@@ -64,7 +64,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName, final String packageName) {
+	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
@@ -171,7 +171,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		this.anonymClass = anonymClass;
 	}
 	
-	private void setParent(JavaClassDefinition parent) {
+	private void setParent(final JavaClassDefinition parent) {
 		this.parent = parent;
 	}
 	
