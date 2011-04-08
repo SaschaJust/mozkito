@@ -119,9 +119,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 	}
 	
 	private final EntityManager             entityManager;
+	
 	private static String                   type;
 	private static Map<Thread, OpenJPAUtil> provider = new HashMap<Thread, OpenJPAUtil>();
 	
+	/**
+	 * 
+	 */
 	private OpenJPAUtil() {
 		this.entityManager = factory.createEntityManager();
 	}
@@ -227,6 +231,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 		return query.getResultList().get(0);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#getToolInformation
+	 * ()
+	 */
 	@SuppressWarnings ("deprecation")
 	@Override
 	public String getToolInformation() {

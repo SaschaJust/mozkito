@@ -2,11 +2,7 @@ package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Basic;
 import javax.persistence.Embeddable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -15,30 +11,20 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	
 	private static final long serialVersionUID = -6589083902512542247L;
 	
-	private String            transactionId;
+	private String            transaction;
 	
-	private long              changedFileId;
+	private long              changedFile;
 	
 	public RevisionPrimaryKey() {
 	}
 	
 	/**
-	 * @param changedFile
-	 * @param transaction
-	 */
-	public RevisionPrimaryKey(final RCSFile changedFile, final RCSTransaction transaction) {
-		this.changedFileId = changedFile.getGeneratedId();
-		this.transactionId = transaction.getId();
-	}
-	
-	/**
 	 * @param transaction
 	 * @param changedFile
 	 */
-	public RevisionPrimaryKey(final RCSTransaction transaction, final RCSFile changedFile) {
-		super();
-		this.changedFileId = changedFile.getGeneratedId();
-		this.transactionId = transaction.getId();
+	public RevisionPrimaryKey(final String transaction, final long changedFile) {
+		this.transaction = transaction;
+		this.changedFile = changedFile;
 	}
 	
 	/*
@@ -57,29 +43,31 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 			return false;
 		}
 		RevisionPrimaryKey other = (RevisionPrimaryKey) obj;
-		if (this.getChangedFileId() != other.getChangedFileId()) {
+		if (this.changedFile != other.changedFile) {
 			return false;
 		}
-		if (this.getTransaction() == null) {
-			if (other.getTransaction() != null) {
+		if (this.transaction == null) {
+			if (other.transaction != null) {
 				return false;
 			}
-		} else if (!this.getTransaction().equals(other.getTransaction())) {
+		} else if (!this.transaction.equals(other.transaction)) {
 			return false;
 		}
 		return true;
 	}
 	
-	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@Basic
-	public long getChangedFileId() {
-		return this.changedFileId;
+	/**
+	 * @return
+	 */
+	public long getChangedFile() {
+		return this.changedFile;
 	}
 	
-	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@Basic
+	/**
+	 * @return
+	 */
 	public String getTransaction() {
-		return this.transactionId;
+		return this.transaction;
 	}
 	
 	/*
@@ -90,35 +78,24 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (this.getChangedFileId() ^ (this.getChangedFileId() >>> 32));
-		result = prime * result + ((this.getTransaction() == null)
-		                                                          ? 0
-		                                                          : this.getTransaction().hashCode());
+		result = prime * result + (int) (this.changedFile ^ (this.changedFile >>> 32));
+		result = prime * result + ((this.transaction == null)
+		                                                     ? 0
+		                                                     : this.transaction.hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param changedFileId
+	 * @param changedFile
 	 */
-	public void setChangedFileId(final long changedFileId) {
-		this.changedFileId = changedFileId;
+	public void setChangedFile(final long changedFile) {
+		this.changedFile = changedFile;
 	}
 	
 	/**
-	 * @param transactionId
+	 * @param transaction
 	 */
-	public void setTransaction(final String transactionId) {
-		this.transactionId = transactionId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("transactionId: ", getTransaction())
-		                                                                .append("changedFileId: ", getChangedFileId())
-		                                                                .toString();
+	public void setTransaction(final String transaction) {
+		this.transaction = transaction;
 	}
 }

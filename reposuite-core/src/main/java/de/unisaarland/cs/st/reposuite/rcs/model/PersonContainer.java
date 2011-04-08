@@ -154,7 +154,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * @param map
 	 *            the map to set
 	 */
-	@SuppressWarnings ("unused")
 	private void setMap(final Map<String, Person> map) {
 		this.map = map;
 	}

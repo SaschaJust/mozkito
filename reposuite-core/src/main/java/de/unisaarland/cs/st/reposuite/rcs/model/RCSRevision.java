@@ -4,16 +4,17 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import javax.persistence.CascadeType;
-import javax.persistence.EmbeddedId;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -26,7 +27,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 @Entity
-@Table (name = "rcsrevision")
+@Table (name = "rcsrevision",
+        uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
 // @AssociationOverrides ({
 // @AssociationOverride (name = "primaryKey.changedFile", joinColumns =
 // @JoinColumn (name = "file_id")),
@@ -47,13 +49,13 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		return RCSRevision.class.getSimpleName();
 	}
 	
-	private ChangeType         changeType;
+	private ChangeType     changeType;
 	
-	private RevisionPrimaryKey primaryKey;
+	private RCSTransaction transaction;
 	
-	private RCSTransaction     transaction;
+	private RCSFile        changedFile;
 	
-	private RCSFile            changedFile;
+	private long           revisionId;
 	
 	/**
 	 * used by PersistenceUtil to instantiate a {@link RCSRevision} object
@@ -67,7 +69,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		setTransaction(rcsTransaction);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
-		setPrimaryKey(new RevisionPrimaryKey(rcsFile, rcsTransaction));
 		
 		boolean success = getTransaction().addRevision(this);
 		Condition.check(success, "Revision could not be registered at transaction.");
@@ -78,7 +79,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 		
-		Condition.notNull(getPrimaryKey(), "Primary key may never be null after creation.");
 		Condition.notNull(getTransaction(), "Transaction may never be null after creation.");
 		Condition.notNull(getChangedFile(), "Changed file may never be null after creation.");
 	}
@@ -120,13 +120,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		} else if (!this.getChangedFile().equals(other.getChangedFile())) {
 			return false;
 		}
-		if (this.getPrimaryKey() == null) {
-			if (other.getPrimaryKey() != null) {
-				return false;
-			}
-		} else if (!this.getPrimaryKey().equals(other.getPrimaryKey())) {
-			return false;
-		}
+		
 		if (this.getTransaction() == null) {
 			if (other.getTransaction() != null) {
 				return false;
@@ -140,9 +134,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	/**
 	 * @return the changedFile
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@MapsId ("changedFileId")
-	@JoinColumn (name = "changedFileId", nullable = false)
+	// @MapsId ("changedFile")
+	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
 	public RCSFile getChangedFile() {
 		return this.changedFile;
 	}
@@ -155,17 +149,21 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		return this.changeType;
 	}
 	
-	@EmbeddedId
-	public RevisionPrimaryKey getPrimaryKey() {
-		return this.primaryKey;
+	/**
+	 * @return the revisionId
+	 */
+	@Id
+	@GeneratedValue
+	public long getRevisionId() {
+		return this.revisionId;
 	}
 	
 	/**
 	 * @return the transaction
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@MapsId ("transactionId")
-	@JoinColumn (name = "transactionId", nullable = false)
+	// @MapsId ("transaction")
+	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}
@@ -184,9 +182,9 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		result = prime * result + ((getChangedFile() == null)
 		                                                     ? 0
 		                                                     : getChangedFile().hashCode());
-		result = prime * result + ((getPrimaryKey() == null)
-		                                                    ? 0
-		                                                    : getPrimaryKey().hashCode());
+		// result = prime * result + ((getPrimaryKey() == null)
+		// ? 0
+		// : getPrimaryKey().hashCode());
 		result = prime * result + ((getTransaction() == null)
 		                                                     ? 0
 		                                                     : getTransaction().hashCode());
@@ -209,10 +207,10 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	}
 	
 	/**
-	 * @param primaryKey
+	 * @param revisionId the revisionId to set
 	 */
-	private void setPrimaryKey(final RevisionPrimaryKey primaryKey) {
-		this.primaryKey = primaryKey;
+	public void setRevisionId(final long revisionId) {
+		this.revisionId = revisionId;
 	}
 	
 	/**

@@ -68,8 +68,9 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 			              arguments.get("database.type").getValue().toString(), arguments.get("database.driver")
 			                                                                             .getValue().toString());
 			PersistenceManager.registerMiddleware(middlewareClass);
-			this.settings.addToolInformation(middlewareClass.getSimpleName(), middlewareClass.newInstance()
-			                                                                                 .getToolInformation());
+			
+			String toolInfo = PersistenceManager.getUtil().getToolInformation();
+			this.settings.addToolInformation(middlewareClass.getSimpleName(), toolInfo);
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				System.err.println("Could not initialize database middleware "
