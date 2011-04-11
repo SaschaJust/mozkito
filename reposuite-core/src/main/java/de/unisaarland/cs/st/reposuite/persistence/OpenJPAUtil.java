@@ -15,14 +15,18 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
+import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
+import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -41,9 +45,52 @@ public class OpenJPAUtil implements PersistenceUtil {
 		if (factory == null) {
 			if (type == null) {
 				String url = (String) properties.get("openjpa.ConnectionURL");
-				type = url.split(":")[1];
+				if (type != null) {
+					type = url.split(":")[1];
+				} else {
+					type = "unknown";
+				}
 			}
-			factory = OpenJPAPersistence.createEntityManagerFactory("Reposuite", null, properties);
+			
+			String unit = properties.getProperty("openjpa.persistence-unit");
+			
+			if (unit == null) {
+				StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+				ArrayUtils.reverse(trace);
+				for (StackTraceElement element : trace) {
+					Class<?> activeClass;
+					try {
+						activeClass = Class.forName(element.getClassName());
+						if (ClassFinder.extending(activeClass, RepoSuiteToolchain.class)) {
+							unit = activeClass.getSimpleName().toLowerCase();
+							break;
+						}
+					} catch (ClassNotFoundException e) {
+					}
+				}
+				
+				if (unit == null) {
+					if (Logger.logError()) {
+						Logger.error("You have to set the 'database-unit' property.");
+						
+					}
+					throw new Shutdown("Persistence unit property not specified and can't be determined automatically.");
+				}
+			}
+			
+			properties.remove("openjpa.persistence.unit");
+			
+			if (Logger.logInfo()) {
+				Logger.info("Requesting persistence-unit: " + unit);
+			}
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Using options: ");
+				for (Object property : properties.keySet()) {
+					Logger.debug(property + ": " + properties.getProperty((String) property));
+				}
+			}
+			factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
 			// FIXME
 			// try {
 			// Collection<Class<?>> annotatedClasses =
@@ -64,9 +111,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 			// }
 			// throw new RuntimeException(e);
 			// }
+			
+			if (factory == null) {
+				throw new Shutdown("Could not initialize persistence-unit: " + unit);
+			}
 		} else {
 			if (Logger.logWarn()) {
-				Logger.warn("Session factory already exists. Skipping creating.");
+				Logger.warn("Session factory already exists. Skipping creation.");
 			}
 		}
 	}
@@ -84,9 +135,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 	                                        final String user,
 	                                        final String password,
 	                                        final String type,
-	                                        final String driver) {
+	                                        final String driver,
+	                                        final String unit) {
 		String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
-		// + "?useUnicode=true&characterEncoding=UTF-8;";
 		
 		Properties properties = new Properties();
 		properties.put("openjpa.ConnectionURL", url);
@@ -94,6 +145,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		properties.put("openjpa.ConnectionDriverName", driver);
 		properties.put("openjpa.ConnectionUserName", user);
 		properties.put("openjpa.ConnectionPassword", password);
+		properties.put("openjpa.persistence-unit", unit);
 		OpenJPAUtil.type = type;
 		
 		createSessionFactory(properties);

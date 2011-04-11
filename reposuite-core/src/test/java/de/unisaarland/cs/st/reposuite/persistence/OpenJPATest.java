@@ -38,7 +38,7 @@ public class OpenJPATest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// Logger.setLogLevel(LogLevel.OFF);
+		// Logger.setLogLevel(LogLevel.DEBUG);
 		Properties properties = new Properties();
 		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
 		properties.put("openjpa.ConnectionURL", url);
@@ -46,6 +46,7 @@ public class OpenJPATest {
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
 		properties.put("openjpa.ConnectionUserName", "miner");
 		properties.put("openjpa.ConnectionPassword", "miner");
+		properties.put("openjpa.persistence-unit", "core");
 		
 		OpenJPAUtil.createSessionFactory(properties);
 	}

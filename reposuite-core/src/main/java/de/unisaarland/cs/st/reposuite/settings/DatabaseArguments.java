@@ -37,6 +37,7 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
 		                               "org.postgresql.Driver", isRequired));
 		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
+		addArgument(new StringArgument(settings, "database.unit", null, null, false));
 	}
 	
 	/*
@@ -50,7 +51,8 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
 		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
-		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue())) {
+		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
+		                      arguments.get("database.middleware").getValue())) {
 			return null;
 		}
 		
@@ -60,13 +62,14 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 			                                                                                                     .getName()
 			        + "." + arguments.get("database.middleware").getValue() + "Util");
 			Method method = middlewareClass.getMethod("createSessionFactory", String.class, String.class, String.class,
-			                                          String.class, String.class, String.class);
+			                                          String.class, String.class, String.class, String.class);
 			method.invoke(null, arguments.get("database.host").getValue().toString(), arguments.get("database.name")
 			                                                                                   .getValue().toString(),
 			              arguments.get("database.user").getValue().toString(), arguments.get("database.password")
 			                                                                             .getValue().toString(),
 			              arguments.get("database.type").getValue().toString(), arguments.get("database.driver")
-			                                                                             .getValue().toString());
+			                                                                             .getValue().toString(),
+			              arguments.get("database.unit").getValue().toString());
 			PersistenceManager.registerMiddleware(middlewareClass);
 			
 			String toolInfo = PersistenceManager.getUtil().getToolInformation();

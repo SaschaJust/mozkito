@@ -29,12 +29,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 @Entity
 @Table (name = "rcsrevision",
         uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
-// @AssociationOverrides ({
-// @AssociationOverride (name = "primaryKey.changedFile", joinColumns =
-// @JoinColumn (name = "file_id")),
-// @AssociationOverride (name = "primaryKey.transaction", joinColumns =
-// @JoinColumn (name = "transaction_id")) })
-// @IdClass (RevisionPrimaryKey.class)
 public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	
 	/**

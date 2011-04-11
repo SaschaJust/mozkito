@@ -30,9 +30,27 @@ import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException
  */
 public class ClassFinder {
 	
+	/**
+	 * @param baseClass
+	 * @param superClass
+	 * @return
+	 */
+	@NoneNull
+	public static boolean extending(final Class<?> baseClass,
+	                                final Class<?> superClass) {
+		Class<?> c = null;
+		while ((c = baseClass.getSuperclass()) != null) {
+			if (c == superClass) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
 	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage) throws ClassNotFoundException,
-	WrongClassSearchMethodException,
-	IOException {
+	                                                                                WrongClassSearchMethodException,
+	                                                                                IOException {
 		List<String> pathList = new LinkedList<String>();
 		
 		String classPaths = System.getProperty("java.class.path");
@@ -79,8 +97,8 @@ public class ClassFinder {
 	@NoneNull
 	public static Collection<Class<?>> getClassesExtendingClass(final Package pakkage,
 	                                                            final Class<?> superClass) throws ClassNotFoundException,
-	                                                            WrongClassSearchMethodException,
-	                                                            IOException {
+	                                                                                      WrongClassSearchMethodException,
+	                                                                                      IOException {
 		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage);
 		
 		Collection<Class<?>> classList = new HashSet<Class<?>>();
@@ -118,8 +136,8 @@ public class ClassFinder {
 	 * @throws IOException
 	 */
 	public static Collection<Class<?>> getClassesFromClasspath(final String packageName) throws ClassNotFoundException,
-	WrongClassSearchMethodException,
-	IOException {
+	                                                                                    WrongClassSearchMethodException,
+	                                                                                    IOException {
 		// This will hold a list of directories matching the packageName. There
 		// may
 		// be more than one if a package is split over multiple jars/paths
@@ -152,10 +170,10 @@ public class ClassFinder {
 			}
 		} catch (NullPointerException x) {
 			throw new ClassNotFoundException(packageName
-			                                 + " does not appear to be a valid package (Null pointer exception)");
+			        + " does not appear to be a valid package (Null pointer exception)");
 		} catch (UnsupportedEncodingException encex) {
 			throw new ClassNotFoundException(packageName
-			                                 + " does not appear to be a valid package (Unsupported encoding)");
+			        + " does not appear to be a valid package (Unsupported encoding)");
 		}
 		
 		Collection<Class<?>> classes = new HashSet<Class<?>>();
@@ -171,13 +189,13 @@ public class ClassFinder {
 						// removes the .class extension
 						int index = directory.getAbsolutePath().indexOf(path);
 						String absolutePackageName = directory.getAbsolutePath().substring(index)
-						.replaceAll(FileUtils.fileSeparator, ".");
+						                                      .replaceAll(FileUtils.fileSeparator, ".");
 						classes.add(Class.forName(absolutePackageName + '.' + file.substring(0, file.length() - 6)));
 					}
 				}
 			} else {
 				throw new ClassNotFoundException(packageName + " (" + directory.getPath()
-				                                 + ") does not appear to be a valid package");
+				        + ") does not appear to be a valid package");
 			}
 		}
 		return classes;
@@ -196,8 +214,8 @@ public class ClassFinder {
 	 */
 	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
 	                                                         final String filePath) throws ClassNotFoundException,
-	                                                         WrongClassSearchMethodException,
-	                                                         IOException {
+	                                                                               WrongClassSearchMethodException,
+	                                                                               IOException {
 		// String filePath =
 		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		
@@ -218,11 +236,11 @@ public class ClassFinder {
 			JarEntry current = e.nextElement();
 			
 			if ((current.getName().length() > path.length())
-					&& current.getName().substring(0, path.length()).equals(path)
-					&& current.getName().endsWith(".class")) {
+			        && current.getName().substring(0, path.length()).equals(path)
+			        && current.getName().endsWith(".class")) {
 				classes.add(Class.forName(current.getName()
-				                          .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
-				                          ".").replace(".class", "")));
+				                                 .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".")
+				                                 .replace(".class", "")));
 			}
 		}
 		
@@ -244,8 +262,8 @@ public class ClassFinder {
 	@NoneNull
 	public static Collection<Class<?>> getClassesOfInterface(final Package pakkage,
 	                                                         final Class<?> theInterface) throws ClassNotFoundException,
-	                                                         WrongClassSearchMethodException,
-	                                                         IOException {
+	                                                                                     WrongClassSearchMethodException,
+	                                                                                     IOException {
 		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage);
 		
 		Collection<Class<?>> classList = new HashSet<Class<?>>();
@@ -268,7 +286,7 @@ public class ClassFinder {
 					if (classInterface == theInterface) {
 						if (Logger.logTrace()) {
 							Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
-							             + aClass.getName());
+							        + aClass.getName());
 						}
 						matchingClass = discovered;
 						break;
@@ -278,7 +296,7 @@ public class ClassFinder {
 				if (matchingClass == null) {
 					if (Logger.logTrace()) {
 						Logger.trace("Class doesn't implement the " + theInterface.getSimpleName() + " interface: "
-						             + aClass.getName() + ", checking its superclasses");
+						        + aClass.getName() + ", checking its superclasses");
 					}
 					// find noarg constructable objects in the hierarchy
 					boolean noargCons = false;

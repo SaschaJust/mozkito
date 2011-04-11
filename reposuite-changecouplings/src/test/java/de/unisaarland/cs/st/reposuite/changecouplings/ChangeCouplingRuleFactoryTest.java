@@ -46,6 +46,7 @@ public class ChangeCouplingRuleFactoryTest {
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
 		properties.put("openjpa.ConnectionUserName", "miner");
 		properties.put("openjpa.ConnectionPassword", "miner");
+		properties.put("openjpa.persistence-unit", "core");
 		
 		OpenJPAUtil.createSessionFactory(properties);
 	}
