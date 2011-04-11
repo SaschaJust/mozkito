@@ -64,7 +64,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			this.anonymClass = true;
+			anonymClass = true;
 		}
 		setParent(parent);
 	}
@@ -91,12 +91,12 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 */
 	@Transient
 	private HashMap<Integer, Integer> getAnonCounters() {
-		return this.anonCounters;
+		return anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return this.parent;
+		return parent;
 	}
 	
 	/**
@@ -106,7 +106,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 */
 	@SuppressWarnings ("unused")
 	private String getSuperClassName() {
-		return this.superClassName;
+		return superClassName;
 	}
 	
 	/*
@@ -121,7 +121,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		Element thisElement = document.createElement("JavaClassDefinition");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(getFullQualifiedName());
 		nameElement.appendChild(textNode);
 		thisElement.appendChild(nameElement);
 		return thisElement;
@@ -133,7 +133,7 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * @return true, if is anonym class
 	 */
 	public boolean isAnonymClass() {
-		return this.anonymClass;
+		return anonymClass;
 	}
 	
 	/**
@@ -147,15 +147,15 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	@Transient
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
-		if (this.isAnonymClass()) {
+		if (isAnonymClass()) {
 			return getParent().nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
-			if (!this.getAnonCounters().containsKey(vId)) {
-				this.getAnonCounters().put(vId, 0);
+			if (!getAnonCounters().containsKey(vId)) {
+				getAnonCounters().put(vId, 0);
 			}
-			this.getAnonCounters().put(vId, this.getAnonCounters().get(vId) + 1);
-			return this.getAnonCounters().get(vId);
+			getAnonCounters().put(vId, getAnonCounters().get(vId) + 1);
+			return getAnonCounters().get(vId);
 		}
 	}
 	
@@ -197,9 +197,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	public String toLongString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(this.superClassName);
+		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(this.anonymClass);
+		sb.append(isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
@@ -215,9 +215,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(this.superClassName);
+		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(this.anonymClass);
+		sb.append(isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
 		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");

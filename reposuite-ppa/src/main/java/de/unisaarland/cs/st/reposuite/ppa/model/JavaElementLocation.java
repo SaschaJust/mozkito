@@ -137,7 +137,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	                            @NotNegative final int to) {
 		Condition.check(from <= to, "You must supply a closed interval.");
 		for (int i = from; i <= to; ++i) {
-			this.commentLines.add(i);
+			this.getCommentLines().add(i);
 		}
 	}
 	
@@ -240,7 +240,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the line cover
 	 */
 	public LineCover coversLine(@NotNegative final int line) {
-		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.commentLines.contains(line))) {
+		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.getCommentLines().contains(line))) {
 			if (this.getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
 			}
@@ -269,28 +269,28 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 			return false;
 		}
 		JavaElementLocation<T> other = (JavaElementLocation<T>) obj;
-		if (this.element == null) {
-			if (other.element != null) {
+		if (this.getElement() == null) {
+			if (other.getElement() != null) {
 				return false;
 			}
-		} else if (!this.element.equals(other.element)) {
+		} else if (!this.getElement().equals(other.getElement())) {
 			return false;
 		}
-		if (this.filePath == null) {
-			if (other.filePath != null) {
+		if (this.getFilePath() == null) {
+			if (other.getFilePath() != null) {
 				return false;
 			}
-		} else if (!this.filePath.equals(other.filePath)) {
+		} else if (!this.getFilePath().equals(other.getFilePath())) {
 			return false;
 		}
 		if (!(getElement() instanceof JavaElementDefinition)) {
-			if (this.endLine != other.endLine) {
+			if (this.getEndLine() != other.getEndLine()) {
 				return false;
 			}
-			if (this.position != other.position) {
+			if (this.getPosition() != other.getPosition()) {
 				return false;
 			}
-			if (this.startLine != other.startLine) {
+			if (this.getStartLine() != other.getStartLine()) {
 				return false;
 			}
 		}
@@ -410,16 +410,16 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.element == null)
-		                                                 ? 0
-		                                                 : this.element.hashCode());
-		result = prime * result + ((this.filePath == null)
-		                                                  ? 0
-		                                                  : this.filePath.hashCode());
+		result = prime * result + ((this.getElement() == null)
+		                                                      ? 0
+		                                                      : this.getElement().hashCode());
+		result = prime * result + ((this.getFilePath() == null)
+		                                                       ? 0
+		                                                       : this.getFilePath().hashCode());
 		if (!(getElement() instanceof JavaElementDefinition)) {
-			result = prime * result + this.endLine;
-			result = prime * result + this.position;
-			result = prime * result + this.startLine;
+			result = prime * result + this.getEndLine();
+			result = prime * result + this.getPosition();
+			result = prime * result + this.getStartLine();
 		}
 		return result;
 	}

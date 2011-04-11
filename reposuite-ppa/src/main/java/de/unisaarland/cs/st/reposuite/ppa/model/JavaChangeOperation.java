@@ -44,6 +44,10 @@ public class JavaChangeOperation implements Annotated {
 	/** The revision. */
 	private RCSRevision         revision;
 	
+	public JavaChangeOperation() {
+		// FIXME remove
+	}
+	
 	/**
 	 * Instantiates a new java change operation.
 	 * 
@@ -78,18 +82,18 @@ public class JavaChangeOperation implements Annotated {
 			return false;
 		}
 		JavaChangeOperation other = (JavaChangeOperation) obj;
-		if (this.changedElementLocation == null) {
-			if (other.changedElementLocation != null) {
+		if (getChangedElementLocation() == null) {
+			if (other.getChangedElementLocation() != null) {
 				return false;
 			}
-		} else if (!this.changedElementLocation.equals(other.changedElementLocation)) {
+		} else if (!getChangedElementLocation().equals(other.getChangedElementLocation())) {
 			return false;
 		}
-		if (this.revision == null) {
-			if (other.revision != null) {
+		if (getRevision() == null) {
+			if (other.getRevision() != null) {
 				return false;
 			}
-		} else if (!this.revision.equals(other.revision)) {
+		} else if (!getRevision().equals(other.getRevision())) {
 			return false;
 		}
 		return true;
@@ -103,7 +107,7 @@ public class JavaChangeOperation implements Annotated {
 	@SuppressWarnings ("rawtypes")
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
-		return this.changedElementLocation;
+		return changedElementLocation;
 	}
 	
 	/**
@@ -113,7 +117,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Transient
 	public String getChangedPath() {
-		return this.changedElementLocation.getFilePath();
+		return getChangedElementLocation().getFilePath();
 	}
 	
 	/**
@@ -123,7 +127,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return this.changeType;
+		return changeType;
 	}
 	
 	/**
@@ -134,7 +138,7 @@ public class JavaChangeOperation implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -144,7 +148,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
-		return this.revision;
+		return revision;
 	}
 	
 	/**
@@ -156,7 +160,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Transient
 	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement(this.changeType.toString());
+		Element thisElement = document.createElement(getChangeType().toString());
 		// Attr revision = document.createAttribute("revision");
 		// revision.setNodeValue(this.getRevision().getTransaction().getId());
 		// thisElement.setAttributeNode(revision);
@@ -168,12 +172,12 @@ public class JavaChangeOperation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.changedElementLocation == null)
+		result = prime * result + ((getChangedElementLocation() == null)
 		                                                                ? 0
-		                                                                : this.changedElementLocation.hashCode());
-		result = prime * result + ((this.revision == null)
+		                                                                : getChangedElementLocation().hashCode());
+		result = prime * result + ((getRevision() == null)
 		                                                  ? 0
-		                                                  : this.revision.hashCode());
+		                                                  : getRevision().hashCode());
 		return result;
 	}
 	
@@ -185,7 +189,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@SuppressWarnings ("rawtypes")
 	private void setChangedElementLocation(final JavaElementLocation changedElement) {
-		this.changedElementLocation = changedElement;
+		changedElementLocation = changedElement;
 	}
 	
 	/**

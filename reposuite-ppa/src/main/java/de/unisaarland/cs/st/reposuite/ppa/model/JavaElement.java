@@ -70,18 +70,18 @@ public abstract class JavaElement implements Annotated {
 			return false;
 		}
 		JavaElement other = (JavaElement) obj;
-		if (this.elementType == null) {
-			if (other.elementType != null) {
+		if (getElementType() == null) {
+			if (other.getElementType() != null) {
 				return false;
 			}
-		} else if (!this.elementType.equals(other.elementType)) {
+		} else if (!getElementType().equals(other.getElementType())) {
 			return false;
 		}
-		if (this.fullQualifiedName == null) {
-			if (other.fullQualifiedName != null) {
+		if (getFullQualifiedName() == null) {
+			if (other.getFullQualifiedName() != null) {
 				return false;
 			}
-		} else if (!this.fullQualifiedName.equals(other.fullQualifiedName)) {
+		} else if (!getFullQualifiedName().equals(other.getFullQualifiedName())) {
 			return false;
 		}
 		return true;
@@ -92,7 +92,7 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Id
 	public String getElementType() {
-		return this.elementType;
+		return elementType;
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Id
 	public String getFullQualifiedName() {
-		return this.fullQualifiedName;
+		return fullQualifiedName;
 	}
 	
 	/**
@@ -112,9 +112,9 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getPackageName() {
-		int index = this.getFullQualifiedName().lastIndexOf(".");
+		int index = getFullQualifiedName().lastIndexOf(".");
 		if (index > 0) {
-			return this.getFullQualifiedName().substring(index);
+			return getFullQualifiedName().substring(index);
 		}
 		return "";
 	}
@@ -147,17 +147,18 @@ public abstract class JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.elementType == null)
+		result = prime * result + ((getElementType() == null)
 		                                                     ? 0
-		                                                     : this.elementType.hashCode());
-		result = prime * result + ((this.fullQualifiedName == null)
+		                                                     : getElementType().hashCode());
+		result = prime * result + ((getFullQualifiedName() == null)
 		                                                           ? 0
-		                                                           : this.fullQualifiedName.hashCode());
+		                                                           : getFullQualifiedName().hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param elementType the elementType to set
+	 * @param elementType
+	 *            the elementType to set
 	 */
 	public void setElementType(final String elementType) {
 		this.elementType = elementType;
@@ -171,7 +172,7 @@ public abstract class JavaElement implements Annotated {
 	 * @return the fullQualifiedName
 	 */
 	public void setFullQualifiedName(final String name) {
-		this.fullQualifiedName = name;
+		fullQualifiedName = name;
 	}
 	
 	/*
@@ -180,6 +181,6 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "JavaElement [fullQualifiedName=" + this.getFullQualifiedName() + "]";
+		return "JavaElement [fullQualifiedName=" + getFullQualifiedName() + "]";
 	}
 }
