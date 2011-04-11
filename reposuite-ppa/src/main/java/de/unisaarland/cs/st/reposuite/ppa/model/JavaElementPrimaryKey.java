@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -14,7 +12,6 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-@Embeddable
 public class JavaElementPrimaryKey implements Annotated, Serializable {
 	
 	/** The Constant serialVersionUID. */
@@ -26,10 +23,8 @@ public class JavaElementPrimaryKey implements Annotated, Serializable {
 	/** The element type. */
 	private String            elementType;
 	
-	/**
-	 * Instantiates a new java element primary key.
-	 */
-	protected JavaElementPrimaryKey() {
+	public JavaElementPrimaryKey() {
+		
 	}
 	
 	/**

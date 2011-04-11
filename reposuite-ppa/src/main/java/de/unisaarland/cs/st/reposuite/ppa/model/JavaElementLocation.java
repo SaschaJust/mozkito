@@ -107,6 +107,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
 	        @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
+		
 		if (element instanceof JavaElementDefinition) {
 			Condition.check(bodyStartLine <= endLine,
 			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
@@ -320,7 +321,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * 
 	 * @return the element
 	 */
-	@Type (value = JavaElement.class)
+	@Type (JavaElement.class)
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public T getElement() {
 		return this.element;
@@ -382,6 +383,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the xML representation
 	 */
 	@NoneNull
+	@Transient
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement("JavaElementLocation");
 		

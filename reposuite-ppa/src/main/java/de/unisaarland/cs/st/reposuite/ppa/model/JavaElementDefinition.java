@@ -8,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-
-import org.apache.openjpa.persistence.jdbc.ForeignKey;
-
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
@@ -19,7 +16,6 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <kim@cs.uni-saarland.de>
  */
 @Entity
-@ForeignKey (name = "JAVA_ELEM_DEF")
 public abstract class JavaElementDefinition extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */

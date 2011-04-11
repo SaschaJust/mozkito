@@ -4,8 +4,9 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
@@ -24,13 +25,15 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  */
 @Entity
 @Inheritance (strategy = InheritanceType.TABLE_PER_CLASS)
+@IdClass (JavaElementPrimaryKey.class)
 public abstract class JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long                           serialVersionUID = -8960043672858454394L;
+	private static final long serialVersionUID = -8960043672858454394L;
 	
-	/** The primary key. */
-	private JavaElementPrimaryKey                       primaryKey;
+	private String            fullQualifiedName;
+	
+	private String            elementType;
 	
 	/**
 	 * Instantiates a new java element.
@@ -47,19 +50,49 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@NoneNull
 	public JavaElement(final String fullQualifiedName) {
-		this.setPrimaryKey(new JavaElementPrimaryKey(fullQualifiedName, this.getClass()));
+		setFullQualifiedName(fullQualifiedName);
+		setElementType(this.getClass().getCanonicalName());
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof JavaElement)) {
+			return false;
+		}
 		JavaElement other = (JavaElement) obj;
-		if (primaryKey == null) {
-			if (other.primaryKey != null) return false;
-		} else if (!primaryKey.equals(other.primaryKey)) return false;
+		if (this.elementType == null) {
+			if (other.elementType != null) {
+				return false;
+			}
+		} else if (!this.elementType.equals(other.elementType)) {
+			return false;
+		}
+		if (this.fullQualifiedName == null) {
+			if (other.fullQualifiedName != null) {
+				return false;
+			}
+		} else if (!this.fullQualifiedName.equals(other.fullQualifiedName)) {
+			return false;
+		}
 		return true;
+	}
+	
+	/**
+	 * @return the elementType
+	 */
+	@Id
+	public String getElementType() {
+		return this.elementType;
 	}
 	
 	/**
@@ -67,9 +100,9 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	@Transient
+	@Id
 	public String getFullQualifiedName() {
-		return this.primaryKey.getFullQualifiedName();
+		return this.fullQualifiedName;
 	}
 	
 	/**
@@ -84,16 +117,6 @@ public abstract class JavaElement implements Annotated {
 			return this.getFullQualifiedName().substring(index);
 		}
 		return "";
-	}
-	
-	/**
-	 * Gets the primary key.
-	 * 
-	 * @return the primary key
-	 */
-	@EmbeddedId
-	public JavaElementPrimaryKey getPrimaryKey() {
-		return this.primaryKey;
 	}
 	
 	/**
@@ -116,14 +139,28 @@ public abstract class JavaElement implements Annotated {
 	 */
 	public abstract Element getXMLRepresentation(Document document);
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((primaryKey == null)
-				? 0
-				: primaryKey.hashCode());
+		result = prime * result + ((this.elementType == null)
+		                                                     ? 0
+		                                                     : this.elementType.hashCode());
+		result = prime * result + ((this.fullQualifiedName == null)
+		                                                           ? 0
+		                                                           : this.fullQualifiedName.hashCode());
 		return result;
+	}
+	
+	/**
+	 * @param elementType the elementType to set
+	 */
+	public void setElementType(final String elementType) {
+		this.elementType = elementType;
 	}
 	
 	/**
@@ -133,20 +170,8 @@ public abstract class JavaElement implements Annotated {
 	 *            the new full qualified name
 	 * @return the fullQualifiedName
 	 */
-	@Transient
-	protected void setFullQualifiedName(final String name) {
-		this.primaryKey.setFullQualifiedName(name);
-	}
-	
-	
-	/**
-	 * Sets the primary key.
-	 * 
-	 * @param primaryKey
-	 *            the new primary key
-	 */
-	private void setPrimaryKey(final JavaElementPrimaryKey primaryKey) {
-		this.primaryKey = primaryKey;
+	public void setFullQualifiedName(final String name) {
+		this.fullQualifiedName = name;
 	}
 	
 	/*

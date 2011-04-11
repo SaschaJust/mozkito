@@ -24,7 +24,7 @@ public class PPAPersistenceUtil {
 	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil,
 	                                         final JavaElement e) {
 		Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
-		criteria.eq("primaryKey", e.getPrimaryKey());
+		criteria.eq("fullQualifiedName", e.getFullQualifiedName()).eq("elementType", e.getElementType());
 		List<? extends JavaElement> elements = persistenceUtil.load(criteria);
 		if (elements.isEmpty()) {
 			return null;
@@ -36,24 +36,6 @@ public class PPAPersistenceUtil {
 			return null;
 		}
 		return elements.get(0);
-	}
-	
-	/**
-	 * Gets the session java element.
-	 * 
-	 * @param persistenceUtil
-	 *            the persistence middleware util
-	 * @param e
-	 *            the e
-	 * @return the session java element
-	 */
-	public static JavaElement getSessionJavaElement(final PersistenceUtil persistenceUtil,
-	                                                final JavaElement e) {
-		// Object cached = session.get(JavaElement.class, e.getPrimaryKey());
-		// if (cached != null) {
-		// return (JavaElement) cached;
-		// }
-		return null;
 	}
 	
 }

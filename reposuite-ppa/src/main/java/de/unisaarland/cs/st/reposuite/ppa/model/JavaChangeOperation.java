@@ -46,13 +46,6 @@ public class JavaChangeOperation implements Annotated {
 	
 	/**
 	 * Instantiates a new java change operation.
-	 */
-	@SuppressWarnings ("unused")
-	private JavaChangeOperation() {
-	}
-	
-	/**
-	 * Instantiates a new java change operation.
 	 * 
 	 * @param type
 	 *            the type
@@ -69,6 +62,10 @@ public class JavaChangeOperation implements Annotated {
 		setRevision(revision);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -157,6 +154,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the document
 	 * @return the xML representation
 	 */
+	@Transient
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement(this.changeType.toString());
 		// Attr revision = document.createAttribute("revision");

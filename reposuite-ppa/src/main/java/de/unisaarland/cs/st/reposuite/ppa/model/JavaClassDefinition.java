@@ -37,7 +37,6 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	private final static String             anonCheck        = ".*\\$\\d+";
 	
 	/** The anon counter. */
-	@Transient
 	private final HashMap<Integer, Integer> anonCounters     = new HashMap<Integer, Integer>();
 	
 	/** The anonym class. */
@@ -85,6 +84,14 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
+	}
+	
+	/**
+	 * @return the anonCounters
+	 */
+	@Transient
+	private HashMap<Integer, Integer> getAnonCounters() {
+		return this.anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
@@ -141,14 +148,14 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
 		if (this.isAnonymClass()) {
-			return this.parent.nextAnonCounter(v);
+			return getParent().nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
-			if (!this.anonCounters.containsKey(vId)) {
-				this.anonCounters.put(vId, 0);
+			if (!this.getAnonCounters().containsKey(vId)) {
+				this.getAnonCounters().put(vId, 0);
 			}
-			this.anonCounters.put(vId, this.anonCounters.get(vId) + 1);
-			return this.anonCounters.get(vId);
+			this.getAnonCounters().put(vId, this.getAnonCounters().get(vId) + 1);
+			return this.getAnonCounters().get(vId);
 		}
 	}
 	
@@ -164,6 +171,9 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 		this.anonymClass = anonymClass;
 	}
 	
+	/**
+	 * @param parent
+	 */
 	private void setParent(final JavaClassDefinition parent) {
 		this.parent = parent;
 	}
