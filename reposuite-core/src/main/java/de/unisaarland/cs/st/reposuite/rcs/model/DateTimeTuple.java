@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -60,7 +59,9 @@ public class DateTimeTuple implements Annotated {
 	@Column (name = "newValue")
 	@Temporal (TemporalType.TIMESTAMP)
 	protected Date getJavaNewValue() {
-		return (getNewValue() != null ? getNewValue().toDate() : null);
+		return (getNewValue() != null
+		                             ? getNewValue().toDate()
+		                             : null);
 	}
 	
 	/**
@@ -70,7 +71,9 @@ public class DateTimeTuple implements Annotated {
 	@Column (name = "oldValue")
 	@Temporal (TemporalType.TIMESTAMP)
 	protected Date getJavaOldValue() {
-		return getOldValue() != null ? getOldValue().toDate() : null;
+		return getOldValue() != null
+		                            ? getOldValue().toDate()
+		                            : null;
 	}
 	
 	/**
@@ -89,23 +92,22 @@ public class DateTimeTuple implements Annotated {
 		return this.oldValue;
 	}
 	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @param date
 	 */
 	protected void setJavaNewValue(final Date date) {
-		setNewValue(date != null ? new DateTime(date) : null);
+		setNewValue(date != null
+		                        ? new DateTime(date)
+		                        : null);
 	}
 	
 	/**
 	 * @param date
 	 */
 	protected void setJavaOldValue(final Date date) {
-		setOldValue(date != null ? new DateTime(date) : null);
+		setOldValue(date != null
+		                        ? new DateTime(date)
+		                        : null);
 	}
 	
 	/**

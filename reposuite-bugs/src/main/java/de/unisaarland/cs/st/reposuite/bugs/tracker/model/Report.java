@@ -4,9 +4,7 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,10 +29,13 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Severity;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
@@ -52,35 +54,35 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * 
 	 */
-	private static final long        serialVersionUID = 3241584366125944268L;
-	private long                     id               = -1l;
-	private String                   category;
-	private final SortedSet<Comment> comments         = new TreeSet<Comment>();
-	private String                   description;
-	private Severity                 severity;
-	private Priority                 priority;
-	private Resolution               resolution;
-	private String                   subject;
-	private final SortedSet<Long>    siblings         = new TreeSet<Long>();
-	private History                  history          = new History();
-	private Status                   status;
-	private Type                     type;
-	private DateTime                 creationTimestamp;
-	private DateTime                 resolutionTimestamp;
-	private DateTime                 lastUpdateTimestamp;
-	private DateTime                 lastFetch;
-	private String                   version;
-	private String                   summary;
-	private String                   observedBehavior;
-	private String                   expectedBehavior;
-	private String                   stepsToReproduce;
-	private String                   component;
-	private String                   product;
-	private byte[]                   hash             = new byte[33];
+	private static final long  serialVersionUID = 3241584366125944268L;
+	private long               id               = -1l;
+	private String             category;
+	private SortedSet<Comment> comments         = new TreeSet<Comment>(new CommentComparator());
+	private String             description;
+	private Severity           severity;
+	private Priority           priority;
+	private Resolution         resolution;
+	private String             subject;
+	private SortedSet<Long>    siblings         = new TreeSet<Long>();
+	private History            history          = new History();
+	private Status             status;
+	private Type               type;
+	private DateTime           creationTimestamp;
+	private DateTime           resolutionTimestamp;
+	private DateTime           lastUpdateTimestamp;
+	private DateTime           lastFetch;
+	private String             version;
+	private String             summary;
+	private String             observedBehavior;
+	private String             expectedBehavior;
+	private String             stepsToReproduce;
+	private String             component;
+	private String             product;
+	private byte[]             hash             = new byte[33];
 	// assignedTo
 	// submitter
 	// resolver
-	private PersonContainer          personContainer  = new PersonContainer();
+	private PersonContainer    personContainer  = new PersonContainer();
 	
 	public Report() {
 		super();
@@ -88,34 +90,46 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * @param comment
+	 * @return 
 	 */
 	@Transient
-	public void addComment(@NotNull final Comment comment) {
-		Condition.notNull(this.comments,
+	public boolean addComment(@NotNull final Comment comment) {
+		Condition.notNull(getComments(),
 		                  "The container holding the comments must be initialized before adding a comment to the report.");
 		
-		boolean retval = this.comments.add(comment);
+		SortedSet<Comment> comments = getComments();
+		boolean ret = comments.add(comment);
+		setComments(comments);
 		comment.setBugReport(this);
-		Condition.check(retval, "Could not add comment with id %s (already existing).", comment.getId());
+		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
+		return ret;
 	}
 	
 	/**
 	 * @param historyElement
+	 * @return 
 	 */
 	@Transient
-	public void addHistoryElement(@NotNull final HistoryElement historyElement) {
-		Condition.notNull(this.history, "The history handler must not be null when adding a history element.");
-		this.history.add(historyElement);
+	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
+		Condition.notNull(getHistory(), "The history handler must not be null when adding a history element.");
+		History history = getHistory();
+		boolean ret = history.add(historyElement);
+		setHistory(history);
 		historyElement.setBugReport(this);
+		return ret;
 	}
 	
 	/**
 	 * @param sibling
+	 * @return 
 	 */
 	@Transient
-	public void addSibling(@NotNull final Long sibling) {
-		Condition.notNull(this.siblings, "The sibling handler must not be null when adding a sibling.");
-		this.siblings.add(sibling);
+	public boolean addSibling(@NotNull final Long sibling) {
+		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
+		SortedSet<Long> siblings = getSiblings();
+		boolean ret = siblings.add(sibling);
+		setSiblings(siblings);
+		return ret;
 	}
 	
 	/*
@@ -139,7 +153,7 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Transient
 	public Person getAssignedTo() {
-		return this.getPersonContainer().get("assignedTo");
+		return getPersonContainer().get("assignedTo");
 	}
 	
 	/**
@@ -153,7 +167,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the comments
 	 */
-	@Sort (type = SortType.COMPARATOR, comparator = CommentComparator.class)
+	@OrderBy
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
 		return this.comments;
@@ -336,7 +350,7 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getResolver() {
-		return this.getPersonContainer().get("resolver");
+		return getPersonContainer().get("resolver");
 	}
 	
 	/**
@@ -351,7 +365,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return the siblings
 	 */
 	@ElementCollection
-	@Sort (type = SortType.NATURAL)
+	@OrderBy
 	public SortedSet<Long> getSiblings() {
 		return this.siblings;
 	}
@@ -387,7 +401,7 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Transient
 	public Person getSubmitter() {
-		return this.getPersonContainer().get("submitter");
+		return getPersonContainer().get("submitter");
 	}
 	
 	/**
@@ -415,24 +429,6 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.version;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		Collection<Annotated> ret = new LinkedList<Annotated>();
-		for (Comment comment : this.comments) {
-			ret.add(comment.getPersonContainer());
-		}
-		for (HistoryElement historyElement : this.history.getElements()) {
-			ret.addAll(historyElement.getPersonContainers());
-		}
-		ret.add(this.personContainer);
-		return ret;
-	}
-	
 	/**
 	 * @param assignedTo
 	 *            the assignedTo to set
@@ -458,10 +454,12 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the comments to set
 	 */
 	public void setComments(final SortedSet<Comment> comments) {
-		this.comments.clear();
-		this.comments.addAll(comments);
+		this.comments = comments;
 	}
 	
+	/**
+	 * @param component
+	 */
 	public void setComponent(final String component) {
 		this.component = component;
 	}
@@ -471,9 +469,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
-		this.creationTimestamp = creationTimestamp != null
-		                                                  ? new DateTime(creationTimestamp)
-		                                                  : null;
+		setCreationTimestamp(creationTimestamp != null
+		                                              ? new DateTime(creationTimestamp)
+		                                              : null);
 	}
 	
 	/**
@@ -537,9 +535,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
-		this.lastFetch = lastFetch != null
-		                                  ? new DateTime(lastFetch)
-		                                  : null;
+		setLastFetch(lastFetch != null
+		                              ? new DateTime(lastFetch)
+		                              : null);
 	}
 	
 	/**
@@ -547,9 +545,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
-		this.lastUpdateTimestamp = date != null
-		                                       ? new DateTime(date)
-		                                       : null;
+		setLastUpdateTimestamp(date != null
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
 	
 	/**
@@ -598,11 +596,14 @@ public class Report implements Annotated, Comparable<Report> {
 		this.resolution = resolution;
 	}
 	
+	/**
+	 * @param date
+	 */
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
-		this.resolutionTimestamp = date != null
-		                                       ? new DateTime(date)
-		                                       : null;
+		setResolutionTimestamp(date != null
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
 	
 	/**
@@ -633,8 +634,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the siblings to set
 	 */
 	public void setSiblings(final SortedSet<Long> siblings) {
-		this.siblings.clear();
-		this.siblings.addAll(siblings);
+		this.siblings = siblings;
 	}
 	
 	/**
@@ -702,32 +702,32 @@ public class Report implements Annotated, Comparable<Report> {
 	public String toString() {
 		String hash;
 		try {
-			hash = JavaUtils.byteArrayToHexString(this.hash);
+			hash = JavaUtils.byteArrayToHexString(getHash());
 		} catch (UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		        + this.id
+		        + getId()
 		        + ", assignedTo="
 		        + getAssignedTo()
 		        + ", category="
-		        + this.category
+		        + getCategory()
 		        + ", comments="
-		        + (this.comments != null
-		                                ? this.comments.size()
+		        + (getComments() != null
+		                                ? getComments().size()
 		                                : 0)
 		        + ", description="
-		        + this.description.substring(0,
-		                                     this.description.length() > 10
+		        + getDescription().substring(0,
+		                                     getDescription().length() > 10
 		                                                                   ? 10
-		                                                                   : Math.max(this.description.length() - 1, 0))
-		        + "... , severity=" + this.severity + ", priority=" + this.priority + ", resolution=" + this.resolution
+		                                                                   : Math.max(getDescription().length() - 1, 0))
+		        + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
 		        + ", submitter=" + getSubmitter() + ", subject="
-		        + this.subject.substring(0, this.subject.length() > 10
+		        + getSubject().substring(0, getSubject().length() > 10
 		                                                              ? 10
-		                                                              : Math.max(this.subject.length() - 1, 0))
-		        + "... , resolver=" + getResolver() + ", status=" + this.status + ", type=" + this.type
-		        + ", creationTimestamp=" + this.creationTimestamp + ", lastFetch=" + this.lastFetch + ", hash=" + hash
+		                                                              : Math.max(getSubject().length() - 1, 0))
+		        + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
+		        + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
 		        + "]";
 	}
 	

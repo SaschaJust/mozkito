@@ -30,7 +30,7 @@ public class Main {
 			}
 			throw new RuntimeException();
 		}
-		//		ReposuiteDeltaInfo core = new ReposuiteDeltaInfo();
-		//		core.run();
+		// ReposuiteDeltaInfo core = new ReposuiteDeltaInfo();
+		// core.run();
 	}
 }

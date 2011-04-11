@@ -52,10 +52,18 @@
 			<version>3.6.0</version>
 		</dependency>
 		<dependency>
+<<<<<<< local
 			<groupId>org.eclipse</groupId>
 			<artifactId>osgi</artifactId>
 			<version>3.6.0</version>
+=======
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung2</artifactId>
+			<version>2.0.1</version>
+			<type>pom</type>
+>>>>>>> other
 		</dependency>
+<<<<<<< local
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>core-contenttype</artifactId>
@@ -68,6 +76,8 @@
 		</dependency>
 
 
+=======
+>>>>>>> other
 	</dependencies>
 	<properties>
 		<moduleName>ppa</moduleName>

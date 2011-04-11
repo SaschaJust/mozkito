@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.persistence.Embeddable;
 
@@ -46,7 +45,8 @@ public class JavaElementPrimaryKey implements Annotated, Serializable {
 		this.setElementType(clazz.toString());
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class JavaElementPrimaryKey implements Annotated, Serializable {
 		} else if ((o != null) && (o instanceof JavaElementPrimaryKey) && (o.hashCode() == this.hashCode())) {
 			JavaElementPrimaryKey anotherKey = (JavaElementPrimaryKey) o;
 			return anotherKey.fullQualifiedName.equals(this.fullQualifiedName)
-			&& anotherKey.elementType.equals(this.elementType);
+			        && anotherKey.elementType.equals(this.elementType);
 		} else {
 			return false;
 		}
@@ -80,20 +80,13 @@ public class JavaElementPrimaryKey implements Annotated, Serializable {
 		return this.fullQualifiedName;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return this.getFullQualifiedName().hashCode() + 13 * this.getElementType().hashCode();
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**
@@ -116,13 +109,15 @@ public class JavaElementPrimaryKey implements Annotated, Serializable {
 		this.fullQualifiedName = name;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-		.append("fullQualifiedName", this.getFullQualifiedName()).append("elementType", this.getElementType())
-		.toString();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("fullQualifiedName",
+		                                                                        this.getFullQualifiedName())
+		                                                                .append("elementType", this.getElementType())
+		                                                                .toString();
 	}
 }

@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
-import java.util.Collection;
-
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 
@@ -49,15 +47,6 @@ public class IntegerTuple implements Annotated {
 	@Basic
 	public Integer getOldValue() {
 		return this.oldValue;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

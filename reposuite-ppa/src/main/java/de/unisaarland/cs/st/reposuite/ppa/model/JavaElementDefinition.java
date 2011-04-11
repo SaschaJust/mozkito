@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.hibernate.annotations.ForeignKey;
+import org.apache.openjpa.persistence.jdbc.ForeignKey;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 public abstract class JavaElementDefinition extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long   serialVersionUID = 1535115107166147270L;
+	private static final long serialVersionUID = 1535115107166147270L;
 	
 	/**
 	 * Instantiates a new java element definition.

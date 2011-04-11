@@ -5,9 +5,8 @@ package de.unisaarland.cs.st.reposuite.mapping;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
-
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
@@ -20,18 +19,18 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
 	
-	private final HibernateUtil hibernateUtil;
+	private final PersistenceUtil persistenceUtil;
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
-	 * @param hibernateUtil 
+	 * @param persistenceUtil 
 	 */
 	public MappingsReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	        final HibernateUtil hibernateUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, MappingsReader.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
@@ -50,9 +49,8 @@ public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
-			@SuppressWarnings ("unchecked")
-			List<RCSTransaction> list = criteria.list();
+			Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
+			List<RCSTransaction> list = this.persistenceUtil.load(criteria);
 			
 			for (RCSTransaction transaction : list) {
 				if (Logger.logDebug()) {

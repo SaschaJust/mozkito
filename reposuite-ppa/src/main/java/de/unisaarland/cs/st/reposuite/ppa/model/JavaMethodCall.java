@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -55,18 +54,18 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	}
 	
 	/** The signature. */
-	private List<String>          signature;
+	private List<String> signature;
 	
 	/** The called package name. */
-	private String                calledPackageName = "<unknown>";
+	private String       calledPackageName = "<unknown>";
 	
 	/** The called class name. */
-	private String                calledClassName   = "<unknown>";
+	private String       calledClassName   = "<unknown>";
 	
 	/**
 	 * Instantiates a new java method call.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private JavaMethodCall() {
 		super();
 	}
@@ -88,14 +87,17 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		int index = fullQualifiedName.lastIndexOf(".");
 		Condition.check(index < fullQualifiedName.length(),
 		                "Could not determine called class name. Last index of `.` is not less than length of string: "
-		                + fullQualifiedName);
+		                        + fullQualifiedName);
 		this.calledPackageName = fullQualifiedName.substring(0, index);
-		this.calledClassName = fullQualifiedName.substring(index+1, fullQualifiedName.length());
+		this.calledClassName = fullQualifiedName.substring(index + 1, fullQualifiedName.length());
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#equals(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#equals(java.lang
+	 * .Object)
 	 */
 	@Override
 	public boolean equals(final Object obj) {
@@ -158,8 +160,11 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		return this.signature;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation(org.w3c.dom.Document)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
+	 * (org.w3c.dom.Document)
 	 */
 	@Override
 	@NoneNull
@@ -173,27 +178,17 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		return thisElement;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * Sets the called class name.
 	 * 
 	 * @param calledClassName
 	 *            the new called class name
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	@NoneNull
 	private void setCalledClassName(final String calledClassName) {
 		this.calledClassName = calledClassName;
 	}
-	
-	
 	
 	/**
 	 * Sets the called package name.
@@ -213,7 +208,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param signature
 	 *            the new signature
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	@NoneNull
 	private void setSignature(final List<String> signature) {
 		this.signature = signature;

@@ -1,15 +1,8 @@
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -18,67 +11,91 @@ public class RevisionPrimaryKey implements Annotated, Serializable {
 	
 	private static final long serialVersionUID = -6589083902512542247L;
 	
-	private RCSTransaction    transaction;
+	private String            transaction;
 	
-	private RCSFile           changedFile;
+	private long              changedFile;
 	
-	protected RevisionPrimaryKey() {
+	public RevisionPrimaryKey() {
 	}
 	
-	public RevisionPrimaryKey(final RCSFile changedFile, final RCSTransaction transaction) {
-		this.changedFile = changedFile;
-		this.transaction = transaction;
-	}
-	
-	public RevisionPrimaryKey(final RCSTransaction transaction, final RCSFile changedFile) {
-		super();
+	/**
+	 * @param transaction
+	 * @param changedFile
+	 */
+	public RevisionPrimaryKey(final String transaction, final long changedFile) {
 		this.transaction = transaction;
 		this.changedFile = changedFile;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(final Object o) {
-		if (o == this) {
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		} else if ((o != null) && (o instanceof RevisionPrimaryKey) && (o.hashCode() == this.hashCode())) {
-			RevisionPrimaryKey anotherKey = (RevisionPrimaryKey) o;
-			return anotherKey.transaction.equals(this.transaction) && anotherKey.changedFile.equals(this.changedFile);
-		} else {
+		}
+		if (obj == null) {
 			return false;
 		}
+		if (!(obj instanceof RevisionPrimaryKey)) {
+			return false;
+		}
+		RevisionPrimaryKey other = (RevisionPrimaryKey) obj;
+		if (this.changedFile != other.changedFile) {
+			return false;
+		}
+		if (this.transaction == null) {
+			if (other.transaction != null) {
+				return false;
+			}
+		} else if (!this.transaction.equals(other.transaction)) {
+			return false;
+		}
+		return true;
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public RCSFile getChangedFile() {
+	/**
+	 * @return
+	 */
+	public long getChangedFile() {
 		return this.changedFile;
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public RCSTransaction getTransaction() {
+	/**
+	 * @return
+	 */
+	public String getTransaction() {
 		return this.transaction;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return this.transaction.hashCode() + 13 * this.changedFile.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (this.changedFile ^ (this.changedFile >>> 32));
+		result = prime * result + ((this.transaction == null)
+		                                                     ? 0
+		                                                     : this.transaction.hashCode());
+		return result;
 	}
 	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
-	public void setChangedFile(final RCSFile changedFile) {
+	/**
+	 * @param changedFile
+	 */
+	public void setChangedFile(final long changedFile) {
 		this.changedFile = changedFile;
 	}
 	
-	public void setTransaction(final RCSTransaction transaction) {
+	/**
+	 * @param transaction
+	 */
+	public void setTransaction(final String transaction) {
 		this.transaction = transaction;
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("transaction", this.transaction)
-		        .append("changedFile", this.changedFile).toString();
 	}
 }

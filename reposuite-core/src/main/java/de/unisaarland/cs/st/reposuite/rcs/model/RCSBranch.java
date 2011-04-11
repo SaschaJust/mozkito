@@ -18,7 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
+import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -218,11 +218,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return this.name;
 	}
 	
-	@SuppressWarnings ("unused")
-	private boolean getOpen() {
-		return this.open;
-	}
-	
 	/**
 	 * Gets the parent.
 	 * 
@@ -254,18 +249,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public void markOpen() {
-		this.mergedIn = null;
+		setMergedIn(null);
 		setOpen(true);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#getSaveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**
@@ -299,6 +284,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.generatedId = generatedId;
 	}
 	
+	/**
+	 * @param mergedIn
+	 */
 	public void setMergedIn(final String mergedIn) {
 		if (!isOpen()) {
 			this.mergedIn = mergedIn;

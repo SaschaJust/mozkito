@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
-import java.util.Collection;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +38,7 @@ public class JavaChangeOperation implements Annotated {
 	private ChangeType          changeType;
 	
 	/** The changed element. */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
@@ -49,7 +47,7 @@ public class JavaChangeOperation implements Annotated {
 	/**
 	 * Instantiates a new java change operation.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private JavaChangeOperation() {
 	}
 	
@@ -63,7 +61,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the revision
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@NoneNull
 	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
 		setChangeType(type);
@@ -73,16 +71,30 @@ public class JavaChangeOperation implements Annotated {
 	
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
 		JavaChangeOperation other = (JavaChangeOperation) obj;
-		if (changedElementLocation == null) {
-			if (other.changedElementLocation != null) return false;
-		} else if (!changedElementLocation.equals(other.changedElementLocation)) return false;
-		if (revision == null) {
-			if (other.revision != null) return false;
-		} else if (!revision.equals(other.revision)) return false;
+		if (this.changedElementLocation == null) {
+			if (other.changedElementLocation != null) {
+				return false;
+			}
+		} else if (!this.changedElementLocation.equals(other.changedElementLocation)) {
+			return false;
+		}
+		if (this.revision == null) {
+			if (other.revision != null) {
+				return false;
+			}
+		} else if (!this.revision.equals(other.revision)) {
+			return false;
+		}
 		return true;
 	}
 	
@@ -112,7 +124,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the change type
 	 */
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
 		return this.changeType;
 	}
@@ -123,7 +135,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
 		return this.id;
 	}
@@ -138,7 +150,6 @@ public class JavaChangeOperation implements Annotated {
 		return this.revision;
 	}
 	
-	
 	/**
 	 * Gets the xML representation.
 	 * 
@@ -148,9 +159,9 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	public Element getXMLRepresentation(final Document document) {
 		Element thisElement = document.createElement(this.changeType.toString());
-		//		Attr revision = document.createAttribute("revision");
-		//		revision.setNodeValue(this.getRevision().getTransaction().getId());
-		//		thisElement.setAttributeNode(revision);
+		// Attr revision = document.createAttribute("revision");
+		// revision.setNodeValue(this.getRevision().getTransaction().getId());
+		// thisElement.setAttributeNode(revision);
 		thisElement.appendChild(getChangedElementLocation().getXMLRepresentation(document));
 		return thisElement;
 	}
@@ -159,28 +170,14 @@ public class JavaChangeOperation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((changedElementLocation == null)
-				? 0
-				: changedElementLocation.hashCode());
-		result = prime * result + ((revision == null)
-				? 0
-				: revision.hashCode());
+		result = prime * result + ((this.changedElementLocation == null)
+		                                                                ? 0
+		                                                                : this.changedElementLocation.hashCode());
+		result = prime * result + ((this.revision == null)
+		                                                  ? 0
+		                                                  : this.revision.hashCode());
 		return result;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	public Collection<Annotated> saveFirst() {
-		//		HashSet<Annotated> set = new HashSet<Annotated>();
-		//		set.add(getChangedElementLocation());
-		//		return set;
-		return null;
-	}
-	
 	
 	/**
 	 * Sets the changed element.
@@ -188,7 +185,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	private void setChangedElementLocation(final JavaElementLocation changedElement) {
 		this.changedElementLocation = changedElement;
 	}
@@ -209,7 +206,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param id
 	 *            the new id
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private void setId(final long id) {
 		this.id = id;
 	}

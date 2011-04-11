@@ -27,7 +27,7 @@ public class RepoSuiteSettings {
 	
 	public static final boolean            debug           = (System.getProperty("debug") != null);
 	public static final String             reportThis      = "Please file a bug report with this error message here: "
-		+ "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
+	                                                               + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
 	private Map<String, RepoSuiteArgument> arguments       = new HashMap<String, RepoSuiteArgument>();
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
@@ -75,7 +75,8 @@ public class RepoSuiteSettings {
 		return true;
 	}
 	
-	protected void addToolInformation(final String tool, final String information) {
+	protected void addToolInformation(final String tool,
+	                                  final String information) {
 		this.toolInformation.put(tool, information);
 	}
 	
@@ -168,6 +169,7 @@ public class RepoSuiteSettings {
 			builder.append(FileUtils.lineSeparator);
 			builder.append(this.toolInformation.get(tool));
 			builder.append(FileUtils.lineSeparator);
+			builder.append(FileUtils.lineSeparator);
 		}
 		return builder.toString();
 	}
@@ -194,13 +196,13 @@ public class RepoSuiteSettings {
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					            + "` does not exists. Ignoring ...");
+					        + "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					            + "` is a directory. Ignoring ...");
+					        + "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;
 			}
@@ -254,10 +256,11 @@ public class RepoSuiteSettings {
 	 * @throws NoSuchFieldException
 	 *             If no argument with the specified name is registered.
 	 */
-	protected void setField(final String argument, final String value) throws NoSuchFieldException {
+	protected void setField(final String argument,
+	                        final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
-			                               + "The argument is not part of the current argument set.");
+			        + "The argument is not part of the current argument set.");
 		}
 		this.arguments.get(argument).setStringValue(value);
 	}
@@ -310,8 +313,10 @@ public class RepoSuiteSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-				                                arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
-				                                                                                   arg.toString()));
+				                                arg.getName(), arg instanceof MaskedStringArgument
+				                                                                                  ? passwordMask
+				                                                                                  : arg.getValue(),
+				                                arg.toString()));
 				
 			}
 		}
@@ -327,7 +332,9 @@ public class RepoSuiteSettings {
 	 */
 	private boolean validateSettings() {
 		Set<RepoSuiteArgument> defaultValueArgs = new HashSet<RepoSuiteArgument>();
-		boolean noDefaults = System.getProperty("denyDefaultValues") != null ? true : false;
+		boolean noDefaults = System.getProperty("denyDefaultValues") != null
+		                                                                    ? true
+		                                                                    : false;
 		for (RepoSuiteArgument arg : this.arguments.values()) {
 			if (!arg.wasSet()) {
 				if (noDefaults) {

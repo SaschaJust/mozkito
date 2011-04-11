@@ -15,7 +15,8 @@ public interface Intercepted<T> {
 	 * @param id
 	 * @param t
 	 */
-	public void add(String id, T t);
+	public T add(String id,
+	             T t);
 	
 	/**
 	 * @param id
@@ -32,5 +33,6 @@ public interface Intercepted<T> {
 	 * @param from
 	 * @param to
 	 */
-	public void replace(T from, T to);
+	public void replace(T from,
+	                    T to);
 }

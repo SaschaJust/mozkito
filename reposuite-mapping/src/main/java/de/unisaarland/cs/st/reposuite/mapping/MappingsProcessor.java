@@ -3,16 +3,13 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import java.util.List;
 import java.util.Set;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -26,25 +23,24 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
 	
-	private final HibernateUtil hibernateUtil;
-	private final MapScore      zeroScore = new MapScore(null, null);
+	private final PersistenceUtil persistenceUtil;
+	private final MapScore        zeroScore = new MapScore(null, null);
 	
 	/**
 	 * @param threadGroup
 	 * @param settings
-	 * @param hibernateUtil 
+	 * @param persistenceUtil 
 	 */
 	public MappingsProcessor(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	        final HibernateUtil hibernateUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, MappingsProcessor.class.getSimpleName(), settings);
-		this.hibernateUtil = hibernateUtil;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		try {
@@ -68,10 +64,10 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 						        + JavaUtils.collectionToString(candidates));
 					}
 					
-					Criteria criteria = this.hibernateUtil.createCriteria(Report.class);
-					criteria.add(Restrictions.in("id", candidates));
+					Criteria<Report> criteria = this.persistenceUtil.createCriteria(Report.class);
+					criteria.in("id", candidates);
 					
-					for (Report report : (List<Report>) criteria.list()) {
+					for (Report report : this.persistenceUtil.load(criteria)) {
 						if (Logger.logDebug()) {
 							Logger.debug("Processing mapping for " + transaction.getId() + " to " + report.getId()
 							        + ".");

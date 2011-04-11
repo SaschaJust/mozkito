@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -26,7 +27,7 @@ import net.ownhero.dev.kanuni.annotations.string.Trimmed;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.Index;
+import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -35,7 +36,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 @Entity
-@javax.persistence.Table (name = "person")
+@Table (name = "person")
 public class Person implements Annotated {
 	
 	/**
@@ -82,16 +83,14 @@ public class Person implements Annotated {
 		return keeper;
 	}
 	
-	private long                      generatedId;
-	
-	private final Set<String>         usernames      = new TreeSet<String>();
-	private final Set<String>         emailAddresses = new TreeSet<String>();
-	private final Set<String>         fullnames      = new TreeSet<String>();
-	
-	private final Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
+	private long                generatedId;
+	private Set<String>         usernames      = new TreeSet<String>();
+	private Set<String>         emailAddresses = new TreeSet<String>();
+	private Set<String>         fullnames      = new TreeSet<String>();
+	private Set<RCSTransaction> transactions   = new HashSet<RCSTransaction>();
 	
 	/**
-	 * Default constructor used by Hibernate
+	 * Default constructor used by persistence middleware
 	 */
 	protected Person() {
 	}
@@ -113,62 +112,90 @@ public class Person implements Annotated {
 	 * @param emails
 	 */
 	@Transient
-	public void addAllEmails(@NotNull final Set<String> emails) {
-		this.emailAddresses.addAll(emails);
+	public boolean addAllEmails(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> emails) {
+		boolean ret = false;
+		Set<String> addresses = getEmailAddresses();
+		ret = addresses.addAll(emails);
+		setEmailAddresses(addresses);
+		return ret;
 	}
 	
 	/**
 	 * @param fullnames
 	 */
 	@Transient
-	public void addAllFullnames(@NotNull final Set<String> fullnames) {
-		getFullnames().addAll(fullnames);
+	public boolean addAllFullnames(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> fullnames) {
+		boolean ret = false;
+		Set<String> names = getFullnames();
+		ret = names.addAll(fullnames);
+		setEmailAddresses(names);
+		return ret;
 	}
 	
 	/**
 	 * @param transactions
 	 */
 	@Transient
-	public void addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
-		getTransactions().addAll(transactions);
+	public boolean addAllTransactions(@NotNull final Set<RCSTransaction> transactions) {
+		boolean ret = false;
+		Set<RCSTransaction> rcstransactions = getTransactions();
+		ret = rcstransactions.addAll(transactions);
+		setTransactions(rcstransactions);
+		return ret;
 	}
 	
 	/**
 	 * @param usernames
 	 */
 	@Transient
-	public void addAllUsernames(@NotNull final Set<String> usernames) {
-		getUsernames().addAll(usernames);
+	public boolean addAllUsernames(@NotNull final Set<String> usernames) {
+		boolean ret = false;
+		Set<String> names = getUsernames();
+		ret = names.addAll(usernames);
+		setEmailAddresses(names);
+		return ret;
 	}
 	
 	/**
 	 * @param email
 	 */
 	@Transient
-	public void addEmail(final String email) {
+	public boolean addEmail(final String email) {
+		boolean ret = false;
 		if (email != null) {
-			this.getEmailAddresses().add(email);
+			Set<String> addresses = getEmailAddresses();
+			ret = addresses.add(email);
+			setEmailAddresses(addresses);
 		}
+		return ret;
 	}
 	
 	/**
 	 * @param fullname
 	 */
 	@Transient
-	public void addFullname(final String fullname) {
+	public boolean addFullname(final String fullname) {
+		boolean ret = false;
 		if (fullname != null) {
-			this.fullnames.add(fullname);
+			Set<String> names = getFullnames();
+			ret = names.add(fullname);
+			setFullnames(names);
 		}
+		return ret;
 	}
 	
 	/**
 	 * @param username
 	 */
 	@Transient
-	public void addUsername(final String username) {
+	public boolean addUsername(final String username) {
+		boolean ret = false;
 		if (username != null) {
-			this.usernames.add(username);
+			Set<String> names = getUsernames();
+			ret = names.add(username);
+			setUsernames(names);
 		}
+		return ret;
 	}
 	
 	/**
@@ -179,8 +206,11 @@ public class Person implements Annotated {
 	 *            the transaction
 	 */
 	@Transient
-	protected void assignTransaction(@NotNull final RCSTransaction transaction) {
-		this.transactions.add(transaction);
+	protected boolean assignTransaction(@NotNull final RCSTransaction transaction) {
+		Set<RCSTransaction> transactions = getTransactions();
+		boolean ret = transactions.add(transaction);
+		setTransactions(transactions);
+		return ret;
 	}
 	
 	/**
@@ -188,7 +218,7 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public void clearTransaction() {
-		this.transactions.clear();
+		setTransactions(new HashSet<RCSTransaction>());
 	}
 	
 	/*
@@ -224,7 +254,7 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public RCSTransaction getFirstCommit() {
-		return this.transactions.iterator().next();
+		return getTransactions().iterator().next();
 	}
 	
 	/**
@@ -242,7 +272,7 @@ public class Person implements Annotated {
 	@Index (name = "idx_personid")
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	private long getGeneratedId() {
+	protected long getGeneratedId() {
 		return this.generatedId;
 	}
 	
@@ -252,10 +282,12 @@ public class Person implements Annotated {
 	@Transient
 	public RCSTransaction getLatestCommit() {
 		RCSTransaction rcsTransaction = null;
-		Iterator<RCSTransaction> iterator = this.transactions.iterator();
+		Iterator<RCSTransaction> iterator = getTransactions().iterator();
+		
 		while (iterator.hasNext()) {
 			rcsTransaction = iterator.next();
 		}
+		
 		return rcsTransaction;
 	}
 	
@@ -283,17 +315,15 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.emailAddresses.isEmpty())
+		result = prime * result + ((getEmailAddresses().isEmpty())
 		                                                          ? 0
-		                                                          : this.emailAddresses.iterator().next().hashCode());
-		result = prime * result + ((this.fullnames.isEmpty())
+		                                                          : getEmailAddresses().iterator().next().hashCode());
+		result = prime * result + ((getFullnames().isEmpty())
 		                                                     ? 0
-		                                                     : this.fullnames.iterator().next().hashCode());
-		result = prime * result + ((this.usernames.isEmpty())
+		                                                     : getFullnames().iterator().next().hashCode());
+		result = prime * result + ((getUsernames().isEmpty())
 		                                                     ? 0
-		                                                     : this.usernames.iterator().next().hashCode());
-		// result = prime * result + (int) (this.generatedId ^ (this.generatedId
-		// >>> 32));
+		                                                     : getUsernames().iterator().next().hashCode());
 		return result;
 	}
 	
@@ -317,23 +347,11 @@ public class Person implements Annotated {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.persistence.Annotated#saveFirst()
-	 */
-	@Override
-	@Transient
-	public Collection<Annotated> saveFirst() {
-		return null;
-	}
-	
 	/**
 	 * @param emailAddresses
 	 */
-	@SuppressWarnings ("unused")
-	private void setEmailAddresses(final Set<String> emailAddresses) {
-		this.emailAddresses.clear();
-		this.emailAddresses.addAll(emailAddresses);
+	protected void setEmailAddresses(final Set<String> emailAddresses) {
+		this.emailAddresses = emailAddresses;
 	}
 	
 	/**
@@ -341,8 +359,7 @@ public class Person implements Annotated {
 	 *            the fullnames to set
 	 */
 	protected void setFullnames(final Set<String> fullnames) {
-		this.fullnames.clear();
-		this.fullnames.addAll(fullnames);
+		this.fullnames = fullnames;
 	}
 	
 	/**
@@ -358,17 +375,14 @@ public class Person implements Annotated {
 	 *            the transactions to set
 	 */
 	protected void setTransactions(final Set<RCSTransaction> transactions) {
-		this.transactions.clear();
-		this.transactions.addAll(transactions);
+		this.transactions = transactions;
 	}
 	
 	/**
 	 * @param usernames
 	 */
-	@SuppressWarnings ("unused")
 	private void setUsernames(final Set<String> usernames) {
-		this.usernames.clear();
-		this.usernames.addAll(usernames);
+		this.usernames = usernames;
 	}
 	
 	/*
@@ -381,13 +395,13 @@ public class Person implements Annotated {
 		builder.append("Person [generatedId=");
 		builder.append(getGeneratedId());
 		builder.append(", usernames=");
-		builder.append(this.usernames);
+		builder.append(getUsernames());
 		builder.append(", emailAddresses=");
-		builder.append(this.emailAddresses);
+		builder.append(getEmailAddresses());
 		builder.append(", fullnames=");
-		builder.append(this.fullnames);
+		builder.append(getFullnames());
 		builder.append(", transactions=");
-		builder.append(this.transactions.size());
+		builder.append(getTransactions().size());
 		builder.append(", hashcode=");
 		builder.append(hashCode());
 		builder.append("]");

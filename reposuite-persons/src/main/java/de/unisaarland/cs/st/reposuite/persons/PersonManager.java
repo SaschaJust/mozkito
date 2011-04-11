@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -28,10 +27,10 @@ public class PersonManager {
 	private final Map<String, Person>      usernameMap = new HashMap<String, Person>();
 	private final Map<String, Set<Person>> fullnameMap = new HashMap<String, Set<Person>>();
 	
-	private final HibernateUtil            hibernateUtil;
+	private final PersistenceUtil          persistenceUtil;
 	
-	public PersonManager(final HibernateUtil hibernateUtil) {
-		this.hibernateUtil = hibernateUtil;
+	public PersonManager(final PersistenceUtil persistenceUtil) {
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/**
@@ -111,10 +110,9 @@ public class PersonManager {
 	 * 
 	 */
 	public synchronized void loadEntities() {
-		if (this.hibernateUtil != null) {
-			Criteria criteria = this.hibernateUtil.createCriteria(Person.class);
-			@SuppressWarnings ("unchecked")
-			List<Person> results = criteria.list();
+		if (this.persistenceUtil != null) {
+			Criteria<Person> criteria = this.persistenceUtil.createCriteria(Person.class);
+			List<Person> results = this.persistenceUtil.load(criteria);
 			if ((results != null) && (results.size() > 0)) {
 				setPersons(results);
 				if (Logger.logInfo()) {

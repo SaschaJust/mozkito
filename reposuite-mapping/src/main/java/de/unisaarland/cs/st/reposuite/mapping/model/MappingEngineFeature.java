@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,11 +105,6 @@ public class MappingEngineFeature implements Annotated {
 	 */
 	public String getSubstring() {
 		return this.substring;
-	}
-	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

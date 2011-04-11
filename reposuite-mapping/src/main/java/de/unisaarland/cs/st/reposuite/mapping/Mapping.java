@@ -3,7 +3,8 @@ package de.unisaarland.cs.st.reposuite.mapping;
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
@@ -57,15 +58,16 @@ public class Mapping extends RepoSuiteToolchain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		// TODO properties.put("hibernate.hbm2ddl.auto", "create-drop");
+		// TODO properties.put("persistence middleware.hbm2ddl.auto",
+		// "create-drop");
 		
 		if (this.databaseArguments.getValue() != null) {
-			HibernateUtil hibernateUtil;
+			PersistenceUtil persistenceUtil;
 			try {
-				hibernateUtil = HibernateUtil.getInstance();
-				new MappingsReader(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), hibernateUtil);
-				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(), HibernateUtil.getInstance());
+				persistenceUtil = PersistenceManager.getUtil();
+				new MappingsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

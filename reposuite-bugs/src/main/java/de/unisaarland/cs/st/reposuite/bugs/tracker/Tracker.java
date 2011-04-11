@@ -17,8 +17,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
@@ -29,7 +27,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.LoadingException;
 import de.unisaarland.cs.st.reposuite.exceptions.StoringException;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
@@ -45,14 +43,14 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType type             = TrackerType.valueOf(this
-	                                                                   .getClass()
-	                                                                   .getSimpleName()
-	                                                                   .substring(
-	                                                                              0,
-	                                                                              this.getClass().getSimpleName().length()
-	                                                                              - Tracker.class.getSimpleName().length())
-	                                                                              .toUpperCase());
+	protected final TrackerType type             = TrackerType.valueOf(this.getClass()
+	                                                                       .getSimpleName()
+	                                                                       .substring(0,
+	                                                                                  this.getClass().getSimpleName()
+	                                                                                      .length()
+	                                                                                          - Tracker.class.getSimpleName()
+	                                                                                                         .length())
+	                                                                       .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -148,7 +146,7 @@ public abstract class Tracker {
 	 */
 	public File getFileForContent(final long id) {
 		return new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + getHandle() + "_"
-		                + this.fetchURI.getHost() + "_content_" + id);
+		        + this.fetchURI.getHost() + "_content_" + id);
 	}
 	
 	/**
@@ -250,11 +248,12 @@ public abstract class Tracker {
 	 * @return the {@link Report}
 	 */
 	public Report loadReport(final Long id) {
-		Criteria criteria;
+		de.unisaarland.cs.st.reposuite.persistence.Criteria<?> criteria;
 		try {
-			criteria = HibernateUtil.getInstance().createCriteria(Report.class);
-			criteria.add(Restrictions.eq("id", id));
-			@SuppressWarnings ("unchecked") List<Report> list = criteria.list();
+			criteria = PersistenceManager.getUtil().createCriteria(Report.class);
+			criteria.eq("id", id);
+			@SuppressWarnings ("unchecked")
+			List<Report> list = (List<Report>) PersistenceManager.getUtil().load(criteria);
 			
 			if (list.size() > 0) {
 				Report bugReport = list.get(0);
@@ -283,7 +282,9 @@ public abstract class Tracker {
 		String uriString = uri.toString();
 		
 		String tmpURI = uriString.substring(this.fetchURI.toString().length() + split[0].length(), uriString.length());
-		String bugid = tmpURI.substring(0, split.length > 1 ? tmpURI.indexOf(split[1]) : tmpURI.length());
+		String bugid = tmpURI.substring(0, split.length > 1
+		                                                   ? tmpURI.indexOf(split[1])
+		                                                   : tmpURI.length());
 		
 		try {
 			return new Long(bugid);
@@ -323,11 +324,13 @@ public abstract class Tracker {
 	                  final URI overviewURI,
 	                  final String pattern,
 	                  final String username,
-	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	throws InvalidParameterException {
+	                  final String password,
+	                  final Long startAt,
+	                  final Long stopAt,
+	                  final String cacheDirPath) throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
-		                "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
-		                password);
+		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
+		                username, password);
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
 		                "`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),

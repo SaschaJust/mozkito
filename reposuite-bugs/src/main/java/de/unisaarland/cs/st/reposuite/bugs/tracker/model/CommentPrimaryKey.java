@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.persistence.Embeddable;
 
@@ -28,7 +27,7 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	private static final long serialVersionUID = -2568891675198367976L;
 	
 	/**
-	 * used by hibernate
+	 * used by PersistenceUtil
 	 */
 	protected CommentPrimaryKey() {
 	}
@@ -54,11 +53,6 @@ public class CommentPrimaryKey implements Annotated, Serializable {
 	 */
 	protected long getReportId() {
 		return this.reportId;
-	}
-	
-	@Override
-	public Collection<Annotated> saveFirst() {
-		return null;
 	}
 	
 	/**

@@ -13,8 +13,6 @@ import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -28,9 +26,7 @@ import org.jfree.data.xy.DefaultXYDataset;
 
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.reposuite.exceptions.InvalidRepositoryURI;
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolType;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
@@ -67,7 +63,8 @@ public abstract class Repository {
 	 * @return the URI with encoded user name. If the encoding fails, the
 	 *         original URI will be returned.
 	 */
-	public static URI encodeUsername(final URI address, final String username) {
+	public static URI encodeUsername(final URI address,
+	                                 final String username) {
 		// [scheme:][//authority][path][?query][#fragment]
 		// [user-info@]host[:port]
 		
@@ -103,7 +100,7 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-					             + uriString.toString() + "`");
+					        + uriString.toString() + "`");
 				}
 				if (Logger.logWarn()) {
 					Logger.warn("Falling back original URI.");
@@ -133,7 +130,8 @@ public abstract class Repository {
 	 *            the revision the file path will be annotated in
 	 * @return List of AnnotationEntry for all lines starting by first line
 	 */
-	public abstract List<AnnotationEntry> annotate(String filePath, String revision);
+	public abstract List<AnnotationEntry> annotate(String filePath,
+	                                               String revision);
 	
 	/**
 	 * Checks out the given relative path in repository and returns the file
@@ -148,7 +146,8 @@ public abstract class Repository {
 	 * @return The file handle to the checked out, corresponding file or
 	 *         directory.
 	 */
-	public abstract File checkoutPath(String relativeRepoPath, String revision);
+	public abstract File checkoutPath(String relativeRepoPath,
+	                                  String revision);
 	
 	/**
 	 * Checks the repository for corruption.
@@ -164,8 +163,8 @@ public abstract class Repository {
 			if (previous != null) {
 				if (entry.getDateTime().isBefore(previous.getDateTime())) {
 					System.out.println("Transaction " + entry.getRevision()
-					                   + " has timestamp before previous transaction: current " + entry + " vs. previous "
-					                   + previous);
+					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
+					        + previous);
 				}
 			}
 			
@@ -264,7 +263,8 @@ public abstract class Repository {
 	 * @param threshold
 	 * @return
 	 */
-	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries, final double threshold) {
+	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries,
+	                                               final double threshold) {
 		Map<String, Double> authors = new HashMap<String, Double>();
 		
 		for (LogEntry entry : entries) {
@@ -306,7 +306,9 @@ public abstract class Repository {
 	 *            the revised revision
 	 * @return Collection of deltas found between two revision
 	 */
-	public abstract Collection<Delta> diff(String filePath, String baseRevision, String revisedRevision);
+	public abstract Collection<Delta> diff(String filePath,
+	                                       String baseRevision,
+	                                       String revisedRevision);
 	
 	/**
 	 * @return a string containing information about the instrumented
@@ -349,7 +351,8 @@ public abstract class Repository {
 	 * @return Returns the former path name iff the file/directory was renamed.
 	 *         Null otherwise.
 	 */
-	public abstract String getFormerPathName(String revision, String pathName);
+	public abstract String getFormerPathName(String revision,
+	                                         String pathName);
 	
 	/**
 	 * Determines the simple class name of the object.
@@ -379,7 +382,8 @@ public abstract class Repository {
 	 * @param index
 	 * @return
 	 */
-	public abstract String getRelativeTransactionId(String transactionId, long index);
+	public abstract String getRelativeTransactionId(String transactionId,
+	                                                long index);
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -388,9 +392,11 @@ public abstract class Repository {
 	 *         details.
 	 */
 	public final RepositoryType getRepositoryType() {
-		return RepositoryType.valueOf(this.getClass().getSimpleName()
-		                              .substring(0, this.getClass().getSimpleName().length() - Repository.class.getSimpleName().length())
-		                              .toUpperCase());
+		return RepositoryType.valueOf(this.getClass()
+		                                  .getSimpleName()
+		                                  .substring(0,
+		                                             this.getClass().getSimpleName().length()
+		                                                     - Repository.class.getSimpleName().length()).toUpperCase());
 	}
 	
 	/**
@@ -448,32 +454,6 @@ public abstract class Repository {
 	public abstract File getWokingCopyLocation();
 	
 	/**
-	 * Load transaction.
-	 * 
-	 * @param revision
-	 *            the revision
-	 * @return the rCS transaction
-	 */
-	public RCSTransaction loadTransaction(final String revision) {
-		try {
-			HibernateUtil hibernateUtil = HibernateUtil.getInstance();
-			if (hibernateUtil != null) {
-				Criteria criteria = hibernateUtil.createCriteria(RCSTransaction.class);
-				criteria.add(Restrictions.eq("id", revision));
-				@SuppressWarnings ("unchecked") List<RCSTransaction> results = criteria.list();
-				if ((results != null) && (results.size() > 0)) {
-					return results.get(0);
-				}
-			}
-		} catch (UninitializedDatabaseException e) {
-			if (Logger.logInfo()) {
-				Logger.info(e.getClass().getSimpleName());
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * Extract a log from the repository.
 	 * 
 	 * @param fromRevision
@@ -482,7 +462,8 @@ public abstract class Repository {
 	 *            the to revision
 	 * @return the list of log entries. The first entry is the oldest log entry.
 	 */
-	public abstract List<LogEntry> log(String fromRevision, String toRevision);
+	public abstract List<LogEntry> log(String fromRevision,
+	                                   String toRevision);
 	
 	/**
 	 * Extract a log from the repository spanning between two revisions.
@@ -496,7 +477,9 @@ public abstract class Repository {
 	 * @return Iterator running from <code>fromRevisions</code> to
 	 *         <code>toRevision</code>
 	 */
-	public Iterator<LogEntry> log(final String fromRevision, final String toRevision, final int cacheSize) {
+	public Iterator<LogEntry> log(final String fromRevision,
+	                              final String toRevision,
+	                              final int cacheSize) {
 		return new LogIterator(this, fromRevision, toRevision, cacheSize);
 	}
 	
@@ -553,11 +536,13 @@ public abstract class Repository {
 			} catch (URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-					             + uriBuilder.toString() + "`");
+					        + uriBuilder.toString() + "`");
 				}
 			}
 		}
-		return (fragment != null ? fragment : "");
+		return (fragment != null
+		                        ? fragment
+		                        : "");
 	}
 	
 	/**
@@ -578,8 +563,12 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address, String startRevision, String endRevision) throws MalformedURLException,
-	InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	public abstract void setup(URI address,
+	                           String startRevision,
+	                           String endRevision) throws MalformedURLException,
+	                                              InvalidProtocolType,
+	                                              InvalidRepositoryURI,
+	                                              UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -603,8 +592,14 @@ public abstract class Repository {
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
 	 */
-	public abstract void setup(URI address, String startRevision, String endRevision, String username, String password)
-	throws MalformedURLException, InvalidProtocolType, InvalidRepositoryURI, UnsupportedProtocolType;
+	public abstract void setup(URI address,
+	                           String startRevision,
+	                           String endRevision,
+	                           String username,
+	                           String password) throws MalformedURLException,
+	                                           InvalidProtocolType,
+	                                           InvalidRepositoryURI,
+	                                           UnsupportedProtocolType;
 	
 	/**
 	 * @param uri

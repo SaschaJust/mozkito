@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
@@ -29,19 +29,16 @@ public class MergeTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Logger.setLogLevel(LogLevel.OFF);
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest?useUnicode=true&characterEncoding=UTF-8";
-		
 		Properties properties = new Properties();
-		properties.put("hibernate.connection.url", url);
-		properties.put("hibernate.hbm2ddl.auto", "update");
-		properties.put("hibernate.connection.autocommit", "false");
-		properties.put("hibernate.show_sql", "false");
-		properties.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-		properties.put("hibernate.connection.username", "miner");
-		properties.put("hibernate.connection.password", "miner");
-		properties.put("hibernate.hbm2ddl.auto", "create-drop");
+		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", "miner");
+		properties.put("openjpa.ConnectionPassword", "miner");
+		properties.put("openjpa.persistence-unit", "core");
 		
-		HibernateUtil.createSessionFactory(properties);
+		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	/**
@@ -49,6 +46,7 @@ public class MergeTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		OpenJPAUtil.getInstance().shutdown();
 	}
 	
 	/**
@@ -77,10 +75,10 @@ public class MergeTest {
 	@Test
 	public void testMergePerson() {
 		
-		// HibernateUtil hibernateUtil;
+		// PersistenceUtil persistenceUtil;
 		// try {
-		// hibernateUtil = HibernateUtil.getInstance();
-		// Criteria criteria = hibernateUtil.createCriteria(Person.class);
+		// persistenceUtil = PersistenceUtil.getInstance();
+		// Criteria criteria = persistenceUtil.createCriteria(Person.class);
 		// int personCount = criteria.list().size();
 		//
 		// Person[] persons = new Person[] { new Person("just", null, null),
@@ -92,21 +90,21 @@ public class MergeTest {
 		//
 		// RCSTransaction rcsTransaction = null;
 		//
-		// hibernateUtil.beginTransaction();
+		// persistenceUtil.beginTransaction();
 		//
 		// int i = 0;
 		// for (Person person : persons) {
 		// rcsTransaction = RCSTransaction.createTransaction("" + ++i, "test",
 		// new DateTime(), person, "");
-		// hibernateUtil.saveOrUpdate(rcsTransaction);
+		// persistenceUtil.saveOrUpdate(rcsTransaction);
 		// }
 		//
-		// hibernateUtil.commitTransaction();
+		// persistenceUtil.commitTransaction();
 		//
 		// Persons personsMerger = new Persons();
 		// personsMerger.run();
 		//
-		// criteria = hibernateUtil.createCriteria(Person.class);
+		// criteria = persistenceUtil.createCriteria(Person.class);
 		// @SuppressWarnings ("unchecked")
 		// List<Person> list = criteria.list();
 		// Person person = (Person) CollectionUtils.find(list, new Predicate() {
@@ -141,55 +139,5 @@ public class MergeTest {
 	
 	@Test
 	public void testMergePersonSingleContainer() {
-		HibernateUtil hibernateUtil;
-		// try {
-		// hibernateUtil = HibernateUtil.getInstance();
-		// Criteria criteria = hibernateUtil.createCriteria(Person.class);
-		// int personCount = criteria.list().size();
-		//
-		// PersonContainer personContainer = new PersonContainer();
-		// Person[] persons = new Person[] { new Person("pan", null, null),
-		// new Person(null, null, "peter.pan@st.cs.uni-saarland.de"), new
-		// Person(null, "Peter Pan", null),
-		// new Person("pan", "Peter Pan", null),
-		// new Person(null, "Peter Pan", "peter.pan@st.cs.uni-saarland.de") };
-		//
-		// for (int i = 0; i < persons.length; ++i) {
-		// personContainer.add("contrib_" + i, persons[i]);
-		// }
-		//
-		// hibernateUtil.beginTransaction();
-		// hibernateUtil.save(personContainer);
-		// hibernateUtil.commitTransaction();
-		//
-		// Persons personsMerger = new Persons();
-		// personsMerger.run();
-		//
-		// criteria = hibernateUtil.createCriteria(Person.class);
-		// @SuppressWarnings ("unchecked")
-		// List<Person> list = criteria.list();
-		// Person person = (Person) CollectionUtils.find(list, new Predicate() {
-		//
-		// @Override
-		// public boolean evaluate(final Object object) {
-		// Person p = (Person) object;
-		// return (p.getUsernames().size() == 1) &&
-		// p.getUsernames().iterator().next().equals("pan");
-		// }
-		// });
-		//
-		// assertTrue(!list.isEmpty());
-		// assertEquals(personCount + 1, list.size());
-		// assertEquals(1, person.getUsernames().size());
-		// assertEquals("pan", person.getUsernames().iterator().next());
-		// assertEquals(1, person.getEmailAddresses().size());
-		// assertEquals("peter.pan@st.cs.uni-saarland.de",
-		// person.getEmailAddresses().iterator().next());
-		// assertEquals(1, person.getFullnames().size());
-		// assertEquals("Peter Pan", person.getFullnames().iterator().next());
-		//
-		// } catch (UninitializedDatabaseException e) {
-		// fail();
-		// }
 	}
 }

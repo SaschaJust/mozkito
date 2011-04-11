@@ -9,13 +9,12 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
 import de.unisaarland.cs.st.reposuite.Core;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.HibernateUtil;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -54,8 +53,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	/** The as xml. */
 	private final OutputFileArgument  asXML;
 	
-	/** The hibernate util. */
-	private HibernateUtil             hibernateUtil;
+	/** The persistence middleware util. */
+	private PersistenceUtil           persistenceUtil;
 	
 	/** The shutdown. */
 	private boolean                   shutdown;
@@ -74,12 +73,14 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false);
 		settings.setLoggerArg(true);
-		this.testCaseTransactionArg = new ListArgument(settings, "testCaseTransactions",
+		this.testCaseTransactionArg = new ListArgument(
+		                                               settings,
+		                                               "testCaseTransactions",
 		                                               "List of transactions that will be passed for test case purposes. "
-		                                               + "If this option is set, this module will start in test case mode. "
-		                                               + "If will generate change operations to specified transactions, only;"
-		                                               + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                                               + "or to specified XML file.", null, false);
+		                                                       + "If this option is set, this module will start in test case mode. "
+		                                                       + "If will generate change operations to specified transactions, only;"
+		                                                       + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                                                       + "or to specified XML file.", null, false);
 		
 		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
 		                                  "false", false);
@@ -91,13 +92,14 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		                                    null, false, true);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
-		                                       "Use this transaction ID as the first one.",
-		                                       null, false);
+		                                       "Use this transaction ID as the first one.", null, false);
 		
 		settings.parseArguments();
+		
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -113,10 +115,11 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void setup() {
 		if (!this.databaseSettings.getValue()) {
@@ -125,7 +128,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			}
 		}
 		try {
-			this.hibernateUtil = HibernateUtil.getInstance();
+			this.persistenceUtil = PersistenceManager.getUtil();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
@@ -133,21 +136,22 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		File xmlFile = this.asXML.getValue();
 		Repository repository = this.repoSettings.getValue();
 		
-		//get the transactions to be processed
+		// get the transactions to be processed
 		List<RCSTransaction> transactions = new LinkedList<RCSTransaction>();
-		Criteria criteria = this.hibernateUtil.createCriteria(RCSTransaction.class);
+		@SuppressWarnings ("rawtypes")
+		Criteria criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
 		HashSet<String> transactionLimit = this.testCaseTransactionArg.getValue();
 		if (transactionLimit != null) {
-			criteria.add(Restrictions.in("id", transactionLimit));
+			criteria.in("id", transactionLimit);
 		}
-		transactions.addAll(criteria.list());
+		transactions.addAll(this.persistenceUtil.load(criteria));
 		
-		
-		//generate the change operation reader
+		// generate the change operation reader
 		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
 		                          this.startWithArg.getValue(), this.ppaArg.getValue());
 		
-		//the xml file set, create XMLSinkThread. Otherwise the Hibernate persister thread
+		// the xml file set, create XMLSinkThread. Otherwise the persistence
+		// middleware persister thread
 		if (xmlFile != null) {
 			boolean stdout = false;
 			if (!xmlFile.canWrite()) {
@@ -161,13 +165,13 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						             + "Writing to sstdout!");
+						        + "Writing to sstdout!");
 					}
 					stdout = true;
 				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						             + "Writing to sstdout!");
+						        + "Writing to sstdout!");
 					}
 					stdout = true;
 				}
