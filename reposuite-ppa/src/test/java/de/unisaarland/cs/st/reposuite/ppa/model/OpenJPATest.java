@@ -47,8 +47,7 @@ public class OpenJPATest {
 			
 			persistenceUtil.beginTransaction();
 			JavaElementCache cache = new JavaElementCache();
-			JavaElementLocation<JavaClassDefinition> classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30,
-			                                                                                    123, 5, "a");
+			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5, "a");
 			DateTime now = new DateTime();
 			Person p = new Person("kim", "", "");
 			RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1");

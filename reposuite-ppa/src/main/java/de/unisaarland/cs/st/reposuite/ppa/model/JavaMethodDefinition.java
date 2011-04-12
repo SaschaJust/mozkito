@@ -20,7 +20,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
-public class JavaMethodDefinition extends JavaElementDefinition implements Annotated {
+public class JavaMethodDefinition extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6574764154587254697L;
@@ -80,8 +80,8 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	protected JavaMethodDefinition(final String fullQualifiedName, final List<String> signature) {
 		// TODO add condition check that fullQualifiedName contains (,) and .
 		super(fullQualifiedName);
-		this.setSignature(new ArrayList<String>(signature));
-		this.setFullQualifiedName(fullQualifiedName);
+		setSignature(new ArrayList<String>(signature));
+		setFullQualifiedName(fullQualifiedName);
 	}
 	
 	/*
@@ -119,7 +119,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return this.signature;
+		return signature;
 	}
 	
 	/*
@@ -133,7 +133,7 @@ public class JavaMethodDefinition extends JavaElementDefinition implements Annot
 		Element thisElement = document.createElement("JavaMethodDefinition");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(getFullQualifiedName());
 		nameElement.appendChild(textNode);
 		
 		thisElement.appendChild(nameElement);

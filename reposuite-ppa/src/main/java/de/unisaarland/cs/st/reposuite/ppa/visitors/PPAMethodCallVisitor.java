@@ -19,12 +19,10 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -38,13 +36,23 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	/** The method calls by file. */
 	private final Map<String, Collection<JavaMethodCall>> methodCallsByFile = new HashMap<String, Collection<JavaMethodCall>>();
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#endVisit(de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#endVisit(de.
+	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit,
+	 * org.eclipse.jdt.core.dom.ASTNode,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
 	 */
 	@Override
-	public void endVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
-	                     @NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
-	                     final JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull final JavaElementCache elementCache) {
+	public void endVisit(@NotNull final PPATypeVisitor ppaVisitor,
+	                     @NotNull final CompilationUnit cu,
+	                     @NotNull final ASTNode node,
+	                     final JavaElementLocation classContext,
+	                     final JavaElementLocation methodContext,
+	                     @NotNull final JavaElementCache elementCache) {
 	}
 	
 	/**
@@ -53,16 +61,25 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	 * @return the method calls by file
 	 */
 	public Map<String, Collection<JavaMethodCall>> getMethodCallsByFile() {
-		return this.methodCallsByFile;
+		return methodCallsByFile;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#postVisit(de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, int, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#postVisit(de.
+	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit,
+	 * org.eclipse.jdt.core.dom.ASTNode,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, int,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
 	 */
 	@Override
-	public void postVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
-	                      @NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
-	                      final JavaElementLocation<JavaMethodDefinition> methodContext,
+	public void postVisit(@NotNull final PPATypeVisitor ppaVisitor,
+	                      @NotNull final CompilationUnit cu,
+	                      @NotNull final ASTNode node,
+	                      final JavaElementLocation classContext,
+	                      final JavaElementLocation methodContext,
 	                      @NotNegative final int currentLine,
 	                      @NotNull final JavaElementCache elementCache) {
 		
@@ -145,31 +162,39 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			arguments.add(args[i].getName());
 		}
 		
-		JavaElementDefinition parent = classContext.getElement();
+		JavaElement parent = classContext.getElement();
 		if (methodContext != null) {
 			parent = methodContext.getElement();
 		}
 		
 		String filename = ppaVisitor.getRelativeFilePath();
 		
-		JavaElementLocation<JavaMethodCall> javaMethodCall = elementCache.getMethodCall(
-		                                                                                calledObject + "." + methodName, arguments,
-		                                                                                filename, parent, thisLine, thisLine, position);
+		JavaElementLocation javaMethodCall = elementCache.getMethodCall(calledObject + "." + methodName, arguments,
+		                                                                filename, parent, thisLine, thisLine, position);
 		
-		if (!this.methodCallsByFile.containsKey(filename)) {
-			this.methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
+		if (!methodCallsByFile.containsKey(filename)) {
+			methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
 		}
-		this.methodCallsByFile.get(filename).add(javaMethodCall.getElement());
+		methodCallsByFile.get(filename).add((JavaMethodCall) javaMethodCall.getElement());
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#preVisit(de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, int, int, de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor#preVisit(de.
+	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit,
+	 * org.eclipse.jdt.core.dom.ASTNode,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation, int, int,
+	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache)
 	 */
 	@Override
-	public void preVisit(@NotNull final PPATypeVisitor ppaVisitor, @NotNull final CompilationUnit cu,
-	                     @NotNull final ASTNode node, final JavaElementLocation<JavaClassDefinition> classContext,
-	                     final JavaElementLocation<JavaMethodDefinition> methodContext,
+	public void preVisit(@NotNull final PPATypeVisitor ppaVisitor,
+	                     @NotNull final CompilationUnit cu,
+	                     @NotNull final ASTNode node,
+	                     final JavaElementLocation classContext,
+	                     final JavaElementLocation methodContext,
 	                     @NotNegative final int currentLine,
 	                     @NotNegative final int endLine,
 	                     @NotNull final JavaElementCache elementCache) {

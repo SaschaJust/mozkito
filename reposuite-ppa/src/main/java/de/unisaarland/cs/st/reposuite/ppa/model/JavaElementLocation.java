@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
-public class JavaElementLocation<T extends JavaElement> implements Comparable<JavaElementLocation<T>>, Annotated {
+public class JavaElementLocation implements Comparable<JavaElementLocation>, Annotated {
 	
 	/**
 	 * The Enum LineCover.
@@ -69,7 +69,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	private int               position;
 	
 	/** The element. */
-	private T                 element;
+	private JavaElement       element;
 	
 	/** The file path. */
 	private String            filePath         = "<unknown>";
@@ -103,12 +103,12 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param filePath
 	 *            the file path
 	 */
-	public JavaElementLocation(@NotNull final T element, @NotNegative final int startLine,
+	public JavaElementLocation(@NotNull final JavaElement element, @NotNegative final int startLine,
 	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
 	        @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		
-		if (element instanceof JavaElementDefinition) {
+		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
 			Condition.check(bodyStartLine <= endLine,
 			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
 			                        + " startLine=" + endLine);
@@ -116,12 +116,12 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 			                "Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
 			                        + " startLine=" + startLine);
 		}
-		this.setElement(element);
-		this.setStartLine(startLine);
-		this.setEndLine(endLine);
-		this.setPosition(position);
-		this.setFilePath(filePath);
-		this.setBodyStartLine(bodyStartLine);
+		setElement(element);
+		setStartLine(startLine);
+		setEndLine(endLine);
+		setPosition(position);
+		setFilePath(filePath);
+		setBodyStartLine(bodyStartLine);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	                            @NotNegative final int to) {
 		Condition.check(from <= to, "You must supply a closed interval.");
 		for (int i = from; i <= to; ++i) {
-			this.getCommentLines().add(i);
+			getCommentLines().add(i);
 		}
 	}
 	
@@ -147,15 +147,15 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 */
 	@Override
 	@NoneNull
-	public int compareTo(final JavaElementLocation<T> other) {
-		if (this.getStartLine() < other.getStartLine()) {
+	public int compareTo(final JavaElementLocation other) {
+		if (getStartLine() < other.getStartLine()) {
 			return -1;
-		} else if (this.getStartLine() > other.getStartLine()) {
+		} else if (getStartLine() > other.getStartLine()) {
 			return 1;
 		} else {
-			if (this.getPosition() < other.getPosition()) {
+			if (getPosition() < other.getPosition()) {
 				return -1;
-			} else if (this.getPosition() > other.getPosition()) {
+			} else if (getPosition() > other.getPosition()) {
 				return 1;
 			} else {
 				return 0;
@@ -240,8 +240,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the line cover
 	 */
 	public LineCover coversLine(@NotNegative final int line) {
-		if ((getStartLine() <= line) && (getEndLine() >= line) && (!this.getCommentLines().contains(line))) {
-			if (this.getElement() instanceof JavaMethodCall) {
+		if ((getStartLine() <= line) && (getEndLine() >= line) && (!getCommentLines().contains(line))) {
+			if (getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
 			}
 			if ((getBodyStartLine() < 0) || (getBodyStartLine() >= line)) {
@@ -256,7 +256,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -268,29 +267,29 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		JavaElementLocation<T> other = (JavaElementLocation<T>) obj;
-		if (this.getElement() == null) {
+		JavaElementLocation other = (JavaElementLocation) obj;
+		if (getElement() == null) {
 			if (other.getElement() != null) {
 				return false;
 			}
-		} else if (!this.getElement().equals(other.getElement())) {
+		} else if (!getElement().equals(other.getElement())) {
 			return false;
 		}
-		if (this.getFilePath() == null) {
+		if (getFilePath() == null) {
 			if (other.getFilePath() != null) {
 				return false;
 			}
-		} else if (!this.getFilePath().equals(other.getFilePath())) {
+		} else if (!getFilePath().equals(other.getFilePath())) {
 			return false;
 		}
-		if (!(getElement() instanceof JavaElementDefinition)) {
-			if (this.getEndLine() != other.getEndLine()) {
+		if (getElement() instanceof JavaMethodCall) {
+			if (getEndLine() != other.getEndLine()) {
 				return false;
 			}
-			if (this.getPosition() != other.getPosition()) {
+			if (getPosition() != other.getPosition()) {
 				return false;
 			}
-			if (this.getStartLine() != other.getStartLine()) {
+			if (getStartLine() != other.getStartLine()) {
 				return false;
 			}
 		}
@@ -303,7 +302,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the body start line
 	 */
 	public int getBodyStartLine() {
-		return this.bodyStartLine;
+		return bodyStartLine;
 	}
 	
 	/**
@@ -313,7 +312,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 */
 	@ElementCollection
 	public Set<Integer> getCommentLines() {
-		return this.commentLines;
+		return commentLines;
 	}
 	
 	/**
@@ -323,8 +322,8 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 */
 	@Type (JavaElement.class)
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	public T getElement() {
-		return this.element;
+	public JavaElement getElement() {
+		return element;
 	}
 	
 	/**
@@ -333,7 +332,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the end line
 	 */
 	public int getEndLine() {
-		return this.endLine;
+		return endLine;
 	}
 	
 	/**
@@ -342,7 +341,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the file path
 	 */
 	public String getFilePath() {
-		return this.filePath;
+		return filePath;
 	}
 	
 	/**
@@ -354,7 +353,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	@Id
 	@GeneratedValue
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -363,7 +362,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the position
 	 */
 	public int getPosition() {
-		return this.position;
+		return position;
 	}
 	
 	/**
@@ -372,7 +371,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @return the start line
 	 */
 	public int getStartLine() {
-		return this.startLine;
+		return startLine;
 	}
 	
 	/**
@@ -410,16 +409,16 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getElement() == null)
-		                                                      ? 0
-		                                                      : this.getElement().hashCode());
-		result = prime * result + ((this.getFilePath() == null)
-		                                                       ? 0
-		                                                       : this.getFilePath().hashCode());
-		if (!(getElement() instanceof JavaElementDefinition)) {
-			result = prime * result + this.getEndLine();
-			result = prime * result + this.getPosition();
-			result = prime * result + this.getStartLine();
+		result = prime * result + ((getElement() == null)
+		                                                 ? 0
+		                                                 : getElement().hashCode());
+		result = prime * result + ((getFilePath() == null)
+		                                                  ? 0
+		                                                  : getFilePath().hashCode());
+		if (getElement() instanceof JavaMethodCall) {
+			result = prime * result + getEndLine();
+			result = prime * result + getPosition();
+			result = prime * result + getStartLine();
 		}
 		return result;
 	}
@@ -452,8 +451,7 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param element
 	 *            the new element
 	 */
-	@NoneNull
-	public void setElement(final T element) {
+	public void setElement(final JavaElement element) {
 		this.element = element;
 	}
 	
@@ -473,7 +471,6 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	 * @param filePath
 	 *            the new file path
 	 */
-	@NoneNull
 	private void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
@@ -517,18 +514,18 @@ public class JavaElementLocation<T extends JavaElement> implements Comparable<Ja
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("element = [");
-		sb.append(this.getElement().toString());
+		sb.append(getElement().toString());
 		sb.append("]");
 		sb.append(", id = ");
-		sb.append(this.getId());
+		sb.append(getId());
 		sb.append(", filePath = ");
-		sb.append(this.getFilePath());
+		sb.append(getFilePath());
 		sb.append(", position = ");
-		sb.append(this.getPosition());
+		sb.append(getPosition());
 		sb.append(", startLine = ");
-		sb.append(this.getStartLine());
+		sb.append(getStartLine());
 		sb.append(", endLine = ");
-		sb.append(this.getEndLine());
+		sb.append(getEndLine());
 		sb.append("]");
 		return sb.toString();
 	}

@@ -38,7 +38,6 @@ public class JavaChangeOperation implements Annotated {
 	private ChangeType          changeType;
 	
 	/** The changed element. */
-	@SuppressWarnings ("rawtypes")
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
@@ -58,7 +57,6 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the revision
 	 */
-	@SuppressWarnings ("rawtypes")
 	@NoneNull
 	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
 		setChangeType(type);
@@ -104,7 +102,6 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the changed element
 	 */
-	@SuppressWarnings ("rawtypes")
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
 		return changedElementLocation;
@@ -187,7 +184,6 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	@SuppressWarnings ("rawtypes")
 	private void setChangedElementLocation(final JavaElementLocation changedElement) {
 		changedElementLocation = changedElement;
 	}

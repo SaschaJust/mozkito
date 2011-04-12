@@ -6,10 +6,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 
 /**
  * The Interface PPAVisitor.
@@ -34,9 +32,12 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void endVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
-	              @NotNull JavaElementLocation<JavaClassDefinition> classContext,
-	              JavaElementLocation<JavaMethodDefinition> methodContext, @NotNull JavaElementCache elementCache);
+	void endVisit(@NotNull PPATypeVisitor ppaVisitor,
+	              @NotNull CompilationUnit cu,
+	              @NotNull ASTNode node,
+	              @NotNull JavaElementLocation classContext,
+	              JavaElementLocation methodContext,
+	              @NotNull JavaElementCache elementCache);
 	
 	/**
 	 * Post visit.
@@ -56,9 +57,11 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void postVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
-	               JavaElementLocation<JavaClassDefinition> classContext,
-	               JavaElementLocation<JavaMethodDefinition> methodContext,
+	void postVisit(@NotNull PPATypeVisitor ppaVisitor,
+	               @NotNull CompilationUnit cu,
+	               @NotNull ASTNode node,
+	               JavaElementLocation classContext,
+	               JavaElementLocation methodContext,
 	               @NotNegative int currentLine,
 	               @NotNull JavaElementCache elementCache);
 	
@@ -82,9 +85,11 @@ public interface PPAVisitor {
 	 * @param elementCache
 	 *            the element cache
 	 */
-	void preVisit(@NotNull PPATypeVisitor ppaVisitor, @NotNull CompilationUnit cu, @NotNull ASTNode node,
-	              JavaElementLocation<JavaClassDefinition> classContext,
-	              JavaElementLocation<JavaMethodDefinition> methodContext,
+	void preVisit(@NotNull PPATypeVisitor ppaVisitor,
+	              @NotNull CompilationUnit cu,
+	              @NotNull ASTNode node,
+	              JavaElementLocation classContext,
+	              JavaElementLocation methodContext,
 	              @NotNegative int currentLine,
 	              @NotNegative int endLine,
 	              @NotNull JavaElementCache elementCache);

@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
-public class JavaClassDefinition extends JavaElementDefinition implements Annotated {
+public class JavaClassDefinition extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long               serialVersionUID = 945704236316941413L;
@@ -104,7 +104,6 @@ public class JavaClassDefinition extends JavaElementDefinition implements Annota
 	 * 
 	 * @return the super class name
 	 */
-	@SuppressWarnings ("unused")
 	private String getSuperClassName() {
 		return superClassName;
 	}

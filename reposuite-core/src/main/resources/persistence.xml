@@ -83,7 +83,6 @@
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElement</class>
-        <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElementDefinition</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition</class>

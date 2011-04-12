@@ -8,7 +8,9 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaElementDefinitionCache. All instances extending JavaElement
@@ -20,22 +22,22 @@ import de.unisaarland.cs.st.reposuite.ppa.utils.JavaElementLocations;
 public class JavaElementCache {
 	
 	/** The class definitions by name. */
-	public static Map<String, JavaClassDefinition>               classDefs           = new HashMap<String, JavaClassDefinition>();
+	public static Map<String, JavaClassDefinition>  classDefs           = new HashMap<String, JavaClassDefinition>();
 	
 	/** The method definitions by name. */
-	public static Map<String, JavaMethodDefinition>              methodDefs          = new HashMap<String, JavaMethodDefinition>();
+	public static Map<String, JavaMethodDefinition> methodDefs          = new HashMap<String, JavaMethodDefinition>();
 	
 	/** The method calls by name. */
-	public static Map<String, JavaMethodCall>                    methodCalls         = new HashMap<String, JavaMethodCall>();
+	public static Map<String, JavaMethodCall>       methodCalls         = new HashMap<String, JavaMethodCall>();
 	
 	/** The class def locations. */
-	private final Set<JavaElementLocation<JavaClassDefinition>>  classDefLocations   = new HashSet<JavaElementLocation<JavaClassDefinition>>();
+	private final Set<JavaElementLocation>          classDefLocations   = new HashSet<JavaElementLocation>();
 	
 	/** The method def locations. */
-	private final Set<JavaElementLocation<JavaMethodDefinition>> methodDefLocations  = new HashSet<JavaElementLocation<JavaMethodDefinition>>();
+	private final Set<JavaElementLocation>          methodDefLocations  = new HashSet<JavaElementLocation>();
 	
 	/** The method call locations. */
-	private final Set<JavaElementLocation<JavaMethodCall>>       methodCallLocations = new HashSet<JavaElementLocation<JavaMethodCall>>();
+	private final Set<JavaElementLocation>          methodCallLocations = new HashSet<JavaElementLocation>();
 	
 	/**
 	 * Instantiates a new java element cache.
@@ -65,13 +67,13 @@ public class JavaElementCache {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaElementLocation<JavaClassDefinition> getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
-	                                                                            @NotNull final String fullQualifiedName,
-	                                                                            @NotNull final String file,
-	                                                                            @NotNegative final int startLine,
-	                                                                            @NotNegative final int endLine,
-	                                                                            @NotNegative final int position,
-	                                                                            @NotNegative final int bodyStartLine) {
+	public JavaElementLocation getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
+	                                                       @NotNull final String fullQualifiedName,
+	                                                       @NotNull final String file,
+	                                                       @NotNegative final int startLine,
+	                                                       @NotNegative final int endLine,
+	                                                       @NotNegative final int position,
+	                                                       @NotNegative final int bodyStartLine) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -80,12 +82,8 @@ public class JavaElementCache {
 		} else {
 			def = classDefs.get(fullQualifiedName);
 		}
-		JavaElementLocation<JavaClassDefinition> result = new JavaElementLocation<JavaClassDefinition>(def, startLine,
-				endLine,
-				position,
-				bodyStartLine,
-				file);
-		this.classDefLocations.add(result);
+		JavaElementLocation result = new JavaElementLocation(def, startLine, endLine, position, bodyStartLine, file);
+		classDefLocations.add(result);
 		
 		return result;
 	}
@@ -111,13 +109,13 @@ public class JavaElementCache {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaElementLocation<JavaClassDefinition> getClassDefinition(@NotNull final String fullQualifiedName,
-	                                                                   @NotNull final String file,
-	                                                                   @NotNegative final int startLine,
-	                                                                   @NotNegative final int endLine,
-	                                                                   @NotNegative final int position,
-	                                                                   @NotNegative final int bodyStartLine,
-	                                                                   @NotNull final String packageName) {
+	public JavaElementLocation getClassDefinition(@NotNull final String fullQualifiedName,
+	                                              @NotNull final String file,
+	                                              @NotNegative final int startLine,
+	                                              @NotNegative final int endLine,
+	                                              @NotNegative final int position,
+	                                              @NotNegative final int bodyStartLine,
+	                                              @NotNull final String packageName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -126,9 +124,8 @@ public class JavaElementCache {
 		} else {
 			def = classDefs.get(fullQualifiedName);
 		}
-		JavaElementLocation<JavaClassDefinition> result = new JavaElementLocation<JavaClassDefinition>(def, startLine,
-				endLine, position, bodyStartLine, file);
-		this.classDefLocations.add(result);
+		JavaElementLocation result = new JavaElementLocation(def, startLine, endLine, position, bodyStartLine, file);
+		classDefLocations.add(result);
 		
 		return result;
 	}
@@ -140,9 +137,9 @@ public class JavaElementCache {
 	 */
 	public JavaElementLocations getJavaElementLocations() {
 		JavaElementLocations result = new JavaElementLocations();
-		result.addAllClassDefs(this.classDefLocations);
-		result.addAllMethodCalls(this.methodCallLocations);
-		result.addAllMethodDefs(this.methodDefLocations);
+		result.addAllClassDefs(classDefLocations);
+		result.addAllMethodCalls(methodCallLocations);
+		result.addAllMethodDefs(methodDefLocations);
 		return result;
 	}
 	
@@ -165,12 +162,22 @@ public class JavaElementCache {
 	 *            the position
 	 * @return the method call
 	 */
-	public JavaElementLocation<JavaMethodCall> getMethodCall(@NotNull final String fullQualifiedName,
-	                                                         @NotNull final List<String> signature, @NotNull final String file,
-	                                                         @NotNull final JavaElementDefinition parent,
-	                                                         @NotNegative final int startLine,
-	                                                         @NotNegative final int endLine,
-	                                                         @NotNegative final int position) {
+	public JavaElementLocation getMethodCall(@NotNull final String fullQualifiedName,
+	                                         @NotNull final List<String> signature,
+	                                         @NotNull final String file,
+	                                         @NotNull final JavaElement parent,
+	                                         @NotNegative final int startLine,
+	                                         @NotNegative final int endLine,
+	                                         @NotNegative final int position) {
+		
+		boolean parentPass = ((parent instanceof JavaClassDefinition) || (parent instanceof JavaMethodDefinition));
+		Condition.check(parentPass,
+		                "The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
+		if (!parentPass) {
+			if (Logger.logError()) {
+				Logger.error("The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
+			}
+		}
 		
 		String cacheName = JavaMethodCall.composeFullQualifiedName(fullQualifiedName, signature);
 		JavaMethodCall call = null;
@@ -180,9 +187,8 @@ public class JavaElementCache {
 		} else {
 			call = methodCalls.get(cacheName);
 		}
-		JavaElementLocation<JavaMethodCall> methodCall = new JavaElementLocation<JavaMethodCall>(call, startLine,
-				endLine, position, -1, file);
-		this.methodCallLocations.add(methodCall);
+		JavaElementLocation methodCall = new JavaElementLocation(call, startLine, endLine, position, -1, file);
+		methodCallLocations.add(methodCall);
 		return methodCall;
 	}
 	
@@ -207,12 +213,13 @@ public class JavaElementCache {
 	 *            the body start line
 	 * @return the method definition
 	 */
-	public JavaElementLocation<JavaMethodDefinition> getMethodDefinition(@NotNull final String fullQualifiedName,
-	                                                                     @NotNull final List<String> signature, @NotNull final String file,
-	                                                                     @NotNegative final int startLine,
-	                                                                     @NotNegative final int endLine,
-	                                                                     @NotNegative final int position,
-	                                                                     final int bodyStartLine) {
+	public JavaElementLocation getMethodDefinition(@NotNull final String fullQualifiedName,
+	                                               @NotNull final List<String> signature,
+	                                               @NotNull final String file,
+	                                               @NotNegative final int startLine,
+	                                               @NotNegative final int endLine,
+	                                               @NotNegative final int position,
+	                                               final int bodyStartLine) {
 		
 		JavaMethodDefinition def = null;
 		if (!methodDefs.containsKey(fullQualifiedName)) {
@@ -222,10 +229,9 @@ public class JavaElementCache {
 		} else {
 			def = methodDefs.get(fullQualifiedName);
 		}
-		JavaElementLocation<JavaMethodDefinition> result = new JavaElementLocation<JavaMethodDefinition>(def,
-				startLine, endLine, position, bodyStartLine, file);
+		JavaElementLocation result = new JavaElementLocation(def, startLine, endLine, position, bodyStartLine, file);
 		
-		this.methodDefLocations.add(result);
+		methodDefLocations.add(result);
 		return result;
 	}
 }
