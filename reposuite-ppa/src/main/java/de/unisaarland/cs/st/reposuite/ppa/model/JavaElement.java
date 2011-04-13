@@ -4,6 +4,9 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -24,7 +27,9 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig<kim@cs.uni-saarland.de>
  */
 @Entity
-@Inheritance (strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance (strategy = InheritanceType.JOINED)
+@DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue ("JAVAELEMENT")
 @IdClass (JavaElementPrimaryKey.class)
 public abstract class JavaElement implements Annotated {
 	

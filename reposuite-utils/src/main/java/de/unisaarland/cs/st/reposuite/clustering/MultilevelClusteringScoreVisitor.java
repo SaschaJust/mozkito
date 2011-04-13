@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.clustering;
 
-
 /**
  * The Interface MultilevelPartitioningScoreVisitor.
  * 
@@ -26,5 +25,6 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	 *            the old score
 	 * @return the new (manipulated) score
 	 */
-	public double getScore(final T t1, final T t2, double oldScore);
+	public double getScore(final T t1,
+	                       final T t2);
 }

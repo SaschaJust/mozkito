@@ -55,17 +55,17 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = this.repoDirArg.getValue();
-		String username = this.userArg.getValue();
-		String password = this.passArg.getValue();
-		String startRevision = this.startRevision.getValue();
+		URI repositoryURI = this.getRepoDirArg().getValue();
+		String username = this.getUserArg().getValue();
+		String password = this.getPassArg().getValue();
+		String startRevision = this.getStartRevision().getValue();
 		String endRevision = this.endRevision.getValue();
 		
-		if (JavaUtils.AnyNull(repositoryURI, this.repoTypeArg.getValue())) {
+		if (JavaUtils.AnyNull(repositoryURI, this.getRepoTypeArg().getValue())) {
 			return null;
 		}
 		
-		RepositoryType rcsType = RepositoryType.valueOf(this.repoTypeArg.getValue());
+		RepositoryType rcsType = RepositoryType.valueOf(this.getRepoTypeArg().getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			if (Logger.logWarn()) {
@@ -95,4 +95,24 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			throw new RuntimeException();
 		}
 	}
+
+	public StringArgument getUserArg() {
+	    return userArg;
+    }
+
+	public StringArgument getPassArg() {
+	    return passArg;
+    }
+
+	public URIArgument getRepoDirArg() {
+	    return repoDirArg;
+    }
+
+	public StringArgument getStartRevision() {
+	    return startRevision;
+    }
+
+	public EnumArgument getRepoTypeArg() {
+	    return repoTypeArg;
+    }
 }

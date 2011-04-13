@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
@@ -20,6 +21,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
+@DiscriminatorValue ("JAVAMETHODDEFINITION")
 public class JavaMethodDefinition extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */

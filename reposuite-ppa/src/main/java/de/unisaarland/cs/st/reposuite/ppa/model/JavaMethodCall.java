@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -22,6 +23,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
+@DiscriminatorValue ("JAVAMETHODCALL")
 public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -83,13 +85,13 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		// TODO add check on fullqualified name
 		super(fullQualifiedName);
 		this.signature = new ArrayList<String>(signature);
-		this.setFullQualifiedName(fullQualifiedName);
+		setFullQualifiedName(fullQualifiedName);
 		int index = fullQualifiedName.lastIndexOf(".");
 		Condition.check(index < fullQualifiedName.length(),
 		                "Could not determine called class name. Last index of `.` is not less than length of string: "
 		                        + fullQualifiedName);
-		this.calledPackageName = fullQualifiedName.substring(0, index);
-		this.calledClassName = fullQualifiedName.substring(index + 1, fullQualifiedName.length());
+		calledPackageName = fullQualifiedName.substring(0, index);
+		calledClassName = fullQualifiedName.substring(index + 1, fullQualifiedName.length());
 		
 	}
 	
@@ -128,7 +130,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameFullQualified() {
-		return this.getFullQualifiedName();
+		return getFullQualifiedName();
 	}
 	
 	/**
@@ -138,7 +140,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameShort() {
-		return this.calledClassName;
+		return calledClassName;
 	}
 	
 	/**
@@ -147,7 +149,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the called package name
 	 */
 	public String getCalledPackageName() {
-		return this.calledPackageName;
+		return calledPackageName;
 	}
 	
 	/**
@@ -157,7 +159,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return this.signature;
+		return signature;
 	}
 	
 	/*
@@ -172,7 +174,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		Element thisElement = document.createElement("JavaMethodCall");
 		
 		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(this.getFullQualifiedName());
+		Text textNode = document.createTextNode(getFullQualifiedName());
 		nameElement.appendChild(textNode);
 		thisElement.appendChild(nameElement);
 		return thisElement;

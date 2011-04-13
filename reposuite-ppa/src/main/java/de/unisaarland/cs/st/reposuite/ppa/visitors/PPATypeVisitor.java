@@ -284,7 +284,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			                                                                          + td.getName().toString(),
 			                                                                  relativeFilePath, startLine, endLine,
 			                                                                  td.getStartPosition(),
-			                                                                  bodyStartLine, packageName);
+			                                                                  bodyStartLine);
 			
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + packageName

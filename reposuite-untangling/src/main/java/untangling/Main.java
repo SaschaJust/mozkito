@@ -14,8 +14,8 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		Untangling untangling = new Untangling(args);
+	public static void main(final String[] args) {
+		Untangling untangling = new Untangling();
 		untangling.run();
 	}
 	

@@ -42,18 +42,19 @@ public class MultilevelClustering<T> {
 			super(f, s);
 		}
 		
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		@Override
 		public int compareTo(final Tuple<Double, M> o) {
-			return o.getFirst().compareTo(this.getFirst());
+			return o.getFirst().compareTo(getFirst());
 		}
 		
 	}
 	
 	/** The matrix. */
-	private final Map<T, Map<T, Double>>                      matrix = new HashMap<T, Map<T, Double>>();
+	private final Map<T, Map<T, Double>>                    matrix = new HashMap<T, Map<T, Double>>();
 	
 	/** The score visitors. */
 	private final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors;
@@ -73,8 +74,9 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final Set<T> nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
-		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
+	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+		@SuppressWarnings ("unchecked")
+		T[] array = (T[]) nodes.toArray();
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(array);
@@ -92,9 +94,8 @@ public class MultilevelClustering<T> {
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final T[] nodes,
-	                            final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);
@@ -123,7 +124,7 @@ public class MultilevelClustering<T> {
 					existingClusters.add(p2);
 				}
 				
-				Cluster<T> tmpCluster = new Cluster<T>(p1,p2,this.matrix.get(t1).get(t2));
+				Cluster<T> tmpCluster = new Cluster<T>(p1, p2, this.matrix.get(t1).get(t2));
 				scores.offer(tmpCluster);
 			}
 		}
@@ -136,22 +137,21 @@ public class MultilevelClustering<T> {
 				continue;
 			}
 			
-			//delete old clusters!
+			// delete old clusters!
 			existingClusters.remove(children.getFirst());
 			existingClusters.remove(children.getSecond());
 			
-			//compute all new scores
-			for(Cluster<T> cluster : existingClusters){
+			// compute all new scores
+			for (Cluster<T> cluster : existingClusters) {
 				
-				double score = this.collapseVisitor.getScore(highestScore, cluster);
+				double score = this.collapseVisitor.getScore(highestScore, cluster, matrix);
 				Cluster<T> tmpCluster = new Cluster<T>(highestScore, cluster, score);
 				scores.offer(tmpCluster);
 			}
 			
-			//add new combined cluster
+			// add new combined cluster
 			existingClusters.add(highestScore);
 		}
-		
 		
 		Set<Set<T>> result = new HashSet<Set<T>>();
 		for (Cluster<T> cluster : existingClusters) {
@@ -169,10 +169,11 @@ public class MultilevelClustering<T> {
 	 *            the t2
 	 * @return the score
 	 */
-	public double getScore(final T t1, final T t2) {
+	public double getScore(final T t1,
+	                       final T t2) {
 		double score = 0d;
 		for (MultilevelClusteringScoreVisitor<T> visitor : this.scoreVisitors) {
-			score = visitor.getScore(t1, t2, score);
+			score += visitor.getScore(t1, t2);
 		}
 		return score;
 	}

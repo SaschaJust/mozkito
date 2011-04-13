@@ -78,7 +78,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final String fullQualifiedName, final String packageName) {
+	protected JavaClassDefinition(final String fullQualifiedName) {
 		
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
