@@ -54,7 +54,7 @@ public class Criteria<T> {
 	
 	public Criteria<T> in(final String column,
 	                      final Collection<?> values) {
-		this.query.where(this.builder.in(this.root.get(column)).in(values));
+		this.query.where(this.root.get(column).in(values));
 		return this;
 	}
 	

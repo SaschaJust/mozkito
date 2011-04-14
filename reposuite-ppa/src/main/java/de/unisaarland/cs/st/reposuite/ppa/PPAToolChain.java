@@ -71,7 +71,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);
-		this.databaseSettings = settings.setDatabaseArgs(false);
+		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
 		settings.setLoggerArg(true);
 		this.testCaseTransactionArg = new ListArgument(
 		                                               settings,
@@ -161,7 +161,8 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				stdout = true;
 			} else {
 				try {
-					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), new FileOutputStream(xmlFile));
+					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
+					                      new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator

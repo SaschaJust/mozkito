@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -19,6 +20,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 
@@ -54,8 +56,8 @@ public class RegexMappingEngine extends MappingEngine {
 		/**
 		 * @return the regex
 		 */
-		public Regex getRegex() {
-			return this.regex;
+		public Regex getRegex(final long id) {
+			return new Regex(this.regex.getPattern().replace("##ID##", "" + id));
 		}
 		
 		/**
@@ -79,6 +81,21 @@ public class RegexMappingEngine extends MappingEngine {
 			this.score = score;
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Matcher [score=");
+			builder.append(this.score);
+			builder.append(", regex=");
+			builder.append(this.regex);
+			builder.append("]");
+			return builder.toString();
+		}
+		
 	}
 	
 	/*
@@ -87,12 +104,12 @@ public class RegexMappingEngine extends MappingEngine {
 	 * Pattern.CASE_INSENSITIVE
 	 */
 	private static Collection<Matcher> matchers;
-	private static String              configPath;
+	private static URI                 configPath;
 	
 	/**
 	 * @return the configPath
 	 */
-	private static String getConfigPath() {
+	private static URI getConfigPath() {
 		return configPath;
 	}
 	
@@ -104,10 +121,10 @@ public class RegexMappingEngine extends MappingEngine {
 	}
 	
 	/**
-	 * @param configPath the configPath to set
+	 * @param uri the configPath to set
 	 */
-	private static void setConfigPath(final String configPath) {
-		RegexMappingEngine.configPath = configPath;
+	private static void setConfigPath(final URI uri) {
+		RegexMappingEngine.configPath = uri;
 	}
 	
 	/**
@@ -120,10 +137,19 @@ public class RegexMappingEngine extends MappingEngine {
 	/**
 	 * @param settings
 	 */
-	RegexMappingEngine(final MappingSettings settings) {
+	public RegexMappingEngine(final MappingSettings settings) {
 		super(settings);
-		setConfigPath((String) getSettings().getSetting("mapping.config.regexFile").getValue());
+		setConfigPath((URI) getSettings().getSetting("mapping.config.regexFile").getValue());
 		setMatchers(new LinkedList<RegexMappingEngine.Matcher>());
+		
+		if (!getConfigPath().getScheme().equalsIgnoreCase("file")) {
+			if (Logger.logError()) {
+				Logger.error("Other locations then file are currently not supported for config files: "
+				        + getConfigPath().toString());
+			}
+			throw new Shutdown("Other locations then file are currently not supported for config files: "
+			        + getConfigPath().toString());
+		}
 		
 		File file = new File(getConfigPath());
 		try {
@@ -134,6 +160,10 @@ public class RegexMappingEngine extends MappingEngine {
 				getMatchers().add(new Matcher(line[0], line[1], line.length > 2
 				                                                               ? line[2]
 				                                                               : ""));
+			}
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Loaded patterns: " + JavaUtils.collectionToString(getMatchers()));
 			}
 		} catch (FilePermissionException e) {
 			throw new Shutdown("Regex configuration file has wrong permissions (" + FileUtils.permissionsToString(file)
@@ -165,9 +195,13 @@ public class RegexMappingEngine extends MappingEngine {
 		}
 		
 		for (Matcher matcher : matchers) {
-			Regex regex = matcher.getRegex();
+			Regex regex = matcher.getRegex(report.getId());
 			
 			if (value < matcher.getScore()) {
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Using regex '" + regex.getPattern() + "'.");
+				}
 				if (regex.find(transaction.getMessage()) != null) {
 					
 					value += matcher.getScore();
@@ -176,7 +210,9 @@ public class RegexMappingEngine extends MappingEngine {
 			}
 		}
 		
-		score.addFeature(value, "message", relevantString, this.getClass());
+		if (!relevantString.isEmpty()) {
+			score.addFeature(value, "message", relevantString, this.getClass());
+		}
 	}
 	
 }

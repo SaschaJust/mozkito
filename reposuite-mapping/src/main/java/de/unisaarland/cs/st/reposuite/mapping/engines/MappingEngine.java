@@ -16,7 +16,7 @@ public abstract class MappingEngine {
 	
 	private MappingSettings settings;
 	
-	MappingEngine(final MappingSettings settings) {
+	public MappingEngine(final MappingSettings settings) {
 		setSettings(settings);
 	}
 	

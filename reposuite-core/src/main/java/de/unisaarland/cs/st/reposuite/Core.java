@@ -36,7 +36,7 @@ public class Core extends RepoSuiteToolchain {
 		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
 		RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
-		this.databaseSettings = settings.setDatabaseArgs(false);
+		this.databaseSettings = settings.setDatabaseArgs(false, this.getClass().getSimpleName().toLowerCase());
 		this.logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);

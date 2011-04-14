@@ -50,17 +50,18 @@ public class MappingsPersister extends RepoSuiteSinkThread<MapScore> {
 			int i = 0;
 			
 			while (!isShutdown() && ((score = read()) != null)) {
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + score);
+				if (Double.compare(score.getTotalConfidence(), 0d) > 0) {
+					if (Logger.logDebug()) {
+						Logger.debug("Storing " + score);
+					}
+					
+					if (++i % 50 == 0) {
+						this.persistenceUtil.commitTransaction();
+						this.persistenceUtil.beginTransaction();
+					}
+					
+					this.persistenceUtil.save(score);
 				}
-				
-				if (++i % 50 == 0) {
-					this.persistenceUtil.commitTransaction();
-					this.persistenceUtil.beginTransaction();
-				}
-				
-				this.persistenceUtil.save(score);
 			}
 			this.persistenceUtil.commitTransaction();
 			finish();

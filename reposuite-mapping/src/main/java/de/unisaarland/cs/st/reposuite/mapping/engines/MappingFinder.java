@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -24,9 +26,9 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class MappingFinder {
 	
-	private static Map<String, MappingEngine> engines = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingEngine> engines = new HashMap<String, MappingEngine>();
 	
-	static {
+	public MappingFinder(final MappingSettings settings) {
 		try {
 			Package package1 = MappingEngine.class.getPackage();
 			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
@@ -37,7 +39,9 @@ public class MappingFinder {
 				if (Logger.logInfo()) {
 					Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
 				}
-				engines.put(klass.getCanonicalName(), (MappingEngine) klass.newInstance());
+				
+				Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
+				this.engines.put(klass.getCanonicalName(), (MappingEngine) constructor.newInstance(settings));
 			}
 		} catch (Exception e) {
 			if (Logger.logError()) {
@@ -51,7 +55,7 @@ public class MappingFinder {
 	 * @param transaction
 	 * @return
 	 */
-	public static Set<Long> getCandidates(final RCSTransaction transaction) {
+	public Set<Long> getCandidates(final RCSTransaction transaction) {
 		Set<Long> candidates = new HashSet<Long>();
 		
 		Regex pattern = new Regex("({id}\\d{2,})");
@@ -71,12 +75,12 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public static MapScore score(final RCSTransaction transaction,
-	                             final Report report) {
+	public MapScore score(final RCSTransaction transaction,
+	                      final Report report) {
 		MapScore score = new MapScore(transaction, report);
 		
-		for (String engineName : engines.keySet()) {
-			MappingEngine mappingEngine = engines.get(engineName);
+		for (String engineName : this.engines.keySet()) {
+			MappingEngine mappingEngine = this.engines.get(engineName);
 			mappingEngine.score(transaction, report, score);
 		}
 		return score;

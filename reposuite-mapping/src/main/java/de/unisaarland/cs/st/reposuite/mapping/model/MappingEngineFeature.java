@@ -30,8 +30,7 @@ public class MappingEngineFeature implements Annotated {
 	/**
 	 * 
 	 */
-	@SuppressWarnings ("unused")
-	private MappingEngineFeature() {
+	public MappingEngineFeature() {
 	}
 	
 	/**

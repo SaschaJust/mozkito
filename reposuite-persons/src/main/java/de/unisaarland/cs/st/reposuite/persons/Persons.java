@@ -33,7 +33,8 @@ public class Persons extends RepoSuiteToolchain {
 		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
 		
 		RepoSuiteSettings settings = getSettings();
-		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true);
+		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, Core.class.getSimpleName()
+		                                                                                         .toLowerCase());
 		this.logSettings = settings.setLoggerArg(true);
 		
 		settings.parseArguments();

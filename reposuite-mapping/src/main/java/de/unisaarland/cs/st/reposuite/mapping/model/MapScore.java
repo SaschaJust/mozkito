@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,8 +48,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
 	
-	@SuppressWarnings ("unused")
-	private MapScore() {
+	public MapScore() {
 		
 	}
 	
@@ -109,7 +107,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the report
 	 */
-	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
 	@JoinColumn (nullable = false)
 	public Report getReport() {
 		return this.report;
@@ -140,7 +138,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the transaction
 	 */
-	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
 	@JoinColumn (nullable = false)
 	public RCSTransaction getTransaction() {
 		return this.transaction;

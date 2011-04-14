@@ -16,13 +16,15 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
 	private final RepositorySettings settings;
+	private final String             unit;
 	
 	/**
 	 * @param settings
 	 * @param isRequired
 	 */
-	protected DatabaseArguments(final RepositorySettings settings, final boolean isRequired) {
+	protected DatabaseArguments(final RepositorySettings settings, final boolean isRequired, final String unit) {
 		super();
+		this.unit = unit;
 		this.settings = settings;
 		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
 		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
@@ -37,7 +39,7 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
 		                               "org.postgresql.Driver", isRequired));
 		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
-		addArgument(new StringArgument(settings, "database.unit", null, null, false));
+		addArgument(new StringArgument(settings, "database.unit", "The persistence unit config tag used.", unit, true));
 	}
 	
 	/*
@@ -61,6 +63,7 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 			Class<PersistenceUtil> middlewareClass = (Class<PersistenceUtil>) Class.forName(PersistenceUtil.class.getPackage()
 			                                                                                                     .getName()
 			        + "." + arguments.get("database.middleware").getValue() + "Util");
+			
 			Method method = middlewareClass.getMethod("createSessionFactory", String.class, String.class, String.class,
 			                                          String.class, String.class, String.class, String.class);
 			method.invoke(null, arguments.get("database.host").getValue().toString(), arguments.get("database.name")

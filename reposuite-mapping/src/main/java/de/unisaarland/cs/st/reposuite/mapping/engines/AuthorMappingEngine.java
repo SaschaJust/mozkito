@@ -34,7 +34,7 @@ public class AuthorMappingEngine extends MappingEngine {
 	/**
 	 * @param settings
 	 */
-	AuthorMappingEngine(final MappingSettings settings) {
+	public AuthorMappingEngine(final MappingSettings settings) {
 		super(settings);
 		setScoreAuthorEquality((Double) getSettings().getSetting("mapping.score.AuthorEquality").getValue());
 	}

@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
-
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
@@ -15,8 +14,9 @@ public class RepositorySettings extends RepoSuiteSettings {
 	 * @return
 	 * @throws DuplicateArgumentException
 	 */
-	public DatabaseArguments setDatabaseArgs(final boolean isRequired) {
-		DatabaseArguments minerDatabaseArguments = new DatabaseArguments(this, isRequired);
+	public DatabaseArguments setDatabaseArgs(final boolean isRequired,
+	                                         final String unit) {
+		DatabaseArguments minerDatabaseArguments = new DatabaseArguments(this, isRequired, unit);
 		return minerDatabaseArguments;
 	}
 	

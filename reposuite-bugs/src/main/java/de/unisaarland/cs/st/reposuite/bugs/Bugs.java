@@ -36,7 +36,7 @@ public class Bugs extends RepoSuiteToolchain {
 		this.threadPool = new RepoSuiteThreadPool(Bugs.class.getSimpleName(), this);
 		TrackerSettings settings = (TrackerSettings) getSettings();
 		this.trackerArguments = settings.setTrackerArgs(true);
-		this.databaseArguments = settings.setDatabaseArgs(false);
+		this.databaseArguments = settings.setDatabaseArgs(false, this.getClass().getSimpleName().toLowerCase());
 		this.logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);

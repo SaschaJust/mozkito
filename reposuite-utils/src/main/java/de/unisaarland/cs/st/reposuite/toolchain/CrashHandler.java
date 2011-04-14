@@ -143,19 +143,20 @@ public class CrashHandler extends ThreadGroup {
 			body.append(stack.toString());
 			body.append(FileUtils.lineSeparator);
 			
-			if (e.getCause() != null) {
-				Throwable cause = e.getCause();
+			Throwable t = e.getCause();
+			while (t != null) {
 				stack = new StringWriter();
 				writer = new PrintWriter(stack);
-				cause.printStackTrace(writer);
+				t.printStackTrace(writer);
 				
-				body.append(FileUtils.lineSeparator);
 				body.append(FileUtils.lineSeparator);
 				body.append("Cause Stacktrace:");
 				body.append(FileUtils.lineSeparator);
 				body.append(FileUtils.lineSeparator);
 				body.append(stack.toString());
 				body.append(FileUtils.lineSeparator);
+				
+				t = t.getCause();
 			}
 			
 			body.append("<<< Crash Report <<<");
@@ -477,5 +478,5 @@ public class CrashHandler extends ThreadGroup {
 		
 		return builder.toString();
 	}
-
+	
 }
