@@ -258,7 +258,6 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param calledClassName
 	 *            the new called class name
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
 	protected void setCalledClassName(final String calledClassName) {
 		this.calledClassName = calledClassName;
@@ -270,7 +269,6 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param calledPackageName
 	 *            the new called package name
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
 	protected void setCalledPackageName(final String calledPackageName) {
 		this.calledPackageName = calledPackageName;
@@ -282,7 +280,6 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param signature
 	 *            the new signature
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
 	protected void setSignature(final List<String> signature) {
 		this.signature = signature;

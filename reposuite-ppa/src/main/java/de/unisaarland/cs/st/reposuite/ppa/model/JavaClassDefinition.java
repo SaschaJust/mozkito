@@ -193,7 +193,6 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @param anonymClass
 	 *            the new anonym class
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
 	protected void setAnonymClass(final boolean anonymClass) {
 		this.anonymClass = anonymClass;
