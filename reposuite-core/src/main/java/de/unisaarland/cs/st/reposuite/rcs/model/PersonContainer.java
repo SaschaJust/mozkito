@@ -54,7 +54,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public Person add(final String id,
 	                  final Person person) {
 		Map<String, Person> map = getMap();
-		Person ret = map.put(id, person);
+		Person ret = map.put(id.toLowerCase(), person);
 		setMap(map);
 		return ret;
 	}
@@ -65,7 +65,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Transient
 	public boolean contains(final String key) {
-		return getMap().containsKey(key);
+		return getMap().containsKey(key.toLowerCase());
 	}
 	
 	/*
@@ -77,7 +77,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	@Transient
 	public Person get(final String id) {
-		return getMap().get(id);
+		return getMap().get(id.toLowerCase());
 	}
 	
 	/**

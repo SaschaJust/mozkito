@@ -4,7 +4,12 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -30,6 +35,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
@@ -59,14 +65,14 @@ public class Report implements Annotated, Comparable<Report> {
 	private String             category;
 	private SortedSet<Comment> comments         = new TreeSet<Comment>(new CommentComparator());
 	private String             description;
-	private Severity           severity;
-	private Priority           priority;
-	private Resolution         resolution;
+	private Severity           severity         = Severity.UNKNOWN;
+	private Priority           priority         = Priority.UNKNOWN;
+	private Resolution         resolution       = Resolution.UNKNOWN;
 	private String             subject;
 	private SortedSet<Long>    siblings         = new TreeSet<Long>();
 	private History            history          = new History();
-	private Status             status;
-	private Type               type;
+	private Status             status           = Status.UNKNOWN;
+	private Type               type             = Type.UNKNOWN;
 	private DateTime           creationTimestamp;
 	private DateTime           resolutionTimestamp;
 	private DateTime           lastUpdateTimestamp;
@@ -132,6 +138,37 @@ public class Report implements Annotated, Comparable<Report> {
 		return ret;
 	}
 	
+	@Override
+	protected Report clone() throws CloneNotSupportedException {
+		Report report = new Report();
+		report.setCategory(getCategory());
+		report.setComments(getComments());
+		report.setDescription(getDescription());
+		report.setSeverity(getSeverity());
+		report.setPriority(getPriority());
+		report.setResolution(getResolution());
+		report.setSubject(getSubject());
+		report.setSiblings(getSiblings());
+		report.setHistory(getHistory());
+		report.setStatus(getStatus());
+		report.setType(getType());
+		report.setCreationTimestamp(getCreationTimestamp());
+		report.setResolutionTimestamp(getResolutionTimestamp());
+		report.setLastUpdateTimestamp(getLastUpdateTimestamp());
+		report.setLastFetch(getLastFetch());
+		report.setVersion(getVersion());
+		report.setSummary(getSummary());
+		report.setObservedBehavior(getObservedBehavior());
+		report.setExpectedBehavior(getExpectedBehavior());
+		report.setStepsToReproduce(getStepsToReproduce());
+		report.setComponent(getComponent());
+		report.setProduct(getProduct());
+		report.setAssignedTo(getAssignedTo());
+		report.setResolver(getResolver());
+		report.setSubmitter(getSubmitter());
+		return report;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -150,7 +187,6 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the assignedTo
 	 */
-	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Transient
 	public Person getAssignedTo() {
 		return getPersonContainer().get("assignedTo");
@@ -217,6 +253,37 @@ public class Report implements Annotated, Comparable<Report> {
 	@Lob
 	public String getExpectedBehavior() {
 		return this.expectedBehavior;
+	}
+	
+	public Object getField(final String lowerFieldName) {
+		Method[] methods = this.getClass().getDeclaredMethods();
+		String getter = "get" + lowerFieldName;
+		
+		for (Method method : methods) {
+			if (method.getName().equalsIgnoreCase(getter)) {
+				try {
+					return method.invoke(this);
+				} catch (IllegalArgumentException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (IllegalAccessException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (InvocationTargetException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		
+		if (Logger.logWarn()) {
+			Logger.warn("Did not find a matching field for: " + lowerFieldName);
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -499,6 +566,43 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * @param fieldName
+	 * @param fieldValue
+	 */
+	@Transient
+	public void setField(final String fieldName,
+	                     final Object fieldValue) {
+		String lowerFieldName = fieldName.toLowerCase();
+		Method[] methods = this.getClass().getDeclaredMethods();
+		String getter = "set" + lowerFieldName;
+		
+		for (Method method : methods) {
+			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
+			        && (method.getParameterTypes()[0] == fieldValue.getClass())) {
+				try {
+					method.invoke(fieldValue);
+				} catch (IllegalArgumentException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (IllegalAccessException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (InvocationTargetException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		
+		if (Logger.logWarn()) {
+			Logger.warn("Did not find a matching field for: " + lowerFieldName);
+		}
+	}
+	
+	/**
 	 * @param hash
 	 *            the hash to set
 	 */
@@ -691,6 +795,41 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setVersion(final String version) {
 		this.version = version;
+	}
+	
+	/**
+	 * @param timestamp
+	 * @return
+	 */
+	public Report timewarp(final DateTime timestamp) {
+		return getHistory().rollback(this, timestamp);
+	}
+	
+	/**
+	 * @param interval
+	 * @return
+	 */
+	public Collection<Report> timewarp(final Interval interval,
+	                                   final String field) {
+		LinkedList<Report> reports = new LinkedList<Report>();
+		Report report = timewarp(interval.getEnd());
+		
+		History history = report.getHistory().get(field);
+		
+		LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
+		ListIterator<HistoryElement> iterator = list.listIterator(list.size());
+		while (iterator.hasPrevious()) {
+			HistoryElement element = iterator.previous();
+			if (interval.contains(element.getTimestamp())) {
+				History historyPatch = new History();
+				historyPatch.add(element);
+				reports.add(report = historyPatch.rollback(report, element.getTimestamp()));
+			} else {
+				break;
+			}
+		}
+		
+		return reports;
 	}
 	
 	/*

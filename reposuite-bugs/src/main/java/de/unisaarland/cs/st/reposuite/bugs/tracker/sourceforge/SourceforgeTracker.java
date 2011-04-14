@@ -64,7 +64,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public class SourceforgeTracker extends Tracker {
 	
 	private static Regex              submittedRegex = new Regex(
-	"({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
+	                                                             "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
 	
 	protected static Regex            groupIdRegex   = new Regex("group_id=({group_id}\\d+)");
 	protected static Regex            atIdRegex      = new Regex("atid=({atid}\\d+)");
@@ -72,28 +72,26 @@ public class SourceforgeTracker extends Tracker {
 	protected static Regex            limitRegex     = new Regex("limit=({limit}\\d+)");
 	
 	private static Map<String, Field> fieldMap       = new HashMap<String, Field>() {
-		
-		private static final long serialVersionUID = 1L;
-		
-		{
-			try {
-				put("close_date",
-						Report.class
-						.getDeclaredField("resolutionTimestamp"));
-				put("resolution_id",
-						Report.class.getDeclaredField("resolution"));
-				put("status_id",
-						Report.class.getDeclaredField("status"));
-			} catch (Exception e) {
-				if (Logger.logError()) {
-					Logger.error(
-							"No such field in "
-							+ Report.class.getSimpleName()
-							+ ": " + e.getMessage(), e);
-				}
-			}
-		}
-	};
+		                                                 
+		                                                 private static final long serialVersionUID = 1L;
+		                                                 
+		                                                 {
+			                                                 try {
+				                                                 put("close_date",
+				                                                     Report.class.getDeclaredField("resolutionTimestamp"));
+				                                                 put("resolution_id",
+				                                                     Report.class.getDeclaredField("resolution"));
+				                                                 put("status_id",
+				                                                     Report.class.getDeclaredField("status"));
+			                                                 } catch (Exception e) {
+				                                                 if (Logger.logError()) {
+					                                                 Logger.error("No such field in "
+					                                                                      + Report.class.getSimpleName()
+					                                                                      + ": " + e.getMessage(), e);
+				                                                 }
+			                                                 }
+		                                                 }
+	                                                 };
 	
 	private static Priority buildPriority(final String value) {
 		// 1..9;
@@ -288,7 +286,7 @@ public class SourceforgeTracker extends Tracker {
 			String html = htmlSB.toString();
 			
 			if ((html.contains("There was an error processing your request ..."))
-					|| (html.contains("No results were found to match your current search criteria."))) {
+			        || (html.contains("No results were found to match your current search criteria."))) {
 				running = false;
 				break;
 			}
@@ -369,8 +367,10 @@ public class SourceforgeTracker extends Tracker {
 		}
 	};
 	
-	@SuppressWarnings("unchecked")
-	private void handleDivElement(final Report bugReport, Element e, final Element n) {
+	@SuppressWarnings ("unchecked")
+	private void handleDivElement(final Report bugReport,
+	                              Element e,
+	                              final Element n) {
 		if (e.getName().equals("label")) {
 			
 			String fieldName = e.getValue().replaceFirst(":.*", "");
@@ -418,7 +418,9 @@ public class SourceforgeTracker extends Tracker {
 			bugReport.setId(Long.parseLong(find.get(2).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
 			// Comments are not properly formatted. Hacking it.
-			e = (Element) (e.getChildren() != null ? e.getChildren().get(0) : null);
+			e = (Element) (e.getChildren() != null
+			                                      ? e.getChildren().get(0)
+			                                      : null);
 			if (e != null) {
 				Element e1, e2;
 				
@@ -428,7 +430,7 @@ public class SourceforgeTracker extends Tracker {
 				// All childs of tbody should be [TR]
 				for (Object commentObject : e.getChildren()) {
 					
-					//insert correct comment id
+					// insert correct comment id
 					String comment_id = ((Element) commentObject).getAttributeValue("id");
 					comment_id = comment_id.replace("artifact_comment_", "");
 					
@@ -451,7 +453,7 @@ public class SourceforgeTracker extends Tracker {
 					// .println("================================================================================");
 					// System.err.println(e2.getValue());
 					Element commenter = e1.getChild("a", e1.getNamespace());
-					//					System.err.println(">>>" + bugReport.getId());
+					// System.err.println(">>>" + bugReport.getId());
 					String commenterUsername;
 					String commenterFullname;
 					
@@ -473,15 +475,13 @@ public class SourceforgeTracker extends Tracker {
 						commentAuthor = new Person(commenterFullname, commenterUsername, null);
 					}
 					
-					
 					String datetime = e1.getContent(0).getValue().trim();
 					datetime = datetime.substring(datetime.indexOf(" ") + 1, datetime.length());
 					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
 					String commentBody = e2.getText().trim();
-					Comment comment = new Comment(new Integer(comment_id), commentAuthor, commentTimestamp,
-							commentBody);
+					Comment comment = new Comment(new Integer(comment_id), commentAuthor, commentTimestamp, commentBody);
 					if ((bugReport.getLastUpdateTimestamp() == null)
-							|| (commentTimestamp.isAfter(bugReport.getLastUpdateTimestamp()))) {
+					        || (commentTimestamp.isAfter(bugReport.getLastUpdateTimestamp()))) {
 						bugReport.setLastUpdateTimestamp(commentTimestamp);
 					}
 					bugReport.addComment(comment);
@@ -526,7 +526,7 @@ public class SourceforgeTracker extends Tracker {
 						Method method = null;
 						try {
 							method = Report.class.getMethod("get" + Character.toUpperCase(field.getName().charAt(0))
-									+ field.getName().substring(1), new Class<?>[0]);
+							        + field.getName().substring(1), new Class<?>[0]);
 						} catch (SecurityException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
@@ -553,7 +553,7 @@ public class SourceforgeTracker extends Tracker {
 						}
 					} else {
 						// take this
-						newValue = history.last().getNewValue(field.getName());
+						newValue = history.last().get(field.getName());
 					}
 					
 					Object oldValue = null;
@@ -572,8 +572,12 @@ public class SourceforgeTracker extends Tracker {
 						oldValue = oldValueElement.getValue();
 					}
 					
-					String authorFullname = authorElement != null ? authorElement.getAttributeValue("title") : null;
-					String authorUsername = authorElement != null ? authorElement.getValue() : null;
+					String authorFullname = authorElement != null
+					                                             ? authorElement.getAttributeValue("title")
+					                                             : null;
+					String authorUsername = authorElement != null
+					                                             ? authorElement.getValue()
+					                                             : null;
 					
 					ArrayList<Object> list = new ArrayList<Object>(2);
 					list.add(oldValue);
@@ -587,7 +591,8 @@ public class SourceforgeTracker extends Tracker {
 						authorUsername = authorUsername.trim();
 					}
 					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
-							DateTimeUtils.parseDate(datetimeElement.getValue()), map));
+					                                               DateTimeUtils.parseDate(datetimeElement.getValue()),
+					                                               map));
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
@@ -615,16 +620,19 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void hangle(final Report bugReport, final Element e, final Element n) {
-		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e
-				.getAttributeValue("class").startsWith("yui-g")))
-				|| ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container")
-						|| e.getAttributeValue("id").equals("commentbar") || e.getAttributeValue("id").equals(
-						"changebar")))) {
+	@SuppressWarnings ("unchecked")
+	private void hangle(final Report bugReport,
+	                    final Element e,
+	                    final Element n) {
+		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e.getAttributeValue("class")
+		                                                                                                     .startsWith("yui-g")))
+		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container")
+		                || e.getAttributeValue("id").equals("commentbar") || e.getAttributeValue("id")
+		                                                                      .equals("changebar")))) {
 			
-			//		if ((e.getAttribute("class") != null) && (e.getAttributeValue("class").startsWith("yui-g"))) {
-			//details and header
+			// if ((e.getAttribute("class") != null) &&
+			// (e.getAttributeValue("class").startsWith("yui-g"))) {
+			// details and header
 			this.handleDivElement(bugReport, e, n);
 		} else {
 			List<Element> el = e.getChildren();
@@ -649,20 +657,25 @@ public class SourceforgeTracker extends Tracker {
 		bugReport.setLastFetch(xmlReport.getFetchTime());
 		bugReport.setHash(xmlReport.getMd5());
 		hangle(bugReport, element, null);
-		//		SortedSet<Comment> comments = bugReport.getComments();
-		//		int i = comments.size();
-		//		for (Comment comment : comments) {
-		//			comment.setId(i--);
-		//		}
+		// SortedSet<Comment> comments = bugReport.getComments();
+		// int i = comments.size();
+		// for (Comment comment : comments) {
+		// comment.setId(i--);
+		// }
 		bugReport.setType(Type.BUG);
 		
 		return bugReport;
 	}
 	
 	@Override
-	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-			final String password, final Long startAt, final Long stopAt, final String cacheDir)
-	throws InvalidParameterException {
+	public void setup(final URI fetchURI,
+	                  final URI overviewURI,
+	                  final String pattern,
+	                  final String username,
+	                  final String password,
+	                  final Long startAt,
+	                  final Long stopAt,
+	                  final String cacheDir) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		if (overviewURI != null) {

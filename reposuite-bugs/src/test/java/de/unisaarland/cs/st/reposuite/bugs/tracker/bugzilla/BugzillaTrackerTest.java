@@ -52,10 +52,14 @@ public class BugzillaTrackerTest {
 		BugzillaTracker tracker = new BugzillaTracker();
 		try {
 			try {
-				assertFalse(tracker.checkRAW(new RawReport(1l, IOUtils.fetch(new URI(
-				"https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")))));
-				assertFalse(tracker.checkRAW(new RawReport(1l, IOUtils.fetch(new URI(
-				"https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xml&id=1234")))));
+				assertFalse(tracker.checkRAW(new RawReport(
+				                                           1l,
+				                                           IOUtils.fetch(new URI(
+				                                                                 "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")))));
+				assertFalse(tracker.checkRAW(new RawReport(
+				                                           1l,
+				                                           IOUtils.fetch(new URI(
+				                                                                 "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xml&id=1234")))));
 			} catch (UnsupportedProtocolException e) {
 				e.printStackTrace();
 				fail();
@@ -103,16 +107,15 @@ public class BugzillaTrackerTest {
 			DateTime dt = DateTimeUtils.parseDate("2005-11-01 11:52:13 EST");
 			assertTrue(dt.isEqual(comments.first().getTimestamp()));
 			assertEquals("Test site is here: https://node1.eclipse.org/bugstest/\n\nRelated to eclipse.org bug 113042",
-					comments.first().getMessage());
+			             comments.first().getMessage());
 			
 			assertEquals("mik.kersten", comments.last().getAuthor().getUsernames().iterator().next());
 			assertEquals(comments.first().getAuthor(), comments.last().getAuthor());
 			assertTrue(comments.last().getAuthor().getEmailAddresses().isEmpty());
 			assertEquals("Mik Kersten", comments.last().getAuthor().getFullnames().iterator().next());
 			assertTrue(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST").isEqual(comments.last().getTimestamp()));
-			assertEquals(
-					"Core support works now (adding existing reports, creating new reports).  Still some issue\nwith search (bug 115017), and rest will be broken out into seperate reports.",
-					comments.last().getMessage());
+			assertEquals("Core support works now (adding existing reports, creating new reports).  Still some issue\nwith search (bug 115017), and rest will be broken out into seperate reports.",
+			             comments.last().getMessage());
 			
 			assertEquals("Bugzilla", report.getComponent());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:42 EST"), report.getCreationTimestamp());
@@ -160,7 +163,7 @@ public class BugzillaTrackerTest {
 	}
 	
 	@Test
-	public void testParseHistroy() {
+	public void testParseHistory() {
 		URL historyURL = BugzillaTracker.class.getResource(FileUtils.fileSeparator + "bugzilla_114562_history.html");
 		Report report = new Report();
 		try {
@@ -173,16 +176,16 @@ public class BugzillaTrackerTest {
 			assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("priority"));
-			assertEquals(BugzillaXMLParser.getPriority("P3"), hElem.getOldValue("priority"));
-			assertEquals(BugzillaXMLParser.getPriority("P1"), hElem.getNewValue("priority"));
+			assertEquals(Priority.UNKNOWN, history.getOldValue("priority", hElem));
+			assertEquals(BugzillaXMLParser.getPriority("P1"), hElem.get("priority"));
 			
 			hElem = hElemIter.next();
 			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("summary"));
-			assertEquals("add support for Bugzilla 2.20", hElem.getOldValue("summary"));
-			assertEquals("add support for Bugzilla 2 20", hElem.getNewValue("summary"));
+			assertEquals("add support for Bugzilla 2.20", history.getOldValue("summary", hElem));
+			assertEquals("add support for Bugzilla 2 20", hElem.get("summary"));
 			
 			hElem = hElemIter.next();
 			assertEquals(3, hElem.size());
@@ -191,12 +194,12 @@ public class BugzillaTrackerTest {
 			assertTrue(hElem.contains("status"));
 			assertTrue(hElem.contains("resolution"));
 			assertTrue(hElem.contains("summary"));
-			assertEquals(BugzillaXMLParser.getStatus("NEW"), hElem.getOldValue("status"));
-			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"), hElem.getNewValue("status"));
-			assertEquals(BugzillaXMLParser.getResolution(""), hElem.getOldValue("resolution"));
-			assertEquals(BugzillaXMLParser.getResolution("FIXED"), hElem.getNewValue("resolution"));
-			assertEquals("add support for Bugzilla 2 20", hElem.getOldValue("summary"));
-			assertEquals("add basic support for Bugzilla 2.20", hElem.getNewValue("summary"));
+			assertEquals(BugzillaXMLParser.getStatus("NEW"), history.getOldValue("status", hElem));
+			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"), hElem.get("status"));
+			assertEquals(BugzillaXMLParser.getResolution(""), history.getOldValue("resolution", hElem));
+			assertEquals(BugzillaXMLParser.getResolution("FIXED"), hElem.get("resolution"));
+			assertEquals("add support for Bugzilla 2 20", history.getOldValue("summary", hElem));
+			assertEquals("add basic support for Bugzilla 2.20", hElem.get("summary"));
 			
 			assertEquals("mik.kersten", report.getResolver().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), report.getResolutionTimestamp());

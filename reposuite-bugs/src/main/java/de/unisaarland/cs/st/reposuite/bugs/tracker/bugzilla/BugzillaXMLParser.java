@@ -155,12 +155,13 @@ public class BugzillaXMLParser {
 	 * @throws NoSuchFieldException
 	 */
 	@NoneNull
-	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
-	FetchException,
-	JDOMException,
-	IOException,
-	SecurityException,
-	NoSuchFieldException {
+	public static void handleHistory(final URI historyUri,
+	                                 final Report report) throws UnsupportedProtocolException,
+	                                                     FetchException,
+	                                                     JDOMException,
+	                                                     IOException,
+	                                                     SecurityException,
+	                                                     NoSuchFieldException {
 		RawContent rawContent = IOUtils.fetch(historyUri);
 		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 		SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
@@ -171,7 +172,7 @@ public class BugzillaXMLParser {
 		if (!rootElement.getName().equals("html")) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
-				             + rootElement.getName() + ">.");
+				        + rootElement.getName() + ">.");
 			}
 			return;
 		}
@@ -183,10 +184,11 @@ public class BugzillaXMLParser {
 			}
 			return;
 		}
-		@SuppressWarnings ("unchecked") List<Element> bodyChildren = body.getChildren();
+		@SuppressWarnings ("unchecked")
+		List<Element> bodyChildren = body.getChildren();
 		for (Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
-					&& (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
+			        && (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
 				Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
@@ -203,8 +205,8 @@ public class BugzillaXMLParser {
 					return;
 				}
 				
-				@SuppressWarnings ("unchecked") List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr",
-				                                                                                             namespace));
+				@SuppressWarnings ("unchecked")
+				List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr", namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
@@ -215,17 +217,18 @@ public class BugzillaXMLParser {
 				DateTime dateTime = null;
 				for (Element tr : trs) {
 					int whatIndex = 2;
-					@SuppressWarnings ("unchecked") List<Element> tds = tr.getChildren("td", namespace);
+					@SuppressWarnings ("unchecked")
+					List<Element> tds = tr.getChildren("td", namespace);
 					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
-							             + tds.size());
+							        + tds.size());
 						}
 						return;
 					} else if (tds.size() < 3) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 3 table columns, found :"
-							             + tds.size());
+							        + tds.size());
 						}
 						return;
 					}
@@ -238,6 +241,7 @@ public class BugzillaXMLParser {
 						historyAuthor = new Person(username, null, null);
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
 						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
+						// FIXME helo? what about data? go fix them all 66
 						hElement = new HistoryElement(historyAuthor, dateTime, map);
 						report.addHistoryElement(hElement);
 					} else {
@@ -312,7 +316,8 @@ public class BugzillaXMLParser {
 	}
 	
 	@NoneNull
-	private static void handleLongDesc(final Report report, final Element rootElement) {
+	private static void handleLongDesc(final Report report,
+	                                   final Element rootElement) {
 		Condition.check(rootElement.getName().equals("long_desc"), "The root element must be 'long_desc'.");
 		
 		Element who = rootElement.getChild("who");
@@ -378,12 +383,14 @@ public class BugzillaXMLParser {
 	 * @param rootElement
 	 */
 	@NoneNull
-	public static void handleRoot(final Report report, final Element rootElement) {
+	public static void handleRoot(final Report report,
+	                              final Element rootElement) {
 		Condition.check(rootElement.getName().equals("bug"), "The root element must be 'bug'.");
 		
 		report.setType(Type.BUG);
 		
-		@SuppressWarnings ({ "unchecked" }) List<Element> elements = rootElement.getChildren();
+		@SuppressWarnings ({ "unchecked" })
+		List<Element> elements = rootElement.getChildren();
 		for (Element element : elements) {
 			if (element.getName().equals("bug_id")) {
 				try {
@@ -391,7 +398,7 @@ public class BugzillaXMLParser {
 				} catch (NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Bugzilla bug id `" + element.getText()
-						             + "` cannot be interpreted as an long. Abort parsing.");
+						        + "` cannot be interpreted as an long. Abort parsing.");
 					}
 					return;
 				}
@@ -400,7 +407,7 @@ public class BugzillaXMLParser {
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
-						            + "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setCreationTimestamp(creationTime);
@@ -412,7 +419,7 @@ public class BugzillaXMLParser {
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla modification time `" + element.getText()
-						            + "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setLastUpdateTimestamp(modificationTime);

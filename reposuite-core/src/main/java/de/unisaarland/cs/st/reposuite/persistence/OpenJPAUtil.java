@@ -78,7 +78,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			
-			properties.remove("openjpa.persistence.unit");
+			properties.remove("openjpa.persistence-unit");
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting persistence-unit: " + unit);

@@ -3,7 +3,11 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -21,6 +25,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.HistoryElementComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -151,7 +156,10 @@ public class History implements Annotated {
 		Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			HistoryElement element = iterator.next();
-			history.add(element.getForField(field));
+			HistoryElement value = element.getForField(field);
+			if (!value.isEmpty()) {
+				history.add(value);
+			}
 		}
 		return history;
 	}
@@ -175,6 +183,29 @@ public class History implements Annotated {
 	}
 	
 	/**
+	 * @param fieldName
+	 * @param element
+	 * @return
+	 */
+	public Object getOldValue(final String fieldName,
+	                          final HistoryElement element) {
+		History history = get(fieldName);
+		SortedSet<HistoryElement> elements = history.getElements();
+		ArrayList<HistoryElement> list = new ArrayList<HistoryElement>(elements);
+		Object object = null;
+		
+		int index = list.indexOf(element);
+		
+		if ((index > 0) && (index < list.size())) {
+			object = list.get(index);
+		} else {
+			object = new Report().getField(fieldName);
+		}
+		
+		return object;
+	}
+	
+	/**
 	 * @return
 	 */
 	@Transient
@@ -195,6 +226,58 @@ public class History implements Annotated {
 	@Transient
 	public HistoryElement last() {
 		return getElements().last();
+	}
+	
+	/**
+	 * @param element
+	 */
+	private boolean remove(final HistoryElement element) {
+		boolean ret;
+		SortedSet<HistoryElement> set = getElements();
+		ret = set.remove(element);
+		setElements(set);
+		return ret;
+	}
+	
+	/**
+	 * @param report
+	 * @return
+	 */
+	public Report rollback(@NotNull final Report report,
+	                       @NotNull final DateTime timestamp) {
+		if (report.getCreationTimestamp().isBefore(timestamp)) {
+			try {
+				History history = after(timestamp);
+				Report newReport = report.clone();
+				LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
+				ListIterator<HistoryElement> iterator = list.listIterator(list.size());
+				
+				while (iterator.hasPrevious()) {
+					HistoryElement element = iterator.previous();
+					Set<String> fields = element.getFields();
+					for (String fieldName : fields) {
+						newReport.setField(fieldName, getOldValue(fieldName, element));
+					}
+					newReport.getHistory().remove(element);
+				}
+				
+				SortedSet<Comment> comments = newReport.getComments();
+				SortedSet<Comment> newComments = new TreeSet<Comment>();
+				
+				for (Comment comment : comments) {
+					if (!comment.getTimestamp().isAfter(timestamp)) {
+						newComments.add(comment);
+					}
+				}
+				
+				newReport.setComments(newComments);
+				
+				return newReport;
+			} catch (CloneNotSupportedException e) {
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -233,5 +316,19 @@ public class History implements Annotated {
 		builder.append(JavaUtils.collectionToString(getElements()));
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	/**
+	 * @param interval
+	 * @return
+	 */
+	public History whithin(final Interval interval) {
+		History history = new History();
+		for (HistoryElement element : getElements()) {
+			if (interval.contains(element.getTimestamp())) {
+				history.add(element);
+			}
+		}
+		return history;
 	}
 }

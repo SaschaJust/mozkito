@@ -501,6 +501,33 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
+	public static String permissionsToString(final File file) {
+		StringBuilder builder = new StringBuilder();
+		
+		if (file.exists()) {
+			
+			if (file.isDirectory()) {
+				builder.append('d');
+			}
+			
+			if (file.canRead()) {
+				builder.append('r');
+			}
+			
+			if (file.canWrite()) {
+				builder.append('w');
+			}
+			
+			if (file.canExecute()) {
+				builder.append('x');
+			}
+		} else {
+			builder.append("not existing");
+		}
+		
+		return builder.toString();
+	}
+	
 	public static String readFileToString(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}

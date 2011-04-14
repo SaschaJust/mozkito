@@ -20,7 +20,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -86,22 +85,19 @@ public class OpenJPATest {
 			Report report = new Report();
 			report.setSubmitter(submitter);
 			
-			report.addHistoryElement(new HistoryElement(historyAuthor1, new DateTime(),
-			                                            new HashMap<String, Tuple<?, ?>>() {
-				                                            
-				                                            {
-					                                            put("status", new Tuple<Status, Status>(Status.NEW,
-					                                                                                    Status.CLOSED));
-				                                            }
-			                                            }));
-			report.addHistoryElement(new HistoryElement(historyAuthor2, new DateTime(),
-			                                            new HashMap<String, Tuple<?, ?>>() {
-				                                            
-				                                            {
-					                                            put("status", new Tuple<Status, Status>(Status.NEW,
-					                                                                                    Status.CLOSED));
-				                                            }
-			                                            }));
+			report.addHistoryElement(new HistoryElement(historyAuthor1, new DateTime(), new HashMap<String, Enum<?>>() {
+				
+				{
+					put("status", Status.CLOSED);
+				}
+			}));
+			
+			report.addHistoryElement(new HistoryElement(historyAuthor2, new DateTime(), new HashMap<String, Enum<?>>() {
+				
+				{
+					put("status", Status.CLOSED);
+				}
+			}));
 			
 			report.addComment(new Comment(2, commentAuthor2, new DateTime(), "comment2"));
 			
@@ -113,5 +109,4 @@ public class OpenJPATest {
 			fail(e.getMessage());
 		}
 	}
-	
 }

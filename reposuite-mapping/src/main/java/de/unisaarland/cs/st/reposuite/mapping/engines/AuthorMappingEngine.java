@@ -6,6 +6,7 @@ package de.unisaarland.cs.st.reposuite.mapping.engines;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -13,6 +14,30 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  *
  */
 public class AuthorMappingEngine extends MappingEngine {
+	
+	private static double scoreAuthorEquality = 0.2d;
+	
+	/**
+	 * @return the scoreAuthorEquality
+	 */
+	private static double getScoreAuthorEquality() {
+		return scoreAuthorEquality;
+	}
+	
+	/**
+	 * @param scoreAuthorEquality the scoreAuthorEquality to set
+	 */
+	private static void setScoreAuthorEquality(final double scoreAuthorEquality) {
+		AuthorMappingEngine.scoreAuthorEquality = scoreAuthorEquality;
+	}
+	
+	/**
+	 * @param settings
+	 */
+	AuthorMappingEngine(final MappingSettings settings) {
+		super(settings);
+		setScoreAuthorEquality((Double) getSettings().getSetting("mapping.score.AuthorEquality").getValue());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -26,12 +51,16 @@ public class AuthorMappingEngine extends MappingEngine {
 	public void score(final RCSTransaction transaction,
 	                  final Report report,
 	                  final MapScore score) {
+		double value = 0d;
+		
 		for (Comment comment : report.getComments()) {
 			if (comment.getAuthor().equals(transaction.getAuthor())) {
-				score.addFeature(0.2, "author", transaction.getAuthor().toString(), this.getClass());
+				value += getScoreAuthorEquality();
 				break;
 			}
 		}
+		
+		score.addFeature(value, "author", transaction.getAuthor().toString(), this.getClass());
 	}
 	
 }
