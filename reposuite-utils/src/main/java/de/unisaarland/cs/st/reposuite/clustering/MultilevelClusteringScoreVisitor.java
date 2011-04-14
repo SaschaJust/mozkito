@@ -17,7 +17,9 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	public double getMaxPossibleScore();
 	
 	/**
-	 * Gets the new score by manipulating the given score.
+	 * Returns a confidence value between 0 and getMaxPossibleScore(). The
+	 * higher the confidence, the stronger the voter indicates that the provided
+	 * artifacts t1 and t2 should belong to the same cluster.
 	 * 
 	 * @param ts
 	 *            the ts
