@@ -138,8 +138,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
 	 * Adds the all tags.
-	 *
-	 * @param tagNames the tag names
+	 * 
+	 * @param tagNames
+	 *            the tag names
 	 */
 	@Transient
 	public boolean addAllTags(final Collection<String> tagNames) {
@@ -202,8 +203,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
 	 * Adds the tag.
-	 *
-	 * @param tagName the tag name
+	 * 
+	 * @param tagName
+	 *            the tag name
 	 */
 	@Transient
 	public boolean addTag(@NotNull final String tagName) {
@@ -231,7 +233,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("Comparing transactions: `" + this.getId() + "` and `" + transaction.getId() + "`");
+			Logger.debug("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
 		}
 		if (equals(transaction)) {
 			return 0;
@@ -268,7 +270,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
-			int subresult = this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 			if (subresult >= 0) {
 				return 1;
 			} else {
@@ -321,18 +323,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
-		return this.branch;
+		return branch;
 	}
 	
 	/**
 	 * Gets the changed files.
-	 *
+	 * 
 	 * @return the changed files
 	 */
 	@Transient
 	public Collection<RCSFile> getChangedFiles() {
 		List<RCSFile> changedFiles = new LinkedList<RCSFile>();
-		for (RCSRevision revision : this.getRevisions()) {
+		for (RCSRevision revision : getRevisions()) {
 			changedFiles.add(revision.getChangedFile());
 		}
 		return changedFiles;
@@ -367,7 +369,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return this.children;
+		return children;
 	}
 	
 	/**
@@ -378,7 +380,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Id
 	@Index (name = "idx_transactionid")
 	public String getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -403,14 +405,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Lob
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getOriginalId() {
-		return this.originalId;
+		return originalId;
 	}
 	
 	/**
@@ -444,7 +446,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
-		return this.parents;
+		return parents;
 	}
 	
 	/**
@@ -452,7 +454,25 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
-		return this.persons;
+		return persons;
+	}
+	
+	/**
+	 * Gets the revision that changed the specified path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the revision for path if found. Returns <code>null</code>
+	 *         otherwise.
+	 */
+	@Transient
+	public RCSRevision getRevisionForPath(final String path) {
+		for (RCSRevision revision : getRevisions()) {
+			if (revision.getChangedFile().equals(path)) {
+				return revision;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -462,7 +482,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return this.revisions;
+		return revisions;
 	}
 	
 	/**
@@ -470,7 +490,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@ElementCollection
 	public Set<String> getTags() {
-		return this.tags;
+		return tags;
 	}
 	
 	/**
@@ -480,7 +500,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/**
@@ -525,9 +545,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date date) {
-		this.timestamp = date != null
-		                             ? new DateTime(date)
-		                             : null;
+		timestamp = date != null
+		                        ? new DateTime(date)
+		                        : null;
 	}
 	
 	/**
@@ -577,7 +597,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		this.tags = tagName;
+		tags = tagName;
 	}
 	
 	/**

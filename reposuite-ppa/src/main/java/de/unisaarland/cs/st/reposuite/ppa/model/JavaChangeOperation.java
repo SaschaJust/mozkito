@@ -13,12 +13,18 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaChangeOperation.
@@ -28,8 +34,72 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 @Entity
 public class JavaChangeOperation implements Annotated {
 	
+	public static String      TRANSACTION_TAG_NAME = "transaction";
+	
 	/** The Constant serialVersionUID. */
-	private static final long   serialVersionUID = 8988140924725401608L;
+	private static final long serialVersionUID     = 8988140924725401608L;
+	
+	/**
+	 * Creates an JavaChangeOperation instance by parsing a corresponding XML
+	 * representation.
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the java change operation if successfull. Otherwise returns
+	 *         <node>null</code>
+	 */
+	public static JavaChangeOperation fromXMLRepresentation(final org.jdom.Element element) {
+		
+		ChangeType changeType = null;
+		RCSRevision revision = null;
+		JavaElementLocation location = null;
+		
+		try {
+			changeType = ChangeType.valueOf(element.getName());
+		} catch (IllegalArgumentException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not detect ChangeType of JavaChangeOperation. Unknown value '" + element.getName()
+				        + "'. Returning null.");
+			}
+			return null;
+		}
+		
+		Attribute revAttribute = element.getAttribute(TRANSACTION_TAG_NAME);
+		String transaction_id = revAttribute.getValue();
+		
+		org.jdom.Element javaElementChild = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
+		
+		location = JavaElementLocation.fromXMLRepresentation(javaElementChild);
+		
+		if (location == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		String changedPath = location.getFilePath();
+		
+		try {
+			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+			RCSTransaction transaction = persistenceUtil.fetchRCSTransaction(transaction_id);
+			if (!changedPath.startsWith("/")) {
+				changedPath = "/" + changedPath;
+			}
+			revision = transaction.getRevisionForPath(changedPath);
+		} catch (UninitializedDatabaseException e) {
+			throw new UnrecoverableError("Could not retrieve RCSTransaction. Database uninitialized!", e);
+		}
+		
+		if (revision == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract revision from XML. Returning null.");
+			}
+		}
+		
+		return new JavaChangeOperation(changeType, location, revision);
+		
+	}
 	
 	/** The id. */
 	private long                id;
@@ -43,8 +113,9 @@ public class JavaChangeOperation implements Annotated {
 	/** The revision. */
 	private RCSRevision         revision;
 	
+	@Deprecated
 	public JavaChangeOperation() {
-		// FIXME remove
+		
 	}
 	
 	/**
@@ -151,17 +222,13 @@ public class JavaChangeOperation implements Annotated {
 	/**
 	 * Gets the xML representation.
 	 * 
-	 * @param document
-	 *            the document
 	 * @return the xML representation
 	 */
 	@Transient
-	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement(getChangeType().toString());
-		// Attr revision = document.createAttribute("revision");
-		// revision.setNodeValue(this.getRevision().getTransaction().getId());
-		// thisElement.setAttributeNode(revision);
-		thisElement.appendChild(getChangedElementLocation().getXMLRepresentation(document));
+	public Element getXMLRepresentation() {
+		Element thisElement = new Element(getChangeType().toString());
+		thisElement.setAttribute(TRANSACTION_TAG_NAME, getRevision().getTransaction().getId());
+		thisElement.addContent(getChangedElementLocation().getXMLRepresentation());
 		return thisElement;
 	}
 	

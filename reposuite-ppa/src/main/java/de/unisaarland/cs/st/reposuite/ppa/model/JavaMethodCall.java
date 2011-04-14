@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.ppa.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -10,11 +11,10 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaMethodCall.
@@ -22,10 +22,14 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
+@DiscriminatorValue ("JAVAMETHODCALL")
 public class JavaMethodCall extends JavaElement implements Annotated {
 	
+	public static final String FULL_QUALIFIED_NAME = "fullQualifiedName";
+	public static final String JAVA_METHOD_CALL    = "JavaMethodCall";
+	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -2885710604331995125L;
+	private static final long  serialVersionUID    = -2885710604331995125L;
 	
 	/**
 	 * Compose full qualified name.
@@ -37,10 +41,17 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	@NoneNull
-	public static String composeFullQualifiedName(final String fullQualifiedName,
+	public static String composeFullQualifiedName(final String objectName,
+	                                              final String methodName,
 	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(fullQualifiedName);
+		String localParentName = objectName;
+		while (localParentName.endsWith(".")) {
+			localParentName = localParentName.substring(0, localParentName.length() - 1);
+		}
+		sb.append(localParentName);
+		sb.append(".");
+		sb.append(methodName);
 		sb.append("(");
 		if (!signature.isEmpty()) {
 			sb.append(signature.get(0));
@@ -51,6 +62,62 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		}
 		sb.append(")");
 		return sb.toString();
+	}
+	
+	/**
+	 * Creates a JavaMethodCall instance from XML.
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the java method call is successful, <code>null</code> otherwise.
+	 */
+	public static JavaMethodCall fromXMLRepresentation(final org.jdom.Element element) {
+		if (!element.getName().equals(JAVA_METHOD_CALL)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
+			}
+			return null;
+		}
+		
+		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		if (nameElement == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		String name = nameElement.getText();
+		
+		if ((name == null) || (!name.contains("(")) || (!name.contains(")"))) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		
+		int dotIndex = name.indexOf(".");
+		int index = name.indexOf("(");
+		
+		if ((dotIndex < 0) || (dotIndex > index)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		
+		String tmpName = name.substring(0, index);
+		int lastDotIndex = tmpName.lastIndexOf(".");
+		String parentName = tmpName.substring(0, lastDotIndex);
+		String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
+		
+		String argString = name.substring(index + 1, name.indexOf(")"));
+		String[] args = argString.split(",");
+		List<String> argList = new ArrayList<String>(args.length);
+		for (String arg : args) {
+			argList.add(arg);
+		}
+		
+		return new JavaMethodCall(parentName, methodName, argList);
 	}
 	
 	/** The signature. */
@@ -65,8 +132,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	/**
 	 * Instantiates a new java method call.
 	 */
-	@SuppressWarnings ("unused")
-	private JavaMethodCall() {
+	@Deprecated
+	public JavaMethodCall() {
 		super();
 	}
 	
@@ -79,17 +146,26 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 *            the signature
 	 */
 	@NoneNull
-	protected JavaMethodCall(final String fullQualifiedName, final List<String> signature) {
-		// TODO add check on fullqualified name
-		super(fullQualifiedName);
+	protected JavaMethodCall(final String objectName, final String methodName, final List<String> signature) {
+		super(methodName);
+		
+		Condition.check(objectName.contains("."), "The objectName of a method call MUST contain at least one DOT.");
+		Condition.check(!objectName.contains("("), "The objectName name of a method call must not contain '('.");
+		Condition.check(!objectName.contains(")"), "The objectName name of a method call must not contain ')'.");
+		Condition.check(!methodName.contains("."), "The methodName name of a method call MUST NOT contains any DOT.");
+		Condition.check(!methodName.contains("("), "The methodName name of a method call must not contain '('.");
+		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
+		
 		this.signature = new ArrayList<String>(signature);
-		this.setFullQualifiedName(fullQualifiedName);
-		int index = fullQualifiedName.lastIndexOf(".");
-		Condition.check(index < fullQualifiedName.length(),
-		                "Could not determine called class name. Last index of `.` is not less than length of string: "
-		                        + fullQualifiedName);
-		this.calledPackageName = fullQualifiedName.substring(0, index);
-		this.calledClassName = fullQualifiedName.substring(index + 1, fullQualifiedName.length());
+		setFullQualifiedName(composeFullQualifiedName(objectName, methodName, signature));
+		int index = objectName.lastIndexOf(".");
+		if (index < 0) {
+			calledPackageName = "";
+			calledClassName = objectName.substring(0, objectName.length());
+		} else {
+			calledPackageName = objectName.substring(0, index);
+			calledClassName = objectName.substring(index + 1, objectName.length());
+		}
 		
 	}
 	
@@ -128,7 +204,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameFullQualified() {
-		return this.getFullQualifiedName();
+		return getFullQualifiedName();
 	}
 	
 	/**
@@ -138,7 +214,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameShort() {
-		return this.calledClassName;
+		return calledClassName;
 	}
 	
 	/**
@@ -147,7 +223,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the called package name
 	 */
 	public String getCalledPackageName() {
-		return this.calledPackageName;
+		return calledPackageName;
 	}
 	
 	/**
@@ -157,24 +233,22 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return this.signature;
+		return signature;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.ppa.model.JavaElement#getXMLRepresentation
-	 * (org.w3c.dom.Document)
+	 * ()
 	 */
 	@Override
 	@NoneNull
-	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement("JavaMethodCall");
-		
-		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(this.getFullQualifiedName());
-		nameElement.appendChild(textNode);
-		thisElement.appendChild(nameElement);
+	public Element getXMLRepresentation() {
+		Element thisElement = new Element(JAVA_METHOD_CALL);
+		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		nameElement.setText(getFullQualifiedName());
+		thisElement.addContent(nameElement);
 		return thisElement;
 	}
 	
@@ -184,9 +258,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param calledClassName
 	 *            the new called class name
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
-	private void setCalledClassName(final String calledClassName) {
+	protected void setCalledClassName(final String calledClassName) {
 		this.calledClassName = calledClassName;
 	}
 	
@@ -196,9 +269,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param calledPackageName
 	 *            the new called package name
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
-	private void setCalledPackageName(final String calledPackageName) {
+	protected void setCalledPackageName(final String calledPackageName) {
 		this.calledPackageName = calledPackageName;
 	}
 	
@@ -208,9 +280,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @param signature
 	 *            the new signature
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
-	private void setSignature(final List<String> signature) {
+	protected void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}
 }

@@ -1,8 +1,13 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -11,6 +16,30 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class PPAPersistenceUtil {
+	
+	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
+	                                                           final RCSTransaction transaction) {
+		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		
+		for (RCSRevision revision : transaction.getRevisions()) {
+			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+			criteria.eq("revision", revision);
+			result.addAll(persistenceUtil.load(criteria));
+		}
+		return result;
+	}
+	
+	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
+	                                                           final String transactionId) {
+		List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
+		
+		RCSTransaction transaction = persistenceUtil.fetchRCSTransaction(transactionId);
+		if (transaction != null) {
+			return getChangeOperation(persistenceUtil, transaction);
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Gets the java element.

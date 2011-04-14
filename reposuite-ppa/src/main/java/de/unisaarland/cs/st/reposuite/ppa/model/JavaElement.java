@@ -4,6 +4,9 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -13,8 +16,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -24,7 +26,9 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Kim Herzig<kim@cs.uni-saarland.de>
  */
 @Entity
-@Inheritance (strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance (strategy = InheritanceType.JOINED)
+@DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue ("JAVAELEMENT")
 @IdClass (JavaElementPrimaryKey.class)
 public abstract class JavaElement implements Annotated {
 	
@@ -133,11 +137,9 @@ public abstract class JavaElement implements Annotated {
 	/**
 	 * Gets the xML representation.
 	 * 
-	 * @param document
-	 *            the document
 	 * @return the xML representation
 	 */
-	public abstract Element getXMLRepresentation(Document document);
+	public abstract Element getXMLRepresentation();
 	
 	/*
 	 * (non-Javadoc)

@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -284,7 +283,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			                                                                          + td.getName().toString(),
 			                                                                  relativeFilePath, startLine, endLine,
 			                                                                  td.getStartPosition(),
-			                                                                  bodyStartLine, packageName);
+			                                                                  bodyStartLine);
 			
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + packageName
@@ -385,10 +384,8 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				JavaClassDefinition parent = ((JavaClassDefinition) classStack.peek().getElement());
-				String cacheName = JavaMethodDefinition.composeFullQualifiedName(parent, md.getName().toString(),
-				                                                                 arguments);
-				
-				JavaElementLocation methodDefLoc = elementCache.getMethodDefinition(cacheName, arguments,
+				JavaElementLocation methodDefLoc = elementCache.getMethodDefinition(parent.getFullQualifiedName(),
+				                                                                    md.getName().toString(), arguments,
 				                                                                    getRelativeFilePath(), startLine,
 				                                                                    endLine, node.getStartPosition(),
 				                                                                    bodyStartLine);

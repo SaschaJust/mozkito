@@ -11,13 +11,12 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaClassDefinition.
@@ -27,28 +26,60 @@ import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 @Entity
 public class JavaClassDefinition extends JavaElement implements Annotated {
 	
+	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";
+	public static final String JAVA_CLASS_DEFINITION = "JavaClassDefinition";
+	
 	/** The Constant serialVersionUID. */
-	private static final long               serialVersionUID = 945704236316941413L;
+	private static final long  serialVersionUID      = 945704236316941413L;
+	
+	/**
+	 * Creates a JavaClassDefinition instance from XML.
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the java class definition is successful, <code>null</code>
+	 *         otherwise.
+	 */
+	public static JavaClassDefinition fromXMLRepresentation(final org.jdom.Element element) {
+		
+		if (!element.getName().equals(JAVA_CLASS_DEFINITION)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
+			}
+			return null;
+		}
+		
+		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		if (nameElement == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		String name = nameElement.getText();
+		
+		return new JavaClassDefinition(name);
+	}
 	
 	/** The super class name. */
-	private String                          superClassName   = null;
+	private String                          superClassName = null;
 	
 	/** The Constant anonCheck. */
-	private final static String             anonCheck        = ".*\\$\\d+";
+	private final static String             anonCheck      = ".*\\$\\d+";
 	
 	/** The anon counter. */
-	private final HashMap<Integer, Integer> anonCounters     = new HashMap<Integer, Integer>();
+	private final HashMap<Integer, Integer> anonCounters   = new HashMap<Integer, Integer>();
 	
 	/** The anonym class. */
-	private boolean                         anonymClass      = false;
+	private boolean                         anonymClass    = false;
 	
 	private JavaClassDefinition             parent;
 	
 	/**
 	 * Instantiates a new java class definition.
 	 */
-	@SuppressWarnings ("unused")
-	private JavaClassDefinition() {
+	@Deprecated
+	public JavaClassDefinition() {
 		super();
 	}
 	
@@ -78,7 +109,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final String fullQualifiedName, final String packageName) {
+	protected JavaClassDefinition(final String fullQualifiedName) {
 		
 		super(fullQualifiedName);
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
@@ -104,7 +135,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @return the super class name
 	 */
-	private String getSuperClassName() {
+	protected String getSuperClassName() {
 		return superClassName;
 	}
 	
@@ -116,13 +147,11 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Override
 	@NoneNull
-	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement("JavaClassDefinition");
-		
-		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(getFullQualifiedName());
-		nameElement.appendChild(textNode);
-		thisElement.appendChild(nameElement);
+	public Element getXMLRepresentation() {
+		Element thisElement = new Element(JAVA_CLASS_DEFINITION);
+		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		nameElement.setText(getFullQualifiedName());
+		thisElement.addContent(nameElement);
 		return thisElement;
 	}
 	
@@ -164,16 +193,15 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @param anonymClass
 	 *            the new anonym class
 	 */
-	@SuppressWarnings ("unused")
 	@NoneNull
-	private void setAnonymClass(final boolean anonymClass) {
+	protected void setAnonymClass(final boolean anonymClass) {
 		this.anonymClass = anonymClass;
 	}
 	
 	/**
 	 * @param parent
 	 */
-	private void setParent(final JavaClassDefinition parent) {
+	protected void setParent(final JavaClassDefinition parent) {
 		this.parent = parent;
 	}
 	

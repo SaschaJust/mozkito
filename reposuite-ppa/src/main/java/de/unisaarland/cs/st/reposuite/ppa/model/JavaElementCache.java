@@ -114,12 +114,11 @@ public class JavaElementCache {
 	                                              @NotNegative final int startLine,
 	                                              @NotNegative final int endLine,
 	                                              @NotNegative final int position,
-	                                              @NotNegative final int bodyStartLine,
-	                                              @NotNull final String packageName) {
+	                                              @NotNegative final int bodyStartLine) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
-			def = new JavaClassDefinition(fullQualifiedName, packageName);
+			def = new JavaClassDefinition(fullQualifiedName);
 			classDefs.put(fullQualifiedName, def);
 		} else {
 			def = classDefs.get(fullQualifiedName);
@@ -162,7 +161,8 @@ public class JavaElementCache {
 	 *            the position
 	 * @return the method call
 	 */
-	public JavaElementLocation getMethodCall(@NotNull final String fullQualifiedName,
+	public JavaElementLocation getMethodCall(@NotNull final String objectName,
+	                                         @NotNull final String methodName,
 	                                         @NotNull final List<String> signature,
 	                                         @NotNull final String file,
 	                                         @NotNull final JavaElement parent,
@@ -179,10 +179,10 @@ public class JavaElementCache {
 			}
 		}
 		
-		String cacheName = JavaMethodCall.composeFullQualifiedName(fullQualifiedName, signature);
+		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
 		JavaMethodCall call = null;
 		if (!methodCalls.containsKey(cacheName)) {
-			call = new JavaMethodCall(cacheName, signature);
+			call = new JavaMethodCall(objectName, methodName, signature);
 			methodCalls.put(cacheName, call);
 		} else {
 			call = methodCalls.get(cacheName);
@@ -213,7 +213,8 @@ public class JavaElementCache {
 	 *            the body start line
 	 * @return the method definition
 	 */
-	public JavaElementLocation getMethodDefinition(@NotNull final String fullQualifiedName,
+	public JavaElementLocation getMethodDefinition(@NotNull final String objectName,
+	                                               @NotNull final String methodName,
 	                                               @NotNull final List<String> signature,
 	                                               @NotNull final String file,
 	                                               @NotNegative final int startLine,
@@ -222,12 +223,13 @@ public class JavaElementCache {
 	                                               final int bodyStartLine) {
 		
 		JavaMethodDefinition def = null;
-		if (!methodDefs.containsKey(fullQualifiedName)) {
+		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
+		if (!methodDefs.containsKey(cacheName)) {
 			
-			def = new JavaMethodDefinition(fullQualifiedName, signature);
-			methodDefs.put(fullQualifiedName, def);
+			def = new JavaMethodDefinition(objectName, methodName, signature);
+			methodDefs.put(cacheName, def);
 		} else {
-			def = methodDefs.get(fullQualifiedName);
+			def = methodDefs.get(cacheName);
 		}
 		JavaElementLocation result = new JavaElementLocation(def, startLine, endLine, position, bodyStartLine, file);
 		

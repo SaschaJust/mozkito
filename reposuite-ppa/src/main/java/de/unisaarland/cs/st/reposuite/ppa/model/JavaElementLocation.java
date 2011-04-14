@@ -20,11 +20,11 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaElementLocation.
@@ -51,34 +51,189 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		DEF_AND_BODY,
 		/** The FALSE. */
 		FALSE
-	};
+	}
+	
+	public static String      JAVA_ELEMENT_LOCATION_TAG             = "JavaElementLocation";
+	public static String      JAVA_ELEMENT_LOCATION_ID_ATTR         = "id";
+	public static String      JAVA_ELEMENT_LOCATION_START_LINE_ATTR = "startline";
+	public static String      JAVA_ELEMENT_LOCATION_END_LINE_ATTR   = "endline";
+	public static String      JAVA_ELEMENT_LOCATION_POSITION_ATTR   = "position";
+	public static String      JAVA_ELEMENT_LOCATION_PATH_TAG        = "filePath";
+	public static String      JAVA_ELEMENT_LOCATION_BODY_START_ATTR = "bodystartline";
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -4858435624572738026L;
+	private static final long serialVersionUID                      = -4858435624572738026L;
+	
+	/**
+	 * Creates a JavaElementLocation instance from XML.
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the java element location if successful. Returns
+	 *         <code>null</code> otherwise.
+	 */
+	public static JavaElementLocation fromXMLRepresentation(final org.jdom.Element element) {
+		
+		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Unrecognized JavaElementLocation tag. Expected <" + JAVA_ELEMENT_LOCATION_TAG
+				        + "> but got <" + element.getName() + ">. Retuning null.");
+			}
+			return null;
+		}
+		
+		Attribute idAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR);
+		if (idAttr == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.id from XML. Returning null.");
+			}
+			return null;
+		}
+		Long id = -1l;
+		try {
+			id = new Long(idAttr.getValue());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.id from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		Attribute slAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR);
+		Integer startline = -1;
+		if (slAttr == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.startline from XML. Returning null.");
+			}
+			return null;
+		}
+		try {
+			startline = new Integer(slAttr.getValue());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.startline from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		Attribute elAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR);
+		Integer endline = -1;
+		if (elAttr == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.endline from XML. Returning null.");
+			}
+			return null;
+		}
+		try {
+			endline = new Integer(elAttr.getValue());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.endline from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		Attribute posAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR);
+		Integer position = -1;
+		if (posAttr == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.position from XML. Returning null.");
+			}
+			return null;
+		}
+		try {
+			position = new Integer(posAttr.getValue());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.position from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		Attribute bsAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR);
+		Integer bodystart = -1;
+		if (bsAttr == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.bodystartline from XML. Returning null.");
+			}
+			return null;
+		}
+		try {
+			bodystart = new Integer(bsAttr.getValue());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.bodystartline from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		org.jdom.Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		if (pathElement == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElementLocation.path from XML. Returning null.");
+			}
+			return null;
+		}
+		String path = pathElement.getText();
+		
+		JavaElement javaElement = null;
+		
+		org.jdom.Element elementChild = element.getChild(JavaClassDefinition.JAVA_CLASS_DEFINITION);
+		if (elementChild != null) {
+			javaElement = JavaClassDefinition.fromXMLRepresentation(elementChild);
+		} else {
+			elementChild = element.getChild(JavaMethodDefinition.JAVA_METHOD_DEFINITION);
+			if (elementChild != null) {
+				javaElement = JavaMethodDefinition.fromXMLRepresentation(elementChild);
+			} else {
+				elementChild = element.getChild(JavaMethodCall.JAVA_METHOD_CALL);
+				if (elementChild != null) {
+					javaElement = JavaMethodCall.fromXMLRepresentation(elementChild);
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Could not extract JavaElement from XML. Returning null.");
+					}
+					return null;
+				}
+			}
+		}
+		
+		if (javaElement == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaElement from XML. Returning null.");
+			}
+			return null;
+		}
+		
+		JavaElementLocation javaElementLocation = new JavaElementLocation(javaElement, startline, endline, position,
+		                                                                  bodystart, path);
+		javaElementLocation.setId(id);
+		return javaElementLocation;
+	}
 	
 	/** The id. */
-	private long              id;
+	private long         id;
 	
 	/** The start line. */
-	private int               startLine;
+	private int          startLine;
 	
 	/** The end line. */
-	private int               endLine;
+	private int          endLine;
 	
 	/** The position. */
-	private int               position;
+	private int          position;
 	
 	/** The element. */
-	private JavaElement       element;
+	private JavaElement  element;
 	
 	/** The file path. */
-	private String            filePath         = "<unknown>";
+	private String       filePath     = "<unknown>";
 	
 	/** The body start line. */
-	private int               bodyStartLine;
+	private int          bodyStartLine;
 	
 	/** The comment lines. */
-	private Set<Integer>      commentLines     = new HashSet<Integer>();
+	private Set<Integer> commentLines = new HashSet<Integer>();
 	
 	/**
 	 * Instantiates a new java element location.
@@ -377,26 +532,24 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	/**
 	 * Gets the xML representation.
 	 * 
-	 * @param document
-	 *            the document
 	 * @return the xML representation
 	 */
 	@NoneNull
 	@Transient
-	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement("JavaElementLocation");
+	public Element getXMLRepresentation() {
+		Element thisElement = new Element(JAVA_ELEMENT_LOCATION_TAG);
 		
-		thisElement.setAttribute("id", "" + getId());
-		thisElement.setAttribute("startline", "" + getStartLine());
-		thisElement.setAttribute("endline", "" + getEndLine());
-		thisElement.setAttribute("position", "" + getPosition());
+		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR, "" + getId());
+		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR, "" + getStartLine());
+		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR, "" + getEndLine());
+		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR, "" + getPosition());
+		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR, "" + getBodyStartLine());
 		
-		Element filePathElement = document.createElement("filePath");
-		Text textNode = document.createTextNode(getFilePath());
-		filePathElement.appendChild(textNode);
-		thisElement.appendChild(filePathElement);
+		Element filePathElement = new Element(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		filePathElement.setText(getFilePath());
+		thisElement.addContent(filePathElement);
 		
-		thisElement.appendChild(getElement().getXMLRepresentation(document));
+		thisElement.addContent(getElement().getXMLRepresentation());
 		
 		return thisElement;
 	}
@@ -481,7 +634,6 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param id
 	 *            the new id
 	 */
-	@SuppressWarnings ("unused")
 	private void setId(final long id) {
 		this.id = id;
 	}

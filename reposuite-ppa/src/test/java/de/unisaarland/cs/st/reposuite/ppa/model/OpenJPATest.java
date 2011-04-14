@@ -47,7 +47,7 @@ public class OpenJPATest {
 			
 			persistenceUtil.beginTransaction();
 			JavaElementCache cache = new JavaElementCache();
-			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5, "a");
+			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 			DateTime now = new DateTime();
 			Person p = new Person("kim", "", "");
 			RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1");
@@ -60,7 +60,6 @@ public class OpenJPATest {
 			persistenceUtil.beginTransaction();
 			
 			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			criteria.eq("id", 1);
 			List<JavaChangeOperation> list = persistenceUtil.load(criteria);
 			assertEquals(1, list.size());
 		} catch (UninitializedDatabaseException e) {

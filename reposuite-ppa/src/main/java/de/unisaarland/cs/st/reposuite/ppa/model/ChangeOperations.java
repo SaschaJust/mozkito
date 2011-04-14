@@ -8,7 +8,6 @@ import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ChangeOperations.
  * 

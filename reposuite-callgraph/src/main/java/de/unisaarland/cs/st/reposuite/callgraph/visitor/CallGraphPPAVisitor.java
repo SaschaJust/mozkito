@@ -29,47 +29,47 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class CallGraphPPAVisitor implements PPAVisitor {
 	
-	private final CallGraph    callGraph;
+	private final CallGraph         callGraph;
 	private boolean                 update           = false;
 	private final Set<ClassVertex>  resettedVertices = new HashSet<ClassVertex>();
 	private final Set<MethodVertex> changedMethods   = new HashSet<MethodVertex>();
 	private final String            filename;
 	private final JavaElementCache  javaElementCache;
 	
-	public CallGraphPPAVisitor(final CallGraph callGraph, final boolean update,
-	                           final String fileName, final JavaElementCache javaElementCache) {
+	public CallGraphPPAVisitor(final CallGraph callGraph, final boolean update, final String fileName,
+	        final JavaElementCache javaElementCache) {
 		this.callGraph = callGraph;
 		this.update = update;
-		this.filename = fileName;
+		filename = fileName;
 		this.javaElementCache = javaElementCache;
 	}
 	
 	private void addEdge(final MethodVertex from,
 	                     final MethodVertex to) {
-		if (this.update) {
+		if (update) {
 			ClassVertex parent = from.getParent();
-			if ((parent != null) && (!this.resettedVertices.contains(parent))) {
-				this.callGraph.removeRecursive(parent);
-				this.resettedVertices.add(parent);
+			if ((parent != null) && (!resettedVertices.contains(parent))) {
+				callGraph.removeRecursive(parent);
+				resettedVertices.add(parent);
 			}
 		}
-		this.callGraph.addEdge(from, to);
-		this.changedMethods.add(from);
+		callGraph.addEdge(from, to);
+		changedMethods.add(from);
 	}
 	
 	@Override
 	public void endVisit(final PPATypeVisitor ppaVisitor,
 	                     final CompilationUnit cu,
 	                     final ASTNode node,
-	                     final JavaElementLocation<JavaClassDefinition> classContext,
-	                     final JavaElementLocation<JavaMethodDefinition> methodContext,
+	                     final JavaElementLocation classContext,
+	                     final JavaElementLocation methodContext,
 	                     final JavaElementCache elementCache) {
 		
 	}
 	
 	public Set<ClassVertex> getChangedClasses() {
 		Set<ClassVertex> changedClasses = new HashSet<ClassVertex>();
-		for (MethodVertex v : this.changedMethods) {
+		for (MethodVertex v : changedMethods) {
 			if (v.getParent() != null) {
 				changedClasses.add(v.getParent());
 			}
@@ -78,13 +78,13 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	}
 	
 	public Set<MethodVertex> getChangedMethods() {
-		return this.changedMethods;
+		return changedMethods;
 	}
 	
 	private void handleClassInstanceCreation(final int line,
 	                                         final ClassInstanceCreation cic,
-	                                         final JavaElementLocation<JavaClassDefinition> classContext,
-	                                         final JavaElementLocation<JavaMethodDefinition> methodContext) {
+	                                         final JavaElementLocation classContext,
+	                                         final JavaElementLocation methodContext) {
 		IMethodBinding mBinding = cic.resolveConstructorBinding();
 		if (mBinding == null) {
 			StringBuilder ss = new StringBuilder();
@@ -132,8 +132,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 		}
 		
-		JavaClassDefinition calledObject = javaElementCache.getClassDefinition(calledObjectName, filename, 0, 0, 0, 0)
-		.getElement();
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		                                                                                             filename, 0, 0, 0,
+		                                                                                             0).getElement();
 		
 		ITypeBinding[] args = mBinding.getParameterTypes();
 		List<String> arguments = new ArrayList<String>();
@@ -149,11 +150,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                                                                 filename);
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(methodContext.getElement().getFullQualifiedName() + " calls "
-				             + to.getFullQualifiedMethodName());
+				        + to.getFullQualifiedMethodName());
 			}
 			
 		} else {
@@ -163,7 +164,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                                                                 filename);
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -173,8 +174,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	private void handleMethodInvocation(final int line,
 	                                    final MethodInvocation mi,
-	                                    final JavaElementLocation<JavaClassDefinition> classContextLocation,
-	                                    final JavaElementLocation<JavaMethodDefinition> methodContextLocation) {
+	                                    final JavaElementLocation classContextLocation,
+	                                    final JavaElementLocation methodContextLocation) {
 		
 		if ((classContextLocation == null) || (classContextLocation.getElement() == null)) {
 			if (Logger.logWarn()) {
@@ -183,7 +184,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = classContextLocation.getElement();
+		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
 		
 		IBinding binding = mi.resolveMethodBinding();
 		
@@ -222,8 +223,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = javaElementCache.getClassDefinition(calledObjectName, filename, 0, 0, 0, 0)
-		.getElement();
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		                                                                                             filename, 0, 0, 0,
+		                                                                                             0).getElement();
 		
 		ITypeBinding[] args = mBinding.getParameterTypes();
 		List<String> arguments = new ArrayList<String>();
@@ -233,7 +235,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		String methodName = mi.getName().toString();
 		
 		if ((methodContextLocation != null) && (methodContextLocation.getElement() != null)) {
-			JavaMethodDefinition methodContext = methodContextLocation.getElement();
+			JavaMethodDefinition methodContext = (JavaMethodDefinition) methodContextLocation.getElement();
 			
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(), filename);
@@ -241,7 +243,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                                                                 filename);
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -254,7 +256,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                                                                 filename);
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -265,8 +267,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	private void handleSuperConstructorInvocation(final int line,
 	                                              final SuperConstructorInvocation sci,
-	                                              final JavaElementLocation<JavaClassDefinition> classContextLocation,
-	                                              final JavaElementLocation<JavaMethodDefinition> methodContextLocation) {
+	                                              final JavaElementLocation classContextLocation,
+	                                              final JavaElementLocation methodContextLocation) {
 		
 		if ((classContextLocation == null) || (classContextLocation.getElement() == null)) {
 			if (Logger.logWarn()) {
@@ -275,7 +277,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = classContextLocation.getElement();
+		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
 		
 		IMethodBinding mBinding = sci.resolveConstructorBinding();
 		if (mBinding == null) {
@@ -295,13 +297,13 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 				return;
 			} else {
 				
-				JavaMethodDefinition methodContext = methodContextLocation.getElement();
+				JavaMethodDefinition methodContext = (JavaMethodDefinition) methodContextLocation.getElement();
 				
 				MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(), filename);
 				MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent(),
 				                                                                                                 "<init>",
 				                                                                                                 new ArrayList<String>()),
-				                                                                                                 filename);
+				                                                   filename);
 				addEdge(from, to);
 				if (Logger.logDebug()) {
 					Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -332,8 +334,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = javaElementCache.getClassDefinition(calledObjectName, filename, 0, 0, 0, 0)
-		.getElement();
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		                                                                                             filename, 0, 0, 0,
+		                                                                                             0).getElement();
 		
 		ITypeBinding[] args = mBinding.getParameterTypes();
 		List<String> arguments = new ArrayList<String>();
@@ -345,10 +348,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		if ((methodContextLocation != null) && (methodContextLocation.getElement() != null)) {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
-			                                                     .getFullQualifiedName(), filename);
+			                                                                          .getFullQualifiedName(), filename);
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
-			                                                                                                 arguments), filename);
+			                                                                                                 arguments),
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -357,8 +361,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			if (Logger.logError()) {
 				Logger.error("Found method call outside method declaration in class `"
-				             + classContext.getFullQualifiedName()
-				             + "` in line " + line, new RuntimeException());
+				                     + classContext.getFullQualifiedName() + "` in line " + line,
+				             new RuntimeException());
 			}
 		}
 		
@@ -366,8 +370,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	private void handleSuperMethodInvocation(final int line,
 	                                         final SuperMethodInvocation smi,
-	                                         final JavaElementLocation<JavaClassDefinition> classContextLocation,
-	                                         final JavaElementLocation<JavaMethodDefinition> methodContextLocation) {
+	                                         final JavaElementLocation classContextLocation,
+	                                         final JavaElementLocation methodContextLocation) {
 		
 		if ((classContextLocation == null) || (classContextLocation.getElement() == null)) {
 			if (Logger.logWarn()) {
@@ -376,7 +380,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = classContextLocation.getElement();
+		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
 		IBinding binding = smi.resolveMethodBinding();
 		
 		if (binding == null) {
@@ -415,8 +419,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = javaElementCache.getClassDefinition(calledObjectName, filename, 0, 0, 0, 0)
-		.getElement();
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		                                                                                             filename, 0, 0, 0,
+		                                                                                             0).getElement();
 		
 		ITypeBinding[] args = mBinding.getParameterTypes();
 		List<String> arguments = new ArrayList<String>();
@@ -428,11 +433,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		if ((methodContextLocation != null) && (methodContextLocation.getElement() != null)) {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
-			                                                     .getFullQualifiedName(),
-			                                                     filename);
+			                                                                          .getFullQualifiedName(), filename);
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
 			                                                                                                 methodName,
-			                                                                                                 arguments), filename);
+			                                                                                                 arguments),
+			                                                   filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -441,8 +446,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			if (Logger.logError()) {
 				Logger.error("Found method call outside method declaration in class `"
-				             + classContext.getFullQualifiedName()
-				             + "` in line " + line, new RuntimeException());
+				                     + classContext.getFullQualifiedName() + "` in line " + line,
+				             new RuntimeException());
 			}
 		}
 	}
@@ -451,8 +456,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	public void postVisit(final PPATypeVisitor ppaVisitor,
 	                      final CompilationUnit cu,
 	                      final ASTNode node,
-	                      final JavaElementLocation<JavaClassDefinition> classContext,
-	                      final JavaElementLocation<JavaMethodDefinition> methodContext,
+	                      final JavaElementLocation classContext,
+	                      final JavaElementLocation methodContext,
 	                      final int currentLine,
 	                      final JavaElementCache elementCache) {
 		if (classContext == null) {
@@ -487,8 +492,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	public void preVisit(final PPATypeVisitor ppaVisitor,
 	                     final CompilationUnit cu,
 	                     final ASTNode node,
-	                     final JavaElementLocation<JavaClassDefinition> classContext,
-	                     final JavaElementLocation<JavaMethodDefinition> methodContext,
+	                     final JavaElementLocation classContext,
+	                     final JavaElementLocation methodContext,
 	                     final int currentLine,
 	                     final int endLine,
 	                     final JavaElementCache elementCache) {

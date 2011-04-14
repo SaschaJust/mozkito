@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.clustering;
 
-
 /**
  * The Interface MultilevelPartitioningScoreVisitor.
  * 
@@ -18,7 +17,9 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	public double getMaxPossibleScore();
 	
 	/**
-	 * Gets the new score by manipulating the given score.
+	 * Returns a confidence value between 0 and getMaxPossibleScore(). The
+	 * higher the confidence, the stronger the voter indicates that the provided
+	 * artifacts t1 and t2 should belong to the same cluster.
 	 * 
 	 * @param ts
 	 *            the ts
@@ -26,5 +27,6 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	 *            the old score
 	 * @return the new (manipulated) score
 	 */
-	public double getScore(final T t1, final T t2, double oldScore);
+	public double getScore(final T t1,
+	                       final T t2);
 }
