@@ -3,6 +3,7 @@
  */
 package ppa;
 
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import de.unisaarland.cs.st.reposuite.ppa.PPAToolChain;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -11,6 +12,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 public class Main {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/**
 	 * @param args

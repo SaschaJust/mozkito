@@ -161,7 +161,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				stdout = true;
 			} else {
 				try {
-					new PPAXMLSink(this.threadPool.getThreadGroup(), getSettings(), new FileOutputStream(xmlFile));
+					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
@@ -179,7 +179,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			
 			if (stdout) {
 				try {
-					new PPAXMLSink(this.threadPool.getThreadGroup(), getSettings(), System.out);
+					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), System.out);
 				} catch (ParserConfigurationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}

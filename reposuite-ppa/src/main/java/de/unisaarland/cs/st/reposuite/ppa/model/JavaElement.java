@@ -16,8 +16,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
@@ -138,11 +137,9 @@ public abstract class JavaElement implements Annotated {
 	/**
 	 * Gets the xML representation.
 	 * 
-	 * @param document
-	 *            the document
 	 * @return the xML representation
 	 */
-	public abstract Element getXMLRepresentation(Document document);
+	public abstract Element getXMLRepresentation();
 	
 	/*
 	 * (non-Javadoc)

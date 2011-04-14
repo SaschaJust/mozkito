@@ -8,12 +8,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class JavaMethodDefinition.
@@ -24,8 +24,11 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 @DiscriminatorValue ("JAVAMETHODDEFINITION")
 public class JavaMethodDefinition extends JavaElement implements Annotated {
 	
+	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";
+	public static final String JAVA_METHOD_DEFINITION = "JavaMethodDefinition";
+	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -6574764154587254697L;
+	private static final long  serialVersionUID       = -6574764154587254697L;
 	
 	/**
 	 * Compose full qualified name.
@@ -39,12 +42,16 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	@NoneNull
-	public static String composeFullQualifiedName(final JavaClassDefinition parent,
+	public static String composeFullQualifiedName(final String parentName,
 	                                              final String methodName,
 	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(parent.getFullQualifiedName());
+		String localParentName = parentName;
+		while (localParentName.endsWith(".")) {
+			localParentName = localParentName.substring(0, localParentName.length() - 1);
+		}
+		sb.append(localParentName);
 		sb.append(".");
 		sb.append(methodName);
 		sb.append("(");
@@ -59,14 +66,71 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		return sb.toString();
 	}
 	
+	/**
+	 * Creates a JavaMethodDefinition instance from XML.
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the java method definition is successful, <code>null</code>
+	 *         otherwise.
+	 */
+	public static JavaMethodDefinition fromXMLRepresentation(final org.jdom.Element element) {
+		if (!element.getName().equals(JAVA_METHOD_DEFINITION)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
+			}
+			return null;
+		}
+		
+		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		if (nameElement == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		String name = nameElement.getText();
+		
+		if ((name == null) || (!name.contains("(")) || (!name.contains(")"))) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		
+		int dotIndex = name.indexOf(".");
+		int index = name.indexOf("(");
+		
+		if ((dotIndex < 0) || (dotIndex > index)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
+			}
+			return null;
+		}
+		
+		String tmpName = name.substring(0, index);
+		int lastDotIndex = tmpName.lastIndexOf(".");
+		String parentName = tmpName.substring(0, lastDotIndex);
+		String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
+		
+		String argString = name.substring(index + 1, name.indexOf(")"));
+		String[] args = argString.split(",");
+		List<String> argList = new ArrayList<String>(args.length);
+		for (String arg : args) {
+			argList.add(arg);
+		}
+		
+		return new JavaMethodDefinition(parentName, methodName, argList);
+	}
+	
 	/** The signature. */
 	private List<String> signature;
 	
 	/**
 	 * Instantiates a new java method definition.
 	 */
-	@SuppressWarnings ("unused")
-	private JavaMethodDefinition() {
+	@Deprecated
+	public JavaMethodDefinition() {
 		super();
 	}
 	
@@ -79,11 +143,18 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 *            the signature
 	 */
 	@NoneNull
-	protected JavaMethodDefinition(final String fullQualifiedName, final List<String> signature) {
-		// TODO add condition check that fullQualifiedName contains (,) and .
-		super(fullQualifiedName);
+	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature) {
+		super(methodName);
+		
+		Condition.check(parentName.contains("."), "The parentName of a method call MUST contain at least one DOT.");
+		Condition.check(!parentName.contains("("), "The parentName name of a method call must not contain '('.");
+		Condition.check(!parentName.contains(")"), "The parentName name of a method call must not contain ')'.");
+		Condition.check(!methodName.contains("."), "The methodName name of a method call MUST NOT contains any DOT.");
+		Condition.check(!methodName.contains("("), "The methodName name of a method call must not contain '('.");
+		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
+		
 		setSignature(new ArrayList<String>(signature));
-		setFullQualifiedName(fullQualifiedName);
+		setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
 	}
 	
 	/*
@@ -131,14 +202,11 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 * (org.w3c.dom.Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(final Document document) {
-		Element thisElement = document.createElement("JavaMethodDefinition");
-		
-		Element nameElement = document.createElement("fullQualifiedName");
-		Text textNode = document.createTextNode(getFullQualifiedName());
-		nameElement.appendChild(textNode);
-		
-		thisElement.appendChild(nameElement);
+	public Element getXMLRepresentation() {
+		Element thisElement = new Element(JAVA_METHOD_DEFINITION);
+		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		nameElement.setText(getFullQualifiedName());
+		thisElement.addContent(nameElement);
 		return thisElement;
 	}
 	
@@ -164,7 +232,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 *            the new signature
 	 */
 	@NoneNull
-	private void setSignature(final List<String> signature) {
+	protected void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}
 	
