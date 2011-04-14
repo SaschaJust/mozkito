@@ -12,7 +12,12 @@ import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.ppa.PPAXMLTransformer;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
@@ -22,9 +27,26 @@ import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
+/**
+ * The Class Untangling.
+ */
 public class Untangling {
 	
+	/**
+	 * Untangle.
+	 * 
+	 * @param blob
+	 *            the blob
+	 * @param numClusters
+	 *            the num clusters
+	 * @param scoreVisitors
+	 *            the score visitors
+	 * @param collapseVisitor
+	 *            the collapse visitor
+	 * @return the sets the
+	 */
 	@NoneNull
 	public static Set<Set<JavaChangeOperation>> untangle(final Set<JavaChangeOperation> blob,
 	                                                     final int numClusters,
@@ -41,16 +63,33 @@ public class Untangling {
 		return clustering.getPartitions(numClusters);
 	}
 	
+	/** The repository arg. */
 	private final RepositoryArguments                                   repositoryArg;
+	
+	/** The callgraph arg. */
 	private final DirectoryArgument                                     callgraphArg;
+	
+	/** The transaction arg. */
 	private final StringArgument                                        transactionArg;
 	
+	/** The blob arg. */
 	private final InputFileArgument                                     blobArg;
+	
+	/** The score visitors. */
 	private List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors;
+	
+	/** The use call graph. */
 	private final BooleanArgument                                       useCallGraph;
+	
+	/** The database args. */
 	private final DatabaseArguments                                     databaseArgs;
+	
+	/** The num partition arg. */
 	private final LongArgument                                          numPartitionArg;
 	
+	/**
+	 * Instantiates a new untangling.
+	 */
 	public Untangling() {
 		RepositorySettings settings = new RepositorySettings();
 		
@@ -85,6 +124,9 @@ public class Untangling {
 		settings.parseArguments();
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run() {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
@@ -111,21 +153,44 @@ public class Untangling {
 		File blobXML = blobArg.getValue();
 		
 		Set<Set<JavaChangeOperation>> partition = new HashSet<Set<JavaChangeOperation>>();
+		Set<JavaChangeOperation> blob = new HashSet<JavaChangeOperation>();
 		
 		if (blobXML != null) {
-			// TODO read and convert blob.
-			Set<JavaChangeOperation> blob = new HashSet<JavaChangeOperation>();
-			partition = untangle(blob, numPartitionArg.getValue().intValue(), scoreVisitors,
-			                     new MaxCollapseVisitor<JavaChangeOperation>());
+			// read and convert blob
+			blob.addAll(PPAXMLTransformer.readOperations(blobXML));
+			
 		} else {
+			String transactionId = transactionArg.getValue();
+			if (transactionId == null) {
+				throw new UnrecoverableError("If " + blobArg.getName() + " argument not set, you have to specify "
+				        + transactionArg.getName() + " argument.");
+			}
+			
 			if (!databaseArgs.getValue()) {
 				throw new UnrecoverableError("Could not connect to specified database using specified credentials.");
 			}
-			// TODO get method change operations from DB.
-			Set<JavaChangeOperation> blob = new HashSet<JavaChangeOperation>();
-			partition = untangle(blob, numPartitionArg.getValue().intValue(), scoreVisitors,
-			                     new MaxCollapseVisitor<JavaChangeOperation>());
+			
+			// get method change operations from DB.
+			try {
+				PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+				List<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+				                                                                                   transactionArg.getValue());
+				for (JavaChangeOperation op : changeOperations) {
+					if ((op.getChangedElementLocation() != null)
+					        && (op.getChangedElementLocation().getElement() != null)
+					        && (op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+						blob.add(op);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				if (Logger.logError()) {
+					throw new UnrecoverableError("Database connection could not be established.", e);
+				}
+			}
 		}
+		partition = untangle(blob, numPartitionArg.getValue().intValue(), scoreVisitors,
+		                     new MaxCollapseVisitor<JavaChangeOperation>());
 		
 		// TODO think of a clever was to report partition
 	}

@@ -29,6 +29,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	/** The call graph. */
 	private CallGraph                    callGraph;
 	
+	/** The dijkstra transformer. */
 	private static EdgeWeightTransformer dijkstraTransformer = new EdgeWeightTransformer();
 	
 	/**
@@ -77,8 +78,6 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	/**
 	 * Distance.
 	 * 
-	 * @param graph
-	 *            the graph
 	 * @param path
 	 *            the path
 	 * @return the double
@@ -110,6 +109,10 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	/**
 	 * Distance.
 	 * 
+	 * @param v1
+	 *            the v1
+	 * @param v2
+	 *            the v2
 	 * @return the double
 	 */
 	private double distance(final MethodVertex v1,
