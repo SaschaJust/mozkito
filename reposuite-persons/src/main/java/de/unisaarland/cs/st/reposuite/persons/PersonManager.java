@@ -10,7 +10,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -38,7 +42,7 @@ public class PersonManager {
 		}
 		
 		for (String fullname : person.getFullnames()) {
-			if (this.fullnameMap.get(fullname) == null) {
+			if (!this.fullnameMap.containsKey(fullname)) {
 				this.fullnameMap.put(fullname, new HashSet<Person>());
 			}
 			this.fullnameMap.get(fullname).add(person);
@@ -86,7 +90,22 @@ public class PersonManager {
 				}
 			}
 		}
-		this.persons.remove(collider);
+		
+		if (!this.persons.remove(collider)) {
+			if (Logger.logError()) {
+				Logger.error("Could not remove collider from person list: " + collider);
+				Logger.error("Relevant active person list: ");
+				for (Person person : getPersons()) {
+					if (!CollectionUtils.intersection(collider.getEmailAddresses(), person.getEmailAddresses())
+					                    .isEmpty()
+					        || !CollectionUtils.intersection(collider.getFullnames(), person.getFullnames()).isEmpty()
+					        || !CollectionUtils.intersection(collider.getUsernames(), person.getUsernames()).isEmpty()) {
+						Logger.error(person.toString());
+					}
+				}
+			}
+			throw new UnrecoverableError("Could not remove collider from person list: " + collider);
+		}
 	}
 	
 	/**
@@ -94,6 +113,13 @@ public class PersonManager {
 	 */
 	public synchronized Collection<Person> getPersons() {
 		return this.persons;
+	}
+	
+	/**
+	 * 
+	 */
+	public void rehash() {
+		setPersons(new HashSet<Person>(getPersons()));
 	}
 	
 	/**

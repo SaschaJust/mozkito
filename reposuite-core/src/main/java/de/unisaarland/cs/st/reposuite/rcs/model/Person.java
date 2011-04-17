@@ -317,15 +317,10 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getEmailAddresses().isEmpty())
-		                                                          ? 0
-		                                                          : getEmailAddresses().iterator().next().hashCode());
-		result = prime * result + ((getFullnames().isEmpty())
-		                                                     ? 0
-		                                                     : getFullnames().iterator().next().hashCode());
-		result = prime * result + ((getUsernames().isEmpty())
-		                                                     ? 0
-		                                                     : getUsernames().iterator().next().hashCode());
+		result = prime * result + getEmailAddresses().hashCode();
+		result = prime * result + getFullnames().hashCode();
+		result = prime * result + getUsernames().hashCode();
+		
 		return result;
 	}
 	
