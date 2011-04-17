@@ -7,14 +7,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -26,12 +22,6 @@ public class PersonManager {
 	private final Map<String, Person>      emailMap    = new HashMap<String, Person>();
 	private final Map<String, Person>      usernameMap = new HashMap<String, Person>();
 	private final Map<String, Set<Person>> fullnameMap = new HashMap<String, Set<Person>>();
-	
-	private final PersistenceUtil          persistenceUtil;
-	
-	public PersonManager(final PersistenceUtil persistenceUtil) {
-		this.persistenceUtil = persistenceUtil;
-	}
 	
 	/**
 	 * @param person
@@ -107,24 +97,8 @@ public class PersonManager {
 	}
 	
 	/**
-	 * 
-	 */
-	public synchronized void loadEntities() {
-		if (this.persistenceUtil != null) {
-			Criteria<Person> criteria = this.persistenceUtil.createCriteria(Person.class);
-			List<Person> results = this.persistenceUtil.load(criteria);
-			if ((results != null) && (results.size() > 0)) {
-				setPersons(results);
-				if (Logger.logInfo()) {
-					Logger.info("Loaded " + results.size() + " persons from persitence storage.");
-				}
-			}
-		}
-	}
-	
-	/**
-	 * @param persons
-	 */
+	* @param persons
+	*/
 	public synchronized void setPersons(final Collection<Person> persons) {
 		this.persons = new HashSet<Person>(persons);
 	}

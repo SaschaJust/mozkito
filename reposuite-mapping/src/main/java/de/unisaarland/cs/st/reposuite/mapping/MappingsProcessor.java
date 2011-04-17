@@ -33,10 +33,10 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 	 * @param persistenceUtil 
 	 */
 	public MappingsProcessor(final RepoSuiteThreadGroup threadGroup, final MappingSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	        final MappingFinder finder, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, MappingsProcessor.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
-		this.mappingFinder = new MappingFinder(settings);
+		this.mappingFinder = finder;
 	}
 	
 	/*

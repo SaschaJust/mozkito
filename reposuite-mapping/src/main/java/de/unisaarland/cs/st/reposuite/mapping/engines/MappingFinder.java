@@ -3,8 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,9 +11,8 @@ import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -28,27 +25,11 @@ public class MappingFinder {
 	
 	private final Map<String, MappingEngine> engines = new HashMap<String, MappingEngine>();
 	
-	public MappingFinder(final MappingSettings settings) {
-		try {
-			Package package1 = MappingEngine.class.getPackage();
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                  MappingEngine.class);
-			
-			for (Class<?> klass : classesExtendingClass) {
-				
-				if (Logger.logInfo()) {
-					Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
-				}
-				
-				Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
-				this.engines.put(klass.getCanonicalName(), (MappingEngine) constructor.newInstance(settings));
-			}
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new RuntimeException();
-		}
+	/**
+	 * @param engine
+	 */
+	public void addEngine(final MappingEngine engine) {
+		this.engines.put(engine.getClass().getCanonicalName(), engine);
 	}
 	
 	/**
@@ -78,6 +59,11 @@ public class MappingFinder {
 	public MapScore score(final RCSTransaction transaction,
 	                      final Report report) {
 		MapScore score = new MapScore(transaction, report);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Scoring with " + this.engines.size() + " engines: "
+			        + JavaUtils.collectionToString(this.engines.values()));
+		}
 		
 		for (String engineName : this.engines.keySet()) {
 			MappingEngine mappingEngine = this.engines.get(engineName);

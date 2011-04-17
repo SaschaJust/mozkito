@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.MapCondition;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
@@ -27,15 +28,15 @@ public class PersonsMerger extends
         RepoSuiteTransformerThread<PersonContainer, HashMap<Person, HashSet<PersonContainer>>> {
 	
 	PersonManager                             personManager;
-	HashMap<Person, HashSet<PersonContainer>> remap         = new HashMap<Person, HashSet<PersonContainer>>();
-	PersistenceUtil                             persistenceUtil = null;
-	List<Person>                              deletes       = new LinkedList<Person>();
+	HashMap<Person, HashSet<PersonContainer>> remap           = new HashMap<Person, HashSet<PersonContainer>>();
+	PersistenceUtil                           persistenceUtil = null;
+	List<Person>                              deletes         = new LinkedList<Person>();
 	
 	public PersonsMerger(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, PersonsMerger.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
-		this.personManager = new PersonManager(persistenceUtil);
+		this.personManager = new PersonManager();
 	}
 	
 	// private PersonContainer findPerson(final Person person) {
@@ -117,8 +118,30 @@ public class PersonsMerger extends
 							List<PersonContainer> updatableTargets = new LinkedList<PersonContainer>();
 							rehash();
 							for (Person collider : collisions) {
-								MapCondition.containsKey(this.remap, collider,
-								                         "Requesting remap for unknown collider. This should not happen.");
+								try {
+									MapCondition.containsKey(this.remap, collider,
+									                         "Requesting remap for unknown collider. This should not happen.");
+								} catch (AssertionError e) {
+									if (Logger.logError()) {
+										Logger.error(e.getMessage());
+										Logger.error("Causing instance: " + person);
+										Logger.error("Collider instance: " + collider);
+										
+										for (Person p : this.remap.keySet()) {
+											if (person.matches(p)) {
+												Logger.error("Match in remap table: " + p);
+											}
+										}
+										
+										for (Person p : this.personManager.getPersons()) {
+											if (person.matches(p)) {
+												Logger.error("Match in person manager: " + p);
+											}
+										}
+									}
+									throw new UnrecoverableError(
+									                             "Requesting remap for unknown collider. This should not happen.");
+								}
 								
 								if (this.remap.get(collider).size() > i) {
 									keeper = collider;

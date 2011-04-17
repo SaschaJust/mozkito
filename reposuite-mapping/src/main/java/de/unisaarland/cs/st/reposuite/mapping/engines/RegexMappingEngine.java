@@ -3,10 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,12 +13,12 @@ import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
@@ -139,6 +138,15 @@ public class RegexMappingEngine extends MappingEngine {
 	 */
 	public RegexMappingEngine(final MappingSettings settings) {
 		super(settings);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
+	 */
+	@Override
+	public void init() {
+		super.init();
 		setConfigPath((URI) getSettings().getSetting("mapping.config.regexFile").getValue());
 		setMatchers(new LinkedList<RegexMappingEngine.Matcher>());
 		
@@ -151,10 +159,10 @@ public class RegexMappingEngine extends MappingEngine {
 			        + getConfigPath().toString());
 		}
 		
-		File file = new File(getConfigPath());
 		try {
-			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
-			CSVReader reader = new CSVReader(new FileReader(file), ' ');
+			CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(getConfigPath().toURL()
+			                                                                                         .openStream())),
+			                                 ' ');
 			String[] line = null;
 			while ((line = reader.readNext()) != null) {
 				getMatchers().add(new Matcher(line[0], line[1], line.length > 2
@@ -165,14 +173,27 @@ public class RegexMappingEngine extends MappingEngine {
 			if (Logger.logDebug()) {
 				Logger.debug("Loaded patterns: " + JavaUtils.collectionToString(getMatchers()));
 			}
-		} catch (FilePermissionException e) {
-			throw new Shutdown("Regex configuration file has wrong permissions (" + FileUtils.permissionsToString(file)
-			        + ").", e);
-		} catch (FileNotFoundException e) {
-			throw new Shutdown("Regex configuration file does not exist.", e);
 		} catch (IOException e) {
 			throw new Shutdown("Regex configuration read error.", e);
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init(de.
+	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
+	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
+	 * boolean)
+	 */
+	@Override
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
+		super.register(settings, arguments, isRequired);
+		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
+		                                      "URI to file containing the regular expressions used to map the IDs.",
+		                                      null, isRequired));
 	}
 	
 	/*

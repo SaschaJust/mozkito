@@ -2,6 +2,8 @@ package de.unisaarland.cs.st.reposuite.mapping;
 
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -18,6 +20,7 @@ public class Mapping extends RepoSuiteToolchain {
 	private final RepoSuiteThreadPool threadPool;
 	private final DatabaseArguments   databaseArguments;
 	private final LoggerArguments     logSettings;
+	private final MappingArguments    mappingArguments;
 	
 	/**
 	 * 
@@ -28,7 +31,7 @@ public class Mapping extends RepoSuiteToolchain {
 		MappingSettings settings = getSettings();
 		this.databaseArguments = settings.setDatabaseArgs(false, this.getClass().getSimpleName().toLowerCase());
 		this.logSettings = settings.setLoggerArg(true);
-		settings.setMappingArgs(true);
+		this.mappingArguments = settings.setMappingArgs(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);
 		new LongArgument(settings, "cache.size",
@@ -68,15 +71,22 @@ public class Mapping extends RepoSuiteToolchain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		// TODO properties.put("persistence middleware.hbm2ddl.auto",
-		// "create-drop");
+		
+		MappingFinder finder = this.mappingArguments.getValue();
+		
+		if (finder == null) {
+			if (Logger.logError()) {
+				Logger.error("MappingFinder initialization failed. Aborting...");
+				shutdown();
+			}
+		}
 		
 		if (this.databaseArguments.getValue() != null) {
 			PersistenceUtil persistenceUtil;
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
 				new MappingsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new MappingsProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 				new MappingsPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				

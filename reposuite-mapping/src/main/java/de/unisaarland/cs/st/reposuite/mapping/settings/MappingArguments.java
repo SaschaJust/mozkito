@@ -3,16 +3,25 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.settings;
 
-import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
+import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
-import de.unisaarland.cs.st.reposuite.settings.URIArgument;
+import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
 public class MappingArguments extends RepoSuiteArgumentSet {
+	
+	private final Set<MappingEngine> engines = new HashSet<MappingEngine>();
 	
 	/**
 	 * @param isRequired 
@@ -22,27 +31,61 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	public MappingArguments(final MappingSettings settings, final boolean isRequired) {
 		super();
 		
-		addArgument(new URIArgument(settings, "mapping.config.regexFile",
-		                            "URI to file containing the regular expressions used to map the IDs.", null,
-		                            isRequired));
-		addArgument(new DoubleArgument(settings, "mapping.score.AuthorEquality",
-		                               "Score for equal authors in transaction and report comments.", "0.2", isRequired));
-		addArgument(new DoubleArgument(settings, "mapping.score.AuthorInequality",
-		                               "Score for not equal authors in transaction and report comments.", "-0.8",
-		                               isRequired));
-		addArgument(new DoubleArgument(settings, "mapping.score.ReportCreatedAfterTransaction",
-		                               "Score in case the report was created after the transaction.", "-100",
-		                               isRequired));
-		addArgument(new DoubleArgument(
-		                               settings,
-		                               "mapping.score.ReportResolvedWithinWindow",
-		                               "Score in case the report was resolved within the specified time window after the transaction.",
-		                               "2.0", isRequired));
-		addArgument(new ListArgument(
-		                             settings,
-		                             "mapping.window.ReportResolvedAfterTransaction",
-		                             "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                             "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired));
+		try {
+			Package package1 = MappingEngine.class.getPackage();
+			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                  MappingEngine.class);
+			
+			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used.",
+			                             buildEngineList(classesExtendingClass), false));
+			
+			String engines = System.getProperty("mapping.engines");
+			Set<String> engineNames = new HashSet<String>();
+			
+			if (engines != null) {
+				for (String engineName : engines.split(",")) {
+					engineNames.add(MappingEngine.class.getPackage().getName() + "." + engineName);
+				}
+				
+			}
+			
+			for (Class<?> klass : classesExtendingClass) {
+				if (engineNames.isEmpty() || engineNames.contains(klass.getCanonicalName())) {
+					if (Logger.logInfo()) {
+						Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
+					}
+					
+					Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
+					MappingEngine engine = (MappingEngine) constructor.newInstance(settings);
+					engine.register(settings, this, isRequired);
+					this.engines.add(engine);
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("Not loading available engine: " + klass.getSimpleName());
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException();
+		}
+	}
+	
+	/**
+	 * @param engines
+	 * @return
+	 */
+	private String buildEngineList(final Collection<Class<?>> engines) {
+		StringBuilder builder = new StringBuilder();
+		for (Class<?> klass : engines) {
+			if (builder.length() != 0) {
+				builder.append(",");
+			}
+			builder.append(klass.getSimpleName());
+		}
+		return builder.toString();
 	}
 	
 	/*
@@ -51,9 +94,15 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public MappingFinder getValue() {
+		MappingFinder finder = new MappingFinder();
+		
+		for (MappingEngine engine : this.engines) {
+			engine.init();
+			finder.addEngine(engine);
+		}
+		
+		return finder;
 	}
 	
 }

@@ -17,8 +17,11 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
+import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -31,7 +34,6 @@ public class TimestampMappingEngine extends MappingEngine {
 	
 	private static double                 scoreReportCreatedAfterTransaction   = -10d;
 	private static double                 scoreReportResolvedWithinWindow      = 2d;
-	// TODO use meaningful values here
 	private static org.joda.time.Interval windowReportResolvedAfterTransaction = new Interval(0, 7200000);
 	
 	/**
@@ -81,6 +83,15 @@ public class TimestampMappingEngine extends MappingEngine {
 	 */
 	public TimestampMappingEngine(final MappingSettings settings) {
 		super(settings);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
+	 */
+	@Override
+	public void init() {
+		super.init();
 		setScoreReportCreatedAfterTransaction((Double) getSettings().getSetting("mapping.score.ReportCreatedAfterTransaction")
 		                                                            .getValue());
 		setScoreReportResolvedWithinWindow((Double) getSettings().getSetting("mapping.score.ReportResolvedWithinWindow")
@@ -146,6 +157,34 @@ public class TimestampMappingEngine extends MappingEngine {
 	/*
 	 * (non-Javadoc)
 	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init(de.
+	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
+	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
+	 * boolean)
+	 */
+	@Override
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
+		super.register(settings, arguments, isRequired);
+		arguments.addArgument(new DoubleArgument(settings, "mapping.score.ReportCreatedAfterTransaction",
+		                                         "Score in case the report was created after the transaction.", "-100",
+		                                         isRequired));
+		arguments.addArgument(new DoubleArgument(
+		                                         settings,
+		                                         "mapping.score.ReportResolvedWithinWindow",
+		                                         "Score in case the report was resolved within the specified time window after the transaction.",
+		                                         "2.0", isRequired));
+		arguments.addArgument(new ListArgument(
+		                                       settings,
+		                                       "mapping.window.ReportResolvedAfterTransaction",
+		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
+		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
@@ -168,9 +207,9 @@ public class TimestampMappingEngine extends MappingEngine {
 				Logger.debug("Report was created before transaction.");
 			}
 			
-			if (!report.getHistory().get("status").isEmpty()) {
-				report.getHistory().get("status").iterator();
-				Collection<Report> historicalReports = report.timewarp(interval, "status");
+			if (!report.getHistory().get(Resolution.class.getSimpleName().toLowerCase()).isEmpty()) {
+				Collection<Report> historicalReports = report.timewarp(interval, Resolution.class.getSimpleName()
+				                                                                                 .toLowerCase());
 				
 				if (!historicalReports.isEmpty()) {
 					for (Report hReport : historicalReports) {
@@ -187,14 +226,16 @@ public class TimestampMappingEngine extends MappingEngine {
 					
 					if (Logger.logDebug()) {
 						if (Double.compare(value, 0d) == 0) {
-							Logger.debug("But report hasn't been marked as " + Resolution.RESOLVED.name()
-							        + " within the time window.");
+							Logger.debug("Report (created: " + report.getCreationTimestamp() + ", resolved: "
+							        + report.getResolutionTimestamp() + ") hasn't been marked as "
+							        + Resolution.RESOLVED.name() + " within the time window: " + interval);
 						}
 					}
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("But report hasn't been marked as " + Resolution.RESOLVED.name()
-						        + " within the time window.");
+						Logger.debug("Report (created: " + report.getCreationTimestamp() + ", resolved: "
+						        + report.getResolutionTimestamp() + ") hasn't been marked as "
+						        + Resolution.RESOLVED.name() + " within the time window: " + interval);
 					}
 				}
 			}

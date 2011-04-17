@@ -16,7 +16,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class DatabaseArguments extends RepoSuiteArgumentSet {
 	
 	private final RepositorySettings settings;
-	private final String             unit;
 	
 	/**
 	 * @param settings
@@ -24,7 +23,6 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 	 */
 	protected DatabaseArguments(final RepositorySettings settings, final boolean isRequired, final String unit) {
 		super();
-		this.unit = unit;
 		this.settings = settings;
 		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
 		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
@@ -54,7 +52,8 @@ public class DatabaseArguments extends RepoSuiteArgumentSet {
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
 		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
 		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
-		                      arguments.get("database.middleware").getValue())) {
+		                      arguments.get("database.middleware").getValue(), arguments.get("database.unit")
+		                                                                                .getValue())) {
 			return null;
 		}
 		
