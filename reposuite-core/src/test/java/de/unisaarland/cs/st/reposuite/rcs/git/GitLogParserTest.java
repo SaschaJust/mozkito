@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
@@ -24,47 +25,92 @@ public class GitLogParserTest {
 	
 	@Test
 	public void testAuthorRegExp() {
-		String author1 = "Carsten Nielsen <heycarsten@gmail.com>";
-		Regex regex = GitLogParser.regex;
-		assertTrue(regex.matches(author1));
-		assertTrue(regex.find(author1) != null);
-		assertTrue(regex.find(author1).size() > 0);
-		assertEquals("Carsten", regex.getGroup("name"));
-		assertEquals("Nielsen", regex.getGroup("lastname").trim());
-		assertEquals("heycarsten@gmail.com", regex.getGroup("email"));
+		String author1 = "Author: Carsten Nielsen <heycarsten@gmail.com>";
 		
-		String author2 = "tinogomes <tinorj@gmail.com>";
-		assertTrue(regex.matches(author2));
-		assertTrue(regex.find(author2) != null);
-		assertTrue(regex.find(author2).size() > 0);
-		assertEquals("tinogomes", regex.getGroup("name").trim());
-		assertEquals(null, regex.getGroup("lastname"));
-		assertEquals("tinorj@gmail.com", regex.getGroup("email"));
+		Person author = GitLogParser.getAuthor(author1, 0);
 		
-		String author3 = "<tinorj@gmail.com>";
-		assertTrue(regex.matches(author3));
-		assertTrue(regex.find(author3) != null);
-		assertTrue(regex.find(author3).size() > 0);
-		assertEquals(null, regex.getGroup("name"));
-		assertEquals(null, regex.getGroup("lastname"));
-		assertEquals("tinorj@gmail.com", regex.getGroup("email"));
+		assertTrue(author.getFullnames() != null);
+		assertEquals(1, author.getFullnames().size());
+		assertTrue(author.getFullnames().contains("Carsten Nielsen"));
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("heycarsten@gmail.com"));
+		assertTrue(author.getUsernames() != null);
+		assertEquals(0, author.getUsernames().size());
 		
-		String author4 = "tinogomes";
-		assertTrue(regex.matches(author4));
-		assertTrue(regex.find(author4) != null);
-		assertTrue(regex.find(author4).size() > 0);
-		assertEquals("tinogomes", regex.getGroup("plain").trim());
-		assertEquals(null, regex.getGroup("name"));
-		assertEquals(null, regex.getGroup("lastname"));
-		assertEquals(null, regex.getGroup("email"));
+		String author2 = "Author: tinogomes <tinorj@gmail.com>";
+		author = GitLogParser.getAuthor(author2, 0);
+		assertTrue(author.getFullnames() != null);
+		assertEquals(0, author.getFullnames().size());
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("tinorj@gmail.com"));
+		assertTrue(author.getUsernames() != null);
+		assertEquals(1, author.getUsernames().size());
+		assertTrue(author.getUsernames().contains("tinogomes"));
 		
-		String author5 = "just <just@b3cd8044-6b0a-409c-a07a-9925dc373c42>";
-		assertTrue(regex.matches(author5));
-		assertTrue(regex.find(author5) != null);
-		assertTrue(regex.find(author5).size() > 0);
-		assertEquals("just", regex.getGroup("name").trim());
-		assertEquals(null, regex.getGroup("lastname"));
-		assertEquals("just@b3cd8044-6b0a-409c-a07a-9925dc373c42", regex.getGroup("email"));
+		String author3 = "Author: <tinorj@gmail.com>";
+		author = GitLogParser.getAuthor(author3, 0);
+		assertTrue(author.getFullnames() != null);
+		assertEquals(0, author.getFullnames().size());
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("tinorj@gmail.com"));
+		assertTrue(author.getUsernames() != null);
+		assertEquals(0, author.getUsernames().size());
+		
+		String author4 = "Author: tinogomes";
+		author = GitLogParser.getAuthor(author4, 0);
+		assertTrue(author.getFullnames() != null);
+		assertEquals(0, author.getFullnames().size());
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(0, author.getEmailAddresses().size());
+		assertTrue(author.getUsernames() != null);
+		assertEquals(1, author.getUsernames().size());
+		assertTrue(author.getUsernames().contains("tinogomes"));
+		
+		String author5 = "Author: just <just@b3cd8044-6b0a-409c-a07a-9925dc373c42>";
+		author = GitLogParser.getAuthor(author5, 0);
+		assertTrue(author.getFullnames() != null);
+		assertEquals(0, author.getFullnames().size());
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("just@b3cd8044-6b0a-409c-a07a-9925dc373c42"));
+		assertTrue(author.getUsernames() != null);
+		assertEquals(1, author.getUsernames().size());
+		assertTrue(author.getUsernames().contains("just"));
+		
+		String author6 = "Author: just <just>";
+		author = GitLogParser.getAuthor(author6, 0);
+		assertTrue(author.getFullnames() != null);
+		assertEquals(0, author.getFullnames().size());
+		assertTrue(author.getEmailAddresses() != null);
+		assertEquals(0, author.getEmailAddresses().size());
+		assertTrue(author.getUsernames() != null);
+		assertEquals(1, author.getUsernames().size());
+		assertTrue(author.getUsernames().contains("just"));
+		
+	}
+	
+	@Test
+	public void testEmailRegex() {
+		String message = "hjkkjdskj ksdjfkljf;lsjdfkldsj f@lkdsaf elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5 fhdsjfjkshdfjklhsa fjsadfh jkldsahfl";
+		
+		Regex tmp = new Regex(GitLogParser.emailBaseRegex.getPattern());
+		
+		GitLogParser.emailBaseRegex = tmp;
+		// tmp = GitLogParser.emailBaseRegex;
+		tmp.getPattern();
+		assertTrue(tmp.matches(message));
+		tmp.find(message);
+		String email = tmp.getGroup("email");
+		assertEquals("elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5", email);
+		
+		message = "hjkkjdskj ksdjfkljf;lsjdfkldsj f@lkdsaf  elharo@bla.de fhdsjfjkshdfjklhsa fjsadfh jkldsahfl";
+		assertTrue(tmp.matches(message));
+		tmp.find(message);
+		email = tmp.getGroup("email");
+		assertEquals("elharo@bla.de", email);
 	}
 	
 	@Test
