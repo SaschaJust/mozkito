@@ -243,12 +243,12 @@ public class BugzillaXMLParser {
 						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
 						// FIXME helo? what about data? go fix them all 66
 						hElement = new HistoryElement(historyAuthor, dateTime, map);
-						report.addHistoryElement(hElement);
 					} else {
 						--rowspan;
 						whatIndex -= 2;
 					}
 					
+					// TODO Add test cases for history parsing
 					String what = tds.get(whatIndex).getText().trim().toLowerCase();
 					String removed = tds.get(++whatIndex).getText().trim();
 					String added = tds.get(++whatIndex).getText().trim();
@@ -311,6 +311,7 @@ public class BugzillaXMLParser {
 						continue;
 					}
 				}
+				report.addHistoryElement(hElement);
 			}
 		}
 	}
