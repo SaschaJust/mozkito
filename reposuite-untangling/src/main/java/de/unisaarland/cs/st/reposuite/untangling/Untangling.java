@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
@@ -15,6 +16,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.ppa.PPAXMLTransformer;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -25,6 +27,7 @@ import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
+import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -91,33 +94,33 @@ public class Untangling {
 	public Untangling() {
 		RepositorySettings settings = new RepositorySettings();
 		
-		this.repositoryArg = settings.setRepositoryArg(true);
-		this.databaseArgs = settings.setDatabaseArgs(true, Core.class.getSimpleName().toLowerCase());
-		this.callgraphArg = new DirectoryArgument(
-		                                          settings,
-		                                          "callgraph.eclipse",
-		                                          "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
-		                                          null, true, false);
-		
-		this.blobArg = new InputFileArgument(
+		repositoryArg = settings.setRepositoryArg(true);
+		databaseArgs = settings.setDatabaseArgs(true, Core.class.getSimpleName().toLowerCase());
+		callgraphArg = new DirectoryArgument(
 		                                     settings,
-		                                     "blob.xml",
-		                                     "XML file containing change operations to be considered as a single change blob. (This option will ignore the databse arguments!)",
-		                                     null, false);
+		                                     "callgraph.eclipse",
+		                                     "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
+		                                     null, true, false);
 		
-		this.transactionArg = new StringArgument(
-		                                         settings,
-		                                         "transaction.id",
-		                                         "The transaction id identifying the transaction to be untangled. (If argument '"
-		                                                 + this.blobArg.getName()
-		                                                 + "' is provided, this transaction id will be used to untangle the blob, if necessary).",
-		                                         null, true);
+		blobArg = new InputFileArgument(
+		                                settings,
+		                                "blob.xml",
+		                                "XML file containing change operations to be considered as a single change blob. (This option will ignore the databse arguments!)",
+		                                null, false);
 		
-		this.useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling",
-		                                        "true", false);
+		transactionArg = new StringArgument(
+		                                    settings,
+		                                    "transaction.id",
+		                                    "The transaction id identifying the transaction to be untangled. (If argument '"
+		                                            + blobArg.getName()
+		                                            + "' is provided, this transaction id will be used to untangle the blob, if necessary).",
+		                                    null, true);
 		
-		this.numPartitionArg = new LongArgument(settings, "num.partitions",
-		                                        "Specifies the number of partitions to be generated.", null, true);
+		useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling", "true",
+		                                   false);
+		
+		numPartitionArg = new LongArgument(settings, "num.partitions",
+		                                   "Specifies the number of partitions to be generated.", null, true);
 		
 		settings.parseArguments();
 	}
@@ -129,18 +132,18 @@ public class Untangling {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
 		
-		eclipseArgs.add(" -Drepository.uri=" + this.repositoryArg.getRepoDirArg().getValue().toString());
-		eclipseArgs.add(" -Drepository.password" + this.repositoryArg.getPassArg().getValue());
-		eclipseArgs.add(" -Drepository.type" + this.repositoryArg.getRepoTypeArg().getValue());
-		eclipseArgs.add(" -Drepository.user" + this.repositoryArg.getUserArg().getValue());
+		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
+		eclipseArgs.add(" -Drepository.password" + repositoryArg.getPassArg().getValue());
+		eclipseArgs.add(" -Drepository.type" + repositoryArg.getRepoTypeArg().getValue());
+		eclipseArgs.add(" -Drepository.user" + repositoryArg.getUserArg().getValue());
 		
-		this.scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 		
 		// add call graph visitor
-		if (this.useCallGraph.getValue()) {
-			this.scoreVisitors.add(new CallGraphVoter(this.callgraphArg.getValue(),
-			                                          eclipseArgs.toArray(new String[eclipseArgs.size()]),
-			                                          this.transactionArg.getValue()));
+		if (useCallGraph.getValue()) {
+			scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(),
+			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]),
+			                                     transactionArg.getValue()));
 		}
 		
 		// TODO add change coupling visitor
@@ -148,7 +151,7 @@ public class Untangling {
 		// TODO add yana's change rule visitor
 		// TODO add semdiff visitor
 		
-		File blobXML = this.blobArg.getValue();
+		File blobXML = blobArg.getValue();
 		
 		Set<Set<JavaChangeOperation>> partition = new HashSet<Set<JavaChangeOperation>>();
 		Set<JavaChangeOperation> blob = new HashSet<JavaChangeOperation>();
@@ -158,13 +161,13 @@ public class Untangling {
 			blob.addAll(PPAXMLTransformer.readOperations(blobXML));
 			
 		} else {
-			String transactionId = this.transactionArg.getValue();
+			String transactionId = transactionArg.getValue();
 			if (transactionId == null) {
-				throw new UnrecoverableError("If " + this.blobArg.getName() + " argument not set, you have to specify "
-				        + this.transactionArg.getName() + " argument.");
+				throw new UnrecoverableError("If " + blobArg.getName() + " argument not set, you have to specify "
+				        + transactionArg.getName() + " argument.");
 			}
 			
-			if (!this.databaseArgs.getValue()) {
+			if (!databaseArgs.getValue()) {
 				throw new UnrecoverableError("Could not connect to specified database using specified credentials.");
 			}
 			
@@ -172,7 +175,7 @@ public class Untangling {
 			try {
 				PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
 				List<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-				                                                                                   this.transactionArg.getValue());
+				                                                                                   transactionArg.getValue());
 				for (JavaChangeOperation op : changeOperations) {
 					if ((op.getChangedElementLocation() != null)
 					        && (op.getChangedElementLocation().getElement() != null)
@@ -187,7 +190,7 @@ public class Untangling {
 				}
 			}
 		}
-		partition = untangle(blob, this.numPartitionArg.getValue().intValue(), this.scoreVisitors,
+		partition = untangle(blob, numPartitionArg.getValue().intValue(), scoreVisitors,
 		                     new MaxCollapseVisitor<JavaChangeOperation>());
 		
 		// TODO think of a clever was to report partition

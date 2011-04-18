@@ -147,7 +147,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContext.getElement().getFullQualifiedName(),
 			                                                     filename);
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
@@ -158,10 +158,10 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 			
 		} else {
-			String initMethodName = JavaMethodDefinition.composeFullQualifiedName(calledObject, "<init>",
-			                                                                      new ArrayList<String>());
+			String initMethodName = JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
+			                                                                      "<init>", new ArrayList<String>());
 			MethodVertex from = VertexFactory.createMethodVertex(initMethodName, filename);
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
@@ -240,7 +240,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(), filename);
 			
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
@@ -250,10 +250,10 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 		} else {
 			
-			String initMethodName = JavaMethodDefinition.composeFullQualifiedName(calledObject, "<init>",
-			                                                                      new ArrayList<String>());
+			String initMethodName = JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
+			                                                                      "<init>", new ArrayList<String>());
 			MethodVertex from = VertexFactory.createMethodVertex(initMethodName, filename);
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
@@ -300,7 +300,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 				JavaMethodDefinition methodContext = (JavaMethodDefinition) methodContextLocation.getElement();
 				
 				MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(), filename);
-				MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent(),
+				MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent()
+				                                                                                                             .getFullQualifiedName(),
 				                                                                                                 "<init>",
 				                                                                                                 new ArrayList<String>()),
 				                                                   filename);
@@ -349,7 +350,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
 			                                                                          .getFullQualifiedName(), filename);
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
@@ -434,7 +435,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
 			                                                                          .getFullQualifiedName(), filename);
-			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject,
+			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
 			                                                   filename);
