@@ -51,6 +51,7 @@
 		<module>reposuite-persons</module>
 		<module>reposuite-mapping</module>
 		<module>reposuite-nalatra</module>
+		<module>reposuite-infozilla</module>
 		<module>reposuite-fixindchanges</module>
 		<module>reposuite-genealogies</module>
 		<module>reposuite-untangling</module>
