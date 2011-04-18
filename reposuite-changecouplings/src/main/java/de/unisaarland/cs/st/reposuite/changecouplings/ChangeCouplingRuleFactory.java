@@ -42,7 +42,8 @@ public class ChangeCouplingRuleFactory {
 		List<ChangeCouplingRule> result = new LinkedList<ChangeCouplingRule>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
-			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases!");
+			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
+			        + persistenceUtil.getType() + ").");
 		}
 		
 		// URL sqlFunctionURL =
