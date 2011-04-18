@@ -26,9 +26,9 @@ class GitLogParser {
 	// protected static DateTimeFormatter gitLogDateFormat =
 	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
 	protected static Regex gitLogDateFormatRegex = new Regex(
-	"({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})(\\s+[+-]\\d{4})");
+	                                                         "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	protected static Regex regex                 = new Regex(
-	"^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	                                                         "^(({plain}[a-zA-Z]+)$|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
 	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
@@ -72,14 +72,14 @@ class GitLogParser {
 				String[] commitParts = line.split(" ");
 				if (commitParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-					                             + ". Abort parsing.");
+					        + ". Abort parsing.");
 				}
 				currentID = commitParts[1].trim();
 			} else if (line.startsWith("Author:")) {
 				String[] authorParts = line.split(":");
 				if (authorParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-					                             + ". Abort parsing.");
+					        + ". Abort parsing.");
 				}
 				String username = null;
 				String fullname = null;
@@ -100,7 +100,7 @@ class GitLogParser {
 				String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
-					                             + ". Abort parsing.");
+					        + ". Abort parsing.");
 				}
 				date = authorDateParts[1].trim();
 			} else if (line.startsWith(" ")) {

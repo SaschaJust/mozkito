@@ -3,11 +3,14 @@ package de.unisaarland.cs.st.reposuite.rcs.git;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class GitLogParserTest {
 	
@@ -70,5 +73,33 @@ public class GitLogParserTest {
 		GitLogParser.originalIdRegex.find(s);
 		assertTrue(GitLogParser.originalIdRegex.getGroup("hit") != null);
 		assertEquals("7896", GitLogParser.originalIdRegex.getGroup("hit").trim());
+	}
+	
+	@Test
+	public void testRegressionBug169() {
+		String message = "Author: jvanzyl <jvanzyl>\nDate:   Tue Jan 13 22:54:37 2004 +0000\n o http://jira.codehaus.org/secure/ViewIssue.jspa?key=XSTR-17\n\ngit-svn-id: file:///scratch/kim/miner_repos/xstream/svn_repo_09_03_2011/trunk@61 f887afa5-a9cb-4ae6-b411-6339e5819859";
+		List<RegexGroup> groups = GitLogParser.gitLogDateFormatRegex.find(message);
+		int found = 0;
+		assertEquals(9, groups.size());
+		for (RegexGroup group : groups) {
+			if ((group.getName().equals("Z")) && (group.getMatch().equals("+0000"))) {
+				++found;
+			} else if ((group.getName().equals("EEE")) && (group.getMatch().equals("Tue"))) {
+				++found;
+			} else if ((group.getName().equals("MMM")) && (group.getMatch().equals("Jan"))) {
+				++found;
+			} else if ((group.getName().equals("d")) && (group.getMatch().equals("13"))) {
+				++found;
+			} else if ((group.getName().equals("HH")) && (group.getMatch().equals("22"))) {
+				++found;
+			} else if ((group.getName().equals("mm")) && (group.getMatch().equals("54"))) {
+				++found;
+			} else if ((group.getName().equals("ss")) && (group.getMatch().equals("37"))) {
+				++found;
+			} else if ((group.getName().equals("yyyy")) && (group.getMatch().equals("2004"))) {
+				++found;
+			}
+		}
+		assertEquals(8, found);
 	}
 }
