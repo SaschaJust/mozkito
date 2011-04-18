@@ -105,7 +105,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 					if (report.getField(lowerFieldName) != null) {
 						type = report.getField(lowerFieldName).getClass();
 					} else {
-						Tuple<T, T> object = get(lowerFieldName);
+						Tuple<?, ?> object = get(lowerFieldName);
 						
 						if (object != null) {
 							type = object.getFirst() != null
@@ -311,38 +311,34 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @param field
 	 * @return
 	 */
-	@SuppressWarnings ("unchecked")
-	public <T> Tuple<T, T> get(final String field) {
+	public <T> Tuple<?, ?> get(final String field) {
 		String lowerFieldName = field.toLowerCase();
 		
 		if (getChangedStringValues().containsKey(lowerFieldName)) {
-			return (Tuple<T, T>) new Tuple<String, String>(getChangedStringValues().get(lowerFieldName).getOldValue(),
-			                                               getChangedStringValues().get(lowerFieldName).getNewValue());
+			return new Tuple<String, String>(getChangedStringValues().get(lowerFieldName).getOldValue(),
+			                                 getChangedStringValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
-			return (Tuple<T, T>) new Tuple<Person, Person>(
-			                                               getChangedPersonValues().get(lowerFieldName).getOldValue()
-			                                                                       .isEmpty()
-			                                                                                 ? null
-			                                                                                 : getChangedPersonValues().get(lowerFieldName)
-			                                                                                                           .getOldValue()
-			                                                                                                           .getPersons()
-			                                                                                                           .iterator()
-			                                                                                                           .next(),
-			                                               getChangedPersonValues().get(lowerFieldName).getNewValue()
-			                                                                       .isEmpty()
-			                                                                                 ? null
-			                                                                                 : getChangedPersonValues().get(lowerFieldName)
-			                                                                                                           .getNewValue()
-			                                                                                                           .getPersons()
-			                                                                                                           .iterator()
-			                                                                                                           .next());
+			return new Tuple<Person, Person>(
+			                                 getChangedPersonValues().get(lowerFieldName).getOldValue().isEmpty()
+			                                                                                                     ? null
+			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
+			                                                                                                                               .getOldValue()
+			                                                                                                                               .getPersons()
+			                                                                                                                               .iterator()
+			                                                                                                                               .next(),
+			                                 getChangedPersonValues().get(lowerFieldName).getNewValue().isEmpty()
+			                                                                                                     ? null
+			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
+			                                                                                                                               .getNewValue()
+			                                                                                                                               .getPersons()
+			                                                                                                                               .iterator()
+			                                                                                                                               .next());
 		} else if (getChangedEnumValues().containsKey(lowerFieldName)) {
-			return (Tuple<T, T>) new Tuple<Enum<?>, Enum<?>>(getChangedEnumValues().get(lowerFieldName).getOldValue(),
-			                                                 getChangedEnumValues().get(lowerFieldName).getNewValue());
+			return new Tuple<Enum<?>, Enum<?>>(getChangedEnumValues().get(lowerFieldName).getOldValue(),
+			                                   getChangedEnumValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedDateValues().containsKey(lowerFieldName)) {
-			return (Tuple<T, T>) new Tuple<DateTime, DateTime>(
-			                                                   getChangedDateValues().get(lowerFieldName).getOldValue(),
-			                                                   getChangedDateValues().get(lowerFieldName).getNewValue());
+			return new Tuple<DateTime, DateTime>(getChangedDateValues().get(lowerFieldName).getOldValue(),
+			                                     getChangedDateValues().get(lowerFieldName).getNewValue());
 		}
 		return null;
 	}
