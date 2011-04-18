@@ -3,6 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
+import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
@@ -32,7 +36,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class OpenJPAUtil implements PersistenceUtil {
 	
@@ -154,7 +158,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/**
 	 * @return
-	 * @throws UninitializedDatabaseException 
+	 * @throws UninitializedDatabaseException
 	 */
 	public static PersistenceUtil getInstance() throws UninitializedDatabaseException {
 		if (factory == null) {
@@ -179,7 +183,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * 
 	 */
 	private OpenJPAUtil() {
-		this.entityManager = factory.createEntityManager();
+		entityManager = factory.createEntityManager();
 	}
 	
 	/*
@@ -190,7 +194,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void beginTransaction() {
-		this.entityManager.getTransaction().begin();
+		entityManager.getTransaction().begin();
 	}
 	
 	/*
@@ -201,8 +205,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void commitTransaction() {
-		if (this.entityManager.getTransaction().isActive()) {
-			this.entityManager.getTransaction().commit();
+		if (entityManager.getTransaction().isActive()) {
+			entityManager.getTransaction().commit();
 		}
 	}
 	
@@ -229,7 +233,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public Query createQuery(final String query) {
-		return this.entityManager.createQuery(query);
+		return entityManager.createQuery(query);
 	}
 	
 	/*
@@ -240,7 +244,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void delete(final Annotated object) {
-		this.entityManager.remove(object);
+		entityManager.remove(object);
 	}
 	
 	/*
@@ -251,8 +255,25 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void executeNativeQuery(final String queryString) {
-		Query nativeQuery = this.entityManager.createNativeQuery(queryString);
-		nativeQuery.executeUpdate();
+		try {
+			entityManager.getTransaction().begin();
+			OpenJPAEntityManager ojem = (OpenJPAEntityManager) entityManager;
+			Connection conn = (Connection) ojem.getConnection();
+			Statement statement = conn.createStatement();
+			statement.executeUpdate(queryString);
+			statement.close();
+			entityManager.getTransaction().commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			entityManager.getTransaction().rollback();
+		}
+	}
+	
+	@SuppressWarnings ("rawtypes")
+	@Override
+	public List executeNativeSelectQuery(final String queryString) {
+		Query nativeQuery = entityManager.createNativeQuery(queryString);
+		return nativeQuery.getResultList();
 	}
 	
 	/*
@@ -263,7 +284,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void executeQuery(final String queryString) {
-		Query query = this.entityManager.createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 		query.executeUpdate();
 	}
 	
@@ -274,11 +295,11 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public RCSTransaction fetchRCSTransaction(final String id) {
-		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<RCSTransaction> criteria = builder.createQuery(RCSTransaction.class);
 		Root<RCSTransaction> transaction = criteria.from(RCSTransaction.class);
 		criteria.where(builder.equal(transaction.get("id"), id));
-		TypedQuery<RCSTransaction> query = this.entityManager.createQuery(criteria);
+		TypedQuery<RCSTransaction> query = entityManager.createQuery(criteria);
 		
 		return query.getResultList().get(0);
 	}
@@ -332,7 +353,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria) {
-		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
+		TypedQuery<T> query = entityManager.createQuery(criteria.getQuery());
 		return query.getResultList();
 	}
 	
@@ -343,7 +364,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void save(final Annotated object) {
-		this.entityManager.persist(object);
+		entityManager.persist(object);
 	}
 	
 	/*
@@ -354,7 +375,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void saveOrUpdate(final Annotated object) {
-		if (this.entityManager.contains(object)) {
+		if (entityManager.contains(object)) {
 			update(object);
 		} else {
 			save(object);
@@ -386,7 +407,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void update(final Annotated object) {
-		this.entityManager.merge(object);
+		entityManager.merge(object);
 	}
 	
 }

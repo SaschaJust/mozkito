@@ -11,7 +11,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public interface PersistenceUtil {
 	
@@ -26,6 +26,9 @@ public interface PersistenceUtil {
 	public void delete(final Annotated object);
 	
 	public void executeNativeQuery(final String query);
+	
+	@SuppressWarnings ("rawtypes")
+	public List executeNativeSelectQuery(final String queryString);
 	
 	public void executeQuery(final String query);
 	
