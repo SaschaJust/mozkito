@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Query;
-
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
@@ -68,12 +66,14 @@ public class ChangeCouplingRuleFactory {
 		// persistenceUtil.executeQuery(sql.toString());
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
 		tablename = "reposuite_cc_" + tablename;
+		persistenceUtil.commitTransaction();
 		
+		persistenceUtil.executeNativeQuery("drop table if exists changecoupling_tmp;");
+		persistenceUtil.executeNativeQuery("create temporary table changecoupling_tmp (result integer);");
 		persistenceUtil.executeNativeQuery("select reposuite_changecouplings('" + transaction.getId() + "','"
 		        + tablename + "')");
-		Query ccRulesQuery = persistenceUtil.createQuery("select array_to_string(premise,',') AS premise, implication, support, confidence FROM "
+		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
-		List<Object[]> list = ccRulesQuery.getResultList();
 		if (list == null) {
 			return null;
 		}
@@ -81,7 +81,7 @@ public class ChangeCouplingRuleFactory {
 			int support = (Integer) row[2];
 			double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
-				String[] premises = row[0].toString().split(",");
+				String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
 				Integer[] premise = new Integer[premises.length];
 				for (int i = 0; i < premises.length; ++i) {
 					premise[i] = Integer.valueOf(premises[i]);

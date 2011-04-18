@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), 
 	def cc_support(s,ctime):
 	  args = list(s)
 	  counter = 1
-	  basequery = " SELECT transaction_id FROM rcsrevision WHERE file_id = $"
+	  basequery = " SELECT transaction_id FROM rcsrevision WHERE changedfile_id = $"
 	  argtypes = []
 	  if len(s) < 1:
 	    return 0
@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), 
 	plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
 	plpy.execute("CREATE TABLE "+str(tablename)+" (premise integer[], implication integer, support integer, confidence float)")
 	
-	q = plpy.prepare("select r1.file_id AS premise, r2.file_id AS implication from rcsrevision r1 CROSS JOIN rcsrevision r2 WHERE r2.transaction_id = $1 AND r1.transaction_id = $1 AND r1.file_id <> r2.file_id ORDER BY premise",["text"])
+	q = plpy.prepare("select r1.changedfile_id AS premise, r2.changedfile_id AS implication from rcsrevision r1 CROSS JOIN rcsrevision r2 WHERE r2.transaction_id = $1 AND r1.transaction_id = $1 AND r1.changedfile_id <> r2.changedfile_id ORDER BY premise",["text"])
 	q_rows = plpy.execute(q, [tid])
 	
 	cquery = plpy.prepare("SELECT timestamp FROM rcstransaction WHERE id = $1",["text"])
