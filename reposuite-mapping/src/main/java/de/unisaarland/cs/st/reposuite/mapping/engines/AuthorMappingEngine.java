@@ -13,6 +13,7 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -98,6 +99,7 @@ public class AuthorMappingEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void score(final RCSTransaction transaction,
 	                  final Report report,
@@ -116,7 +118,7 @@ public class AuthorMappingEngine extends MappingEngine {
 			}
 			
 			for (HistoryElement element : history.getElements()) {
-				if (((Resolution) element.get(Resolution.class.getSimpleName().toLowerCase())) == Resolution.RESOLVED) {
+				if (((Tuple<Resolution, Resolution>) element.get(Resolution.class.getSimpleName().toLowerCase())).getSecond() == Resolution.RESOLVED) {
 					if (Logger.logDebug()) {
 						Logger.debug("Found history entry that marks the report as " + Resolution.RESOLVED.name() + ".");
 					}
