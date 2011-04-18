@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -36,7 +34,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 public class BugzillaXMLParser {
 	
@@ -240,9 +237,11 @@ public class BugzillaXMLParser {
 						}
 						historyAuthor = new Person(username, null, null);
 						dateTime = DateTimeUtils.parseDate(tds.get(1).getText().trim());
-						Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
-						// FIXME helo? what about data? go fix them all 66
-						hElement = new HistoryElement(historyAuthor, dateTime, map);
+						if (hElement != null) {
+							report.addHistoryElement(hElement);
+						}
+						hElement = new HistoryElement(report.getId(), historyAuthor, dateTime);
+						
 					} else {
 						--rowspan;
 						whatIndex -= 2;
@@ -311,7 +310,9 @@ public class BugzillaXMLParser {
 						continue;
 					}
 				}
-				report.addHistoryElement(hElement);
+				if (hElement != null) {
+					report.addHistoryElement(hElement);
+				}
 			}
 		}
 	}
@@ -353,20 +354,7 @@ public class BugzillaXMLParser {
 			message = thetext.getText().trim();
 		}
 		
-		Element commentidElem = rootElement.getChild("commentid");
 		int commentid = report.getComments().size() + 1;
-		try {
-			commentid = new Integer(commentidElem.getText());
-		} catch (NumberFormatException e) {
-			if (Logger.logWarn()) {
-				Logger.warn("Found bugzilla comment with id that cannot converted to long. Trying to generate ID.");
-			}
-		}
-		if (commentidElem == null) {
-			if (Logger.logWarn()) {
-				Logger.warn("Found bugzilla comment without id. Trying to generate ID.");
-			}
-		}
 		
 		if (!message.equals("")) {
 			List<List<RegexGroup>> groupsList = siblingRegex.findAll(message);
@@ -408,14 +396,18 @@ public class BugzillaXMLParser {
 		List<Element> elements = rootElement.getChildren();
 		for (Element element : elements) {
 			if (element.getName().equals("bug_id")) {
-				try {
-					report.setId(new Long(element.getText()));
-				} catch (NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Bugzilla bug id `" + element.getText()
-						        + "` cannot be interpreted as an long. Abort parsing.");
-					}
-					return;
+				// try {
+				// report.setId(new Long(element.getText()));
+				// } catch (NumberFormatException e) {
+				// if (Logger.logError()) {
+				// Logger.error("Bugzilla bug id `" + element.getText()
+				// + "` cannot be interpreted as an long. Abort parsing.");
+				// }
+				// return;
+				// }
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Skipping bug id parsing. Already known.");
 				}
 			} else if (element.getName().equals("creation_ts")) {
 				DateTime creationTime = DateTimeUtils.parseDate(element.getText().trim());

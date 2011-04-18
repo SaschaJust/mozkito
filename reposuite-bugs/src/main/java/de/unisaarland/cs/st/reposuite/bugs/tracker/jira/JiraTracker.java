@@ -57,16 +57,16 @@ public class JiraTracker extends Tracker {
 		String suffix = xmlUrl.substring(index, xmlUrl.length());
 		String historyUrl = xmlUrl.replace("si/jira.issueviews:issue-xml/", "browse/");
 		return historyUrl.replace(suffix,
-		"?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+		                          "?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
 	}
 	
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	"<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	                                                   "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
 	private static Regex errorRegex        = new Regex(
-	"<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	                                                   "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
@@ -188,7 +188,7 @@ public class JiraTracker extends Tracker {
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
 		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder), "URI must contain bugIdPlaceHolder");
 		Condition.check(!uri.toString().endsWith(FileUtils.fileSeparator), "file should not end with "
-		                + FileUtils.fileSeparator);
+		        + FileUtils.fileSeparator);
 		if (this.overalXML == null) {
 			// fetch source from net
 			
@@ -294,7 +294,7 @@ public class JiraTracker extends Tracker {
 			Logger.info("Parsing report with id `" + rawReport.getId() + "` ... ");
 		}
 		
-		Report bugReport = new Report();
+		Report bugReport = new Report(rawReport.getId());
 		Element itemElement = rawReport.getDocument().getRootElement();
 		itemElement = itemElement.getChild("channel", itemElement.getNamespace());
 		itemElement = itemElement.getChild("item", itemElement.getNamespace());
@@ -318,7 +318,7 @@ public class JiraTracker extends Tracker {
 						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
 					} else {
 						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-						             + "`. Used uri =`" + historyUrl + "`.");
+						        + "`. Used uri =`" + historyUrl + "`.");
 					}
 					Logger.error(e.getMessage(), e);
 				}
@@ -327,6 +327,7 @@ public class JiraTracker extends Tracker {
 		if (Logger.logInfo()) {
 			Logger.info("done");
 		}
+		
 		return bugReport;
 	}
 	
@@ -382,7 +383,7 @@ public class JiraTracker extends Tracker {
 				if (!rawContent.getFormat().toLowerCase().equals("xhtml")) {
 					if (Logger.logError()) {
 						Logger.error("Expected overall Jira bug file in XML format. Got format: "
-						             + rawContent.getFormat());
+						        + rawContent.getFormat());
 					}
 					return;
 				}

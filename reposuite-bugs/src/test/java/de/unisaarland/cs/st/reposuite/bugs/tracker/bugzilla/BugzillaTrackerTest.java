@@ -120,14 +120,12 @@ public class BugzillaTrackerTest {
 			assertEquals("Bugzilla", report.getComponent());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:42 EST"), report.getCreationTimestamp());
 			assertEquals("eclipse.org is moving to it", report.getDescription());
-			assertEquals(null, report.getExpectedBehavior());
 			
 			History history = report.getHistory();
-			assertEquals(0, history.size());
+			assertTrue(history.isEmpty());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 			assertTrue(DateTimeUtils.parseDate("2005-11-03 23:17:37 -0500").isEqual(report.getLastUpdateTimestamp()));
-			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.VERY_HIGH, report.getPriority());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			
@@ -137,7 +135,6 @@ public class BugzillaTrackerTest {
 			assertEquals(true, report.getSiblings().contains(115017l));
 			
 			assertEquals(Status.CLOSED, report.getStatus());
-			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("add basic support for Bugzilla 2.20", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
 			assertEquals("mik.kersten", report.getSubmitter().getUsernames().iterator().next());
@@ -165,19 +162,27 @@ public class BugzillaTrackerTest {
 	@Test
 	public void testParseHistory() {
 		URL historyURL = BugzillaTracker.class.getResource(FileUtils.fileSeparator + "bugzilla_114562_history.html");
-		Report report = new Report();
+		Report report = new Report(11562);
 		try {
+			BugzillaTracker tracker = new BugzillaTracker();
+			RawReport rawReport = new RawReport(
+			                                    114562,
+			                                    IOUtils.fetch(BugzillaTracker.class.getResource(FileUtils.fileSeparator
+			                                                                                            + "bugzilla_114562.xml")
+			                                                                       .toURI()));
+			report = tracker.parse(tracker.createDocument(rawReport));
 			BugzillaXMLParser.handleHistory(historyURL.toURI(), report);
 			History history = report.getHistory();
 			assertEquals(3, history.size());
 			Iterator<HistoryElement> hElemIter = history.iterator();
 			HistoryElement hElem = hElemIter.next();
+			
 			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("priority"));
-			assertEquals(Priority.UNKNOWN, history.getOldValue("priority", hElem));
-			assertEquals(BugzillaXMLParser.getPriority("P1"), hElem.get("priority"));
+			assertEquals(Priority.NORMAL, history.getOldValue("priority", hElem));
+			assertEquals(BugzillaXMLParser.getPriority("P1"), hElem.get("priority").getSecond());
 			
 			hElem = hElemIter.next();
 			assertEquals(1, hElem.size());
@@ -185,7 +190,7 @@ public class BugzillaTrackerTest {
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("summary"));
 			assertEquals("add support for Bugzilla 2.20", history.getOldValue("summary", hElem));
-			assertEquals("add support for Bugzilla 2 20", hElem.get("summary"));
+			assertEquals("add support for Bugzilla 2 20", hElem.get("summary").getSecond());
 			
 			hElem = hElemIter.next();
 			assertEquals(3, hElem.size());
@@ -195,11 +200,11 @@ public class BugzillaTrackerTest {
 			assertTrue(hElem.contains("resolution"));
 			assertTrue(hElem.contains("summary"));
 			assertEquals(BugzillaXMLParser.getStatus("NEW"), history.getOldValue("status", hElem));
-			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"), hElem.get("status"));
+			assertEquals(BugzillaXMLParser.getStatus("RESOLVED"), hElem.get("status").getSecond());
 			assertEquals(BugzillaXMLParser.getResolution(""), history.getOldValue("resolution", hElem));
-			assertEquals(BugzillaXMLParser.getResolution("FIXED"), hElem.get("resolution"));
+			assertEquals(BugzillaXMLParser.getResolution("FIXED"), hElem.get("resolution").getSecond());
 			assertEquals("add support for Bugzilla 2 20", history.getOldValue("summary", hElem));
-			assertEquals("add basic support for Bugzilla 2.20", hElem.get("summary"));
+			assertEquals("add basic support for Bugzilla 2.20", hElem.get("summary").getSecond());
 			
 			assertEquals("mik.kersten", report.getResolver().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), report.getResolutionTimestamp());

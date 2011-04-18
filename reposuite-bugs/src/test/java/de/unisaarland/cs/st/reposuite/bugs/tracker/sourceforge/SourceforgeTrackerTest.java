@@ -64,9 +64,8 @@ public class SourceforgeTrackerTest {
 	@Test
 	public void testIssueParser() {
 		SourceforgeTracker tracker = new SourceforgeTracker();
-		String url = SourceforgeTrackerTest.class.getResource(
-				FileUtils.fileSeparator + "sourceforge_issue_1887104.html")
-				.toString();
+		String url = SourceforgeTrackerTest.class.getResource(FileUtils.fileSeparator
+		                                                              + "sourceforge_issue_1887104.html").toString();
 		url = url.substring(0, url.lastIndexOf("sourceforge_issue_1887104.html"));
 		String pattern = "sourceforge_issue_" + Tracker.bugIdPlaceholder + ".html";
 		try {
@@ -84,7 +83,7 @@ public class SourceforgeTrackerTest {
 			assertEquals(2658599, c1.getId());
 			Person daliboz = c1.getAuthor();
 			assertTrue(daliboz != null);
-			assertEquals(report,c1.getBugReport());
+			assertEquals(report, c1.getBugReport());
 			assertTrue(c1.getMessage().startsWith("bumping up priority."));
 			DateTime dt = DateTimeUtils.parseDate("2008-02-05 16:52:57 UTC");
 			assertTrue(dt.isEqual(c1.getTimestamp()));
@@ -134,21 +133,18 @@ public class SourceforgeTrackerTest {
 			dt = DateTimeUtils.parseDate("2008-02-05 16:24:58 UTC");
 			assertTrue(dt.isEqual(report.getCreationTimestamp()));
 			
-			assertTrue(report.getDescription().startsWith(
-			"On versions 1.5+, using roundFloorCopy on one of the ambiguous times "));
-			assertEquals(null, report.getExpectedBehavior());
+			assertTrue(report.getDescription()
+			                 .startsWith("On versions 1.5+, using roundFloorCopy on one of the ambiguous times "));
 			assertEquals(1887104, report.getId());
 			assertTrue(c6Dt.isEqual(report.getLastUpdateTimestamp()));
-			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.VERY_HIGH, report.getPriority());
 			assertEquals(null, report.getProduct());
 			assertEquals(Resolution.UNRESOLVED, report.getResolution());
 			assertEquals(null, report.getResolutionTimestamp());
 			assertEquals(null, report.getResolver());
-			assertEquals(null, report.getSeverity());
+			assertEquals(new Report(0).getSeverity(), report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status.CLOSED, report.getStatus());
-			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("joda-time 1.5+ issues with roundFloor and DST", report.getSubject());
 			assertEquals(daliboz, report.getSubmitter());
 			assertEquals(null, report.getSummary());
@@ -290,7 +286,6 @@ public class SourceforgeTrackerTest {
 			assertTrue(ids.contains(954058l));
 			assertTrue(ids.contains(949267l));
 			assertTrue(ids.contains(943071l));
-			
 			
 		} catch (SAXException e) {
 			e.printStackTrace();

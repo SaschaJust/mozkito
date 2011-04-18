@@ -70,7 +70,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private Resolution         resolution       = Resolution.UNKNOWN;
 	private String             subject;
 	private SortedSet<Long>    siblings         = new TreeSet<Long>();
-	private History            history          = new History();
+	private History            history;
 	private Status             status           = Status.UNKNOWN;
 	private Type               type             = Type.UNKNOWN;
 	private DateTime           creationTimestamp;
@@ -79,9 +79,6 @@ public class Report implements Annotated, Comparable<Report> {
 	private DateTime           lastFetch;
 	private String             version;
 	private String             summary;
-	private String             observedBehavior;
-	private String             expectedBehavior;
-	private String             stepsToReproduce;
 	private String             component;
 	private String             product;
 	private byte[]             hash             = new byte[33];
@@ -90,8 +87,17 @@ public class Report implements Annotated, Comparable<Report> {
 	// resolver
 	private PersonContainer    personContainer  = new PersonContainer();
 	
-	public Report() {
+	private Report() {
 		super();
+	}
+	
+	/**
+	 * @param id
+	 */
+	public Report(final long id) {
+		this();
+		setId(id);
+		setHistory(new History(getId()));
 	}
 	
 	/**
@@ -121,7 +127,7 @@ public class Report implements Annotated, Comparable<Report> {
 		History history = getHistory();
 		boolean ret = history.add(historyElement);
 		setHistory(history);
-		historyElement.setBugReport(this);
+		historyElement.setBugId(getId());
 		return ret;
 	}
 	
@@ -158,9 +164,6 @@ public class Report implements Annotated, Comparable<Report> {
 		report.setLastFetch(getLastFetch());
 		report.setVersion(getVersion());
 		report.setSummary(getSummary());
-		report.setObservedBehavior(getObservedBehavior());
-		report.setExpectedBehavior(getExpectedBehavior());
-		report.setStepsToReproduce(getStepsToReproduce());
 		report.setComponent(getComponent());
 		report.setProduct(getProduct());
 		report.setAssignedTo(getAssignedTo());
@@ -244,15 +247,6 @@ public class Report implements Annotated, Comparable<Report> {
 	@Lob
 	public String getDescription() {
 		return this.description;
-	}
-	
-	/**
-	 * @return the expectedBehavior
-	 */
-	@Basic
-	@Lob
-	public String getExpectedBehavior() {
-		return this.expectedBehavior;
 	}
 	
 	public Object getField(final String lowerFieldName) {
@@ -351,15 +345,6 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return the observedBehavior
-	 */
-	@Basic
-	@Lob
-	public String getObservedBehavior() {
-		return this.observedBehavior;
-	}
-	
-	/**
 	 * @return the personContainer
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -443,15 +428,6 @@ public class Report implements Annotated, Comparable<Report> {
 	@Enumerated (EnumType.ORDINAL)
 	public Status getStatus() {
 		return this.status;
-	}
-	
-	/**
-	 * @return the stepsToReproduce
-	 */
-	@Basic
-	@Lob
-	public String getStepsToReproduce() {
-		return this.stepsToReproduce;
 	}
 	
 	/**
@@ -558,14 +534,6 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @param expectedBehavior
-	 *            the expectedBehavior to set
-	 */
-	public void setExpectedBehavior(final String expectedBehavior) {
-		this.expectedBehavior = expectedBehavior;
-	}
-	
-	/**
 	 * @param fieldName
 	 * @param fieldValue
 	 */
@@ -614,7 +582,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param history
 	 *            the history to set
 	 */
-	public void setHistory(final History history) {
+	private void setHistory(final History history) {
 		this.history = history;
 	}
 	
@@ -622,7 +590,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(final long id) {
+	private void setId(final long id) {
 		this.id = id;
 	}
 	
@@ -659,14 +627,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
 		this.lastUpdateTimestamp = lastUpdateTimestamp;
-	}
-	
-	/**
-	 * @param observedBehavior
-	 *            the observedBehavior to set
-	 */
-	public void setObservedBehavior(final String observedBehavior) {
-		this.observedBehavior = observedBehavior;
 	}
 	
 	/**
@@ -750,14 +710,6 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @param stepsToReproduce
-	 *            the stepsToReproduce to set
-	 */
-	public void setStepsToReproduce(final String stepsToReproduce) {
-		this.stepsToReproduce = stepsToReproduce;
-	}
-	
-	/**
 	 * @param subject
 	 *            the subject to set
 	 */
@@ -821,7 +773,7 @@ public class Report implements Annotated, Comparable<Report> {
 		while (iterator.hasPrevious()) {
 			HistoryElement element = iterator.previous();
 			if (interval.contains(element.getTimestamp())) {
-				History historyPatch = new History();
+				History historyPatch = new History(getId());
 				historyPatch.add(element);
 				reports.add(report = historyPatch.rollback(report, element.getTimestamp()));
 			} else {

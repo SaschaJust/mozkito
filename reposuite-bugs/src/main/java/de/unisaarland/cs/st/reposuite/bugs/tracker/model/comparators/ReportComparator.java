@@ -18,8 +18,8 @@ public class ReportComparator implements Comparator<Report> {
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(final Report o1, final Report o2) {
-		// TODO Auto-generated method stub
+	public int compare(final Report o1,
+	                   final Report o2) {
 		return o1.compareTo(o2);
 	}
 	

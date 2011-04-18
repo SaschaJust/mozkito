@@ -60,7 +60,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
 public class GoogleTracker extends Tracker {
 	
 	protected static Regex        fetchRegex    = new Regex(
-	"https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
+	                                                        "https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
 	private String                projectName;
 	private ProjectHostingService service;
 	
@@ -100,7 +100,7 @@ public class GoogleTracker extends Tracker {
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
 		Condition.check(rawReport instanceof GoogleRawContent,
-		"The rawReport has to be an instance of GoogleRawContent.");
+		                "The rawReport has to be an instance of GoogleRawContent.");
 		return (GoogleRawContent) rawReport;
 	}
 	
@@ -187,15 +187,14 @@ public class GoogleTracker extends Tracker {
 	@Override
 	public Report parse(final XmlReport xmlReport) {
 		Condition.check(xmlReport instanceof GoogleRawContent,
-		"The xmlReport has to be an instance of GoogleRawContent.");
+		                "The xmlReport has to be an instance of GoogleRawContent.");
 		
 		GoogleRawContent issue = (GoogleRawContent) xmlReport;
-		Report report = new Report();
+		Report report = new Report(issue.getId());
 		report.setAssignedTo(issue.getOwner().toPerson());
 		report.setCategory(issue.getCategory());
 		
 		report.setCreationTimestamp(issue.getCreationDate());
-		report.setId(issue.getId());
 		report.setLastFetch(xmlReport.getFetchTime());
 		if (issue.getUpdateDate() != null) {
 			report.setLastUpdateTimestamp(issue.getUpdateDate());
@@ -215,15 +214,17 @@ public class GoogleTracker extends Tracker {
 				report.setPriority(Priority.UNKNOWN);
 				if (Logger.logWarn()) {
 					Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-					            + "`. Setting prioroty to UNKNOWN.");
+					        + "`. Setting prioroty to UNKNOWN.");
 				}
 			}
 		}
 		
 		if (issue.getStatus() != null) {
 			String status = issue.getStatus().toLowerCase();
-			// Started, Accepted, FixedNotReleased, NeedsInfo, New, PatchesWelcome,
-			// ReviewPending, AssumedStale, Duplicate, Fixed, Invalid, KnownQuirk,
+			// Started, Accepted, FixedNotReleased, NeedsInfo, New,
+			// PatchesWelcome,
+			// ReviewPending, AssumedStale, Duplicate, Fixed, Invalid,
+			// KnownQuirk,
 			// NotPlanned
 			if (status.equals("started")) {
 				report.setStatus(Status.IN_PROGRESS);
@@ -304,12 +305,13 @@ public class GoogleTracker extends Tracker {
 			report.setType(Type.UNKNOWN);
 			if (Logger.logWarn()) {
 				Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
-				            + "`. Setting type to UNKNOWN.");
+				        + "`. Setting type to UNKNOWN.");
 			}
 		}
 		report.setVersion(issue.getVersion());
 		
 		parseComments(report);
+		
 		return report;
 	}
 	
@@ -324,7 +326,7 @@ public class GoogleTracker extends Tracker {
 			
 			try {
 				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/"
-				                      + report.getId() + "/comments/full/" + (++counter));
+				        + report.getId() + "/comments/full/" + (++counter));
 				ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
 				IssueCommentsEntry commentEntry = service.getEntry(feedUrl, IssueCommentsEntry.class);
 				TextContent textContent = (TextContent) commentEntry.getContent();
@@ -334,8 +336,8 @@ public class GoogleTracker extends Tracker {
 					message = htmlConstruct.getHtml();
 				}
 				com.google.gdata.data.DateTime published = commentEntry.getPublished();
-				DateTime createDate = new DateTime(published.getValue(), DateTimeZone.forOffsetHours(published
-				                                                                                     .getTzShift()));
+				DateTime createDate = new DateTime(published.getValue(),
+				                                   DateTimeZone.forOffsetHours(published.getTzShift()));
 				
 				Person author = unknownPerson;
 				List<com.google.gdata.data.Person> authors = commentEntry.getAuthors();
@@ -348,7 +350,7 @@ public class GoogleTracker extends Tracker {
 					Updates updates = commentEntry.getUpdates();
 					updates.getBlockedOnUpdates();
 					
-					HistoryElement hElem = new HistoryElement(author, createDate, new HashMap<String, Tuple<?, ?>>());
+					HistoryElement hElem = new HistoryElement(report.getId(), author, createDate);
 					
 					if (updates.getCcUpdates() != null) {
 						// CCs are not supported by report
@@ -361,7 +363,7 @@ public class GoogleTracker extends Tracker {
 						String compValue = l.getValue().toLowerCase();
 						if (compValue.startsWith("type-")) {
 							String newValue = label.substring(5).trim();
-							if(changes.containsKey("type")){
+							if (changes.containsKey("type")) {
 								changes.get("type").setSecond(newValue);
 							} else {
 								changes.put("type", new Tuple<String, String>("<UNKNOWN>", newValue));
@@ -375,7 +377,7 @@ public class GoogleTracker extends Tracker {
 							}
 						} else if (compValue.startsWith("priority-")) {
 							String newValue = label.substring(9).trim();
-							if(changes.containsKey("priority")){
+							if (changes.containsKey("priority")) {
 								changes.get("priority").setSecond(newValue);
 							} else {
 								changes.put("priority", new Tuple<String, String>("<UNKNOWN>", newValue));
@@ -389,7 +391,7 @@ public class GoogleTracker extends Tracker {
 							}
 						} else if (compValue.startsWith("category-")) {
 							String newValue = label.substring(9).trim();
-							if(changes.containsKey("category")){
+							if (changes.containsKey("category")) {
 								changes.get("category").setSecond(newValue);
 							} else {
 								changes.put("category", new Tuple<String, String>("<UNKNOWN>", newValue));
@@ -403,7 +405,7 @@ public class GoogleTracker extends Tracker {
 							}
 						} else if (compValue.startsWith("milestone-")) {
 							String newValue = label.substring(10).trim();
-							if(changes.containsKey("milestone")){
+							if (changes.containsKey("milestone")) {
 								changes.get("milestone").setSecond(newValue);
 							} else {
 								changes.put("milestone", new Tuple<String, String>("<UNKNOWN>", newValue));
@@ -420,7 +422,7 @@ public class GoogleTracker extends Tracker {
 					
 					if (updates.getOwnerUpdate() != null) {
 						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
-						                                                              .getValue(), null, null));
+						                                                                     .getValue(), null, null));
 					}
 					
 					if (updates.getStatus() != null) {
@@ -508,9 +510,14 @@ public class GoogleTracker extends Tracker {
 	 * java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
-	                  final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
-	throws InvalidParameterException {
+	public void setup(final URI fetchURI,
+	                  final URI overviewURI,
+	                  final String pattern,
+	                  final String username,
+	                  final String password,
+	                  final Long startAt,
+	                  final Long stopAt,
+	                  final String cacheDirPath) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
@@ -519,7 +526,7 @@ public class GoogleTracker extends Tracker {
 		Condition.check(groups.size() == 2,
 		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
 		CompareCondition.equals(groups.get(1).getName(), "project", "The name of the first group has to be 'project'.");
-
+		
 		this.projectName = groups.get(1).getMatch();
 		
 		try {
@@ -532,7 +539,7 @@ public class GoogleTracker extends Tracker {
 			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 				IssuesEntry entry = resultFeed.getEntries().get(i);
 				long bugId = entry.getIssueId().getValue().longValue();
-				if((bugId >= startAt) && (bugId <= stopAt)){
+				if ((bugId >= startAt) && (bugId <= stopAt)) {
 					this.addBugId(bugId);
 				}
 			}

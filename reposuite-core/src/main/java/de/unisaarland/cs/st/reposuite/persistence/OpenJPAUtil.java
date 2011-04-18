@@ -45,7 +45,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		if (factory == null) {
 			if (type == null) {
 				String url = (String) properties.get("openjpa.ConnectionURL");
-				if (type != null) {
+				if (url != null) {
 					type = url.split(":")[1];
 				} else {
 					type = "unknown";

@@ -37,7 +37,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
  */
 @Entity
 @Table (name = "comment", uniqueConstraints = { @UniqueConstraint (columnNames = { "id", "bugreport_id" }) })
-public class Comment implements Annotated, Comparable<Comment> {
+public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	
 	/**
 	 * 
@@ -148,6 +148,11 @@ public class Comment implements Annotated, Comparable<Comment> {
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	protected PersonContainer getPersonContainer() {
 		return this.personContainer;
+	}
+	
+	@Override
+	public String getText() {
+		return getMessage();
 	}
 	
 	/**

@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.google;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -36,23 +35,7 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 public class GoogleTrackerTest {
 	
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	"(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
-	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
-	@Test
-	public void testFetchRegex() {
-		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
-		List<RegexGroup> groups = GoogleTracker.fetchRegex.find(fetchURI);
-		assertEquals(2, groups.size());
-		assertEquals("project", groups.get(1).getName());
-		assertEquals("webtoolkit", groups.get(1).getMatch());
-	}
+	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
 	
 	@AfterClass
 	public static void afterClass() {
@@ -73,7 +56,24 @@ public class GoogleTrackerTest {
 			}
 		}
 	}
-
+	
+	@Before
+	public void setUp() throws Exception {
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testFetchRegex() {
+		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
+		List<RegexGroup> groups = GoogleTracker.fetchRegex.find(fetchURI);
+		assertEquals(2, groups.size());
+		assertEquals("project", groups.get(1).getName());
+		assertEquals("webtoolkit", groups.get(1).getMatch());
+	}
+	
 	@Test
 	public void testTracker() {
 		File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);
@@ -83,8 +83,8 @@ public class GoogleTrackerTest {
 			}
 			
 			GoogleTracker tracker = new GoogleTracker();
-			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"),
-					null, null, null, null, 4380l, 4380l, cacheDir.getAbsolutePath());
+			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
+			              null, null, 4380l, 4380l, cacheDir.getAbsolutePath());
 			
 			Long nextId = tracker.getNextId();
 			assertEquals(4380, nextId, 0);
@@ -96,35 +96,32 @@ public class GoogleTrackerTest {
 			assertEquals(rawReport, xmlReport);
 			assert (xmlReport instanceof GoogleRawContent);
 			Report report = tracker.parse(xmlReport);
-			assertEquals(4380,report.getId());
+			assertEquals(4380, report.getId());
 			assertEquals(1, report.getAssignedTo().getUsernames().size());
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));
 			assertEquals("DevPlugin", report.getCategory());
 			
-			assertEquals(60,report.getComments().size());
+			assertEquals(60, report.getComments().size());
 			
-			assertEquals(null,report.getComponent());
-			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z", dateTimeHistoryFormatRegex).isEqual(
-					report.getCreationTimestamp()));
-			assertEquals(null, report.getExpectedBehavior());
+			assertEquals(null, report.getComponent());
+			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z", dateTimeHistoryFormatRegex)
+			                        .isEqual(report.getCreationTimestamp()));
 			
 			assertTrue(report.getHistory() != null);
 			assertEquals(2, report.getHistory().size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
-			assertEquals(null, report.getObservedBehavior());
-			assertEquals(null, report.getPriority());
-			assertEquals(null, report.getProduct());
+			assertEquals(new Report(0).getPriority(), report.getPriority());
+			assertEquals(new Report(0).getProduct(), report.getProduct());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
-			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z", dateTimeHistoryFormatRegex).isEqual(
-					report.getResolutionTimestamp()));
+			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z", dateTimeHistoryFormatRegex)
+			                        .isEqual(report.getResolutionTimestamp()));
 			assertTrue(report.getResolver() != null);
 			assertEquals(1, report.getResolver().getUsernames().size());
 			assertTrue(report.getResolver().getUsernames().contains("jat@google.com"));
-			assertEquals(null, report.getSeverity());
+			assertEquals(new Report(0).getSeverity(), report.getSeverity());
 			report.getSiblings();
 			assertEquals(Status.CLOSED, report.getStatus());
-			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("DevMode plug-in doesn't work in Firefox 3.6", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
 			assertEquals(1, report.getSubmitter().getUsernames().size());

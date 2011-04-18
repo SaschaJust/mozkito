@@ -5,8 +5,6 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -49,11 +47,10 @@ public class HistoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.report = new Report();
+		this.report = new Report(1);
 		this.report.setCreationTimestamp(this.formatter.parseDateTime("2010-01-10 13:23:12"));
 		this.report.setComponent("Model");
 		this.report.setDescription("Some default description");
-		this.report.setId(1);
 		this.report.setLastFetch(new DateTime());
 		this.report.setSummary("Some default summary");
 		this.report.setStatus(Status.NEW);
@@ -63,30 +60,17 @@ public class HistoryTest {
 		this.report.addComment(new Comment(2, new Person("just", "Sascha Just", null),
 		                                   this.formatter.parseDateTime("2010-01-13 19:19:53"),
 		                                   "Some default comment 2"));
-		this.report.addHistoryElement(new HistoryElement(new Person("doe", "John Doe", "foo@bar.com"),
-		                                                 this.formatter.parseDateTime("2010-01-11 21:12:23"),
-		                                                 new HashMap<String, Object>() {
-			                                                 
-			                                                 private static final long serialVersionUID = 1L;
-			                                                 
-			                                                 {
-				                                                 put("assignedTo",
-				                                                     new Person("kim", "Kim Herzig",
-				                                                                "herzig@cs.uni-saarland.de"));
-				                                                 put("priority", Priority.HIGH);
-			                                                 }
-		                                                 }));
-		this.report.addHistoryElement(new HistoryElement(new Person("kim", "Kim Herzig", null),
-		                                                 this.formatter.parseDateTime("2010-01-15 01:59:26"),
-		                                                 new HashMap<String, Object>() {
-			                                                 
-			                                                 private static final long serialVersionUID = 1L;
-			                                                 
-			                                                 {
-				                                                 put("resolution", Resolution.RESOLVED);
-				                                                 put("status", Status.CLOSED);
-			                                                 }
-		                                                 }));
+		HistoryElement element = new HistoryElement(this.report.getId(), new Person("doe", "John Doe", "foo@bar.com"),
+		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
+		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@cs.uni-saarland.de"));
+		element.addChangedValue("priority", new Report(0).getPriority(), Priority.HIGH);
+		this.report.addHistoryElement(element);
+		
+		element = new HistoryElement(this.report.getId(), new Person("kim", "Kim Herzig", null),
+		                             this.formatter.parseDateTime("2010-01-15 01:59:26"));
+		element.addChangedValue("resolution", new Report(0).getResolution(), Resolution.RESOLVED);
+		element.addChangedValue("status", new Report(0).getStatus(), Status.CLOSED);
+		this.report.addHistoryElement(element);
 	}
 	
 	/**

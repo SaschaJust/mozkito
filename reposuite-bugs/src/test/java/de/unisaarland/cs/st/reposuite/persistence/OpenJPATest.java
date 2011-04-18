@@ -2,7 +2,6 @@ package de.unisaarland.cs.st.reposuite.persistence;
 
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
@@ -71,7 +70,6 @@ public class OpenJPATest {
 	public void tearDown() throws Exception {
 	}
 	
-	@SuppressWarnings ("serial")
 	@Test
 	public void testOrphanPerson() {
 		try {
@@ -82,22 +80,16 @@ public class OpenJPATest {
 			Person historyAuthor2 = new Person(null, "Yoko Harada", null);
 			Person commentAuthor2 = new Person("yokolet", null, null);
 			
-			Report report = new Report();
+			Report report = new Report(1);
 			report.setSubmitter(submitter);
 			
-			report.addHistoryElement(new HistoryElement(historyAuthor1, new DateTime(), new HashMap<String, Enum<?>>() {
-				
-				{
-					put("status", Status.CLOSED);
-				}
-			}));
+			HistoryElement element = new HistoryElement(report.getId(), historyAuthor1, new DateTime());
+			element.addChangedValue("status", new Report(0).getStatus(), Status.ASSIGNED);
+			report.addHistoryElement(element);
 			
-			report.addHistoryElement(new HistoryElement(historyAuthor2, new DateTime(), new HashMap<String, Enum<?>>() {
-				
-				{
-					put("status", Status.CLOSED);
-				}
-			}));
+			element = new HistoryElement(1, historyAuthor2, new DateTime());
+			element.addChangedValue("status", Status.ASSIGNED, Status.CLOSED);
+			report.addHistoryElement(element);
 			
 			report.addComment(new Comment(2, commentAuthor2, new DateTime(), "comment2"));
 			

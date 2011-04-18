@@ -4,10 +4,7 @@
     <persistence-unit name="core" transaction-type="RESOURCE_LOCAL">
     	<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple</class>
-        <class>de.unisaarland.cs.st.reposuite.rcs.model.DateTuple</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple</class>
-        <class>de.unisaarland.cs.st.reposuite.rcs.model.IntegerTuple</class>
-        <class>de.unisaarland.cs.st.reposuite.rcs.model.LongTuple</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.Person</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple</class>
@@ -32,6 +29,8 @@
     </persistence-unit>
 	<persistence-unit name="bugs" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.Person</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple</class>
@@ -40,6 +39,7 @@
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.CommentPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.History</class>
@@ -60,6 +60,8 @@
 	</persistence-unit>
 		<persistence-unit name="mapping" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.Person</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple</class>
@@ -68,6 +70,7 @@
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
         <class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.CommentPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.History</class>
@@ -90,13 +93,23 @@
 	</persistence-unit>
 	<persistence-unit name="ppa" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.Person</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSFile</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
+        <class>de.unisaarland.cs.st.reposuite.rcs.model.StringTuple</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElement</class>
+		<class>de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation</class>
-        <!--<class>de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation</class>-->
+        <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall</class>
         <class>de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition</class>
-        <class>nullpointer.A</class>
-        <class>nullpointer.B</class>
         <properties>
         	<property name="openjpa.Log" value="slf4j" />
         	<property name="openjpa.Multithreaded" value="true" />

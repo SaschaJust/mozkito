@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -236,7 +235,7 @@ public class JiraXMLParser {
 						}
 						
 						List<Element> trs = tbody.getChildren("tr", namespace);
-						HistoryElement hElement = new HistoryElement(author, timestamp, new HashMap<String, String>());
+						HistoryElement hElement = new HistoryElement(report.getId(), author, timestamp);
 						
 						for (Element tr : trs) {
 							if (tr == null) {
@@ -335,7 +334,7 @@ public class JiraXMLParser {
 					}
 					return;
 				}
-				report.setId(new Long(groups.get(1).getMatch()).longValue());
+				// report.setId(new Long(groups.get(1).getMatch()).longValue());
 			} else if (element.getName().equals("summary")) {
 				report.setSummary(element.getText());
 			} else if (element.getName().equals("type")) {

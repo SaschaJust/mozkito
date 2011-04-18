@@ -415,7 +415,7 @@ public class SourceforgeTracker extends Tracker {
 			}
 			List<RegexGroup> find = this.subjectRegex.find(n.getValue());
 			bugReport.setSubject(find.get(1).getMatch());
-			bugReport.setId(Long.parseLong(find.get(2).getMatch()));
+			// bugReport.setId(Long.parseLong(find.get(2).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
 			// Comments are not properly formatted. Hacking it.
 			e = (Element) (e.getChildren() != null
@@ -582,7 +582,7 @@ public class SourceforgeTracker extends Tracker {
 					ArrayList<Object> list = new ArrayList<Object>(2);
 					list.add(oldValue);
 					list.add(newValue);
-					Map<String, Tuple<?, ?>> map = new HashMap<String, Tuple<?, ?>>();
+					new HashMap<String, Tuple<?, ?>>();
 					
 					if (authorFullname != null) {
 						authorFullname = authorFullname.trim();
@@ -590,9 +590,9 @@ public class SourceforgeTracker extends Tracker {
 					if (authorUsername != null) {
 						authorUsername = authorUsername.trim();
 					}
-					bugReport.addHistoryElement(new HistoryElement(new Person(authorUsername, authorFullname, null),
-					                                               DateTimeUtils.parseDate(datetimeElement.getValue()),
-					                                               map));
+					bugReport.addHistoryElement(new HistoryElement(bugReport.getId(), new Person(authorUsername,
+					                                                                             authorFullname, null),
+					                                               DateTimeUtils.parseDate(datetimeElement.getValue())));
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
@@ -653,7 +653,7 @@ public class SourceforgeTracker extends Tracker {
 		// Content content = document.getContent(1);
 		// Element element = content.getDocument().getRootElement();
 		Element element = xmlReport.getDocument().getRootElement();
-		Report bugReport = new Report();
+		Report bugReport = new Report(xmlReport.getId());
 		bugReport.setLastFetch(xmlReport.getFetchTime());
 		bugReport.setHash(xmlReport.getMd5());
 		hangle(bugReport, element, null);

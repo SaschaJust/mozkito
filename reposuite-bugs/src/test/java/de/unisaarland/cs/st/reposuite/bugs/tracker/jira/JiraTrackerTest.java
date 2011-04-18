@@ -104,15 +104,12 @@ public class JiraTrackerTest {
 			                     + "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
 			                     + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
 			             report.getDescription());
-			assertEquals(null, report.getExpectedBehavior());
-			
 			History history = report.getHistory();
 			assertEquals(0, history.size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
 			                        .isEqual(report.getLastUpdateTimestamp()));
-			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.NORMAL, report.getPriority());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
@@ -120,10 +117,9 @@ public class JiraTrackerTest {
 			assertEquals(comments.first().getAuthor().getUsernames().iterator().next(), report.getResolver()
 			                                                                                  .getUsernames()
 			                                                                                  .iterator().next());
-			assertEquals(null, report.getSeverity());
+			assertEquals(new Report(0).getSeverity(), report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(Status.CLOSED, report.getStatus());
-			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("[JAXEN-177] Expression.getText() returns invalid XPath query strings", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
 			assertEquals("rgustav", report.getSubmitter().getUsernames().iterator().next());
@@ -240,7 +236,6 @@ public class JiraTrackerTest {
 			                     + "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
 			                     + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
 			             report.getDescription());
-			assertEquals(null, report.getExpectedBehavior());
 			
 			History history = report.getHistory();
 			assertEquals(0, history.size());
@@ -248,7 +243,6 @@ public class JiraTrackerTest {
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
 			                        .isEqual(report.getLastUpdateTimestamp()));
-			assertEquals(null, report.getObservedBehavior());
 			assertEquals(Priority.NORMAL, report.getPriority());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("Sat, 6 Jan 2007 05:51:31 -0600", JiraXMLParser.dateTimeFormatRegex)
@@ -256,10 +250,9 @@ public class JiraTrackerTest {
 			assertEquals(comments.first().getAuthor().getUsernames().iterator().next(), report.getResolver()
 			                                                                                  .getUsernames()
 			                                                                                  .iterator().next());
-			assertEquals(null, report.getSeverity());
+			assertEquals(new Report(0).getSeverity(), report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(Status.CLOSED, report.getStatus());
-			assertEquals(null, report.getStepsToReproduce());
 			assertEquals("[JAXEN-177] Expression.getText() returns invalid XPath query strings", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
 			assertEquals("rgustav", report.getSubmitter().getUsernames().iterator().next());
@@ -284,7 +277,7 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testParseHistory() {
-		Report report = new Report();
+		Report report = new Report(9551);
 		URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
 		try {
 			JiraXMLParser.handleHistory(url.toURI(), report);
