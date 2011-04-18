@@ -352,6 +352,21 @@ public class BugzillaXMLParser {
 			message = thetext.getText().trim();
 		}
 		
+		Element commentidElem = rootElement.getChild("commentid");
+		int commentid = report.getComments().size() + 1;
+		try {
+			commentid = new Integer(commentidElem.getText());
+		} catch (NumberFormatException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Found bugzilla comment with id that cannot converted to long. Trying to generate ID.");
+			}
+		}
+		if (commentidElem == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Found bugzilla comment without id. Trying to generate ID.");
+			}
+		}
+		
 		if (!message.equals("")) {
 			List<List<RegexGroup>> groupsList = siblingRegex.findAll(message);
 			if (groupsList != null) {
@@ -373,8 +388,7 @@ public class BugzillaXMLParser {
 		if (report.getDescription() == null) {
 			report.setDescription(message);
 		} else {
-			// FIXME insert correct comment ids
-			report.addComment(new Comment(report.getComments().size() + 1, author, timestamp, message));
+			report.addComment(new Comment(commentid, author, timestamp, message));
 		}
 	}
 	
