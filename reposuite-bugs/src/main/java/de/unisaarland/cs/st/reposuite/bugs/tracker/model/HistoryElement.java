@@ -294,14 +294,14 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			return false;
 		}
 		HistoryElement other = (HistoryElement) obj;
-		if (this.bugId != other.bugId) {
+		if (bugId != other.bugId) {
 			return false;
 		}
-		if (this.timestamp == null) {
+		if (timestamp == null) {
 			if (other.timestamp != null) {
 				return false;
 			}
-		} else if (!this.timestamp.equals(other.timestamp)) {
+		} else if (!timestamp.equals(other.timestamp)) {
 			return false;
 		}
 		return true;
@@ -350,6 +350,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * @return
 	 */
+	@Override
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Transient
 	public Person getAuthor() {
@@ -360,7 +361,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @return the bugId
 	 */
 	public long getBugId() {
-		return this.bugId;
+		return bugId;
 	}
 	
 	/**
@@ -370,7 +371,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, DateTimeTuple> getChangedDateValues() {
-		return this.changedDateValues;
+		return changedDateValues;
 	}
 	
 	/**
@@ -380,7 +381,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, EnumTuple> getChangedEnumValues() {
-		return this.changedEnumValues;
+		return changedEnumValues;
 	}
 	
 	/**
@@ -388,7 +389,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public Map<String, PersonTuple> getChangedPersonValues() {
-		return this.changedPersonValues;
+		return changedPersonValues;
 	}
 	
 	/**
@@ -398,7 +399,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, StringTuple> getChangedStringValues() {
-		return this.changedStringValues;
+		return changedStringValues;
 	}
 	
 	/**
@@ -444,7 +445,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -462,7 +463,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return this.personContainer;
+		return personContainer;
 	}
 	
 	/*
@@ -478,9 +479,10 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * @return the timestamp
 	 */
+	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/*
@@ -491,10 +493,10 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (this.bugId ^ (this.bugId >>> 32));
-		result = prime * result + ((this.timestamp == null)
-		                                                   ? 0
-		                                                   : this.timestamp.hashCode());
+		result = prime * result + (int) (bugId ^ (bugId >>> 32));
+		result = prime * result + ((timestamp == null)
+		                                              ? 0
+		                                              : timestamp.hashCode());
 		return result;
 	}
 	
@@ -515,7 +517,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	}
 	
 	/**
-	 * @param bugId the bugId to set
+	 * @param bugId
+	 *            the bugId to set
 	 */
 	public void setBugId(final long bugId) {
 		this.bugId = bugId;
@@ -561,6 +564,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		this.id = id;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement#getText()
+	 */
 	/**
 	 * @param timestamp
 	 */

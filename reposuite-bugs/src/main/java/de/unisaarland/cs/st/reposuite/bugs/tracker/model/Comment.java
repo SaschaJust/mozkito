@@ -92,6 +92,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	/**
 	 * @return the author
 	 */
+	@Override
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getAuthor() {
@@ -103,7 +104,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Report getBugReport() {
-		return this.bugReport;
+		return bugReport;
 	}
 	
 	/**
@@ -112,7 +113,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@Basic
 	public int getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -130,7 +131,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	private Date getJavaTimestamp() {
-		return this.timestamp.toDate();
+		return timestamp.toDate();
 	}
 	
 	/**
@@ -139,7 +140,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Lob
 	@Basic
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 	
 	/**
@@ -147,7 +148,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	protected PersonContainer getPersonContainer() {
-		return this.personContainer;
+		return personContainer;
 	}
 	
 	@Override
@@ -158,9 +159,10 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	/**
 	 * @return the timestamp
 	 */
+	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/**
