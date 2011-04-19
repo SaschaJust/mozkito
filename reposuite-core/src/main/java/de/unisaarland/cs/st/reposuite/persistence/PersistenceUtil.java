@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -14,6 +15,8 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * 
  */
 public interface PersistenceUtil {
+	
+	public boolean activeTransaction();
 	
 	public void beginTransaction();
 	
@@ -31,6 +34,8 @@ public interface PersistenceUtil {
 	public List executeNativeSelectQuery(final String queryString);
 	
 	public void executeQuery(final String query);
+	
+	public RCSFile fetchRCSFile(final Long id);
 	
 	public RCSTransaction fetchRCSTransaction(final String id);
 	

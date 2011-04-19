@@ -28,6 +28,7 @@ import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
@@ -189,6 +190,17 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/*
 	 * (non-Javadoc)
 	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#activeTransaction
+	 * ()
+	 */
+	@Override
+	public boolean activeTransaction() {
+		return entityManager.getTransaction().isActive();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
 	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#beginTransaction
 	 * ()
 	 */
@@ -286,6 +298,17 @@ public class OpenJPAUtil implements PersistenceUtil {
 	public void executeQuery(final String queryString) {
 		Query query = entityManager.createQuery(queryString);
 		query.executeUpdate();
+	}
+	
+	@Override
+	public RCSFile fetchRCSFile(final Long id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<RCSFile> criteria = builder.createQuery(RCSFile.class);
+		Root<RCSFile> file = criteria.from(RCSFile.class);
+		criteria.where(builder.equal(file.get("generatedId"), id));
+		TypedQuery<RCSFile> query = entityManager.createQuery(criteria);
+		
+		return query.getResultList().get(0);
 	}
 	
 	/*

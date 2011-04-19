@@ -37,6 +37,7 @@ public class RCSFile implements Annotated {
 	 */
 	private static final long   serialVersionUID = 7232712367403624199L;
 	private long                generatedId;
+	
 	private Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
@@ -71,13 +72,31 @@ public class RCSFile implements Annotated {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		RCSFile other = (RCSFile) obj;
+		if (generatedId != other.generatedId) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * @return the changedNames
 	 */
 	@ElementCollection
 	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return this.changedNames;
+		return changedNames;
 	}
 	
 	/**
@@ -88,7 +107,7 @@ public class RCSFile implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -149,6 +168,14 @@ public class RCSFile implements Annotated {
 			}
 			return null;
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (generatedId ^ (generatedId >>> 32));
+		return result;
 	}
 	
 	/**
