@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import de.unisaarland.cs.st.reposuite.changecouplings.model.ChangeCouplingRule;
+import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -33,11 +33,11 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<ChangeCouplingRule> getChangeCouplingRules(final RCSTransaction transaction,
-	                                                              final int minSupport,
-	                                                              final int minConfidence,
-	                                                              final PersistenceUtil persistenceUtil) {
-		List<ChangeCouplingRule> result = new LinkedList<ChangeCouplingRule>();
+	public static List<FileChangeCoupling> getFileChangeCouplingRules(final RCSTransaction transaction,
+	                                                                  final int minSupport,
+	                                                                  final int minConfidence,
+	                                                                  final PersistenceUtil persistenceUtil) {
+		List<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
@@ -68,9 +68,7 @@ public class ChangeCouplingRuleFactory {
 		tablename = "reposuite_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		persistenceUtil.executeNativeQuery("drop table if exists changecoupling_tmp;");
-		persistenceUtil.executeNativeQuery("create temporary table changecoupling_tmp (result integer);");
-		persistenceUtil.executeNativeQuery("select reposuite_changecouplings('" + transaction.getId() + "','"
+		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
 		        + tablename + "')");
 		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
@@ -86,7 +84,7 @@ public class ChangeCouplingRuleFactory {
 				for (int i = 0; i < premises.length; ++i) {
 					premise[i] = Integer.valueOf(premises[i]);
 				}
-				result.add(new ChangeCouplingRule(premise, (Integer) row[1], support, confidence));
+				result.add(new FileChangeCoupling(premise, (Integer) row[1], support, confidence, persistenceUtil));
 			}
 		}
 		
