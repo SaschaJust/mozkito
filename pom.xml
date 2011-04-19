@@ -51,6 +51,7 @@
 		<module>reposuite-persons</module>
 		<module>reposuite-mapping</module>
 		<module>reposuite-nalatra</module>
+		<module>reposuite-infozilla</module>
 		<module>reposuite-fixindchanges</module>
 		<module>reposuite-genealogies</module>
 		<module>reposuite-untangling</module>
@@ -253,7 +254,7 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-			<!--<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.7</version>
@@ -267,21 +268,22 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>org.umlgraph</groupId>
-						<artifactId>doclet</artifactId>
-						<version>5.3</version>
-					</docletArtifact>
-					<useStandardDocletOptions>true</useStandardDocletOptions>
-					<minmemory>64m</minmemory>
-					<maxmemory>512m</maxmemory>
-					<show>private</show>
-					<linksource>true</linksource>
-					<quiet>true</quiet>
-					<source>1.6</source>
+					<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+										<docletArtifact>
+											<groupId>org.umlgraph</groupId>
+											<artifactId>doclet</artifactId>
+											<version>5.3</version>
+										</docletArtifact>
+										<useStandardDocletOptions>true</useStandardDocletOptions>
+										<minmemory>64m</minmemory>
+										<maxmemory>512m</maxmemory>
+										<show>private</show>
+										<linksource>true</linksource>
+										<quiet>true</quiet>
+										<source>1.6</source> -->
+					<aggregate>true</aggregate>
 				</configuration>
-			</plugin>-->
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
