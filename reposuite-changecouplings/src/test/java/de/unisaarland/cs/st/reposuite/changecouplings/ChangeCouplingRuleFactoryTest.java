@@ -150,7 +150,7 @@ public class ChangeCouplingRuleFactoryTest {
 		
 		persistenceUtil.commitTransaction();
 		
-		List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplingRules(rcsTransaction3,
+		List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
 		                                                                                                    1, 0,
 		                                                                                                    persistenceUtil);
 		assertEquals(8, changeCouplingRules.size());

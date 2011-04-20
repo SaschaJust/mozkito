@@ -16,12 +16,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-core</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-utils</artifactId>
+			<artifactId>reposuite-ppa</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
