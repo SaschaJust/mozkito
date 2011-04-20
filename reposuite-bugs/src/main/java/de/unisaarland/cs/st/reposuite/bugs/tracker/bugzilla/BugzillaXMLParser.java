@@ -3,7 +3,9 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Severity;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -387,7 +390,8 @@ public class BugzillaXMLParser {
 	 */
 	@NoneNull
 	public static void handleRoot(final Report report,
-	                              final Element rootElement) {
+	                              final Element rootElement,
+	                              final BugzillaTracker tracker) {
 		Condition.check(rootElement.getName().equals("bug"), "The root element must be 'bug'.");
 		
 		report.setType(Type.BUG);
@@ -479,6 +483,77 @@ public class BugzillaXMLParser {
 				} catch (NumberFormatException e) {
 					
 				}
+			} else if (element.equals("attachment")) {
+				Element attachIdElem = element.getChild("attachid", element.getNamespace());
+				if (attachIdElem == null) {
+					continue;
+				}
+				String attachId = attachIdElem.getText();
+				// https://bugs.eclipse.org/bugs/attachment.cgi?id=82463
+				// String attachURL =
+				AttachmentEntry attachmentEntry = new AttachmentEntry(attachId);
+				
+				Element attacherElem = element.getChild("attacher", element.getNamespace());
+				if (attacherElem == null) {
+					continue;
+				}
+				attachmentEntry.setAuthor(new Person(attacherElem.getText(), null, null));
+				
+				Element descElem = element.getChild("desc", element.getNamespace());
+				if (descElem == null) {
+					continue;
+				}
+				attachmentEntry.setDescription(descElem.getText());
+				
+				Element filenameElem = element.getChild("filename", element.getNamespace());
+				if (filenameElem == null) {
+					continue;
+				}
+				attachmentEntry.setFilename(filenameElem.getText());
+				
+				Element dateElem = element.getChild("date", element.getNamespace());
+				if (dateElem == null) {
+					continue;
+				}
+				attachmentEntry.setTimestamp(DateTimeUtils.parseDate(dateElem.getText()));
+				
+				String uri = tracker.getUri().toString();
+				if (!uri.endsWith("/")) {
+					uri += "/";
+				}
+				uri += "attachment.cgi?id=" + attachId;
+				
+				try {
+					attachmentEntry.setLink(new URL(uri));
+				} catch (MalformedURLException e1) {
+					
+				}
+				
+				Element deltaTSElem = element.getChild("delta_ts", element.getNamespace());
+				if (deltaTSElem == null) {
+					continue;
+				}
+				attachmentEntry.setDeltaTS(DateTimeUtils.parseDate(deltaTSElem.getText()));
+				
+				Element typeElem = element.getChild("type", element.getNamespace());
+				if (typeElem == null) {
+					continue;
+				}
+				attachmentEntry.setMime(typeElem.getText());
+				
+				Element sizeElem = element.getChild("size", element.getNamespace());
+				if (sizeElem == null) {
+					continue;
+				}
+				
+				try {
+					long size = new Long(sizeElem.getText());
+					attachmentEntry.setSize(size);
+				} catch (NumberFormatException e) {
+					
+				}
+				
+				report.addAttachmentEntry(attachmentEntry);
 			}
 		}
 	}

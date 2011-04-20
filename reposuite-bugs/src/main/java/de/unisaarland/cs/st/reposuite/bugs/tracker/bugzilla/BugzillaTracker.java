@@ -116,7 +116,7 @@ public class BugzillaTracker extends Tracker {
 	public Report parse(@NotNull final XmlReport rawReport) {
 		Report bugReport = new Report(rawReport.getId());
 		Element itemElement = rawReport.getDocument().getRootElement().getChild("bug");
-		BugzillaXMLParser.handleRoot(bugReport, itemElement);
+		BugzillaXMLParser.handleRoot(bugReport, itemElement, this);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
 		
