@@ -10,7 +10,7 @@ import java.util.List;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class UnifiedDiff implements Patch {
+public class UnifiedDiff extends Patch {
 	
 	class Hunk {
 		

@@ -40,6 +40,7 @@ public class AttachmentEntry implements Annotated {
 	DateTime                  timestamp;
 	String                    description;
 	URL                       link;
+	String                    filename;
 	
 	/*
 	 * (non-Javadoc)
@@ -81,6 +82,13 @@ public class AttachmentEntry implements Annotated {
 	@Basic
 	public String getDescription() {
 		return this.description;
+	}
+	
+	/**
+	 * @return the filename
+	 */
+	public String getFilename() {
+		return this.filename;
 	}
 	
 	/**
@@ -160,6 +168,13 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+	
+	/**
+	 * @param filename the filename to set
+	 */
+	public void setFilename(final String filename) {
+		this.filename = filename;
 	}
 	
 	/**

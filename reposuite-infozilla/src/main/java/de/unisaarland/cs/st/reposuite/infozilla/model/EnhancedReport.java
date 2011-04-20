@@ -10,6 +10,7 @@ import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.infozilla.model.image.Image;
+import de.unisaarland.cs.st.reposuite.infozilla.model.log.Log;
 import de.unisaarland.cs.st.reposuite.infozilla.model.patch.Patch;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.Stacktrace;
 
