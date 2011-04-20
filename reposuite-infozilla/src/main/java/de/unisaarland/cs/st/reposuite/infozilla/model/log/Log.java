@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 
 public class Log implements Attachable {
 	
@@ -13,6 +14,12 @@ public class Log implements Attachable {
 	DateTime            end;
 	
 	ArrayList<LogEntry> entities;
+	
+	@Override
+	public Attachment getAttachment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	/**
 	 * @return the end

@@ -34,13 +34,14 @@ public class AttachmentEntry implements Annotated {
 	private static final long serialVersionUID = 5533493175917492442L;
 	
 	private PersonContainer   personContainer  = new PersonContainer();
-	Person                    author;
 	long                      size;
-	String                    mime;
-	DateTime                  timestamp;
-	String                    description;
-	URL                       link;
-	String                    filename;
+	private String            mime;
+	private DateTime          timestamp;
+	private DateTime          deltaTS;
+	private String            id;
+	private String            description;
+	private URL               link;
+	private String            filename;
 	
 	/*
 	 * (non-Javadoc)
@@ -77,6 +78,13 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * @return the deltaTS
+	 */
+	public DateTime getDeltaTS() {
+		return this.deltaTS;
+	}
+	
+	/**
 	 * @return the description
 	 */
 	@Basic
@@ -89,6 +97,13 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public String getFilename() {
 		return this.filename;
+	}
+	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return this.id;
 	}
 	
 	/**
@@ -164,6 +179,13 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * @param deltaTS the deltaTS to set
+	 */
+	public void setDeltaTS(final DateTime deltaTS) {
+		this.deltaTS = deltaTS;
+	}
+	
+	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(final String description) {
@@ -175,6 +197,13 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
+	}
+	
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(final String id) {
+		this.id = id;
 	}
 	
 	/**

@@ -9,7 +9,12 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 import de.unisaarland.cs.st.reposuite.infozilla.model.image.Image;
+import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.ExpectedBehavior;
+import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.ObservedBehavior;
+import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.StepsToReproduce;
+import de.unisaarland.cs.st.reposuite.infozilla.model.link.Link;
 import de.unisaarland.cs.st.reposuite.infozilla.model.log.Log;
 import de.unisaarland.cs.st.reposuite.infozilla.model.patch.Patch;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.Stacktrace;
@@ -30,17 +35,11 @@ public class EnhancedReport {
 	Report                       modifiedReport;
 	
 	Collection<Patch>            patches           = new LinkedList<Patch>();
-	
 	Collection<Image>            images            = new LinkedList<Image>();
-	
 	Collection<Stacktrace>       stacktraces       = new LinkedList<Stacktrace>();
-	
 	Collection<Log>              logs              = new LinkedList<Log>();
-	
 	Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
-	
 	Collection<ObservedBehavior> observedBehaviors = new LinkedList<ObservedBehavior>();
-	
 	Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
 	Collection<Link>             links             = new LinkedList<Link>();
 	Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();

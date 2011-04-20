@@ -21,8 +21,8 @@ package de.unisaarland.cs.st.reposuite.infozilla.Elements.SourceCode.Java;
  * Each <code>CodeRegion</code> records the <code>start</code> and <code>end</code> 
  * positions in the original input text, as well as the type of the source code element detected.
  * @author Nicolas Bettenburg
- * @see de.unisaarland.cs.st.reposuite.infozilla.Filters.FilterSourceCodeJAVA
- * @see de.unisaarland.cs.st.reposuite.infozilla.Filters.FilterChain
+ * @see de.unisaarland.cs.st.reposuite.infozilla.filters.sourcecode.JavaSourceCodeFilter
+ * @see de.unisaarland.cs.st.reposuite.infozilla.filters.chain.FilterChain
  * @see de.unisaarland.cs.st.reposuite.infozilla.Ressources.Java_CodeDB.txt
  * @see de.unisaarland.cs.st.reposuite.infozilla.Ressources.Java_Keywords.txt
  */
