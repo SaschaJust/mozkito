@@ -6,6 +6,8 @@ package de.unisaarland.cs.st.reposuite.infozilla.model.patch;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
@@ -30,6 +32,12 @@ public class UnifiedDiff extends Patch {
 	 */
 	public UnifiedDiff() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public Attachment getAttachment() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/**

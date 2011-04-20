@@ -81,6 +81,15 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * @param attachment
+	 * @return
+	 */
+	private static Attachable createAttachable(final Attachment attachment) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
 	 * @param data
 	 * @return
 	 * @throws EncodingDeterminationException
@@ -165,15 +174,6 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param attachment
-	 * @return
-	 */
-	private static Attachable createAttachable(Attachment attachment) {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/**
 	 * @param mime
 	 * @return
 	 */
@@ -196,6 +196,13 @@ public class Attachment implements Annotated {
 	public Attachment(final AttachmentEntry entry, final byte[] data) {
 		setEntry(entry);
 		setData(data);
+	}
+	
+	/**
+	 * @return the attachable
+	 */
+	public Attachable getAttachable() {
+		return this.attachable;
 	}
 	
 	/**
@@ -266,6 +273,13 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * @param attachable the attachable to set
+	 */
+	public void setAttachable(final Attachable attachable) {
+		this.attachable = attachable;
+	}
+	
+	/**
 	 * @param data the data to set
 	 */
 	public void setData(final byte[] data) {
@@ -327,18 +341,4 @@ public class Attachment implements Annotated {
 	public void setType(final AttachmentType type) {
 		this.type = type;
 	}
-
-	/**
-     * @param attachable the attachable to set
-     */
-    public void setAttachable(Attachable attachable) {
-	    this.attachable = attachable;
-    }
-
-	/**
-     * @return the attachable
-     */
-    public Attachable getAttachable() {
-	    return attachable;
-    }
 }

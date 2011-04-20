@@ -32,17 +32,11 @@ public class EnhancedReport {
 	Report                       modifiedReport;
 	
 	Collection<Patch>            patches           = new LinkedList<Patch>();
-	
 	Collection<Image>            images            = new LinkedList<Image>();
-	
 	Collection<Stacktrace>       stacktraces       = new LinkedList<Stacktrace>();
-	
 	Collection<Log>              logs              = new LinkedList<Log>();
-	
 	Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
-	
 	Collection<ObservedBehavior> observedBehaviors = new LinkedList<ObservedBehavior>();
-	
 	Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
 	Collection<Link>             links             = new LinkedList<Link>();
 	Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();

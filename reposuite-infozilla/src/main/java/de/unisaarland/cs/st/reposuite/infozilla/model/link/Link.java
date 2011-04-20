@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement;
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 
 public class Link implements Attachable {
@@ -27,6 +28,12 @@ public class Link implements Attachable {
 	private DateTime      postedOn;
 	
 	private TextElement   postedIn;
+	
+	@Override
+	public Attachment getAttachment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	/**
 	 * @return the kind
