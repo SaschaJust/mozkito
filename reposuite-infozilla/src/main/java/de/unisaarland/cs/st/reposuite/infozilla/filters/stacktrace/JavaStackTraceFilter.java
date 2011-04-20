@@ -170,7 +170,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 		return stacktraces;
 	}
 	
-	// Auto-generated Message from Filter interface
+	// Auto-generated Message from InfozillaFilter interface
 	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
@@ -202,7 +202,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 				int traceEnd = traceStart + matchText.length() + 1;
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
-					System.out.println("Critical Error in Stacktrace Filter! Could not find start and End!");
+					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
 				}
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
@@ -239,7 +239,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 				int traceEnd = traceStart + matchText.length();
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
-					System.out.println("Critical Error in Stacktrace Filter! Could not find start and End!");
+					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
 				}
 				
 				// Check if it is a cause or not
@@ -265,7 +265,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 		return stackTraces;
 	}
 	
-	// Auto-generated Message from Filter interface
+	// Auto-generated Message from InfozillaFilter interface
 	@Override
 	public List<StackTrace> runFilter(final String inputText) {
 		// Initialize TextRemover

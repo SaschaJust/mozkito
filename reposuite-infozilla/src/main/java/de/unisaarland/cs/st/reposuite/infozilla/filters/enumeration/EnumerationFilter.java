@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-import de.unisaarland.cs.st.reposuite.infozilla.filters.Filter;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.Itemization;
 
-public class EnumerationFilter implements Filter {
+public class EnumerationFilter implements InfozillaFilter {
 	
 	private FilterTextRemover textRemover;
 	private String            processedText = "";

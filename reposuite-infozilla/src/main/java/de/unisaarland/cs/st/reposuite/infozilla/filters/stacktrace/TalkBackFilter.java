@@ -6,10 +6,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.unisaarland.cs.st.reposuite.infozilla.Helpers.RegExHelper;
-import de.unisaarland.cs.st.reposuite.infozilla.filters.Filter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
-import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.Stacktrace;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackEntry;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackTrace;
 

@@ -1,6 +1,6 @@
 /**
  * 
- * Filter.java
+ * InfozillaFilter.java
  * 
  * @author Nicolas Bettenburg � 2009-2010, all rights reserved.
  ******************************************************************** 
@@ -18,15 +18,24 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters;
 
 import java.util.List;
 
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaSettings;
+
 /**
- * This interface describes the method interface for every infoZilla Filter.
+ * This interface describes the method interface for every infoZilla InfozillaFilter.
  * @author Nicolas Bettenburg
  *
  */
-public interface Filter {
+public abstract class InfozillaFilter {
 	
-	public List<?> runFilter(String inputText);
+	public abstract String getOutputText();
 	
-	public String getOutputText();
+	public abstract void init();
+	
+	public abstract void register(InfozillaSettings settings,
+	                              InfozillaArguments infozillaArguments,
+	                              boolean isRequired);
+	
+	public abstract List<?> runFilter(String inputText);
 	
 }

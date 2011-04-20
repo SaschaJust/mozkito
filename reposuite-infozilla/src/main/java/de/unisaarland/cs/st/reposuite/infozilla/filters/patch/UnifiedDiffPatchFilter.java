@@ -6,7 +6,7 @@ import de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch.Patch;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 
 /**
- * This Filter class acts as an interface for the PatchParser class
+ * This InfozillaFilter class acts as an interface for the PatchParser class
  * that has to be instantiated before using it.
  * @author Nicolas Bettenburg
  *
@@ -24,7 +24,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	}
 	
 	/**
-	 * Filter a list of {@link Patch}es from a text {@link s}
+	 * InfozillaFilter a list of {@link Patch}es from a text {@link s}
 	 * @param text the text we should look for patches inside
 	 * @return a List of {@link Patch}es.
 	 */
@@ -42,7 +42,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 			foundPatches = pp.parseForPatches(text);
 		}
 		
-		// Filter them out
+		// InfozillaFilter them out
 		for (Patch patch : foundPatches) {
 			this.textRemover.markForDeletion(patch.getStartPosition(), patch.getEndPosition());
 		}

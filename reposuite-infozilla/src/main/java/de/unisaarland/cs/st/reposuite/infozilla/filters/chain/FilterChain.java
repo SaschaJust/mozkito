@@ -5,6 +5,16 @@ import java.util.List;
 public interface FilterChain {
 	
 	/**
+	 * @return the enumerations
+	 */
+	public List<?> getEnumerations();
+	
+	/**
+	 * @return the inputText
+	 */
+	public String getInputText();
+	
+	/**
 	 * @return the outputText
 	 */
 	public String getOutputText();
@@ -15,28 +25,18 @@ public interface FilterChain {
 	public List<?> getPatches();
 	
 	/**
-	 * @return the traces
-	 */
-	public List<?> getTraces();
-	
-	/**
 	 * @return the regions
 	 */
 	public List<?> getRegions();
 	
 	/**
-	 * @return the enumerations
+	 * @return the traces
 	 */
-	public List<?> getEnumerations();
+	public List<?> getTraces();
 	
 	/**
 	 * @param inputText the inputText to set
 	 */
 	public void setInputText(String inputText);
-	
-	/**
-	 * @return the inputText
-	 */
-	public String getInputText();
 	
 }

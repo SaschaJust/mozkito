@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.reposuite.infozilla.Elements.SourceCode.Java.CodeReg
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 
 /**
- * The JavaSourceCodeFilter class implements the Filter interface for
+ * The JavaSourceCodeFilter class implements the InfozillaFilter interface for
  * JAVA source code structural elements. 
  * @author Nicolas Bettenburg
  *

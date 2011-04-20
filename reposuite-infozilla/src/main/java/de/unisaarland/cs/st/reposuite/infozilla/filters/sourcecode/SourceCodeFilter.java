@@ -5,13 +5,13 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.sourcecode;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.reposuite.infozilla.filters.Filter;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public abstract class SourceCodeFilter implements Filter {
+public abstract class SourceCodeFilter extends InfozillaFilter {
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public abstract class SourceCodeFilter implements Filter {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.reposuite.infozilla.filters.Filter#getOutputText()
+	 * de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter#getOutputText()
 	 */
 	@Override
 	public String getOutputText() {
@@ -34,7 +34,7 @@ public abstract class SourceCodeFilter implements Filter {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.reposuite.infozilla.filters.Filter#runFilter(java
+	 * de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter#runFilter(java
 	 * .lang.String)
 	 */
 	@Override
