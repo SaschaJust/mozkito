@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION reposuite_file_changecouplings(tid character varying(
 	    q = q + " INTERSECT " + basequery +str(counter)
 	    argtypes.append("integer")
 	    counter = counter + 1
-	  q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN rcstransaction t ON r.transaction_id = t.id WHERE timestamp <= $"+str(counter)
+	  q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN rcstransaction t ON r.transaction_id = t.id WHERE timestamp < $"+str(counter)
 	  args.append(ctime)
 	  argtypes.append("timestamp")
 	  q = plpy.prepare(q,argtypes)

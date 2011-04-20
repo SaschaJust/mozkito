@@ -60,7 +60,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			persistenceUtil = OpenJPAUtil.getInstance();
 			URL sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
-			        + "change_couplings.psql");
+			        + "change_file_couplings.psql");
 			
 			File sqlFile = new File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
@@ -151,8 +151,8 @@ public class ChangeCouplingRuleFactoryTest {
 		persistenceUtil.commitTransaction();
 		
 		List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
-		                                                                                                    1, 0,
-		                                                                                                    persistenceUtil);
+		                                                                                                1, 0,
+		                                                                                                persistenceUtil);
 		assertEquals(8, changeCouplingRules.size());
 		FileChangeCoupling rule = changeCouplingRules.get(0);
 		assertEquals(1, rule.getPremise().size());
