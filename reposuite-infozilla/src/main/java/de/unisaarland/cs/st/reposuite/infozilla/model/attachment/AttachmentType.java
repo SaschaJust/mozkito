@@ -10,5 +10,5 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  *
  */
 public enum AttachmentType implements Annotated {
-	ARCHIVE, IMAGE, LOG, PATCH, STACKTRACE, UNKNOWN;
+	ARCHIVE, IMAGE, LOG, PATCH, SOURCECODE, STACKTRACE, UNKNOWN;
 }

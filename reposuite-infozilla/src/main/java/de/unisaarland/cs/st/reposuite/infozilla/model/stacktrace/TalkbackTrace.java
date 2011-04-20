@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.infozilla.Elements.StackTraces.Talkback;
+package de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.chain;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.Enumerations.Enumeration;
 import de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch.Patch;
 import de.unisaarland.cs.st.reposuite.infozilla.Elements.SourceCode.Java.CodeRegion;
 import de.unisaarland.cs.st.reposuite.infozilla.Elements.StackTraces.Java.StackTrace;
@@ -12,6 +11,7 @@ import de.unisaarland.cs.st.reposuite.infozilla.filters.enumeration.EnumerationF
 import de.unisaarland.cs.st.reposuite.infozilla.filters.patch.UnifiedDiffPatchFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.sourcecode.JavaSourceCodeFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.stacktrace.JavaStackTraceFilter;
+import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.Itemization;
 
 /**
  * Class for runnning the complete filter chain on an eclipse input and gathering the results
@@ -32,7 +32,7 @@ public class FilterChainEclipse implements FilterChain {
 	private List<Patch>                patches;
 	private List<StackTrace>           traces;
 	private List<CodeRegion>           regions;
-	private List<Enumeration>          enumerations;
+	private List<Itemization>          enumerations;
 	
 	// Constructor runs the experiments
 	public FilterChainEclipse(final String inputText) {
@@ -95,7 +95,7 @@ public class FilterChainEclipse implements FilterChain {
 		if (runEnums) {
 			this.enumerations = this.enumFilter.runFilter(this.outputText);
 		} else {
-			this.enumerations = new ArrayList<Enumeration>();
+			this.enumerations = new ArrayList<Itemization>();
 		}
 		
 		// The output of the filter chain
@@ -105,7 +105,7 @@ public class FilterChainEclipse implements FilterChain {
 	/**
 	 * @return the enumerations
 	 */
-	public List<Enumeration> getEnumerations() {
+	public List<Itemization> getEnumerations() {
 		return this.enumerations;
 	}
 	

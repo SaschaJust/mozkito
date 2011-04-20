@@ -146,7 +146,7 @@ public class Attachment implements Annotated {
 			
 			try {
 				attachment.setMime(determineMIME(data));
-				attachment.setType(guessType(attachment.getMime()));
+				attachment.setType(guessType(attachment));
 			} catch (MIMETypeDeterminationException e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not determine MIME type from data for " + entry + ": " + e.getMessage());
@@ -177,9 +177,54 @@ public class Attachment implements Annotated {
 	 * @param mime
 	 * @return
 	 */
-	private static AttachmentType guessType(final String mime) {
-		// TODO Auto-generated method stub
-		return null;
+	private static AttachmentType guessType(final Attachment attachment) {
+		AttachmentType guessedType = AttachmentType.UNKNOWN;
+		
+		// Rules for Screenshot
+		if (attachment.getMime().contains("image") || attachment.getMime().contains("jpg")
+		        || attachment.getMime().contains("gif") || attachment.getMime().contains("jpeg")
+		        || attachment.getMime().contains("bmp") || attachment.getMime().contains("png")
+		        || attachment.getMime().contains("video")
+		        || attachment.getEntry().getDescription().toLowerCase().contains("screenshot")
+		        || attachment.getEntry().getFilename().toLowerCase().contains("screenshot")) {
+			guessedType = AttachmentType.IMAGE;
+		}
+		
+		// Rules for Patches
+		if (attachment.getMime().contains("patch") || attachment.getMime().contains("diff")
+		        || attachment.getEntry().getDescription().toLowerCase().contains("patch")
+		        || attachment.getEntry().getDescription().toLowerCase().contains("diff")
+		        || attachment.getEntry().getFilename().toLowerCase().contains("patch")
+		        || attachment.getEntry().getFilename().toLowerCase().contains("diff")) {
+			guessedType = AttachmentType.PATCH;
+		}
+		
+		// Rules for Source Code
+		if (attachment.getMime().contains("text/java")
+		        || attachment.getMime().contains("text/java source")
+		        || attachment.getMime().contains("text/x-java")
+		        || attachment.getMime().contains("text/x-java source")
+		        || (attachment.getEntry().getDescription().toLowerCase().contains("source") && attachment.getEntry()
+		                                                                                                 .getDescription()
+		                                                                                                 .toLowerCase()
+		                                                                                                 .contains("code"))
+		        || attachment.getEntry().getFilename().toLowerCase().contains(".java")) {
+			guessedType = AttachmentType.SOURCECODE;
+		}
+		
+		// Rules for Stack Traces
+		if (attachment.getMime().contains("text/log")
+		        || attachment.getMime().contains("text/x-log")
+		        || (attachment.getEntry().getDescription().toLowerCase().contains("stack") && attachment.getEntry()
+		                                                                                                .getDescription()
+		                                                                                                .toLowerCase()
+		                                                                                                .contains("trace"))
+		        || attachment.getEntry().getFilename().toLowerCase().contains("stacktrace")) {
+			guessedType = AttachmentType.STACKTRACE;
+		}
+		
+		return guessedType;
+		
 	}
 	
 	private byte[]          data;

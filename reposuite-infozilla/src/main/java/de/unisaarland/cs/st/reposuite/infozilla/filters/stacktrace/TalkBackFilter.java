@@ -6,12 +6,12 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.StackTraces.Talkback.TalkbackEntry;
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.StackTraces.Talkback.TalkbackTrace;
 import de.unisaarland.cs.st.reposuite.infozilla.Helpers.RegExHelper;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.Filter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.Stacktrace;
+import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackEntry;
+import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackTrace;
 
 public class TalkBackFilter extends StackTraceFilter {
 	
@@ -28,7 +28,7 @@ public class TalkBackFilter extends StackTraceFilter {
 		List<String> talkbackLines = new ArrayList<String>();
 		
 		/*
-		 * This regular expression can be used to filter TalkBack expressions (
+		 * This regular expression can be used to filter TalkBackStacktrace expressions (
 		 * ([ \\n\\r]*(?:.*)(?:::)(?:.*)[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[
 		 * \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[
 		 * \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*?\\(\\)) (?:[ \\n\\r]*.*?\\+[

@@ -1,14 +1,14 @@
-package de.unisaarland.cs.st.reposuite.infozilla.Elements.Enumerations;
+package de.unisaarland.cs.st.reposuite.infozilla.model.itemization;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class encapsulates an Enumeration as created by FilterEnumerations filter.
+ * This class encapsulates an Itemization as created by FilterEnumerations filter.
  * @author Nicolas Bettenburg
  *
  */
-public class Enumeration {
+public class Itemization {
 	
 	private List<String> enumeration_items;
 	private int          start;
@@ -32,13 +32,13 @@ public class Enumeration {
 		this.enumEnd = enumEnd;
 	}
 	
-	public Enumeration(List<String> items, int start, int end) {
+	public Itemization(List<String> items, int start, int end) {
 		this.start = start;
 		this.end = end;
 		this.enumeration_items = items;
 	}
 	
-	public Enumeration() {
+	public Itemization() {
 		this.enumeration_items = new ArrayList<String>();
 	}
 	

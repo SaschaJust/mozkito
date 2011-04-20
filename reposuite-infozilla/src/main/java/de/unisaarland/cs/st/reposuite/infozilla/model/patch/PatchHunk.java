@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch;
+package de.unisaarland.cs.st.reposuite.infozilla.model.patch;
 
 public class PatchHunk {
 	

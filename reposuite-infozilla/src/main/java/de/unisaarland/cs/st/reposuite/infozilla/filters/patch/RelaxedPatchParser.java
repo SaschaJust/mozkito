@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch.Patch;
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch.PatchHunk;
+import de.unisaarland.cs.st.reposuite.infozilla.model.patch.PatchHunk;
 
 public class RelaxedPatchParser {
 	
