@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,6 +25,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -60,32 +62,33 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * 
 	 */
-	private static final long  serialVersionUID = 3241584366125944268L;
-	private long               id               = -1l;
-	private String             category;
-	private SortedSet<Comment> comments         = new TreeSet<Comment>(new CommentComparator());
-	private String             description;
-	private Severity           severity         = Severity.UNKNOWN;
-	private Priority           priority         = Priority.UNKNOWN;
-	private Resolution         resolution       = Resolution.UNKNOWN;
-	private String             subject;
-	private SortedSet<Long>    siblings         = new TreeSet<Long>();
-	private History            history;
-	private Status             status           = Status.UNKNOWN;
-	private Type               type             = Type.UNKNOWN;
-	private DateTime           creationTimestamp;
-	private DateTime           resolutionTimestamp;
-	private DateTime           lastUpdateTimestamp;
-	private DateTime           lastFetch;
-	private String             version;
-	private String             summary;
-	private String             component;
-	private String             product;
-	private byte[]             hash             = new byte[33];
+	private static final long     serialVersionUID  = 3241584366125944268L;
+	private long                  id                = -1l;
+	private String                category;
+	private SortedSet<Comment>    comments          = new TreeSet<Comment>(new CommentComparator());
+	private String                description;
+	private Severity              severity          = Severity.UNKNOWN;
+	private Priority              priority          = Priority.UNKNOWN;
+	private Resolution            resolution        = Resolution.UNKNOWN;
+	private String                subject;
+	private SortedSet<Long>       siblings          = new TreeSet<Long>();
+	private History               history;
+	private Status                status            = Status.UNKNOWN;
+	private Type                  type              = Type.UNKNOWN;
+	private DateTime              creationTimestamp;
+	private DateTime              resolutionTimestamp;
+	private DateTime              lastUpdateTimestamp;
+	private DateTime              lastFetch;
+	private String                version;
+	private String                summary;
+	private String                component;
+	private String                product;
+	private byte[]                hash              = new byte[33];
+	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
 	// assignedTo
 	// submitter
 	// resolver
-	private PersonContainer    personContainer  = new PersonContainer();
+	private PersonContainer       personContainer   = new PersonContainer();
 	
 	private Report() {
 		super();
@@ -98,6 +101,15 @@ public class Report implements Annotated, Comparable<Report> {
 		this();
 		setId(id);
 		setHistory(new History(getId()));
+	}
+	
+	/**
+	 * @param entry
+	 */
+	@Transient
+	public void addAttachmentEntry(final AttachmentEntry entry) {
+		getAttachmentEntries().add(entry);
+		setAttachmentEntries(getAttachmentEntries());
 	}
 	
 	/**
@@ -193,6 +205,14 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public Person getAssignedTo() {
 		return getPersonContainer().get("assignedTo");
+	}
+	
+	/**
+	 * @return the attachmentEntries
+	 */
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public List<AttachmentEntry> getAttachmentEntries() {
+		return this.attachmentEntries;
 	}
 	
 	/**
@@ -478,6 +498,13 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setAssignedTo(final Person assignedTo) {
 		this.getPersonContainer().add("assignedTo", assignedTo);
+	}
+	
+	/**
+	 * @param attachmentEntries the attachmentEntries to set
+	 */
+	public void setAttachmentEntries(final List<AttachmentEntry> attachmentEntries) {
+		this.attachmentEntries = attachmentEntries;
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.reposuite.infozilla.model.image;
 
-public interface Image {
+import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+
+public abstract class Image implements Attachable {
 	
 }

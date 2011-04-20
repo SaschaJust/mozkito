@@ -31,7 +31,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -249,7 +248,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getEmailAddresses() {
-		return emailAddresses;
+		return this.emailAddresses;
 	}
 	
 	/**
@@ -265,7 +264,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getFullnames() {
-		return fullnames;
+		return this.fullnames;
 	}
 	
 	/**
@@ -276,7 +275,7 @@ public class Person implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	protected long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -299,7 +298,7 @@ public class Person implements Annotated {
 	 */
 	@ManyToMany (cascade = {}, fetch = FetchType.LAZY)
 	public Set<RCSTransaction> getTransactions() {
-		return transactions;
+		return this.transactions;
 	}
 	
 	/**
@@ -307,7 +306,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getUsernames() {
-		return usernames;
+		return this.usernames;
 	}
 	
 	/*
