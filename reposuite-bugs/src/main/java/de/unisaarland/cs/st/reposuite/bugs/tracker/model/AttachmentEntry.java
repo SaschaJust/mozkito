@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 @Embeddable
 public class AttachmentEntry implements Annotated {
@@ -42,6 +42,10 @@ public class AttachmentEntry implements Annotated {
 	private String            description;
 	private URL               link;
 	private String            filename;
+	
+	public AttachmentEntry(final String attachId) {
+		id = attachId;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -59,11 +63,11 @@ public class AttachmentEntry implements Annotated {
 			return false;
 		}
 		AttachmentEntry other = (AttachmentEntry) obj;
-		if (this.link == null) {
+		if (link == null) {
 			if (other.link != null) {
 				return false;
 			}
-		} else if (!this.link.equals(other.link)) {
+		} else if (!link.equals(other.link)) {
 			return false;
 		}
 		return true;
@@ -81,7 +85,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
-		return this.deltaTS;
+		return deltaTS;
 	}
 	
 	/**
@@ -89,21 +93,21 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 	
 	/**
 	 * @return the filename
 	 */
 	public String getFilename() {
-		return this.filename;
+		return filename;
 	}
 	
 	/**
 	 * @return the id
 	 */
 	public String getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -121,7 +125,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the link
 	 */
 	public URL getLink() {
-		return this.link;
+		return link;
 	}
 	
 	/**
@@ -129,7 +133,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getMime() {
-		return this.mime;
+		return mime;
 	}
 	
 	/**
@@ -137,7 +141,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return this.personContainer;
+		return personContainer;
 	}
 	
 	/**
@@ -145,7 +149,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public long getSize() {
-		return this.size;
+		return size;
 	}
 	
 	/**
@@ -153,7 +157,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/*
@@ -164,14 +168,15 @@ public class AttachmentEntry implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.link == null)
-		                                              ? 0
-		                                              : this.link.hashCode());
+		result = prime * result + ((link == null)
+		                                         ? 0
+		                                         : link.hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param author the author to set
+	 * @param author
+	 *            the author to set
 	 */
 	public void setAuthor(@NotNull final Person author) {
 		getPersonContainer().add("author", author);
@@ -179,28 +184,32 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param deltaTS the deltaTS to set
+	 * @param deltaTS
+	 *            the deltaTS to set
 	 */
 	public void setDeltaTS(final DateTime deltaTS) {
 		this.deltaTS = deltaTS;
 	}
 	
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * @param filename the filename to set
+	 * @param filename
+	 *            the filename to set
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 	
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(final String id) {
 		this.id = id;
@@ -214,35 +223,40 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param link the link to set
+	 * @param link
+	 *            the link to set
 	 */
 	public void setLink(final URL link) {
 		this.link = link;
 	}
 	
 	/**
-	 * @param mime the mime to set
+	 * @param mime
+	 *            the mime to set
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
 	}
 	
 	/**
-	 * @param personContainer the personContainer to set
+	 * @param personContainer
+	 *            the personContainer to set
 	 */
 	public void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
 	}
 	
 	/**
-	 * @param size the size to set
+	 * @param size
+	 *            the size to set
 	 */
 	public void setSize(final long size) {
 		this.size = size;
 	}
 	
 	/**
-	 * @param timestamp the timestamp to set
+	 * @param timestamp
+	 *            the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
