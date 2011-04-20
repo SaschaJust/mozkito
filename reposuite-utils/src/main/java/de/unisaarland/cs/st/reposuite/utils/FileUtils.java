@@ -14,15 +14,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import lzma.sdk.lzma.Decoder;
+import lzma.streams.LzmaInputStream;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.tika.parser.pkg.bzip2.CBZip2InputStream;
+import org.apache.tika.parser.pkg.tar.TarEntry;
+import org.apache.tika.parser.pkg.tar.TarInputStream;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
@@ -68,6 +74,55 @@ public class FileUtils {
 			fileManager.put(shutdownAction, new HashSet<File>());
 		}
 		fileManager.get(shutdownAction).add(file);
+	}
+	
+	/**
+	 * @param bzip2File
+	 * @param directory
+	 * @return
+	 */
+	public static boolean bunzip2(final File bzip2File,
+	                              final File directory) {
+		try {
+			ensureFilePermissions(bzip2File, READABLE_FILE);
+			ensureFilePermissions(directory, WRITABLE_DIR);
+			
+			FileInputStream fis = new FileInputStream(bzip2File);
+			CBZip2InputStream zis = new CBZip2InputStream(fis);
+			
+			int BUFFER = 2048;
+			byte[] buffer = new byte[BUFFER];
+			String path = bzip2File.getName();
+			int i = path.lastIndexOf(".");
+			if (i > 0) {
+				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+			} else {
+				// TODO error
+			}
+			
+			File outputFile = new File(path);
+			ensureFilePermissions(outputFile, WRITABLE_FILE);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			
+			while ((zis.read(buffer)) != -1) {
+				stream.write(buffer);
+			}
+			
+			stream.flush();
+			stream.close();
+			zis.close();
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -290,6 +345,19 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @param data
+	 * @param file
+	 * @throws IOException 
+	 */
+	public static void dump(final byte[] data,
+	                        final File file) throws IOException {
+		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+		stream.write(data);
+		stream.flush();
+		stream.close();
+	}
+	
+	/**
 	 * Ensure file permissions.
 	 * 
 	 * @param file
@@ -484,6 +552,54 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @param gzipFile
+	 * @param directory
+	 * @return
+	 */
+	public static boolean gunzip(final File gzipFile,
+	                             final File directory) {
+		try {
+			ensureFilePermissions(gzipFile, READABLE_FILE);
+			ensureFilePermissions(directory, WRITABLE_DIR);
+			
+			FileInputStream fis = new FileInputStream(gzipFile);
+			GZIPInputStream zis = new GZIPInputStream(fis);
+			int BUFFER = 2048;
+			byte[] buffer = new byte[BUFFER];
+			String path = gzipFile.getName();
+			int i = path.lastIndexOf(".");
+			if (i > 0) {
+				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+			} else {
+				// TODO error
+			}
+			
+			File outputFile = new File(path);
+			ensureFilePermissions(outputFile, WRITABLE_FILE);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			
+			while ((zis.read(buffer)) != -1) {
+				stream.write(buffer);
+			}
+			
+			stream.flush();
+			stream.close();
+			zis.close();
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * List files. @see
 	 * 
 	 * @param directory
@@ -572,6 +688,105 @@ public class FileUtils {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @param lzmaFile
+	 * @param directory
+	 * @return
+	 */
+	public static boolean unlzma(final File lzmaFile,
+	                             final File directory) {
+		try {
+			ensureFilePermissions(lzmaFile, READABLE_FILE);
+			ensureFilePermissions(directory, WRITABLE_DIR);
+			
+			int BUFFER = 2048;
+			FileInputStream fis = new FileInputStream(lzmaFile);
+			LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+			byte[] buffer = new byte[BUFFER];
+			String path = lzmaFile.getName();
+			int i = path.lastIndexOf(".");
+			if (i > 0) {
+				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+			} else {
+				// TODO error
+			}
+			
+			File outputFile = new File(path);
+			ensureFilePermissions(outputFile, WRITABLE_FILE);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			
+			while ((zis.read(buffer)) != -1) {
+				stream.write(buffer);
+			}
+			
+			stream.flush();
+			stream.close();
+			zis.close();
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param tarFile
+	 * @param directory
+	 * @return
+	 */
+	public static boolean untar(final File tarFile,
+	                            final File directory) {
+		try {
+			ensureFilePermissions(tarFile, READABLE_FILE);
+			ensureFilePermissions(directory, WRITABLE_DIR);
+			
+			int BUFFER = 2048;
+			BufferedOutputStream dest = null;
+			FileInputStream fis = new FileInputStream(tarFile);
+			TarInputStream zis = new TarInputStream(new BufferedInputStream(fis));
+			TarEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
+					continue;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("Extracting: " + entry);
+				}
+				int count;
+				byte data[] = new byte[BUFFER];
+				// write the files to the disk
+				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				        + FileUtils.fileSeparator + entry.getName()));
+				dest = new BufferedOutputStream(fos, BUFFER);
+				while ((count = zis.read(data, 0, BUFFER)) != -1) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				dest.close();
+			}
+			zis.close();
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (FilePermissionException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	/**
