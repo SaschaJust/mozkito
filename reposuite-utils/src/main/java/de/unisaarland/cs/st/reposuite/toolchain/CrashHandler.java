@@ -225,9 +225,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return the reposuite settings of the monitored application, if any
 	 */
 	protected String getRepoSuiteSettings() {
-		return (this.application != null)
-		                                 ? this.application.getSettings().toString()
-		                                 : "";
+		return (application != null)
+		                            ? application.getSettings().toString()
+		                            : "";
 	}
 	
 	private String getRuntimeInformation() {
@@ -272,9 +272,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return information provided by the {@link RepoSuiteToolchain}
 	 */
 	protected String getToolInformation() {
-		return (this.application != null)
-		                                 ? this.application.getSettings().getToolInformation()
-		                                 : "";
+		return (application != null)
+		                            ? application.getSettings().getToolInformation()
+		                            : "";
 	}
 	
 	/**
@@ -352,8 +352,7 @@ public class CrashHandler extends ThreadGroup {
 	 *            the report to be send
 	 */
 	private void sendReport(final String report) {
-		if ((System.getProperty("disableCrashEmail") == null)
-		        || (System.getProperty("disableCrashEmail").toLowerCase().equals("false"))) {
+		if (application.getSettings().isCrashEmailDisabled()) {
 			try {
 				Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);
 				Transport transport = session.getTransport();
@@ -418,8 +417,8 @@ public class CrashHandler extends ThreadGroup {
 				Logger.info("Initiating shutdown.");
 			}
 			
-			if (this.application != null) {
-				this.application.shutdown();
+			if (application != null) {
+				application.shutdown();
 			}
 		}
 	}

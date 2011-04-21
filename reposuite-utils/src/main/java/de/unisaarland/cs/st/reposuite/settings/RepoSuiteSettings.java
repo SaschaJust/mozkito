@@ -33,6 +33,25 @@ public class RepoSuiteSettings {
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
 	private Properties                     commandlineProps;
 	
+	private final BooleanArgument          noDefaultValueArg;
+	private final BooleanArgument          helpArg;
+	private final BooleanArgument          disableCrashArg;
+	@SuppressWarnings ("unused")
+	private final StringArgument           settingsArg;
+	
+	public RepoSuiteSettings() {
+		noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false", false);
+		helpArg = new BooleanArgument(this, "help", "Shows this help menu.", "false", false);
+		disableCrashArg = new BooleanArgument(this, "disableCrashEmail",
+		                                      "If set to `true` no crash emails will be send!", "false", false);
+		settingsArg = new StringArgument(
+		                                 this,
+		                                 "repoSuiteSettings",
+		                                 "Setting file that contains the JavaVM arguments for the current repo suite task.",
+		                                 null, false);
+		
+	}
+	
 	/**
 	 * adds an argument to the repo suite settings. Leave default value
 	 * <code>null</code> if none to be set.
@@ -48,10 +67,10 @@ public class RepoSuiteSettings {
 	 *         <code>False</code> otherwise.
 	 */
 	protected boolean addArgument(@NotNull final RepoSuiteArgument argument) {
-		if (this.arguments.containsKey(argument.getName())) {
+		if (arguments.containsKey(argument.getName())) {
 			return false;
 		}
-		this.arguments.put(argument.getName(), argument);
+		arguments.put(argument.getName(), argument);
 		return true;
 	}
 	
@@ -64,20 +83,20 @@ public class RepoSuiteSettings {
 	 */
 	protected boolean addArgumentSet(final RepoSuiteArgumentSet argSet) {
 		
-		HashMap<String, RepoSuiteArgument> tmpArguments = new HashMap<String, RepoSuiteArgument>(this.arguments);
+		HashMap<String, RepoSuiteArgument> tmpArguments = new HashMap<String, RepoSuiteArgument>(arguments);
 		for (RepoSuiteArgument argument : argSet.getArguments().values()) {
 			if (tmpArguments.containsKey(argument.getName())) {
 				return false;
 			}
 			tmpArguments.put(argument.getName(), argument);
 		}
-		this.arguments = tmpArguments;
+		arguments = tmpArguments;
 		return true;
 	}
 	
 	protected void addToolInformation(final String tool,
 	                                  final String information) {
-		this.toolInformation.put(tool, information);
+		toolInformation.put(tool, information);
 	}
 	
 	/**
@@ -86,7 +105,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 */
 	public Collection<RepoSuiteArgument> getArguments() {
-		return this.arguments.values();
+		return arguments.values();
 	}
 	
 	/**
@@ -100,48 +119,16 @@ public class RepoSuiteSettings {
 		ss.append("Available JavaVM arguments:");
 		ss.append(System.getProperty("line.separator"));
 		
-		ss.append("\t");
-		ss.append("-D");
-		ss.append("help");
-		ss.append(": ");
-		ss.append("Shows this help menu.");
-		ss.append(System.getProperty("line.separator"));
+		TreeSet<RepoSuiteArgument> args = new TreeSet<RepoSuiteArgument>();
+		args.addAll(arguments.values());
 		
-		ss.append("\t");
-		ss.append("-D");
-		ss.append("denyDefaultValues");
-		ss.append(": ");
-		ss.append("Ignore default values!");
-		ss.append(System.getProperty("line.separator"));
-		
-		ss.append("\t");
-		ss.append("-D");
-		ss.append("disableCrashEmail");
-		ss.append(": ");
-		ss.append("If set to `true` no crash emails will be send!");
-		ss.append(System.getProperty("line.separator"));
-		
-		ss.append("\t");
-		ss.append("-D");
-		ss.append("disableLongTests");
-		ss.append(": ");
-		ss.append("If set to `true` no long tests will be executed!");
-		ss.append(System.getProperty("line.separator"));
-		
-		ss.append("\t");
-		ss.append("-D");
-		ss.append("repoSuiteSettings");
-		ss.append(": ");
-		ss.append("Setting file that contains the JavaVM arguments for the current repo suite task.");
-		ss.append(System.getProperty("line.separator"));
-		
-		for (String argName : this.arguments.keySet()) {
+		for (RepoSuiteArgument arg : args) {
 			ss.append("\t");
 			ss.append("-D");
-			ss.append(argName);
+			ss.append(arg.getName());
 			ss.append(": ");
-			ss.append(this.arguments.get(argName).getDescription());
-			if (this.arguments.get(argName).isRequired()) {
+			ss.append(arg.getDescription());
+			if (arg.isRequired()) {
 				ss.append(" (required!)");
 			}
 			ss.append(System.getProperty("line.separator"));
@@ -154,7 +141,7 @@ public class RepoSuiteSettings {
 	 * @return
 	 */
 	public RepoSuiteArgument getSetting(final String name) {
-		return this.arguments.get(name);
+		return arguments.get(name);
 	}
 	
 	/**
@@ -162,16 +149,20 @@ public class RepoSuiteSettings {
 	 */
 	public String getToolInformation() {
 		StringBuilder builder = new StringBuilder();
-		for (String tool : this.toolInformation.keySet()) {
+		for (String tool : toolInformation.keySet()) {
 			builder.append("[[");
 			builder.append(tool);
 			builder.append("]]");
 			builder.append(FileUtils.lineSeparator);
-			builder.append(this.toolInformation.get(tool));
+			builder.append(toolInformation.get(tool));
 			builder.append(FileUtils.lineSeparator);
 			builder.append(FileUtils.lineSeparator);
 		}
 		return builder.toString();
+	}
+	
+	public boolean isCrashEmailDisabled() {
+		return disableCrashArg.getValue();
 	}
 	
 	/**
@@ -182,13 +173,13 @@ public class RepoSuiteSettings {
 	 */
 	public void parseArguments() {
 		
-		if (System.getProperties().containsKey("help")) {
+		if (helpArg.getValue()) {
 			System.err.println(getHelpString());
 			throw new de.unisaarland.cs.st.reposuite.exceptions.Shutdown();
 		}
 		
 		// save given arguments to load if necessary
-		this.commandlineProps = System.getProperties();
+		commandlineProps = System.getProperties();
 		
 		if (System.getProperty("repoSuiteSettings") != null) {
 			boolean parseSettingFile = true;
@@ -226,17 +217,17 @@ public class RepoSuiteSettings {
 			for (Entry<Object, Object> entry : System.getProperties().entrySet()) {
 				String argName = entry.getKey().toString();
 				String value = entry.getValue().toString();
-				if (this.arguments.containsKey(argName)) {
-					this.arguments.get(argName).setStringValue(value);
+				if (arguments.containsKey(argName)) {
+					arguments.get(argName).setStringValue(value);
 				}
 			}
 		}
 		
-		for (Entry<Object, Object> entry : this.commandlineProps.entrySet()) {
+		for (Entry<Object, Object> entry : commandlineProps.entrySet()) {
 			String argName = entry.getKey().toString();
 			String value = entry.getValue().toString();
-			if ((this.arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
-				this.arguments.get(argName).setStringValue(value);
+			if ((arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
+				arguments.get(argName).setStringValue(value);
 			}
 		}
 		
@@ -258,11 +249,11 @@ public class RepoSuiteSettings {
 	 */
 	protected void setField(final String argument,
 	                        final String value) throws NoSuchFieldException {
-		if (!this.arguments.containsKey(argument)) {
+		if (!arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
 			        + "The argument is not part of the current argument set.");
 		}
-		this.arguments.get(argument).setStringValue(value);
+		arguments.get(argument).setStringValue(value);
 	}
 	
 	/**
@@ -295,7 +286,7 @@ public class RepoSuiteSettings {
 		String passwordMask = "******** (masked)";
 		int maxNameLength = 0;
 		int maxValueLength = passwordMask.length();
-		TreeSet<RepoSuiteArgument> set = new TreeSet<RepoSuiteArgument>(this.arguments.values());
+		TreeSet<RepoSuiteArgument> set = new TreeSet<RepoSuiteArgument>(arguments.values());
 		for (RepoSuiteArgument arg : set) {
 			if (arg.getValue() != null) {
 				if (arg.getName().length() > maxNameLength) {
@@ -332,12 +323,10 @@ public class RepoSuiteSettings {
 	 */
 	private boolean validateSettings() {
 		Set<RepoSuiteArgument> defaultValueArgs = new HashSet<RepoSuiteArgument>();
-		boolean noDefaults = System.getProperty("denyDefaultValues") != null
-		                                                                    ? true
-		                                                                    : false;
-		for (RepoSuiteArgument arg : this.arguments.values()) {
+		
+		for (RepoSuiteArgument arg : arguments.values()) {
 			if (!arg.wasSet()) {
-				if (noDefaults) {
+				if (noDefaultValueArg.getValue()) {
 					arg.setStringValue(null);
 				} else if ((arg.getDefaultValue() != null) && arg.isRequired()) {
 					defaultValueArgs.add(arg);
