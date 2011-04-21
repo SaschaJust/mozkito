@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,11 +16,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.gdata.client.sites.SitesService;
-import com.google.gdata.data.MediaContent;
-import com.google.gdata.data.sites.AttachmentEntry;
-import com.google.gdata.data.sites.ContentFeed;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
@@ -78,58 +72,6 @@ public class GoogleTrackerTest {
 		assertEquals(2, groups.size());
 		assertEquals("project", groups.get(1).getName());
 		assertEquals("webtoolkit", groups.get(1).getMatch());
-	}
-	
-	@Test
-	public void testTmp() {
-		try {
-			
-			SitesService service = new SitesService("unisaarland-reposuite-0.1");
-			
-			// IssuesQuery iQuery = new IssuesQuery(
-			// new URL(
-			// "http://google-web-toolkit.googlecode.com/issues/attachment?aid=4009690497676971601&amp;name=before.png&amp;token=ff33a9e71e62fc7bc0ceaccfff395de7"));
-			//
-			ContentFeed contentFeed = service.getFeed(new URL(
-			                                                  "https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full?kind=attachment&id=4369"),
-			                                          ContentFeed.class);
-			
-			List<AttachmentEntry> entries = contentFeed.getEntries(AttachmentEntry.class);
-			System.out.println(entries.size());
-			for (AttachmentEntry entry : entries) {
-				System.out.println(" title: " + entry.getTitle().getPlainText());
-				System.out.println(" id: " + entry);
-				if (entry.getParentLink() != null) {
-					System.out.println(" parent id: " + entry.getParentLink().getHref());
-				}
-				if (entry.getSummary() != null) {
-					System.out.println(" description: " + entry.getSummary().getPlainText());
-				}
-				System.out.println(" revision: " + entry.getRevision().getValue());
-				MediaContent content = (MediaContent) entry.getContent();
-				System.out.println(" src: " + content.getUri());
-				System.out.println(" content type: " + content.getMimeType().getMediaType());
-			}
-			
-			// URL feedUrl = new
-			// URL("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/4369/comments/full");
-			//
-			
-			// IssueCommentsFeed resultFeed = service.getFeed(feedUrl,
-			// AttachmentFeed.class);
-			//
-			// for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-			// IssueCommentsEntry commentEntry = resultFeed.getEntries().get(i);
-			//
-			// HTMLTextContent content = (TextContent)
-			// commentEntry.getContent();
-			//
-			// System.out.println(content.getContent().getPlainText());
-			// System.out.println(content.getClass().getCanonicalName());
-			// }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@Test
