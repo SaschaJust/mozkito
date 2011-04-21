@@ -9,3 +9,9 @@ tracker.type=JIRA
 tracker.stop=652
 tracker.pattern="XSTR-<BUGID>/XSTR-<BUGID>.xml"
 headless
+mapping.config.regexFile=${REPOSUITE_ROOT}/settings/reposuite_xstream_may2011.regex
+mapping.score.AuthorEquality = 1
+mapping.score.AuthorInequality = 0
+mapping.score.ReportCreatedAfterTransaction = 1
+mapping.score.ReportResolvedWithinWindow = 1
+mapping.window.ReportResolvedAfterTransaction = [+-]03d 00h 00m 00s
