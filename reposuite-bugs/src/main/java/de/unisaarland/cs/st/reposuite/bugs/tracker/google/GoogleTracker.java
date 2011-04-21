@@ -318,183 +318,217 @@ public class GoogleTracker extends Tracker {
 	
 	private void parseComments(final Report report) {
 		SortedSet<Comment> comments = new TreeSet<Comment>();
-		boolean run = true;
-		int counter = 0;
 		Person fixer = null;
 		Person resolver = null;
+		int counter = 0;
+		int max_result = 25;
 		
-		while (run) {
+		URL baseFeedUrl = null;
+		try {
+			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/" + report.getId()
+			        + "/comments/full?max-result=" + max_result);
 			
-			try {
-				URL feedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/"
-				        + report.getId() + "/comments/full");
-				
-				ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
-				IssueCommentsFeed resultFeed = service.getFeed(feedUrl, IssueCommentsFeed.class);
-				
-				for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-					IssueCommentsEntry commentEntry = resultFeed.getEntries().get(i);
-					
-					// commentEntry.getContent().
-					
-					TextContent textContent = (TextContent) commentEntry.getContent();
-					String message = "";
-					if ((textContent != null) && (textContent.getContent() != null)) {
-						HtmlTextConstruct htmlConstruct = (HtmlTextConstruct) textContent.getContent();
-						message = htmlConstruct.getHtml();
+		} catch (MalformedURLException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not create URL!", e);
+			}
+			return;
+		}
+		ProjectHostingService service = new ProjectHostingService("unisaarland-reposuite-0.1");
+		
+		while (true) {
+			
+			URL feedUrl = baseFeedUrl;
+			if (counter != 0) {
+				int startIndex = (counter * max_result) + 1;
+				try {
+					feedUrl = new URL(baseFeedUrl.toString() + "&start-index=" + startIndex);
+				} catch (MalformedURLException e) {
+					if (Logger.logWarn()) {
+						Logger.warn("Error while building feed url. Abort.", e);
 					}
-					com.google.gdata.data.DateTime published = commentEntry.getPublished();
-					DateTime createDate = new DateTime(published.getValue(),
-					                                   DateTimeZone.forOffsetHours(published.getTzShift()));
-					
-					Person author = unknownPerson;
-					List<com.google.gdata.data.Person> authors = commentEntry.getAuthors();
-					if (authors.size() > 0) {
-						com.google.gdata.data.Person person = authors.get(0);
-						author = new Person(person.getName(), person.getNameLang(), person.getEmail());
-					}
-					
-					if (commentEntry.hasUpdates()) {
-						Updates updates = commentEntry.getUpdates();
-						updates.getBlockedOnUpdates();
-						
-						HistoryElement hElem = new HistoryElement(report.getId(), author, createDate);
-						
-						if (updates.getCcUpdates() != null) {
-							// CCs are not supported by report
-						}
-						
-						Map<String, Tuple<String, String>> changes = new HashMap<String, Tuple<String, String>>();
-						
-						for (Label l : updates.getLabels()) {
-							String label = l.getValue();
-							String compValue = l.getValue().toLowerCase();
-							if (compValue.startsWith("type-")) {
-								String newValue = label.substring(5).trim();
-								if (changes.containsKey("type")) {
-									changes.get("type").setSecond(newValue);
-								} else {
-									changes.put("type", new Tuple<String, String>("<UNKNOWN>", newValue));
-								}
-							} else if (compValue.startsWith("-type-")) {
-								String oldValue = label.substring(6).trim();
-								if (changes.containsKey("type")) {
-									changes.get("type").setFirst(oldValue);
-								} else {
-									changes.put("type", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
-								}
-							} else if (compValue.startsWith("priority-")) {
-								String newValue = label.substring(9).trim();
-								if (changes.containsKey("priority")) {
-									changes.get("priority").setSecond(newValue);
-								} else {
-									changes.put("priority", new Tuple<String, String>("<UNKNOWN>", newValue));
-								}
-							} else if (compValue.startsWith("-priority-")) {
-								String oldValue = label.substring(10).trim();
-								if (changes.containsKey("priority")) {
-									changes.get("priority").setFirst(oldValue);
-								} else {
-									changes.put("priority", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
-								}
-							} else if (compValue.startsWith("category-")) {
-								String newValue = label.substring(9).trim();
-								if (changes.containsKey("category")) {
-									changes.get("category").setSecond(newValue);
-								} else {
-									changes.put("category", new Tuple<String, String>("<UNKNOWN>", newValue));
-								}
-							} else if (compValue.startsWith("-category-")) {
-								String oldValue = label.substring(10).trim();
-								if (changes.containsKey("category")) {
-									changes.get("category").setFirst(oldValue);
-								} else {
-									changes.put("category", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
-								}
-							} else if (compValue.startsWith("milestone-")) {
-								String newValue = label.substring(10).trim();
-								if (changes.containsKey("milestone")) {
-									changes.get("milestone").setSecond(newValue);
-								} else {
-									changes.put("milestone", new Tuple<String, String>("<UNKNOWN>", newValue));
-								}
-							} else if (compValue.startsWith("-milestone-")) {
-								String oldValue = label.substring(11).trim();
-								if (changes.containsKey("milestone")) {
-									changes.get("milestone").setFirst(oldValue);
-								} else {
-									changes.put("milestone", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
-								}
-							}
-						}
-						
-						if (updates.getOwnerUpdate() != null) {
-							hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
-							                                                                     .getValue(), null,
-							                                                              null));
-						}
-						
-						if (updates.getStatus() != null) {
-							String status = updates.getStatus().getValue().toLowerCase();
-							if (status.equals("started")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.IN_PROGRESS);
-							} else if (status.equals("accepted")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.ASSIGNED);
-							} else if (status.equals("fixednotreleased")) {
-								fixer = author;
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.IN_PROGRESS);
-							} else if (status.equals("needsinfo")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.FEEDBACK);
-							} else if (status.equals("new")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.NEW);
-							} else if (status.equals("patcheswelcome")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.UNKNOWN);
-							} else if (status.equals("reviewpending")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.REVIEWPENDING);
-							} else if (status.equals("assumedstale")) {
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.UNKNOWN);
-							} else if (status.equals("duplicate")) {
-								hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.DUPLICATE);
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
-							} else if (status.equals("fixed")) {
-								resolver = author;
-								hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.RESOLVED);
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
-							} else if (status.equals("invalid")) {
-								hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
-							} else if (status.equals("knownquirk")) {
-								hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
-							} else if (status.equals("notplanned")) {
-								hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
-								hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
-							}
-						}
-						
-						if (updates.getSummary() != null) {
-							hElem.addChangedValue("summary", "<unknown>", updates.getSummary().getValue());
-						}
-						
-						report.addHistoryElement(hElem);
-					}
-					
-					Comment comment = new Comment(counter, author, createDate, message);
-					comments.add(comment);
-					report.addComment(comment);
+					break;
 				}
-			} catch (MalformedURLException e) {
-				run = false;
+			}
+			++counter;
+			
+			IssueCommentsFeed resultFeed = null;
+			try {
+				resultFeed = service.getFeed(feedUrl, IssueCommentsFeed.class);
+			} catch (ServiceException e) {
 				if (Logger.logWarn()) {
-					Logger.warn("Could not create URL!");
+					Logger.warn(e.getMessage(), e);
 				}
 				break;
 			} catch (IOException e) {
-				run = false;
+				if (Logger.logWarn()) {
+					Logger.warn(e.getMessage(), e);
+				}
 				break;
-			} catch (ServiceException e) {
-				run = false;
+			}
+			
+			if (resultFeed.getEntries().size() < 1) {
 				break;
+			}
+			
+			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+				IssueCommentsEntry commentEntry = resultFeed.getEntries().get(i);
+				
+				// commentEntry.getContent().
+				
+				TextContent textContent = (TextContent) commentEntry.getContent();
+				String message = "";
+				if ((textContent != null) && (textContent.getContent() != null)) {
+					HtmlTextConstruct htmlConstruct = (HtmlTextConstruct) textContent.getContent();
+					message = htmlConstruct.getHtml();
+				}
+				com.google.gdata.data.DateTime published = commentEntry.getPublished();
+				DateTime createDate = new DateTime(published.getValue(),
+				                                   DateTimeZone.forOffsetHours(published.getTzShift()));
+				
+				Person author = unknownPerson;
+				List<com.google.gdata.data.Person> authors = commentEntry.getAuthors();
+				if (authors.size() > 0) {
+					com.google.gdata.data.Person person = authors.get(0);
+					author = new Person(person.getName(), person.getNameLang(), person.getEmail());
+				}
+				
+				if (commentEntry.hasUpdates()) {
+					Updates updates = commentEntry.getUpdates();
+					updates.getBlockedOnUpdates();
+					
+					HistoryElement hElem = new HistoryElement(report.getId(), author, createDate);
+					
+					if (updates.getCcUpdates() != null) {
+						// CCs are not supported by report
+					}
+					
+					Map<String, Tuple<String, String>> changes = new HashMap<String, Tuple<String, String>>();
+					
+					for (Label l : updates.getLabels()) {
+						String label = l.getValue();
+						String compValue = l.getValue().toLowerCase();
+						if (compValue.startsWith("type-")) {
+							String newValue = label.substring(5).trim();
+							if (changes.containsKey("type")) {
+								changes.get("type").setSecond(newValue);
+							} else {
+								changes.put("type", new Tuple<String, String>("<UNKNOWN>", newValue));
+							}
+						} else if (compValue.startsWith("-type-")) {
+							String oldValue = label.substring(6).trim();
+							if (changes.containsKey("type")) {
+								changes.get("type").setFirst(oldValue);
+							} else {
+								changes.put("type", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
+							}
+						} else if (compValue.startsWith("priority-")) {
+							String newValue = label.substring(9).trim();
+							if (changes.containsKey("priority")) {
+								changes.get("priority").setSecond(newValue);
+							} else {
+								changes.put("priority", new Tuple<String, String>("<UNKNOWN>", newValue));
+							}
+						} else if (compValue.startsWith("-priority-")) {
+							String oldValue = label.substring(10).trim();
+							if (changes.containsKey("priority")) {
+								changes.get("priority").setFirst(oldValue);
+							} else {
+								changes.put("priority", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
+							}
+						} else if (compValue.startsWith("category-")) {
+							String newValue = label.substring(9).trim();
+							if (changes.containsKey("category")) {
+								changes.get("category").setSecond(newValue);
+							} else {
+								changes.put("category", new Tuple<String, String>("<UNKNOWN>", newValue));
+							}
+						} else if (compValue.startsWith("-category-")) {
+							String oldValue = label.substring(10).trim();
+							if (changes.containsKey("category")) {
+								changes.get("category").setFirst(oldValue);
+							} else {
+								changes.put("category", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
+							}
+						} else if (compValue.startsWith("milestone-")) {
+							String newValue = label.substring(10).trim();
+							if (changes.containsKey("milestone")) {
+								changes.get("milestone").setSecond(newValue);
+							} else {
+								changes.put("milestone", new Tuple<String, String>("<UNKNOWN>", newValue));
+							}
+						} else if (compValue.startsWith("-milestone-")) {
+							String oldValue = label.substring(11).trim();
+							if (changes.containsKey("milestone")) {
+								changes.get("milestone").setFirst(oldValue);
+							} else {
+								changes.put("milestone", new Tuple<String, String>(oldValue, "<UNKNOWN>"));
+							}
+						}
+					}
+					
+					if (updates.getOwnerUpdate() != null) {
+						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
+						                                                                     .getValue(), null, null));
+					}
+					
+					if (updates.getStatus() != null) {
+						String status = updates.getStatus().getValue().toLowerCase();
+						if (status.equals("started")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.IN_PROGRESS);
+						} else if (status.equals("accepted")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.ASSIGNED);
+						} else if (status.equals("fixednotreleased")) {
+							fixer = author;
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.IN_PROGRESS);
+						} else if (status.equals("needsinfo")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.FEEDBACK);
+						} else if (status.equals("new")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.NEW);
+						} else if (status.equals("patcheswelcome")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.UNKNOWN);
+						} else if (status.equals("reviewpending")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.REVIEWPENDING);
+						} else if (status.equals("assumedstale")) {
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.UNKNOWN);
+						} else if (status.equals("duplicate")) {
+							hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.DUPLICATE);
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
+						} else if (status.equals("fixed")) {
+							resolver = author;
+							hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.RESOLVED);
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
+						} else if (status.equals("invalid")) {
+							hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
+						} else if (status.equals("knownquirk")) {
+							hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
+						} else if (status.equals("notplanned")) {
+							hElem.addChangedValue("resolution", Status.UNKNOWN, Resolution.INVALID);
+							hElem.addChangedValue("status", Status.UNKNOWN, Status.CLOSED);
+						}
+					}
+					
+					if (updates.getSummary() != null) {
+						hElem.addChangedValue("summary", "<unknown>", updates.getSummary().getValue());
+					}
+					
+					report.addHistoryElement(hElem);
+				}
+				String googleCommentId = commentEntry.getId();
+				int index = googleCommentId.lastIndexOf("/");
+				int commentId = comments.size() + 1;
+				try {
+					commentId = new Integer(googleCommentId.substring(index + 1));
+				} catch (NumberFormatException e) {
+					if (Logger.logWarn()) {
+						Logger.warn("Could not determine google comment id. Trying to guess id.");
+					}
+				}
+				Comment comment = new Comment(commentId, author, createDate, message);
+				comments.add(comment);
+				report.addComment(comment);
 			}
 		}
 		report.setComments(comments);
