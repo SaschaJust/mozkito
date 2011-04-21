@@ -215,8 +215,8 @@ public class RepoSuiteSettings {
 				}
 			}
 			for (Entry<Object, Object> entry : System.getProperties().entrySet()) {
-				String argName = entry.getKey().toString();
-				String value = entry.getValue().toString();
+				String argName = entry.getKey().toString().trim();
+				String value = entry.getValue().toString().trim();
 				if (arguments.containsKey(argName)) {
 					arguments.get(argName).setStringValue(value);
 				}
@@ -224,8 +224,8 @@ public class RepoSuiteSettings {
 		}
 		
 		for (Entry<Object, Object> entry : commandlineProps.entrySet()) {
-			String argName = entry.getKey().toString();
-			String value = entry.getValue().toString();
+			String argName = entry.getKey().toString().trim();
+			String value = entry.getValue().toString().trim();
 			if ((arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
 				arguments.get(argName).setStringValue(value);
 			}

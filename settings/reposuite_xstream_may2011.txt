@@ -1,10 +1,11 @@
 database.name=reposuite_xstream_may2011
 database.user=miner
-database.password=miner 
-log.level=info 
-repository.uri=/data/kim/miner_repos/xstream/git_repo_09_03_2011/ 
-repository.type=GIT 
-tracker.fetchURI=http://jira.codehaus.org/browse/ 
-tracker.type=JIRA 
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/xstream/git_repo_09_03_2011/
+repository.type=GIT
+tracker.fetchURI=http://jira.codehaus.org/browse/
+tracker.type=JIRA
 tracker.stop=652
 tracker.pattern="XSTR-<BUGID>/XSTR-<BUGID>.xml"
+headless
