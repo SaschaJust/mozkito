@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
@@ -43,19 +42,14 @@
 			<version>1.4.3</version>
 		</dependency>
 		<dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.9.0.GA</version>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>0.9</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.tika</groupId>
-		    <artifactId>tika</artifactId>
-		    <version>0.3</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.github.jponge</groupId>
-		    <artifactId>lzma-java</artifactId>
-		    <version>1.2</version>
+			<groupId>com.github.jponge</groupId>
+			<artifactId>lzma-java</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>

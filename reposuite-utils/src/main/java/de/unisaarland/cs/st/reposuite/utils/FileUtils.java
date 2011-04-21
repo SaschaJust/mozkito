@@ -24,13 +24,13 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.tika.parser.pkg.bzip2.CBZip2InputStream;
-import org.apache.tika.parser.pkg.tar.TarEntry;
-import org.apache.tika.parser.pkg.tar.TarInputStream;
 import org.joda.time.DateTime;
 
+import ucar.unidata.io.bzip2.CBZip2InputStream;
 import de.unisaarland.cs.st.reposuite.exceptions.ExternalExecutableException;
 import de.unisaarland.cs.st.reposuite.exceptions.FilePermissionException;
 
@@ -77,10 +77,10 @@ public class FileUtils {
 	}
 	
 	/**
-	 * @param bzip2File
-	 * @param directory
-	 * @return
-	 */
+	* @param bzip2File
+	* @param directory
+	* @return
+	*/
 	public static boolean bunzip2(final File bzip2File,
 	                              final File directory) {
 		try {
@@ -752,8 +752,8 @@ public class FileUtils {
 			int BUFFER = 2048;
 			BufferedOutputStream dest = null;
 			FileInputStream fis = new FileInputStream(tarFile);
-			TarInputStream zis = new TarInputStream(new BufferedInputStream(fis));
-			TarEntry entry;
+			TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
+			ArchiveEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
 				if (entry.isDirectory()) {
 					(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();

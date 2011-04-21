@@ -9,8 +9,9 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +29,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@Embeddable
+@Entity
 public class AttachmentEntry implements Annotated {
 	
 	private static final long serialVersionUID = 5533493175917492442L;
@@ -43,8 +44,11 @@ public class AttachmentEntry implements Annotated {
 	private URL               link;
 	private String            filename;
 	
+	/**
+	 * @param attachId
+	 */
 	public AttachmentEntry(final String attachId) {
-		id = attachId;
+		this.id = attachId;
 	}
 	
 	/*
@@ -63,11 +67,11 @@ public class AttachmentEntry implements Annotated {
 			return false;
 		}
 		AttachmentEntry other = (AttachmentEntry) obj;
-		if (link == null) {
+		if (this.link == null) {
 			if (other.link != null) {
 				return false;
 			}
-		} else if (!link.equals(other.link)) {
+		} else if (!this.link.equals(other.link)) {
 			return false;
 		}
 		return true;
@@ -85,7 +89,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
-		return deltaTS;
+		return this.deltaTS;
 	}
 	
 	/**
@@ -93,21 +97,22 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 	
 	/**
 	 * @return the filename
 	 */
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 	
 	/**
 	 * @return the id
 	 */
+	@Id
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -125,7 +130,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the link
 	 */
 	public URL getLink() {
-		return link;
+		return this.link;
 	}
 	
 	/**
@@ -133,7 +138,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getMime() {
-		return mime;
+		return this.mime;
 	}
 	
 	/**
@@ -141,7 +146,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	/**
@@ -149,7 +154,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public long getSize() {
-		return size;
+		return this.size;
 	}
 	
 	/**
@@ -157,7 +162,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/*
@@ -168,9 +173,9 @@ public class AttachmentEntry implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((link == null)
-		                                         ? 0
-		                                         : link.hashCode());
+		result = prime * result + ((this.link == null)
+		                                              ? 0
+		                                              : this.link.hashCode());
 		return result;
 	}
 	
