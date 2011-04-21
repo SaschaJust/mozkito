@@ -375,7 +375,9 @@ public class JiraXMLParser {
 		
 		List<Element> children = root.getChildren();
 		for (Element element : children) {
-			if (element.getName().equals("description")) {
+			if (element.getName().equals("title")) {
+				report.setSubject(element.getText());
+			} else if (element.getName().equals("description")) {
 				report.setDescription(element.getText());
 			} else if (element.getName().equals("key")) {
 				List<RegexGroup> groups = idRegex.find(element.getText());
