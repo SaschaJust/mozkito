@@ -106,6 +106,10 @@ public class BugzillaTracker extends Tracker {
 		return null;
 	}
 	
+	protected Element getRootElement(@NotNull final XmlReport rawReport) {
+		return rawReport.getDocument().getRootElement().getChild("bug");
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -115,7 +119,7 @@ public class BugzillaTracker extends Tracker {
 	@Override
 	public Report parse(@NotNull final XmlReport rawReport) {
 		Report bugReport = new Report(rawReport.getId());
-		Element itemElement = rawReport.getDocument().getRootElement().getChild("bug");
+		Element itemElement = getRootElement(rawReport);
 		BugzillaXMLParser.handleRoot(bugReport, itemElement, this);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());

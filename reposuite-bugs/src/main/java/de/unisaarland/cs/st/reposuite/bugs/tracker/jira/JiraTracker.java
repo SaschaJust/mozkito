@@ -189,7 +189,7 @@ public class JiraTracker extends Tracker {
 		Condition.check(!uri.toString().contains(Tracker.bugIdPlaceholder), "URI must contain bugIdPlaceHolder");
 		Condition.check(!uri.toString().endsWith(FileUtils.fileSeparator), "file should not end with "
 		        + FileUtils.fileSeparator);
-		if (this.overalXML == null) {
+		if (overalXML == null) {
 			// fetch source from net
 			
 			String filename = uri.toString();
@@ -197,8 +197,8 @@ public class JiraTracker extends Tracker {
 			filename = filename.substring(index + 1);
 			
 			// check cacheDir if exists already
-			if (this.cacheDir != null) {
-				File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			if (cacheDir != null) {
+				File cacheFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
 				if (cacheFile.exists()) {
 					if (Logger.logInfo()) {
 						Logger.info("Fetching report `" + uri.toString() + "` from cache directory ... ");
@@ -212,8 +212,8 @@ public class JiraTracker extends Tracker {
 			}
 			RawReport source = super.fetchSource(uri);
 			// write to disk
-			if (this.cacheDir != null) {
-				this.writeContentToFile(source, this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			if (cacheDir != null) {
+				writeContentToFile(source, cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
 			}
 			
 			if (Logger.logInfo()) {
@@ -227,13 +227,13 @@ public class JiraTracker extends Tracker {
 				Logger.info("Fetching report `" + uri.toString() + "` from local overview xml file ... ");
 			}
 			
-			Long idToFetch = this.reverseURI(uri);
+			Long idToFetch = reverseURI(uri);
 			if (idToFetch == null) {
 				return super.fetchSource(uri);
 			}
 			try {
 				SAXBuilder parser = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-				Document document = parser.build(this.overalXML);
+				Document document = parser.build(overalXML);
 				Element element = SubReportExtractor.extract(document.getRootElement(), idToFetch);
 				Element rss = new Element("rss", element.getNamespace());
 				rss.setAttribute("version", "0.92");
@@ -280,6 +280,13 @@ public class JiraTracker extends Tracker {
 		}
 	}
 	
+	@NoneNull
+	protected Element getRootElement(final XmlReport rawReport) {
+		Element itemElement = rawReport.getDocument().getRootElement();
+		itemElement = itemElement.getChild("channel", itemElement.getNamespace());
+		return itemElement.getChild("item", itemElement.getNamespace());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -295,10 +302,8 @@ public class JiraTracker extends Tracker {
 		}
 		
 		Report bugReport = new Report(rawReport.getId());
-		Element itemElement = rawReport.getDocument().getRootElement();
-		itemElement = itemElement.getChild("channel", itemElement.getNamespace());
-		itemElement = itemElement.getChild("item", itemElement.getNamespace());
-		JiraXMLParser.handleRoot(bugReport, itemElement);
+		Element itemElement = getRootElement(rawReport);
+		JiraXMLParser.handleRoot(bugReport, itemElement, this);
 		bugReport.setLastFetch(rawReport.getFetchTime());
 		bugReport.setHash(rawReport.getMd5());
 		
@@ -387,8 +392,8 @@ public class JiraTracker extends Tracker {
 					}
 					return;
 				}
-				this.overalXML = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-				FileOutputStream writer = new FileOutputStream(this.overalXML);
+				overalXML = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+				FileOutputStream writer = new FileOutputStream(overalXML);
 				writer.write(rawContent.getContent().getBytes());
 				writer.flush();
 				writer.close();
@@ -397,7 +402,7 @@ public class JiraTracker extends Tracker {
 				XMLReader parser = XMLReaderFactory.createXMLReader();
 				JiraIDExtractor handler = new JiraIDExtractor();
 				parser.setContentHandler(handler);
-				InputSource inputSource = new InputSource(new FileInputStream(this.overalXML));
+				InputSource inputSource = new InputSource(new FileInputStream(overalXML));
 				parser.parse(inputSource);
 				for (Long id : handler.getIds()) {
 					if ((id <= this.stopAt) && (id >= this.startAt)) {
@@ -418,7 +423,7 @@ public class JiraTracker extends Tracker {
 				addBugId(i);
 			}
 		}
-		this.initialized = true;
+		initialized = true;
 		if (Logger.logDebug()) {
 			Logger.debug("done");
 		}

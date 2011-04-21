@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.jdom.Element;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -46,6 +48,48 @@ public class JiraTrackerTest {
 	
 	@After
 	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testAttachments() {
+		JiraTracker tracker = new JiraTracker();
+		try {
+			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(451l), new Long(451l), null);
+		} catch (InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
+		
+		RawReport rawReport = null;
+		try {
+			rawReport = tracker.fetchSource(tracker.getLinkFromId(451l));
+		} catch (FetchException e) {
+			e.printStackTrace();
+			fail();
+		} catch (UnsupportedProtocolException e) {
+			e.printStackTrace();
+			fail();
+		}
+		XmlReport xmlReport = tracker.createDocument(rawReport);
+		Element rootElement = tracker.getRootElement(xmlReport);
+		
+		List<AttachmentEntry> attachments = JiraXMLParser.extractAttachments(rootElement, tracker);
+		assertEquals(1, attachments.size());
+		
+		assertEquals("38639", attachments.get(0).getId());
+		assertEquals(0, attachments.get(0).getAuthor().getUsernames().size());
+		assertTrue(attachments.get(0).getAuthor().getEmailAddresses().contains("andreas.bartelt@gmail.com"));
+		assertEquals(null, attachments.get(0).getDeltaTS());
+		assertEquals(null, attachments.get(0).getDescription());
+		assertEquals(".classpath", attachments.get(0).getFilename());
+		assertEquals(baseDirURL.toString() + "secure/attachment/38639/.classpath", attachments.get(0).getLink()
+		                                                                                      .toString());
+		assertEquals(null, attachments.get(0).getMime());
+		assertEquals(8818, attachments.get(0).getSize());
+		assertEquals(DateTimeUtils.parseDate("2008-12-08 09:51:06 -0600"), attachments.get(0).getTimestamp());
 	}
 	
 	@Test

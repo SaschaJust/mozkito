@@ -3,7 +3,10 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,6 +24,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -46,6 +50,55 @@ public class JiraXMLParser {
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
 	                                                                    "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
+	
+	protected static List<AttachmentEntry> extractAttachments(final Element root,
+	                                                          final JiraTracker tracker) {
+		
+		List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
+		
+		Element element = root.getChild("attachments", root.getNamespace());
+		if (element != null) {
+			@SuppressWarnings ("unchecked")
+			List<Element> attachElems = element.getChildren("attachment", element.getNamespace());
+			for (Element attachElem : attachElems) {
+				String attachId = attachElem.getAttributeValue("id");
+				AttachmentEntry attachment = new AttachmentEntry(attachId);
+				
+				attachment.setFilename(attachElem.getAttributeValue("name"));
+				try {
+					attachment.setSize(new Long(attachElem.getAttributeValue("size")));
+				} catch (NumberFormatException e) {
+					
+				}
+				String attachAuthor = attachElem.getAttributeValue("author");
+				if (new Regex(Regex.emailPattern).matches(attachAuthor)) {
+					attachment.setAuthor(new Person(null, null, attachAuthor));
+				} else {
+					attachment.setAuthor(new Person(attachAuthor, null, null));
+				}
+				String attachDate = attachElem.getAttributeValue("created");
+				attachment.setTimestamp(DateTimeUtils.parseDate(attachDate, new Regex(dateTimeFormatRegex.getPattern())));
+				
+				String uri = tracker.getUri().toString();
+				if (!uri.endsWith("/")) {
+					uri += "/";
+				}
+				if (attachment.getFilename() != null) {
+					try {
+						attachment.setLink(new URL(uri + "secure/attachment/" + attachId + "/"
+						        + attachment.getFilename()));
+					} catch (MalformedURLException e) {
+						if (Logger.logWarn()) {
+							Logger.warn("Failed to set Link to attachment. Continue ...");
+						}
+					}
+				}
+				
+				result.add(attachment);
+			}
+		}
+		return result;
+	}
 	
 	protected static Element getElement(final Element root,
 	                                    final Namespace namespace,
@@ -316,14 +369,13 @@ public class JiraXMLParser {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static void handleRoot(final Report report,
-	                              final Element root) {
+	                              final Element root,
+	                              final JiraTracker tracker) {
 		CompareCondition.equals(root.getName(), "item", "The root element has to be 'item'.");
 		
 		List<Element> children = root.getChildren();
 		for (Element element : children) {
-			if (element.getName().equals("title")) {
-				report.setSubject(element.getText());
-			} else if (element.getName().equals("description")) {
+			if (element.getName().equals("description")) {
 				report.setDescription(element.getText());
 			} else if (element.getName().equals("key")) {
 				List<RegexGroup> groups = idRegex.find(element.getText());
@@ -414,6 +466,8 @@ public class JiraXMLParser {
 				report.setComponent(element.getText());
 			}
 		}
+		for (AttachmentEntry entry : extractAttachments(root, tracker)) {
+			report.addAttachmentEntry(entry);
+		}
 	}
-	
 }
