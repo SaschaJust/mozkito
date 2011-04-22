@@ -12,18 +12,16 @@ import javax.persistence.Basic;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-
-import org.apache.openjpa.persistence.jdbc.Index;
-
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -34,23 +32,15 @@ import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
  *
  */
 @Entity
+@IdClass (MapId.class)
 public class MapScore implements Annotated, Comparable<MapScore> {
-	
-	private int                generatedId;
 	
 	private static final long  serialVersionUID = -8606759070008468513L;
 	
-	RCSTransaction             transaction;
-	
-	Report                     report;
-	
-	double                     totalConfidence  = 0.0d;
-	
 	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
-	
-	public MapScore() {
-		
-	}
+	Report                     report;
+	double                     totalConfidence  = 0.0d;
+	RCSTransaction             transaction;
 	
 	/**
 	 * @param transaction
@@ -88,27 +78,17 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the features
 	 */
-	@ElementCollection
+	@ElementCollection (fetch = FetchType.EAGER)
 	public List<MappingEngineFeature> getFeatures() {
 		return this.features;
-	}
-	
-	/**
-	 * @return the generatedId
-	 */
-	@SuppressWarnings ("unused")
-	@Id
-	@Index (name = "idx_scoreid")
-	@GeneratedValue
-	private int getGeneratedId() {
-		return this.generatedId;
 	}
 	
 	/**
 	 * @return the report
 	 */
 	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
-	@JoinColumn (nullable = false)
+	@JoinColumn (nullable = false, name = "reportid")
+	@Id
 	public Report getReport() {
 		return this.report;
 	}
@@ -138,8 +118,9 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	/**
 	 * @return the transaction
 	 */
+	@Id
 	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
-	@JoinColumn (nullable = false)
+	@JoinColumn (nullable = false, name = "transactionid")
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}
@@ -148,16 +129,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @param features the features to set
 	 */
 	public void setFeatures(final List<MappingEngineFeature> features) {
-		this.features.clear();
-		this.features.addAll(features);
-	}
-	
-	/**
-	 * @param generatedId the generatedId to set
-	 */
-	@SuppressWarnings ("unused")
-	private void setGeneratedId(final int generatedId) {
-		this.generatedId = generatedId;
+		this.features = features;
 	}
 	
 	/**
@@ -189,9 +161,13 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MapScore [totalConfidence=");
-		builder.append(this.totalConfidence);
+		builder.append(getTotalConfidence());
+		builder.append(", transaction=");
+		builder.append(getTransaction().getId());
+		builder.append(", report=");
+		builder.append(getReport().getId());
 		builder.append(", features=");
-		builder.append(JavaUtils.collectionToString(this.features));
+		builder.append(JavaUtils.collectionToString(getFeatures()));
 		builder.append("]");
 		return builder.toString();
 	}

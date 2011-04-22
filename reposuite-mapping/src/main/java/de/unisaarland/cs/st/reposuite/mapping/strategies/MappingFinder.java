@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.mapping.engines;
+package de.unisaarland.cs.st.reposuite.mapping.strategies;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -23,13 +25,21 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class MappingFinder {
 	
-	private final Map<String, MappingEngine> engines = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingEngine>   engines    = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingStrategy> strategies = new HashMap<String, MappingStrategy>();
 	
 	/**
 	 * @param engine
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
+	}
+	
+	/**
+	 * @param strategy
+	 */
+	public void addStrategy(final MappingStrategy strategy) {
+		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
 	}
 	
 	/**
@@ -49,6 +59,24 @@ public class MappingFinder {
 		}
 		
 		return candidates;
+	}
+	
+	/**
+	 * @param score
+	 * @return
+	 */
+	public RCSBugMapping map(final MapScore score) {
+		RCSBugMapping mapping = new RCSBugMapping(score);
+		for (String key : this.strategies.keySet()) {
+			MappingStrategy strategy = this.strategies.get(key);
+			mapping = strategy.map(mapping);
+		}
+		
+		if ((mapping.getValid() != null) && (mapping.getValid() == true)) {
+			return mapping;
+		} else {
+			return null;
+		}
 	}
 	
 	/**

@@ -9,5 +9,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mapping.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-DKanuniDebug"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-mapping"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Ddebug -Dlog.level=debug -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Ddatabase.name=reposuite_xstream_may2011 -Ddatabase.host=quentin.cs.uni-saarland.de  -Ddatabse.type=PostgreSQL -DdisableCrashEmail"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Ddebug -Dlog.level=debug -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Ddatabase.name=reposuite_xstream_may2011_new -Ddatabase.host=quentin.cs.uni-saarland.de  -Ddatabse.type=PostgreSQL -DdisableCrashEmail -Dmapping.strategies=MajorityStrategy -Dmapping.config.regexFile=file:///Users/just/Development/reposuite/reposuite-mapping/config/xstream.regex"/>
 </launchConfiguration>

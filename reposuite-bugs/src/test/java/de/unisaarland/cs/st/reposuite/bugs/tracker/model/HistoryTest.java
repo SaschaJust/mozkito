@@ -53,7 +53,7 @@ public class HistoryTest {
 		this.report.setDescription("Some default description");
 		this.report.setLastFetch(new DateTime());
 		this.report.setSummary("Some default summary");
-		this.report.setStatus(Status.NEW);
+		this.report.setStatus(Status.CLOSED);
 		this.report.setSubmitter(new Person("just", "Sascha Just", "sascha.just@st.cs.uni-saarland.de"));
 		this.report.addComment(new Comment(1, new Person("kim", "Kim Herzig", null),
 		                                   this.formatter.parseDateTime("2010-01-12 09:35:11"), "Some default comment"));
@@ -64,12 +64,13 @@ public class HistoryTest {
 		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
 		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@cs.uni-saarland.de"));
 		element.addChangedValue("priority", new Report(0).getPriority(), Priority.HIGH);
+		element.addChangedValue("status", new Report(0).getStatus(), Status.NEW);
 		this.report.addHistoryElement(element);
 		
 		element = new HistoryElement(this.report.getId(), new Person("kim", "Kim Herzig", null),
 		                             this.formatter.parseDateTime("2010-01-15 01:59:26"));
 		element.addChangedValue("resolution", new Report(0).getResolution(), Resolution.RESOLVED);
-		element.addChangedValue("status", new Report(0).getStatus(), Status.CLOSED);
+		element.addChangedValue("status", Status.NEW, Status.FEEDBACK);
 		this.report.addHistoryElement(element);
 	}
 	
