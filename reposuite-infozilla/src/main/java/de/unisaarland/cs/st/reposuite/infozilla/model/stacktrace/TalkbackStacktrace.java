@@ -25,6 +25,12 @@ public class TalkBackStacktrace extends Stacktrace {
 		this.trace = trace;
 	}
 	
+	@Override
+	public int getEndPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	public String getField(final String name) {
 		if (this.fields.containsKey(name)) {
 			return this.fields.get(name);
@@ -35,6 +41,12 @@ public class TalkBackStacktrace extends Stacktrace {
 	
 	public String getIncident_id() {
 		return this.incident_id;
+	}
+	
+	@Override
+	public int getStartPosition() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	public TalkbackTrace getTrace() {

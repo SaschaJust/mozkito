@@ -2,8 +2,10 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.patch;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.Patch.Patch;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
+import de.unisaarland.cs.st.reposuite.infozilla.model.patch.Patch;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaSettings;
 
 /**
  * This InfozillaFilter class acts as an interface for the PatchParser class
@@ -19,6 +21,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	public UnifiedDiffPatchFilter() {
 	}
 	
+	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
 	}
@@ -28,6 +31,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	 * @param text the text we should look for patches inside
 	 * @return a List of {@link Patch}es.
 	 */
+	@SuppressWarnings ("unchecked")
 	private List<Patch> getPatches(final String text) {
 		// Setup Helper classes
 		this.textRemover = new FilterTextRemover(text);
@@ -36,10 +40,10 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		List<Patch> foundPatches = null;
 		if (isRelaxed()) {
 			RelaxedPatchParser pp = new RelaxedPatchParser();
-			foundPatches = pp.parseForPatches(text);
+			foundPatches = (List<Patch>) pp.parseForPatches(text);
 		} else {
 			PatchParser pp = new PatchParser();
-			foundPatches = pp.parseForPatches(text);
+			foundPatches = (List<Patch>) pp.parseForPatches(text);
 		}
 		
 		// InfozillaFilter them out
@@ -49,10 +53,25 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		return foundPatches;
 	}
 	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public boolean isRelaxed() {
 		return this.relaxed;
 	}
 	
+	@Override
+	public void register(final InfozillaSettings settings,
+	                     final InfozillaArguments infozillaArguments,
+	                     final boolean isRequired) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public List<Patch> runFilter(final String inputText) {
 		return getPatches(inputText);
 	}

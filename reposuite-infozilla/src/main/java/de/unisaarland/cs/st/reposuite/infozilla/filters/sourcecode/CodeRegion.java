@@ -14,7 +14,7 @@
  * 
  */
 
-package de.unisaarland.cs.st.reposuite.infozilla.Elements.SourceCode.Java;
+package de.unisaarland.cs.st.reposuite.infozilla.filters.sourcecode;
 
 /**
  * The <code>CodeRegion</code> class represents source code structural elements.

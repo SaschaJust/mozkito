@@ -6,10 +6,11 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement;
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+import de.unisaarland.cs.st.reposuite.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 
-public class Link implements Attachable {
+public class Link implements Attachable, Inlineable {
 	
 	private enum Kind {
 		WEB, REPOSITORY, TRACKER;
@@ -33,6 +34,12 @@ public class Link implements Attachable {
 	public Attachment getAttachment() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public int getEndPosition() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	/**
@@ -61,6 +68,12 @@ public class Link implements Attachable {
 	 */
 	public DateTime getPostedOn() {
 		return this.postedOn;
+	}
+	
+	@Override
+	public int getStartPosition() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	/**

@@ -60,6 +60,12 @@ public class JavaStacktrace extends Stacktrace {
 		this.isCause = false;
 	}
 	
+	@Override
+	public int getEndPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	/**
 	 * Getter for the Exception
 	 * @return the exception this Stack Trace originated from
@@ -98,6 +104,12 @@ public class JavaStacktrace extends Stacktrace {
 		} else {
 			return this.reason;
 		}
+	}
+	
+	@Override
+	public int getStartPosition() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	public int getTraceEnd() {
