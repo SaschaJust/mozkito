@@ -408,7 +408,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		set.addAll(getChangedEnumValues().keySet());
 		set.addAll(getChangedDateValues().keySet());
 		set.addAll(getChangedPersonValues().keySet());
-		
+		set.addAll(getChangedStringValues().keySet());
 		return set;
 	}
 	
