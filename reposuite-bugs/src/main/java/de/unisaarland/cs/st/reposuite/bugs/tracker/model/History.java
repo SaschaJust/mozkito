@@ -108,6 +108,14 @@ public class History implements Annotated {
 	}
 	
 	/**
+	 * @return
+	 */
+	@Transient
+	public HistoryElement first() {
+		return getElements().first();
+	}
+	
+	/**
 	 * @param from
 	 * @param to
 	 * @return
