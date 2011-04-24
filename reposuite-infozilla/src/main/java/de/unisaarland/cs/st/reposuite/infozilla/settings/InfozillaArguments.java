@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
-import de.unisaarland.cs.st.reposuite.infozilla.filters.chain.InfozillaFilterChain;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilterChain;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;

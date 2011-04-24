@@ -101,6 +101,7 @@
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report
 		</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.MapScore</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature
 		</class>
 		<properties>

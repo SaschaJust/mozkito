@@ -9,7 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
-import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
@@ -21,7 +22,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class MappingArguments extends RepoSuiteArgumentSet {
 	
-	private final Set<MappingEngine> engines = new HashSet<MappingEngine>();
+	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
+	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
 	
 	/**
 	 * @param isRequired 
@@ -65,6 +67,39 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 					}
 				}
 			}
+			
+			Package package2 = MappingStrategy.class.getPackage();
+			Collection<Class<?>> interfaces = ClassFinder.getClassesExtendingClass(package2, MappingStrategy.class);
+			addArgument(new ListArgument(settings, "mapping.strategies",
+			                             "A list of mapping strategies that shall be used. Available: "
+			                                     + buildStrategyList(classesExtendingClass), null, true));
+			
+			String strategies = System.getProperty("mapping.strategies");
+			Set<String> strategyNames = new HashSet<String>();
+			
+			if (strategies != null) {
+				for (String strategyName : strategies.split(",")) {
+					strategyNames.add(MappingStrategy.class.getPackage().getName() + "." + strategyName);
+				}
+			}
+			
+			for (Class<?> klass : interfaces) {
+				if (strategyNames.isEmpty() || strategyNames.contains(klass.getCanonicalName())) {
+					if (Logger.logInfo()) {
+						Logger.info("Adding new MappingStrategy " + klass.getCanonicalName());
+					}
+					
+					Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
+					MappingStrategy strategy = (MappingStrategy) constructor.newInstance(settings);
+					strategy.register(settings, this, isRequired);
+					this.strategies.add(strategy);
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("Not loading available strategy: " + klass.getSimpleName());
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -88,6 +123,21 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		return builder.toString();
 	}
 	
+	/**
+	 * @param strategies
+	 * @return
+	 */
+	private String buildStrategyList(final Collection<Class<?>> strategies) {
+		StringBuilder builder = new StringBuilder();
+		for (Class<?> klass : strategies) {
+			if (builder.length() != 0) {
+				builder.append(",");
+			}
+			builder.append(klass.getSimpleName());
+		}
+		return builder.toString();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -100,6 +150,11 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		for (MappingEngine engine : this.engines) {
 			engine.init();
 			finder.addEngine(engine);
+		}
+		
+		for (MappingStrategy strategy : this.strategies) {
+			strategy.init();
+			finder.addStrategy(strategy);
 		}
 		
 		return finder;

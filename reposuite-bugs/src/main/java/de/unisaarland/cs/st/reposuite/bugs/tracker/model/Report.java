@@ -573,9 +573,9 @@ public class Report implements Annotated, Comparable<Report> {
 		
 		for (Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
-			        && (method.getParameterTypes()[0] == fieldValue.getClass())) {
+			        && ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
 				try {
-					method.invoke(fieldValue);
+					method.invoke(this, fieldValue);
 				} catch (IllegalArgumentException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);

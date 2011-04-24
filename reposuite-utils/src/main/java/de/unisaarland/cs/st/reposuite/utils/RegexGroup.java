@@ -13,6 +13,8 @@ public class RegexGroup {
 	private final String match;
 	private final String name;
 	private final String pattern;
+	private final int    start;
+	private final int    end;
 	
 	private final String text;
 	
@@ -21,12 +23,22 @@ public class RegexGroup {
 	 * @param index
 	 * @param name
 	 */
-	public RegexGroup(final String pattern, final String text, final String match, final int index, final String name) {
+	public RegexGroup(final String pattern, final String text, final String match, final int index, final String name,
+	        final int start, final int end) {
 		this.pattern = pattern;
 		this.text = text;
 		this.match = match;
 		this.index = index;
 		this.name = name;
+		this.end = end;
+		this.start = start;
+	}
+	
+	/**
+	 * @return
+	 */
+	public int end() {
+		return this.end;
 	}
 	
 	/*
@@ -109,9 +121,20 @@ public class RegexGroup {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + this.index;
-		result = prime * result + ((this.pattern == null) ? 0 : this.pattern.hashCode());
-		result = prime * result + ((this.text == null) ? 0 : this.text.hashCode());
+		result = prime * result + ((this.pattern == null)
+		                                                 ? 0
+		                                                 : this.pattern.hashCode());
+		result = prime * result + ((this.text == null)
+		                                              ? 0
+		                                              : this.text.hashCode());
 		return result;
+	}
+	
+	/**
+	 * @return
+	 */
+	public int start() {
+		return this.start;
 	}
 	
 	/*

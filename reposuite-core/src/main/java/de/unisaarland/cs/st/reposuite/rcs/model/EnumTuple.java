@@ -58,6 +58,46 @@ public class EnumTuple implements Annotated {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof EnumTuple)) {
+			return false;
+		}
+		EnumTuple other = (EnumTuple) obj;
+		if (this.enumClass == null) {
+			if (other.enumClass != null) {
+				return false;
+			}
+		} else if (!this.enumClass.equals(other.enumClass)) {
+			return false;
+		}
+		if (this.newValue == null) {
+			if (other.newValue != null) {
+				return false;
+			}
+		} else if (!this.newValue.equals(other.newValue)) {
+			return false;
+		}
+		if (this.oldValue == null) {
+			if (other.oldValue != null) {
+				return false;
+			}
+		} else if (!this.oldValue.equals(other.oldValue)) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * @return the enumClass
 	 */
@@ -104,6 +144,26 @@ public class EnumTuple implements Annotated {
 	@Transient
 	public Enum<?> getOldValue() {
 		return this.oldValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.enumClass == null)
+		                                                   ? 0
+		                                                   : this.enumClass.hashCode());
+		result = prime * result + ((this.newValue == null)
+		                                                  ? 0
+		                                                  : this.newValue.hashCode());
+		result = prime * result + ((this.oldValue == null)
+		                                                  ? 0
+		                                                  : this.oldValue.hashCode());
+		return result;
 	}
 	
 	/**
@@ -183,6 +243,23 @@ public class EnumTuple implements Annotated {
 	 */
 	public void setOldValue(final Enum<?> oldValue) {
 		this.oldValue = oldValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EnumTuple [class=");
+		builder.append(getEnumClassName());
+		builder.append(", old=");
+		builder.append(getOldStringValue());
+		builder.append(", new=");
+		builder.append(getNewStringValue());
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

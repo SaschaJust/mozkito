@@ -1,18 +1,18 @@
 database.name=reposuite_xstream_may2011
 database.user=miner
 database.password=miner
-database.host=quentin.cs.uni-saarland.de
 log.level=info
 repository.uri=/data/kim/miner_repos/xstream/git_repo_09_03_2011/
 repository.type=GIT
-tracker.fetchURI=http://jira.codehaus.org/browse/
+tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
 tracker.type=JIRA
 tracker.stop=652
-tracker.pattern="XSTR-<BUGID>/XSTR-<BUGID>.xml"
+tracker.pattern=XSTR-<BUGID>/XSTR-<BUGID>.xml
 headless
-mapping.config.regexFile=${REPOSUITE_ROOT}/settings/reposuite_xstream_may2011.regex
-mapping.score.AuthorEquality = 1
-mapping.score.AuthorInequality = 0
-mapping.score.ReportCreatedAfterTransaction = 1
-mapping.score.ReportResolvedWithinWindow = 1
-mapping.window.ReportResolvedAfterTransaction = [+-]03d 00h 00m 00s
+mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
+mapping.score.AuthorEquality=1
+mapping.score.AuthorInequality=0
+mapping.score.ReportCreatedAfterTransaction=1
+mapping.score.ReportResolvedWithinWindow=1
+mapping.window.ReportResolvedAfterTransaction=00d 00h 00m 00s,+03d 00h 00m 00s
+mapping.strategies=MajorityStrategy

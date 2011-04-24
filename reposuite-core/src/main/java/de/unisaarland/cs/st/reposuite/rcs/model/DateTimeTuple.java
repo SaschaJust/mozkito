@@ -22,6 +22,7 @@ public class DateTimeTuple implements Annotated {
 	 * 
 	 */
 	private static final long serialVersionUID = 8037500943691455328L;
+	
 	private DateTime          oldValue;
 	private DateTime          newValue;
 	
@@ -50,6 +51,39 @@ public class DateTimeTuple implements Annotated {
 	public DateTimeTuple(final DateTime oldValue, final DateTime newValue) {
 		setOldValue(oldValue);
 		setNewValue(newValue);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof DateTimeTuple)) {
+			return false;
+		}
+		DateTimeTuple other = (DateTimeTuple) obj;
+		if (this.newValue == null) {
+			if (other.newValue != null) {
+				return false;
+			}
+		} else if (!this.newValue.equals(other.newValue)) {
+			return false;
+		}
+		if (this.oldValue == null) {
+			if (other.oldValue != null) {
+				return false;
+			}
+		} else if (!this.oldValue.equals(other.oldValue)) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -92,6 +126,23 @@ public class DateTimeTuple implements Annotated {
 		return this.oldValue;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getNewValue() == null)
+		                                                  ? 0
+		                                                  : getNewValue().hashCode());
+		result = prime * result + ((getOldValue() == null)
+		                                                  ? 0
+		                                                  : getOldValue().hashCode());
+		return result;
+	}
+	
 	/**
 	 * @param date
 	 */
@@ -124,6 +175,21 @@ public class DateTimeTuple implements Annotated {
 	 */
 	public void setOldValue(final DateTime oldValue) {
 		this.oldValue = oldValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DateTimeTuple [old=");
+		builder.append(getOldValue());
+		builder.append(", new=");
+		builder.append(getNewValue());
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

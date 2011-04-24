@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping;
 
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
@@ -13,30 +10,32 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
+import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
-/**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
- */
-public class Mapping extends RepoSuiteToolchain {
+public class Scoring extends RepoSuiteToolchain {
 	
 	private final RepoSuiteThreadPool threadPool;
 	private final DatabaseArguments   databaseArguments;
 	private final LoggerArguments     logSettings;
 	private final MappingArguments    mappingArguments;
 	
-	public Mapping() {
+	/**
+	 * 
+	 */
+	public Scoring() {
 		super(new MappingSettings());
 		this.threadPool = new RepoSuiteThreadPool(Bugs.class.getSimpleName(), this);
 		MappingSettings settings = getSettings();
-		this.databaseArguments = settings.setDatabaseArgs(false, this.getClass().getSimpleName().toLowerCase());
+		this.databaseArguments = settings.setDatabaseArgs(false, "mapping");
 		this.logSettings = settings.setLoggerArg(true);
 		this.mappingArguments = settings.setMappingArgs(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);
+		new LongArgument(settings, "cache.size",
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		
 		settings.parseArguments();
 	}
@@ -51,6 +50,10 @@ public class Mapping extends RepoSuiteToolchain {
 		return (MappingSettings) super.getSettings();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		setup();
@@ -82,9 +85,9 @@ public class Mapping extends RepoSuiteToolchain {
 			PersistenceUtil persistenceUtil;
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
-				new MappingReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new MappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new MappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

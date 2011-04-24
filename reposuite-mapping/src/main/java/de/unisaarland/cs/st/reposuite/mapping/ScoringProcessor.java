@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.reposuite.mapping;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.mapping.engines.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingFinder;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
+public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
 	
 	private final PersistenceUtil persistenceUtil;
 	private final MapScore        zeroScore = new MapScore(null, null);
@@ -32,9 +32,9 @@ public class MappingsProcessor extends RepoSuiteTransformerThread<RCSTransaction
 	 * @param settings
 	 * @param persistenceUtil 
 	 */
-	public MappingsProcessor(final RepoSuiteThreadGroup threadGroup, final MappingSettings settings,
+	public ScoringProcessor(final RepoSuiteThreadGroup threadGroup, final MappingSettings settings,
 	        final MappingFinder finder, final PersistenceUtil persistenceUtil) {
-		super(threadGroup, MappingsProcessor.class.getSimpleName(), settings);
+		super(threadGroup, ScoringProcessor.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
 		this.mappingFinder = finder;
 	}

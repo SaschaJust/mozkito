@@ -24,13 +24,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import com.Ostermiller.util.CSVParser;
 
-import de.unisaarland.cs.st.reposuite.infozilla.Elements.SourceCode.Java.CodeRegion;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaSettings;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 /**
  * The JavaSourceCodeFilter class implements the InfozillaFilter interface for
@@ -153,18 +155,27 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		List<CodeRegion> codeRegions = new ArrayList<CodeRegion>();
 		// for each keyword-pattern pair find the corresponding occurences!
 		for (String keyword : this.codePatterns.keySet()) {
-			Pattern p = this.codePatterns.get(keyword);
+			this.codePatterns.get(keyword);
 			String patternOptions = this.codePatternOptions.get(keyword);
 			if (patternOptions.contains("MATCH")) {
-				for (MatchResult r : RegExHelper.findMatches(p, s)) {
-					int offset = findMatch(s, '{', '}', r.end());
-					CodeRegion foundRegion = new CodeRegion(r.start(), r.end() + offset, keyword,
-					                                        s.substring(r.start(), r.end() + offset));
+				Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				List<List<RegexGroup>> list = regex.findAll(s);
+				
+				for (List<RegexGroup> matches : list) {
+					int offset = findMatch(s, '{', '}', matches.get(0).end());
+					CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end() + offset,
+					                                        keyword, s.substring(matches.get(0).start(), matches.get(0)
+					                                                                                            .end()
+					                                                + offset));
 					codeRegions.add(foundRegion);
 				}
 			} else {
-				for (MatchResult r : RegExHelper.findMatches(p, s)) {
-					CodeRegion foundRegion = new CodeRegion(r.start(), r.end(), keyword, r.group());
+				Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				List<List<RegexGroup>> list = regex.findAll(s);
+				
+				for (List<RegexGroup> matches : list) {
+					CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end(), keyword,
+					                                        matches.get(0).getMatch());
 					codeRegions.add(foundRegion);
 				}
 			}
@@ -181,6 +192,12 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
+	}
+	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
@@ -241,6 +258,14 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				this.codePatterns.put(keyword, somePattern);
 			}
 		}
+	}
+	
+	@Override
+	public void register(final InfozillaSettings settings,
+	                     final InfozillaArguments infozillaArguments,
+	                     final boolean isRequired) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override

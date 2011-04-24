@@ -17,7 +17,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
+public class ScoringReader extends RepoSuiteSourceThread<RCSTransaction> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -27,9 +27,9 @@ public class MappingsReader extends RepoSuiteSourceThread<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil 
 	 */
-	public MappingsReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public ScoringReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil) {
-		super(threadGroup, MappingsReader.class.getSimpleName(), settings);
+		super(threadGroup, ScoringReader.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
 	}
 	
