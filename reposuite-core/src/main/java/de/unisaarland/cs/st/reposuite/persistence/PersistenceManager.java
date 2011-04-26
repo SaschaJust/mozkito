@@ -3,6 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.persistence;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -12,13 +15,29 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PersistenceManager {
 	
-	private static Class<PersistenceUtil> middleware = null;
+	private static Class<PersistenceUtil>           middleware    = null;
+	
+	private static Map<String, Map<String, String>> nativeQueries = new HashMap<String, Map<String, String>>();
 	
 	/**
 	 * @return
 	 */
 	public static Class<PersistenceUtil> getMiddleware() {
 		return middleware;
+	}
+	
+	/**
+	 * @param util
+	 * @param id
+	 * @return
+	 */
+	public static String getNativeQuery(final PersistenceUtil util,
+	                                    final String id) {
+		if (nativeQueries.containsKey(util.getType()) && nativeQueries.get(util.getType()).containsKey(id)) {
+			return nativeQueries.get(util.getType()).get(id);
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -46,5 +65,16 @@ public class PersistenceManager {
 				        + PersistenceManager.middleware.getCanonicalName());
 			}
 		}
+	}
+	
+	public static String registerNativeQuery(final String type,
+	                                         final String id,
+	                                         final String query) {
+		if (!nativeQueries.containsKey(type)) {
+			nativeQueries.put(type, new HashMap<String, String>());
+		}
+		
+		Map<String, String> map = nativeQueries.get(type);
+		return map.put(id, query);
 	}
 }

@@ -323,7 +323,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
-		return branch;
+		return this.branch;
 	}
 	
 	/**
@@ -366,10 +366,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the children
 	 */
 	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE })
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return children;
+		return this.children;
 	}
 	
 	/**
@@ -380,7 +380,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Id
 	@Index (name = "idx_transactionid")
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -405,14 +405,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Lob
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getOriginalId() {
-		return originalId;
+		return this.originalId;
 	}
 	
 	/**
@@ -443,10 +443,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE })
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
-		return parents;
+		return this.parents;
 	}
 	
 	/**
@@ -454,7 +454,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
-		return persons;
+		return this.persons;
 	}
 	
 	/**
@@ -482,7 +482,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return revisions;
+		return this.revisions;
 	}
 	
 	/**
@@ -490,7 +490,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@ElementCollection
 	public Set<String> getTags() {
-		return tags;
+		return this.tags;
 	}
 	
 	/**
@@ -500,7 +500,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/**
@@ -545,9 +545,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date date) {
-		timestamp = date != null
-		                        ? new DateTime(date)
-		                        : null;
+		this.timestamp = date != null
+		                             ? new DateTime(date)
+		                             : null;
 	}
 	
 	/**
@@ -597,7 +597,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		tags = tagName;
+		this.tags = tagName;
 	}
 	
 	/**
@@ -628,6 +628,32 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		string.append(getRevisions().size());
 		string.append(", author=");
 		string.append(getAuthor());
+		string.append(", parents=");
+		string.append("[");
+		StringBuilder builder = new StringBuilder();
+		
+		for (RCSTransaction transaction : getParents()) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(transaction.getId());
+		}
+		string.append(builder.toString());
+		string.append("]");
+		
+		string.append(", children=");
+		string.append("[");
+		StringBuilder builder2 = new StringBuilder();
+		
+		for (RCSTransaction transaction : getChildren()) {
+			if (builder2.length() > 0) {
+				builder2.append(", ");
+			}
+			builder2.append(transaction.getId());
+		}
+		string.append(builder2.toString());
+		string.append("]");
+		
 		if (getBranch() != null) {
 			string.append(", branch=");
 			string.append(getBranch());

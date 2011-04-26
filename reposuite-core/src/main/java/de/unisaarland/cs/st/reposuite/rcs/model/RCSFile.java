@@ -12,13 +12,12 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -72,6 +71,10 @@ public class RCSFile implements Annotated {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -84,7 +87,7 @@ public class RCSFile implements Annotated {
 			return false;
 		}
 		RCSFile other = (RCSFile) obj;
-		if (generatedId != other.generatedId) {
+		if (this.generatedId != other.generatedId) {
 			return false;
 		}
 		return true;
@@ -96,18 +99,17 @@ public class RCSFile implements Annotated {
 	@ElementCollection
 	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return changedNames;
+		return this.changedNames;
 	}
 	
 	/**
 	 * @return the generatedId
 	 */
 	@Id
-	@Index (name = "idx_fileid")
 	@Column (name = "id")
-	@GeneratedValue
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -174,7 +176,7 @@ public class RCSFile implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (generatedId ^ (generatedId >>> 32));
+		result = prime * result + (int) (this.generatedId ^ (this.generatedId >>> 32));
 		return result;
 	}
 	

@@ -102,7 +102,7 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	public Person(@Trimmed final String username, @Trimmed final String fullname,
-	        @Matches (pattern = "[A-Z0-9._%-+]+@[A-Z0-9.-]+\\.[A-Z]{2,4}") @Trimmed final String email) {
+	        @Matches (pattern = "[A-Za-z0-9._%-+]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}") @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense.");
 		addUsername(username);
@@ -162,7 +162,7 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	@Transient
-	public boolean addEmail(@Matches (pattern = "[A-Z0-9._%-+]+@[A-Z0-9.-]+\\.[A-Z]{2,4}") @Trimmed final String email) {
+	public boolean addEmail(@Matches (pattern = "[A-Za-z0-9._%-+]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}") @Trimmed final String email) {
 		boolean ret = false;
 		if (email != null) {
 			Set<String> addresses = getEmailAddresses();

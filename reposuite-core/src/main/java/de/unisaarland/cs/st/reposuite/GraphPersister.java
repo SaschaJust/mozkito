@@ -11,32 +11,24 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
- * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous
- * node and dumps the data to the database.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
+ *
  */
-public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
+public class GraphPersister extends RepoSuiteSinkThread<RCSTransaction> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
 	/**
-	 * @see RepoSuiteSinkThread
 	 * @param threadGroup
+	 * @param name
 	 * @param settings
-	 * @param persistenceUtil
 	 */
-	public RepositoryPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
+	public GraphPersister(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
 	@Override
 	public void run() {
 		if (!checkConnections()) {
@@ -66,7 +58,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 					this.persistenceUtil.beginTransaction();
 				}
 				
-				this.persistenceUtil.save(currentTransaction);
+				this.persistenceUtil.update(currentTransaction);
 			}
 			this.persistenceUtil.commitTransaction();
 			
@@ -82,4 +74,5 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 			shutdown();
 		}
 	}
+	
 }

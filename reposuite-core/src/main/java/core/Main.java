@@ -5,6 +5,7 @@ package core;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.Graph;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -26,6 +27,11 @@ public class Main {
 			core.setName(core.getClass().getSimpleName());
 			core.start();
 			core.join();
+			Graph graph = new Graph();
+			graph.setName(graph.getClass().getSimpleName());
+			graph.start();
+			graph.join();
+			
 			if (Logger.logInfo()) {
 				Logger.info("Core.Main: All done. cerio!");
 			}
