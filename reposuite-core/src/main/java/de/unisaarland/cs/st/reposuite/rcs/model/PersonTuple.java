@@ -45,6 +45,39 @@ public class PersonTuple implements Annotated {
 		setNewValue(newValue);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof PersonTuple)) {
+			return false;
+		}
+		PersonTuple other = (PersonTuple) obj;
+		if (this.newValue == null) {
+			if (other.newValue != null) {
+				return false;
+			}
+		} else if (!this.newValue.equals(other.newValue)) {
+			return false;
+		}
+		if (this.oldValue == null) {
+			if (other.oldValue != null) {
+				return false;
+			}
+		} else if (!this.oldValue.equals(other.oldValue)) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * @return the newValue
 	 */
@@ -59,6 +92,23 @@ public class PersonTuple implements Annotated {
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getOldValue() {
 		return this.oldValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.newValue == null)
+		                                                  ? 0
+		                                                  : this.newValue.hashCode());
+		result = prime * result + ((this.oldValue == null)
+		                                                  ? 0
+		                                                  : this.oldValue.hashCode());
+		return result;
 	}
 	
 	/**
@@ -97,6 +147,21 @@ public class PersonTuple implements Annotated {
 	                        final Person oldValue) {
 		this.oldValue = new PersonContainer();
 		getOldValue().add(key, oldValue);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PersonTuple [old=");
+		builder.append(this.oldValue);
+		builder.append(", new=");
+		builder.append(this.newValue);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

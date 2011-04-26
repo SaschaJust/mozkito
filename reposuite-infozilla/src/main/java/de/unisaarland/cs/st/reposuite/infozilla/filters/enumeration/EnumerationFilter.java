@@ -2,14 +2,17 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.enumeration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.Itemization;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;
+import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaSettings;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
+import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
-public class EnumerationFilter implements InfozillaFilter {
+public class EnumerationFilter extends InfozillaFilter {
 	
 	private FilterTextRemover textRemover;
 	private String            processedText = "";
@@ -103,7 +106,7 @@ public class EnumerationFilter implements InfozillaFilter {
 		// RegEx for Enumerations Start
 		// like A A. A) A.) a a. a) a.) (A) (a) etc.
 		final String regex_EnumStart = "^\\(?([a-zA-Z])(\\.|\\.\\)|\\))[a-zA-Z \t].*";
-		final Pattern pattern_EnumStart = Pattern.compile(regex_EnumStart);
+		Pattern.compile(regex_EnumStart);
 		
 		// Split the input into lines
 		String[] lines = s.split("[\n\r]");
@@ -131,8 +134,11 @@ public class EnumerationFilter implements InfozillaFilter {
 				
 				// Store the Symbol we found this time
 				String foundEnumSymbol = "";
-				for (MatchResult match : RegExHelper.findMatches(pattern_EnumStart, line)) {
-					foundEnumSymbol = match.group(1);
+				Regex regex = new Regex(regex_EnumStart);
+				List<List<RegexGroup>> findAll = regex.findAll(line);
+				
+				for (List<RegexGroup> list : findAll) {
+					foundEnumSymbol = list.get(1).getMatch();
 				}
 				
 				// Check whether the Symbol is an increase over the previous
@@ -291,7 +297,7 @@ public class EnumerationFilter implements InfozillaFilter {
 		// RegEx for Enumerations Start
 		// like 1 1. 1) 1.) (1) 1-
 		final String regex_EnumStart = "^\\(?([0-9]+)(\\.|\\.\\)|\\)|\\-)[a-zA-Z \t].*";
-		final Pattern pattern_EnumStart = Pattern.compile(regex_EnumStart);
+		Pattern.compile(regex_EnumStart);
 		
 		// Split the input into lines
 		String[] lines = s.split("[\n\r]");
@@ -320,9 +326,11 @@ public class EnumerationFilter implements InfozillaFilter {
 				
 				// Store the Symbol we found this time
 				int foundEnumSymbol = -1;
-				for (MatchResult match : RegExHelper.findMatches(pattern_EnumStart, line)) {
+				Regex regex = new Regex(regex_EnumStart);
+				List<List<RegexGroup>> list = regex.findAll(line);
+				for (List<RegexGroup> matches : list) {
 					try {
-						foundEnumSymbol = Integer.valueOf(match.group(1));
+						foundEnumSymbol = Integer.valueOf(matches.get(1).getMatch());
 					} catch (NumberFormatException e) {
 						foundEnumSymbol = Integer.MAX_VALUE;
 					}
@@ -373,6 +381,7 @@ public class EnumerationFilter implements InfozillaFilter {
 		return foundEnumerations;
 	}
 	
+	@Override
 	public String getOutputText() {
 		return getProcessedText();
 	}
@@ -392,6 +401,21 @@ public class EnumerationFilter implements InfozillaFilter {
 		return this.processedText;
 	}
 	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void register(final InfozillaSettings settings,
+	                     final InfozillaArguments infozillaArguments,
+	                     final boolean isRequired) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public List<Itemization> runFilter(final String inputText) {
 		return getEnumerationsAndItemizations(inputText);
 	}

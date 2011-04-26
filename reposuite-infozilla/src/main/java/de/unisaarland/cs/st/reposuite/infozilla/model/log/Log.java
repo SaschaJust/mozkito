@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+import de.unisaarland.cs.st.reposuite.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 
-public class Log implements Attachable {
+public class Log implements Attachable, Inlineable {
 	
 	DateTime            start;
 	
@@ -28,6 +29,12 @@ public class Log implements Attachable {
 		return this.end;
 	}
 	
+	@Override
+	public int getEndPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	/**
 	 * @return the entities
 	 */
@@ -40,6 +47,12 @@ public class Log implements Attachable {
 	 */
 	public DateTime getStart() {
 		return this.start;
+	}
+	
+	@Override
+	public int getStartPosition() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	/**

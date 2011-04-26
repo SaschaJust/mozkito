@@ -4,13 +4,14 @@
 package de.unisaarland.cs.st.reposuite.infozilla.model.patch;
 
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
+import de.unisaarland.cs.st.reposuite.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public abstract class Patch implements Attachable {
+public abstract class Patch implements Attachable, Inlineable {
 	
 	@Override
 	public Attachment getAttachment() {

@@ -1,7 +1,21 @@
 package de.unisaarland.cs.st.reposuite.infozilla.model.itemization;
 
-public class ExpectedBehavior {
+import de.unisaarland.cs.st.reposuite.infozilla.model.Inlineable;
+
+public class ExpectedBehavior implements Inlineable {
 	
 	String text;
+	
+	@Override
+	public int getEndPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public int getStartPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

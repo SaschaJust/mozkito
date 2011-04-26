@@ -11,15 +11,16 @@ import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -45,6 +46,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Severity;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
@@ -63,35 +65,50 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public class SourceforgeTracker extends Tracker {
 	
-	private static Regex              submittedRegex = new Regex(
-	                                                             "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
+	private static String             submittedPattern   = "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)";
 	
-	protected static Regex            groupIdRegex   = new Regex("group_id=({group_id}\\d+)");
-	protected static Regex            atIdRegex      = new Regex("atid=({atid}\\d+)");
-	protected static Regex            offsetRegex    = new Regex("offset=({offset}\\d+)");
-	protected static Regex            limitRegex     = new Regex("limit=({limit}\\d+)");
+	protected static String           groupIdPattern     = "group_id=({group_id}\\d+)";
+	protected static String           atIdPattern        = "atid=({atid}\\d+)";
+	protected static String           fileIdPattern      = "file_id=({fileid}\\d+)";
+	protected static String           offsetPattern      = "offset=({offset}\\d+)";
+	protected static String           limitPattern       = "limit=({limit}\\d+)";
+	protected static String           htmlCommentPattern = "(?#special condition to check wether we got a new line after or before the match to remove one of them)(?(?=<!--.*?-->$\\s)(?#used if condition was true)<!--.*?-->\\s|(?#used if condition was false)\\s?<!--.*?-->)";
 	
-	private static Map<String, Field> fieldMap       = new HashMap<String, Field>() {
-		                                                 
-		                                                 private static final long serialVersionUID = 1L;
-		                                                 
-		                                                 {
-			                                                 try {
-				                                                 put("close_date",
-				                                                     Report.class.getDeclaredField("resolutionTimestamp"));
-				                                                 put("resolution_id",
-				                                                     Report.class.getDeclaredField("resolution"));
-				                                                 put("status_id",
-				                                                     Report.class.getDeclaredField("status"));
-			                                                 } catch (Exception e) {
-				                                                 if (Logger.logError()) {
-					                                                 Logger.error("No such field in "
-					                                                                      + Report.class.getSimpleName()
-					                                                                      + ": " + e.getMessage(), e);
-				                                                 }
-			                                                 }
-		                                                 }
-	                                                 };
+	private static Map<String, Field> fieldMap           = new HashMap<String, Field>() {
+		                                                     
+		                                                     private static final long serialVersionUID = 1L;
+		                                                     
+		                                                     {
+			                                                     try {
+				                                                     put("resolution_id",
+				                                                         Report.class.getDeclaredField("resolution"));
+				                                                     put("status_id",
+				                                                         Report.class.getDeclaredField("status"));
+				                                                     put("priority",
+				                                                         Report.class.getDeclaredField("priority"));
+				                                                     put("close_date",
+				                                                         Report.class.getDeclaredField("resolutionTimestamp"));
+				                                                     put("category_id",
+				                                                         Report.class.getDeclaredField("category"));
+				                                                     put("artifact_group_id",
+				                                                         Report.class.getDeclaredField("component"));
+				                                                     // FIXME
+				                                                     // what a
+				                                                     // field to
+				                                                     // set here
+				                                                     // put("assigned_to",
+				                                                     // Report.class.getDeclaredField("product"));
+				                                                     put("summary",
+				                                                         Report.class.getDeclaredField("subject"));
+			                                                     } catch (Exception e) {
+				                                                     if (Logger.logError()) {
+					                                                     Logger.error("No such field in "
+					                                                             + Report.class.getSimpleName() + ": "
+					                                                             + e.getMessage(), e);
+				                                                     }
+			                                                     }
+		                                                     }
+	                                                     };
 	
 	private static Priority buildPriority(final String value) {
 		// 1..9;
@@ -187,7 +204,21 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
-	private final Regex subjectRegex = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
+	private static Element getDeepestChild(final Element e) {
+		@SuppressWarnings ("rawtypes")
+		List children = e.getChildren();
+		if (children.size() > 1) {
+			return null;
+		} else if (children.size() < 1) {
+			return e;
+		} else {
+			return getDeepestChild((Element) children.get(0));
+		}
+	}
+	
+	private HistoryElement lastHistoryElement = null;
+	
+	private final Regex    subjectRegex       = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
 	
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
@@ -231,6 +262,7 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	protected Set<Long> getIdsFromHTTPUri(final URI uri) throws SAXException, IOException {
+		Regex groupIdRegex = new Regex(groupIdPattern);
 		groupIdRegex.find(uri.toString());
 		String groupId = groupIdRegex.getGroup("group_id");
 		if (groupId == null) {
@@ -238,6 +270,7 @@ public class SourceforgeTracker extends Tracker {
 				Logger.error("Could not extract group_id from uri: " + uri.toString());
 			}
 		}
+		Regex atIdRegex = new Regex(atIdPattern);
 		atIdRegex.find(uri.toString());
 		String atId = atIdRegex.getGroup("atid");
 		if (atId == null) {
@@ -248,6 +281,7 @@ public class SourceforgeTracker extends Tracker {
 		
 		String baseUriString = uri.toString();
 		
+		Regex limitRegex = new Regex(limitPattern);
 		limitRegex.find(uri.toString());
 		String limit = limitRegex.getGroup("limit");
 		if (limit == null) {
@@ -256,6 +290,7 @@ public class SourceforgeTracker extends Tracker {
 			baseUriString = limitRegex.replaceAll(uri.toString(), "limit=100");
 		}
 		
+		Regex offsetRegex = new Regex(offsetPattern);
 		offsetRegex.find(uri.toString());
 		String offsetString = offsetRegex.getGroup("offset");
 		if (offsetString != null) {
@@ -320,12 +355,12 @@ public class SourceforgeTracker extends Tracker {
 			
 		}
 		return ids;
-	}
+	};
 	
 	public void getIdsFromURI(final URI uri) {
 		if (uri.getScheme().equals("file")) {
 			// FIXME this will fail on ?+*
-			Regex regex = new Regex(".*" + this.pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
+			Regex regex = new Regex(".*" + pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
 			File baseDir = new File(uri.getPath());
 			
 			if (baseDir.exists() && baseDir.isDirectory() && baseDir.canExecute() && baseDir.canRead()) {
@@ -365,7 +400,7 @@ public class SourceforgeTracker extends Tracker {
 		} else {
 			
 		}
-	};
+	}
 	
 	@SuppressWarnings ("unchecked")
 	private void handleDivElement(final Report bugReport,
@@ -385,6 +420,7 @@ public class SourceforgeTracker extends Tracker {
 			} else if (fieldName.equalsIgnoreCase("Details")) {
 				bugReport.setDescription(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Submitted")) {
+				Regex submittedRegex = new Regex(submittedPattern);
 				List<RegexGroup> find = submittedRegex.find(fieldValue);
 				bugReport.setSubmitter(new Person(find.get(2).getMatch().trim(), find.get(1).getMatch().trim(), null));
 				bugReport.setCreationTimestamp(DateTimeUtils.parseDate(find.get(3).getMatch().trim()));
@@ -398,8 +434,6 @@ public class SourceforgeTracker extends Tracker {
 				}
 			} else if (fieldName.equalsIgnoreCase("Group")) {
 				bugReport.setComponent(fieldValue);
-			} else if (fieldName.equalsIgnoreCase("Details")) {
-				bugReport.setDescription(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Priority")) {
 				bugReport.setPriority(buildPriority(fieldValue));
 			} else {
@@ -413,7 +447,7 @@ public class SourceforgeTracker extends Tracker {
 			if (Logger.logTrace()) {
 				Logger.trace("Found field: subject, value: " + n.getValue());
 			}
-			List<RegexGroup> find = this.subjectRegex.find(n.getValue());
+			List<RegexGroup> find = subjectRegex.find(n.getValue());
 			bugReport.setSubject(find.get(1).getMatch());
 			// bugReport.setId(Long.parseLong(find.get(2).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
@@ -490,6 +524,59 @@ public class SourceforgeTracker extends Tracker {
 					}
 				}
 			}
+		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("filebar")) {
+			int i = e.getParentElement().indexOf(e);
+			for (; i < e.getParentElement().getContent().size(); ++i) {
+				if (e.getParentElement().getContent().get(i) instanceof Element) {
+					if (((Element) e.getParentElement().getContent().get(i)).getName().equals("div")) {
+						break;
+					}
+				}
+			}
+			Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
+			Element body = tabular.getChild("tbody", tabular.getNamespace());
+			if (body != null) {
+				List<Element> tableRows = body.getChildren("tr", body.getNamespace());
+				for (Element tableRow : tableRows) {
+					
+					Element filenameElem = getDeepestChild((Element) tableRow.getChildren().get(0));
+					Element descriptionElem = getDeepestChild((Element) tableRow.getChildren().get(1));
+					Element aElem = getDeepestChild((Element) tableRow.getChildren().get(2));
+					if (aElem == null) {
+						continue;
+					}
+					String href = aElem.getAttributeValue("href");
+					List<RegexGroup> find = new Regex(fileIdPattern).find(href);
+					if ((find == null) || (find.size() < 2)) {
+						continue;
+					}
+					String attachId = find.get(1).getMatch();
+					AttachmentEntry attachment = new AttachmentEntry(attachId);
+					
+					String description = descriptionElem.getText();
+					Regex htmlCommentRegex = new Regex(htmlCommentPattern, Pattern.MULTILINE | Pattern.DOTALL);
+					description = htmlCommentRegex.removeAll(description).trim();
+					attachment.setDescription(description.replaceAll("\"", ""));
+					
+					String filename = filenameElem.getText();
+					filename = htmlCommentRegex.removeAll(filename).trim();
+					attachment.setFilename(filename.replaceAll("\"", ""));
+					
+					if (href.startsWith("/")) {
+						href = "http://sourceforge.net" + href;
+					} else {
+						href = "http://sourceforge.net/" + href;
+					}
+					try {
+						attachment.setLink(new URL(href));
+					} catch (MalformedURLException e1) {
+						if (Logger.logDebug()) {
+							Logger.debug("Could not create link URL when parsing attachemnt.", e);
+						}
+					}
+					bugReport.addAttachmentEntry(attachment);
+				}
+			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("changebar")) {
 			int i = e.getParentElement().indexOf(e);
 			for (; i < e.getParentElement().getContent().size(); ++i) {
@@ -507,20 +594,80 @@ public class SourceforgeTracker extends Tracker {
 					Element fieldElement = ((Element) tableRow.getChildren().get(0));
 					Element oldValueElement = ((Element) tableRow.getChildren().get(1));
 					Element datetimeElement = ((Element) tableRow.getChildren().get(2));
-					Element authorElement = (Element) ((Element) tableRow.getChildren().get(3)).getContent().get(0);
+					Element authorElement = ((Element) tableRow.getChildren().get(3)).getChild("a",
+					                                                                           tableRow.getNamespace());
+					if (authorElement == null) {
+						authorElement = getDeepestChild((Element) ((Element) tableRow.getChildren().get(3)).getContent()
+						                                                                                   .get(0));
+					}
+					
+					String authorFullname = authorElement != null
+					                                             ? authorElement.getAttributeValue("title")
+					                                             : null;
+					if (authorFullname != null) {
+						authorFullname = authorFullname.trim();
+					}
+					String authorUsername = authorElement != null
+					                                             ? authorElement.getValue()
+					                                             : null;
+					if (authorUsername != null) {
+						authorUsername = authorUsername.trim();
+					}
+					
+					Person author = new Person(authorUsername, authorFullname, null);
 					
 					Field field = null;
 					field = fieldMap.get(fieldElement.getValue().toLowerCase().trim());
 					if (field == null) {
-						
-						if (Logger.logWarn()) {
-							Logger.warn("Field not found: " + fieldElement.getValue().toLowerCase().trim());
+						if (fieldElement.getValue().toLowerCase().trim().equals("file added")) {
+							// search for attachment and set fields
+							String[] splitValues = oldValueElement.getValue().trim().split(":");
+							if (splitValues.length != 2) {
+								if (Logger.logWarn()) {
+									Logger.warn("Could not identify attachment file. Failed to extract file id.");
+								}
+							}
+							String attachId = splitValues[0].trim();
+							for (AttachmentEntry attachment : bugReport.getAttachmentEntries()) {
+								if (attachment.getId().equals(attachId)) {
+									attachment.setTimestamp(DateTimeUtils.parseDate(datetimeElement.getValue()));
+									attachment.setAuthor(author);
+									break;
+								}
+							}
+						} else {
+							if (Logger.logWarn()) {
+								Logger.warn("Field not found: " + fieldElement.getValue().toLowerCase().trim());
+							}
 						}
-						return;
+						continue;
 					}
-					History history = bugReport.getHistory().get(field.getName());
 					
+					DateTime dateTime = DateTimeUtils.parseDate(datetimeElement.getValue());
+					
+					if (lastHistoryElement == null) {
+						lastHistoryElement = new HistoryElement(bugReport.getId(), author,
+						                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
+					} else {
+						if (!lastHistoryElement.getTimestamp().isEqual(dateTime)) {
+							if (!bugReport.addHistoryElement(lastHistoryElement)) {
+								if (Logger.logWarn()) {
+									Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
+								}
+							}
+							lastHistoryElement = new HistoryElement(bugReport.getId(), author,
+							                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
+						}
+					}
+					
+					// FIXME this method call fails
+					// Report historicReport = bugReport.timewarp(dateTime);
+					// Object newValue =
+					// historicReport.getField(field.getName());
+					
+					History history = bugReport.getHistory().get(field.getName());
 					Object newValue = null;
+					
 					if (history.isEmpty()) {
 						// take actual value
 						Method method = null;
@@ -552,47 +699,36 @@ public class SourceforgeTracker extends Tracker {
 							}
 						}
 					} else {
-						// take this
-						newValue = history.last().get(field.getName());
+						// FIXEME the last is wrong since the history gets
+						// parsed from newer to older. Anyway the last is
+						// the first state
+						newValue = history.first().get(field.getName()).getFirst();
 					}
 					
-					Object oldValue = null;
+					Object oldValue = oldValueElement.getValue().trim();
 					
 					if (field.getName().equalsIgnoreCase("PRIORITY")) {
-						oldValue = buildPriority(oldValueElement.getValue());
+						
+						oldValue = buildPriority(oldValue.toString());
 					} else if (field.getName().equalsIgnoreCase("RESOLUTION")) {
-						oldValue = buildResolution(oldValueElement.getValue());
+						oldValue = buildResolution(oldValue.toString());
 					} else if (field.getName().equalsIgnoreCase("SEVERITY")) {
-						oldValue = buildSeverity(oldValueElement.getValue());
+						oldValue = buildSeverity(oldValue.toString());
 					} else if (field.getName().equalsIgnoreCase("STATUS")) {
-						oldValue = buildStatus(oldValueElement.getValue());
+						oldValue = buildStatus(oldValue.toString());
 					} else if (field.getName().equalsIgnoreCase("TYPE")) {
-						oldValue = buildType(oldValueElement.getValue());
-					} else {
-						oldValue = oldValueElement.getValue();
+						oldValue = buildType(oldValue.toString());
+					} else if (field.getName().equalsIgnoreCase("RESOLUTIONTIMESTAMP")) {
+						if (oldValue.toString().trim().equals("-")) {
+							continue;
+						}
+						oldValue = DateTimeUtils.parseDate(oldValue.toString());
 					}
 					
-					String authorFullname = authorElement != null
-					                                             ? authorElement.getAttributeValue("title")
-					                                             : null;
-					String authorUsername = authorElement != null
-					                                             ? authorElement.getValue()
-					                                             : null;
-					
-					ArrayList<Object> list = new ArrayList<Object>(2);
-					list.add(oldValue);
-					list.add(newValue);
-					new HashMap<String, Tuple<?, ?>>();
-					
-					if (authorFullname != null) {
-						authorFullname = authorFullname.trim();
-					}
-					if (authorUsername != null) {
-						authorUsername = authorUsername.trim();
-					}
-					bugReport.addHistoryElement(new HistoryElement(bugReport.getId(), new Person(authorUsername,
-					                                                                             authorFullname, null),
-					                                               DateTimeUtils.parseDate(datetimeElement.getValue())));
+					Tuple<Object, Object> tuple = new Tuple<Object, Object>(oldValue, newValue);
+					HashMap<String, Tuple<Object, Object>> valueMap = new HashMap<String, Tuple<Object, Object>>();
+					valueMap.put(field.getName(), tuple);
+					lastHistoryElement.addChange(valueMap);
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
@@ -627,13 +763,13 @@ public class SourceforgeTracker extends Tracker {
 		if (((e.getAttributeValue("class") != null) && (e.getAttributeValue("class").startsWith("yui-u") || e.getAttributeValue("class")
 		                                                                                                     .startsWith("yui-g")))
 		        || ((e.getAttributeValue("id") != null) && (e.getAttributeValue("id").equals("comment_table_container")
-		                || e.getAttributeValue("id").equals("commentbar") || e.getAttributeValue("id")
-		                                                                      .equals("changebar")))) {
+		                || e.getAttributeValue("id").equals("commentbar")
+		                || e.getAttributeValue("id").equals("filebar") || e.getAttributeValue("id").equals("changebar")))) {
 			
 			// if ((e.getAttribute("class") != null) &&
 			// (e.getAttributeValue("class").startsWith("yui-g"))) {
 			// details and header
-			this.handleDivElement(bugReport, e, n);
+			handleDivElement(bugReport, e, n);
 		} else {
 			List<Element> el = e.getChildren();
 			for (int i = 0; i < el.size(); i++) {
@@ -657,11 +793,14 @@ public class SourceforgeTracker extends Tracker {
 		bugReport.setLastFetch(xmlReport.getFetchTime());
 		bugReport.setHash(xmlReport.getMd5());
 		hangle(bugReport, element, null);
-		// SortedSet<Comment> comments = bugReport.getComments();
-		// int i = comments.size();
-		// for (Comment comment : comments) {
-		// comment.setId(i--);
-		// }
+		
+		// check if there is a non-added hs
+		if (!bugReport.addHistoryElement(lastHistoryElement)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
+			}
+		}
+		
 		bugReport.setType(Type.BUG);
 		
 		return bugReport;
@@ -693,7 +832,6 @@ public class SourceforgeTracker extends Tracker {
 			}
 		}
 		
-		this.initialized = true;
+		initialized = true;
 	}
-	
 }

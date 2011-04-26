@@ -23,6 +23,7 @@ import net.sf.jmimemagic.MagicParseException;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
@@ -101,8 +102,10 @@ public class Attachment implements Annotated {
 			metadata.set(Metadata.RESOURCE_NAME_KEY, "filename");
 			ByteInputStream inputStream = new ByteInputStream(data, 0);
 			Parser parser = new AutoDetectParser();
+			ParseContext context = new ParseContext();
+			context.set(Parser.class, parser);
 			
-			parser.parse(inputStream, contenthandler, metadata);
+			parser.parse(inputStream, contenthandler, metadata, context);
 			
 			return metadata.get(Metadata.CONTENT_ENCODING);
 		} catch (IOException e) {
