@@ -238,8 +238,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	/**
 	 * Instantiates a new java element location.
 	 */
-	@SuppressWarnings ("unused")
-	private JavaElementLocation() {
+	protected JavaElementLocation() {
 	}
 	
 	/**
