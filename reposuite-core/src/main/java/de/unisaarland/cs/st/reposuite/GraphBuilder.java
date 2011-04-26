@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.reposuite;
 import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -24,7 +23,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
+public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 	
 	private final Repository                  repository;
 	private final PersistenceUtil             persistenceUtil;
@@ -32,9 +31,9 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 	private final Map<String, String>         latest              = new HashMap<String, String>();
 	private final Map<String, RCSTransaction> cached              = new HashMap<String, RCSTransaction>();
 	
-	public RepositoryGraphBuilder(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
+	public GraphBuilder(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
 	        final Repository repository, final PersistenceUtil persistenceUtil) {
-		super(threadGroup, RepositoryGraphBuilder.class.getSimpleName(), settings);
+		super(threadGroup, GraphBuilder.class.getSimpleName(), settings);
 		this.repository = repository;
 		this.persistenceUtil = persistenceUtil;
 	}
@@ -63,7 +62,6 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 		}
 		
 		RCSTransaction rcsTransaction = null;
-		CountDownLatch latch = new CountDownLatch(1);
 		
 		try {
 			while (!isShutdown() && ((rcsTransaction = read()) != null)) {
@@ -118,10 +116,6 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 					}
 				}
 				
-				// we have to store the current transaction before (!) we update
-				// the parents' children
-				latch = write(rcsTransaction);
-				
 				// detect branch merge
 				if (revdep.getParents().size() > 1) {
 					for (String parent : revdep.getParents()) {
@@ -131,10 +125,8 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 							// closed branch
 							// remove parent transaction from cache
 							
-							// wait for children to be persisted
-							latch.await();
-							
 							parentTransaction.addChild(rcsTransaction);
+							
 							this.persistenceUtil.update(this.cached.remove(parentTransaction.getId()));
 							// remove branch from cache
 							this.latest.remove(parentTransaction.getBranch().getName());
@@ -147,12 +139,10 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				// ++++++ Update caches ++++++
 				// remove old "latest transaction" from cache
 				if (this.cached.containsKey(this.latest.get(revdep.getCommitBranch().getName()))) {
-					latch.await();
 					this.cached.get(this.latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
+					
 					this.persistenceUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
 				}
-				
-				latch.await();
 				
 				// add transaction to cache
 				this.cached.put(rcsTransaction.getId(), rcsTransaction);
@@ -162,9 +152,6 @@ public class RepositoryGraphBuilder extends RepoSuiteFilterThread<RCSTransaction
 				// ------ Update caches ------
 				
 			}
-			
-			// wait for children to be persisted
-			latch.await();
 			
 			// persist all remaining cached transactions
 			this.persistenceUtil.commitTransaction();
