@@ -251,7 +251,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	private void setChangedElementLocation(final JavaElementLocation changedElement) {
+	protected void setChangedElementLocation(final JavaElementLocation changedElement) {
 		changedElementLocation = changedElement;
 	}
 	
@@ -261,7 +261,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changeType
 	 *            the new change type
 	 */
-	private void setChangeType(final ChangeType changeType) {
+	protected void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
@@ -272,7 +272,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the new id
 	 */
 	@SuppressWarnings ("unused")
-	private void setId(final long id) {
+	protected void setId(final long id) {
 		this.id = id;
 	}
 	
@@ -282,7 +282,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	private void setRevision(final RCSRevision revision) {
+	protected void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}
 	

@@ -613,7 +613,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param endLine
 	 *            the new end line
 	 */
-	private void setEndLine(final int endLine) {
+	protected void setEndLine(final int endLine) {
 		this.endLine = endLine;
 	}
 	
@@ -623,7 +623,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param filePath
 	 *            the new file path
 	 */
-	private void setFilePath(final String filePath) {
+	protected void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
 	
@@ -633,7 +633,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param id
 	 *            the new id
 	 */
-	private void setId(final long id) {
+	protected void setId(final long id) {
 		this.id = id;
 	}
 	
@@ -643,7 +643,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param position
 	 *            the new position
 	 */
-	private void setPosition(final int position) {
+	protected void setPosition(final int position) {
 		this.position = position;
 	}
 	
@@ -653,7 +653,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @param startLine
 	 *            the new start line
 	 */
-	private void setStartLine(final int startLine) {
+	protected void setStartLine(final int startLine) {
 		this.startLine = startLine;
 	}
 	
