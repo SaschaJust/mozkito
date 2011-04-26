@@ -8,7 +8,7 @@ repository.type=GIT
 tracker.fetchURI=http://jira.codehaus.org/browse/
 tracker.type=JIRA
 tracker.stop=652
-tracker.pattern="XSTR-<BUGID>/XSTR-<BUGID>.xml"
+tracker.pattern=XSTR-<BUGID>/XSTR-<BUGID>.xml
 headless
 mapping.config.regexFile=${REPOSUITE_ROOT}/settings/reposuite_xstream_may2011.regex
 mapping.score.AuthorEquality = 1
