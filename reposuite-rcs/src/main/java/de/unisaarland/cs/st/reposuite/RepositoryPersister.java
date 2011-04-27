@@ -59,6 +59,7 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentTransaction);
+					System.err.println(currentTransaction.toTerm());
 				}
 				
 				if (++i % 100 == 0) {

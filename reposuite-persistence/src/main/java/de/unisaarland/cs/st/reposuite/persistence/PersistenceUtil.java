@@ -32,11 +32,15 @@ public interface PersistenceUtil {
 	
 	public void executeQuery(final String query);
 	
+	public void exmerge(final Annotated object);
+	
 	public void flush();
 	
 	public String getToolInformation();
 	
 	public String getType();
+	
+	public void globalShutdown();
 	
 	public <T> List<T> load(final Criteria<T> criteria);
 	

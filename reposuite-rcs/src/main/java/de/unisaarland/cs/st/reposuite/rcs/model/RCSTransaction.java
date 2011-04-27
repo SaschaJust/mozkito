@@ -3,9 +3,12 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,12 +38,19 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
+import org.dom4j.Document;
 import org.joda.time.DateTime;
+import org.w3c.dom.html.HTMLDocument;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.output.Console;
+import de.unisaarland.cs.st.reposuite.output.Console.Color;
+import de.unisaarland.cs.st.reposuite.output.Displayable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -52,7 +62,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 @Entity
 @Table (name = "rcstransaction")
-public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
+public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Displayable {
 	
 	/**
 	 * 
@@ -321,7 +331,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the branch
 	 */
-	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+	@ManyToOne (fetch = FetchType.LAZY,
+	            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	            optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
 		return this.branch;
@@ -422,7 +434,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public RCSTransaction getParent(final RCSBranch branch) {
-		if (branch.getBegin().equals(this)) {
+		if (branch == null) {
+			return null;
+		}
+		
+		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
 			return getParents().isEmpty()
 			                             ? null
 			                             : getParents().iterator().next();
@@ -611,6 +627,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		this.timestamp = timestamp;
 	}
 	
+	@Override
+	public HTMLDocument toHTML() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void toHTML(final OutputStream stream) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -661,6 +689,262 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		}
 		string.append("]");
 		return string.toString();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.output.Displayable#toText()
+	 */
+	@Override
+	public String toTerm() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(",-----------------------------------------------------------------------------------.")
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Id:", getId())).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "OriginalId:", getOriginalId()))
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Timestamp:",
+		                             getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		
+		int i = 0;
+		String value;
+		for (Iterator<String> iterator = getAuthor().getUsernames().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %-12s %-68s |", i++ == 0
+			                                                        ? "Username:"
+			                                                        : "", value)).append(FileUtils.lineSeparator);
+		}
+		
+		i = 0;
+		for (Iterator<String> iterator = getAuthor().getFullnames().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %-12s %-68s |", i++ == 0
+			                                                        ? "Fullname:"
+			                                                        : "", value)).append(FileUtils.lineSeparator);
+		}
+		
+		i = 0;
+		for (Iterator<String> iterator = getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %-12s %-68s |", i++ == 0
+			                                                        ? "Email:"
+			                                                        : "", value)).append(FileUtils.lineSeparator);
+		}
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		
+		builder.append(String.format("| %-12s %-22s %-12s %-32s |", "Branch:", getBranch().getName(), "Tags:",
+		                             JavaUtils.collectionToString(getTags()))).append(FileUtils.lineSeparator);;
+		i = 0;
+		while (i < Math.max(getParents().size(), getChildren().size())) {
+			builder.append(String.format("| %-12s %-22s %-12s %-32s |", i == 0
+			                                                                  ? "Parents:"
+			                                                                  : "",
+			                             i < getParents().size()
+			                                                    ? getParents().toArray()[i]
+			                                                    : "", i == 0
+			                                                                ? "Children:"
+			                                                                : "",
+			                             i < getChildren().size()
+			                                                     ? getChildren().toArray()[i]
+			                                                     : "")).append(FileUtils.lineSeparator);
+			++i;
+		}
+		
+		if (i == 0) {
+			builder.append(String.format("| %-12s %-22s %-12s %-32s |", "Parents:", "", "Children:", ""))
+			       .append(FileUtils.lineSeparator);
+		}
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Message:", "")).append(FileUtils.lineSeparator);
+		String message = getMessage().trim();
+		int lines = message.length() / 82;
+		
+		for (i = 0; i <= lines; ++i) {
+			builder.append(String.format("| %-81s |",
+			                             message.length() <= (i + 1) * 81
+			                                                             ? message.substring(i * 81, message.length())
+			                                                             : message.substring(i * 81, (i + 1) * 81)))
+			       .append(FileUtils.lineSeparator);
+		}
+		
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Changes:", "")).append(FileUtils.lineSeparator);
+		
+		for (RCSRevision revision : getRevisions()) {
+			String path = revision.getChangedFile().getPath(this);
+			if (path == null) {
+				path = revision.getChangedFile().getLatestPath();
+			}
+			
+			if (path != null) {
+				if (path.length() > 72) {
+					path = "..." + path.substring(path.length() - 69, path.length());
+				}
+				
+				Console.Color color = Color.NONE;
+				switch (revision.getChangeType()) {
+					case Added:
+						color = Console.Color.GREEN;
+						break;
+					case Deleted:
+						color = Color.RED;
+						break;
+					case Modified:
+						color = Color.YELLOW;
+						break;
+					case Renamed:
+						color = Color.YELLOW;
+						break;
+					default:
+						color = Color.NONE;
+				}
+				builder.append(String.format("| %s%-8s%s %-72s |", color.toString(), revision.getChangeType().name(),
+				                             Console.Color.NONE, path)).append(FileUtils.lineSeparator);
+			}
+			
+		}
+		
+		builder.append("`-----------------------------------------------------------------------------------'")
+		       .append(FileUtils.lineSeparator);
+		
+		return builder.toString();
+	}
+	
+	@Override
+	public void toTerm(final OutputStream stream) {
+		try {
+			stream.write(toTerm().getBytes());
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	@Override
+	public String toText() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(",-----------------------------------------------------------------------------------.")
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "Id:", Color.NONE, getId()))
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "OriginalId:", Color.NONE, getOriginalId()))
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, "Timestamp:", Color.NONE,
+		                             getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
+		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		
+		int i = 0;
+		String value;
+		for (Iterator<String> iterator = getAuthor().getUsernames().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			                                                                             ? "Username:"
+			                                                                             : "", Color.NONE, value))
+			       .append(FileUtils.lineSeparator);
+		}
+		
+		i = 0;
+		for (Iterator<String> iterator = getAuthor().getFullnames().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %%s-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			                                                                             ? "Fullname:"
+			                                                                             : "", Color.NONE, value))
+			       .append(FileUtils.lineSeparator);
+		}
+		
+		i = 0;
+		for (Iterator<String> iterator = getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
+			value = iterator.next();
+			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			                                                                             ? "Email:"
+			                                                                             : "", Color.NONE, value))
+			       .append(FileUtils.lineSeparator);
+		}
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		
+		builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, "Branch:", Color.NONE,
+		                             getBranch().getName(), Color.UNDERLINE, "Tags:", Color.NONE,
+		                             JavaUtils.collectionToString(getTags()))).append(FileUtils.lineSeparator);;
+		i = 0;
+		while (i < Math.max(getParents().size(), getChildren().size())) {
+			builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, i == 0
+			                                                                                           ? "Parents:"
+			                                                                                           : "",
+			                             Color.NONE, i < getParents().size()
+			                                                                ? getParents().toArray()[i]
+			                                                                : "", Color.UNDERLINE, i == 0
+			                                                                                             ? "Children:"
+			                                                                                             : "",
+			                             Color.NONE, i < getChildren().size()
+			                                                                 ? getChildren().toArray()[i]
+			                                                                 : "")).append(FileUtils.lineSeparator);
+			++i;
+		}
+		
+		if (i == 0) {
+			builder.append(String.format("| %-12s %-22s %-12s %-32s |", "Parents:", "", "Children:", ""))
+			       .append(FileUtils.lineSeparator);
+		}
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Message:", "")).append(FileUtils.lineSeparator);
+		String message = getMessage().trim();
+		int lines = message.length() / 82;
+		
+		for (i = 0; i <= lines; ++i) {
+			builder.append(String.format("| %-81s |",
+			                             message.length() <= (i + 1) * 81
+			                                                             ? message.substring(i * 81, message.length())
+			                                                             : message.substring(i * 81, (i + 1) * 81)))
+			       .append(FileUtils.lineSeparator);
+		}
+		
+		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "Changes:", "")).append(FileUtils.lineSeparator);
+		
+		for (RCSRevision revision : getRevisions()) {
+			String path = revision.getChangedFile().getPath(this);
+			if (path == null) {
+				path = revision.getChangedFile().getLatestPath();
+			}
+			
+			if (path != null) {
+				if (path.length() > 72) {
+					path = "..." + path.substring(path.length() - 69, path.length());
+				}
+				builder.append(String.format("| %-8s %-72s |", revision.getChangeType().name(), path))
+				       .append(FileUtils.lineSeparator);
+			}
+			
+		}
+		
+		builder.append("`-----------------------------------------------------------------------------------'")
+		       .append(FileUtils.lineSeparator);
+		builder.append(Console.Color.BLACK + "Hello World" + Console.Color.NONE).append(FileUtils.lineSeparator);
+		return builder.toString();
+	}
+	
+	@Override
+	public void toText(final OutputStream stream) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public Document toXML() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void toXML(final OutputStream stream) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
