@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**

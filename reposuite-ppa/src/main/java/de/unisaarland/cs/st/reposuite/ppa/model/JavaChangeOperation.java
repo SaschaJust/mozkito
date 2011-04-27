@@ -82,7 +82,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		try {
 			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
-			RCSTransaction transaction = persistenceUtil.fetchRCSTransaction(transaction_id);
+			RCSTransaction transaction = persistenceUtil.loadById(transaction_id, RCSTransaction.class);
 			if (!changedPath.startsWith("/")) {
 				changedPath = "/" + changedPath;
 			}
@@ -175,7 +175,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
-		return changedElementLocation;
+		return this.changedElementLocation;
 	}
 	
 	/**
@@ -195,7 +195,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return changeType;
+		return this.changeType;
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class JavaChangeOperation implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -216,7 +216,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
-		return revision;
+		return this.revision;
 	}
 	
 	/**
@@ -252,7 +252,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the new changed element
 	 */
 	private void setChangedElementLocation(final JavaElementLocation changedElement) {
-		changedElementLocation = changedElement;
+		this.changedElementLocation = changedElement;
 	}
 	
 	/**

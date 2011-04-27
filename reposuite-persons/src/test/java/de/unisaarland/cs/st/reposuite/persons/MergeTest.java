@@ -12,8 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -36,7 +36,7 @@ public class MergeTest {
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
 		properties.put("openjpa.ConnectionUserName", "miner");
 		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "core");
+		properties.put("openjpa.persistence-unit", "rcs");
 		
 		OpenJPAUtil.createSessionFactory(properties);
 	}

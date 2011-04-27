@@ -8,7 +8,7 @@ import java.util.ListIterator;
 
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;

@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -67,7 +67,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	 */
 	public PPAToolChain() {
 		super(new RepositorySettings());
-		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
+		this.threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
 		RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);

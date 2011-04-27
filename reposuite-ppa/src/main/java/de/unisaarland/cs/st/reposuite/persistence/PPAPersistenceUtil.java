@@ -33,7 +33,7 @@ public class PPAPersistenceUtil {
 	                                                           final String transactionId) {
 		List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
-		RCSTransaction transaction = persistenceUtil.fetchRCSTransaction(transactionId);
+		RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 		if (transaction != null) {
 			return getChangeOperation(persistenceUtil, transaction);
 		}

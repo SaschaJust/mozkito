@@ -13,8 +13,8 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.conditions.MapCondition;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -167,7 +167,6 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 							}
 							this.personManager.delete(collider);
 							this.remap.remove(collider);
-							collider.clearTransaction();
 							// this.persistenceUtil.delete(collider);
 						}
 						if (Logger.logDebug()) {
@@ -179,7 +178,6 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 							Logger.debug("Replacing person " + person + " by " + keeper + ".");
 						}
 						container.replace(person, keeper);
-						person.clearTransaction();
 						person = keeper;
 						
 						if (Logger.logDebug()) {

@@ -1,7 +1,7 @@
 package de.unisaarland.cs.st.reposuite.infozilla.model.attachment;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -28,8 +28,6 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
@@ -100,7 +98,7 @@ public class Attachment implements Annotated {
 			ContentHandler contenthandler = new BodyContentHandler();
 			Metadata metadata = new Metadata();
 			metadata.set(Metadata.RESOURCE_NAME_KEY, "filename");
-			ByteInputStream inputStream = new ByteInputStream(data, 0);
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(data, 0, data.length);
 			Parser parser = new AutoDetectParser();
 			ParseContext context = new ParseContext();
 			context.set(Parser.class, parser);
@@ -143,7 +141,7 @@ public class Attachment implements Annotated {
 	 */
 	public static Attachment fetch(final AttachmentEntry entry) throws FetchException {
 		try {
-			byte data[] = IOUtils.binaryfetch(entry.getLink().toURI());
+			byte data[] = IOUtils.binaryfetch(entry.toURI());
 			
 			Attachment attachment = new Attachment(entry, data);
 			
@@ -169,8 +167,6 @@ public class Attachment implements Annotated {
 			
 			attachment.setAttachable(createAttachable(attachment));
 		} catch (UnsupportedProtocolException e) {
-			throw new FetchException(e);
-		} catch (URISyntaxException e) {
 			throw new FetchException(e);
 		}
 		return null;

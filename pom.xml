@@ -46,7 +46,8 @@
 	</organization>
 	<modules>
 		<module>reposuite-utils</module>
-		<module>reposuite-core</module>
+		<module>reposuite-persistence</module>
+		<module>reposuite-rcs</module>
 		<module>reposuite-bugs</module>
 		<module>reposuite-persons</module>
 		<module>reposuite-mapping</module>

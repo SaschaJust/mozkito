@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 

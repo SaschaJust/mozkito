@@ -47,7 +47,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
@@ -117,7 +117,7 @@ public class GoogleTracker extends Tracker {
 			Long bugId = Long.valueOf(uri.toString());
 			IssuesQuery iQuery = new IssuesQuery(getUri().toURL());
 			iQuery.setId(bugId.intValue());
-			IssuesFeed resultFeed = service.query(iQuery, IssuesFeed.class);
+			IssuesFeed resultFeed = this.service.query(iQuery, IssuesFeed.class);
 			List<IssuesEntry> entries = resultFeed.getEntries();
 			
 			CollectionCondition.minSize(entries, 1, "There has to be at least one entry in the issue list.");
@@ -176,7 +176,7 @@ public class GoogleTracker extends Tracker {
 	 * @return the project name
 	 */
 	public String getProjectName() {
-		return projectName;
+		return this.projectName;
 	}
 	
 	/*
@@ -325,8 +325,8 @@ public class GoogleTracker extends Tracker {
 		
 		URL baseFeedUrl = null;
 		try {
-			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/" + report.getId()
-			        + "/comments/full?max-result=" + max_result);
+			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/"
+			        + report.getId() + "/comments/full?max-result=" + max_result);
 			
 		} catch (MalformedURLException e) {
 			if (Logger.logWarn()) {
@@ -571,15 +571,15 @@ public class GoogleTracker extends Tracker {
 		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
 		CompareCondition.equals(groups.get(1).getName(), "project", "The name of the first group has to be 'project'.");
 		
-		projectName = groups.get(1).getMatch();
+		this.projectName = groups.get(1).getMatch();
 		
 		try {
-			service = new ProjectHostingService("unisaarland-reposuite-0.1");
+			this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 			if ((username != null) && (password != null) && (!username.trim().equals(""))) {
-				service.setUserCredentials(username, password);
+				this.service.setUserCredentials(username, password);
 			}
 			
-			IssuesFeed resultFeed = service.getFeed(fetchURI.toURL(), IssuesFeed.class);
+			IssuesFeed resultFeed = this.service.getFeed(fetchURI.toURL(), IssuesFeed.class);
 			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 				IssuesEntry entry = resultFeed.getEntries().get(i);
 				long bugId = entry.getIssueId().getValue().longValue();
