@@ -12,11 +12,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-persistence</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-rcs</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
@@ -27,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>jdt-rcs</artifactId>
+			<artifactId>jdt-core</artifactId>
 			<version>3.6.0</version>
 		</dependency>
 		<dependency>
@@ -37,7 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>rcs-resources</artifactId>
+			<artifactId>core-resources</artifactId>
 			<version>3.6.0</version>
 		</dependency>
 		<dependency>
@@ -47,12 +42,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>rcs-jobs</artifactId>
+			<artifactId>core-jobs</artifactId>
 			<version>3.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>rcs-runtime</artifactId>
+			<artifactId>core-runtime</artifactId>
 			<version>3.6.0</version>
 		</dependency>
 		<dependency>
@@ -62,7 +57,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
-			<artifactId>rcs-contenttype</artifactId>
+			<artifactId>core-contenttype</artifactId>
 			<version>3.4.100</version>
 		</dependency>
 		<dependency>
