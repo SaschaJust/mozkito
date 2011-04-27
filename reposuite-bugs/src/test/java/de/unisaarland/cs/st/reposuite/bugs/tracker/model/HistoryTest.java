@@ -17,7 +17,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

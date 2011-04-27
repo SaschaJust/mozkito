@@ -82,7 +82,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		try {
 			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
-			RCSTransaction transaction = persistenceUtil.fetchRCSTransaction(transaction_id);
+			RCSTransaction transaction = persistenceUtil.loadById(transaction_id, RCSTransaction.class);
 			if (!changedPath.startsWith("/")) {
 				changedPath = "/" + changedPath;
 			}
@@ -175,7 +175,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
-		return changedElementLocation;
+		return this.changedElementLocation;
 	}
 	
 	/**
@@ -195,7 +195,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return changeType;
+		return this.changeType;
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class JavaChangeOperation implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -216,7 +216,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
-		return revision;
+		return this.revision;
 	}
 	
 	/**
@@ -251,8 +251,8 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	protected void setChangedElementLocation(final JavaElementLocation changedElement) {
-		changedElementLocation = changedElement;
+	private void setChangedElementLocation(final JavaElementLocation changedElement) {
+		this.changedElementLocation = changedElement;
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changeType
 	 *            the new change type
 	 */
-	protected void setChangeType(final ChangeType changeType) {
+	private void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
@@ -272,7 +272,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the new id
 	 */
 	@SuppressWarnings ("unused")
-	protected void setId(final long id) {
+	private void setId(final long id) {
 		this.id = id;
 	}
 	
@@ -282,7 +282,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	protected void setRevision(final RCSRevision revision) {
+	private void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}
 	

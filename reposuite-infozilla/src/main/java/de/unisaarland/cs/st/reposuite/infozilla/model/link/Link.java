@@ -8,7 +8,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement;
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
 import de.unisaarland.cs.st.reposuite.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 public class Link implements Attachable, Inlineable {
 	

@@ -33,7 +33,7 @@ import org.joda.time.Interval;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.HistoryElementComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -63,7 +63,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public boolean add(@NotNull final HistoryElement element) {
-		CompareCondition.equals(bugId, element.getBugId(),
+		CompareCondition.equals(this.bugId, element.getBugId(),
 		                        "HistoryElements may never be added to the History of a different report: %s -> %s",
 		                        element, this);
 		boolean ret = false;
@@ -208,7 +208,7 @@ public class History implements Annotated {
 	 * @return the bugId
 	 */
 	public long getBugId() {
-		return bugId;
+		return this.bugId;
 	}
 	
 	/**
@@ -217,7 +217,7 @@ public class History implements Annotated {
 	@OrderBy
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public SortedSet<HistoryElement> getElements() {
-		return elements;
+		return this.elements;
 	}
 	
 	/**
@@ -226,7 +226,7 @@ public class History implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -368,9 +368,9 @@ public class History implements Annotated {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("History [bugId=");
-		builder.append(bugId);
+		builder.append(this.bugId);
 		builder.append(", elements=");
-		builder.append(elements);
+		builder.append(this.elements);
 		builder.append("]");
 		return builder.toString();
 	}

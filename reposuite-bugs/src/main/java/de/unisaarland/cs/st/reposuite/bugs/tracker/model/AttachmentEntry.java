@@ -3,6 +3,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker.model;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 
@@ -22,8 +25,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -41,40 +44,14 @@ public class AttachmentEntry implements Annotated {
 	private DateTime          deltaTS;
 	private String            id;
 	private String            description;
-	private URL               link;
 	private String            filename;
+	private String            link;
 	
 	/**
 	 * @param attachId
 	 */
 	public AttachmentEntry(final String attachId) {
 		this.id = attachId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof AttachmentEntry)) {
-			return false;
-		}
-		AttachmentEntry other = (AttachmentEntry) obj;
-		if (this.link == null) {
-			if (other.link != null) {
-				return false;
-			}
-		} else if (!this.link.equals(other.link)) {
-			return false;
-		}
-		return true;
 	}
 	
 	/**
@@ -129,7 +106,8 @@ public class AttachmentEntry implements Annotated {
 	/**
 	 * @return the link
 	 */
-	public URL getLink() {
+	@Basic
+	public String getLink() {
 		return this.link;
 	}
 	
@@ -163,20 +141,6 @@ public class AttachmentEntry implements Annotated {
 	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.link == null)
-		                                              ? 0
-		                                              : this.link.hashCode());
-		return result;
 	}
 	
 	/**
@@ -228,11 +192,18 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param link
-	 *            the link to set
+	 * @param link the link to set
 	 */
-	public void setLink(final URL link) {
+	public void setLink(final String link) {
 		this.link = link;
+	}
+	
+	/**
+	 * @param url
+	 */
+	@Transient
+	public void setLink(final URL url) {
+		setLink(url.toString());
 	}
 	
 	/**
@@ -265,5 +236,27 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	/**
+	 * @return
+	 */
+	public URI toURI() {
+		try {
+			return new URI(getLink());
+		} catch (URISyntaxException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public URL toURL() {
+		try {
+			return new URL(getLink());
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 }

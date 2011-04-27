@@ -13,7 +13,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-core</artifactId>
+			<artifactId>reposuite-persistence</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-rcs</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

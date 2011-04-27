@@ -28,8 +28,8 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -104,7 +104,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Report getBugReport() {
-		return bugReport;
+		return this.bugReport;
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@Basic
 	public int getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	private Date getJavaTimestamp() {
-		return timestamp.toDate();
+		return this.timestamp.toDate();
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Lob
 	@Basic
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	/**
@@ -148,7 +148,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	protected PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	@Override
@@ -162,7 +162,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/**

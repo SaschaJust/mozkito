@@ -27,14 +27,15 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 			commit = true;
 		}
 		for (Integer fileId : premise) {
-			RCSFile rcsFile = persistenceUtil.fetchRCSFile((long) fileId);
+			
+			RCSFile rcsFile = persistenceUtil.loadById((long) fileId, RCSFile.class);
 			if (rcsFile == null) {
 				throw new UnrecoverableError("Could not retrieve RCSFile with id " + fileId);
 			}
 			this.premise.add(rcsFile);
 		}
 		
-		RCSFile rcsFile = persistenceUtil.fetchRCSFile((long) implication);
+		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);;
 		if (rcsFile == null) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
 		}
@@ -74,26 +75,27 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	}
 	
 	public Double getConfidence() {
-		return confidence;
+		return this.confidence;
 	}
 	
 	public RCSFile getImplication() {
-		return implication;
+		return this.implication;
 	}
 	
 	@Id
 	public Set<RCSFile> getPremise() {
-		return premise;
+		return this.premise;
 	}
 	
 	public Integer getSupport() {
-		return support;
+		return this.support;
 	}
 	
 	@Override
 	public String toString() {
-		return "ChangeCouplingRule [premise=" + Arrays.toString(premise.toArray(new RCSFile[premise.size()]))
-		        + ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
+		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new RCSFile[this.premise.size()]))
+		        + ", implication=" + this.implication + ", support=" + this.support + ", confidence=" + this.confidence
+		        + "]";
 	}
 	
 }

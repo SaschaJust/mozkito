@@ -46,8 +46,8 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComparator;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 

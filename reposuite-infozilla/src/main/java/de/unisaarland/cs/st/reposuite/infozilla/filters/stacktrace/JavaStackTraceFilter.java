@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.stacktrace;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
@@ -27,42 +26,51 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	private static Pattern    pattern_cause_java      = Pattern.compile(JAVA_CAUSE, Pattern.DOTALL | Pattern.MULTILINE);
 	
 	/**
-	 * This method is used to create an Stacktrace object given its String representation.
+	 * This method is used to create an {@link Stacktrace} object given its String representation.
 	 * @param stackTraceMatchGroup the String representing a StrackTrace Cause.
 	 * 		This usually comes from a RegExHelper matches' group() operation! 
 	 * @return a Stacktrace as represented by the given String 
 	 */
 	private JavaStacktrace createCause(final String stackTraceMatchGroup) {
-		String exception = "";
-		String reason = "";
-		List<String> foundFrames = new ArrayList<String>();
-		
-		// This Pattern has: GROUP 1 GROUP 2 GROUP 3
-		String causeException = "(Caused by:)(.*?(Error|Exception){1})(.*?)(at\\s+([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
-		Pattern causeEPattern = Pattern.compile(causeException, Pattern.DOTALL | Pattern.MULTILINE);
-		
-		// Find the Exception of this cause (which is group 2 of causeEPattern)
-		Matcher exceptionMatcher = causeEPattern.matcher(stackTraceMatchGroup);
-		if (exceptionMatcher.find()) {
-			MatchResult matchResult = exceptionMatcher.toMatchResult();
-			
-			exception = matchResult.group(2).trim();
-			reason = matchResult.group(4).trim();
-			
-			// look at the frames
-			String regexFrames = "(^\\s*?at\\s+(([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.*?\\)$))";
-			Pattern patternFrames = Pattern.compile(regexFrames, Pattern.DOTALL | Pattern.MULTILINE);
-			
-			// Find all frames (without the preceeding "at" )
-			for (MatchResult framesMatch : RegExHelper.findMatches(patternFrames, matchResult.group(5))) {
-				foundFrames.add(framesMatch.group(2).replaceAll("[\n\r]", ""));
-			}
-		}
-		// create a Stacktrace
-		JavaStacktrace trace = new JavaStacktrace(exception, reason, foundFrames);
-		trace.setCause(true);
-		
-		return trace;
+		// String exception = "";
+		// String reason = "";
+		// List<String> foundFrames = new ArrayList<String>();
+		//
+		// // This Pattern has: GROUP 1 GROUP 2 GROUP 3
+		// String causeException =
+		// "(Caused by:)(.*?(Error|Exception){1})(.*?)(at\\s+([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
+		// Pattern causeEPattern = Pattern.compile(causeException,
+		// Pattern.DOTALL | Pattern.MULTILINE);
+		//
+		// // Find the Exception of this cause (which is group 2 of
+		// causeEPattern)
+		// Matcher exceptionMatcher =
+		// causeEPattern.matcher(stackTraceMatchGroup);
+		// if (exceptionMatcher.find()) {
+		// MatchResult matchResult = exceptionMatcher.toMatchResult();
+		//
+		// exception = matchResult.group(2).trim();
+		// reason = matchResult.group(4).trim();
+		//
+		// // look at the frames
+		// String regexFrames =
+		// "(^\\s*?at\\s+(([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.*?\\)$))";
+		// Pattern patternFrames = Pattern.compile(regexFrames, Pattern.DOTALL |
+		// Pattern.MULTILINE);
+		//
+		// // Find all frames (without the preceeding "at" )
+		// for (MatchResult framesMatch : RegExHelper.findMatches(patternFrames,
+		// matchResult.group(5))) {
+		// foundFrames.add(framesMatch.group(2).replaceAll("[\n\r]", ""));
+		// }
+		// }
+		// // create a Stacktrace
+		// JavaStacktrace trace = new JavaStacktrace(exception, reason,
+		// foundFrames);
+		// trace.setCause(true);
+		//
+		// return trace;
+		return null;
 	}
 	
 	/**
@@ -72,37 +80,46 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 * @return a Stacktrace as represented by the given String 
 	 */
 	private JavaStacktrace createTrace(final String stackTraceMatchGroup) {
-		String exception = "";
-		String reason = "";
-		List<String> foundFrames = new ArrayList<String>();
-		
-		// This Pattern has: GROUP 1 = exception GROUP 4 = reason GROUP 5 =
-		// frames
-		String traceException = "(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1})(.*?)(at\\s+([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
-		Pattern tracePattern = Pattern.compile(traceException, Pattern.DOTALL | Pattern.MULTILINE);
-		
-		// Find the Exception of this cause (which is group 2 of causeEPattern)
-		Matcher exceptionMatcher = tracePattern.matcher(stackTraceMatchGroup);
-		if (exceptionMatcher.find()) {
-			MatchResult matchResult = exceptionMatcher.toMatchResult();
-			
-			exception = matchResult.group(1).trim();
-			reason = matchResult.group(4).trim();
-			
-			// look at the frames
-			String regexFrames = "(^\\s*?at\\s+(([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.*?\\)$))";
-			Pattern patternFrames = Pattern.compile(regexFrames, Pattern.DOTALL | Pattern.MULTILINE);
-			
-			// Find all frames (without the preceeding "at" )
-			for (MatchResult framesMatch : RegExHelper.findMatches(patternFrames, matchResult.group(5))) {
-				foundFrames.add(framesMatch.group(2).replaceAll("[\n\r]", ""));
-			}
-		}
-		// create a Stacktrace
-		JavaStacktrace trace = new JavaStacktrace(exception, reason, foundFrames);
-		trace.setCause(false);
-		
-		return (trace);
+		// String exception = "";
+		// String reason = "";
+		// List<String> foundFrames = new ArrayList<String>();
+		//
+		// // This Pattern has: GROUP 1 = exception GROUP 4 = reason GROUP 5 =
+		// // frames
+		// String traceException =
+		// "(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1})(.*?)(at\\s+([\\w<>\\$_\n\r]+\\.)+[\\w<>\\$_\n\r]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
+		// Pattern tracePattern = Pattern.compile(traceException, Pattern.DOTALL
+		// | Pattern.MULTILINE);
+		//
+		// // Find the Exception of this cause (which is group 2 of
+		// causeEPattern)
+		// Matcher exceptionMatcher =
+		// tracePattern.matcher(stackTraceMatchGroup);
+		// if (exceptionMatcher.find()) {
+		// MatchResult matchResult = exceptionMatcher.toMatchResult();
+		//
+		// exception = matchResult.group(1).trim();
+		// reason = matchResult.group(4).trim();
+		//
+		// // look at the frames
+		// String regexFrames =
+		// "(^\\s*?at\\s+(([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.*?\\)$))";
+		// Pattern patternFrames = Pattern.compile(regexFrames, Pattern.DOTALL |
+		// Pattern.MULTILINE);
+		//
+		// // Find all frames (without the preceeding "at" )
+		// for (MatchResult framesMatch : RegExHelper.findMatches(patternFrames,
+		// matchResult.group(5))) {
+		// foundFrames.add(framesMatch.group(2).replaceAll("[\n\r]", ""));
+		// }
+		// }
+		// // create a Stacktrace
+		// JavaStacktrace trace = new JavaStacktrace(exception, reason,
+		// foundFrames);
+		// trace.setCause(false);
+		//
+		// return (trace);
+		return null;
 	}
 	
 	/**
@@ -111,48 +128,55 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 * @return an array of possible starting points
 	 */
 	private final int[] findExceptions(final CharSequence s) {
-		List<Integer> exceptionList = new ArrayList<Integer>();
-		
-		// We match against our well known JAVA_EXCEPTION Pattern that denotes a
-		// start of an exception or error
-		Pattern exceptionPattern = Pattern.compile(JAVA_EXCEPTION, Pattern.DOTALL | Pattern.MULTILINE);
-		
-		// For every match we want to add the start of that match to the list of
-		// possible starting points
-		for (MatchResult r : RegExHelper.findMatches(exceptionPattern, s)) {
-			
-			// If there have previously been some starting points
-			if (exceptionList.size() > 0) {
-				// See if this new starting points is at least 20 lines away
-				// from the old one
-				// Sometimes the reason contains another Exception in the first
-				// 5 lines
-				// In this case we would otherwise omit the root exception but
-				// take the exception stated in Reason as root!
-				String newRegion = s.subSequence(exceptionList.get(exceptionList.size() - 1), r.start()).toString();
-				if (newRegion.split("[\n\r]").length >= 20) {
-					exceptionList.add(new Integer(r.start()));
-				}
-			} else {
-				// If there had been no starting points before just add one to
-				// start with
-				exceptionList.add(new Integer(r.start()));
-			}
-		}
-		
-		// If no region is found then go and try the whole text for exhaustive
-		// search
-		if (exceptionList.size() == 0) {
-			exceptionList.add(new Integer(0));
-		}
-		
-		// Convert the List<Integer> to an array
-		int[] results = new int[exceptionList.size()];
-		for (int i = 0; i < exceptionList.size(); i++) {
-			results[i] = exceptionList.get(i).intValue();
-		}
-		
-		return results;
+		// List<Integer> exceptionList = new ArrayList<Integer>();
+		//
+		// // We match against our well known JAVA_EXCEPTION Pattern that
+		// denotes a
+		// // start of an exception or error
+		// Pattern exceptionPattern = Pattern.compile(JAVA_EXCEPTION,
+		// Pattern.DOTALL | Pattern.MULTILINE);
+		//
+		// // For every match we want to add the start of that match to the list
+		// of
+		// // possible starting points
+		// for (MatchResult r : RegExHelper.findMatches(exceptionPattern, s)) {
+		//
+		// // If there have previously been some starting points
+		// if (exceptionList.size() > 0) {
+		// // See if this new starting points is at least 20 lines away
+		// // from the old one
+		// // Sometimes the reason contains another Exception in the first
+		// // 5 lines
+		// // In this case we would otherwise omit the root exception but
+		// // take the exception stated in Reason as root!
+		// String newRegion =
+		// s.subSequence(exceptionList.get(exceptionList.size() - 1),
+		// r.start()).toString();
+		// if (newRegion.split("[\n\r]").length >= 20) {
+		// exceptionList.add(new Integer(r.start()));
+		// }
+		// } else {
+		// // If there had been no starting points before just add one to
+		// // start with
+		// exceptionList.add(new Integer(r.start()));
+		// }
+		// }
+		//
+		// // If no region is found then go and try the whole text for
+		// exhaustive
+		// // search
+		// if (exceptionList.size() == 0) {
+		// exceptionList.add(new Integer(0));
+		// }
+		//
+		// // Convert the List<Integer> to an array
+		// int[] results = new int[exceptionList.size()];
+		// for (int i = 0; i < exceptionList.size(); i++) {
+		// results[i] = exceptionList.get(i).intValue();
+		// }
+		//
+		// return results;
+		return null;
 	}
 	
 	/**
@@ -161,16 +185,19 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 * @return A list of Matches
 	 */
 	private List<MatchResult> findStacktraces(final CharSequence s) {
-		List<MatchResult> stacktraces = new ArrayList<MatchResult>();
-		
-		for (MatchResult r : RegExHelper.findMatches(pattern_stacktrace_java, s)) {
-			stacktraces.add(r);
-		}
-		
-		for (MatchResult r : RegExHelper.findMatches(pattern_cause_java, s)) {
-			stacktraces.add(r);
-		}
-		return stacktraces;
+		// List<MatchResult> stacktraces = new ArrayList<MatchResult>();
+		//
+		// for (MatchResult r : RegExHelper.findMatches(pattern_stacktrace_java,
+		// s)) {
+		// stacktraces.add(r);
+		// }
+		//
+		// for (MatchResult r : RegExHelper.findMatches(pattern_cause_java, s))
+		// {
+		// stacktraces.add(r);
+		// }
+		// return stacktraces;
+		return null;
 	}
 	
 	// Auto-generated Message from InfozillaFilter interface

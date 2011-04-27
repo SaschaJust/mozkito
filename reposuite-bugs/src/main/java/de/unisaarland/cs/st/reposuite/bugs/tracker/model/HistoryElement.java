@@ -32,12 +32,12 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.DateTimeTuple;
-import de.unisaarland.cs.st.reposuite.rcs.model.EnumTuple;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.rcs.model.PersonTuple;
-import de.unisaarland.cs.st.reposuite.rcs.model.StringTuple;
+import de.unisaarland.cs.st.reposuite.persistence.model.DateTimeTuple;
+import de.unisaarland.cs.st.reposuite.persistence.model.EnumTuple;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persistence.model.PersonTuple;
+import de.unisaarland.cs.st.reposuite.persistence.model.StringTuple;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -294,14 +294,14 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			return false;
 		}
 		HistoryElement other = (HistoryElement) obj;
-		if (bugId != other.bugId) {
+		if (this.bugId != other.bugId) {
 			return false;
 		}
-		if (timestamp == null) {
+		if (this.timestamp == null) {
 			if (other.timestamp != null) {
 				return false;
 			}
-		} else if (!timestamp.equals(other.timestamp)) {
+		} else if (!this.timestamp.equals(other.timestamp)) {
 			return false;
 		}
 		return true;
@@ -357,7 +357,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @return the bugId
 	 */
 	public long getBugId() {
-		return bugId;
+		return this.bugId;
 	}
 	
 	/**
@@ -367,7 +367,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, DateTimeTuple> getChangedDateValues() {
-		return changedDateValues;
+		return this.changedDateValues;
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, EnumTuple> getChangedEnumValues() {
-		return changedEnumValues;
+		return this.changedEnumValues;
 	}
 	
 	/**
@@ -385,7 +385,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public Map<String, PersonTuple> getChangedPersonValues() {
-		return changedPersonValues;
+		return this.changedPersonValues;
 	}
 	
 	/**
@@ -395,7 +395,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, StringTuple> getChangedStringValues() {
-		return changedStringValues;
+		return this.changedStringValues;
 	}
 	
 	/**
@@ -441,7 +441,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -459,7 +459,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	/*
@@ -478,7 +478,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/*
@@ -489,10 +489,10 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (bugId ^ (bugId >>> 32));
-		result = prime * result + ((timestamp == null)
-		                                              ? 0
-		                                              : timestamp.hashCode());
+		result = prime * result + (int) (this.bugId ^ (this.bugId >>> 32));
+		result = prime * result + ((this.timestamp == null)
+		                                                   ? 0
+		                                                   : this.timestamp.hashCode());
 		return result;
 	}
 	

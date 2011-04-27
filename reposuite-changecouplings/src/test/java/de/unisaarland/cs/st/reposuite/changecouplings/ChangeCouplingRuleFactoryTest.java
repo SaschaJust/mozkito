@@ -21,9 +21,9 @@ import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
-import de.unisaarland.cs.st.reposuite.rcs.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -53,7 +53,7 @@ public class ChangeCouplingRuleFactoryTest {
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
 		properties.put("openjpa.ConnectionUserName", "miner");
 		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "core");
+		properties.put("openjpa.persistence-unit", "rcs");
 		OpenJPAUtil.createSessionFactory(properties);
 		
 		try {

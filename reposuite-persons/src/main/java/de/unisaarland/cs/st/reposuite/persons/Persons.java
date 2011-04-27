@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.persons;
 
-import de.unisaarland.cs.st.reposuite.Core;
+import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -30,11 +30,10 @@ public class Persons extends RepoSuiteToolchain {
 	 */
 	public Persons() {
 		super(new RepositorySettings());
-		this.threadPool = new RepoSuiteThreadPool(Core.class.getSimpleName(), this);
+		this.threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
 		
 		RepoSuiteSettings settings = getSettings();
-		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, Core.class.getSimpleName()
-		                                                                                         .toLowerCase());
+		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, "persistence");
 		this.logSettings = settings.setLoggerArg(true);
 		
 		settings.parseArguments();
