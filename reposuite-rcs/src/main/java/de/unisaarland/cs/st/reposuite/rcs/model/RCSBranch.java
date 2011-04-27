@@ -61,9 +61,11 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/**
 	 * Instantiates a new rCS branch.
-	 *
-	 * @param name might be null
-	 * @param open the open
+	 * 
+	 * @param name
+	 *            might be null
+	 * @param open
+	 *            the open
 	 */
 	private RCSBranch(final String name, final boolean open) {
 		setName(name);
@@ -90,12 +92,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Override
 	public int compareTo(final RCSBranch other) {
 		RCSBranch p = getParent();
-		if (this.equals(other)) {
+		if (equals(other)) {
 			return 0;
 		}
 		if (other.equals(MASTER)) {
 			return 1;
-		} else if (this.equals(MASTER)) {
+		} else if (equals(MASTER)) {
 			return -1;
 		}
 		while ((p != null) && (!p.equals(MASTER))) {
@@ -125,7 +127,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
 		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
 		for (String id : tIds) {
-			RCSTransaction t = this.containsTransaction(id);
+			RCSTransaction t = containsTransaction(id);
 			if (t != null) {
 				result.add(t);
 			}
@@ -143,12 +145,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public RCSTransaction containsTransaction(final String tId) {
-		if (this.getBegin().getId().equals(tId)) {
-			return this.getBegin();
+		if (getBegin().getId().equals(tId)) {
+			return getBegin();
 		}
 		
-		RCSTransaction current = this.getEnd();
-		while (!current.equals(this.getBegin())) {
+		RCSTransaction current = getEnd();
+		while (!current.equals(getBegin())) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
@@ -164,7 +166,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
-		return this.begin;
+		return begin;
 	}
 	
 	/**
@@ -174,7 +176,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
-		return this.end;
+		return end;
 	}
 	
 	/**
@@ -186,8 +188,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Index (name = "idx_branchid")
 	@Column (name = "id", nullable = false)
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	private long getGeneratedId() {
-		return this.generatedId;
+	protected long getGeneratedId() {
+		return generatedId;
 	}
 	
 	/**
@@ -204,7 +206,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the name of the branch this branch was merged in (if any)
 	 */
 	public String getMergedIn() {
-		return this.mergedIn;
+		return mergedIn;
 	}
 	
 	/**
@@ -215,7 +217,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Basic
 	@Index (name = "idx_name")
 	public String getName() {
-		return this.name;
+		return name;
 	}
 	
 	/**
@@ -225,7 +227,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
-		return this.parent;
+		return parent;
 	}
 	
 	/**
@@ -241,7 +243,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean isOpen() {
-		return this.open;
+		return open;
 	}
 	
 	/**
@@ -279,8 +281,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setGeneratedId(final long generatedId) {
+	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	
@@ -303,8 +304,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.name = name;
 	}
 	
-	private void setOpen(final boolean b) {
-		this.open = b;
+	protected void setOpen(final boolean b) {
+		open = b;
 	}
 	
 	/**
@@ -313,7 +314,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @param parent
 	 *            the parent to set
 	 */
-	private void setParent(final RCSBranch parent) {
+	protected void setParent(final RCSBranch parent) {
 		this.parent = parent;
 	}
 	

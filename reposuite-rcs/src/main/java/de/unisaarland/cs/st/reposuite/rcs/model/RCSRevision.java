@@ -104,22 +104,22 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 			return false;
 		}
 		RCSRevision other = (RCSRevision) obj;
-		if (this.getChangeType() != other.getChangeType()) {
+		if (getChangeType() != other.getChangeType()) {
 			return false;
 		}
-		if (this.getChangedFile() == null) {
+		if (getChangedFile() == null) {
 			if (other.getChangedFile() != null) {
 				return false;
 			}
-		} else if (!this.getChangedFile().equals(other.getChangedFile())) {
+		} else if (!getChangedFile().equals(other.getChangedFile())) {
 			return false;
 		}
 		
-		if (this.getTransaction() == null) {
+		if (getTransaction() == null) {
 			if (other.getTransaction() != null) {
 				return false;
 			}
-		} else if (!this.getTransaction().equals(other.getTransaction())) {
+		} else if (!getTransaction().equals(other.getTransaction())) {
 			return false;
 		}
 		return true;
@@ -132,7 +132,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public RCSFile getChangedFile() {
-		return this.changedFile;
+		return changedFile;
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return this.changeType;
+		return changeType;
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Id
 	@GeneratedValue
 	public long getRevisionId() {
-		return this.revisionId;
+		return revisionId;
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public RCSTransaction getTransaction() {
-		return this.transaction;
+		return transaction;
 	}
 	
 	/*
@@ -186,7 +186,8 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	}
 	
 	/**
-	 * @param changedFile the changedFile to set
+	 * @param changedFile
+	 *            the changedFile to set
 	 */
 	public void setChangedFile(final RCSFile changedFile) {
 		this.changedFile = changedFile;
@@ -196,19 +197,21 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 * @param changeType
 	 *            the changeType to set
 	 */
-	private void setChangeType(final ChangeType changeType) {
+	protected void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
 	/**
-	 * @param revisionId the revisionId to set
+	 * @param revisionId
+	 *            the revisionId to set
 	 */
 	public void setRevisionId(final long revisionId) {
 		this.revisionId = revisionId;
 	}
 	
 	/**
-	 * @param transaction the transaction to set
+	 * @param transaction
+	 *            the transaction to set
 	 */
 	public void setTransaction(final RCSTransaction transaction) {
 		this.transaction = transaction;

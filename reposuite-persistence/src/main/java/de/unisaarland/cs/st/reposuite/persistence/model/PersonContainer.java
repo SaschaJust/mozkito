@@ -88,15 +88,15 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
 	 * @return the map
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	private Map<String, Person> getMap() {
-		return this.map;
+	protected Map<String, Person> getMap() {
+		return map;
 	}
 	
 	/**
@@ -154,7 +154,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 * @param map
 	 *            the map to set
 	 */
-	private void setMap(final Map<String, Person> map) {
+	protected void setMap(final Map<String, Person> map) {
 		this.map = map;
 	}
 	

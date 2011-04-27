@@ -87,7 +87,7 @@ public class RCSFile implements Annotated {
 			return false;
 		}
 		RCSFile other = (RCSFile) obj;
-		if (this.generatedId != other.generatedId) {
+		if (getGeneratedId() != other.getGeneratedId()) {
 			return false;
 		}
 		return true;
@@ -99,7 +99,7 @@ public class RCSFile implements Annotated {
 	@ElementCollection
 	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return this.changedNames;
+		return changedNames;
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class RCSFile implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class RCSFile implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (this.generatedId ^ (this.generatedId >>> 32));
+		result = prime * result + (int) (getGeneratedId() ^ (getGeneratedId() >>> 32));
 		return result;
 	}
 	
@@ -192,8 +192,7 @@ public class RCSFile implements Annotated {
 		return getGeneratedId() != 0;
 	}
 	
-	@SuppressWarnings ("unused")
-	private void setChangedNames(final Map<String, String> changedNames) {
+	protected void setChangedNames(final Map<String, String> changedNames) {
 		this.changedNames = changedNames;
 	}
 	
@@ -201,8 +200,7 @@ public class RCSFile implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setGeneratedId(final long generatedId) {
+	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	

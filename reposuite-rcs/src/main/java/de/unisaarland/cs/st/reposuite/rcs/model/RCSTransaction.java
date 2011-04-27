@@ -336,7 +336,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	            optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
-		return this.branch;
+		return branch;
 	}
 	
 	/**
@@ -382,7 +382,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return this.children;
+		return children;
 	}
 	
 	/**
@@ -393,7 +393,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Id
 	@Index (name = "idx_transactionid")
 	public String getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -401,11 +401,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * 
 	 * @return the java timestamp
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	@Index (name = "idx_timestamp")
-	private Date getJavaTimestamp() {
+	protected Date getJavaTimestamp() {
 		return getTimestamp() != null
 		                             ? getTimestamp().toDate()
 		                             : null;
@@ -418,14 +417,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Lob
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getOriginalId() {
-		return this.originalId;
+		return originalId;
 	}
 	
 	/**
@@ -463,7 +462,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
-		return this.parents;
+		return parents;
 	}
 	
 	/**
@@ -471,7 +470,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
-		return this.persons;
+		return persons;
 	}
 	
 	/**
@@ -499,7 +498,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return this.revisions;
+		return revisions;
 	}
 	
 	/**
@@ -507,7 +506,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ElementCollection
 	public Set<String> getTags() {
-		return this.tags;
+		return tags;
 	}
 	
 	/**
@@ -517,7 +516,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/**
@@ -550,7 +549,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param id
 	 *            the id to set
 	 */
-	private void setId(final String id) {
+	protected void setId(final String id) {
 		this.id = id;
 	}
 	
@@ -560,11 +559,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param date
 	 *            the new java timestamp
 	 */
-	@SuppressWarnings ("unused")
-	private void setJavaTimestamp(final Date date) {
-		this.timestamp = date != null
-		                             ? new DateTime(date)
-		                             : null;
+	protected void setJavaTimestamp(final Date date) {
+		timestamp = date != null
+		                        ? new DateTime(date)
+		                        : null;
 	}
 	
 	/**
@@ -573,14 +571,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param message
 	 *            the message to set
 	 */
-	private void setMessage(final String message) {
+	protected void setMessage(final String message) {
 		this.message = message;
 	}
 	
 	/**
 	 * @param originalId
 	 */
-	private void setOriginalId(final String originalId) {
+	protected void setOriginalId(final String originalId) {
 		this.originalId = originalId;
 	}
 	
@@ -606,7 +604,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param revisions
 	 *            the revisions to set
 	 */
-	private void setRevisions(final Collection<RCSRevision> revisions) {
+	protected void setRevisions(final Collection<RCSRevision> revisions) {
 		this.revisions = revisions;
 	}
 	
@@ -614,7 +612,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		this.tags = tagName;
+		tags = tagName;
 	}
 	
 	/**
@@ -623,7 +621,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param timestamp
 	 *            the timestamp to set
 	 */
-	private void setTimestamp(final DateTime timestamp) {
+	protected void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	
