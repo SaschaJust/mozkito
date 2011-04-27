@@ -1,6 +1,7 @@
-.classpath
+reposuite-*/.classpath
 .externalToolBuilders
 .project
 .settings
 maven-eclipse.xml
 target/
+de.unisaarland.cs.st.reposuite.ppa.eclipse/bin/
