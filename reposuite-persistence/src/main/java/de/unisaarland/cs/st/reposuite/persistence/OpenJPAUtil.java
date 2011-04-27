@@ -330,6 +330,15 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#flush()
+	 */
+	@Override
+	public void flush() {
+		this.entityManager.flush();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#getToolInformation
 	 * ()
@@ -453,14 +462,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void shutdown() {
-		for (Thread t : provider.keySet()) {
-			provider.get(t).entityManager.close();
-		}
-		
-		if (factory.isOpen()) {
-			factory.close();
-			factory = null;
-		}
+		this.entityManager.close();
 	}
 	
 	/*

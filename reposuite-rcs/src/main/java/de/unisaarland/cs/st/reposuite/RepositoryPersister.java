@@ -73,6 +73,8 @@ public class RepositoryPersister extends RepoSuiteSinkThread<RCSTransaction> {
 			if (Logger.logInfo()) {
 				Logger.info("RepositoryPersister done. Terminating... ");
 			}
+			
+			this.persistenceUtil.shutdown();
 			finish();
 		} catch (InterruptedException e) {
 			

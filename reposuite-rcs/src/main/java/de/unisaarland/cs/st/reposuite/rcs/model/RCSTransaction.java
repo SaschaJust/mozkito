@@ -367,7 +367,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the children
 	 */
 	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE })
+	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
 		return this.children;
@@ -444,7 +444,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE })
+	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
 		return this.parents;

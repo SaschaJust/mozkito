@@ -94,7 +94,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	/**
 	 * @return the map
 	 */
-	@OneToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private Map<String, Person> getMap() {
 		return this.map;
 	}

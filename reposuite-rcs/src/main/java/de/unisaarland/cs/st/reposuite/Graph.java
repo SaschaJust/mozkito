@@ -92,7 +92,6 @@ public class Graph extends RepoSuiteToolchain {
 		new GraphReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.persistenceUtil);
 		new GraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository,
 		                 this.persistenceUtil);
-		new GraphPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.persistenceUtil);
 	}
 	
 	/*

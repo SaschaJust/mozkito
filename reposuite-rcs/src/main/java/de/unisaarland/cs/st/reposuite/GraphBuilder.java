@@ -15,7 +15,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteFilterThread;
+import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
+public class GraphBuilder extends RepoSuiteSinkThread<RCSTransaction> {
 	
 	private final Repository                  repository;
 	private final PersistenceUtil             persistenceUtil;
@@ -64,13 +64,16 @@ public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 		RCSTransaction rcsTransaction = null;
 		
 		try {
+			this.persistenceUtil.beginTransaction();
 			while (!isShutdown() && ((rcsTransaction = read()) != null)) {
 				if (Logger.logDebug()) {
 					Logger.debug("Updating graph for " + rcsTransaction);
 				}
 				
 				RevDependency revdep = this.reverseDependencies.get(rcsTransaction.getId());
-				rcsTransaction.setBranch(revdep.getCommitBranch());
+				RCSBranch rcsBranch = revdep.getCommitBranch();
+				this.persistenceUtil.update(rcsBranch);
+				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
@@ -127,7 +130,10 @@ public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 							
 							parentTransaction.addChild(rcsTransaction);
 							
-							this.persistenceUtil.update(this.cached.remove(parentTransaction.getId()));
+							// this.persistenceUtil.update(this.cached.remove(parentTransaction.getId()));
+							this.cached.remove(parentTransaction.getId());
+							this.persistenceUtil.commitTransaction();
+							this.persistenceUtil.beginTransaction();
 							// remove branch from cache
 							this.latest.remove(parentTransaction.getBranch().getName());
 							
@@ -141,7 +147,10 @@ public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 				if (this.cached.containsKey(this.latest.get(revdep.getCommitBranch().getName()))) {
 					this.cached.get(this.latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
 					
-					this.persistenceUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
+					// this.persistenceUtil.update(this.cached.remove(this.latest.get(revdep.getCommitBranch().getName())));
+					this.cached.remove(this.latest.get(revdep.getCommitBranch().getName()));
+					this.persistenceUtil.commitTransaction();
+					this.persistenceUtil.beginTransaction();
 				}
 				
 				// add transaction to cache
@@ -154,13 +163,13 @@ public class GraphBuilder extends RepoSuiteFilterThread<RCSTransaction> {
 			}
 			
 			// persist all remaining cached transactions
+			// this.persistenceUtil.commitTransaction();
+			// this.persistenceUtil.beginTransaction();
+			// for (RCSTransaction transaction : this.cached.values()) {
+			// this.persistenceUtil.update(transaction);
+			// }
 			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.beginTransaction();
-			for (RCSTransaction transaction : this.cached.values()) {
-				this.persistenceUtil.update(transaction);
-			}
-			this.persistenceUtil.commitTransaction();
-			
+			// this.persistenceUtil.flush();
 			this.cached.clear();
 			
 			finish();

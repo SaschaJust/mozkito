@@ -32,6 +32,8 @@ public interface PersistenceUtil {
 	
 	public void executeQuery(final String query);
 	
+	public void flush();
+	
 	public String getToolInformation();
 	
 	public String getType();

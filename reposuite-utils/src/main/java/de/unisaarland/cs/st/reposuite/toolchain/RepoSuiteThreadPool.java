@@ -44,7 +44,7 @@ public class RepoSuiteThreadPool {
 	 *            the name of the {@link RepoSuiteThreadGroup}
 	 */
 	public RepoSuiteThreadPool(final String name, final RepoSuiteToolchain toolchain) {
-		threads = new RepoSuiteThreadGroup(name, toolchain);
+		this.threads = new RepoSuiteThreadGroup(name, toolchain);
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class RepoSuiteThreadPool {
 		Map<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>> sinkThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>>();
 		Tuple<Type, Type> tuple;
 		
-		for (RepoSuiteThread thread : threads.getThreads()) {
+		for (RepoSuiteThread thread : this.threads.getThreads()) {
 			if (thread instanceof RepoSuiteSourceThread) {
 				RepoSuiteSourceThread<?> sourceThread = (RepoSuiteSourceThread<?>) thread;
 				Type c = getOutputClassType(sourceThread);
@@ -227,8 +227,13 @@ public class RepoSuiteThreadPool {
 		if (sourceThreads.keySet().size() != 1) {
 			
 			if (Logger.logError()) {
-				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
-				        + JavaUtils.collectionToString(sourceThreads.keySet()));
+				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: ");
+				for (List<RepoSuiteSourceThread<?>> list : sourceThreads.values()) {
+					for (RepoSuiteSourceThread<?> t : list) {
+						Logger.error(t.getName());
+					}
+				}
+				
 			}
 			throw new Shutdown();
 		}
@@ -236,8 +241,12 @@ public class RepoSuiteThreadPool {
 		if (sinkThreads.keySet().size() != 1) {
 			
 			if (Logger.logError()) {
-				Logger.error("Currently, only simple graphs are supported (using only 1 class of source). Given: "
-				        + JavaUtils.collectionToString(sinkThreads.keySet()));
+				Logger.error("Currently, only simple graphs are supported (using only 1 class of sink). Given: ");
+				for (List<RepoSuiteSinkThread<?>> list : sinkThreads.values()) {
+					for (RepoSuiteSinkThread<?> t : list) {
+						Logger.error(t.getName());
+					}
+				}
 			}
 			throw new Shutdown();
 		}
@@ -297,11 +306,11 @@ public class RepoSuiteThreadPool {
 	public void execute() {
 		connectThreads();
 		
-		for (Thread thread : threads.getThreads()) {
+		for (Thread thread : this.threads.getThreads()) {
 			thread.start();
 		}
 		
-		for (Thread thread : threads.getThreads()) {
+		for (Thread thread : this.threads.getThreads()) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -340,7 +349,7 @@ public class RepoSuiteThreadPool {
 	 * @return the inner thread group
 	 */
 	public RepoSuiteThreadGroup getThreadGroup() {
-		return threads;
+		return this.threads;
 	}
 	
 	/**
@@ -348,10 +357,10 @@ public class RepoSuiteThreadPool {
 	 */
 	public void shutdown() {
 		if (Logger.logError()) {
-			Logger.error("Terminating " + threads.activeCount() + " threads.");
+			Logger.error("Terminating " + this.threads.activeCount() + " threads.");
 		}
 		
-		threads.shutdown();
+		this.threads.shutdown();
 		
 		FileUtils.shutdown();
 		System.exit(0);

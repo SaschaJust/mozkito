@@ -162,7 +162,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -172,7 +172,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -223,7 +223,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}

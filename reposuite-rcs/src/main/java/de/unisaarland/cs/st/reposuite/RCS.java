@@ -178,8 +178,6 @@ public class RCS extends RepoSuiteToolchain {
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
 		if (this.persistenceUtil != null) {
-			new GraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository,
-			                 this.persistenceUtil);
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
 			                        this.persistenceUtil);
 		} else {
