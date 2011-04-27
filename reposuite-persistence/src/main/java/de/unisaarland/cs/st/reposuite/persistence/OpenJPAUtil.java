@@ -330,6 +330,18 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#exmerge(de
+	 * .unisaarland.cs.st.reposuite.persistence.Annotated)
+	 */
+	@Override
+	public void exmerge(final Annotated object) {
+		this.entityManager.detach(object);
+		this.entityManager.merge(object);
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#flush()
 	 */
 	@Override
@@ -376,6 +388,16 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public String getType() {
 		return type;
+	}
+	
+	@Override
+	public void globalShutdown() {
+		for (Thread t : provider.keySet()) {
+			provider.get(t).shutdown();
+		}
+		
+		factory.close();
+		factory = null;
 	}
 	
 	/*

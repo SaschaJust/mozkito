@@ -53,7 +53,7 @@ public class OpenJPATest {
 	@After
 	public void tearDown() throws Exception {
 		try {
-			OpenJPAUtil.getInstance().shutdown();
+			OpenJPAUtil.getInstance().globalShutdown();
 		} catch (UninitializedDatabaseException e) {
 			
 		}
@@ -79,33 +79,24 @@ public class OpenJPATest {
 			                                                                            "sascha.just@st.cs.uni-saarland.de"),
 			                                                                 "0123456789abcde");
 			
-			branch.setBegin(beginTransaction);
-			branch.setEnd(endTransaction);
+			beginTransaction.setBranch(branch);
+			endTransaction.setBranch(branch);
 			
 			persistenceUtil.beginTransaction();
 			persistenceUtil.save(beginTransaction);
 			persistenceUtil.save(endTransaction);
-			persistenceUtil.save(branch);
-			beginTransaction.setBranch(branch);
-			endTransaction.setBranch(branch);
+			branch.setBegin(beginTransaction);
+			branch.setEnd(endTransaction);
 			beginTransaction.addChild(endTransaction);
-			persistenceUtil.update(beginTransaction);
-			persistenceUtil.update(endTransaction);
 			persistenceUtil.commitTransaction();
 			
 			List<RCSBranch> list = persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class));
 			
 			assertFalse(list.isEmpty());
-			assertEquals(2, list.size());
+			assertEquals(1, list.size());
 			for (RCSBranch b : list) {
-				if (b.getName().equals(RCSBranch.MASTER.getName())) {
-					assertEquals(RCSBranch.MASTER, b);
-				} else if (b.getName().equals(branch.getName())) {
-					assertEquals(branch, b);
-					assertEquals("0123456789abcde", b.getMergedIn());
-				} else {
-					fail("Invalid branch information loaded.");
-				}
+				assertEquals(branch, b);
+				assertEquals("0123456789abcde", b.getMergedIn());
 			}
 		} catch (UninitializedDatabaseException e) {
 			fail(e.getMessage());
@@ -124,7 +115,7 @@ public class OpenJPATest {
 			RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 			
 			assertTrue(transaction.getRevisions().contains(revision));
-			
+			transaction.setBranch(new RCSBranch("master"));
 			persistenceUtil.beginTransaction();
 			persistenceUtil.save(transaction);
 			persistenceUtil.commitTransaction();
@@ -184,11 +175,12 @@ public class OpenJPATest {
 			RCSFileManager fileManager = new RCSFileManager();
 			Person person = new Person("kim", null, null);
 			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
-			rcsTransaction.setBranch(RCSBranch.MASTER);
+			
 			RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 			file.assignTransaction(rcsTransaction, "formerTest.java");
 			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 			persistenceUtil.beginTransaction();
+			rcsTransaction.setBranch(RCSBranch.MASTER);
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 			persistenceUtil.commitTransaction();
 			
