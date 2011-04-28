@@ -3,6 +3,7 @@
  */
 package bugs;
 
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -12,6 +13,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * 
  */
 public class Main {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/**
 	 * @param args
