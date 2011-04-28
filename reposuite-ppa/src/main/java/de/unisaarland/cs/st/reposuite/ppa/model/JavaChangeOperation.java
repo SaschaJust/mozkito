@@ -175,7 +175,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
-		return this.changedElementLocation;
+		return changedElementLocation;
 	}
 	
 	/**
@@ -195,7 +195,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return this.changeType;
+		return changeType;
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class JavaChangeOperation implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -216,7 +216,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
-		return this.revision;
+		return revision;
 	}
 	
 	/**
@@ -251,8 +251,8 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changedElement
 	 *            the new changed element
 	 */
-	private void setChangedElementLocation(final JavaElementLocation changedElement) {
-		this.changedElementLocation = changedElement;
+	protected void setChangedElementLocation(final JavaElementLocation changedElement) {
+		changedElementLocation = changedElement;
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param changeType
 	 *            the new change type
 	 */
-	private void setChangeType(final ChangeType changeType) {
+	protected void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
 	}
 	
@@ -272,7 +272,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the new id
 	 */
 	@SuppressWarnings ("unused")
-	private void setId(final long id) {
+	protected void setId(final long id) {
 		this.id = id;
 	}
 	
@@ -282,7 +282,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	private void setRevision(final RCSRevision revision) {
+	protected void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}
 	
