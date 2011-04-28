@@ -53,6 +53,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			File sqlFile = new File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
+			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
 			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
 			persistenceUtil.executeNativeQuery(query);
 		} catch (IOException e) {
