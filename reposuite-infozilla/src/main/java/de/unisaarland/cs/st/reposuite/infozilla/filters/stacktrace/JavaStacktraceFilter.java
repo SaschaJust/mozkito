@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.reposuite.infozilla.filters.stacktrace;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
 
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.JavaStacktrace;
@@ -16,14 +15,17 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	private FilterTextRemover textRemover;
 	
 	// Define a reusable Regular Expression for finding Java Stack Traces
-	public static String      JAVA_EXCEPTION          = "^(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1}(\\s|:))";
-	public static String      JAVA_REASON             = "(:?.*?)(at\\s+([\\w<>\\$_]+\\.)+[\\w<>\\$_]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)";
-	public static String      JAVA_TRACE              = "(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
-	public static String      JAVA_CAUSE              = "(Caused by:).*?(Exception|Error)(.*?)(\\s+at.*?\\(.*?:\\d+\\))+";
-	public static String      JAVA_STACKTRACE         = JAVA_EXCEPTION + JAVA_REASON + JAVA_TRACE;
-	private static Pattern    pattern_stacktrace_java = Pattern.compile(JAVA_STACKTRACE, Pattern.DOTALL
-	                                                          | Pattern.MULTILINE);
-	private static Pattern    pattern_cause_java      = Pattern.compile(JAVA_CAUSE, Pattern.DOTALL | Pattern.MULTILINE);
+	public static String      JAVA_EXCEPTION  = "^(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1}(\\s|:))";
+	public static String      JAVA_REASON     = "(:?.*?)(at\\s+([\\w<>\\$_]+\\.)+[\\w<>\\$_]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)";
+	public static String      JAVA_TRACE      = "(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
+	public static String      JAVA_CAUSE      = "(Caused by:).*?(Exception|Error)(.*?)(\\s+at.*?\\(.*?:\\d+\\))+";
+	public static String      JAVA_STACKTRACE = JAVA_EXCEPTION + JAVA_REASON + JAVA_TRACE;
+	
+	// private static Pattern pattern_stacktrace_java =
+	// Pattern.compile(JAVA_STACKTRACE, Pattern.DOTALL
+	// | Pattern.MULTILINE);
+	// private static Pattern pattern_cause_java = Pattern.compile(JAVA_CAUSE,
+	// Pattern.DOTALL | Pattern.MULTILINE);
 	
 	/**
 	 * This method is used to create an {@link Stacktrace} object given its String representation.
