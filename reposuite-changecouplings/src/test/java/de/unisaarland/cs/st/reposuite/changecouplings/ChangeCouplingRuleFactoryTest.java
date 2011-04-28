@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -28,7 +27,6 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 public class ChangeCouplingRuleFactoryTest {
@@ -45,16 +43,7 @@ public class ChangeCouplingRuleFactoryTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		Logger.setLogLevel(LogLevel.OFF);
-		Properties properties = new Properties();
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", "miner");
-		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "rcs");
-		OpenJPAUtil.createSessionFactory(properties);
+		OpenJPAUtil.createTestSessionFactory("rcs");
 		
 		try {
 			
