@@ -1,0 +1,13 @@
+database.name=reposuite_jodatime_march2011
+database.user=miner
+database.password=miner
+database.host=quentin.cs.uni-saarland.de
+log.level=info
+repository.uri=/data/kim/miner_repos/jodatime/svnrepo_10_03_2011.git
+repository.type=GIT
+tracker.fetchURI=http://jira.codehaus.org/browse/
+tracker.type=SOURCEFORGE
+tracker.stop=3281020
+tracker.overviewURI=http://sourceforge.net/tracker/?group_id=97367&atid=617889
+tracker.pattern=http://sourceforge.net/tracker/?func=detail&aid=<BUGID>&group_id=97367&atid=617889
+headless
