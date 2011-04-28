@@ -53,8 +53,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			File sqlFile = new File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
-			// query =
-			// "CREATE OR REPLACE FUNCTION reposuite_changecouplings(tid character varying(40), tablename varchar) RETURNS integer AS $$\nreturn1\n$$ LANGUAGE plpython2u;";
+			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
 			persistenceUtil.executeNativeQuery(query);
 		} catch (IOException e) {
 			if (Logger.logWarn()) {
@@ -145,15 +144,15 @@ public class ChangeCouplingRuleFactoryTest {
 		assertEquals(9, changeCouplingRules.size());
 		FileChangeCoupling rule = changeCouplingRules.get(0);
 		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileA));
-		assertEquals(fileB, rule.getImplication());
+		assertTrue(rule.getPremise().contains(fileB));
+		assertEquals(fileA, rule.getImplication());
 		assertEquals(2, rule.getSupport().intValue());
 		assertEquals(1, rule.getConfidence().doubleValue(), 0);
 		
 		rule = changeCouplingRules.get(1);
 		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileB));
-		assertEquals(fileA, rule.getImplication());
+		assertTrue(rule.getPremise().contains(fileA));
+		assertEquals(fileB, rule.getImplication());
 		assertEquals(2, rule.getSupport().intValue());
 		assertEquals(1, rule.getConfidence().doubleValue(), 0);
 		
