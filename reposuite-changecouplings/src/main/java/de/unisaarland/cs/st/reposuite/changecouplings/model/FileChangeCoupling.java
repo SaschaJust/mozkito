@@ -63,39 +63,34 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 					return -1;
 				} else if (getPremise().size() < o.getPremise().size()) {
 					return 1;
-				} else if (getImplication().getGeneratedId() < o.getImplication().getGeneratedId()) {
-					return -1;
-				} else if (getImplication().getGeneratedId() > o.getImplication().getGeneratedId()) {
-					return 1;
 				} else {
-					return 0;
+					return getImplication().getLatestPath().compareTo(o.getImplication().getLatestPath());
 				}
 			}
 		}
 	}
 	
 	public Double getConfidence() {
-		return this.confidence;
+		return confidence;
 	}
 	
 	public RCSFile getImplication() {
-		return this.implication;
+		return implication;
 	}
 	
 	@Id
 	public Set<RCSFile> getPremise() {
-		return this.premise;
+		return premise;
 	}
 	
 	public Integer getSupport() {
-		return this.support;
+		return support;
 	}
 	
 	@Override
 	public String toString() {
-		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new RCSFile[this.premise.size()]))
-		        + ", implication=" + this.implication + ", support=" + this.support + ", confidence=" + this.confidence
-		        + "]";
+		return "ChangeCouplingRule [premise=" + Arrays.toString(premise.toArray(new RCSFile[premise.size()]))
+		        + ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
 	}
 	
 }
