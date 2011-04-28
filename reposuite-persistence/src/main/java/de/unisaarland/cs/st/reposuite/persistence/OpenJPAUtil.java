@@ -164,7 +164,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		Logger.setLogLevel(LogLevel.OFF);
 		Properties properties = new Properties();
 		String url = "jdbc:postgresql://" + System.getProperty("database.host", "quentin.cs.uni-saarland.de") + "/"
-		        + System.getProperty("database.name", "reposuiteTest");
+		        + System.getProperty("database.name", "reposuite_test");
 		properties.put("openjpa.ConnectionURL", url);
 		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");

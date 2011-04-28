@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -37,17 +36,7 @@ public class OpenJPATest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// Logger.setLogLevel(LogLevel.DEBUG);
-		Properties properties = new Properties();
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", "miner");
-		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "rcs");
-		
-		OpenJPAUtil.createSessionFactory(properties);
+		OpenJPAUtil.createTestSessionFactory("rcs");
 	}
 	
 	@After
