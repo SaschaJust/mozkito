@@ -97,9 +97,9 @@ public class RCSFile implements Annotated {
 	 * @return the changedNames
 	 */
 	@ElementCollection
-	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "transaction_id", nullable = false) })
+	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
 	public Map<String, String> getChangedNames() {
-		return changedNames;
+		return this.changedNames;
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class RCSFile implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
