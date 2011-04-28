@@ -9,6 +9,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -53,6 +54,13 @@ public abstract class MappingEngine {
 	 */
 	public boolean isRegistered() {
 		return this.registered;
+	}
+	
+	/**
+	 * @param util
+	 */
+	public void loadData(final PersistenceUtil util) {
+		
 	}
 	
 	/**

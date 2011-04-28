@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -30,13 +28,11 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
@@ -55,7 +51,6 @@ public class SearchEngine extends MappingEngine {
 	
 	private final HashMap<Long, Document> reportDocuments  = new HashMap<Long, Document>();
 	private IndexSearcher                 isearcherReports = null;
-	private boolean                       processed        = false;
 	
 	/**
 	 * @param settings
@@ -81,34 +76,6 @@ public class SearchEngine extends MappingEngine {
 			this.iwriterReports.addDocument(doc);
 		} catch (Exception e) {
 			throw new UnrecoverableError(e);
-		}
-	}
-	
-	/**
-	 * @param util
-	 */
-	public void addReports(final PersistenceUtil util) {
-		Criteria<Report> criteria = util.createCriteria(Report.class);
-		List<Report> list = util.load(criteria);
-		for (Report report : list) {
-			addReportDocument(report);
-		}
-		try {
-			this.iwriterReports.close();
-		} catch (Exception e) {
-			throw new UnrecoverableError(e);
-		} finally {
-			try {
-				this.isearcherReports = new IndexSearcher(this.reportDirectory, true);
-			} catch (CorruptIndexException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} // read-only=true
-			this.parser = new QueryParser(Version.LUCENE_31, "content", this.analyzer);
-			BooleanQuery.setMaxClauseCount(102400);
 		}
 	}
 	
@@ -164,6 +131,28 @@ public class SearchEngine extends MappingEngine {
 		super.init();
 	}
 	
+	@Override
+	public void loadData(final PersistenceUtil util) {
+		Criteria<Report> criteria = util.createCriteria(Report.class);
+		List<Report> list = util.load(criteria);
+		for (Report report : list) {
+			addReportDocument(report);
+		}
+		try {
+			this.iwriterReports.close();
+		} catch (Exception e) {
+			throw new UnrecoverableError(e);
+		} finally {
+			try {
+				this.isearcherReports = new IndexSearcher(this.reportDirectory, true);
+			} catch (Exception e) {
+				throw new UnrecoverableError(e);
+			}
+			this.parser = new QueryParser(Version.LUCENE_31, "content", this.analyzer);
+			BooleanQuery.setMaxClauseCount(102400);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -197,15 +186,6 @@ public class SearchEngine extends MappingEngine {
 	                  final Report report,
 	                  final MapScore score) {
 		super.score(transaction, report, score);
-		if (!this.processed) {
-			try {
-				PersistenceUtil util = PersistenceManager.getUtil();
-				addReports(util);
-			} catch (UninitializedDatabaseException e) {
-				throw new UnrecoverableError(e);
-			}
-			this.processed = true;
-		}
 		
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "content", this.analyzer);

@@ -14,6 +14,10 @@ import org.w3c.dom.html.HTMLDocument;
  */
 public interface Displayable {
 	
+	public String toCSV();
+	
+	public void toCSV(OutputStream stream);
+	
 	public HTMLDocument toHTML();
 	
 	public void toHTML(OutputStream stream);

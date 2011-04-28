@@ -336,7 +336,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	            optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
-		return branch;
+		return this.branch;
 	}
 	
 	/**
@@ -382,7 +382,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return children;
+		return this.children;
 	}
 	
 	/**
@@ -393,7 +393,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Id
 	@Index (name = "idx_transactionid")
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -417,14 +417,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Lob
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getOriginalId() {
-		return originalId;
+		return this.originalId;
 	}
 	
 	/**
@@ -462,7 +462,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
-		return parents;
+		return this.parents;
 	}
 	
 	/**
@@ -470,7 +470,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
-		return persons;
+		return this.persons;
 	}
 	
 	/**
@@ -498,7 +498,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return revisions;
+		return this.revisions;
 	}
 	
 	/**
@@ -506,7 +506,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ElementCollection
 	public Set<String> getTags() {
-		return tags;
+		return this.tags;
 	}
 	
 	/**
@@ -516,7 +516,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/**
@@ -560,9 +560,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 *            the new java timestamp
 	 */
 	protected void setJavaTimestamp(final Date date) {
-		timestamp = date != null
-		                        ? new DateTime(date)
-		                        : null;
+		this.timestamp = date != null
+		                             ? new DateTime(date)
+		                             : null;
 	}
 	
 	/**
@@ -612,7 +612,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		tags = tagName;
+		this.tags = tagName;
 	}
 	
 	/**
@@ -623,6 +623,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	protected void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	@Override
+	public String toCSV() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void toCSV(final OutputStream stream) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override

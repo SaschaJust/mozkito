@@ -58,6 +58,11 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		
 	}
 	
+	/**
+	 * @param rcsTransaction
+	 * @param rcsFile
+	 * @param changeType
+	 */
 	@NoneNull
 	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
 		setTransaction(rcsTransaction);
@@ -66,8 +71,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		
 		boolean success = getTransaction().addRevision(this);
 		Condition.check(success, "Revision could not be registered at transaction.");
-		Condition.check(getTransaction().getRevisions().contains(this),
-		                "Revision could not be registered at transaction.");
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -132,7 +135,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public RCSFile getChangedFile() {
-		return changedFile;
+		return this.changedFile;
 	}
 	
 	/**
@@ -140,7 +143,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
-		return changeType;
+		return this.changeType;
 	}
 	
 	/**
@@ -149,7 +152,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@Id
 	@GeneratedValue
 	public long getRevisionId() {
-		return revisionId;
+		return this.revisionId;
 	}
 	
 	/**
@@ -159,7 +162,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public RCSTransaction getTransaction() {
-		return transaction;
+		return this.transaction;
 	}
 	
 	/*
