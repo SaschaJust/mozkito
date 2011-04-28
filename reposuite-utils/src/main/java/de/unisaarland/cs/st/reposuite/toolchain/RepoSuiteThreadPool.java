@@ -16,7 +16,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
@@ -44,7 +43,7 @@ public class RepoSuiteThreadPool {
 	 *            the name of the {@link RepoSuiteThreadGroup}
 	 */
 	public RepoSuiteThreadPool(final String name, final RepoSuiteToolchain toolchain) {
-		this.threads = new RepoSuiteThreadGroup(name, toolchain);
+		threads = new RepoSuiteThreadGroup(name, toolchain);
 	}
 	
 	/**
@@ -184,7 +183,7 @@ public class RepoSuiteThreadPool {
 		Map<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>> sinkThreads = new HashMap<Tuple<Type, Type>, List<RepoSuiteSinkThread<?>>>();
 		Tuple<Type, Type> tuple;
 		
-		for (RepoSuiteThread thread : this.threads.getThreads()) {
+		for (RepoSuiteThread thread : threads.getThreads()) {
 			if (thread instanceof RepoSuiteSourceThread) {
 				RepoSuiteSourceThread<?> sourceThread = (RepoSuiteSourceThread<?>) thread;
 				Type c = getOutputClassType(sourceThread);
@@ -306,11 +305,11 @@ public class RepoSuiteThreadPool {
 	public void execute() {
 		connectThreads();
 		
-		for (Thread thread : this.threads.getThreads()) {
+		for (Thread thread : threads.getThreads()) {
 			thread.start();
 		}
 		
-		for (Thread thread : this.threads.getThreads()) {
+		for (Thread thread : threads.getThreads()) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -349,7 +348,7 @@ public class RepoSuiteThreadPool {
 	 * @return the inner thread group
 	 */
 	public RepoSuiteThreadGroup getThreadGroup() {
-		return this.threads;
+		return threads;
 	}
 	
 	/**
@@ -357,12 +356,10 @@ public class RepoSuiteThreadPool {
 	 */
 	public void shutdown() {
 		if (Logger.logError()) {
-			Logger.error("Terminating " + this.threads.activeCount() + " threads.");
+			Logger.error("Terminating " + threads.activeCount() + " threads.");
 		}
 		
-		this.threads.shutdown();
-		
-		FileUtils.shutdown();
+		threads.shutdown();
 		System.exit(0);
 	}
 }

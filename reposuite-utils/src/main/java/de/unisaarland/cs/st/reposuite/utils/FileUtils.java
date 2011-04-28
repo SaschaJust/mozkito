@@ -46,6 +46,48 @@ public class FileUtils {
 		KEEP, DELETE
 	}
 	
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			
+			@Override
+			public void run() {
+				Set<File> filesToDelete = new HashSet<File>();
+				if (fileManager.containsKey(FileShutdownAction.DELETE)) {
+					filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
+					for (File f : filesToDelete) {
+						if (f.exists()) {
+							if (f.isDirectory()) {
+								try {
+									if (Logger.logDebug()) {
+										Logger.debug("Deleting directory: " + f.getAbsolutePath());
+									}
+									deleteDirectory(f);
+								} catch (IOException e) {
+									if (Logger.logWarn()) {
+										Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
+									}
+								}
+							} else {
+								if (Logger.logDebug()) {
+									Logger.debug("Deleting file: " + f.getAbsolutePath());
+								}
+								if (!f.delete()) {
+									try {
+										FileUtils.forceDelete(f);
+									} catch (IOException e) {
+										if (Logger.logWarn()) {
+											Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
 	public static final String                        fileSeparator     = System.getProperty("file.separator");
 	public static final String                        lineSeparator     = System.getProperty("line.separator");
 	public static final String                        pathSeparator     = System.getProperty("path.separator");
@@ -77,10 +119,10 @@ public class FileUtils {
 	}
 	
 	/**
-	* @param bzip2File
-	* @param directory
-	* @return
-	*/
+	 * @param bzip2File
+	 * @param directory
+	 * @return
+	 */
 	public static boolean bunzip2(final File bzip2File,
 	                              final File directory) {
 		try {
@@ -347,7 +389,7 @@ public class FileUtils {
 	/**
 	 * @param data
 	 * @param file
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static void dump(final byte[] data,
 	                        final File file) throws IOException {
@@ -512,11 +554,13 @@ public class FileUtils {
 	}
 	
 	/**
-	 *
-	 * This method returns an file iterator the iterates over sub-directories only.
-	 *
+	 * 
+	 * This method returns an file iterator the iterates over sub-directories
+	 * only.
+	 * 
 	 * @param topLevelDir
-	 * @return An valid file iterator if given top level directory exists and is a directory. Null otherwise.
+	 * @return An valid file iterator if given top level directory exists and is
+	 *         a directory. Null otherwise.
 	 */
 	@NoneNull
 	public static Iterator<File> getSubDirectoryIterator(final File topLevelDir) {
@@ -651,42 +695,6 @@ public class FileUtils {
 	private static void removeFromFileManager(final File file) {
 		for (FileShutdownAction key : fileManager.keySet()) {
 			fileManager.get(key).remove(file);
-		}
-	}
-	
-	public static void shutdown() {
-		Set<File> filesToDelete = new HashSet<File>();
-		if (fileManager.containsKey(FileShutdownAction.DELETE)) {
-			filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
-			for (File f : filesToDelete) {
-				if (f.exists()) {
-					if (f.isDirectory()) {
-						try {
-							if (Logger.logDebug()) {
-								Logger.debug("Deleting directory: " + f.getAbsolutePath());
-							}
-							deleteDirectory(f);
-						} catch (IOException e) {
-							if (Logger.logWarn()) {
-								Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
-							}
-						}
-					} else {
-						if (Logger.logDebug()) {
-							Logger.debug("Deleting file: " + f.getAbsolutePath());
-						}
-						if (!f.delete()) {
-							try {
-								FileUtils.forceDelete(f);
-							} catch (IOException e) {
-								if (Logger.logWarn()) {
-									Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 	
