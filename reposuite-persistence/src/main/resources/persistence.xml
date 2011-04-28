@@ -61,7 +61,6 @@
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSFile</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment</class>
@@ -93,7 +92,6 @@
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSFile</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment</class>
@@ -129,7 +127,6 @@
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSFile</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.ppa.model.JavaElement</class>
 		<class>de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition</class>
@@ -162,7 +159,6 @@
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSFile</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision</class>
 		<class>de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.reposuite.rcs.model.RevisionPrimaryKey</class>
 		<class>de.unisaarland.cs.st.reposuite.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment</class>
