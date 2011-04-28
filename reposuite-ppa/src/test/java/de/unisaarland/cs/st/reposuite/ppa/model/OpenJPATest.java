@@ -17,6 +17,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -49,13 +50,15 @@ public class OpenJPATest {
 			JavaElementCache cache = new JavaElementCache();
 			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 			DateTime now = new DateTime();
+			
 			Person p = new Person("kim", "", "");
 			RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1");
+			transaction.setBranch(new RCSBranch("master"));
 			RCSFile file = new RCSFileManager().createFile("a.java", transaction);
 			RCSRevision rev = new RCSRevision(transaction, file, ChangeType.Added);
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-			persistenceUtil.saveOrUpdate(transaction);
-			persistenceUtil.saveOrUpdate(op);
+			persistenceUtil.save(transaction);
+			persistenceUtil.save(op);
 			persistenceUtil.commitTransaction();
 			persistenceUtil.beginTransaction();
 			
