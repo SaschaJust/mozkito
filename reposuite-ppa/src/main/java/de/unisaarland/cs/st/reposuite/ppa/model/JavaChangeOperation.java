@@ -271,7 +271,6 @@ public class JavaChangeOperation implements Annotated {
 	 * @param id
 	 *            the new id
 	 */
-	@SuppressWarnings ("unused")
 	protected void setId(final long id) {
 		this.id = id;
 	}

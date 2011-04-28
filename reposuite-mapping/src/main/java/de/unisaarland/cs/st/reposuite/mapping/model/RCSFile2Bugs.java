@@ -13,7 +13,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.dom4j.Document;
@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 @Entity
 public class RCSFile2Bugs implements Annotated, Displayable {
@@ -113,11 +113,11 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 			return false;
 		}
 		RCSFile2Bugs other = (RCSFile2Bugs) obj;
-		if (this.file == null) {
+		if (file == null) {
 			if (other.file != null) {
 				return false;
 			}
-		} else if (!this.file.equals(other.file)) {
+		} else if (!file.equals(other.file)) {
 			return false;
 		}
 		return true;
@@ -128,15 +128,15 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public RCSFile getFile() {
-		return this.file;
+		return file;
 	}
 	
 	/**
 	 * @return the reports
 	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Report> getReports() {
-		return this.reports;
+		return reports;
 	}
 	
 	/*
@@ -147,21 +147,23 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.file == null)
-		                                              ? 0
-		                                              : this.file.hashCode());
+		result = prime * result + ((file == null)
+		                                         ? 0
+		                                         : file.hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param file the file to set
+	 * @param file
+	 *            the file to set
 	 */
 	public void setFile(final RCSFile file) {
 		this.file = file;
 	}
 	
 	/**
-	 * @param reports the reports to set
+	 * @param reports
+	 *            the reports to set
 	 */
 	public void setReports(final Set<Report> reports) {
 		this.reports = reports;
@@ -199,7 +201,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RCSFile2Bugs [file=");
-		builder.append(this.file.getGeneratedId());
+		builder.append(file.getGeneratedId());
 		builder.append(", reports=");
 		StringBuilder b = new StringBuilder();
 		for (Report report : getReports()) {
