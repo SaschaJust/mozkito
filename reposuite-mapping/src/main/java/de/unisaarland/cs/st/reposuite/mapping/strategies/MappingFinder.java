@@ -13,6 +13,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -33,6 +34,16 @@ public class MappingFinder {
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
+	}
+	
+	/**
+	 * @param persistenceUtil
+	 */
+	public void addPersistenceUtil(final PersistenceUtil persistenceUtil) {
+		for (String engineName : this.engines.keySet()) {
+			MappingEngine mappingEngine = this.engines.get(engineName);
+			mappingEngine.loadData(persistenceUtil);
+		}
 	}
 	
 	/**

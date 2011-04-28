@@ -14,8 +14,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.utils.LogLevel;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -28,17 +26,8 @@ public class MergeTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Logger.setLogLevel(LogLevel.OFF);
-		Properties properties = new Properties();
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", "miner");
-		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "rcs");
+		OpenJPAUtil.createTestSessionFactory("rcs");
 		
-		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	/**

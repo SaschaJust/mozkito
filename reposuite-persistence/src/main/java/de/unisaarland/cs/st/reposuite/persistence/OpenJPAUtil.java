@@ -33,6 +33,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import de.unisaarland.cs.st.reposuite.utils.LogLevel;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -154,7 +155,24 @@ public class OpenJPAUtil implements PersistenceUtil {
 		OpenJPAUtil.type = type;
 		
 		createSessionFactory(properties);
+	}
+	
+	/**
+	 * @param string
+	 */
+	public static void createTestSessionFactory(final String string) {
+		Logger.setLogLevel(LogLevel.OFF);
+		Properties properties = new Properties();
+		String url = "jdbc:postgresql://" + System.getProperty("database.host", "quentin.cs.uni-saarland.de") + "/"
+		        + System.getProperty("database.name", "reposuiteTest");
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", System.getProperty("database.username", "miner"));
+		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
+		properties.put("openjpa.persistence-unit", string);
 		
+		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	/**
@@ -176,8 +194,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	}
 	
 	private final EntityManager             entityManager;
-	
 	private static String                   type;
+	
 	private static Map<Thread, OpenJPAUtil> provider = new HashMap<Thread, OpenJPAUtil>();
 	
 	/**
@@ -288,18 +306,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 		return nativeQuery.getResultList();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#executeQuery
-	 * (java.lang.String)
-	 */
-	@Override
-	public void executeQuery(final String queryString) {
-		Query query = this.entityManager.createQuery(queryString);
-		query.executeUpdate();
-	}
-	
 	// @Override
 	// public RCSFile fetchRCSFile(final Long id) {
 	// CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -327,6 +333,18 @@ public class OpenJPAUtil implements PersistenceUtil {
 	//
 	// return query.getResultList().get(0);
 	// }
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#executeQuery
+	 * (java.lang.String)
+	 */
+	@Override
+	public void executeQuery(final String queryString) {
+		Query query = this.entityManager.createQuery(queryString);
+		query.executeUpdate();
+	}
 	
 	/*
 	 * (non-Javadoc)

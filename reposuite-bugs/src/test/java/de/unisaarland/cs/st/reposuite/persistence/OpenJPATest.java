@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.reposuite.persistence;
 
 import static org.junit.Assert.fail;
 
-import java.util.Properties;
-
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -17,8 +15,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.LogLevel;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -31,17 +27,8 @@ public class OpenJPATest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Logger.setLogLevel(LogLevel.DEBUG);
-		Properties properties = new Properties();
-		String url = "jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest";
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", "miner");
-		properties.put("openjpa.ConnectionPassword", "miner");
-		properties.put("openjpa.persistence-unit", "bugs");
+		OpenJPAUtil.createTestSessionFactory("bugs");
 		
-		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
 	/**
