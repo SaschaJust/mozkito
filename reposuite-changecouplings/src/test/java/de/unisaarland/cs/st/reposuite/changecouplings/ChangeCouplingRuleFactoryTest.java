@@ -170,31 +170,31 @@ public class ChangeCouplingRuleFactoryTest {
 		
 		rule = changeCouplingRules.get(2);
 		assertEquals(2, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileA));
-		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileB, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(3);
-		assertEquals(2, rule.getPremise().size());
 		assertTrue(rule.getPremise().contains(fileC));
 		assertTrue(rule.getPremise().contains(fileB));
 		assertEquals(fileA, rule.getImplication());
 		assertEquals(1, rule.getSupport().intValue());
 		assertEquals(1, rule.getConfidence().doubleValue(), 0);
 		
+		rule = changeCouplingRules.get(3);
+		assertEquals(2, rule.getPremise().size());
+		assertTrue(rule.getPremise().contains(fileA));
+		assertTrue(rule.getPremise().contains(fileC));
+		assertEquals(fileB, rule.getImplication());
+		assertEquals(1, rule.getSupport().intValue());
+		assertEquals(1, rule.getConfidence().doubleValue(), 0);
+		
 		rule = changeCouplingRules.get(4);
 		assertEquals(1, rule.getPremise().size());
 		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileB, rule.getImplication());
+		assertEquals(fileA, rule.getImplication());
 		assertEquals(1, rule.getSupport().intValue());
 		assertEquals(1, rule.getConfidence().doubleValue(), 0);
 		
 		rule = changeCouplingRules.get(5);
 		assertEquals(1, rule.getPremise().size());
 		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileA, rule.getImplication());
+		assertEquals(fileB, rule.getImplication());
 		assertEquals(1, rule.getSupport().intValue());
 		assertEquals(1, rule.getConfidence().doubleValue(), 0);
 		
