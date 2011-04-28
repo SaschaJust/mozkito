@@ -360,7 +360,7 @@ public class SourceforgeTracker extends Tracker {
 	public void getIdsFromURI(final URI uri) {
 		if (uri.getScheme().equals("file")) {
 			// FIXME this will fail on ?+*
-			Regex regex = new Regex(".*" + this.pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
+			Regex regex = new Regex(".*" + pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
 			File baseDir = new File(uri.getPath());
 			
 			if (baseDir.exists() && baseDir.isDirectory() && baseDir.canExecute() && baseDir.canRead()) {
@@ -447,7 +447,7 @@ public class SourceforgeTracker extends Tracker {
 			if (Logger.logTrace()) {
 				Logger.trace("Found field: subject, value: " + n.getValue());
 			}
-			List<RegexGroup> find = this.subjectRegex.find(n.getValue());
+			List<RegexGroup> find = subjectRegex.find(n.getValue());
 			bugReport.setSubject(find.get(1).getMatch());
 			// bugReport.setId(Long.parseLong(find.get(2).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
@@ -645,22 +645,18 @@ public class SourceforgeTracker extends Tracker {
 					
 					DateTime dateTime = DateTimeUtils.parseDate(datetimeElement.getValue());
 					
-					if (this.lastHistoryElement == null) {
-						this.lastHistoryElement = new HistoryElement(
-						                                             bugReport.getId(),
-						                                             author,
-						                                             DateTimeUtils.parseDate(datetimeElement.getValue()));
+					if (lastHistoryElement == null) {
+						lastHistoryElement = new HistoryElement(bugReport.getId(), author,
+						                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
 					} else {
-						if (!this.lastHistoryElement.getTimestamp().isEqual(dateTime)) {
-							if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
+						if (!lastHistoryElement.getTimestamp().isEqual(dateTime)) {
+							if (!bugReport.addHistoryElement(lastHistoryElement)) {
 								if (Logger.logWarn()) {
-									Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
+									Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
 								}
 							}
-							this.lastHistoryElement = new HistoryElement(
-							                                             bugReport.getId(),
-							                                             author,
-							                                             DateTimeUtils.parseDate(datetimeElement.getValue()));
+							lastHistoryElement = new HistoryElement(bugReport.getId(), author,
+							                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
 						}
 					}
 					
@@ -732,7 +728,7 @@ public class SourceforgeTracker extends Tracker {
 					Tuple<Object, Object> tuple = new Tuple<Object, Object>(oldValue, newValue);
 					HashMap<String, Tuple<Object, Object>> valueMap = new HashMap<String, Tuple<Object, Object>>();
 					valueMap.put(field.getName(), tuple);
-					this.lastHistoryElement.addChange(valueMap);
+					lastHistoryElement.addChange(valueMap);
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
@@ -798,10 +794,12 @@ public class SourceforgeTracker extends Tracker {
 		bugReport.setHash(xmlReport.getMd5());
 		hangle(bugReport, element, null);
 		
-		// check if there is a non-added hs
-		if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
+		// check if there is a non-added
+		if (lastHistoryElement != null) {
+			if (!bugReport.addHistoryElement(lastHistoryElement)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
+				}
 			}
 		}
 		
@@ -836,6 +834,6 @@ public class SourceforgeTracker extends Tracker {
 			}
 		}
 		
-		this.initialized = true;
+		initialized = true;
 	}
 }
