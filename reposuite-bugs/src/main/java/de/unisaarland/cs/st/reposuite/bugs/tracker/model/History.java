@@ -22,8 +22,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -54,7 +54,7 @@ public class History implements Annotated {
 	/**
 	 * @param bugId
 	 */
-	public History(@Positive final long bugId) {
+	public History(@NotNegative final long bugId) {
 		setBugId(bugId);
 	}
 	
@@ -63,7 +63,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public boolean add(@NotNull final HistoryElement element) {
-		CompareCondition.equals(this.bugId, element.getBugId(),
+		CompareCondition.equals(bugId, element.getBugId(),
 		                        "HistoryElements may never be added to the History of a different report: %s -> %s",
 		                        element, this);
 		boolean ret = false;
@@ -208,7 +208,7 @@ public class History implements Annotated {
 	 * @return the bugId
 	 */
 	public long getBugId() {
-		return this.bugId;
+		return bugId;
 	}
 	
 	/**
@@ -217,7 +217,7 @@ public class History implements Annotated {
 	@OrderBy
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public SortedSet<HistoryElement> getElements() {
-		return this.elements;
+		return elements;
 	}
 	
 	/**
@@ -226,7 +226,7 @@ public class History implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -368,9 +368,9 @@ public class History implements Annotated {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("History [bugId=");
-		builder.append(this.bugId);
+		builder.append(bugId);
 		builder.append(", elements=");
-		builder.append(this.elements);
+		builder.append(elements);
 		builder.append("]");
 		return builder.toString();
 	}
