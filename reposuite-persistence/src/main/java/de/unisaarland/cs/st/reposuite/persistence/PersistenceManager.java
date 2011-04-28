@@ -36,8 +36,10 @@ public class PersistenceManager {
 	 */
 	public static String getNativeQuery(final PersistenceUtil util,
 	                                    final String id) {
-		if (nativeQueries.containsKey(util.getType()) && nativeQueries.get(util.getType()).containsKey(id)) {
-			return nativeQueries.get(util.getType()).get(id);
+		String databaseType = util.getType().toLowerCase();
+		
+		if (nativeQueries.containsKey(databaseType) && nativeQueries.get(databaseType).containsKey(id)) {
+			return nativeQueries.get(databaseType).get(id);
 		} else {
 			return null;
 		}
@@ -89,11 +91,12 @@ public class PersistenceManager {
 	public static String registerNativeQuery(final String type,
 	                                         final String id,
 	                                         final String query) {
-		if (!nativeQueries.containsKey(type)) {
-			nativeQueries.put(type, new HashMap<String, String>());
+		String databaseType = type.toLowerCase();
+		if (!nativeQueries.containsKey(databaseType)) {
+			nativeQueries.put(databaseType, new HashMap<String, String>());
 		}
 		
-		Map<String, String> map = nativeQueries.get(type);
+		Map<String, String> map = nativeQueries.get(databaseType);
 		return map.put(id, query);
 	}
 	
