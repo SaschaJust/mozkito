@@ -27,6 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -108,10 +109,14 @@ public class Person implements Annotated {
 	 */
 	@Transient
 	public boolean addAllEmails(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> emails) {
-		boolean ret = false;
-		Set<String> addresses = getEmailAddresses();
-		ret = addresses.addAll(emails);
-		setEmailAddresses(addresses);
+		boolean ret = true;
+		Set<String> backup = getEmailAddresses();
+		for (String email : emails) {
+			ret &= addEmail(email);
+		}
+		if (!ret) {
+			setEmailAddresses(backup);
+		}
 		return ret;
 	}
 	
@@ -143,7 +148,7 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	@Transient
-	public boolean addEmail(@Matches (pattern = "[A-Za-z0-9._%-+]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}") @Trimmed final String email) {
+	public boolean addEmail(@Matches (pattern = Regex.emailPattern) @Trimmed final String email) {
 		boolean ret = false;
 		if (email != null) {
 			Set<String> addresses = getEmailAddresses();
