@@ -30,8 +30,7 @@ class GitLogParser {
 	                                                         "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
-	protected static Regex emailBaseRegex        = new Regex("({email}(" + Regex.emailPattern
-	                                                     + ")|([a-zA-Z0-9._%-+]+@([0-9a-fA-F]{4,}-?){5}))");
+	protected static Regex emailBaseRegex        = new Regex("({email}" + Regex.emailPattern + ")");
 	
 	protected static Regex usernameBaseRegex     = new Regex("(^|[\\s<]+)({username}[a-z0-9]{4,})[\\s>]");
 	

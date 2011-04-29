@@ -81,6 +81,20 @@ public class RegexTest {
 		assertFalse(Regex.checkRegex("({test})\\"));
 	}
 	
+	@Test
+	public void testEmailRegex() {
+		String anonEmail = "elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5";
+		String email = "elharo@test-domain.de";
+		
+		Regex regex = new Regex("({email}" + Regex.emailPattern + ")");
+		List<RegexGroup> find = regex.find(anonEmail);
+		assertTrue(find.size() > 1);
+		assertEquals("elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5", find.get(1).getMatch());
+		find = regex.find(email);
+		assertTrue(find.size() > 1);
+		assertEquals("elharo@test-domain.de", find.get(1).getMatch());
+	}
+	
 	/**
 	 * Test method for
 	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#find(java.lang.String)}
@@ -173,8 +187,7 @@ public class RegexTest {
 		String text = "sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">";
 		String match = Regex.findLongestMatchingPattern(pattern, text);
 		
-		assertTrue(new Regex("({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+.*")
-		        .matchesFull(text));
+		assertTrue(new Regex("({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+.*").matchesFull(text));
 		assertEquals("^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+", match);
 	}
 	
@@ -308,5 +321,4 @@ public class RegexTest {
 		assertFalse(regex.matchesFull("atb"));
 		
 	}
-	
 }

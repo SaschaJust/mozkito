@@ -33,7 +33,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 public class Regex {
 	
-	public static final String emailPattern = "[A-Za-z0-9._%-+]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+	public static final String emailPattern = "((?#email user)[A-Za-z0-9._%-+]+@(((?#email real domain)[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})|((?#email anonymous domain)\\p{XDigit}{4,}(-\\p{XDigit}{4,}){4})))";
 	
 	/**
 	 * @param namedPattern
@@ -290,11 +290,11 @@ public class Regex {
 			return false;
 		}
 		Regex other = (Regex) obj;
-		if (this.pattern == null) {
+		if (pattern == null) {
 			if (other.pattern != null) {
 				return false;
 			}
-		} else if (!this.pattern.equals(other.pattern)) {
+		} else if (!pattern.equals(other.pattern)) {
 			return false;
 		}
 		return true;
@@ -310,23 +310,23 @@ public class Regex {
 	public List<RegexGroup> find(@NotNull final String text) {
 		reset();
 		
-		this.matcher = this.pattern.matcher(text);
-		if (this.matcher.find()) {
-			this.matched = true;
+		matcher = pattern.matcher(text);
+		if (matcher.find()) {
+			matched = true;
 			
-			for (int i = 0; i < this.matcher.groupCount(); ++i) {
-				this.matches.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i,
-				                                this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+			for (int i = 0; i < matcher.groupCount(); ++i) {
+				matches.add(new RegexGroup(pattern.toString(), text, matcher.group(i), i, pattern.getGroupName(i),
+				                           matcher.start(), matcher.end()));
 				
-				if (this.pattern.getGroupName(i) != null) {
-					this.groupNames.put(this.pattern.getGroupName(i), i);
+				if (pattern.getGroupName(i) != null) {
+					groupNames.put(pattern.getGroupName(i), i);
 				}
 			}
 		}
 		
-		return (this.matches.size() > 0
-		                               ? this.matches
-		                               : null);
+		return (matches.size() > 0
+		                          ? matches
+		                          : null);
 	}
 	
 	/**
@@ -340,28 +340,28 @@ public class Regex {
 	public List<List<RegexGroup>> findAll(@NotNull final String text) {
 		reset();
 		
-		this.matcher = this.pattern.matcher(text);
-		MatchIterator findAll = this.matcher.findAll();
+		matcher = pattern.matcher(text);
+		MatchIterator findAll = matcher.findAll();
 		
-		this.matched = findAll.hasMore();
+		matched = findAll.hasMore();
 		
 		while (findAll.hasMore()) {
 			MatchResult match = findAll.nextMatch();
-			List<RegexGroup> matches = new ArrayList<RegexGroup>(this.matcher.groupCount());
+			List<RegexGroup> matches = new ArrayList<RegexGroup>(matcher.groupCount());
 			
 			for (int i = 1; i < match.groupCount(); ++i) {
-				matches.add(new RegexGroup(this.pattern.toString(), text, match.group(i), i,
-				                           this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
-				if (this.pattern.getGroupName(i) != null) {
-					this.groupNames.put(this.pattern.getGroupName(i), i);
+				matches.add(new RegexGroup(pattern.toString(), text, match.group(i), i, pattern.getGroupName(i),
+				                           matcher.start(), matcher.end()));
+				if (pattern.getGroupName(i) != null) {
+					groupNames.put(pattern.getGroupName(i), i);
 				}
 			}
-			this.allMatches.add(matches);
+			allMatches.add(matches);
 		}
 		
-		return (this.allMatches.size() == 0
-		                                   ? null
-		                                   : this.allMatches);
+		return (allMatches.size() == 0
+		                              ? null
+		                              : allMatches);
 	}
 	
 	/**
@@ -376,24 +376,24 @@ public class Regex {
 	public List<List<RegexGroup>> findAllPossibleMatches(@NotNull final String text) {
 		reset();
 		
-		this.matcher = this.pattern.matcher(text);
+		matcher = pattern.matcher(text);
 		
-		while (this.matcher.proceed()) {
-			this.matched = true;
+		while (matcher.proceed()) {
+			matched = true;
 			LinkedList<RegexGroup> candidates = new LinkedList<RegexGroup>();
-			candidates.add(new RegexGroup(getPattern(), text, this.matcher.toString(), 0, null, this.matcher.start(),
-			                              this.matcher.end()));
-			this.allMatches.add(candidates);
+			candidates.add(new RegexGroup(getPattern(), text, matcher.toString(), 0, null, matcher.start(),
+			                              matcher.end()));
+			allMatches.add(candidates);
 		}
 		
-		return this.allMatches;
+		return allMatches;
 	}
 	
 	/**
 	 * @return the allMatches
 	 */
 	public List<List<RegexGroup>> getAllMatches() {
-		return this.allMatches;
+		return allMatches;
 	}
 	
 	/**
@@ -401,7 +401,7 @@ public class Regex {
 	 * @return
 	 */
 	public String getGroup(final int i) {
-		return this.matcher.group(i);
+		return matcher.group(i);
 	}
 	
 	/**
@@ -409,35 +409,35 @@ public class Regex {
 	 * @return
 	 */
 	public String getGroup(final String name) {
-		return this.matcher.group(name);
+		return matcher.group(name);
 	}
 	
 	/**
 	 * @return the groupCount
 	 */
 	public Integer getGroupCount() {
-		return this.pattern.groupCount() - 1;
+		return pattern.groupCount() - 1;
 	}
 	
 	/**
 	 * @return the groupNames
 	 */
 	public Set<String> getGroupNames() {
-		return this.groupNames.keySet();
+		return groupNames.keySet();
 	}
 	
 	/**
 	 * @return the matches
 	 */
 	public List<RegexGroup> getMatches() {
-		return this.matches;
+		return matches;
 	}
 	
 	/**
 	 * @return the pattern
 	 */
 	public String getPattern() {
-		return this.pattern.toString();
+		return pattern.toString();
 	}
 	
 	/*
@@ -448,9 +448,9 @@ public class Regex {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.pattern == null)
-		                                                 ? 0
-		                                                 : this.pattern.hashCode());
+		result = prime * result + ((pattern == null)
+		                                            ? 0
+		                                            : pattern.hashCode());
 		return result;
 	}
 	
@@ -458,7 +458,7 @@ public class Regex {
 	 * @return
 	 */
 	public Boolean matched() {
-		return this.matched;
+		return matched;
 	}
 	
 	/**
@@ -469,7 +469,7 @@ public class Regex {
 		reset();
 		
 		find(text);
-		return (this.matches != null) && (this.matches.size() > 0);
+		return (matches != null) && (matches.size() > 0);
 	}
 	
 	/**
@@ -482,13 +482,13 @@ public class Regex {
 	public boolean matchesFull(@NotNull final String text) {
 		reset();
 		
-		this.matcher = this.pattern.matcher(text);
-		this.matched = this.matcher.matches();
+		matcher = pattern.matcher(text);
+		matched = matcher.matches();
 		for (int i = 1; i < getGroupCount(); ++i) {
-			this.groupNames.put(this.pattern.getGroupName(i), i);
+			groupNames.put(pattern.getGroupName(i), i);
 		}
 		
-		return this.matched;
+		return matched;
 	}
 	
 	/**
@@ -504,9 +504,9 @@ public class Regex {
 	public boolean prefixMatches(@NotNull final String text) {
 		reset();
 		
-		Matcher matcher = this.pattern.matcher();
-		this.matched = matcher.matchesPrefix();
-		return this.matched;
+		Matcher matcher = pattern.matcher();
+		matched = matcher.matchesPrefix();
+		return matched;
 	}
 	
 	/**
@@ -519,9 +519,9 @@ public class Regex {
 	public String removeAll(@NotNull final String text) {
 		reset();
 		
-		this.replacer = this.pattern.replacer("");
-		String returnString = this.replacer.replace(text);
-		this.matched = returnString.length() < text.length();
+		replacer = pattern.replacer("");
+		String returnString = replacer.replace(text);
+		matched = returnString.length() < text.length();
 		
 		return returnString;
 	}
@@ -539,15 +539,14 @@ public class Regex {
 	                         final String replacement) {
 		Condition.isNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement),
 		                 "We do not allow references/patterns in this method");
-		Condition.check((find(text) == null)
-		                        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)),
+		Condition.check((find(text) == null) || (matched && !pattern.replacer(replacement).replace(text).equals(text)),
 		                "This is done to ensure matches are not replaced by themselves");
 		
 		reset();
 		
-		this.replacer = this.pattern.replacer(replacement);
-		String returnString = this.replacer.replace(text);
-		this.matched = !returnString.equals(text);
+		replacer = pattern.replacer(replacement);
+		String returnString = replacer.replace(text);
+		matched = !returnString.equals(text);
 		return returnString;
 	}
 	
@@ -555,12 +554,12 @@ public class Regex {
 	 * Resets storage to guarantee consistent getter outputs.
 	 */
 	private void reset() {
-		this.matcher = null;
-		this.replacer = null;
-		this.matches.clear();
-		this.allMatches.clear();
-		this.matched = null;
-		this.groupNames = new HashMap<String, Integer>();
+		matcher = null;
+		replacer = null;
+		matches.clear();
+		allMatches.clear();
+		matched = null;
+		groupNames = new HashMap<String, Integer>();
 	}
 	
 	/**
@@ -589,8 +588,8 @@ public class Regex {
 	 * @return a string array containing all tokens
 	 */
 	public String[] tokenize(final String text) {
-		String[] split = new RETokenizer(this.pattern, text).split();
-		this.matched = (split != null) && (split.length > 0);
+		String[] split = new RETokenizer(pattern, text).split();
+		matched = (split != null) && (split.length > 0);
 		return split;
 	}
 	
@@ -600,7 +599,7 @@ public class Regex {
 	 */
 	@Override
 	public String toString() {
-		return "Regex [pattern=" + this.pattern + "]";
+		return "Regex [pattern=" + pattern + "]";
 	}
 	
 }
