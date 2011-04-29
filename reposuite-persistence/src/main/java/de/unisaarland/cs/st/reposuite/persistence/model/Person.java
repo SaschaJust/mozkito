@@ -27,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -96,8 +95,7 @@ public class Person implements Annotated {
 	 * @param fullname
 	 * @param email
 	 */
-	public Person(@Trimmed final String username, @Trimmed final String fullname,
-	        @Matches (pattern = Regex.emailPattern) @Trimmed final String email) {
+	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense.");
 		addUsername(username);
