@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class TimestampMappingEngine extends MappingEngine {
+public class TimestampEngine extends MappingEngine {
 	
 	private static double                 scoreReportCreatedAfterTransaction   = -10d;
 	private static double                 scoreReportResolvedWithinWindow      = 2d;
@@ -61,27 +61,27 @@ public class TimestampMappingEngine extends MappingEngine {
 	 * @param scoreReportCreatedAfterTransaction the scoreReportCreatedAfterTransaction to set
 	 */
 	private static void setScoreReportCreatedAfterTransaction(final double scoreReportCreatedAfterTransaction) {
-		TimestampMappingEngine.scoreReportCreatedAfterTransaction = scoreReportCreatedAfterTransaction;
+		TimestampEngine.scoreReportCreatedAfterTransaction = scoreReportCreatedAfterTransaction;
 	}
 	
 	/**
 	 * @param scoreReportResolvedWithinWindow the scoreReportResolvedWithinWindow to set
 	 */
 	private static void setScoreReportResolvedWithinWindow(final double scoreReportResolvedAfterTransaction) {
-		TimestampMappingEngine.scoreReportResolvedWithinWindow = scoreReportResolvedAfterTransaction;
+		TimestampEngine.scoreReportResolvedWithinWindow = scoreReportResolvedAfterTransaction;
 	}
 	
 	/**
 	 * @param windowReportResolvedAfterTransaction the windowReportResolvedAfterTransaction to set
 	 */
 	private static void setWindowReportResolvedAfterTransaction(final org.joda.time.Interval windowReportResolvedAfterTransaction) {
-		TimestampMappingEngine.windowReportResolvedAfterTransaction = windowReportResolvedAfterTransaction;
+		TimestampEngine.windowReportResolvedAfterTransaction = windowReportResolvedAfterTransaction;
 	}
 	
 	/**
 	 * @param settings
 	 */
-	public TimestampMappingEngine(final MappingSettings settings) {
+	public TimestampEngine(final MappingSettings settings) {
 		super(settings);
 	}
 	
@@ -247,7 +247,10 @@ public class TimestampMappingEngine extends MappingEngine {
 			value += getScoreReportCreatedAfterTransaction();
 		}
 		
-		score.addFeature(value, "timestamp", transaction.getTimestamp().toString(), this.getClass());
+		score.addFeature(value, "timestamp", transaction.getTimestamp().toString(), "resolutionTimestamp",
+		                 report.getResolutionTimestamp() != null
+		                                                        ? report.getResolutionTimestamp().toString()
+		                                                        : "unset", this.getClass());
 	}
 	
 }
