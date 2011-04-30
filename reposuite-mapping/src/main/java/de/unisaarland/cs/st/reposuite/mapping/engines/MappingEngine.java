@@ -3,13 +3,18 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -18,9 +23,10 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public abstract class MappingEngine {
 	
-	private MappingSettings settings;
-	private boolean         registered  = false;
-	private boolean         initialized = false;
+	private MappingSettings                                            settings;
+	private boolean                                                    registered  = false;
+	private boolean                                                    initialized = false;
+	private final Map<Class<? extends MappingStorage>, MappingStorage> storages    = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	
 	public MappingEngine(final MappingSettings settings) {
 		setSettings(settings);
@@ -31,6 +37,15 @@ public abstract class MappingEngine {
 	 */
 	public MappingSettings getSettings() {
 		return this.settings;
+	}
+	
+	/**
+	 * @param key
+	 * @return
+	 */
+	@SuppressWarnings ("unchecked")
+	public <T extends MappingStorage> T getStorage(final Class<T> key) {
+		return (T) this.storages.get(key);
 	}
 	
 	/**
@@ -57,10 +72,19 @@ public abstract class MappingEngine {
 	}
 	
 	/**
-	 * @param util
+	 * @param storage
 	 */
-	public void loadData(final PersistenceUtil util) {
-		
+	public void provideStorage(final MappingStorage storage) {
+		this.storages.put(storage.getClass(), storage);
+	}
+	
+	/**
+	 * @param storages
+	 */
+	public void provideStorages(final Set<? extends MappingStorage> storages) {
+		for (MappingStorage storage : storages) {
+			this.storages.put(storage.getClass(), storage);
+		}
 	}
 	
 	/**
@@ -81,12 +105,9 @@ public abstract class MappingEngine {
 	 * @param score
 	 */
 	@NoneNull
-	public void score(final RCSTransaction transaction,
-	                  final Report report,
-	                  final MapScore score) {
-		Condition.check(isInitialized(), "The engine has to be initialized before it can be used. Engine: %s",
-		                this.getClass().getSimpleName());
-	}
+	public abstract void score(final RCSTransaction transaction,
+	                           final Report report,
+	                           final MapScore score);
 	
 	/**
 	 * @param initialized the initialized to set
@@ -109,6 +130,13 @@ public abstract class MappingEngine {
 		this.settings = settings;
 	}
 	
+	/**
+	 * @return
+	 */
+	public Set<Class<? extends MappingStorage>> storageDependency() {
+		return new HashSet<Class<? extends MappingStorage>>();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -124,6 +152,14 @@ public abstract class MappingEngine {
 		builder.append(this.initialized);
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	/**
+	 * @param string
+	 * @return
+	 */
+	protected String truncate(final String string) {
+		return string.substring(0, Math.min(string.length() - 1, 254));
 	}
 	
 }

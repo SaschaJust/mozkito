@@ -27,7 +27,7 @@ import de.unisaarland.cs.st.reposuite.utils.Regex;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class RegexMappingEngine extends MappingEngine {
+public class RegexEngine extends MappingEngine {
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -123,20 +123,20 @@ public class RegexMappingEngine extends MappingEngine {
 	 * @param uri the configPath to set
 	 */
 	private static void setConfigPath(final URI uri) {
-		RegexMappingEngine.configPath = uri;
+		RegexEngine.configPath = uri;
 	}
 	
 	/**
 	 * @param matchers the matchers to set
 	 */
 	private static void setMatchers(final Collection<Matcher> matchers) {
-		RegexMappingEngine.matchers = matchers;
+		RegexEngine.matchers = matchers;
 	}
 	
 	/**
 	 * @param settings
 	 */
-	public RegexMappingEngine(final MappingSettings settings) {
+	public RegexEngine(final MappingSettings settings) {
 		super(settings);
 	}
 	
@@ -148,7 +148,7 @@ public class RegexMappingEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		setConfigPath((URI) getSettings().getSetting("mapping.config.regexFile").getValue());
-		setMatchers(new LinkedList<RegexMappingEngine.Matcher>());
+		setMatchers(new LinkedList<RegexEngine.Matcher>());
 		
 		if (!getConfigPath().getScheme().equalsIgnoreCase("file")) {
 			if (Logger.logError()) {
@@ -232,7 +232,7 @@ public class RegexMappingEngine extends MappingEngine {
 		}
 		
 		if (!relevantString.isEmpty()) {
-			score.addFeature(value, "message", relevantString, this.getClass());
+			score.addFeature(value, "message", relevantString, "id", report.getId() + "", this.getClass());
 		}
 	}
 	
