@@ -101,6 +101,14 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * @param <T>
+	 * @param query
+	 */
+	public static <T> void registerPreparedQuery(final PreparedQuery<T> query) {
+		
+	}
+	
+	/**
 	 * @param id
 	 * @param query
 	 */
