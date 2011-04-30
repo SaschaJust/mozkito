@@ -22,8 +22,10 @@ public class MappingEngineFeature implements Annotated {
 	
 	private static final long                                  serialVersionUID = 4097360257338824107L;
 	double                                                     confidence;
-	String                                                     fieldName;
-	String                                                     substring;
+	String                                                     transactionFieldName;
+	String                                                     reportFieldName;
+	String                                                     reportSubstring;
+	String                                                     transactionSubstring;
 	String                                                     fqClassName;
 	private static Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
@@ -35,18 +37,22 @@ public class MappingEngineFeature implements Annotated {
 	
 	/**
 	 * @param confidence
-	 * @param fieldName
-	 * @param substring
+	 * @param transactionFieldName
+	 * @param transactionSubstring
 	 * @param mappingEngine
 	 */
-	public MappingEngineFeature(final double confidence, final String fieldName, final String substring,
+	public MappingEngineFeature(final double confidence, final String transactionFieldName,
+	        final String transactionSubstring, final String reportFieldName, final String reportSubstring,
 	        final Class<? extends MappingEngine> mappingEngine) {
-		this.confidence = confidence;
-		this.fieldName = fieldName;
-		this.substring = substring;
-		this.fqClassName = mappingEngine.getCanonicalName();
-		if (!cache.containsKey(this.fqClassName)) {
-			cache.put(this.fqClassName, mappingEngine);
+		setConfidence(confidence);
+		setTransactionFieldName(transactionFieldName);
+		setTransactionSubstring(transactionSubstring);
+		setReportFieldName(reportFieldName);
+		setReportSubstring(reportSubstring);
+		setFqClassName(mappingEngine.getCanonicalName());
+		
+		if (!cache.containsKey(getFqClassName())) {
+			cache.put(getFqClassName(), mappingEngine);
 		}
 	}
 	
@@ -86,13 +92,6 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @return the fieldName
-	 */
-	public String getFieldName() {
-		return this.fieldName;
-	}
-	
-	/**
 	 * @return the fqClassName
 	 */
 	public String getFqClassName() {
@@ -100,10 +99,31 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @return the substring
+	 * @return the reportFieldName
 	 */
-	public String getSubstring() {
-		return this.substring;
+	public String getReportFieldName() {
+		return this.reportFieldName;
+	}
+	
+	/**
+	 * @return the reportSubstring
+	 */
+	public String getReportSubstring() {
+		return this.reportSubstring;
+	}
+	
+	/**
+	 * @return the transactionFieldName
+	 */
+	public String getTransactionFieldName() {
+		return this.transactionFieldName;
+	}
+	
+	/**
+	 * @return the transactionSubstring
+	 */
+	public String getTransactionSubstring() {
+		return this.transactionSubstring;
 	}
 	
 	/**
@@ -114,13 +134,6 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @param fieldName the fieldName to set
-	 */
-	public void setFieldName(final String fieldName) {
-		this.fieldName = fieldName;
-	}
-	
-	/**
 	 * @param fqClassName the fqClassName to set
 	 */
 	public void setFqClassName(final String fqClassName) {
@@ -128,10 +141,31 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @param substring the substring to set
+	 * @param reportFieldName the reportFieldName to set
 	 */
-	public void setSubstring(final String substring) {
-		this.substring = substring;
+	public void setReportFieldName(final String reportFieldName) {
+		this.reportFieldName = reportFieldName;
+	}
+	
+	/**
+	 * @param reportSubstring the reportSubstring to set
+	 */
+	public void setReportSubstring(final String reportSubstring) {
+		this.reportSubstring = reportSubstring;
+	}
+	
+	/**
+	 * @param transactionFieldName the transactionFieldName to set
+	 */
+	public void setTransactionFieldName(final String transactionFieldName) {
+		this.transactionFieldName = transactionFieldName;
+	}
+	
+	/**
+	 * @param transactionSubstring the transactionSubstring to set
+	 */
+	public void setTransactionSubstring(final String transactionSubstring) {
+		this.transactionSubstring = transactionSubstring;
 	}
 	
 	/*
@@ -143,10 +177,10 @@ public class MappingEngineFeature implements Annotated {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngineFeature [confidence=");
 		builder.append(this.confidence);
-		builder.append(", fieldName=");
-		builder.append(this.fieldName);
-		builder.append(", substring=");
-		builder.append(this.substring);
+		builder.append(", transactionFieldName=");
+		builder.append(this.transactionFieldName);
+		builder.append(", transactionSubstring=");
+		builder.append(this.transactionSubstring);
 		builder.append(", fqClassName=");
 		builder.append(this.fqClassName);
 		builder.append("]");

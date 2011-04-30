@@ -53,17 +53,20 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	/**
 	 * @param confidence
-	 * @param fieldName
+	 * @param transactionFieldName
 	 * @param relevantString
 	 * @param mappingEngine
 	 */
 	@Transient
 	public void addFeature(final double confidence,
-	                       @NotNull @NotEmpty final String fieldName,
-	                       @NotNull @NotEmpty final String relevantString,
+	                       @NotNull @NotEmpty final String transactionFieldName,
+	                       @NotNull @NotEmpty final String transactionSubstring,
+	                       @NotNull @NotEmpty final String reportFieldName,
+	                       @NotNull @NotEmpty final String reportSubstring,
 	                       @NotNull final Class<? extends MappingEngine> mappingEngine) {
 		this.totalConfidence += confidence;
-		this.features.add(new MappingEngineFeature(confidence, fieldName, relevantString, mappingEngine));
+		this.features.add(new MappingEngineFeature(confidence, transactionFieldName, transactionSubstring,
+		                                           reportFieldName, reportSubstring, mappingEngine));
 	}
 	
 	/*

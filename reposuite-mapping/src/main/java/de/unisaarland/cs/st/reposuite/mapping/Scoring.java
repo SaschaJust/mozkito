@@ -2,9 +2,9 @@ package de.unisaarland.cs.st.reposuite.mapping;
 
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingFinder;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -85,6 +85,7 @@ public class Scoring extends RepoSuiteToolchain {
 			PersistenceUtil persistenceUtil;
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
+				finder.loadData(persistenceUtil);
 				new ScoringReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
