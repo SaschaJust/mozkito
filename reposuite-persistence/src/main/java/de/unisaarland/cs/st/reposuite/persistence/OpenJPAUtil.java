@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Query;
@@ -408,12 +407,17 @@ public class OpenJPAUtil implements PersistenceUtil {
 		return type;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#globalShutdown
+	 * ()
+	 */
 	@Override
 	public void globalShutdown() {
 		for (Thread t : provider.keySet()) {
 			provider.get(t).shutdown();
 		}
-		
 		factory.close();
 		factory = null;
 	}
@@ -447,8 +451,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
-					
-					m.getAnnotation(Column.class);
 					
 					column = m.getName().substring(3, 4).toLowerCase() + m.getName().substring(4);
 					criteria.eq(column, id);
@@ -502,7 +504,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void shutdown() {
-		this.entityManager.close();
+		if (this.entityManager.isOpen()) {
+			this.entityManager.close();
+		}
 	}
 	
 	/*
