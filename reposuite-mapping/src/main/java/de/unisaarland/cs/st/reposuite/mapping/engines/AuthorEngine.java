@@ -19,7 +19,7 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class AuthorMappingEngine extends MappingEngine {
+public class AuthorEngine extends MappingEngine {
 	
 	private static double scoreAuthorEquality = 0.2d;
 	private static double scoreAuthorInequality;
@@ -42,20 +42,20 @@ public class AuthorMappingEngine extends MappingEngine {
 	 * @param scoreAuthorEquality the scoreAuthorEquality to set
 	 */
 	private static void setScoreAuthorEquality(final double scoreAuthorEquality) {
-		AuthorMappingEngine.scoreAuthorEquality = scoreAuthorEquality;
+		AuthorEngine.scoreAuthorEquality = scoreAuthorEquality;
 	}
 	
 	/**
 	 * @param scoreAuthorInequality the scoreAuthorInequality to set
 	 */
 	public static void setScoreAuthorInequality(final double scoreAuthorInequality) {
-		AuthorMappingEngine.scoreAuthorInequality = scoreAuthorInequality;
+		AuthorEngine.scoreAuthorInequality = scoreAuthorInequality;
 	}
 	
 	/**
 	 * @param settings
 	 */
-	public AuthorMappingEngine(final MappingSettings settings) {
+	public AuthorEngine(final MappingSettings settings) {
 		super(settings);
 	}
 	
@@ -147,7 +147,10 @@ public class AuthorMappingEngine extends MappingEngine {
 			value += getScoreAuthorInequality();
 		}
 		
-		score.addFeature(value, "author", transaction.getAuthor().toString(), this.getClass());
+		score.addFeature(value, "author", transaction.getAuthor().toString(), "author",
+		                 report.getResolver() != null
+		                                             ? report.getResolver().toString()
+		                                             : "(null)", this.getClass());
 	}
 	
 }
