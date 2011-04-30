@@ -4,12 +4,13 @@
 package de.unisaarland.cs.st.reposuite.mapping.settings;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
-import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
@@ -53,14 +54,16 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			
 			for (Class<?> klass : classesExtendingClass) {
 				if (engineNames.isEmpty() || engineNames.contains(klass.getCanonicalName())) {
-					if (Logger.logInfo()) {
-						Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
+					if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
+						if (Logger.logInfo()) {
+							Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
+						}
+						
+						Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
+						MappingEngine engine = (MappingEngine) constructor.newInstance(settings);
+						engine.register(settings, this, isRequired);
+						this.engines.add(engine);
 					}
-					
-					Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
-					MappingEngine engine = (MappingEngine) constructor.newInstance(settings);
-					engine.register(settings, this, isRequired);
-					this.engines.add(engine);
 				} else {
 					if (Logger.logInfo()) {
 						Logger.info("Not loading available engine: " + klass.getSimpleName());
