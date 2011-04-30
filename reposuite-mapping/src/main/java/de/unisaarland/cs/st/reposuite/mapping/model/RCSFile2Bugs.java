@@ -3,8 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +28,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -46,7 +47,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	
 	static {
 		PersistenceManager.registerNativeQuery("postgresql",
-		                                       "files2bugs",
+		                                       "files2bugsarray",
 		                                       "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
 		                                               + "FROM (                                                                                "
 		                                               + "SELECT changedfile_id, ARRAY(                                                         "
@@ -61,6 +62,9 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 		                                               + ") innerquery                                                                          "
 		                                               + "WHERE array_length(bugs, 1) > 0                                                       "
 		                                               + "GROUP BY file_id, bugs;                                                               ");
+		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
+		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
+		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
 	}
 	
 	/**
@@ -74,12 +78,34 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 			
 			@SuppressWarnings ("unchecked")
 			List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util, "files2bugs"));
+			Criteria<RCSFile> fileCriteria;
+			Criteria<Report> reportCriteria;
+			long fileid = -1, tmp = -1, bugid = -1;
+			RCSFile file = null;
+			Set<Report> reports = new HashSet<Report>();
+			
 			for (Object[] entries : result) {
-				Criteria<RCSFile> fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", entries[0]);
-				List<RCSFile> list = util.load(fileCriteria);
-				Criteria<Report> reportCriteria = util.createCriteria(Report.class).in("id", Arrays.asList(entries[2]));
-				List<Report> reports = util.load(reportCriteria);
-				ret.add(new RCSFile2Bugs(list.iterator().next(), new HashSet<Report>(reports)));
+				tmp = (Long) entries[0];
+				bugid = (Long) entries[1];
+				
+				if (tmp != fileid) {
+					if (!reports.isEmpty()) {
+						ret.add(new RCSFile2Bugs(file, reports));
+						reports.clear();
+					}
+					
+					fileid = tmp;
+					fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
+					file = util.load(fileCriteria).iterator().next();
+				}
+				
+				reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
+				reports.addAll(util.load(reportCriteria));
+			}
+			
+			if (!reports.isEmpty()) {
+				ret.add(new RCSFile2Bugs(file, reports));
+				reports.clear();
 			}
 		} catch (UninitializedDatabaseException e) {
 			throw new Shutdown(e);
@@ -113,11 +139,11 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 			return false;
 		}
 		RCSFile2Bugs other = (RCSFile2Bugs) obj;
-		if (file == null) {
+		if (this.file == null) {
 			if (other.file != null) {
 				return false;
 			}
-		} else if (!file.equals(other.file)) {
+		} else if (!this.file.equals(other.file)) {
 			return false;
 		}
 		return true;
@@ -128,7 +154,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public RCSFile getFile() {
-		return file;
+		return this.file;
 	}
 	
 	/**
@@ -136,7 +162,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Report> getReports() {
-		return reports;
+		return this.reports;
 	}
 	
 	/*
@@ -147,9 +173,9 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((file == null)
-		                                         ? 0
-		                                         : file.hashCode());
+		result = prime * result + ((this.file == null)
+		                                              ? 0
+		                                              : this.file.hashCode());
 		return result;
 	}
 	
@@ -171,14 +197,23 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	
 	@Override
 	public String toCSV() {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder builder = new StringBuilder();
+		builder.append(this.file.getLatestPath()).append(",");
+		builder.append(getReports().size()).append(",");
+		StringBuilder b = new StringBuilder();
+		for (Report report : getReports()) {
+			if (b.length() > 0) {
+				b.append(" ");
+			}
+			b.append(report.getId());
+		}
+		builder.append(b).append(FileUtils.lineSeparator);
+		return builder.toString();
 	}
 	
 	@Override
-	public void toCSV(final OutputStream stream) {
-		// TODO Auto-generated method stub
-		
+	public void toCSV(final OutputStream stream) throws IOException {
+		stream.write(toCSV().getBytes());
 	}
 	
 	@Override
@@ -190,7 +225,6 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	@Override
 	public void toHTML(final OutputStream stream) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	/*
@@ -201,7 +235,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RCSFile2Bugs [file=");
-		builder.append(file.getGeneratedId());
+		builder.append(this.file.getGeneratedId());
 		builder.append(", reports=");
 		StringBuilder b = new StringBuilder();
 		for (Report report : getReports()) {
