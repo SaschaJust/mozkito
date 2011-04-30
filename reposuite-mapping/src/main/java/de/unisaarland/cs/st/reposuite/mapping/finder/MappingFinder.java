@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.mapping.strategies;
+package de.unisaarland.cs.st.reposuite.mapping.finder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +13,8 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
+import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
@@ -26,23 +28,29 @@ import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
  */
 public class MappingFinder {
 	
-	private final Map<String, MappingEngine>   engines    = new HashMap<String, MappingEngine>();
-	private final Map<String, MappingStrategy> strategies = new HashMap<String, MappingStrategy>();
+	private final Map<String, MappingEngine>                           engines    = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingStrategy>                         strategies = new HashMap<String, MappingStrategy>();
+	private final Map<Class<? extends MappingStorage>, MappingStorage> storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	
 	/**
 	 * @param engine
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
-	}
-	
-	/**
-	 * @param persistenceUtil
-	 */
-	public void addPersistenceUtil(final PersistenceUtil persistenceUtil) {
-		for (String engineName : this.engines.keySet()) {
-			MappingEngine mappingEngine = this.engines.get(engineName);
-			mappingEngine.loadData(persistenceUtil);
+		for (Class<? extends MappingStorage> key : engine.storageDependency()) {
+			if (!this.storages.keySet().contains(key)) {
+				try {
+					MappingStorage storage = key.newInstance();
+					this.storages.put(key, storage);
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			engine.provideStorage(this.storages.get(key));
 		}
 	}
 	
@@ -70,6 +78,15 @@ public class MappingFinder {
 		}
 		
 		return candidates;
+	}
+	
+	/**
+	 * @param persistenceUtil
+	 */
+	public void loadData(final PersistenceUtil persistenceUtil) {
+		for (Class<? extends MappingStorage> key : this.storages.keySet()) {
+			this.storages.get(key).loadData(persistenceUtil);
+		}
 	}
 	
 	/**
