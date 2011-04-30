@@ -118,7 +118,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		if (retval && this.knownThreads.isEmpty()) {
 			if (Logger.logError()) {
 				Logger.error(getHandle()
-				             + " has known connections, but knownThreads is empty. This should never happen.");
+				        + " has known connections, but knownThreads is empty. This should never happen.");
 			}
 			retval = false;
 		}
@@ -261,12 +261,18 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 		RepoSuiteGeneralThread<V, ?> outputThread = null;
 		
 		while ((outputThread = this.outputThreads.poll()) != null) {
+			if (Logger.logDebug()) {
+				Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
+			}
 			outputThread.disconnectInput(this);
 		}
 		
 		RepoSuiteGeneralThread<?, K> inputThread = null;
 		
 		while ((inputThread = this.inputThreads.poll()) != null) {
+			if (Logger.logDebug()) {
+				Logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
+			}
 			inputThread.disconnectOutput(this);
 		}
 		
@@ -318,7 +324,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	protected final int inputSize() {
 		Check.notNull(this.inputStorage,
-		"When requesting the inputSize, there has to be already an inputStorage attached");
+		              "When requesting the inputSize, there has to be already an inputStorage attached");
 		Check.check(hasInputConnector(), "When requesting the inputSize, there has to exist an inputConnector");
 		
 		return this.inputStorage.size();
@@ -384,7 +390,7 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 	 */
 	protected final int outputSize() {
 		Check.notNull(this.outputStorage,
-		"When requesting the inputSize, there has to be already an outputStorage attached");
+		              "When requesting the inputSize, there has to be already an outputStorage attached");
 		Check.check(hasOutputConnector(), "When requesting the outputSize, there has to exist an outputConnector");
 		
 		return this.outputStorage.size();
@@ -466,24 +472,30 @@ public abstract class RepoSuiteThread<K, V> extends Thread implements RepoSuiteG
 			
 			setShutdown(true);
 			
-			RepoSuiteGeneralThread<?, ?> thread = null;
-			
-			while ((thread = this.knownThreads.poll()) != null) {
-				if (!thread.isShutdown()) {
-					thread.shutdown();
-				}
-			}
-			
 			RepoSuiteGeneralThread<V, ?> outputThread = null;
 			
 			while ((outputThread = this.outputThreads.poll()) != null) {
+				if (Logger.logDebug()) {
+					Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
+				}
 				outputThread.disconnectInput(this);
 			}
 			
 			RepoSuiteGeneralThread<?, K> inputThread = null;
 			
 			while ((inputThread = this.inputThreads.poll()) != null) {
+				if (Logger.logDebug()) {
+					Logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
+				}
 				inputThread.disconnectOutput(this);
+			}
+			
+			RepoSuiteGeneralThread<?, ?> thread = null;
+			
+			while ((thread = this.knownThreads.poll()) != null) {
+				if (!thread.isShutdown()) {
+					thread.shutdown();
+				}
 			}
 		}
 	}
