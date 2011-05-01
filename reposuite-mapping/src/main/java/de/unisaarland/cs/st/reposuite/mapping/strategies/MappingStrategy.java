@@ -25,6 +25,11 @@ public abstract class MappingStrategy {
 	/**
 	 * @return
 	 */
+	public abstract String getDescription();
+	
+	/**
+	 * @return
+	 */
 	public String getName() {
 		return this.getClass().getSimpleName();
 	}

@@ -21,13 +21,20 @@ public class VetoStrategy extends MappingStrategy {
 	 */
 	public VetoStrategy(final MappingSettings settings) {
 		super(settings);
-		// TODO Auto-generated constructor stub
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#
+	 * getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return "Maps only if the is no feature with negative confidence.";
 	}
 	
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/*
@@ -62,8 +69,6 @@ public class VetoStrategy extends MappingStrategy {
 	public void register(final MappingSettings settings,
 	                     final MappingArguments mappingArguments,
 	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

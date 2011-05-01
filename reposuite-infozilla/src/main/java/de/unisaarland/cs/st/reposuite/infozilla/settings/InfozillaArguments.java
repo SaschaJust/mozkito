@@ -28,8 +28,8 @@ public class InfozillaArguments extends RepoSuiteArgumentSet {
 		
 		try {
 			Package package1 = InfozillaFilter.class.getPackage();
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                  InfozillaFilter.class);
+			Collection<Class<? extends InfozillaFilter>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                                          InfozillaFilter.class);
 			
 			addArgument(new ListArgument(settings, "mapping.filters", "A list of mapping filters that shall be used.",
 			                             buildFilterList(classesExtendingClass), false));
@@ -72,9 +72,9 @@ public class InfozillaArguments extends RepoSuiteArgumentSet {
 	 * @param filters
 	 * @return
 	 */
-	private String buildFilterList(final Collection<Class<?>> filters) {
+	private String buildFilterList(final Collection<Class<? extends InfozillaFilter>> filters) {
 		StringBuilder builder = new StringBuilder();
-		for (Class<?> klass : filters) {
+		for (Class<? extends InfozillaFilter> klass : filters) {
 			if (builder.length() != 0) {
 				builder.append(",");
 			}

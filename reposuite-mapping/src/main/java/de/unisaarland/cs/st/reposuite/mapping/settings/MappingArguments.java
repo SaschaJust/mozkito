@@ -15,6 +15,7 @@ import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
+import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -36,11 +37,11 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		
 		try {
 			Package package1 = MappingEngine.class.getPackage();
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                  MappingEngine.class);
+			Collection<Class<? extends MappingEngine>> engineClasses = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                                MappingEngine.class);
 			
 			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used.",
-			                             buildEngineList(classesExtendingClass), false));
+			                             buildEngineList(engineClasses), false));
 			
 			String engines = System.getProperty("mapping.engines");
 			Set<String> engineNames = new HashSet<String>();
@@ -52,15 +53,15 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 				
 			}
 			
-			for (Class<?> klass : classesExtendingClass) {
+			for (Class<? extends MappingEngine> klass : engineClasses) {
 				if (engineNames.isEmpty() || engineNames.contains(klass.getCanonicalName())) {
 					if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
 						if (Logger.logInfo()) {
 							Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
 						}
 						
-						Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
-						MappingEngine engine = (MappingEngine) constructor.newInstance(settings);
+						Constructor<? extends MappingEngine> constructor = klass.getConstructor(MappingSettings.class);
+						MappingEngine engine = constructor.newInstance(settings);
 						engine.register(settings, this, isRequired);
 						this.engines.add(engine);
 					}
@@ -72,10 +73,11 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			}
 			
 			Package package2 = MappingStrategy.class.getPackage();
-			Collection<Class<?>> interfaces = ClassFinder.getClassesExtendingClass(package2, MappingStrategy.class);
+			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(package2,
+			                                                                                                    MappingStrategy.class);
 			addArgument(new ListArgument(settings, "mapping.strategies",
 			                             "A list of mapping strategies that shall be used. Available: "
-			                                     + buildStrategyList(classesExtendingClass), null, true));
+			                                     + buildStrategyList(strategyClasses), null, true));
 			
 			String strategies = System.getProperty("mapping.strategies");
 			Set<String> strategyNames = new HashSet<String>();
@@ -86,14 +88,14 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 				}
 			}
 			
-			for (Class<?> klass : interfaces) {
+			for (Class<? extends MappingStrategy> klass : strategyClasses) {
 				if (strategyNames.isEmpty() || strategyNames.contains(klass.getCanonicalName())) {
 					if (Logger.logInfo()) {
 						Logger.info("Adding new MappingStrategy " + klass.getCanonicalName());
 					}
 					
-					Constructor<?> constructor = klass.getConstructor(MappingSettings.class);
-					MappingStrategy strategy = (MappingStrategy) constructor.newInstance(settings);
+					Constructor<? extends MappingStrategy> constructor = klass.getConstructor(MappingSettings.class);
+					MappingStrategy strategy = constructor.newInstance(settings);
 					strategy.register(settings, this, isRequired);
 					this.strategies.add(strategy);
 				} else {
@@ -115,7 +117,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 * @param engines
 	 * @return
 	 */
-	private String buildEngineList(final Collection<Class<?>> engines) {
+	private String buildEngineList(final Collection<Class<? extends MappingEngine>> engines) {
 		StringBuilder builder = new StringBuilder();
 		for (Class<?> klass : engines) {
 			if (builder.length() != 0) {
@@ -130,13 +132,20 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 * @param strategies
 	 * @return
 	 */
-	private String buildStrategyList(final Collection<Class<?>> strategies) {
+	private String buildStrategyList(final Collection<Class<? extends MappingStrategy>> strategies) {
 		StringBuilder builder = new StringBuilder();
-		for (Class<?> klass : strategies) {
-			if (builder.length() != 0) {
-				builder.append(",");
+		builder.append(FileUtils.lineSeparator);
+		for (Class<? extends MappingStrategy> klass : strategies) {
+			try {
+				builder.append('\t').append(klass.getSimpleName()).append(": ")
+				       .append(klass.newInstance().getDescription());
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
 			}
-			builder.append(klass.getSimpleName());
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
+			}
 		}
 		return builder.toString();
 	}

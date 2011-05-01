@@ -11,9 +11,12 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class SVMStrategy extends MappingStrategy {
+public class TotalConfidenceStrategy extends MappingStrategy {
 	
-	public SVMStrategy(final MappingSettings settings) {
+	/**
+	 * @param settings
+	 */
+	public TotalConfidenceStrategy(final MappingSettings settings) {
 		super(settings);
 	}
 	
@@ -24,7 +27,7 @@ public class SVMStrategy extends MappingStrategy {
 	 */
 	@Override
 	public String getDescription() {
-		return "Maps according to the trained model on known mappings with the given feature vectors from the MappingEngines.";
+		return "Maps according to the accumulative confidence taken from all MappingEngines.";
 	}
 	
 	/*
@@ -34,29 +37,26 @@ public class SVMStrategy extends MappingStrategy {
 	 */
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
 		
-	}
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings ("unused")
-	private void loadModel() {
-		// TODO
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#map
-	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping)
 	 */
 	@Override
 	public RCSBugMapping map(final RCSBugMapping mapping) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (Double.compare(mapping.getScore().getTotalConfidence(), 0d)) {
+			case -1:
+				mapping.setValid(false);
+				break;
+			case 1:
+				mapping.setValid(true);
+				break;
+		}
+		return mapping;
 	}
 	
 	/*
@@ -71,7 +71,6 @@ public class SVMStrategy extends MappingStrategy {
 	public void register(final MappingSettings settings,
 	                     final MappingArguments mappingArguments,
 	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
 		
 	}
 	

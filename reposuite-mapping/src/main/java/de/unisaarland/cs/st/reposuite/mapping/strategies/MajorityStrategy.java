@@ -22,13 +22,21 @@ public class MajorityStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#
+	 * getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return "Maps according to the mayority decision of the MappingEngines.";
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#init()
 	 */
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/*
@@ -69,12 +77,18 @@ public class MajorityStrategy extends MappingStrategy {
 		return mapping;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#register
+	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
+	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
+	 * boolean)
+	 */
 	@Override
 	public void register(final MappingSettings settings,
 	                     final MappingArguments mappingArguments,
 	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

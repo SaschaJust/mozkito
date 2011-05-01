@@ -3,28 +3,29 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.strategies;
 
+import de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
+ * Only consider the feature with the highest impact.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class SVMStrategy extends MappingStrategy {
+public class HeavyImpactStrategy extends MappingStrategy {
 	
-	public SVMStrategy(final MappingSettings settings) {
+	/**
+	 * @param settings
+	 */
+	public HeavyImpactStrategy(final MappingSettings settings) {
 		super(settings);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#
-	 * getDescription()
-	 */
 	@Override
 	public String getDescription() {
-		return "Maps according to the trained model on known mappings with the given feature vectors from the MappingEngines.";
+		return "Maps according to the highest confidence given by a MappingEngine.";
 	}
 	
 	/*
@@ -34,29 +35,33 @@ public class SVMStrategy extends MappingStrategy {
 	 */
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
 		
-	}
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings ("unused")
-	private void loadModel() {
-		// TODO
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#map
-	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping)
 	 */
 	@Override
 	public RCSBugMapping map(final RCSBugMapping mapping) {
-		// TODO Auto-generated method stub
-		return null;
+		double maxabs = 0d;
+		for (MappingEngineFeature feature : mapping.getScore().getFeatures()) {
+			if (Math.abs(feature.getConfidence()) > Math.abs(maxabs)) {
+				maxabs = feature.getConfidence();
+			}
+		}
+		
+		switch (Double.compare(maxabs, 0d)) {
+			case -1:
+				mapping.setValid(false);
+				break;
+			case 1:
+				mapping.setValid(true);
+				break;
+		}
+		return mapping;
 	}
 	
 	/*
@@ -71,7 +76,6 @@ public class SVMStrategy extends MappingStrategy {
 	public void register(final MappingSettings settings,
 	                     final MappingArguments mappingArguments,
 	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
 		
 	}
 	
