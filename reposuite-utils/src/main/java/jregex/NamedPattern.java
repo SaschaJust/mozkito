@@ -27,11 +27,12 @@ public class NamedPattern extends Pattern {
 	
 	public String getGroupName(@NotNegative final int index) {
 		Condition.notNull(this.memregs,
-		"Requesting memory register for groups when no groups are active violates setup.");
+		                  "Requesting memory register for groups when no groups are active violates setup.");
 		CompareCondition.less(index, this.memregs,
-		"Index of group has to be less then the number of active memory registers.");
+		                      "Index of group has to be less then the number of active memory registers.");
 		
-		@SuppressWarnings ("unchecked") Set<String> keySet = this.namedGroupMap.keySet();
+		@SuppressWarnings ("unchecked")
+		Set<String> keySet = this.namedGroupMap.keySet();
 		for (String groupName : keySet) {
 			if (this.namedGroupMap.get(groupName).equals(index)) {
 				return groupName;

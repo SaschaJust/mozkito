@@ -94,14 +94,15 @@ public class ClassFinder {
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
+	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static Collection<Class<?>> getClassesExtendingClass(final Package pakkage,
-	                                                            final Class<?> superClass) throws ClassNotFoundException,
-	                                                                                      WrongClassSearchMethodException,
-	                                                                                      IOException {
+	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
+	                                                                          final Class<T> superClass) throws ClassNotFoundException,
+	                                                                                                    WrongClassSearchMethodException,
+	                                                                                                    IOException {
 		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage);
 		
-		Collection<Class<?>> classList = new HashSet<Class<?>>();
+		Collection<Class<? extends T>> classList = new HashSet<Class<? extends T>>();
 		for (Class<?> discovered : discoveredClasses) {
 			Class<?> aClass = discovered;
 			do {
@@ -114,7 +115,7 @@ public class ClassFinder {
 				}
 				
 				if (aClass.equals(superClass)) {
-					classList.add(discovered);
+					classList.add((Class<? extends T>) discovered);
 					break;
 				}
 				
@@ -214,8 +215,7 @@ public class ClassFinder {
 	 */
 	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
 	                                                         final String filePath) throws ClassNotFoundException,
-	                                                                               WrongClassSearchMethodException,
-	                                                                               IOException {
+	                                                                               WrongClassSearchMethodException {
 		// String filePath =
 		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		
@@ -225,22 +225,28 @@ public class ClassFinder {
 		// replacing all '.' with OS file separators.
 		String path = packageName.replaceAll("\\.", FileUtils.fileSeparator) + FileUtils.fileSeparator;
 		
-		JarFile currentFile = new JarFile(filePath);
-		
-		/*
-		 * step through all elements in the jar file and check if there exists a
-		 * class file in given package. If so, load it and add it to the
-		 * collection.
-		 */
-		for (Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
-			JarEntry current = e.nextElement();
+		try {
+			JarFile currentFile = new JarFile(filePath);
 			
-			if ((current.getName().length() > path.length())
-			        && current.getName().substring(0, path.length()).equals(path)
-			        && current.getName().endsWith(".class")) {
-				classes.add(Class.forName(current.getName()
-				                                 .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".")
-				                                 .replace(".class", "")));
+			/*
+			 * step through all elements in the jar file and check if there
+			 * exists a class file in given package. If so, load it and add it
+			 * to the collection.
+			 */
+			for (Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
+				JarEntry current = e.nextElement();
+				
+				if ((current.getName().length() > path.length())
+				        && current.getName().substring(0, path.length()).equals(path)
+				        && current.getName().endsWith(".class")) {
+					classes.add(Class.forName(current.getName()
+					                                 .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
+					                                             ".").replace(".class", "")));
+				}
+			}
+		} catch (IOException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Skipping invalid JAR file `" + filePath + "`: " + e.getMessage());
 			}
 		}
 		
