@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.rcs;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +10,9 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
+import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -18,7 +21,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@SuppressWarnings("unchecked")
 public final class RepositoryFactory {
 	
 	/**
@@ -33,14 +35,14 @@ public final class RepositoryFactory {
 		// ======== Repository handlers ========
 		try {
 			Package package1 = Repository.class.getPackage();
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                  Repository.class);
+			Collection<Class<? extends Repository>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                                     Repository.class);
 			
-			for (Class<?> klass : classesExtendingClass) {
-				addRepositoryHandler(
-				                     (RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0]).invoke(
-				                                                                                                   klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
-				                                                                                                   (Class<? extends Repository>) klass);
+			for (Class<? extends Repository> klass : classesExtendingClass) {
+				addRepositoryHandler((RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0])
+				                                           .invoke(klass.getConstructor(new Class<?>[0])
+				                                                        .newInstance(new Object[0]), new Object[0]),
+				                     klass);
 			}
 		} catch (InvocationTargetException e) {
 			if (Logger.logError()) {
@@ -48,17 +50,26 @@ public final class RepositoryFactory {
 				// RepositoryType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
-					             + ". Error was: " + e.getCause().getMessage(), e.getCause());
-				} else {
-					Logger.error(e.getMessage(), e);
+					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
 				}
 			}
-			throw new RuntimeException();
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
+		} catch (ClassNotFoundException e) {
+			throw new UnrecoverableError(e);
+		} catch (WrongClassSearchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (IOException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalArgumentException e) {
+			throw new UnrecoverableError(e);
+		} catch (SecurityException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		} catch (NoSuchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (InstantiationException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
 	
@@ -74,7 +85,7 @@ public final class RepositoryFactory {
 	private static void addRepositoryHandler(@NotNull final RepositoryType repositoryIdentifier,
 	                                         @NotNull final Class<? extends Repository> repositoryClass) {
 		Condition.isNull(repositoryHandlers.get(repositoryIdentifier),
-		"The should not be a reposiotry with the same identifier already");
+		                 "The should not be a reposiotry with the same identifier already");
 		
 		if (RepositorySettings.debug) {
 			if (Logger.logDebug()) {
@@ -85,9 +96,9 @@ public final class RepositoryFactory {
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
 		
 		Condition.notNull(repositoryHandlers.get(repositoryIdentifier),
-		"The must be a repository with the identifier just been created and assigned.");
+		                  "The must be a repository with the identifier just been created and assigned.");
 		CompareCondition.equals(repositoryHandlers.get(repositoryIdentifier), repositoryClass,
-		"The must be a repository with the identifier just been created and assigned.");
+		                        "The must be a repository with the identifier just been created and assigned.");
 	}
 	
 	/**
@@ -102,8 +113,7 @@ public final class RepositoryFactory {
 	 *             registry
 	 */
 	@NoneNull
-	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier)
-	throws UnregisteredRepositoryTypeException {
+	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier) throws UnregisteredRepositoryTypeException {
 		if (RepositorySettings.debug) {
 			if (Logger.logDebug()) {
 				Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
@@ -113,7 +123,7 @@ public final class RepositoryFactory {
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
-			                                              + repositoryIdentifier.toString() + "`");
+			        + repositoryIdentifier.toString() + "`");
 		} else {
 			return repositoryClass;
 		}
