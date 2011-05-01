@@ -7,7 +7,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
@@ -44,56 +46,86 @@ public class RepositoryTest {
 	// [scheme:][//authority][path][?query][#fragment]
 	// [user-info@]host[:port]
 	
-	private static URI              originalNoUser;
-	
-	private static URI              originalUser;
-	
 	private static File             tmpDirectory;
 	private static List<Repository> repositories = new LinkedList<Repository>();
 	
 	@AfterClass
 	public static void afterClass() {
-		try {
-			URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
-			if (repoURL != null) {
+		
+		URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
+		if (repoURL != null) {
+			try {
 				File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				fail();
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
 			}
 			
-			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
-			if (repoURL != null) {
+		}
+		
+		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
+		if (repoURL != null) {
+			try {
 				File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				fail();
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
 			}
-			
-			repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
-			if (repoURL != null) {
+		}
+		
+		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
+		if (repoURL != null) {
+			try {
 				File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				fail();
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
 			}
-			
-			for (Repository repository : repositories) {
-				if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-					continue;
-				} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
+		}
+		
+		for (Repository repository : repositories) {
+			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
+				continue;
+			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
+				try {
 					FileUtils.deleteDirectory(tmpDirectory);
-				} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
-					GitRepository gitRepo = (GitRepository) repository;
-					if (gitRepo.getWokingCopyLocation() != null) {
+				} catch (IOException e) {
+					e.printStackTrace();
+					fail();
+				}
+			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
+				GitRepository gitRepo = (GitRepository) repository;
+				if (gitRepo.getWokingCopyLocation() != null) {
+					try {
 						FileUtils.deleteDirectory(gitRepo.getWokingCopyLocation());
+					} catch (IOException e) {
+						e.printStackTrace();
+						fail();
 					}
-				} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
-					MercurialRepository hgRepo = (MercurialRepository) repository;
-					if (hgRepo.getWokingCopyLocation() != null) {
+				}
+			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
+				MercurialRepository hgRepo = (MercurialRepository) repository;
+				if (hgRepo.getWokingCopyLocation() != null) {
+					try {
 						FileUtils.deleteDirectory(hgRepo.getWokingCopyLocation());
+					} catch (IOException e) {
+						e.printStackTrace();
+						fail();
 					}
 				}
 			}
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
 		}
 		
 		// delete all reposuite directories and files
@@ -116,85 +148,114 @@ public class RepositoryTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
+		
+		// UNZIP mercurial repo
+		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
+		if (zipURL == null) {
+			fail();
+		}
+		File baseDir = null;
 		try {
-			originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
-			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
-			
-			// UNZIP mercurial repo
-			URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
-			if (zipURL == null) {
-				fail();
-			}
-			File baseDir = new File((new URL(zipURL.toString().substring(0,
-					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
-			if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
-				fail();
-			}
-			File zipFile = new File(zipURL.toURI());
-			if (Logger.logInfo()) {
-				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
-			}
-			FileUtils.unzip(zipFile, baseDir);
-			// UNZIP END
-			
-			// UNZIP git repo
-			zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
-			if (zipURL == null) {
-				fail();
-			}
+			baseDir = new File(
+			                   (new URL(zipURL.toString().substring(0,
+			                                                        zipURL.toString()
+			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+			fail();
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+		if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
+			fail();
+		}
+		File zipFile = null;
+		try {
 			zipFile = new File(zipURL.toURI());
-			if (Logger.logInfo()) {
-				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+		if (Logger.logInfo()) {
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+		}
+		FileUtils.unzip(zipFile, baseDir);
+		// UNZIP END
+		
+		// UNZIP git repo
+		zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
+		if (zipURL == null) {
+			fail();
+		}
+		try {
+			zipFile = new File(zipURL.toURI());
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+		if (Logger.logInfo()) {
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+		}
+		FileUtils.unzip(zipFile, baseDir);
+		// UNZIP END
+		
+		for (RepositoryType type : RepositoryType.values()) {
+			if (type.equals(RepositoryType.CVS)) {
+				continue;
 			}
-			FileUtils.unzip(zipFile, baseDir);
-			// UNZIP END
+			Repository repository = null;
+			try {
+				repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (UnregisteredRepositoryTypeException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			repositories.add(repository);
+			URL url = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
+			        + type.toString().toLowerCase());
+			File urlFile = null;
+			try {
+				urlFile = new File(url.toURI());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
 			
-			for (RepositoryType type : RepositoryType.values()) {
-				if (type.equals(RepositoryType.CVS)) {
-					continue;
-				}
-				Repository repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
-				repositories.add(repository);
-				URL url = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
-						+ type.toString().toLowerCase());
-				File urlFile = new File(url.toURI());
-				
-				if (type.equals(RepositoryType.SUBVERSION)) {
-					tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "",
-					                                         FileShutdownAction.DELETE);
-					try {
-						Integer returnValue = 0;
-						if (Logger.logDebug()) {
-							Logger.debug("Creating " + type.toString() + " repository at: "
-									+ tmpDirectory.getAbsolutePath());
-						}
-						Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin",
-								new String[] { "create", "--config-dir",
-								System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
-								tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
-						returnValue += execute.getFirst();
-						execute = CommandExecutor.execute("svnadmin",
-								new String[] { "load", tmpDirectory.getAbsolutePath() }, tmpDirectory,
-								url.openStream(), null);
-						returnValue += execute.getFirst();
-					} catch (IOException e) {
-						e.printStackTrace();
-						fail(e.getMessage());
-					}
-					urlFile = tmpDirectory;
-				}
-				
+			if (type.equals(RepositoryType.SUBVERSION)) {
+				tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "", FileShutdownAction.DELETE);
 				try {
-					repository.setup(new URI("file://" + urlFile.getAbsolutePath()), null, null);
-				} catch (Exception e) {
+					Integer returnValue = 0;
+					if (Logger.logDebug()) {
+						Logger.debug("Creating " + type.toString() + " repository at: "
+						        + tmpDirectory.getAbsolutePath());
+					}
+					Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin", new String[] { "create",
+					        "--config-dir", System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
+					        tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
+					returnValue += execute.getFirst();
+					execute = CommandExecutor.execute("svnadmin",
+					                                  new String[] { "load", tmpDirectory.getAbsolutePath() },
+					                                  tmpDirectory, url.openStream(), null);
+					returnValue += execute.getFirst();
+				} catch (IOException e) {
+					e.printStackTrace();
 					fail(e.getMessage());
 				}
+				urlFile = tmpDirectory;
 			}
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			
+			try {
+				repository.setup(urlFile.toURI(), null, null);
+			} catch (Exception e) {
+				fail(e.getMessage());
 			}
-			fail();
 		}
 		
 	}
@@ -232,10 +293,12 @@ public class RepositoryTest {
 			assertEquals("file_2 content", annotation.get(0).getLine());
 			assertEquals("test", annotation.get(1).getLine());
 			
-			assertEquals(getDateFromString("2010-10-22 14:35:15 +0000").getMillis(), annotation.get(0).getTimestamp()
-					.minusMillis(annotation.get(0).getTimestamp().getMillisOfSecond()).getMillis());
-			assertEquals(getDateFromString("2010-10-22 14:53:06 +0000").getMillis(), annotation.get(1).getTimestamp()
-					.minusMillis(annotation.get(1).getTimestamp().getMillisOfSecond()).getMillis());
+			assertEquals(getDateFromString("2010-10-22 14:35:15 +0000").getMillis(),
+			             annotation.get(0).getTimestamp()
+			                       .minusMillis(annotation.get(0).getTimestamp().getMillisOfSecond()).getMillis());
+			assertEquals(getDateFromString("2010-10-22 14:53:06 +0000").getMillis(),
+			             annotation.get(1).getTimestamp()
+			                       .minusMillis(annotation.get(1).getTimestamp().getMillisOfSecond()).getMillis());
 			
 			assertEquals("just", annotation.get(0).getUsername());
 			assertEquals("just", annotation.get(1).getUsername());
@@ -330,20 +393,6 @@ public class RepositoryTest {
 	}
 	
 	@Test
-	public void testDifferentUsername() {
-		URI encoded = Repository.encodeUsername(originalUser, "kim");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
-		assertEquals("kim", encoded.getUserInfo());
-		assertEquals(originalUser.getScheme(), encoded.getScheme());
-		assertEquals(originalUser.getPath(), encoded.getPath());
-		assertEquals(originalUser.getQuery(), encoded.getQuery());
-		assertEquals(originalUser.getFragment(), encoded.getFragment());
-		assertEquals(originalUser.getHost(), encoded.getHost());
-		assertEquals(originalUser.getPort(), encoded.getPort());
-	}
-	
-	@Test
 	public void testDiffMove() {
 		for (Repository repository : repositories) {
 			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
@@ -354,20 +403,6 @@ public class RepositoryTest {
 			assertEquals(1, deltas[0].getOriginal().getLines().size());
 			assertEquals(0, deltas[0].getRevised().getLines().size());
 		}
-	}
-	
-	@Test
-	public void testEmptyUsername() {
-		URI encoded = Repository.encodeUsername(originalUser, "");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
-		assertEquals("", encoded.getUserInfo());
-		assertEquals(originalUser.getScheme(), encoded.getScheme());
-		assertEquals(originalUser.getPath(), encoded.getPath());
-		assertEquals(originalUser.getQuery(), encoded.getQuery());
-		assertEquals(originalUser.getFragment(), encoded.getFragment());
-		assertEquals(originalUser.getHost(), encoded.getHost());
-		assertEquals(originalUser.getPort(), encoded.getPort());
 	}
 	
 	@Test
@@ -404,8 +439,9 @@ public class RepositoryTest {
 	@Test
 	public void testGetFormerPathName() {
 		for (Repository repository : repositories) {
-			String formerPathName = repository.getFormerPathName(
-					repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3), "dir_b/file_2_dir_a");
+			String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
+			                                                                                         3),
+			                                                     "dir_b/file_2_dir_a");
 			assertEquals("dir_a/file_2_dir_a", formerPathName);
 		}
 	}
@@ -427,7 +463,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
-	public void testGetRelativeTransactionId(){
+	public void testGetRelativeTransactionId() {
 		for (Repository repository : repositories) {
 			String endRevision = repository.getEndRevision();
 			assertEquals(endRevision, repository.getRelativeTransactionId(endRevision, 10));
@@ -443,7 +479,7 @@ public class RepositoryTest {
 			LogEntry entry = log.get(0);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:33:44 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("7b5b41fffc13fba4f2dbca350becc9bc27d2d311", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -458,7 +494,7 @@ public class RepositoryTest {
 			entry = log.get(1);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:35:15 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("7f1d2e6e6cffca9a8360af777254d05d9a26bc11", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -467,13 +503,13 @@ public class RepositoryTest {
 				assertEquals("2", entry.getRevision());
 			}
 			assertEquals("adding file_2" + FileUtils.lineSeparator + "adding file_3" + FileUtils.lineSeparator
-					+ "setting content of file_* to: file_* content", entry.getMessage().trim());
+			        + "setting content of file_* to: file_* content", entry.getMessage().trim());
 			
 			// -- Rev 3 -- //
 			entry = log.get(2);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:36:05 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("d0b5c4888aabfdcc524c10967e5fdea92dd33081", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -487,7 +523,7 @@ public class RepositoryTest {
 			entry = log.get(3);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:36:46 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("63cddef94239aae861c474480a834c95df719c65", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -501,7 +537,7 @@ public class RepositoryTest {
 			entry = log.get(4);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:37:07 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("ea6878a36dc3b644f45ac93b095896bf6d68597d", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -515,7 +551,7 @@ public class RepositoryTest {
 			entry = log.get(5);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:40:19 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("a4769ec81d251b333ab668c013a30df8a6d92bdc", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -524,7 +560,7 @@ public class RepositoryTest {
 				assertEquals("6", entry.getRevision());
 			}
 			assertEquals("moving file_3 to dir_a/file_3_dir_a" + FileUtils.lineSeparator
-					+ "changing content of dir_a/file_3_dir_a to file_3 content changed", entry.getMessage().trim());
+			        + "changing content of dir_a/file_3_dir_a to file_3 content changed", entry.getMessage().trim());
 			
 			// ............ //
 			
@@ -532,7 +568,7 @@ public class RepositoryTest {
 			entry = log.get(16);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:53:06 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("a19f0b6e729adbf26b70a0e17f32453835fb50eb", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -547,8 +583,8 @@ public class RepositoryTest {
 	@Test
 	public void testMoveEdit() {
 		for (Repository repository : repositories) {
-			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(
-					repository.getFirstRevisionId(), 3));
+			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
+			                                                                                                      3));
 			assertEquals(2, changedPaths.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertTrue(changedPaths.containsKey("/dir_a"));
@@ -565,35 +601,4 @@ public class RepositoryTest {
 		}
 	}
 	
-	@Test
-	public void testNoUsername() {
-		URI encoded = Repository.encodeUsername(originalNoUser, "kim");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
-		assertEquals("kim", encoded.getUserInfo());
-		assertEquals(originalNoUser.getScheme(), encoded.getScheme());
-		assertEquals(originalNoUser.getPath(), encoded.getPath());
-		assertEquals(originalNoUser.getQuery(), encoded.getQuery());
-		assertEquals(originalNoUser.getFragment(), encoded.getFragment());
-		assertEquals(originalNoUser.getHost(), encoded.getHost());
-		assertEquals(originalNoUser.getPort(), encoded.getPort());
-	}
-	
-	@Test
-	public void testNullUsername() {
-		URI encoded = Repository.encodeUsername(originalNoUser, null);
-		assertTrue(encoded.equals(originalNoUser));
-		assertFalse(encoded.equals(originalUser));
-		
-		encoded = Repository.encodeUsername(originalUser, null);
-		assertTrue(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
-	}
-	
-	@Test
-	public void testSameUsername() {
-		URI encoded = Repository.encodeUsername(originalUser, "user");
-		assertTrue(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
-	}
 }
