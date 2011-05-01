@@ -59,6 +59,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.utils.URIUtils;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -98,12 +99,12 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public List<AnnotationEntry> annotate(@NotEmpty final String filePath,
 	                                      @NotEmpty final String revision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		SVNURL relativePath;
 		try {
 			
-			relativePath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
-			SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
+			relativePath = SVNURL.parseURIDecoded(repository.getRepositoryRoot(true) + "/" + filePath);
+			SVNLogClient logClient = new SVNLogClient(repository.getAuthenticationManager(),
 			                                          SVNWCUtil.createDefaultOptions(true));
 			
 			SVNRevision svnRevision = buildRevision(revision);
@@ -132,7 +133,7 @@ public class SubversionRepository extends Repository {
 	 * @return the corresponding SVNRevision
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
 		SVNRevision svnRevision;
 		
@@ -149,9 +150,9 @@ public class SubversionRepository extends Repository {
 			if (svnRevision.getNumber() < 0) {
 				if (svnRevision.equals(SVNRevision.PREVIOUS)) {
 					
-					svnRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
+					svnRevision = SVNRevision.create(repository.getLatestRevision() - 1);
 				} else {
-					svnRevision = SVNRevision.create(this.repository.getLatestRevision());
+					svnRevision = SVNRevision.create(repository.getLatestRevision());
 				}
 			}
 		} catch (SVNException e) {
@@ -162,19 +163,19 @@ public class SubversionRepository extends Repository {
 			throw new RuntimeException();
 		}
 		
-		if (svnRevision.getNumber() < this.startRevision.getNumber()) {
+		if (svnRevision.getNumber() < startRevision.getNumber()) {
 			
 			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + this.startRevision.getNumber()
+				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + startRevision.getNumber()
 				        + ". Corrected to start revision.");
 			}
-			return this.startRevision;
-		} else if (svnRevision.getNumber() > this.endRevision.getNumber()) {
+			return startRevision;
+		} else if (svnRevision.getNumber() > endRevision.getNumber()) {
 			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + this.endRevision.getNumber()
+				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + endRevision.getNumber()
 				        + ". Corrected to end revision.");
 			}
-			return this.endRevision;
+			return endRevision;
 		} else {
 			return svnRevision;
 		}
@@ -190,28 +191,27 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public File checkoutPath(@NotEmpty final String relativeRepoPath,
 	                         @NotEmpty final String revision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
-		this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
+		workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
 
 		"reposuite_clone_" + DateTimeUtils.currentTimeMillis(), FileShutdownAction.DELETE);
 		
-		Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
+		Condition.notNull(workingDirectory, "Cannot operate on working directory that is set to Null");
 		
 		SVNURL checkoutPath;
 		try {
 			
-			checkoutPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
-			SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
+			checkoutPath = SVNURL.parseURIDecoded(repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
+			SVNUpdateClient updateClient = new SVNUpdateClient(repository.getAuthenticationManager(),
 			                                                   SVNWCUtil.createDefaultOptions(true));
 			
 			SVNRevision svnRevision = buildRevision(revision);
 			// check out the svnurl recursively into the createDir visible from
 			// revision 0 to given revision string
-			updateClient.doCheckout(checkoutPath, this.workingDirectory, svnRevision, svnRevision, SVNDepth.INFINITY,
-			                        false);
+			updateClient.doCheckout(checkoutPath, workingDirectory, svnRevision, svnRevision, SVNDepth.INFINITY, false);
 			
-			return this.workingDirectory;
+			return workingDirectory;
 		} catch (SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -230,13 +230,13 @@ public class SubversionRepository extends Repository {
 	public Collection<Delta> diff(@NotEmpty final String filePath,
 	                              @NotEmpty final String baseRevision,
 	                              @NotEmpty final String revisedRevision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
 		try {
-			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
+			SVNURL repoPath = SVNURL.parseURIDecoded(repository.getRepositoryRoot(true) + "/" + filePath);
 			SVNRevision fromRevision = buildRevision(baseRevision);
 			SVNRevision toRevision = buildRevision(revisedRevision);
-			SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
+			SVNDiffClient diffClient = new SVNDiffClient(repository.getAuthenticationManager(),
 			                                             SVNWCUtil.createDefaultOptions(true));
 			diffClient.getDiffGenerator().setDiffDeleted(true);
 			SubversionDiffParser diffParser = new SubversionDiffParser();
@@ -292,14 +292,14 @@ public class SubversionRepository extends Repository {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(@NotNull @NotEmpty final String revision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
 		Collection<SVNLogEntry> logs;
 		
 		try {
-			logs = this.repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
+			logs = repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
 			
 			for (SVNLogEntry entry : logs) {
 				Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
@@ -336,7 +336,7 @@ public class SubversionRepository extends Repository {
 	
 	@Override
 	public String getEndRevision() {
-		return this.endRevision.toString();
+		return endRevision.toString();
 	}
 	
 	/*
@@ -345,11 +345,11 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getFirstRevisionId() {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
-		Condition.notNull(this.startRevision, "startRevision must not be null at this point.");
-		CompareCondition.greater(this.startRevision.getNumber(), 0l, "startRevision must be positive at this point.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
+		Condition.notNull(startRevision, "startRevision must not be null at this point.");
+		CompareCondition.greater(startRevision.getNumber(), 0l, "startRevision must be positive at this point.");
 		
-		return this.startRevision.toString();
+		return startRevision.toString();
 	}
 	
 	/*
@@ -362,14 +362,14 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public String getFormerPathName(@NotEmpty final String revision,
 	                                @NotEmpty final String pathName) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
 		Long revisionNumber = buildRevision(revision).getNumber();
 		
 		try {
 			@SuppressWarnings ("unchecked")
-			Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null, revisionNumber,
-			                                                   revisionNumber, true, true);
+			Collection<SVNLogEntry> logs = repository.log(new String[] { "" }, null, revisionNumber, revisionNumber,
+			                                              true, true);
 			
 			for (SVNLogEntry entry : logs) {
 				@SuppressWarnings ("unchecked")
@@ -411,16 +411,15 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getHEADRevisionId() {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
-		Condition.notNull(this.endRevision, "endRevision must not be null at this point.");
-		CompareCondition.greater(this.endRevision.getNumber(), 0l, "endRevision must be positive at this point");
+		Condition.notNull(endRevision, "endRevision must not be null at this point.");
+		CompareCondition.greater(endRevision.getNumber(), 0l, "endRevision must be positive at this point");
 		
 		try {
-			return (this.repository.getLatestRevision() > this.endRevision.getNumber()
-			                                                                          ? this.endRevision.toString()
-			                                                                          : this.repository.getLatestRevision()
-			                                                                                  + "");
+			return (repository.getLatestRevision() > endRevision.getNumber()
+			                                                                ? endRevision.toString()
+			                                                                : repository.getLatestRevision() + "");
 		} catch (SVNException e) {
 			
 			if (Logger.logError()) {
@@ -463,7 +462,7 @@ public class SubversionRepository extends Repository {
 	@Override
 	public long getTransactionCount() {
 		try {
-			return this.repository.getLatestRevision();
+			return repository.getLatestRevision();
 		} catch (SVNException e) {
 			
 			if (Logger.logError()) {
@@ -484,7 +483,7 @@ public class SubversionRepository extends Repository {
 	
 	@Override
 	public File getWokingCopyLocation() {
-		return this.workingDirectory;
+		return workingDirectory;
 	}
 	
 	/*
@@ -497,7 +496,7 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public List<LogEntry> log(@NotEmpty final String fromRevision,
 	                          @NotEmpty final String toRevision) {
-		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		Condition.check(initialized, "Repository has to be initialized before calling this method.");
 		
 		SVNRevision fromSVNRevision = buildRevision(fromRevision);
 		SVNRevision toSVNRevision = buildRevision(toRevision);
@@ -506,8 +505,8 @@ public class SubversionRepository extends Repository {
 		
 		Collection<SVNLogEntry> logs;
 		try {
-			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(),
-			                           toSVNRevision.getNumber(), true, true);
+			logs = repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(), toSVNRevision.getNumber(),
+			                      true, true);
 			LogEntry buff = null;
 			for (SVNLogEntry entry : logs) {
 				LogEntry current = new LogEntry(entry.getRevision() + "", buff,
@@ -539,7 +538,7 @@ public class SubversionRepository extends Repository {
 		try {
 			this.endRevision = (endRevision != null
 			                                       ? SVNRevision.parse(endRevision)
-			                                       : SVNRevision.create(this.repository.getLatestRevision()));
+			                                       : SVNRevision.create(repository.getLatestRevision()));
 		} catch (SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -583,7 +582,7 @@ public class SubversionRepository extends Repository {
 	                                        InvalidProtocolType,
 	                                        InvalidRepositoryURI,
 	                                        UnsupportedProtocolType {
-		this.setUri(address);
+		setUri(address);
 		this.username = username;
 		this.password = password;
 		
@@ -591,88 +590,87 @@ public class SubversionRepository extends Repository {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
 		
-		this.type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
-		if (this.type != null) {
+		type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
+		if (type != null) {
 			if (Logger.logInfo()) {
-				Logger.info("Setting up in '" + this.type.name() + "' mode.");
+				Logger.info("Setting up in '" + type.name() + "' mode.");
 			}
-			switch (this.type) {
+			switch (type) {
 				case FILE:
 					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
+						Logger.debug("Using valid mode " + type.name() + ".");
 					}
 					FSRepositoryFactory.setup();
 					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
+						Logger.trace("Setup done for mode " + type.name() + ".");
 					}
 					break;
 				case HTTP:
 				case HTTPS:
 					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
+						Logger.debug("Using valid mode " + type.name() + ".");
 					}
 					DAVRepositoryFactory.setup();
 					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
+						Logger.trace("Setup done for mode " + type.name() + ".");
 					}
 					break;
 				case SSH:
 					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
+						Logger.debug("Using valid mode " + type.name() + ".");
 					}
 					SVNRepositoryFactoryImpl.setup();
 					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
+						Logger.trace("Setup done for mode " + type.name() + ".");
 					}
 					break;
 				default:
 					if (Logger.logError()) {
-						Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
+						Logger.error("Failed to setup in '" + type.name() + "' mode. Unsupported at this time.");
 					}
-					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + this.type.name());
+					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + type.name());
 			}
 			try {
 				if (Logger.logInfo()) {
-					Logger.info("Parsing URL: " + getUri().toString());
+					Logger.info("Parsing URL: " + URIUtils.Uri2String(getUri()));
 				}
-				this.svnurl = SVNURL.parseURIDecoded(getUri().toString());
+				svnurl = SVNURL.parseURIDecoded(URIUtils.Uri2String(getUri()));
 				if (Logger.logTrace()) {
-					Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
-					        + this.svnurl.toString());
+					Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: " + svnurl.toString());
 				}
 				
 				if (this.username != null) {
 					ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
 					                                                                                     this.password);
-					this.repository.setAuthenticationManager(authManager);
+					repository.setAuthenticationManager(authManager);
 				}
 				
-				this.repository = SVNRepositoryFactory.create(this.svnurl);
+				repository = SVNRepositoryFactory.create(svnurl);
 				
 				this.startRevision = (startRevision != null
 				                                           ? SVNRevision.parse(startRevision)
 				                                           : SVNRevision.create(1));
 				this.endRevision = (endRevision != null
 				                                       ? SVNRevision.parse(endRevision)
-				                                       : SVNRevision.create(this.repository.getLatestRevision()));
+				                                       : SVNRevision.create(repository.getLatestRevision()));
 				
 				if (this.startRevision.getNumber() < 0) {
 					if (this.startRevision.equals(SVNRevision.PREVIOUS)) {
-						this.startRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
+						this.startRevision = SVNRevision.create(repository.getLatestRevision() - 1);
 					} else {
-						this.startRevision = SVNRevision.create(this.repository.getLatestRevision());
+						this.startRevision = SVNRevision.create(repository.getLatestRevision());
 					}
 				}
 				
 				if (this.endRevision.getNumber() < 0) {
 					if (this.endRevision.equals(SVNRevision.PREVIOUS)) {
-						this.endRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
+						this.endRevision = SVNRevision.create(repository.getLatestRevision() - 1);
 					} else {
-						this.endRevision = SVNRevision.create(this.repository.getLatestRevision());
+						this.endRevision = SVNRevision.create(repository.getLatestRevision());
 					}
 				}
 				
-				this.initialized = true;
+				initialized = true;
 				
 				if (Logger.logInfo()) {
 					Logger.info("Setup repository: " + this);
@@ -693,12 +691,12 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String toString() {
-		return "SubversionRepository [password=" + (this.password != null
-		                                                                 ? this.password.replaceAll(".", "*")
-		                                                                 : "(unset)") + ", svnurl=" + this.svnurl
-		        + ", type=" + this.type + ", uri=" + getUri() + ", username=" + (this.username != null
-		                                                                                              ? this.username
-		                                                                                              : "(unset)")
-		        + ", startRevision=" + this.startRevision + ", endRevision=" + this.endRevision + "]";
+		return "SubversionRepository [password=" + (password != null
+		                                                            ? password.replaceAll(".", "*")
+		                                                            : "(unset)") + ", svnurl=" + svnurl + ", type="
+		        + type + ", uri=" + getUri() + ", username=" + (username != null
+		                                                                        ? username
+		                                                                        : "(unset)") + ", startRevision="
+		        + startRevision + ", endRevision=" + endRevision + "]";
 	}
 }
