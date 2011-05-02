@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.LineComment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -260,24 +261,26 @@ public class PPATypeVisitor extends ASTVisitor {
 			TypeDeclaration td = (TypeDeclaration) node;
 			
 			int startLine = currentLine;
-			if (td.getJavadoc() != null) {
-				int javaDocLength = td.getJavadoc().getLength();
-				int pos = node.getStartPosition() + javaDocLength + 1;
-				startLine = cu.getLineNumber(pos);
-			}
-			
-			int bodyStartIndex = td.toString().indexOf("{");
-			
-			if (bodyStartIndex < 1) {
-				if (Logger.logError()) {
-					Logger.error("COuld not find type declaration body start!");
+			boolean startLineShifted = false;
+			@SuppressWarnings ("unchecked")
+			List<ASTNode> modifiers = (List<ASTNode>) td.getStructuralProperty(td.getModifiersProperty());
+			for (ASTNode modifier : modifiers) {
+				if (modifier instanceof Modifier) {
+					startLine = cu.getLineNumber(modifier.getStartPosition());
+					startLineShifted = true;
+					break;
 				}
-				return;
+			}
+			if (!startLineShifted) {
+				ASTNode nameNode = (ASTNode) td.getStructuralProperty(td.getNameProperty());
+				startLine = cu.getLineNumber(nameNode.getStartPosition());
 			}
 			
-			bodyStartIndex = td.getStartPosition() + bodyStartIndex + 1;
-			
-			int bodyStartLine = cu.getLineNumber(bodyStartIndex);
+			@SuppressWarnings ("unchecked")
+			List<ASTNode> bodyDeclarations = (List<ASTNode>) td.getStructuralProperty(td.getBodyDeclarationsProperty());
+			Condition.check(bodyDeclarations.size() > 0, "A type declaration must have a body declaration");
+			ASTNode bodyDeclaration = bodyDeclarations.get(0);
+			int bodyStartLine = cu.getLineNumber(bodyDeclaration.getStartPosition());
 			
 			JavaElementLocation classDefLoc = elementCache.getClassDefinition(packageName + "."
 			                                                                          + td.getName().toString(),
@@ -316,20 +319,10 @@ public class PPATypeVisitor extends ASTVisitor {
 			AnonymousClassDeclaration acd = (AnonymousClassDeclaration) node;
 			@SuppressWarnings ("unchecked")
 			List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
-			Condition.check(bodyDeclarations.size() == 1, "Found type declaration with " + bodyDeclarations.size()
+			Condition.check(bodyDeclarations.size() > 0, "Found type declaration with " + bodyDeclarations.size()
 			        + " body declarations!");
 			
-			int bodyStartLine = currentLine;
-			int bodyStartIndex = acd.toString().indexOf("{");
-			
-			if (bodyStartIndex < 1) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find anonymous class declaration body start!");
-				}
-			} else {
-				bodyStartIndex = acd.getStartPosition() + bodyStartIndex + 1;
-				bodyStartLine = cu.getLineNumber(bodyStartIndex);
-			}
+			int bodyStartLine = cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
 			
 			int anonCount = ((JavaClassDefinition) classStack.peek().getElement()).nextAnonCounter(this);
 			if (!classStack.peek().getElement().getShortName()
@@ -355,16 +348,24 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			int startLine = currentLine;
 			
+			boolean startLineShifted = false;
+			@SuppressWarnings ("unchecked")
+			List<ASTNode> modifiers = (List<ASTNode>) md.getStructuralProperty(md.getModifiersProperty());
+			for (ASTNode modifier : modifiers) {
+				if (modifier instanceof Modifier) {
+					startLine = cu.getLineNumber(modifier.getStartPosition());
+					startLineShifted = true;
+					break;
+				}
+			}
+			if (!startLineShifted) {
+				startLine = cu.getLineNumber(md.getReturnType2().getStartPosition());
+			}
+			
 			Block body = md.getBody();
 			int bodyStartLine = -1;
 			if (body != null) {
 				bodyStartLine = cu.getLineNumber(body.getStartPosition());
-			}
-			
-			if (md.getJavadoc() != null) {
-				int javaDocLength = md.getJavadoc().getLength();
-				int pos = node.getStartPosition() + javaDocLength + 1;
-				startLine = cu.getLineNumber(pos);
 			}
 			
 			if (classStack.isEmpty()) {

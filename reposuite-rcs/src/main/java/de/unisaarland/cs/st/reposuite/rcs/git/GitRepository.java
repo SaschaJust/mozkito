@@ -175,9 +175,27 @@ public class GitRepository extends Repository {
 			
 			cloneDir = new File(destDir);
 			if (!cloneDir.exists()) {
-				throw new UnrecoverableError("Could not clone git repository `" + getUri().toString()
-				        + "` to directory `" + destDir + "`" + FileUtils.lineSeparator
-				        + "Used command: `git clone -n -q " + getUri().toString() + " " + destDir + "`");
+				StringBuilder message = new StringBuilder();
+				message.append("Could not clone git repository `");
+				message.append(URIUtils.Uri2String(getUri()));
+				message.append("` to directory `");
+				message.append(destDir);
+				message.append("`");
+				message.append(FileUtils.lineSeparator);
+				message.append("Used command: `git clone -n -q ");
+				message.append(URIUtils.Uri2String(getUri()));
+				message.append(" ");
+				message.append(destDir);
+				message.append("`.");
+				message.append(FileUtils.lineSeparator);
+				message.append("Got response:");
+				message.append(FileUtils.lineSeparator);
+				for (String line : returnValue.getSecond()) {
+					message.append(line);
+					message.append(FileUtils.lineSeparator);
+				}
+				throw new UnrecoverableError(message.toString());
+				
 			}
 			FileUtils.addToFileManager(cloneDir, FileShutdownAction.DELETE);
 			return true;

@@ -179,7 +179,7 @@ public class RepoSuiteSettings {
 		}
 		
 		// save given arguments to load if necessary
-		commandlineProps = System.getProperties();
+		commandlineProps = (Properties) System.getProperties().clone();
 		
 		if (System.getProperty("repoSuiteSettings") != null) {
 			boolean parseSettingFile = true;
