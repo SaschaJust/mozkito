@@ -75,8 +75,10 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			Package package2 = MappingStrategy.class.getPackage();
 			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(package2,
 			                                                                                                    MappingStrategy.class);
-			addArgument(new ListArgument(settings, "mapping.strategies",
-			                             "A list of mapping strategies that shall be used. Available: "
+			addArgument(new ListArgument(
+			                             settings,
+			                             "mapping.strategies",
+			                             "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
 			                                     + buildStrategyList(strategyClasses), null, true));
 			
 			String strategies = System.getProperty("mapping.strategies");
