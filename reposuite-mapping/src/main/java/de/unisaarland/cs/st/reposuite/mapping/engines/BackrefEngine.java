@@ -19,11 +19,15 @@ public class BackrefEngine extends MappingEngine {
 	
 	private double scoreBackRef;
 	
-	/**
-	 * @param settings
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
+	 * ()
 	 */
-	public BackrefEngine(final MappingSettings settings) {
-		super(settings);
+	@Override
+	public String getDescription() {
+		return "Scores if the report contains a comment including a reference to the transaction id.";
 	}
 	
 	/**

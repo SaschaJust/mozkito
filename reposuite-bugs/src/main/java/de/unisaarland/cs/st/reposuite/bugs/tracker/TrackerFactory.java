@@ -5,6 +5,7 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,10 @@ public class TrackerFactory {
 		// ======== Tracker handlers ========
 		try {
 			Collection<Class<? extends Tracker>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Tracker.class.getPackage(),
-			                                                                                                  Tracker.class);
+			                                                                                                  Tracker.class,
+			                                                                                                  Modifier.ABSTRACT
+			                                                                                                          | Modifier.INTERFACE
+			                                                                                                          | Modifier.PRIVATE);
 			
 			for (Class<? extends Tracker> klass : classesExtendingClass) {
 				addTrackerHandler((TrackerType) klass.getMethod("getTrackerType", new Class<?>[0])

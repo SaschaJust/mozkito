@@ -44,13 +44,36 @@ public class ClassFinder {
 				return true;
 			}
 		}
-		return false;
+		return superClass.isAssignableFrom(baseClass);
 		
 	}
 	
+	/**
+	 * @param pakkage
+	 * @return
+	 * @throws IOException 
+	 * @throws WrongClassSearchMethodException 
+	 * @throws ClassNotFoundException 
+	 */
+	@Deprecated
 	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage) throws ClassNotFoundException,
 	                                                                                WrongClassSearchMethodException,
 	                                                                                IOException {
+		return getAllClasses(pakkage, null);
+	}
+	
+	/**
+	 * @param pakkage
+	 * @param modifiers
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
+	 */
+	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage,
+	                                                 final Integer modifiers) throws ClassNotFoundException,
+	                                                                         WrongClassSearchMethodException,
+	                                                                         IOException {
 		List<String> pathList = new LinkedList<String>();
 		
 		String classPaths = System.getProperty("java.class.path");
@@ -65,17 +88,36 @@ public class ClassFinder {
 				pathList.add(classPath);
 			}
 		}
+		
 		Collection<Class<?>> discoveredClasses = new HashSet<Class<?>>();
 		String thePackage = pakkage.getName();
 		
 		for (String classPath : pathList) {
 			if (classPath.endsWith(".jar")) {
-				discoveredClasses.addAll(getClassesFromJarFile(thePackage, classPath));
+				discoveredClasses.addAll(getClassesFromJarFile(thePackage, classPath, modifiers));
 			} else {
-				discoveredClasses.addAll(getClassesFromClasspath(thePackage));
+				discoveredClasses.addAll(getClassesFromClasspath(thePackage, modifiers));
 			}
 		}
 		return discoveredClasses;
+	}
+	
+	/**
+	 * @param <T>
+	 * @param pakkage
+	 * @param superClass
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
+	 * @Deprecated use {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)} instead
+	 */
+	@Deprecated
+	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
+	                                                                          final Class<T> superClass) throws ClassNotFoundException,
+	                                                                                                    WrongClassSearchMethodException,
+	                                                                                                    IOException {
+		return getClassesExtendingClass(pakkage, superClass, null);
 	}
 	
 	/**
@@ -97,10 +139,11 @@ public class ClassFinder {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
-	                                                                          final Class<T> superClass) throws ClassNotFoundException,
-	                                                                                                    WrongClassSearchMethodException,
-	                                                                                                    IOException {
-		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage);
+	                                                                          final Class<T> superClass,
+	                                                                          final Integer modifiers) throws ClassNotFoundException,
+	                                                                                                  WrongClassSearchMethodException,
+	                                                                                                  IOException {
+		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage, modifiers);
 		
 		Collection<Class<? extends T>> classList = new HashSet<Class<? extends T>>();
 		for (Class<?> discovered : discoveredClasses) {
@@ -126,19 +169,36 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * @param packageName
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
+	 * @deprecated
+	 */
+	@Deprecated
+	public static Collection<Class<?>> getClassesFromClasspath(final String packageName) throws ClassNotFoundException,
+	                                                                                    WrongClassSearchMethodException,
+	                                                                                    IOException {
+		return getClassesFromClasspath(packageName, null);
+	}
+	
+	/**
 	 * Finds all classes in the current classpath that are contained in the
 	 * given package (from packageName). Only .class files are inspected!
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
+	 * @param modifiers 
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
-	public static Collection<Class<?>> getClassesFromClasspath(final String packageName) throws ClassNotFoundException,
-	                                                                                    WrongClassSearchMethodException,
-	                                                                                    IOException {
+	public static Collection<Class<?>> getClassesFromClasspath(final String packageName,
+	                                                           final Integer modifiers) throws ClassNotFoundException,
+	                                                                                   WrongClassSearchMethodException,
+	                                                                                   IOException {
 		// This will hold a list of directories matching the packageName. There
 		// may
 		// be more than one if a package is split over multiple jars/paths
@@ -191,7 +251,15 @@ public class ClassFinder {
 						int index = directory.getAbsolutePath().indexOf(path);
 						String absolutePackageName = directory.getAbsolutePath().substring(index)
 						                                      .replaceAll(FileUtils.fileSeparator, ".");
-						classes.add(Class.forName(absolutePackageName + '.' + file.substring(0, file.length() - 6)));
+						Class<?> class1 = Class.forName(absolutePackageName + '.'
+						        + file.substring(0, file.length() - 6));
+						if (modifiers != null) {
+							if ((class1.getModifiers() & modifiers) == 0) {
+								classes.add(class1);
+							}
+						} else {
+							classes.add(class1);
+						}
 					}
 				}
 			} else {
@@ -203,19 +271,35 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * @param packageName
+	 * @param filePath
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 */
+	@Deprecated
+	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
+	                                                         final String filePath) throws ClassNotFoundException,
+	                                                                               WrongClassSearchMethodException {
+		return getClassesFromJarFile(packageName, filePath, null);
+	}
+	
+	/**
 	 * Scans through the given JAR file and finds all class objects for a given
 	 * package name
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
+	 * @param modifiers 
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
 	 */
 	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
-	                                                         final String filePath) throws ClassNotFoundException,
-	                                                                               WrongClassSearchMethodException {
+	                                                         final String filePath,
+	                                                         final Integer modifiers) throws ClassNotFoundException,
+	                                                                                 WrongClassSearchMethodException {
 		// String filePath =
 		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		
@@ -239,9 +323,16 @@ public class ClassFinder {
 				if ((current.getName().length() > path.length())
 				        && current.getName().substring(0, path.length()).equals(path)
 				        && current.getName().endsWith(".class")) {
-					classes.add(Class.forName(current.getName()
-					                                 .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
-					                                             ".").replace(".class", "")));
+					Class<?> class1 = Class.forName(current.getName()
+					                                       .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
+					                                                   ".").replace(".class", ""));
+					if (modifiers != null) {
+						if ((class1.getModifiers() & modifiers) == 0) {
+							classes.add(class1);
+						}
+					} else {
+						classes.add(class1);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -251,6 +342,22 @@ public class ClassFinder {
 		}
 		
 		return classes;
+	}
+	
+	/**
+	 * @param pakkage
+	 * @param theInterface
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws WrongClassSearchMethodException
+	 * @throws IOException
+	 */
+	@Deprecated
+	public static <T> Collection<Class<T>> getClassesOfInterface(final Package pakkage,
+	                                                             final Class<T> theInterface) throws ClassNotFoundException,
+	                                                                                         WrongClassSearchMethodException,
+	                                                                                         IOException {
+		return getClassesOfInterface(pakkage, theInterface, null);
 	}
 	
 	/**
@@ -265,17 +372,19 @@ public class ClassFinder {
 	 * @throws IOException
 	 * @throws WrongClassSearchMethodException
 	 */
+	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static Collection<Class<?>> getClassesOfInterface(final Package pakkage,
-	                                                         final Class<?> theInterface) throws ClassNotFoundException,
+	public static <T> Collection<Class<T>> getClassesOfInterface(final Package pakkage,
+	                                                             final Class<T> theInterface,
+	                                                             final Integer modifiers) throws ClassNotFoundException,
 	                                                                                     WrongClassSearchMethodException,
 	                                                                                     IOException {
-		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage);
+		Collection<Class<?>> discoveredClasses = ClassFinder.getAllClasses(pakkage, modifiers);
 		
-		Collection<Class<?>> classList = new HashSet<Class<?>>();
+		Collection<Class<T>> classList = new HashSet<Class<T>>();
 		for (Class<?> discovered : discoveredClasses) {
 			Class<?> aClass = discovered;
-			Class<?> matchingClass = null;
+			Class<T> matchingClass = null;
 			
 			do {
 				if (Logger.logTrace()) {
@@ -294,7 +403,7 @@ public class ClassFinder {
 							Logger.trace("Class implements the " + theInterface.getSimpleName() + " interface: "
 							        + aClass.getName());
 						}
-						matchingClass = discovered;
+						matchingClass = (Class<T>) discovered;
 						break;
 					}
 				}

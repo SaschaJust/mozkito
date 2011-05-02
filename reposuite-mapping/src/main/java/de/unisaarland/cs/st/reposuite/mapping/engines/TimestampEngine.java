@@ -78,11 +78,10 @@ public class TimestampEngine extends MappingEngine {
 		TimestampEngine.windowReportResolvedAfterTransaction = windowReportResolvedAfterTransaction;
 	}
 	
-	/**
-	 * @param settings
-	 */
-	public TimestampEngine(final MappingSettings settings) {
-		super(settings);
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return "Scores based on the relation of close and commit timestamp (1/(1+days(close - upperbound).";
 	}
 	
 	/*

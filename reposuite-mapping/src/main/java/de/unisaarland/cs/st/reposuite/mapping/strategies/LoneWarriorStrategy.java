@@ -7,21 +7,12 @@ import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
 public class LoneWarriorStrategy extends MappingStrategy {
-	
-	/**
-	 * @param settings
-	 */
-	public LoneWarriorStrategy(final MappingSettings settings) {
-		super(settings);
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -31,16 +22,6 @@ public class LoneWarriorStrategy extends MappingStrategy {
 	@Override
 	public String getDescription() {
 		return "Maps as soon as a single engine agrees on the mapping";
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#init()
-	 */
-	@Override
-	public void init() {
-		
 	}
 	
 	/*
@@ -60,21 +41,6 @@ public class LoneWarriorStrategy extends MappingStrategy {
 		}
 		
 		return mapping;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#register
-	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
-	 * boolean)
-	 */
-	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments mappingArguments,
-	                     final boolean isRequired) {
-		
 	}
 	
 }

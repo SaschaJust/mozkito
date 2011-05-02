@@ -28,9 +28,14 @@ public abstract class MappingEngine {
 	private boolean                                                    initialized = false;
 	private final Map<Class<? extends MappingStorage>, MappingStorage> storages    = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	
-	public MappingEngine(final MappingSettings settings) {
-		setSettings(settings);
+	public MappingEngine() {
+		
 	}
+	
+	/**
+	 * @return
+	 */
+	public abstract String getDescription();
 	
 	/**
 	 * @return the settings
@@ -96,6 +101,7 @@ public abstract class MappingEngine {
 	public void register(final MappingSettings settings,
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
+		setSettings(settings);
 		setRegistered(true);
 	}
 	

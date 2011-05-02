@@ -21,42 +21,27 @@ import de.unisaarland.cs.st.reposuite.utils.Tuple;
  */
 public class AuthorEngine extends MappingEngine {
 	
-	private static double scoreAuthorEquality = 0.2d;
-	private static double scoreAuthorInequality;
+	private double scoreAuthorEquality = 0.2d;
+	private double scoreAuthorInequality;
+	
+	@Override
+	public String getDescription() {
+		return "Scores according to the equality of committer and person who closes the bug (equal: "
+		        + getScoreAuthorEquality() + "/unequal: " + getScoreAuthorInequality() + ")";
+	}
 	
 	/**
 	 * @return the scoreAuthorEquality
 	 */
-	private static double getScoreAuthorEquality() {
-		return scoreAuthorEquality;
+	private double getScoreAuthorEquality() {
+		return this.scoreAuthorEquality;
 	}
 	
 	/**
 	 * @return the scoreAuthorInequality
 	 */
-	public static double getScoreAuthorInequality() {
-		return scoreAuthorInequality;
-	}
-	
-	/**
-	 * @param scoreAuthorEquality the scoreAuthorEquality to set
-	 */
-	private static void setScoreAuthorEquality(final double scoreAuthorEquality) {
-		AuthorEngine.scoreAuthorEquality = scoreAuthorEquality;
-	}
-	
-	/**
-	 * @param scoreAuthorInequality the scoreAuthorInequality to set
-	 */
-	public static void setScoreAuthorInequality(final double scoreAuthorInequality) {
-		AuthorEngine.scoreAuthorInequality = scoreAuthorInequality;
-	}
-	
-	/**
-	 * @param settings
-	 */
-	public AuthorEngine(final MappingSettings settings) {
-		super(settings);
+	private double getScoreAuthorInequality() {
+		return this.scoreAuthorInequality;
 	}
 	
 	/*
@@ -151,6 +136,20 @@ public class AuthorEngine extends MappingEngine {
 		                 report.getResolver() != null
 		                                             ? report.getResolver().toString()
 		                                             : "(null)", this.getClass());
+	}
+	
+	/**
+	 * @param scoreAuthorEquality the scoreAuthorEquality to set
+	 */
+	private void setScoreAuthorEquality(final double scoreAuthorEquality) {
+		this.scoreAuthorEquality = scoreAuthorEquality;
+	}
+	
+	/**
+	 * @param scoreAuthorInequality the scoreAuthorInequality to set
+	 */
+	private void setScoreAuthorInequality(final double scoreAuthorInequality) {
+		this.scoreAuthorInequality = scoreAuthorInequality;
 	}
 	
 }

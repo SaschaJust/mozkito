@@ -12,7 +12,6 @@ import org.apache.lucene.util.Version;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -23,11 +22,15 @@ public class SummarySearchEngine extends SearchEngine {
 	
 	private QueryParser parser = null;
 	
-	/**
-	 * @param settings
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
+	 * ()
 	 */
-	public SummarySearchEngine(final MappingSettings settings) {
-		super(settings);
+	@Override
+	public String getDescription() {
+		return "Scores based on document similarity/relevance based on commit message and report summary.";
 	}
 	
 	/*

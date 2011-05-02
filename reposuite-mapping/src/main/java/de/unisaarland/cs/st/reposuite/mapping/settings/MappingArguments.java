@@ -3,12 +3,14 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.settings;
 
-import java.lang.reflect.Constructor;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
@@ -34,14 +36,16 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 */
 	public MappingArguments(final MappingSettings settings, final boolean isRequired) {
 		super();
-		
 		try {
 			Package package1 = MappingEngine.class.getPackage();
 			Collection<Class<? extends MappingEngine>> engineClasses = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                MappingEngine.class);
+			                                                                                                MappingEngine.class,
+			                                                                                                Modifier.ABSTRACT
+			                                                                                                        | Modifier.INTERFACE
+			                                                                                                        | Modifier.PRIVATE);
 			
-			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used.",
-			                             buildEngineList(engineClasses), false));
+			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used: "
+			        + buildEngineList(engineClasses), "[all]", false));
 			
 			String engines = System.getProperty("mapping.engines");
 			Set<String> engineNames = new HashSet<String>();
@@ -60,8 +64,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 							Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
 						}
 						
-						Constructor<? extends MappingEngine> constructor = klass.getConstructor(MappingSettings.class);
-						MappingEngine engine = constructor.newInstance(settings);
+						MappingEngine engine = klass.newInstance();
 						engine.register(settings, this, isRequired);
 						this.engines.add(engine);
 					}
@@ -74,7 +77,10 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			
 			Package package2 = MappingStrategy.class.getPackage();
 			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(package2,
-			                                                                                                    MappingStrategy.class);
+			                                                                                                    MappingStrategy.class,
+			                                                                                                    Modifier.ABSTRACT
+			                                                                                                            | Modifier.INTERFACE
+			                                                                                                            | Modifier.PRIVATE);
 			addArgument(new ListArgument(
 			                             settings,
 			                             "mapping.strategies",
@@ -95,9 +101,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 					if (Logger.logInfo()) {
 						Logger.info("Adding new MappingStrategy " + klass.getCanonicalName());
 					}
-					
-					Constructor<? extends MappingStrategy> constructor = klass.getConstructor(MappingSettings.class);
-					MappingStrategy strategy = constructor.newInstance(settings);
+					MappingStrategy strategy = klass.newInstance();
 					strategy.register(settings, this, isRequired);
 					this.strategies.add(strategy);
 				} else {
@@ -107,11 +111,18 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 				}
 			}
 			
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new RuntimeException();
+		} catch (IllegalArgumentException e) {
+			throw new UnrecoverableError(e);
+		} catch (InstantiationException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		} catch (ClassNotFoundException e) {
+			throw new UnrecoverableError(e);
+		} catch (WrongClassSearchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (IOException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
 	
@@ -121,11 +132,18 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 */
 	private String buildEngineList(final Collection<Class<? extends MappingEngine>> engines) {
 		StringBuilder builder = new StringBuilder();
-		for (Class<?> klass : engines) {
-			if (builder.length() != 0) {
-				builder.append(",");
+		builder.append(FileUtils.lineSeparator);
+		for (Class<? extends MappingEngine> klass : engines) {
+			try {
+				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
+				       .append(klass.newInstance().getDescription());
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
 			}
-			builder.append(klass.getSimpleName());
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
+			}
 		}
 		return builder.toString();
 	}
@@ -139,7 +157,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		builder.append(FileUtils.lineSeparator);
 		for (Class<? extends MappingStrategy> klass : strategies) {
 			try {
-				builder.append('\t').append(klass.getSimpleName()).append(": ")
+				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
 				       .append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {

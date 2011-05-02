@@ -31,13 +31,6 @@ public abstract class SearchEngine extends MappingEngine {
 	private LuceneStorage storage;
 	
 	/**
-	 * @param settings
-	 */
-	public SearchEngine(final MappingSettings settings) {
-		super(settings);
-	}
-	
-	/**
 	 * @param queryString
 	 * @param queryParser
 	 * @return
@@ -72,15 +65,6 @@ public abstract class SearchEngine extends MappingEngine {
 	 */
 	public LuceneStorage getStorage() {
 		return this.storage;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
-	 */
-	@Override
-	public void init() {
-		super.init();
 	}
 	
 	/*

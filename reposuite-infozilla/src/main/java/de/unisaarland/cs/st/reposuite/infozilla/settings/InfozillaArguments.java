@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.reposuite.infozilla.settings;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,10 @@ public class InfozillaArguments extends RepoSuiteArgumentSet {
 		try {
 			Package package1 = InfozillaFilter.class.getPackage();
 			Collection<Class<? extends InfozillaFilter>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                          InfozillaFilter.class);
+			                                                                                                          InfozillaFilter.class,
+			                                                                                                          Modifier.ABSTRACT
+			                                                                                                                  | Modifier.INTERFACE
+			                                                                                                                  | Modifier.PRIVATE);
 			
 			addArgument(new ListArgument(settings, "mapping.filters", "A list of mapping filters that shall be used.",
 			                             buildFilterList(classesExtendingClass), false));

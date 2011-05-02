@@ -1,0 +1,10 @@
+database.name=just_jaxen
+database.user=miner
+database.password=miner
+database.host=quentin.cs.uni-saarland.de
+log.level=debug
+repository.uri=/data/kim/miner_repos/reposuite/.git/
+repository.type=GIT
+headless
+repository.transaction.stop=56a62220caf06bd64e21d4f304c0458fdc3c15b2
+

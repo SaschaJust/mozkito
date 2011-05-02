@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.reposuite.rcs;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,10 @@ public final class RepositoryFactory {
 		try {
 			Package package1 = Repository.class.getPackage();
 			Collection<Class<? extends Repository>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                     Repository.class);
+			                                                                                                     Repository.class,
+			                                                                                                     Modifier.ABSTRACT
+			                                                                                                             | Modifier.INTERFACE
+			                                                                                                             | Modifier.PRIVATE);
 			
 			for (Class<? extends Repository> klass : classesExtendingClass) {
 				addRepositoryHandler((RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0])

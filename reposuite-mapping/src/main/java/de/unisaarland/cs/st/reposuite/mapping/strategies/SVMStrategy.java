@@ -4,18 +4,12 @@
 package de.unisaarland.cs.st.reposuite.mapping.strategies;
 
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
 public class SVMStrategy extends MappingStrategy {
-	
-	public SVMStrategy(final MappingSettings settings) {
-		super(settings);
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -25,17 +19,6 @@ public class SVMStrategy extends MappingStrategy {
 	@Override
 	public String getDescription() {
 		return "Maps according to the trained model on known mappings with the given feature vectors from the MappingEngines.";
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#init()
-	 */
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/**
@@ -57,22 +40,6 @@ public class SVMStrategy extends MappingStrategy {
 	public RCSBugMapping map(final RCSBugMapping mapping) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy#register
-	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
-	 * boolean)
-	 */
-	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments mappingArguments,
-	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

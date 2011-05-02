@@ -6,7 +6,10 @@ package de.unisaarland.cs.st.reposuite.mapping.engines;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -102,42 +105,201 @@ public class RegexEngine extends MappingEngine {
 	 * Pattern.CASE_INSENSITIVE 1.0 "fixing bug #({match}##ID##)"
 	 * Pattern.CASE_INSENSITIVE
 	 */
-	private static Collection<Matcher> matchers;
-	private static URI                 configPath;
+	private Collection<Matcher> matchers;
+	private URI                 configPath;
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.net.URI#compareTo(java.net.URI)
+	 */
+	public int compareTo(final URI arg0) {
+		return this.configPath.compareTo(arg0);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RegexEngine)) {
+			return false;
+		}
+		RegexEngine other = (RegexEngine) obj;
+		if (this.configPath == null) {
+			if (other.configPath != null) {
+				return false;
+			}
+		} else if (!this.configPath.equals(other.configPath)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getAuthority()
+	 */
+	public String getAuthority() {
+		return this.configPath.getAuthority();
+	}
 	
 	/**
 	 * @return the configPath
 	 */
-	private static URI getConfigPath() {
-		return configPath;
+	private URI getConfigPath() {
+		return this.configPath;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
+	 * ()
+	 */
+	@Override
+	public String getDescription() {
+		return "Scores if regular expressions from a given set match. See config at: " + getConfigPath();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getFragment()
+	 */
+	public String getFragment() {
+		return this.configPath.getFragment();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getHost()
+	 */
+	public String getHost() {
+		return this.configPath.getHost();
 	}
 	
 	/**
 	 * @return the matchers
 	 */
-	private static Collection<Matcher> getMatchers() {
-		return matchers;
+	private Collection<Matcher> getMatchers() {
+		return this.matchers;
 	}
 	
 	/**
-	 * @param uri the configPath to set
+	 * @return
+	 * @see java.net.URI#getPath()
 	 */
-	private static void setConfigPath(final URI uri) {
-		RegexEngine.configPath = uri;
+	public String getPath() {
+		return this.configPath.getPath();
 	}
 	
 	/**
-	 * @param matchers the matchers to set
+	 * @return
+	 * @see java.net.URI#getPort()
 	 */
-	private static void setMatchers(final Collection<Matcher> matchers) {
-		RegexEngine.matchers = matchers;
+	public int getPort() {
+		return this.configPath.getPort();
 	}
 	
 	/**
-	 * @param settings
+	 * @return
+	 * @see java.net.URI#getQuery()
 	 */
-	public RegexEngine(final MappingSettings settings) {
-		super(settings);
+	public String getQuery() {
+		return this.configPath.getQuery();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawAuthority()
+	 */
+	public String getRawAuthority() {
+		return this.configPath.getRawAuthority();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawFragment()
+	 */
+	public String getRawFragment() {
+		return this.configPath.getRawFragment();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawPath()
+	 */
+	public String getRawPath() {
+		return this.configPath.getRawPath();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawQuery()
+	 */
+	public String getRawQuery() {
+		return this.configPath.getRawQuery();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawSchemeSpecificPart()
+	 */
+	public String getRawSchemeSpecificPart() {
+		return this.configPath.getRawSchemeSpecificPart();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getRawUserInfo()
+	 */
+	public String getRawUserInfo() {
+		return this.configPath.getRawUserInfo();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getScheme()
+	 */
+	public String getScheme() {
+		return this.configPath.getScheme();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getSchemeSpecificPart()
+	 */
+	public String getSchemeSpecificPart() {
+		return this.configPath.getSchemeSpecificPart();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#getUserInfo()
+	 */
+	public String getUserInfo() {
+		return this.configPath.getUserInfo();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.configPath == null)
+		                                                    ? 0
+		                                                    : this.configPath.hashCode());
+		return result;
 	}
 	
 	/*
@@ -178,6 +340,39 @@ public class RegexEngine extends MappingEngine {
 		}
 	}
 	
+	/**
+	 * @return
+	 * @see java.net.URI#isAbsolute()
+	 */
+	public boolean isAbsolute() {
+		return this.configPath.isAbsolute();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#isOpaque()
+	 */
+	public boolean isOpaque() {
+		return this.configPath.isOpaque();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#normalize()
+	 */
+	public URI normalize() {
+		return this.configPath.normalize();
+	}
+	
+	/**
+	 * @return
+	 * @throws URISyntaxException
+	 * @see java.net.URI#parseServerAuthority()
+	 */
+	public URI parseServerAuthority() throws URISyntaxException {
+		return this.configPath.parseServerAuthority();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -194,6 +389,33 @@ public class RegexEngine extends MappingEngine {
 		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
 		                                      "URI to file containing the regular expressions used to map the IDs.",
 		                                      null, isRequired));
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.net.URI#relativize(java.net.URI)
+	 */
+	public URI relativize(final URI arg0) {
+		return this.configPath.relativize(arg0);
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.net.URI#resolve(java.lang.String)
+	 */
+	public URI resolve(final String arg0) {
+		return this.configPath.resolve(arg0);
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.net.URI#resolve(java.net.URI)
+	 */
+	public URI resolve(final URI arg0) {
+		return this.configPath.resolve(arg0);
 	}
 	
 	/*
@@ -215,7 +437,7 @@ public class RegexEngine extends MappingEngine {
 			Logger.debug(this.getClass().getSimpleName() + " checking " + transaction);
 		}
 		
-		for (Matcher matcher : matchers) {
+		for (Matcher matcher : this.matchers) {
 			Regex regex = matcher.getRegex(report.getId());
 			
 			if (value < matcher.getScore()) {
@@ -234,6 +456,46 @@ public class RegexEngine extends MappingEngine {
 		if (!relevantString.isEmpty()) {
 			score.addFeature(value, "message", relevantString, "id", report.getId() + "", this.getClass());
 		}
+	}
+	
+	/**
+	 * @param uri the configPath to set
+	 */
+	private void setConfigPath(final URI uri) {
+		this.configPath = uri;
+	}
+	
+	/**
+	 * @param matchers the matchers to set
+	 */
+	private void setMatchers(final Collection<Matcher> matchers) {
+		this.matchers = matchers;
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#toASCIIString()
+	 */
+	public String toASCIIString() {
+		return this.configPath.toASCIIString();
+	}
+	
+	/**
+	 * @return
+	 * @see java.net.URI#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.configPath.toString();
+	}
+	
+	/**
+	 * @return
+	 * @throws MalformedURLException
+	 * @see java.net.URI#toURL()
+	 */
+	public URL toURL() throws MalformedURLException {
+		return this.configPath.toURL();
 	}
 	
 }
