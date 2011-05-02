@@ -3,12 +3,15 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs.tracker;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnregisteredTrackerTypeException;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -16,7 +19,6 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@SuppressWarnings ("unchecked")
 public class TrackerFactory {
 	
 	/**
@@ -30,14 +32,13 @@ public class TrackerFactory {
 	static {
 		// ======== Tracker handlers ========
 		try {
-			Collection<Class<?>> classesExtendingClass = ClassFinder.getClassesExtendingClass(
-			                                                                                  Tracker.class.getPackage(), Tracker.class);
+			Collection<Class<? extends Tracker>> classesExtendingClass = ClassFinder.getClassesExtendingClass(Tracker.class.getPackage(),
+			                                                                                                  Tracker.class);
 			
-			for (Class<?> klass : classesExtendingClass) {
-				addTrackerHandler(
-				                  (TrackerType) klass.getMethod("getTrackerType", new Class<?>[0]).invoke(
-				                                                                                          klass.getConstructor(new Class<?>[0]).newInstance(new Object[0]), new Object[0]),
-				                                                                                          (Class<? extends Tracker>) klass);
+			for (Class<? extends Tracker> klass : classesExtendingClass) {
+				addTrackerHandler((TrackerType) klass.getMethod("getTrackerType", new Class<?>[0])
+				                                     .invoke(klass.getConstructor(new Class<?>[0])
+				                                                  .newInstance(new Object[0]), new Object[0]), klass);
 			}
 		} catch (InvocationTargetException e) {
 			if (Logger.logError()) {
@@ -45,17 +46,26 @@ public class TrackerFactory {
 				// TrackerType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error("You probably missed to add an enum constant to " + TrackerType.getHandle()
-					             + ". Error was: " + e.getCause().getMessage(), e.getCause());
-				} else {
-					Logger.error(e.getMessage(), e);
+					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
 				}
 			}
-			throw new RuntimeException();
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
+		} catch (ClassNotFoundException e) {
+			throw new UnrecoverableError(e);
+		} catch (WrongClassSearchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (IOException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalArgumentException e) {
+			throw new UnrecoverableError(e);
+		} catch (SecurityException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		} catch (NoSuchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (InstantiationException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
 	
@@ -90,8 +100,7 @@ public class TrackerFactory {
 	 *             * if no matching tracker class object could be found in the
 	 *             registry
 	 */
-	public static Class<? extends Tracker> getTrackerHandler(final TrackerType trackerIdentifier)
-	throws UnregisteredTrackerTypeException {
+	public static Class<? extends Tracker> getTrackerHandler(final TrackerType trackerIdentifier) throws UnregisteredTrackerTypeException {
 		assert (trackerIdentifier != null);
 		
 		if (Logger.logInfo()) {
@@ -102,7 +111,7 @@ public class TrackerFactory {
 		
 		if (trackerClass == null) {
 			throw new UnregisteredTrackerTypeException("Unsupported repository type `" + trackerIdentifier.toString()
-			                                           + "`");
+			        + "`");
 		} else {
 			return trackerClass;
 		}
