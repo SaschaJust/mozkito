@@ -1,20 +1,16 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.persons;
+package de.unisaarland.cs.st.reposuite.persons.processing;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import de.unisaarland.cs.st.reposuite.persons.elements.PersonBucket;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -22,111 +18,104 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class PersonManager {
 	
-	private Set<Person>                    persons     = new HashSet<Person>();
-	private final Map<String, Person>      emailMap    = new HashMap<String, Person>();
-	private final Map<String, Person>      usernameMap = new HashMap<String, Person>();
-	private final Map<String, Set<Person>> fullnameMap = new HashMap<String, Set<Person>>();
+	private final Map<String, List<PersonBucket>> emailMap    = new HashMap<String, List<PersonBucket>>();
+	private final Map<String, List<PersonBucket>> usernameMap = new HashMap<String, List<PersonBucket>>();
+	private final Map<String, List<PersonBucket>> fullnameMap = new HashMap<String, List<PersonBucket>>();
+	private final PersistenceUtil                 util;
+	
+	public PersonManager(final PersistenceUtil util) {
+		this.util = util;
+	}
 	
 	/**
 	 * @param person
+	 * @return
 	 */
-	public synchronized void add(final Person person) {
-		getPersons().add(person);
+	public List<PersonBucket> getBuckets(final Person person) {
+		List<PersonBucket> list = new LinkedList<PersonBucket>();
 		
 		for (String email : person.getEmailAddresses()) {
-			this.emailMap.put(email, person);
+			if (this.emailMap.containsKey(email)) {
+				list.addAll(this.emailMap.get(email));
+			}
 		}
 		
 		for (String username : person.getUsernames()) {
-			this.usernameMap.put(username, person);
+			if (this.usernameMap.containsKey(username)) {
+				list.addAll(this.usernameMap.get(username));
+			}
 		}
 		
 		for (String fullname : person.getFullnames()) {
+			if (this.fullnameMap.containsKey(fullname)) {
+				list.addAll(this.fullnameMap.get(fullname));
+			}
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * @return the util
+	 */
+	public PersistenceUtil getUtil() {
+		return this.util;
+	}
+	
+	/**
+	 * @param bucket
+	 * @param list
+	 */
+	public void updateAndRemove(final PersonBucket bucket,
+	                            final List<PersonBucket> list) {
+		// update
+		for (String username : bucket.getUsernames()) {
+			if (!this.usernameMap.containsKey(username)) {
+				this.usernameMap.put(username, new LinkedList<PersonBucket>());
+			}
+			List<PersonBucket> buckets = this.usernameMap.get(username);
+			buckets.add(bucket);
+			this.usernameMap.put(username, buckets);
+		}
+		
+		for (String email : bucket.getEmails()) {
+			if (!this.emailMap.containsKey(email)) {
+				this.emailMap.put(email, new LinkedList<PersonBucket>());
+			}
+			List<PersonBucket> buckets = this.emailMap.get(email);
+			buckets.add(bucket);
+			this.emailMap.put(email, buckets);
+		}
+		
+		for (String fullname : bucket.getFullnames()) {
 			if (!this.fullnameMap.containsKey(fullname)) {
-				this.fullnameMap.put(fullname, new HashSet<Person>());
+				this.fullnameMap.put(fullname, new LinkedList<PersonBucket>());
 			}
-			this.fullnameMap.get(fullname).add(person);
-		}
-	}
-	
-	/**
-	 * @param person
-	 * @return
-	 */
-	public synchronized Collection<Person> collision(final Person person) {
-		LinkedList<Person> colliders = new LinkedList<Person>();
-		
-		for (Person reference : getPersons()) {
-			if (reference.matches(person)) {
-				colliders.add(reference);
-			}
-		}
-		return colliders;
-	}
-	
-	/**
-	 * @param collider
-	 */
-	public synchronized void delete(final Person collider) {
-		String[] keys = this.emailMap.keySet().toArray(new String[0]);
-		for (String key : keys) {
-			if (this.emailMap.get(key).equals(collider)) {
-				this.emailMap.remove(key);
-			}
+			List<PersonBucket> buckets = this.fullnameMap.get(fullname);
+			buckets.add(bucket);
+			this.fullnameMap.put(fullname, buckets);
 		}
 		
-		keys = this.usernameMap.keySet().toArray(new String[0]);
-		for (String key : keys) {
-			if (this.usernameMap.get(key).equals(collider)) {
-				this.usernameMap.remove(key);
+		// remove
+		if (!list.isEmpty()) {
+			for (String key : this.emailMap.keySet()) {
+				if (this.emailMap.containsKey(key)) {
+					this.emailMap.get(key).removeAll(list);
+				}
 			}
-		}
-		
-		keys = this.fullnameMap.keySet().toArray(new String[0]);
-		for (String key : keys) {
-			if (this.fullnameMap.get(key).remove(collider)) {
-				if (this.fullnameMap.get(key).isEmpty()) {
-					this.fullnameMap.remove(key);
+			
+			for (String key : this.usernameMap.keySet()) {
+				if (this.usernameMap.containsKey(key)) {
+					this.usernameMap.get(key).removeAll(list);
+				}
+			}
+			
+			for (String key : this.fullnameMap.keySet()) {
+				if (this.fullnameMap.containsKey(key)) {
+					this.fullnameMap.get(key).removeAll(list);
 				}
 			}
 		}
-		
-		if (!this.persons.remove(collider)) {
-			if (Logger.logError()) {
-				Logger.error("Could not remove collider from person list: " + collider);
-				Logger.error("Relevant active person list: ");
-				for (Person person : getPersons()) {
-					if (!CollectionUtils.intersection(collider.getEmailAddresses(), person.getEmailAddresses())
-					                    .isEmpty()
-					        || !CollectionUtils.intersection(collider.getFullnames(), person.getFullnames()).isEmpty()
-					        || !CollectionUtils.intersection(collider.getUsernames(), person.getUsernames()).isEmpty()) {
-						Logger.error(person.toString());
-					}
-				}
-			}
-			throw new UnrecoverableError("Could not remove collider from person list: " + collider);
-		}
-	}
-	
-	/**
-	 * @return
-	 */
-	public synchronized Collection<Person> getPersons() {
-		return this.persons;
-	}
-	
-	/**
-	 * 
-	 */
-	public void rehash() {
-		setPersons(new HashSet<Person>(getPersons()));
-	}
-	
-	/**
-	* @param persons
-	*/
-	public synchronized void setPersons(final Collection<Person> persons) {
-		this.persons = new HashSet<Person>(persons);
 	}
 	
 }

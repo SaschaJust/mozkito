@@ -14,6 +14,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persons.processing.PersonManager;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
