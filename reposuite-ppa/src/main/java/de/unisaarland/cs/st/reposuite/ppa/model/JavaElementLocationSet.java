@@ -25,7 +25,26 @@ public class JavaElementLocationSet {
 	/** The method call locations. */
 	private final List<JavaElementLocation> methodCallLocations = new LinkedList<JavaElementLocation>();
 	
-	public JavaElementLocation getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
+	/**
+	 * Adds an anonymous class definition to the set.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param file
+	 *            the file
+	 * @param startLine
+	 *            the start line
+	 * @param endLine
+	 *            the end line
+	 * @param position
+	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
+	 * @return the java element location added.
+	 */
+	public JavaElementLocation addAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
 	                                                       @NotNull final String fullQualifiedName,
 	                                                       @NotNull final String file,
 	                                                       @NotNegative final int startLine,
@@ -34,14 +53,84 @@ public class JavaElementLocationSet {
 	                                                       @NotNegative final int bodyStartLine) {
 		
 		JavaClassDefinition definition = JavaElementFactory.getAnonymousClassDefinition(parent, fullQualifiedName);
-		return new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine, file);
+		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
+		                                                       file);
+		this.classDefLocations.add(location);
+		return location;
 	}
 	
 	/**
-	 * Gets the class definition.
+	 * Adds a class definition.
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
+	 * @param file
+	 *            the file
+	 * @param startLine
+	 *            the start line
+	 * @param endLine
+	 *            the end line
+	 * @param position
+	 *            the position
+	 * @param bodyStartLine
+	 *            the body start line
+	 * @return the class definition added.
+	 */
+	public JavaElementLocation addClassDefinition(@NotNull final String fullQualifiedName,
+	                                              @NotNull final String file,
+	                                              @NotNegative final int startLine,
+	                                              @NotNegative final int endLine,
+	                                              @NotNegative final int position,
+	                                              @NotNegative final int bodyStartLine) {
+		JavaClassDefinition definition = JavaElementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
+		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
+		                                                       file);
+		this.classDefLocations.add(location);
+		return location;
+	}
+	
+	/**
+	 * Adds a method call.
+	 * 
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
+	 * @param signature
+	 *            the signature
+	 * @param file
+	 *            the file
+	 * @param parent
+	 *            the parent
+	 * @param startLine
+	 *            the start line
+	 * @param endLine
+	 *            the end line
+	 * @param position
+	 *            the position
+	 * @return the method call added
+	 */
+	public JavaElementLocation addMethodCall(@NotNull final String objectName,
+	                                         @NotNull final String methodName,
+	                                         @NotNull final List<String> signature,
+	                                         @NotNull final String file,
+	                                         @NotNull final JavaElement parent,
+	                                         @NotNegative final int startLine,
+	                                         @NotNegative final int endLine,
+	                                         @NotNegative final int position) {
+		JavaMethodCall call = JavaElementFactory.getMethodCall(objectName, methodName, signature, parent);
+		JavaElementLocation location = new JavaElementLocation(call, startLine, endLine, position, -1, file);
+		this.methodCallLocations.add(location);
+		return location;
+	}
+	
+	/**
+	 * Add a method definition.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param signature
+	 *            the signature
 	 * @param file
 	 *            the file
 	 * @param parent
@@ -54,18 +143,21 @@ public class JavaElementLocationSet {
 	 *            the position
 	 * @param bodyStartLine
 	 *            the body start line
-	 * @param packageName
-	 *            the package name
-	 * @return the class definition
+	 * @return the method definition added
 	 */
-	public JavaElementLocation getClassDefinition(@NotNull final String fullQualifiedName,
-	                                              @NotNull final String file,
-	                                              @NotNegative final int startLine,
-	                                              @NotNegative final int endLine,
-	                                              @NotNegative final int position,
-	                                              @NotNegative final int bodyStartLine) {
-		JavaClassDefinition definition = JavaElementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
-		return new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine, file);
+	public JavaElementLocation addMethodDefinition(@NotNull final String objectName,
+	                                               @NotNull final String methodName,
+	                                               @NotNull final List<String> signature,
+	                                               @NotNull final String file,
+	                                               @NotNegative final int startLine,
+	                                               @NotNegative final int endLine,
+	                                               @NotNegative final int position,
+	                                               final int bodyStartLine) {
+		JavaMethodDefinition definition = JavaElementFactory.getMethodDefinition(objectName, methodName, signature);
+		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
+		                                                       file);
+		this.methodDefLocations.add(location);
+		return location;
 	}
 	
 	/**
@@ -79,70 +171,6 @@ public class JavaElementLocationSet {
 		result.addAllMethodCalls(this.methodCallLocations);
 		result.addAllMethodDefs(this.methodDefLocations);
 		return result;
-	}
-	
-	/**
-	 * Gets the method call.
-	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
-	 * @param signature
-	 *            the signature
-	 * @param file
-	 *            the file
-	 * @param parent
-	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
-	 * @return the method call
-	 */
-	public JavaElementLocation getMethodCall(@NotNull final String objectName,
-	                                         @NotNull final String methodName,
-	                                         @NotNull final List<String> signature,
-	                                         @NotNull final String file,
-	                                         @NotNull final JavaElement parent,
-	                                         @NotNegative final int startLine,
-	                                         @NotNegative final int endLine,
-	                                         @NotNegative final int position) {
-		JavaMethodCall call = JavaElementFactory.getMethodCall(objectName, methodName, signature, parent);
-		return new JavaElementLocation(call, startLine, endLine, position, -1, file);
-	}
-	
-	/**
-	 * Gets the method definition.
-	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
-	 * @param signature
-	 *            the signature
-	 * @param file
-	 *            the file
-	 * @param parent
-	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
-	 * @param bodyStartLine
-	 *            the body start line
-	 * @return the method definition
-	 */
-	public JavaElementLocation getMethodDefinition(@NotNull final String objectName,
-	                                               @NotNull final String methodName,
-	                                               @NotNull final List<String> signature,
-	                                               @NotNull final String file,
-	                                               @NotNegative final int startLine,
-	                                               @NotNegative final int endLine,
-	                                               @NotNegative final int position,
-	                                               final int bodyStartLine) {
-		JavaMethodDefinition definition = JavaElementFactory.getMethodDefinition(objectName, methodName, signature);
-		return new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine, file);
 	}
 	
 }

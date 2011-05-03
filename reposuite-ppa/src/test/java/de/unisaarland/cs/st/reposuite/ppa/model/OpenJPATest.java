@@ -36,7 +36,7 @@ public class OpenJPATest {
 			
 			persistenceUtil.beginTransaction();
 			JavaElementLocationSet cache = new JavaElementLocationSet();
-			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5);
+			JavaElementLocation classDefinition = cache.addClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 			DateTime now = new DateTime();
 			
 			Person p = new Person("kim", "", "");

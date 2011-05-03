@@ -288,7 +288,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				ASTNode bodyDeclaration = bodyDeclarations.get(0);
 				bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
 			}
-			JavaElementLocation classDefLoc = this.elementCache.getClassDefinition(this.packageName + "."
+			JavaElementLocation classDefLoc = this.elementCache.addClassDefinition(this.packageName + "."
 			                                                                               + td.getName().toString(),
 			                                                                       this.relativeFilePath, startLine,
 			                                                                       endLine, td.getStartPosition(),
@@ -340,7 +340,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaElementLocation classDefLoc = this.elementCache.getAnonymousClassDefinition(((JavaClassDefinition) this.classStack.peek()
+				JavaElementLocation classDefLoc = this.elementCache.addAnonymousClassDefinition(((JavaClassDefinition) this.classStack.peek()
 				                                                                                                                      .getElement()),
 				                                                                                parentName + "$"
 				                                                                                        + anonCount,
@@ -393,7 +393,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 				
 				JavaClassDefinition parent = ((JavaClassDefinition) this.classStack.peek().getElement());
-				JavaElementLocation methodDefLoc = this.elementCache.getMethodDefinition(parent.getFullQualifiedName(),
+				JavaElementLocation methodDefLoc = this.elementCache.addMethodDefinition(parent.getFullQualifiedName(),
 				                                                                         md.getName().toString(),
 				                                                                         arguments,
 				                                                                         this.getRelativeFilePath(),

@@ -169,7 +169,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		String filename = ppaVisitor.getRelativeFilePath();
 		
-		JavaElementLocation javaMethodCall = locationSet.getMethodCall(calledObject, methodName, arguments, filename,
+		JavaElementLocation javaMethodCall = locationSet.addMethodCall(calledObject, methodName, arguments, filename,
 		                                                               parent, thisLine, thisLine, position);
 		
 		if (!this.methodCallsByFile.containsKey(filename)) {

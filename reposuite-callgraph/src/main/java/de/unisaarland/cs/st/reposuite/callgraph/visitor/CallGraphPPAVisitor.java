@@ -132,7 +132,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -223,7 +223,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -335,7 +335,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -420,7 +420,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
