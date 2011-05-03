@@ -35,7 +35,7 @@ public class MergingProcessor {
 	 * @param container
 	 */
 	public void process(final PersonContainer container) {
-		this.manager.getUtil().beginTransaction();
+		this.manager.beginTransaction();
 		for (Person person : container.getPersons()) {
 			HashMap<Class<? extends MergingEngine>, Boolean> features = new HashMap<Class<? extends MergingEngine>, Boolean>();
 			boolean collision = false;
@@ -48,10 +48,10 @@ public class MergingProcessor {
 					}
 					PersonBucket first = list.iterator().next();
 					list.remove(first);
-					first.insert(person, container, this.manager.getUtil());
+					first.insert(person, container, this.manager);
 					
 					for (PersonBucket bucket : list) {
-						PersonBucket.merge(bucket, first, this.manager.getUtil());
+						PersonBucket.merge(bucket, first, this.manager);
 					}
 					
 					collision = true;
@@ -65,9 +65,9 @@ public class MergingProcessor {
 				}
 				this.manager.updateAndRemove(new PersonBucket(person, container), new LinkedList<PersonBucket>());
 			}
-			
+			collision = false;
 		}
-		this.manager.getUtil().commitTransaction();
+		this.manager.commitTransaction();
 	}
 	
 	/**

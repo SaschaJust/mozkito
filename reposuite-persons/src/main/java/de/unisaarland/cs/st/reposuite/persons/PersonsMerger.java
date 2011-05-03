@@ -20,6 +20,12 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 	PersistenceUtil                persistenceUtil = null;
 	private final MergingProcessor processor;
 	
+	/**
+	 * @param threadGroup
+	 * @param settings
+	 * @param persistenceUtil
+	 * @param processor
+	 */
 	public PersonsMerger(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil, final MergingProcessor processor) {
 		super(threadGroup, PersonsMerger.class.getSimpleName(), settings);
@@ -27,6 +33,10 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 		this.processor = processor;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		try {

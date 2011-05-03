@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
@@ -22,9 +23,35 @@ public class PersonManager {
 	private final Map<String, List<PersonBucket>> usernameMap = new HashMap<String, List<PersonBucket>>();
 	private final Map<String, List<PersonBucket>> fullnameMap = new HashMap<String, List<PersonBucket>>();
 	private final PersistenceUtil                 util;
+	private final TreeSet<Long>                   deleted     = new TreeSet<Long>();
 	
 	public PersonManager(final PersistenceUtil util) {
 		this.util = util;
+	}
+	
+	/**
+	 * 
+	 */
+	public void beginTransaction() {
+		getUtil().beginTransaction();
+	}
+	
+	/**
+	 * 
+	 */
+	public void commitTransaction() {
+		getUtil().commitTransaction();
+	}
+	
+	/**
+	 * @param person
+	 */
+	public void delete(final Person person) {
+		if (!this.deleted.contains(person.getGeneratedId())) {
+			getUtil().delete(person);
+		} else {
+			this.deleted.add(person.getGeneratedId());
+		}
 	}
 	
 	/**
@@ -58,7 +85,7 @@ public class PersonManager {
 	/**
 	 * @return the util
 	 */
-	public PersistenceUtil getUtil() {
+	private PersistenceUtil getUtil() {
 		return this.util;
 	}
 	
@@ -100,19 +127,65 @@ public class PersonManager {
 		if (!list.isEmpty()) {
 			for (String key : this.emailMap.keySet()) {
 				if (this.emailMap.containsKey(key)) {
-					this.emailMap.get(key).removeAll(list);
+					List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+					
+					for (PersonBucket b1 : this.emailMap.get(key)) {
+						boolean found = false;
+						for (PersonBucket b2 : list) {
+							if (b1 == b2) {
+								found = true;
+								break;
+							}
+						}
+						
+						if (!found) {
+							buckets.add(b1);
+						} else {
+							found = false;
+						}
+					}
 				}
 			}
 			
 			for (String key : this.usernameMap.keySet()) {
 				if (this.usernameMap.containsKey(key)) {
-					this.usernameMap.get(key).removeAll(list);
+					List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+					
+					for (PersonBucket b1 : this.usernameMap.get(key)) {
+						boolean found = false;
+						for (PersonBucket b2 : list) {
+							if (b1 == b2) {
+								found = true;
+								break;
+							}
+						}
+						
+						if (!found) {
+							buckets.add(b1);
+						} else {
+							found = false;
+						}
+					}
 				}
 			}
 			
 			for (String key : this.fullnameMap.keySet()) {
-				if (this.fullnameMap.containsKey(key)) {
-					this.fullnameMap.get(key).removeAll(list);
+				List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+				
+				for (PersonBucket b1 : this.fullnameMap.get(key)) {
+					boolean found = false;
+					for (PersonBucket b2 : list) {
+						if (b1 == b2) {
+							found = true;
+							break;
+						}
+					}
+					
+					if (!found) {
+						buckets.add(b1);
+					} else {
+						found = false;
+					}
 				}
 			}
 		}

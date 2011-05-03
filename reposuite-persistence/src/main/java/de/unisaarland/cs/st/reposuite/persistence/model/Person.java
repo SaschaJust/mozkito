@@ -211,7 +211,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getEmailAddresses() {
-		return emailAddresses;
+		return this.emailAddresses;
 	}
 	
 	/**
@@ -219,7 +219,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getFullnames() {
-		return fullnames;
+		return this.fullnames;
 	}
 	
 	/**
@@ -229,8 +229,8 @@ public class Person implements Annotated {
 	@Index (name = "idx_personid")
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	protected long getGeneratedId() {
-		return generatedId;
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**
@@ -238,7 +238,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getUsernames() {
-		return usernames;
+		return this.usernames;
 	}
 	
 	/*

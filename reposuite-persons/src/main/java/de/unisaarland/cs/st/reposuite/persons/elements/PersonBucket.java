@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.reposuite.persons.elements;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.persons.processing.PersonManager;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
@@ -20,8 +20,8 @@ public class PersonBucket {
 	
 	public static PersonBucket merge(final PersonBucket from,
 	                                 final PersonBucket to,
-	                                 final PersistenceUtil util) {
-		to.insertAll(from.persons, util);
+	                                 final PersonManager manager) {
+		to.insertAll(from.persons, manager);
 		return to;
 	}
 	
@@ -47,6 +47,7 @@ public class PersonBucket {
 	public List<String> getEmails() {
 		List<String> list = new LinkedList<String>();
 		for (Tuple<Person, PersonContainer> key : this.persons) {
+			
 			list.addAll(key.getFirst().getEmailAddresses());
 		}
 		return list;
@@ -55,6 +56,7 @@ public class PersonBucket {
 	public List<String> getFullnames() {
 		List<String> list = new LinkedList<String>();
 		for (Tuple<Person, PersonContainer> key : this.persons) {
+			
 			list.addAll(key.getFirst().getFullnames());
 		}
 		return list;
@@ -97,7 +99,7 @@ public class PersonBucket {
 	
 	public void insert(final Person person,
 	                   final PersonContainer container,
-	                   final PersistenceUtil util) {
+	                   final PersonManager manager) {
 		Tuple<Person, PersonContainer> p = find(person);
 		if (p != null) {
 			
@@ -105,16 +107,16 @@ public class PersonBucket {
 				Logger.debug("Replacing person: " + person);
 			}
 			container.replace(person, p.getFirst());
-			util.delete(person);
+			manager.delete(person);
 		} else {
 			this.persons.add(new Tuple<Person, PersonContainer>(person, container));
 		}
 	}
 	
 	private void insertAll(final List<Tuple<Person, PersonContainer>> tuples,
-	                       final PersistenceUtil util) {
+	                       final PersonManager manager) {
 		for (Tuple<Person, PersonContainer> key : tuples) {
-			insert(key.getFirst(), key.getSecond(), util);
+			insert(key.getFirst(), key.getSecond(), manager);
 		}
 	}
 }
