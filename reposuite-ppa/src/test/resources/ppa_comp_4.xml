@@ -1,29 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <javaChangeOperations>
   <transaction id="ff1ba504345e9df2b9feb0c678779945017236cc">
-    <Deleted>
-      <JavaElementLocation endline="18" id="0" position="81" startline="16">
+    <Deleted transaction="ff1ba504345e9df2b9feb0c678779945017236cc">
+      <JavaElementLocation id="0" startline="16" endline="18" position="81" bodystartline="16">
         <filePath>reposuite-delta/src/main/java/extrev/Main.java</filePath>
         <JavaMethodDefinition>
           <fullQualifiedName>extrev.Main.main(String[])</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="extrev.Main.main(String[])" deleted=" ff1ba504345e9df2b9feb0c678779945017236cc" parent="extrev.Main"/>
-          </parent>
-          <children/>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Deleted>
-    <Deleted>
-      <JavaElementLocation endline="20" id="0" position="30" startline="11">
+    <Deleted transaction="ff1ba504345e9df2b9feb0c678779945017236cc">
+      <JavaElementLocation id="0" startline="11" endline="20" position="30" bodystartline="13">
         <filePath>reposuite-delta/src/main/java/extrev/Main.java</filePath>
         <JavaClassDefinition>
           <fullQualifiedName>extrev.Main</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added="" child="extrev.Main.main(String[])" deleted=" ff1ba504345e9df2b9feb0c678779945017236cc" parent="extrev.Main"/>
-          </children>
         </JavaClassDefinition>
       </JavaElementLocation>
     </Deleted>
   </transaction>
 </javaChangeOperations>
+
