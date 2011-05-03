@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -73,7 +73,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	private String                           relativeFilePath = "";
 	
 	/** The element cache. */
-	private final JavaElementCache           elementCache;
+	private final JavaElementLocationSet           elementCache;
 	
 	/** The previous node. */
 	private ASTNode                          previousNode     = null;
@@ -89,15 +89,15 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the file path prefix
 	 * @param packageFilter
 	 *            the package filter
-	 * @param elementCache
+	 * @param locationSet
 	 *            the element cache
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final String relativeFilePath, final String[] packageFilter,
-	        final JavaElementCache elementCache) {
+	        final JavaElementLocationSet locationSet) {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
-		this.elementCache = elementCache;
+		this.elementCache = locationSet;
 		
 		this.relativeFilePath = relativeFilePath;
 		

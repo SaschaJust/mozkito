@@ -38,9 +38,9 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation.LineCover;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -82,24 +82,25 @@ public class PPAUtils {
 		}
 		
 		public CompilationUnit getCompilationUnit() {
-			return cu;
+			return this.cu;
 		}
 		
 		public IFile getIFile() {
-			return iFile;
+			return this.iFile;
 		}
 		
 		@Override
 		public void run() {
 			try {
-				iFile = PPAResourceUtil.copyJavaSourceFile(project, file, packagename, filename);
-				if (iFile == null) {
+				this.iFile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
+				                                                this.filename);
+				if (this.iFile == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
 					}
 					return;
 				}
-				cu = getCU(iFile, options);
+				this.cu = getCU(this.iFile, this.options);
 			} catch (CoreException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not import file into eclipse workspace", e);
@@ -976,10 +977,10 @@ public class PPAUtils {
 	                                                               final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		
-		JavaElementCache elemCache = new JavaElementCache();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet();
 		
 		if (cu != null) {
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, locationSet);
 			typeVisitor.registerVisitor(methodCallVisitor);
 			cu.accept(typeVisitor);
 		} else {
@@ -988,7 +989,7 @@ public class PPAUtils {
 				        + ". CompilationUnit cannot be created. Skipping ... ");
 			}
 		}
-		return elemCache.getJavaElementLocations();
+		return locationSet.getJavaElementLocations();
 	}
 	
 	/**
@@ -1008,7 +1009,7 @@ public class PPAUtils {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
-		JavaElementCache elemCache = new JavaElementCache();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet();
 		
 		if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
 			if (Logger.logError()) {
@@ -1024,7 +1025,7 @@ public class PPAUtils {
 					relativePath = relativePath.substring(1);
 				}
 				
-				PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+				PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, locationSet);
 				typeVisitor.registerVisitor(methodCallVisitor);
 				cu.accept(typeVisitor);
 			} else {
@@ -1034,7 +1035,7 @@ public class PPAUtils {
 				}
 			}
 		}
-		return elemCache.getJavaElementLocations();
+		return locationSet.getJavaElementLocations();
 	}
 	
 	/**
@@ -1078,7 +1079,7 @@ public class PPAUtils {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
-		JavaElementCache elemCache = new JavaElementCache();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet();
 		
 		while (fileIterator.hasNext()) {
 			File file = fileIterator.next();
@@ -1102,12 +1103,12 @@ public class PPAUtils {
 				relativePath = relativePath.substring(1);
 			}
 			
-			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, elemCache);
+			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, locationSet);
 			typeVisitor.registerVisitor(methodCallVisitor);
 			cu.accept(typeVisitor);
 		}
 		
-		return elemCache.getJavaElementLocations();
+		return locationSet.getJavaElementLocations();
 	}
 	
 	/**

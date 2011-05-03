@@ -15,6 +15,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -68,7 +69,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	public PPAToolChain() {
 		super(new RepositorySettings());
 		this.threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
-		RepositorySettings settings = (RepositorySettings) getSettings();
+		RepositorySettings settings = (RepositorySettings) this.getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
@@ -105,7 +106,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	@Override
 	public void run() {
 		if (!this.shutdown) {
-			setup();
+			this.setup();
 			if (!this.shutdown) {
 				this.threadPool.execute();
 			}
@@ -146,9 +147,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		}
 		transactions.addAll(this.persistenceUtil.load(criteria));
 		
-		// generate the change operation reader
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
-		                          this.startWithArg.getValue(), this.ppaArg.getValue());
+		JavaElementFactory.init(this.persistenceUtil);
 		
 		// the xml file set, create XMLSinkThread. Otherwise the persistence
 		// middleware persister thread
@@ -161,7 +160,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				stdout = true;
 			} else {
 				try {
-					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
+					new PPAXMLTransformer(this.threadPool.getThreadGroup(), this.getSettings(),
 					                      new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
@@ -180,15 +179,19 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			
 			if (stdout) {
 				try {
-					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), System.out);
+					new PPAXMLTransformer(this.threadPool.getThreadGroup(), this.getSettings(), System.out);
 				} catch (ParserConfigurationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
 			
 		} else {
-			new ChangeOperationPersister(this.threadPool.getThreadGroup(), getSettings());
+			new ChangeOperationPersister(this.threadPool.getThreadGroup(), this.getSettings(), this.persistenceUtil);
 		}
+		
+		// generate the change operation reader
+		new ChangeOperationReader(this.threadPool.getThreadGroup(), this.getSettings(), repository, transactions,
+		                          this.startWithArg.getValue(), this.ppaArg.getValue());
 	}
 	
 	/*

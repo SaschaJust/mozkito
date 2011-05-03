@@ -26,6 +26,7 @@ public class OpenJPATest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		OpenJPAUtil.createTestSessionFactory("ppa");
+		JavaElementFactory.init(OpenJPAUtil.getInstance());
 	}
 	
 	@Test
@@ -34,7 +35,7 @@ public class OpenJPATest {
 			PersistenceUtil persistenceUtil = OpenJPAUtil.getInstance();
 			
 			persistenceUtil.beginTransaction();
-			JavaElementCache cache = new JavaElementCache();
+			JavaElementLocationSet cache = new JavaElementLocationSet();
 			JavaElementLocation classDefinition = cache.getClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 			DateTime now = new DateTime();
 			
