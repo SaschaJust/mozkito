@@ -1,229 +1,126 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <javaChangeOperations>
   <transaction id="f99a3ff4615653855c254874f3d4fe0d084f34d2">
-    <Deleted>
-      <JavaElementLocation endline="56" id="0" position="1078" startline="52">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log()</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Deleted>
-    <Added>
-      <JavaElementLocation endline="56" id="0" position="1078" startline="52">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log(String,String)</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Added>
-    <Modified>
-      <JavaElementLocation endline="70" id="0" position="344" startline="20">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
-        <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.setup(URI,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.getLastRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.annotate(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.checkoutPath(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.setup(URI)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.getFirstRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.diff(String,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository"/>
-          </children>
-        </JavaClassDefinition>
-      </JavaElementLocation>
-    </Modified>
-    <Modified>
-      <JavaElementLocation endline="250" id="0" position="766" startline="32">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
-        <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.checkoutPath(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getFirstRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.GitRepository()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.setup(URI)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.setup(URI,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getLastRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.diff(String,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.getCloneDir()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.annotate(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-          </children>
-        </JavaClassDefinition>
-      </JavaElementLocation>
-    </Modified>
-    <Deleted>
-      <JavaElementLocation endline="195" id="0" position="5108" startline="191">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log()</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Deleted>
-    <Added>
-      <JavaElementLocation endline="199" id="0" position="5108" startline="191">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log(String,String)</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.git.GitRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Added>
-    <Added>
-      <JavaElementLocation endline="124" id="0" position="3673" startline="120">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log(String,String)</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Added>
-    <Modified>
-      <JavaElementLocation endline="175" id="0" position="1411" startline="42">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
-        <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.getFirstRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.diff(String,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.getLastRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.checkoutPath(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.SubversionRepository()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.setup(URI,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.setup(URI)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.annotate(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-          </children>
-        </JavaClassDefinition>
-      </JavaElementLocation>
-    </Modified>
-    <Deleted>
-      <JavaElementLocation endline="124" id="0" position="3673" startline="120">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log()</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Deleted>
-    <Added>
-      <JavaElementLocation endline="60" id="0" position="1152" startline="56">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log(String,String)</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Added>
-    <Modified>
-      <JavaElementLocation endline="74" id="0" position="378" startline="24">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
+    <Modified transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="24" endline="74" position="378" bodystartline="26">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
         <JavaClassDefinition>
           <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.checkoutPath(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.setup(URI)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.diff(String,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.getFirstRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.getLastRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.setup(URI,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.annotate(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-          </children>
         </JavaClassDefinition>
       </JavaElementLocation>
     </Modified>
-    <Deleted>
-      <JavaElementLocation endline="60" id="0" position="1152" startline="56">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
+    <Deleted transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="57" endline="60" position="1152" bodystartline="57">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
         <JavaMethodDefinition>
           <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log()</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository"/>
-          </parent>
-          <children/>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Deleted>
-    <Deleted>
-      <JavaElementLocation endline="88" id="0" position="2445" startline="88">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
+    <Added transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="57" endline="60" position="1152" bodystartline="57">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/mercurial/MercurialRepository.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log()</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-          </parent>
-          <children/>
-        </JavaMethodDefinition>
-      </JavaElementLocation>
-    </Deleted>
-    <Added>
-      <JavaElementLocation endline="96" id="0" position="2507" startline="96">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
-        <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log(String,String)</fullQualifiedName>
-          <parent>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.Repository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-          </parent>
-          <children/>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository.log(String,String)</fullQualifiedName>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Added>
-    <Modified>
-      <JavaElementLocation endline="128" id="0" position="504" startline="23">
-        <filePath>reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
+    <Modified transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="20" endline="70" position="344" bodystartline="22">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
         <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository</fullQualifiedName>
-          <parent/>
-          <children>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.setup(URI,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.diff(String,String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.setup(URI)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.getLastRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added=" f99a3ff4615653855c254874f3d4fe0d084f34d2" child="de.unisaarland.cs.st.reposuite.rcs.Repository.log(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.log()" deleted=" f99a3ff4615653855c254874f3d4fe0d084f34d2" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.getHandle()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.checkoutPath(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.annotate(String,String)" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-            <JavaElementRelation added="" child="de.unisaarland.cs.st.reposuite.rcs.Repository.getFirstRevisionId()" deleted="" parent="de.unisaarland.cs.st.reposuite.rcs.Repository"/>
-          </children>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository</fullQualifiedName>
         </JavaClassDefinition>
       </JavaElementLocation>
     </Modified>
+    <Added transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="53" endline="56" position="1078" bodystartline="53">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Deleted transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="53" endline="56" position="1078" bodystartline="53">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/cvs/CVSRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.cvs.CVSRepository.log()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Deleted>
+    <Deleted transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="88" endline="88" position="2445" bodystartline="-1">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Deleted>
+    <Modified transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="23" endline="128" position="504" bodystartline="25">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="96" endline="96" position="2507" bodystartline="-1">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/Repository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.Repository.log(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Added transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="192" endline="199" position="5108" bodystartline="192">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Modified transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="32" endline="250" position="766" bodystartline="34">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Deleted transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="192" endline="195" position="5108" bodystartline="192">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/git/GitRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.git.GitRepository.log()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Deleted>
+    <Modified transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="42" endline="175" position="1411" bodystartline="44">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
+        <JavaClassDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository</fullQualifiedName>
+        </JavaClassDefinition>
+      </JavaElementLocation>
+    </Modified>
+    <Added transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="121" endline="124" position="3673" bodystartline="121">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log(String,String)</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Added>
+    <Deleted transaction="f99a3ff4615653855c254874f3d4fe0d084f34d2">
+      <JavaElementLocation id="0" startline="121" endline="124" position="3673" bodystartline="121">
+        <filePath>reposuite-core/src/main/java/de/unisaarland/cs/st/reposuite/rcs/subversion/SubversionRepository.java</filePath>
+        <JavaMethodDefinition>
+          <fullQualifiedName>de.unisaarland.cs.st.reposuite.rcs.subversion.SubversionRepository.log()</fullQualifiedName>
+        </JavaMethodDefinition>
+      </JavaElementLocation>
+    </Deleted>
   </transaction>
 </javaChangeOperations>
+

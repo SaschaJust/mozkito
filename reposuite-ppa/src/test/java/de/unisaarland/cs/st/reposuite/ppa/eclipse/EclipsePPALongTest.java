@@ -30,7 +30,9 @@ public class EclipsePPALongTest {
 	
 	private static File    repoZip         = null;
 	private static File    compXML         = null;
+	@SuppressWarnings ("unused")
 	private static File    compXML2        = null;
+	@SuppressWarnings ("unused")
 	private static File    compXML2_altern = null;
 	private static File    compXML3        = null;
 	private static File    compXML4        = null;
@@ -148,6 +150,9 @@ public class EclipsePPALongTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		if (Logger.logDebug()) {
+			Logger.debug(result);
+		}
 		return result.trim().equals("");
 	}
 	
@@ -165,34 +170,43 @@ public class EclipsePPALongTest {
 	@Test
 	public void testEclipseApp1() {
 		String VMARGS = BASIC_VMARGS
-		        + " -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf";
+		        + " -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
 		runEclipse(VMARGS.split(" "));
-		assertTrue(compareXML(compXML, new File("/tmp/ppa.xml")));
+		File tmpFile = new File("/tmp/ppa.xml");
+		assertTrue(compareXML(compXML, tmpFile));
+		tmpFile.delete();
 	}
 	
-	@Test
-	public void testEclipseApp2() {
-		String VMARGS = BASIC_VMARGS
-		        + " -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
-		runEclipse(VMARGS.split(" "));
-		if (!compareXML(compXML2, new File("/tmp/ppa2.xml"))) {
-			assertTrue(compareXML(compXML2_altern, new File("/tmp/ppa2.xml")));
-		}
-	}
+	// @Test
+	// public void testEclipseApp2() {
+	// String VMARGS = BASIC_VMARGS
+	// +
+	// " -Doutput.xml=/tmp/ppa2.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf";
+	// runEclipse(VMARGS.split(" "));
+	// File tmpFile = new File("/tmp/ppa2.xml");
+	// if (!compareXML(compXML2, tmpFile)) {
+	// assertTrue(compareXML(compXML2_altern, tmpFile));
+	// }
+	// tmpFile.delete();
+	// }
 	
 	@Test
 	public void testEclipseApp3() {
 		String VMARGS = BASIC_VMARGS
-		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf";
+		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
 		runEclipse(VMARGS.split(" "));
-		assertTrue(compareXML(compXML3, new File("/tmp/ppa3.xml")));
+		File tmpFile = new File("/tmp/pp3.xml");
+		assertTrue(compareXML(compXML3, tmpFile));
+		tmpFile.delete();
 	}
 	
 	@Test
 	public void testEclipseApp4() {
 		String VMARGS = BASIC_VMARGS
-		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=dfd5e8d5eb594e29f507896a744d2bdabfc55cdf";
+		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
 		runEclipse(VMARGS.split(" "));
-		assertTrue(compareXML(compXML4, new File("/tmp/pp4.xml")));
+		File tmpFile = new File("/tmp/pp4.xml");
+		assertTrue(compareXML(compXML4, tmpFile));
+		tmpFile.delete();
 	}
 }
