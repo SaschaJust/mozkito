@@ -147,7 +147,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	protected JavaMethodCall(final String objectName, final String methodName, final List<String> signature) {
-		super(methodName);
+		super(methodName, JavaMethodCall.class.getCanonicalName());
 		
 		Condition.check(objectName.contains("."), "The objectName of a method call MUST contain at least one DOT.");
 		Condition.check(!objectName.contains("("), "The objectName name of a method call must not contain '('.");
@@ -157,14 +157,14 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
 		
 		this.signature = new ArrayList<String>(signature);
-		setFullQualifiedName(composeFullQualifiedName(objectName, methodName, signature));
+		this.setFullQualifiedName(composeFullQualifiedName(objectName, methodName, signature));
 		int index = objectName.lastIndexOf(".");
 		if (index < 0) {
-			calledPackageName = "";
-			calledClassName = objectName.substring(0, objectName.length());
+			this.calledPackageName = "";
+			this.calledClassName = objectName.substring(0, objectName.length());
 		} else {
-			calledPackageName = objectName.substring(0, index);
-			calledClassName = objectName.substring(index + 1, objectName.length());
+			this.calledPackageName = objectName.substring(0, index);
+			this.calledClassName = objectName.substring(index + 1, objectName.length());
 		}
 		
 	}
@@ -183,15 +183,15 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
 		JavaMethodCall other = (JavaMethodCall) obj;
-		if (getSignature() == null) {
+		if (this.getSignature() == null) {
 			if (other.getSignature() != null) {
 				return false;
 			}
-		} else if (!getSignature().equals(other.getSignature())) {
+		} else if (!this.getSignature().equals(other.getSignature())) {
 			return false;
 		}
 		return true;
@@ -204,7 +204,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameFullQualified() {
-		return getFullQualifiedName();
+		return this.getFullQualifiedName();
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameShort() {
-		return calledClassName;
+		return this.calledClassName;
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the called package name
 	 */
 	public String getCalledPackageName() {
-		return calledPackageName;
+		return this.calledPackageName;
 	}
 	
 	/**
@@ -233,7 +233,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
 	}
 	
 	/*
@@ -247,7 +247,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		Element thisElement = new Element(JAVA_METHOD_CALL);
 		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(getFullQualifiedName());
+		nameElement.setText(this.getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}

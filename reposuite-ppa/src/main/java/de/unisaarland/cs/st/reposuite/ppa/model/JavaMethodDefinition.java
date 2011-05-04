@@ -144,7 +144,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature) {
-		super(methodName);
+		super(methodName, JavaMethodDefinition.class.getCanonicalName());
 		
 		Condition.check(parentName.contains("."), "The parentName of a method call MUST contain at least one DOT.");
 		Condition.check(!parentName.contains("("), "The parentName name of a method call must not contain '('.");
@@ -153,8 +153,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		Condition.check(!methodName.contains("("), "The methodName name of a method call must not contain '('.");
 		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
 		
-		setSignature(new ArrayList<String>(signature));
-		setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
+		this.setSignature(new ArrayList<String>(signature));
+		this.setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
 	}
 	
 	/*
@@ -171,15 +171,15 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
 		JavaMethodDefinition other = (JavaMethodDefinition) obj;
-		if (getSignature() == null) {
+		if (this.getSignature() == null) {
 			if (other.getSignature() != null) {
 				return false;
 			}
-		} else if (!getSignature().equals(other.getSignature())) {
+		} else if (!this.getSignature().equals(other.getSignature())) {
 			return false;
 		}
 		return true;
@@ -192,7 +192,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
 	}
 	
 	/*
@@ -205,7 +205,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		Element thisElement = new Element(JAVA_METHOD_DEFINITION);
 		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(getFullQualifiedName());
+		nameElement.setText(this.getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}
@@ -219,9 +219,9 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((getSignature() == null)
-		                                                   ? 0
-		                                                   : getSignature().hashCode());
+		result = prime * result + ((this.getSignature() == null)
+		                                                        ? 0
+		                                                        : this.getSignature().hashCode());
 		return result;
 	}
 	
