@@ -328,8 +328,10 @@ public class PPATypeVisitor extends ASTVisitor {
 			Condition.check(bodyDeclarations.size() > 0, "Found type declaration with " + bodyDeclarations.size()
 			        + " body declarations!");
 			
-			int bodyStartLine = this.cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
-			
+			int bodyStartLine = currentLine;
+			if (bodyDeclarations.size() > 0) {
+				bodyStartLine = this.cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
+			}
 			int anonCount = ((JavaClassDefinition) this.classStack.peek().getElement()).nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
 			                    .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
