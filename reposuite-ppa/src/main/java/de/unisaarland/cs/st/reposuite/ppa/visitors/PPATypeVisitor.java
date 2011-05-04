@@ -367,7 +367,9 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 			}
 			if (!startLineShifted) {
-				startLine = this.cu.getLineNumber(md.getReturnType2().getStartPosition());
+				if (md.getReturnType2() != null) {
+					startLine = this.cu.getLineNumber(md.getReturnType2().getStartPosition());
+				}
 			}
 			
 			Block body = md.getBody();
