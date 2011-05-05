@@ -32,10 +32,16 @@ public class MergingProcessor {
 	}
 	
 	/**
+	 * 
+	 */
+	public void consolidate() {
+		this.manager.consolidate();
+	}
+	
+	/**
 	 * @param container
 	 */
 	public void process(final PersonContainer container) {
-		this.manager.beginTransaction();
 		for (Person person : container.getPersons()) {
 			HashMap<Class<? extends MergingEngine>, Boolean> features = new HashMap<Class<? extends MergingEngine>, Boolean>();
 			boolean collision = false;
@@ -67,7 +73,6 @@ public class MergingProcessor {
 			}
 			collision = false;
 		}
-		this.manager.commitTransaction();
 	}
 	
 	/**

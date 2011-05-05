@@ -50,6 +50,7 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 			}
 			
 			PersonContainer container = null;
+			this.persistenceUtil.beginTransaction();
 			
 			while (!isShutdown() && ((container = read()) != null)) {
 				if (Logger.logDebug()) {
@@ -59,6 +60,9 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 				this.processor.process(container);
 				
 			}
+			
+			this.processor.consolidate();
+			this.persistenceUtil.commitTransaction();
 			
 			finish();
 		} catch (Exception e) {

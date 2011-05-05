@@ -35,6 +35,33 @@ public class PersonBucket {
 		this.persons.add(new Tuple<Person, PersonContainer>(person, container));
 	}
 	
+	public void consolidate(final PersonManager manager) {
+		if (!this.persons.isEmpty()) {
+			if (Logger.logDebug()) {
+				Logger.debug("Consolidating " + this.hashCode());
+			}
+			Tuple<Person, PersonContainer> first = this.persons.remove(0);
+			
+			for (Tuple<Person, PersonContainer> tuple : this.persons) {
+				if (!manager.isProcessed(tuple.getFirst().getGeneratedId())) {
+					Person.merge(first.getFirst(), tuple.getFirst());
+					tuple.getSecond().replace(tuple.getFirst(), first.getFirst());
+					manager.delete(tuple.getFirst());
+					this.persons.clear();
+					this.persons.add(first);
+				} else {
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Skipping " + tuple.getFirst());
+					}
+				}
+			}
+			if (Logger.logDebug()) {
+				Logger.debug("Keeping " + first);
+			}
+		}
+	}
+	
 	private Tuple<Person, PersonContainer> find(final Person person) {
 		for (Tuple<Person, PersonContainer> p : this.persons) {
 			if (p.getFirst().equals(person)) {
@@ -104,7 +131,7 @@ public class PersonBucket {
 		if (p != null) {
 			
 			if (Logger.logDebug()) {
-				Logger.debug("Replacing person: " + person);
+				Logger.debug("Replacing person " + p.getFirst() + " by " + person);
 			}
 			container.replace(person, p.getFirst());
 			manager.delete(person);

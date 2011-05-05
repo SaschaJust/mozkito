@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persons.elements.PersonBucket;
+import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -43,13 +44,35 @@ public class PersonManager {
 		getUtil().commitTransaction();
 	}
 	
+	public void consolidate() {
+		for (List<PersonBucket> buckets : this.emailMap.values()) {
+			for (PersonBucket bucket : buckets) {
+				bucket.consolidate(this);
+			}
+		}
+		
+		for (List<PersonBucket> buckets : this.usernameMap.values()) {
+			for (PersonBucket bucket : buckets) {
+				bucket.consolidate(this);
+			}
+		}
+		
+		for (List<PersonBucket> buckets : this.fullnameMap.values()) {
+			for (PersonBucket bucket : buckets) {
+				bucket.consolidate(this);
+			}
+		}
+	}
+	
 	/**
 	 * @param person
 	 */
 	public void delete(final Person person) {
 		if (!this.deleted.contains(person.getGeneratedId())) {
+			if (Logger.logDebug()) {
+				Logger.debug("Deleting " + person);
+			}
 			getUtil().delete(person);
-		} else {
 			this.deleted.add(person.getGeneratedId());
 		}
 	}
@@ -87,6 +110,14 @@ public class PersonManager {
 	 */
 	private PersistenceUtil getUtil() {
 		return this.util;
+	}
+	
+	/**
+	 * @param id
+	 * @return
+	 */
+	public boolean isProcessed(final long id) {
+		return this.deleted.contains(id);
 	}
 	
 	/**
