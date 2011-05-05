@@ -53,6 +53,10 @@ public class PersonsReader extends RepoSuiteSourceThread<PersonContainer> {
 			PersonContainer personContainer;
 			Criteria<PersonContainer> criteria = this.persistenceUtil.createCriteria(PersonContainer.class);
 			List<PersonContainer> containerList = this.persistenceUtil.load(criteria);
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Analyzing " + containerList.size() + " person containers.");
+			}
 			ListIterator<PersonContainer> iterator = containerList.listIterator();
 			
 			while (!isShutdown() && iterator.hasNext() && ((personContainer = iterator.next()) != null)) {

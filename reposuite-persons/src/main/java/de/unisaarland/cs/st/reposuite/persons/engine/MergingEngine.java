@@ -4,7 +4,6 @@
 package de.unisaarland.cs.st.reposuite.persons.engine;
 
 import java.util.List;
-import java.util.Map;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
@@ -37,8 +36,7 @@ public abstract class MergingEngine {
 	 */
 	public abstract List<PersonBucket> collides(Person person,
 	                                            PersonContainer container,
-	                                            PersonManager manager,
-	                                            Map<Class<? extends MergingEngine>, Boolean> features);
+	                                            PersonManager manager);
 	
 	/**
 	 * @return

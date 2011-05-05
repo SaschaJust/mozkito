@@ -4,9 +4,9 @@
 package de.unisaarland.cs.st.reposuite.persons.processing;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
@@ -32,53 +32,91 @@ public class MergingProcessor {
 	}
 	
 	/**
-	 * 
+	 * The method is called after processing all {@link Person}s to consolidate 
+	 * the {@link Person}s in the created {@link PersonBucket}s.
 	 */
 	public void consolidate() {
+		// delegate consolidation to the PersonManager:manager
 		this.manager.consolidate();
 	}
 	
 	/**
-	 * @param container
+	 * Performs the actual merging algorithm using all active {@link MergingEngine}s.
+	 * 
+	 * @param container 
+	 *        the {@link PersonContainer} unter subject
 	 */
 	public void process(final PersonContainer container) {
+		// process current PersonContainer:container
+		
+		// step through every Person:person in the PersonContainer:container
+		// and apply the algorithm
 		for (Person person : container.getPersons()) {
-			HashMap<Class<? extends MergingEngine>, Boolean> features = new HashMap<Class<? extends MergingEngine>, Boolean>();
-			boolean collision = false;
+			if (Logger.logDebug()) {
+				Logger.debug("Performing merging algorithm on " + person);
+			}
+			
+			// provide a container to add target buckets returned by merging
+			// engines
+			Set<PersonBucket> targetBuckets = new HashSet<PersonBucket>();
+			
+			// the main target bucket
+			PersonBucket mainTargetBucket = null;
+			
+			// get all target buckets from all MergingEngine:engines and add
+			// them to the PersonBucket container
 			for (MergingEngine engine : this.engines.values()) {
-				List<PersonBucket> list = engine.collides(person, container, this.manager, features);
-				if (!list.isEmpty()) {
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Collision for person: " + person);
-					}
-					PersonBucket first = list.iterator().next();
-					list.remove(first);
-					first.insert(person, container, this.manager);
-					
-					for (PersonBucket bucket : list) {
-						PersonBucket.merge(bucket, first, this.manager);
-					}
-					
-					collision = true;
-					this.manager.updateAndRemove(first, list);
-					break;
-				}
+				targetBuckets.addAll(engine.collides(person, container, this.manager));
 			}
-			if (!collision) {
+			
+			// if the engines found valid buckets for the current person
+			if (!targetBuckets.isEmpty()) {
 				if (Logger.logDebug()) {
-					Logger.debug("No collision for person: " + person);
+					Logger.debug("Found active bucket(s) (" + targetBuckets.size() + ") for: " + person);
 				}
-				this.manager.updateAndRemove(new PersonBucket(person, container), new LinkedList<PersonBucket>());
+				
+				// we checked that the container isn't empty
+				// so we can remove one element without further checks
+				mainTargetBucket = targetBuckets.iterator().next();
+				targetBuckets.remove(mainTargetBucket);
+				
+				// insert the current person in the first bucket
+				// this will cause a replace&delete of the person
+				// under suspect if the bucket already contains
+				// a person with the exact same data
+				mainTargetBucket.insert(person, container, this.manager);
+				
+				// if there are further target buckets merge them
+				// with the first one
+				for (PersonBucket bucket : targetBuckets) {
+					PersonBucket.merge(bucket, mainTargetBucket, this.manager);
+				}
+			} else {
+				// there aren't any matching buckets yet
+				if (Logger.logDebug()) {
+					Logger.debug("No active buckets for: " + person + ". Creating new one.");
+				}
+				
+				// create a new bucket for the person
+				mainTargetBucket = new PersonBucket(person, container);
 			}
-			collision = false;
+			
+			// put it in the PersonManager:manager
+			// that will update internal responsibility maps (e.g.
+			// Map<username, List<PersonBucket>)
+			this.manager.updateAndRemove(mainTargetBucket, targetBuckets);
 		}
 	}
 	
 	/**
-	 * @param util
+	 * Provide the {@link PersistenceUtil} for database manipulation.
+	 * 
+	 * @param util the {@link PersistenceUtil} to be used
 	 */
 	public void providePersistenceUtil(final PersistenceUtil util) {
+		// Store the PersistenceUtil:util in the manager.
+		// There shall be no other place where operations
+		// on the database are requested.
 		this.manager = new PersonManager(util);
 	}
 }

@@ -58,10 +58,10 @@ public class PersonsMerger extends RepoSuiteSinkThread<PersonContainer> {
 				}
 				
 				this.processor.process(container);
-				
 			}
 			
 			this.processor.consolidate();
+			
 			this.persistenceUtil.commitTransaction();
 			
 			finish();

@@ -5,7 +5,6 @@ package de.unisaarland.cs.st.reposuite.persons.engine;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
@@ -29,8 +28,7 @@ public class UniqueUsernameEngine extends MergingEngine {
 	@Override
 	public List<PersonBucket> collides(final Person person,
 	                                   final PersonContainer container,
-	                                   final PersonManager manager,
-	                                   final Map<Class<? extends MergingEngine>, Boolean> features) {
+	                                   final PersonManager manager) {
 		List<PersonBucket> buckets = manager.getBuckets(person);
 		List<PersonBucket> list = new LinkedList<PersonBucket>();
 		
