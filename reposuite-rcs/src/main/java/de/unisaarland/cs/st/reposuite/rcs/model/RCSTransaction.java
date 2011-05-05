@@ -43,17 +43,11 @@ import org.joda.time.DateTime;
 import org.w3c.dom.html.HTMLDocument;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.output.terminal.Terminal;
-import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal;
-import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal.ForegroundColor;
-import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal.Style;
 import de.unisaarland.cs.st.reposuite.output.Displayable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.rcs.elements.PreviousTransactionIterator;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
@@ -716,7 +710,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Override
 	public String toTerm() {
-	return null;
+		return null;
 	}
 	
 	@Override
