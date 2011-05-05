@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraphEdge;
 import de.unisaarland.cs.st.reposuite.callgraph.model.MethodVertex;
@@ -20,9 +21,10 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 
-// TODO: Works only for JavaMethodDefinitions so far.
 /**
  * The Class CallGraphHandler.
+ * 
+ * Works only for JavaMethodDefinitions so far.
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
@@ -71,7 +73,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				Logger.error(sb.toString());
 			}
 		} else {
-			callGraph = CallGraph.unserialize(callGraphFile);
+			this.callGraph = CallGraph.unserialize(callGraphFile);
 		}
 	}
 	
@@ -86,7 +88,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		Double result = null;
 		for (CallGraphEdge e : path) {
 			double d = e.getWeight();
-			CallGraphEdge reverseEdge = callGraph.findEdge(callGraph.getDest(e), callGraph.getSource(e));
+			CallGraphEdge reverseEdge = this.callGraph.findEdge(this.callGraph.getDest(e), this.callGraph.getSource(e));
 			
 			if (reverseEdge != null) {
 				double occ = 1d / d;
@@ -123,17 +125,17 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 		
 		DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
-		                                                                                                                   callGraph,
+		                                                                                                                   this.callGraph,
 		                                                                                                                   dijkstraTransformer);
 		List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
 		double d1 = Double.MAX_VALUE;
 		if (sp1 != null) {
-			d1 = distance(sp1);
+			d1 = this.distance(sp1);
 		}
 		List<CallGraphEdge> sp2 = dijkstra.getPath(v2, v1);
 		double d2 = Double.MAX_VALUE;
 		if (sp2 != null) {
-			d2 = distance(sp2);
+			d2 = this.distance(sp2);
 		}
 		return Math.min(d1, d2);
 	}
@@ -159,7 +161,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
-		if (callGraph == null) {
+		if (this.callGraph == null) {
 			if (Logger.logError()) {
 				Logger.error("Callgraph ot found! Returning zero as score.");
 			}
@@ -172,12 +174,16 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		if ((e1 instanceof JavaMethodDefinition) && (e2 instanceof JavaMethodDefinition)) {
 			MethodVertex v1 = VertexFactory.createMethodVertex(e1.getFullQualifiedName(), "");
 			MethodVertex v2 = VertexFactory.createMethodVertex(e2.getFullQualifiedName(), "");
-			double distance = distance(v1, v2);
+			double distance = this.distance(v1, v2);
 			if (distance == Double.MAX_VALUE) {
 				// no path found. Return 0
 				return 0;
 			} else {
 				distance = Math.min(2d, distance);
+				Condition.check(distance <= 1, "The returned distance must be a value between 0 and 1, but was: "
+				        + distance);
+				Condition.check(distance >= 0, "The returned distance must be a value between 0 and 1, but was: "
+				        + distance);
 				return 1d - (distance / 2d);
 			}
 		}

@@ -12,7 +12,7 @@ import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.reposuite.callgraph.visitor.CallGraphPPAVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -70,7 +70,7 @@ public class CallGraphToolChain extends RepoSuiteToolchain {
 	private void runDirectory(final File sourcedir) {
 		Collection<File> files = FileUtils.listFiles(sourcedir, new String[] { "java" }, true);
 		HashSet<String> packageFilter = packageFilterArg.getValue();
-		JavaElementCache elemCache = new JavaElementCache();
+		JavaElementLocationSet elemCache = new JavaElementLocationSet();
 		
 		Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		

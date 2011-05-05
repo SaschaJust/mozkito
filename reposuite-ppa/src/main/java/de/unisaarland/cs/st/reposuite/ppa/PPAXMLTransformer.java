@@ -23,7 +23,6 @@ import org.jdom.output.XMLOutputter;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -109,8 +108,8 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 	public PPAXMLTransformer(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final OutputStream outStream) throws ParserConfigurationException {
 		super(threadGroup, PPAXMLTransformer.class.getSimpleName(), settings);
-		operationsElement = new Element(ROOT_ELEMENT_NAME);
-		document = new org.jdom.Document(operationsElement);
+		this.operationsElement = new Element(ROOT_ELEMENT_NAME);
+		this.document = new org.jdom.Document(this.operationsElement);
 		this.outStream = outStream;
 	}
 	
@@ -120,39 +119,35 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 	 */
 	@Override
 	public void run() {
-		if (!checkConnections()) {
+		if (!this.checkConnections()) {
 			return;
 		}
 		
-		if (!checkNotShutdown()) {
+		if (!this.checkNotShutdown()) {
 			return;
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
-		}
-		
-		synchronized (JavaElementCache.classDefs) {
-			JavaElementCache.classDefs.notifyAll();
+			Logger.info("Starting " + this.getHandle());
 		}
 		
 		JavaChangeOperation currentOperation;
 		
 		try {
-			while (!isShutdown() && ((currentOperation = read()) != null)) {
+			while (!this.isShutdown() && ((currentOperation = this.read()) != null)) {
 				String transactionId = currentOperation.getRevision().getTransaction().getId();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);
 				}
 				
-				if (!transactionElements.containsKey(transactionId)) {
+				if (!this.transactionElements.containsKey(transactionId)) {
 					Element transactionElement = new Element("transaction");
 					transactionElement.setAttribute("id", transactionId);
-					operationsElement.addContent(transactionElement);
-					transactionElements.put(transactionId, transactionElement);
+					this.operationsElement.addContent(transactionElement);
+					this.transactionElements.put(transactionId, transactionElement);
 				}
-				Element transactionElement = transactionElements.get(transactionId);
+				Element transactionElement = this.transactionElements.get(transactionId);
 				
 				Element operationElement = currentOperation.getXMLRepresentation();
 				transactionElement.addContent(operationElement);
@@ -161,8 +156,8 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 			try {
 				// Use a Transformer for output
 				XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-				outputter.output(document, outStream);
-				outStream.close();
+				outputter.output(this.document, this.outStream);
+				this.outStream.close();
 			} catch (FileNotFoundException e) {
 				throw new UnrecoverableError(e.getMessage(), e);
 			} catch (IOException e) {
@@ -172,13 +167,13 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 			if (Logger.logInfo()) {
 				Logger.info("PPAXMLSink done. Terminating... ");
 			}
-			finish();
+			this.finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			shutdown();
+			this.shutdown();
 		}
 	}
 	

@@ -6,7 +6,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 
 /**
@@ -37,7 +37,7 @@ public interface PPAVisitor {
 	              @NotNull ASTNode node,
 	              @NotNull JavaElementLocation classContext,
 	              JavaElementLocation methodContext,
-	              @NotNull JavaElementCache elementCache);
+	              @NotNull JavaElementLocationSet elementCache);
 	
 	/**
 	 * Post visit.
@@ -63,7 +63,7 @@ public interface PPAVisitor {
 	               JavaElementLocation classContext,
 	               JavaElementLocation methodContext,
 	               @NotNegative int currentLine,
-	               @NotNull JavaElementCache elementCache);
+	               @NotNull JavaElementLocationSet elementCache);
 	
 	/**
 	 * Pre visit.
@@ -92,6 +92,6 @@ public interface PPAVisitor {
 	              JavaElementLocation methodContext,
 	              @NotNegative int currentLine,
 	              @NotNegative int endLine,
-	              @NotNull JavaElementCache elementCache);
+	              @NotNull JavaElementLocationSet elementCache);
 	
 }

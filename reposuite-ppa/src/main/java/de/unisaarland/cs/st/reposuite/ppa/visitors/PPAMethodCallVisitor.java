@@ -20,8 +20,8 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 
@@ -52,7 +52,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	                     @NotNull final ASTNode node,
 	                     final JavaElementLocation classContext,
 	                     final JavaElementLocation methodContext,
-	                     @NotNull final JavaElementCache elementCache) {
+	                     @NotNull final JavaElementLocationSet elementCache) {
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	 * @return the method calls by file
 	 */
 	public Map<String, Collection<JavaMethodCall>> getMethodCallsByFile() {
-		return methodCallsByFile;
+		return this.methodCallsByFile;
 	}
 	
 	/*
@@ -81,7 +81,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	                      final JavaElementLocation classContext,
 	                      final JavaElementLocation methodContext,
 	                      @NotNegative final int currentLine,
-	                      @NotNull final JavaElementCache elementCache) {
+	                      @NotNull final JavaElementLocationSet locationSet) {
 		
 		IBinding binding = null;
 		
@@ -169,13 +169,13 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		String filename = ppaVisitor.getRelativeFilePath();
 		
-		JavaElementLocation javaMethodCall = elementCache.getMethodCall(calledObject, methodName, arguments, filename,
-		                                                                parent, thisLine, thisLine, position);
+		JavaElementLocation javaMethodCall = locationSet.addMethodCall(calledObject, methodName, arguments, filename,
+		                                                               parent, thisLine, thisLine, position);
 		
-		if (!methodCallsByFile.containsKey(filename)) {
-			methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
+		if (!this.methodCallsByFile.containsKey(filename)) {
+			this.methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
 		}
-		methodCallsByFile.get(filename).add((JavaMethodCall) javaMethodCall.getElement());
+		this.methodCallsByFile.get(filename).add((JavaMethodCall) javaMethodCall.getElement());
 		
 	}
 	
@@ -197,7 +197,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	                     final JavaElementLocation methodContext,
 	                     @NotNegative final int currentLine,
 	                     @NotNegative final int endLine,
-	                     @NotNull final JavaElementCache elementCache) {
+	                     @NotNull final JavaElementLocationSet elementCache) {
 	}
 	
 }

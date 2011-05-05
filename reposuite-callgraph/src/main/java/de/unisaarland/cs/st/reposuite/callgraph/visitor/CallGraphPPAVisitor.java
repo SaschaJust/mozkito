@@ -20,7 +20,7 @@ import de.unisaarland.cs.st.reposuite.callgraph.model.ClassVertex;
 import de.unisaarland.cs.st.reposuite.callgraph.model.MethodVertex;
 import de.unisaarland.cs.st.reposuite.callgraph.model.VertexFactory;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
@@ -34,10 +34,10 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	private final Set<ClassVertex>  resettedVertices = new HashSet<ClassVertex>();
 	private final Set<MethodVertex> changedMethods   = new HashSet<MethodVertex>();
 	private final String            filename;
-	private final JavaElementCache  javaElementCache;
+	private final JavaElementLocationSet  javaElementCache;
 	
 	public CallGraphPPAVisitor(final CallGraph callGraph, final boolean update, final String fileName,
-	        final JavaElementCache javaElementCache) {
+	        final JavaElementLocationSet javaElementCache) {
 		this.callGraph = callGraph;
 		this.update = update;
 		filename = fileName;
@@ -63,7 +63,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	                     final ASTNode node,
 	                     final JavaElementLocation classContext,
 	                     final JavaElementLocation methodContext,
-	                     final JavaElementCache elementCache) {
+	                     final JavaElementLocationSet elementCache) {
 		
 	}
 	
@@ -132,7 +132,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -223,7 +223,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -335,7 +335,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -420,7 +420,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.getClassDefinition(calledObjectName,
+		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -460,7 +460,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	                      final JavaElementLocation classContext,
 	                      final JavaElementLocation methodContext,
 	                      final int currentLine,
-	                      final JavaElementCache elementCache) {
+	                      final JavaElementLocationSet elementCache) {
 		if (classContext == null) {
 			return;
 		}
@@ -497,7 +497,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	                     final JavaElementLocation methodContext,
 	                     final int currentLine,
 	                     final int endLine,
-	                     final JavaElementCache elementCache) {
+	                     final JavaElementLocationSet elementCache) {
 	}
 	
 }

@@ -1,17 +1,7 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
-import java.util.List;
-
-import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementCache;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -24,6 +14,8 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
  */
 public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOperation> {
 	
+	private final PersistenceUtil persistenceUtil;
+	
 	/**
 	 * Instantiates a new change operation persister.
 	 * 
@@ -32,74 +24,37 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	 * @param settings
 	 *            the settings
 	 */
-	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings) {
+	public ChangeOperationPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, ChangeOperationPersister.class.getSimpleName(), settings);
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	@SuppressWarnings ({ "unchecked" })
 	@Override
 	public void run() {
 		
-		if (!checkConnections()) {
+		if (!this.checkConnections()) {
 			return;
 		}
 		
-		if (!checkNotShutdown()) {
+		if (!this.checkNotShutdown()) {
 			return;
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
+			Logger.info("Starting " + this.getHandle());
 		}
 		
-		if (Logger.logInfo()) {
-			Logger.info("Filling cache ... ");
-		}
-		PersistenceUtil persistenceUtil;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1);
-		}
-		persistenceUtil.beginTransaction();
+		this.persistenceUtil.beginTransaction();
 		JavaChangeOperation currentOperation;
 		String lastTransactionId = "";
 		
-		@SuppressWarnings ("rawtypes")
-		Criteria criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
-		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
-		for (JavaClassDefinition def : defs) {
-			JavaElementCache.classDefs.put(def.getFullQualifiedName(), def);
-		}
-		criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
-		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria);
-		for (JavaMethodDefinition def : mDefs) {
-			JavaElementCache.methodDefs.put(def.getFullQualifiedName(), def);
-		}
-		criteria = persistenceUtil.createCriteria(JavaMethodCall.class);
-		List<JavaMethodCall> calls = persistenceUtil.load(criteria);
-		for (JavaMethodCall call : calls) {
-			JavaElementCache.methodCalls.put(call.getFullQualifiedName(), call);
-		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("done. Notify all ... ");
-		}
-		
-		synchronized (JavaElementCache.classDefs) {
-			JavaElementCache.classDefs.notifyAll();
-		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("done.");
-		}
-		
 		try {
-			while (!isShutdown() && ((currentOperation = read()) != null)) {
+			while (!this.isShutdown() && ((currentOperation = this.read()) != null)) {
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);
@@ -111,23 +66,23 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 					lastTransactionId = currentTransactionId;
 				}
 				if (!currentTransactionId.equals(lastTransactionId)) {
-					persistenceUtil.commitTransaction();
+					this.persistenceUtil.commitTransaction();
 					lastTransactionId = currentTransactionId;
-					persistenceUtil.beginTransaction();
+					this.persistenceUtil.beginTransaction();
 				}
-				persistenceUtil.saveOrUpdate(currentOperation);
+				this.persistenceUtil.save(currentOperation);
 			}
-			persistenceUtil.commitTransaction();
+			this.persistenceUtil.commitTransaction();
 			if (Logger.logInfo()) {
 				Logger.info("ChangeOperationPersister done. Terminating... ");
 			}
-			finish();
+			this.finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			shutdown();
+			this.shutdown();
 		}
 	}
 }

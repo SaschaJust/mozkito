@@ -54,15 +54,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		sb.append(localParentName);
 		sb.append(".");
 		sb.append(methodName);
-		sb.append("(");
-		if (!signature.isEmpty()) {
-			sb.append(signature.get(0));
-		}
-		for (int i = 1; i < signature.size(); ++i) {
-			sb.append(",");
-			sb.append(signature.get(i));
-		}
-		sb.append(")");
+		sb.append(getSignatureString(signature));
 		return sb.toString();
 	}
 	
@@ -123,6 +115,20 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		return new JavaMethodDefinition(parentName, methodName, argList);
 	}
 	
+	public static String getSignatureString(final List<String> signature) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		if (!signature.isEmpty()) {
+			sb.append(signature.get(0));
+		}
+		for (int i = 1; i < signature.size(); ++i) {
+			sb.append(",");
+			sb.append(signature.get(i));
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+	
 	/** The signature. */
 	private List<String> signature;
 	
@@ -144,7 +150,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature) {
-		super(methodName);
+		super(methodName, JavaMethodDefinition.class.getCanonicalName());
 		
 		Condition.check(parentName.contains("."), "The parentName of a method call MUST contain at least one DOT.");
 		Condition.check(!parentName.contains("("), "The parentName name of a method call must not contain '('.");
@@ -171,7 +177,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
 		JavaMethodDefinition other = (JavaMethodDefinition) obj;

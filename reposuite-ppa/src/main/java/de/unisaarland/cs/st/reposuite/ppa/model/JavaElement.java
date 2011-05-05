@@ -8,11 +8,13 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
@@ -29,11 +31,13 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 @Inheritance (strategy = InheritanceType.JOINED)
 @DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue ("JAVAELEMENT")
-@IdClass (JavaElementPrimaryKey.class)
+@Table (uniqueConstraints = { @UniqueConstraint (columnNames = { "elementtype", "fullqualifiedname" }) })
 public abstract class JavaElement implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960043672858454394L;
+	
+	private long              generatedId;
 	
 	private String            fullQualifiedName;
 	
@@ -53,9 +57,10 @@ public abstract class JavaElement implements Annotated {
 	 *            the full qualified name
 	 */
 	@NoneNull
-	public JavaElement(final String fullQualifiedName) {
-		setFullQualifiedName(fullQualifiedName);
-		setElementType(this.getClass().getCanonicalName());
+	public JavaElement(final String fullQualifiedName, final String elementType) {
+		this.setFullQualifiedName(fullQualifiedName);
+		this.setElementType(this.getClass().getCanonicalName());
+		this.setElementType(elementType);
 	}
 	
 	/*
@@ -74,18 +79,18 @@ public abstract class JavaElement implements Annotated {
 			return false;
 		}
 		JavaElement other = (JavaElement) obj;
-		if (getElementType() == null) {
+		if (this.getElementType() == null) {
 			if (other.getElementType() != null) {
 				return false;
 			}
-		} else if (!getElementType().equals(other.getElementType())) {
+		} else if (!this.getElementType().equals(other.getElementType())) {
 			return false;
 		}
-		if (getFullQualifiedName() == null) {
+		if (this.getFullQualifiedName() == null) {
 			if (other.getFullQualifiedName() != null) {
 				return false;
 			}
-		} else if (!getFullQualifiedName().equals(other.getFullQualifiedName())) {
+		} else if (!this.getFullQualifiedName().equals(other.getFullQualifiedName())) {
 			return false;
 		}
 		return true;
@@ -94,9 +99,9 @@ public abstract class JavaElement implements Annotated {
 	/**
 	 * @return the elementType
 	 */
-	@Id
+	// @Column (name = "elementtype", nullable = false)
 	public String getElementType() {
-		return elementType;
+		return this.elementType;
 	}
 	
 	/**
@@ -104,9 +109,15 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	@Id
+	// @Column (name = "fullqualifiedname", nullable = false)
 	public String getFullQualifiedName() {
-		return fullQualifiedName;
+		return this.fullQualifiedName;
+	}
+	
+	@Id
+	@GeneratedValue
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**
@@ -116,9 +127,9 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getPackageName() {
-		int index = getFullQualifiedName().lastIndexOf(".");
+		int index = this.getFullQualifiedName().lastIndexOf(".");
 		if (index > 0) {
-			return getFullQualifiedName().substring(index);
+			return this.getFullQualifiedName().substring(index);
 		}
 		return "";
 	}
@@ -130,7 +141,7 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getShortName() {
-		String[] nameParts = getFullQualifiedName().split("\\.");
+		String[] nameParts = this.getFullQualifiedName().split("\\.");
 		return nameParts[nameParts.length - 1];
 	}
 	
@@ -149,12 +160,12 @@ public abstract class JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getElementType() == null)
-		                                                     ? 0
-		                                                     : getElementType().hashCode());
-		result = prime * result + ((getFullQualifiedName() == null)
-		                                                           ? 0
-		                                                           : getFullQualifiedName().hashCode());
+		result = prime * result + ((this.getElementType() == null)
+		                                                          ? 0
+		                                                          : this.getElementType().hashCode());
+		result = prime * result + ((this.getFullQualifiedName() == null)
+		                                                                ? 0
+		                                                                : this.getFullQualifiedName().hashCode());
 		return result;
 	}
 	
@@ -174,7 +185,11 @@ public abstract class JavaElement implements Annotated {
 	 * @return the fullQualifiedName
 	 */
 	public void setFullQualifiedName(final String name) {
-		fullQualifiedName = name;
+		this.fullQualifiedName = name;
+	}
+	
+	protected void setGeneratedId(final long generatedId) {
+		this.generatedId = generatedId;
 	}
 	
 	/*
@@ -183,6 +198,6 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "JavaElement [fullQualifiedName=" + getFullQualifiedName() + "]";
+		return "JavaElement [fullQualifiedName=" + this.getFullQualifiedName() + "]";
 	}
 }

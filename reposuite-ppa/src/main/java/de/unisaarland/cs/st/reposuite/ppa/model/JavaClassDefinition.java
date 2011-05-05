@@ -93,11 +93,11 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
-		super(fullQualifiedName);
+		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			anonymClass = true;
+			this.anonymClass = true;
 		}
-		setParent(parent);
+		this.setParent(parent);
 	}
 	
 	/**
@@ -110,8 +110,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	protected JavaClassDefinition(final String fullQualifiedName) {
-		
-		super(fullQualifiedName);
+		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
@@ -122,12 +121,12 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Transient
 	private HashMap<Integer, Integer> getAnonCounters() {
-		return anonCounters;
+		return this.anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/**
@@ -136,7 +135,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return the super class name
 	 */
 	protected String getSuperClassName() {
-		return superClassName;
+		return this.superClassName;
 	}
 	
 	/*
@@ -150,7 +149,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		Element thisElement = new Element(JAVA_CLASS_DEFINITION);
 		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(getFullQualifiedName());
+		nameElement.setText(this.getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}
@@ -161,7 +160,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return true, if is anonym class
 	 */
 	public boolean isAnonymClass() {
-		return anonymClass;
+		return this.anonymClass;
 	}
 	
 	/**
@@ -175,15 +174,15 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	@Transient
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
-		if (isAnonymClass()) {
-			return getParent().nextAnonCounter(v);
+		if (this.isAnonymClass()) {
+			return this.getParent().nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
-			if (!getAnonCounters().containsKey(vId)) {
-				getAnonCounters().put(vId, 0);
+			if (!this.getAnonCounters().containsKey(vId)) {
+				this.getAnonCounters().put(vId, 0);
 			}
-			getAnonCounters().put(vId, getAnonCounters().get(vId) + 1);
-			return getAnonCounters().get(vId);
+			this.getAnonCounters().put(vId, this.getAnonCounters().get(vId) + 1);
+			return this.getAnonCounters().get(vId);
 		}
 	}
 	
@@ -224,13 +223,13 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public String toLongString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(getSuperClassName());
+		sb.append(this.getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(isAnonymClass());
+		sb.append(this.isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
-		sb.append(getFullQualifiedName());
+		sb.append(this.getFullQualifiedName());
 		sb.append(", getShortName()=");
-		sb.append(getShortName());
+		sb.append(this.getShortName());
 		return sb.toString();
 	}
 	
@@ -242,13 +241,13 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(getSuperClassName());
+		sb.append(this.getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(isAnonymClass());
+		sb.append(this.isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
-		sb.append(getFullQualifiedName());
+		sb.append(this.getFullQualifiedName());
 		sb.append(", getShortName()=");
-		sb.append(getShortName());
+		sb.append(this.getShortName());
 		sb.append("]");
 		return sb.toString();
 	}
