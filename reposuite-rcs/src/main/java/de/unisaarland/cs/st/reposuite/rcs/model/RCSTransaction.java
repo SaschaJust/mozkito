@@ -49,6 +49,7 @@ import de.unisaarland.cs.st.reposuite.output.Displayable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.reposuite.rcs.elements.PreviousTransactionIterator;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
@@ -136,11 +137,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
 	        final String originalId) {
-		setId(id);
-		setMessage(message);
-		setTimestamp(timestamp);
-		setAuthor(author);
-		setOriginalId(originalId);
+		this.setId(id);
+		this.setMessage(message);
+		this.setTimestamp(timestamp);
+		this.setAuthor(author);
+		this.setOriginalId(originalId);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -156,9 +157,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public boolean addAllTags(final Collection<String> tagNames) {
 		boolean ret = false;
-		Set<String> tags = getTags();
+		Set<String> tags = this.getTags();
 		ret = tags.addAll(tagNames);
-		setTags(tags);
+		this.setTags(tags);
 		return ret;
 	}
 	
@@ -170,10 +171,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this);
 		boolean ret = false;
 		
-		if (!getChildren().contains(rcsTransaction)) {
-			Set<RCSTransaction> children = getChildren();
+		if (!this.getChildren().contains(rcsTransaction)) {
+			Set<RCSTransaction> children = this.getChildren();
 			ret = children.add(rcsTransaction);
-			setChildren(children);
+			this.setChildren(children);
 		}
 		
 		return ret;
@@ -187,10 +188,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		CompareCondition.notEquals(parentTransaction, this, "a transaction may never be a parent of its own: %s", this);
 		boolean ret = false;
 		
-		if (!getParents().contains(parentTransaction)) {
-			Set<RCSTransaction> parents = getParents();
+		if (!this.getParents().contains(parentTransaction)) {
+			Set<RCSTransaction> parents = this.getParents();
 			ret = parents.add(parentTransaction);
-			setParents(parents);
+			this.setParents(parents);
 		}
 		
 		return ret;
@@ -206,9 +207,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	protected boolean addRevision(@NotNull final RCSRevision revision) {
-		Collection<RCSRevision> revisions = getRevisions();
+		Collection<RCSRevision> revisions = this.getRevisions();
 		boolean ret = revisions.add(revision);
-		setRevisions(revisions);
+		this.setRevisions(revisions);
 		return ret;
 	}
 	
@@ -221,9 +222,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public boolean addTag(@NotNull final String tagName) {
 		boolean ret = false;
-		Set<String> tags = getTags();
+		Set<String> tags = this.getTags();
 		tags.add(tagName);
-		setTags(tags);
+		this.setTags(tags);
 		return ret;
 	}
 	
@@ -237,43 +238,43 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			return 1;
 		}
 		
-		if (getBranch() == null) {
+		if (this.getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction should never be NULL");
 		}
 		if (transaction.getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
+			Logger.debug("Comparing transactions: `" + this.getId() + "` and `" + transaction.getId() + "`");
 		}
-		if (equals(transaction)) {
+		if (this.equals(transaction)) {
 			return 0;
-		} else if (getBranch().equals(transaction.getBranch())) {
-			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
+		} else if (this.getBranch().equals(transaction.getBranch())) {
+			if ((this.getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Comparing transactions of uninitialized branches: start transaction is unknown");
 				}
 				return -1;
 			}
-			if (getBranch().getBegin().equals(this)) {
+			if (this.getBranch().getBegin().equals(this)) {
 				return -1;
-			} else if (getBranch().getBegin().equals(transaction)) {
+			} else if (this.getBranch().getBegin().equals(transaction)) {
 				return 1;
 			} else {
-				RCSTransaction cache = getParent(getBranch());
+				RCSTransaction cache = this.getParent(this.getBranch());
 				if (cache == null) {
 					return -1;
 				}
-				while (cache != getBranch().getBegin()) {
+				while (cache != this.getBranch().getBegin()) {
 					if (cache.equals(transaction)) {
 						return 1;
 					}
-					cache = cache.getParent(getBranch());
+					cache = cache.getParent(this.getBranch());
 				}
 				return -1;
 			}
-		} else if (getBranch().equals(RCSBranch.MASTER)) {
+		} else if (this.getBranch().equals(RCSBranch.MASTER)) {
 			if (Logger.logDebug()) {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
@@ -281,17 +282,17 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
-			int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			int subresult = this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 			if (subresult >= 0) {
 				return 1;
 			} else {
 				return -1;
 			}
 		} else if (transaction.getBranch().equals(RCSBranch.MASTER)) {
-			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
+			if ((this.getBranch().getEnd() == null) || (this.getBranch().getEnd().getChild(this.getBranch()) == null)) {
 				return 1;
 			}
-			int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
+			int sub_result = this.getBranch().getEnd().getChild(this.getBranch()).compareTo(transaction);
 			if (sub_result <= 0) {
 				return -1;
 			} else {
@@ -301,17 +302,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			if ((transaction.getBranch().getEnd() == null)
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
-			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
+			} else if ((this.getBranch().getEnd() == null)
+			        || (this.getBranch().getEnd().getChild(this.getBranch()) == null)) {
 				return 1;
 			} else {
-				int r = getBranch().getEnd().getChild(getBranch())
-				                   .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+				int r = this.getBranch().getEnd().getChild(this.getBranch())
+				            .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 				if (r != 0) {
 					return r;
 				} else {
-					if (getTimestamp().isBefore(transaction.getTimestamp())) {
+					if (this.getTimestamp().isBefore(transaction.getTimestamp())) {
 						return -1;
-					} else if (getTimestamp().isAfter(transaction.getTimestamp())) {
+					} else if (this.getTimestamp().isAfter(transaction.getTimestamp())) {
 						return 1;
 					}
 					return 0;
@@ -325,7 +327,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public Person getAuthor() {
-		return getPersons().get("author");
+		return this.getPersons().get("author");
 	}
 	
 	/**
@@ -347,7 +349,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public Collection<RCSFile> getChangedFiles() {
 		List<RCSFile> changedFiles = new LinkedList<RCSFile>();
-		for (RCSRevision revision : getRevisions()) {
+		for (RCSRevision revision : this.getRevisions()) {
 			changedFiles.add(revision.getChangedFile());
 		}
 		return changedFiles;
@@ -360,11 +362,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public RCSTransaction getChild(final RCSBranch branch) {
 		if (branch.getEnd().equals(this)) {
-			return getChildren().isEmpty()
-			                              ? null
-			                              : getChildren().iterator().next();
+			return this.getChildren().isEmpty()
+			                                   ? null
+			                                   : this.getChildren().iterator().next();
 		} else {
-			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
+			return (RCSTransaction) CollectionUtils.find(this.getChildren(), new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -405,9 +407,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Column (name = "timestamp")
 	@Index (name = "idx_timestamp")
 	protected Date getJavaTimestamp() {
-		return getTimestamp() != null
-		                             ? getTimestamp().toDate()
-		                             : null;
+		return this.getTimestamp() != null
+		                                  ? this.getTimestamp().toDate()
+		                                  : null;
 	}
 	
 	/**
@@ -438,11 +440,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
-			return getParents().isEmpty()
-			                             ? null
-			                             : getParents().iterator().next();
+			return this.getParents().isEmpty()
+			                                  ? null
+			                                  : this.getParents().iterator().next();
 		} else {
-			return (RCSTransaction) CollectionUtils.find(getParents(), new Predicate() {
+			return (RCSTransaction) CollectionUtils.find(this.getParents(), new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -473,6 +475,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		return this.persons;
 	}
 	
+	@Transient
+	public Iterator<RCSTransaction> getPreviousTransactions() {
+		return new PreviousTransactionIterator(this);
+	}
+	
 	/**
 	 * Gets the revision that changed the specified path.
 	 * 
@@ -483,7 +490,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public RCSRevision getRevisionForPath(final String path) {
-		for (RCSRevision revision : getRevisions()) {
+		for (RCSRevision revision : this.getRevisions()) {
 			if (revision.getChangedFile().equals(path)) {
 				return revision;
 			}
@@ -524,7 +531,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public void setAuthor(final Person author) {
-		getPersons().add("author", author);
+		this.getPersons().add("author", author);
 	}
 	
 	/**
@@ -658,20 +665,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		StringBuilder string = new StringBuilder();
 		string.append("RCSTransaction [id=");
-		string.append(getId());
+		string.append(this.getId());
 		string.append(", message=");
-		string.append(StringEscapeUtils.escapeJava(getMessage()));
+		string.append(StringEscapeUtils.escapeJava(this.getMessage()));
 		string.append(", timestamp=");
-		string.append(getTimestamp());
+		string.append(this.getTimestamp());
 		string.append(", revisionCount=");
-		string.append(getRevisions().size());
+		string.append(this.getRevisions().size());
 		string.append(", author=");
-		string.append(getAuthor());
+		string.append(this.getAuthor());
 		string.append(", parents=");
 		string.append("[");
 		StringBuilder builder = new StringBuilder();
 		
-		for (RCSTransaction transaction : getParents()) {
+		for (RCSTransaction transaction : this.getParents()) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -684,7 +691,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		string.append("[");
 		StringBuilder builder2 = new StringBuilder();
 		
-		for (RCSTransaction transaction : getChildren()) {
+		for (RCSTransaction transaction : this.getChildren()) {
 			if (builder2.length() > 0) {
 				builder2.append(", ");
 			}
@@ -693,9 +700,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		string.append(builder2.toString());
 		string.append("]");
 		
-		if (getBranch() != null) {
+		if (this.getBranch() != null) {
 			string.append(", branch=");
-			string.append(getBranch());
+			string.append(this.getBranch());
 		}
 		string.append("]");
 		return string.toString();
@@ -711,17 +718,17 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		builder.append(",-----------------------------------------------------------------------------------.")
 		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-12s %-68s |", "Id:", getId())).append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-12s %-68s |", "OriginalId:", getOriginalId()))
+		builder.append(String.format("| %-12s %-68s |", "Id:", this.getId())).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-12s %-68s |", "OriginalId:", this.getOriginalId()))
 		       .append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-12s %-68s |", "Timestamp:",
-		                             getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
+		                             this.getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
 		       .append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		
 		int i = 0;
 		String value;
-		for (Iterator<String> iterator = getAuthor().getUsernames().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getUsernames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %-12s %-68s |", i++ == 0
 			                                                        ? "Username:"
@@ -729,7 +736,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		i = 0;
-		for (Iterator<String> iterator = getAuthor().getFullnames().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getFullnames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %-12s %-68s |", i++ == 0
 			                                                        ? "Fullname:"
@@ -737,7 +744,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		i = 0;
-		for (Iterator<String> iterator = getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %-12s %-68s |", i++ == 0
 			                                                        ? "Email:"
@@ -745,21 +752,21 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		
-		builder.append(String.format("| %-12s %-22s %-12s %-32s |", "Branch:", getBranch().getName(), "Tags:",
-		                             JavaUtils.collectionToString(getTags()))).append(FileUtils.lineSeparator);;
+		builder.append(String.format("| %-12s %-22s %-12s %-32s |", "Branch:", this.getBranch().getName(), "Tags:",
+		                             JavaUtils.collectionToString(this.getTags()))).append(FileUtils.lineSeparator);;
 		i = 0;
-		while (i < Math.max(getParents().size(), getChildren().size())) {
+		while (i < Math.max(this.getParents().size(), this.getChildren().size())) {
 			builder.append(String.format("| %-12s %-22s %-12s %-32s |", i == 0
 			                                                                  ? "Parents:"
 			                                                                  : "",
-			                             i < getParents().size()
-			                                                    ? getParents().toArray()[i]
-			                                                    : "", i == 0
-			                                                                ? "Children:"
-			                                                                : "",
-			                             i < getChildren().size()
-			                                                     ? getChildren().toArray()[i]
-			                                                     : "")).append(FileUtils.lineSeparator);
+			                             i < this.getParents().size()
+			                                                         ? this.getParents().toArray()[i]
+			                                                         : "", i == 0
+			                                                                     ? "Children:"
+			                                                                     : "",
+			                             i < this.getChildren().size()
+			                                                          ? this.getChildren().toArray()[i]
+			                                                          : "")).append(FileUtils.lineSeparator);
 			++i;
 		}
 		
@@ -769,7 +776,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-12s %-68s |", "Message:", "")).append(FileUtils.lineSeparator);
-		String message = getMessage().trim();
+		String message = this.getMessage().trim();
 		int lines = message.length() / 82;
 		
 		for (i = 0; i <= lines; ++i) {
@@ -783,7 +790,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-12s %-68s |", "Changes:", "")).append(FileUtils.lineSeparator);
 		
-		for (RCSRevision revision : getRevisions()) {
+		for (RCSRevision revision : this.getRevisions()) {
 			String path = revision.getChangedFile().getPath(this);
 			if (path == null) {
 				path = revision.getChangedFile().getLatestPath();
@@ -826,7 +833,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Override
 	public void toTerm(final OutputStream stream) {
 		try {
-			stream.write(toTerm().getBytes());
+			stream.write(this.toTerm().getBytes());
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -840,18 +847,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		builder.append(",-----------------------------------------------------------------------------------.")
 		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "Id:", Color.NONE, getId()))
+		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "Id:", Color.NONE, this.getId()))
 		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "OriginalId:", Color.NONE, getOriginalId()))
-		       .append(FileUtils.lineSeparator);
+		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "OriginalId:", Color.NONE,
+		                             this.getOriginalId())).append(FileUtils.lineSeparator);
 		builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, "Timestamp:", Color.NONE,
-		                             getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
+		                             this.getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
 		       .append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		
 		int i = 0;
 		String value;
-		for (Iterator<String> iterator = getAuthor().getUsernames().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getUsernames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
 			                                                                             ? "Username:"
@@ -860,7 +867,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		i = 0;
-		for (Iterator<String> iterator = getAuthor().getFullnames().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getFullnames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %%s-12s%s %-68s |", Color.UNDERLINE, i++ == 0
 			                                                                             ? "Fullname:"
@@ -869,7 +876,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		i = 0;
-		for (Iterator<String> iterator = getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
 			value = iterator.next();
 			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
 			                                                                             ? "Email:"
@@ -879,21 +886,23 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		
 		builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, "Branch:", Color.NONE,
-		                             getBranch().getName(), Color.UNDERLINE, "Tags:", Color.NONE,
-		                             JavaUtils.collectionToString(getTags()))).append(FileUtils.lineSeparator);;
+		                             this.getBranch().getName(), Color.UNDERLINE, "Tags:", Color.NONE,
+		                             JavaUtils.collectionToString(this.getTags()))).append(FileUtils.lineSeparator);;
 		i = 0;
-		while (i < Math.max(getParents().size(), getChildren().size())) {
+		while (i < Math.max(this.getParents().size(), this.getChildren().size())) {
 			builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, i == 0
 			                                                                                           ? "Parents:"
 			                                                                                           : "",
-			                             Color.NONE, i < getParents().size()
-			                                                                ? getParents().toArray()[i]
-			                                                                : "", Color.UNDERLINE, i == 0
-			                                                                                             ? "Children:"
-			                                                                                             : "",
-			                             Color.NONE, i < getChildren().size()
-			                                                                 ? getChildren().toArray()[i]
-			                                                                 : "")).append(FileUtils.lineSeparator);
+			                             Color.NONE, i < this.getParents().size()
+			                                                                     ? this.getParents().toArray()[i]
+			                                                                     : "", Color.UNDERLINE,
+			                             i == 0
+			                                   ? "Children:"
+			                                   : "", Color.NONE, i < this.getChildren().size()
+			                                                                                  ? this.getChildren()
+			                                                                                        .toArray()[i]
+			                                                                                  : ""))
+			       .append(FileUtils.lineSeparator);
 			++i;
 		}
 		
@@ -903,7 +912,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-12s %-68s |", "Message:", "")).append(FileUtils.lineSeparator);
-		String message = getMessage().trim();
+		String message = this.getMessage().trim();
 		int lines = message.length() / 82;
 		
 		for (i = 0; i <= lines; ++i) {
@@ -917,7 +926,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-12s %-68s |", "Changes:", "")).append(FileUtils.lineSeparator);
 		
-		for (RCSRevision revision : getRevisions()) {
+		for (RCSRevision revision : this.getRevisions()) {
 			String path = revision.getChangedFile().getPath(this);
 			if (path == null) {
 				path = revision.getChangedFile().getLatestPath();
