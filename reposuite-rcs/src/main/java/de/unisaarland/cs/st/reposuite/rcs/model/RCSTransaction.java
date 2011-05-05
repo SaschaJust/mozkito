@@ -43,8 +43,10 @@ import org.joda.time.DateTime;
 import org.w3c.dom.html.HTMLDocument;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.output.Console;
-import de.unisaarland.cs.st.reposuite.output.Console.Color;
+import de.unisaarland.cs.st.reposuite.output.terminal.Terminal;
+import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal;
+import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal.ForegroundColor;
+import de.unisaarland.cs.st.reposuite.output.terminal.VT100Terminal.Style;
 import de.unisaarland.cs.st.reposuite.output.Displayable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
@@ -794,25 +796,26 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 					path = "..." + path.substring(path.length() - 69, path.length());
 				}
 				
-				Console.Color color = Color.NONE;
+				VT100Terminal.ForegroundColor foregroundColor = ForegroundColor.DEFAULT;
 				switch (revision.getChangeType()) {
 					case Added:
-						color = Console.Color.GREEN;
+						foregroundColor = de.unisaarland.cs.st.reposuite.output.terminal.ForegroundColor.GREEN;
 						break;
 					case Deleted:
-						color = Color.RED;
+						foregroundColor = ForegroundColor.RED;
 						break;
 					case Modified:
-						color = Color.YELLOW;
+						foregroundColor = ForegroundColor.YELLOW;
 						break;
 					case Renamed:
-						color = Color.YELLOW;
+						foregroundColor = ForegroundColor.YELLOW;
 						break;
 					default:
-						color = Color.NONE;
+						foregroundColor = ForegroundColor.DEFAULT;
 				}
-				builder.append(String.format("| %s%-8s%s %-72s |", color.toString(), revision.getChangeType().name(),
-				                             Console.Color.NONE, path)).append(FileUtils.lineSeparator);
+				builder.append(String.format("| %s%-8s%s %-72s |", foregroundColor.toString(), revision.getChangeType()
+				                                                                                       .name(),
+				                             de.unisaarland.cs.st.reposuite.output.terminal.ForegroundColor.DEFAULT, path)).append(FileUtils.lineSeparator);
 			}
 			
 		}
@@ -840,11 +843,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		builder.append(",-----------------------------------------------------------------------------------.")
 		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "Id:", Color.NONE, getId()))
+		builder.append(String.format("| %-%s12s%s %-68s |", Style.UNDERLINE, "Id:", ForegroundColor.DEFAULT, getId()))
 		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %-%s12s%s %-68s |", Color.UNDERLINE, "OriginalId:", Color.NONE, getOriginalId()))
-		       .append(FileUtils.lineSeparator);
-		builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, "Timestamp:", Color.NONE,
+		builder.append(String.format("| %-%s12s%s %-68s |", Style.UNDERLINE, "OriginalId:", ForegroundColor.DEFAULT,
+		                             getOriginalId())).append(FileUtils.lineSeparator);
+		builder.append(String.format("| %s%-12s%s %-68s |", Style.UNDERLINE, "Timestamp:", ForegroundColor.DEFAULT,
 		                             getTimestamp().toString("EEEE, d MMMM yyyy, HH:mm:ss ZZZ")))
 		       .append(FileUtils.lineSeparator);
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
@@ -853,47 +856,49 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		String value;
 		for (Iterator<String> iterator = getAuthor().getUsernames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
-			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			builder.append(String.format("| %s%-12s%s %-68s |", Style.UNDERLINE, i++ == 0
 			                                                                             ? "Username:"
-			                                                                             : "", Color.NONE, value))
-			       .append(FileUtils.lineSeparator);
+			                                                                             : "", ForegroundColor.DEFAULT,
+			                             value)).append(FileUtils.lineSeparator);
 		}
 		
 		i = 0;
 		for (Iterator<String> iterator = getAuthor().getFullnames().iterator(); iterator.hasNext();) {
 			value = iterator.next();
-			builder.append(String.format("| %%s-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			builder.append(String.format("| %%s-12s%s %-68s |", Style.UNDERLINE, i++ == 0
 			                                                                             ? "Fullname:"
-			                                                                             : "", Color.NONE, value))
-			       .append(FileUtils.lineSeparator);
+			                                                                             : "", ForegroundColor.DEFAULT,
+			                             value)).append(FileUtils.lineSeparator);
 		}
 		
 		i = 0;
 		for (Iterator<String> iterator = getAuthor().getEmailAddresses().iterator(); iterator.hasNext();) {
 			value = iterator.next();
-			builder.append(String.format("| %s%-12s%s %-68s |", Color.UNDERLINE, i++ == 0
+			builder.append(String.format("| %s%-12s%s %-68s |", Style.UNDERLINE, i++ == 0
 			                                                                             ? "Email:"
-			                                                                             : "", Color.NONE, value))
-			       .append(FileUtils.lineSeparator);
+			                                                                             : "", ForegroundColor.DEFAULT,
+			                             value)).append(FileUtils.lineSeparator);
 		}
 		builder.append(String.format("| %-81s |", "")).append(FileUtils.lineSeparator);
 		
-		builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, "Branch:", Color.NONE,
-		                             getBranch().getName(), Color.UNDERLINE, "Tags:", Color.NONE,
-		                             JavaUtils.collectionToString(getTags()))).append(FileUtils.lineSeparator);;
+		builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Style.UNDERLINE, "Branch:",
+		                             ForegroundColor.DEFAULT, getBranch().getName(), Style.UNDERLINE, "Tags:",
+		                             ForegroundColor.DEFAULT, JavaUtils.collectionToString(getTags())))
+		       .append(FileUtils.lineSeparator);;
 		i = 0;
 		while (i < Math.max(getParents().size(), getChildren().size())) {
-			builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Color.UNDERLINE, i == 0
+			builder.append(String.format("| %s%-12s%s %-22s %s%-12s%s %-32s |", Style.UNDERLINE, i == 0
 			                                                                                           ? "Parents:"
 			                                                                                           : "",
-			                             Color.NONE, i < getParents().size()
-			                                                                ? getParents().toArray()[i]
-			                                                                : "", Color.UNDERLINE, i == 0
-			                                                                                             ? "Children:"
-			                                                                                             : "",
-			                             Color.NONE, i < getChildren().size()
-			                                                                 ? getChildren().toArray()[i]
-			                                                                 : "")).append(FileUtils.lineSeparator);
+			                             ForegroundColor.DEFAULT, i < getParents().size()
+			                                                                          ? getParents().toArray()[i]
+			                                                                          : "", Style.UNDERLINE,
+			                             i == 0
+			                                   ? "Children:"
+			                                   : "", ForegroundColor.DEFAULT,
+			                             i < getChildren().size()
+			                                                     ? getChildren().toArray()[i]
+			                                                     : "")).append(FileUtils.lineSeparator);
 			++i;
 		}
 		
@@ -935,7 +940,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		builder.append("`-----------------------------------------------------------------------------------'")
 		       .append(FileUtils.lineSeparator);
-		builder.append(Console.Color.BLACK + "Hello World" + Console.Color.NONE).append(FileUtils.lineSeparator);
+		builder.append(de.unisaarland.cs.st.reposuite.output.terminal.ForegroundColor.BLACK + "Hello World" + de.unisaarland.cs.st.reposuite.output.terminal.ForegroundColor.DEFAULT)
+		       .append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
 	
