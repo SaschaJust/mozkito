@@ -54,15 +54,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		sb.append(localParentName);
 		sb.append(".");
 		sb.append(methodName);
-		sb.append("(");
-		if (!signature.isEmpty()) {
-			sb.append(signature.get(0));
-		}
-		for (int i = 1; i < signature.size(); ++i) {
-			sb.append(",");
-			sb.append(signature.get(i));
-		}
-		sb.append(")");
+		sb.append(getSignatureString(signature));
 		return sb.toString();
 	}
 	
@@ -123,6 +115,20 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		return new JavaMethodDefinition(parentName, methodName, argList);
 	}
 	
+	public static String getSignatureString(final List<String> signature) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		if (!signature.isEmpty()) {
+			sb.append(signature.get(0));
+		}
+		for (int i = 1; i < signature.size(); ++i) {
+			sb.append(",");
+			sb.append(signature.get(i));
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+	
 	/** The signature. */
 	private List<String> signature;
 	
@@ -153,8 +159,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 		Condition.check(!methodName.contains("("), "The methodName name of a method call must not contain '('.");
 		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
 		
-		this.setSignature(new ArrayList<String>(signature));
-		this.setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
+		setSignature(new ArrayList<String>(signature));
+		setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
 	}
 	
 	/*
@@ -175,11 +181,11 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 			return false;
 		}
 		JavaMethodDefinition other = (JavaMethodDefinition) obj;
-		if (this.getSignature() == null) {
+		if (getSignature() == null) {
 			if (other.getSignature() != null) {
 				return false;
 			}
-		} else if (!this.getSignature().equals(other.getSignature())) {
+		} else if (!getSignature().equals(other.getSignature())) {
 			return false;
 		}
 		return true;
@@ -192,7 +198,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return this.signature;
+		return signature;
 	}
 	
 	/*
@@ -205,7 +211,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		Element thisElement = new Element(JAVA_METHOD_DEFINITION);
 		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(this.getFullQualifiedName());
+		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}
@@ -219,9 +225,9 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((this.getSignature() == null)
-		                                                        ? 0
-		                                                        : this.getSignature().hashCode());
+		result = prime * result + ((getSignature() == null)
+		                                                   ? 0
+		                                                   : getSignature().hashCode());
 		return result;
 	}
 	
