@@ -24,9 +24,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.MinSize;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
@@ -38,9 +41,6 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonTuple;
 import de.unisaarland.cs.st.reposuite.persistence.model.StringTuple;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

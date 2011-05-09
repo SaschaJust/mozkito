@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
@@ -15,7 +16,6 @@ import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

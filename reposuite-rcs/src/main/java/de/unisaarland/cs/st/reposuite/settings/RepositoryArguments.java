@@ -5,7 +5,7 @@ import java.net.URI;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 
 /**

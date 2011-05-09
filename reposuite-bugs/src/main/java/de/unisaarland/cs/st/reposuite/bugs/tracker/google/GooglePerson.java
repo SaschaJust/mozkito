@@ -1,7 +1,7 @@
 package de.unisaarland.cs.st.reposuite.bugs.tracker.google;
 
+import net.ownhero.dev.ioda.interfaces.Storable;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Storable;
 
 public class GooglePerson implements Storable {
 	

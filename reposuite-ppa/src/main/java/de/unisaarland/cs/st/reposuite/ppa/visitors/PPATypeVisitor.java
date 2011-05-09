@@ -11,6 +11,7 @@ import java.util.Stack;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -31,7 +32,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPATypeVisitor.

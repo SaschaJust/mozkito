@@ -13,8 +13,8 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 /**

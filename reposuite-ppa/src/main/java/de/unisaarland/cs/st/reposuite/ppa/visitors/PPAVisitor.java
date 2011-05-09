@@ -6,8 +6,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 
 /**
  * The Interface PPAVisitor.

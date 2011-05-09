@@ -21,7 +21,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.Intercepted;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

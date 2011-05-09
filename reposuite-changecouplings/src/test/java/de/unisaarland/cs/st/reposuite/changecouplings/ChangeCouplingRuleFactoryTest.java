@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 public class ChangeCouplingRuleFactoryTest {

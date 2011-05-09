@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

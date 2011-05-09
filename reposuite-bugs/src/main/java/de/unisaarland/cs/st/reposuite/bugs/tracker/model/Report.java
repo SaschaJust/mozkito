@@ -33,8 +33,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -48,8 +50,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.comparators.CommentComp
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

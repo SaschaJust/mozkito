@@ -3,7 +3,7 @@ package de.unisaarland.cs.st.reposuite.clustering;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * The Class PartitionCell.

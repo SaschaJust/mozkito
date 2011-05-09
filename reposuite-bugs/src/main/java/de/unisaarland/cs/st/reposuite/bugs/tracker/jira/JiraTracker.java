@@ -17,8 +17,15 @@ import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
 import org.jdom.Document;
@@ -36,13 +43,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
-import de.unisaarland.cs.st.reposuite.utils.IOUtils;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.RawContent;
 
 /**
  * The Class JiraTracker.

@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 
 public class GitRevDependencyIteratorTest {

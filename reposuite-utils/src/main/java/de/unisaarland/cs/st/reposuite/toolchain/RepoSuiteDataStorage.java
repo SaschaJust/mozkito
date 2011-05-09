@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * The {@link RepoSuiteDataStorage} elements are the node of a.

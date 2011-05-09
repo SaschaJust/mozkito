@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPAPersistenceUtil.

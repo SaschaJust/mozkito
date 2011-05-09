@@ -24,6 +24,10 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -55,10 +59,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

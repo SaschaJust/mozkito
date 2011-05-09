@@ -12,6 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 
+import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.Element;
@@ -34,11 +39,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
-import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 
 public class BugzillaTrackerTest {
 	

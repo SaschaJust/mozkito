@@ -5,12 +5,12 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import java.net.URI;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

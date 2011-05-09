@@ -9,6 +9,7 @@ import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -23,7 +24,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPAMethodCallVisitor generated MethodCalls(Locations) for the given

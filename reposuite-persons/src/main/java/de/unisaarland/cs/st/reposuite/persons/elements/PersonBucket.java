@@ -10,7 +10,7 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.persons.processing.PersonManager;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

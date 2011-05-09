@@ -17,6 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.CommandExecutor;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -33,12 +40,6 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.rcs.git.GitRepository;
 import de.unisaarland.cs.st.reposuite.rcs.mercurial.MercurialRepository;
-import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import difflib.Delta;
 
 public class RepositoryTest {

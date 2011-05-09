@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ChangeOperationGenerator.

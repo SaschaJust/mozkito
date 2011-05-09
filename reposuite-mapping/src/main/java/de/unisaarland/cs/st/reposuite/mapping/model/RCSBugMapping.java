@@ -20,7 +20,7 @@ import de.unisaarland.cs.st.reposuite.mapping.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

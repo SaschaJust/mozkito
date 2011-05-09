@@ -14,7 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 public class MercurialRepositoryTest {
 	
@@ -39,11 +39,11 @@ public class MercurialRepositoryTest {
 	
 	@Test
 	public void testFormerPathRegex() {
-		String line = "reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/utils/CommandExecutor.java (reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java)";
+		String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
 		List<RegexGroup> found = MercurialRepository.formerPathRegex.find(line);
 		assertTrue(MercurialRepository.formerPathRegex.matches(line));
 		assertEquals(2, found.size());
-		assertEquals("reposuite-rcs/src/main/java/de/unisaarland/cs/st/reposuite/utils/CMDExecutor.java",
+		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
 		        MercurialRepository.formerPathRegex.getGroup("result"));
 	}
 	

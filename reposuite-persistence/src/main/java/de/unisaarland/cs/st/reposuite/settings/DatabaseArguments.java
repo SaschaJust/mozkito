@@ -6,7 +6,7 @@ import java.util.Map;
 import de.unisaarland.cs.st.reposuite.persistence.DatabaseType;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 
 /**

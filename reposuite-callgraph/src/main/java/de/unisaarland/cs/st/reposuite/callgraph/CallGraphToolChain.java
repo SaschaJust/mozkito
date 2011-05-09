@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 
 public class CallGraphToolChain extends RepoSuiteToolchain {

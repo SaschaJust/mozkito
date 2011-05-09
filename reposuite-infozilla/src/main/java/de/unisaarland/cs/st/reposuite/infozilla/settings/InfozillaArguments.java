@@ -9,12 +9,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilterChain;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
-import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

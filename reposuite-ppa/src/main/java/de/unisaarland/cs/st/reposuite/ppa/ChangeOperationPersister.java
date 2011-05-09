@@ -1,11 +1,11 @@
 package de.unisaarland.cs.st.reposuite.ppa;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ChangeOperationPersister.

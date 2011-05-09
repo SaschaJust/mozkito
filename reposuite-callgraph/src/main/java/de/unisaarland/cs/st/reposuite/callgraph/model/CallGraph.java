@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import edu.uci.ics.jung.graph.AbstractGraph;
 import edu.uci.ics.jung.graph.DirectedGraph;

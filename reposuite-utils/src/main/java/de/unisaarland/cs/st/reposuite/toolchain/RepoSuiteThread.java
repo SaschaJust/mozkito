@@ -14,7 +14,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * {@link RepoSuiteThread}s are the edges of a {@link RepoSuiteToolchain} graph,

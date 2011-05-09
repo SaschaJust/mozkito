@@ -6,12 +6,13 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 
 public class FileUtilsTest {
 	
@@ -22,8 +23,7 @@ public class FileUtilsTest {
 	
 	@Test
 	public void exists() {
-		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
-		                        + "reposuiteFileUtilsTestDir");
+		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator + "reposuiteFileUtilsTestDir");
 		if (!this.nameDir.mkdirs()) {
 			fail();
 		}
@@ -34,8 +34,7 @@ public class FileUtilsTest {
 	
 	@Test
 	public void existsAsFile() {
-		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator
-		                        + "reposuiteFileUtilsTestDir");
+		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator + "reposuiteFileUtilsTestDir");
 		try {
 			if (!this.nameDir.createNewFile()) {
 				fail();

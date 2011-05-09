@@ -19,7 +19,7 @@ import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 
 /**

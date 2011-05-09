@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * The Class MultilevelPartitioning.

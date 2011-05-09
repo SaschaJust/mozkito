@@ -10,11 +10,11 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class JavaMethodCall.

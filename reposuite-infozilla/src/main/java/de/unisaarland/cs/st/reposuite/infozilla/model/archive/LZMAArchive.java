@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.reposuite.infozilla.model.archive;
 import java.io.File;
 import java.io.IOException;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.infozilla.model.attachment.Attachment;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
