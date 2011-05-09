@@ -28,6 +28,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -36,7 +37,6 @@ import org.joda.time.DateTimeZone;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -226,9 +226,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return the reposuite settings of the monitored application, if any
 	 */
 	protected String getRepoSuiteSettings() {
-		return (application != null)
-		                            ? application.getSettings().toString()
-		                            : "";
+		return (this.application != null)
+		                                 ? this.application.getSettings().toString()
+		                                 : "";
 	}
 	
 	private String getRuntimeInformation() {
@@ -273,9 +273,9 @@ public class CrashHandler extends ThreadGroup {
 	 * @return information provided by the {@link RepoSuiteToolchain}
 	 */
 	protected String getToolInformation() {
-		return (application != null)
-		                            ? application.getSettings().getToolInformation()
-		                            : "";
+		return (this.application != null)
+		                                 ? this.application.getSettings().getToolInformation()
+		                                 : "";
 	}
 	
 	/**
@@ -353,7 +353,7 @@ public class CrashHandler extends ThreadGroup {
 	 *            the report to be send
 	 */
 	private void sendReport(final String report) {
-		if (application.getSettings().isCrashEmailDisabled()) {
+		if (this.application.getSettings().isCrashEmailDisabled()) {
 			try {
 				Session session = Session.getDefaultInstance(CrashHandler.mailProps, null);
 				Transport transport = session.getTransport();
@@ -418,8 +418,8 @@ public class CrashHandler extends ThreadGroup {
 				Logger.info("Initiating shutdown.");
 			}
 			
-			if (application != null) {
-				application.shutdown();
+			if (this.application != null) {
+				this.application.shutdown();
 			}
 		}
 	}

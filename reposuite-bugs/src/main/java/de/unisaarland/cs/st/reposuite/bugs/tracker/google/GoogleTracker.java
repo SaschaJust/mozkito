@@ -50,7 +50,7 @@ import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**

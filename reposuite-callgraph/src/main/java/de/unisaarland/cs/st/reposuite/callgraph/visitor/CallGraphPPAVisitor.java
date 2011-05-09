@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 public class CallGraphPPAVisitor implements PPAVisitor {
 	

@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

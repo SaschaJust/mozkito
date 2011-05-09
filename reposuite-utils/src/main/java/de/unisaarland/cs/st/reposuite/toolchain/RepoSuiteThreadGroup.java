@@ -6,8 +6,8 @@ package de.unisaarland.cs.st.reposuite.toolchain;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The {@link RepoSuiteThreadGroup} is an extension of the {@link ThreadGroup}
@@ -87,11 +87,12 @@ public class RepoSuiteThreadGroup extends ThreadGroup {
 	 * java.lang.Throwable)
 	 */
 	@Override
-	public void uncaughtException(final Thread t, final Throwable e) {
+	public void uncaughtException(final Thread t,
+	                              final Throwable e) {
 		super.uncaughtException(t, e);
 		if (Logger.logError()) {
 			Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
-			             + ". Message: " + e.getMessage(), e);
+			        + ". Message: " + e.getMessage(), e);
 			Logger.error("Shutting down.");
 		}
 		shutdown();

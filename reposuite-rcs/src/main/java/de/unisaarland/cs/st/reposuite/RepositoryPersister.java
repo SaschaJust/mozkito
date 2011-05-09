@@ -8,7 +8,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous

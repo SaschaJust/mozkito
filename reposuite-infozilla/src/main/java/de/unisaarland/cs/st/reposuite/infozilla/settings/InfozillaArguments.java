@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilterChain;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

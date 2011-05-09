@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class LogEntry.

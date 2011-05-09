@@ -37,7 +37,7 @@ import de.unisaarland.cs.st.reposuite.infozilla.exceptions.MIMETypeDetermination
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 @Entity
 public class Attachment implements Annotated {

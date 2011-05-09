@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPAToolChain.

@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.ppa.CompilationUnitException;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.specification.NoneNull;
 
 /**

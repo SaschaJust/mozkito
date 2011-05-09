@@ -17,7 +17,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 

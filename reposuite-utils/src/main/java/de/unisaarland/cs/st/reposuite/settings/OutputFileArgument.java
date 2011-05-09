@@ -3,8 +3,8 @@ package de.unisaarland.cs.st.reposuite.settings;
 import java.io.File;
 import java.io.IOException;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * The Class FileArgument.
@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.utils.Logger;
 public class OutputFileArgument extends RepoSuiteArgument {
 	
 	// FIXME write test cases
-	private boolean overwrite = false;
+	private boolean overwrite   = false;
 	private boolean selfWritten = false;
 	
 	/**
@@ -41,7 +41,7 @@ public class OutputFileArgument extends RepoSuiteArgument {
 	 *            location must already exist.
 	 */
 	public OutputFileArgument(final RepoSuiteSettings settings, final String name, final String description,
-	                          final String defaultValue, final boolean isRequired, final boolean overwrite) {
+	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
 	}
@@ -62,22 +62,22 @@ public class OutputFileArgument extends RepoSuiteArgument {
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				             + "` is a directory. Expected file. Abort.");
+				        + "` is a directory. Expected file. Abort.");
 			}
 			throw new Shutdown();
 		}
-		if (file.exists() && (!this.overwrite) && (!selfWritten)) {
+		if (file.exists() && (!this.overwrite) && (!this.selfWritten)) {
 			if (this.isRequired()) {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-					             + "` exists already. Please remove file or choose different argument value.");
+					        + "` exists already. Please remove file or choose different argument value.");
 				}
 				throw new Shutdown();
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-					            + "` exists already and cannot be overwritten. Ignoring argument!.");
+					        + "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
 				return null;
 			}
@@ -110,14 +110,14 @@ public class OutputFileArgument extends RepoSuiteArgument {
 				}
 				
 			}
-		} else if (!selfWritten) {
+		} else if (!this.selfWritten) {
 			// file does not exist so far
 			try {
 				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					if(this.isRequired()){
+					if (this.isRequired()) {
 						throw new Shutdown();
 					} else {
 						return null;
@@ -128,14 +128,14 @@ public class OutputFileArgument extends RepoSuiteArgument {
 					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					Logger.error(e.getMessage());
 				}
-				if(this.isRequired()){
+				if (this.isRequired()) {
 					throw new Shutdown();
 				} else {
 					return null;
 				}
 			}
 		}
-		selfWritten = true;
+		this.selfWritten = true;
 		return file;
 	}
 }

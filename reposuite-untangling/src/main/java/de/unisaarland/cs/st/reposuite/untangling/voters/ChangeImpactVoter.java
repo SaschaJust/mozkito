@@ -20,7 +20,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.elements.ImpactCSVRow;
 import de.unisaarland.cs.st.reposuite.untangling.voters.elements.ImpactMatrix;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ChangeImpactVoter.

@@ -4,7 +4,7 @@
 package ppa;
 
 import de.unisaarland.cs.st.reposuite.ppa.PPAToolChain;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author just

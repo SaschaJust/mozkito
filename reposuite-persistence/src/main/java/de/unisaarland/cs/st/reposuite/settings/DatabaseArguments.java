@@ -7,7 +7,7 @@ import de.unisaarland.cs.st.reposuite.persistence.DatabaseType;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

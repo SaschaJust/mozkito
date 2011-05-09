@@ -2,8 +2,8 @@ package de.unisaarland.cs.st.reposuite.settings;
 
 import java.net.URL;
 
-import de.unisaarland.cs.st.reposuite.utils.LogLevel;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.LogLevel;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

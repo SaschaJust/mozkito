@@ -39,7 +39,7 @@ import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonTuple;
 import de.unisaarland.cs.st.reposuite.persistence.model.StringTuple;
 import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**

@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import org.tmatesoft.svn.util.SVNDebugLogAdapter;
 import org.tmatesoft.svn.util.SVNLogType;
 
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper

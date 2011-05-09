@@ -2,7 +2,7 @@ package de.unisaarland.cs.st.reposuite.rcs.elements;
 
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 public class AnnotationEntry {
 	

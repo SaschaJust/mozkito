@@ -1,7 +1,7 @@
 package de.unisaarland.cs.st.reposuite.settings;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

@@ -24,7 +24,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class JavaElementLocation.

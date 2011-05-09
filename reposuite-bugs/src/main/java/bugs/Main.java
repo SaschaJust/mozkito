@@ -6,7 +6,7 @@ package bugs;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author just

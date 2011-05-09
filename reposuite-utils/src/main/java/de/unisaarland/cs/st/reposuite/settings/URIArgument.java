@@ -4,9 +4,9 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

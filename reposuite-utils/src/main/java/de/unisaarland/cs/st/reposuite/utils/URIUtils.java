@@ -3,6 +3,8 @@ package de.unisaarland.cs.st.reposuite.utils;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.ownhero.dev.kisa.Logger;
+
 public class URIUtils {
 	
 	/**

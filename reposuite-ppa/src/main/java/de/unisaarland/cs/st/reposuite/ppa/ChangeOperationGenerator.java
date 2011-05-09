@@ -8,7 +8,7 @@ import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisit
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ChangeOperationGenerator.

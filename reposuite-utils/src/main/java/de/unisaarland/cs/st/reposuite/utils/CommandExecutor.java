@@ -15,6 +15,7 @@ import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -35,8 +36,11 @@ public class CommandExecutor extends Thread {
 		READER, WRITER;
 	}
 	
-	public static Tuple<Integer, List<String>> execute(final String command, final String[] arguments, final File dir,
-	                                                   final InputStream input, final Map<String, String> environment) {
+	public static Tuple<Integer, List<String>> execute(final String command,
+	                                                   final String[] arguments,
+	                                                   final File dir,
+	                                                   final InputStream input,
+	                                                   final Map<String, String> environment) {
 		return execute(command, arguments, dir, input, environment, Charset.defaultCharset());
 	}
 	
@@ -62,7 +66,9 @@ public class CommandExecutor extends Thread {
 	public static Tuple<Integer, List<String>> execute(@NotNull String command,
 	                                                   final String[] arguments,
 	                                                   final File dir,
-	                                                   final InputStream input, final Map<String, String> environment, final Charset charset) {
+	                                                   final InputStream input,
+	                                                   final Map<String, String> environment,
+	                                                   final Charset charset) {
 		Condition.check((arguments == null) || (arguments.length > 0),
 		                "The specified arguments have to be either null or have to contain at least 1 argument.");
 		
@@ -104,17 +110,16 @@ public class CommandExecutor extends Thread {
 		}
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Executing: [command:"
-			             + command
-			             + "][arguments:"
-			             + StringEscapeUtils.escapeJava(Arrays.toString(arguments))
-			             + "][workingdir:"
-			             + (dir != null ? dir.getAbsolutePath() : "(null)")
-			             + "][input:"
-			             + (input != null ? "present" : "omitted")
-			             + "][environment:"
-			             + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null ? environment : System
-			                                                                                      .getenv())) + "]");
+			Logger.debug("Executing: [command:" + command + "][arguments:"
+			        + StringEscapeUtils.escapeJava(Arrays.toString(arguments)) + "][workingdir:"
+			        + (dir != null
+			                      ? dir.getAbsolutePath()
+			                      : "(null)") + "][input:" + (input != null
+			                                                               ? "present"
+			                                                               : "omitted") + "][environment:"
+			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null
+			                                                                                ? environment
+			                                                                                : System.getenv())) + "]");
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -175,12 +180,17 @@ public class CommandExecutor extends Thread {
 					stringBuilder.append("][arguments:");
 					stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
 					stringBuilder.append("][workingdir:");
-					stringBuilder.append((dir != null ? dir.getAbsolutePath() : "(null)"));
+					stringBuilder.append((dir != null
+					                                 ? dir.getAbsolutePath()
+					                                 : "(null)"));
 					stringBuilder.append("][input:");
-					stringBuilder.append((input != null ? "present" : "omitted"));
+					stringBuilder.append((input != null
+					                                   ? "present"
+					                                   : "omitted"));
 					stringBuilder.append("][environment:");
-					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils
-					                                                  .mapToString(environment != null ? environment : System.getenv())));
+					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null
+					                                                                                           ? environment
+					                                                                                           : System.getenv())));
 					stringBuilder.append("] failed with exitCode: ");
 					stringBuilder.append(returnValue);
 					Logger.error(stringBuilder.toString());
@@ -241,7 +251,7 @@ public class CommandExecutor extends Thread {
 	 * @param pipe
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
-	                        final BufferedReader pipe) {
+	        final BufferedReader pipe) {
 		if (Logger.logDebug()) {
 			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
 		}
