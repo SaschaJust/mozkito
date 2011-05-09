@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
@@ -27,8 +29,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPAToolChain.

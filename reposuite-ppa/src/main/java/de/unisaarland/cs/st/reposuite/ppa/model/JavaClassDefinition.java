@@ -10,13 +10,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class JavaClassDefinition.

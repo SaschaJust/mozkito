@@ -3,7 +3,7 @@ package de.unisaarland.cs.st.reposuite.callgraph;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * This class controls all aspects of the application's execution

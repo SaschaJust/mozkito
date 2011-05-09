@@ -17,6 +17,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
@@ -24,7 +25,6 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class JavaElementLocation.

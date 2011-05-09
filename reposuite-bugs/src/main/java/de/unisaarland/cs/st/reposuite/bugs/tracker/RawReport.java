@@ -6,10 +6,10 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.RawContent;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -18,8 +18,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import de.unisaarland.cs.st.reposuite.utils.Tuple;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.Tuple;
 
 /**
  * The thread pool manages all threads of the tool chain. Since all

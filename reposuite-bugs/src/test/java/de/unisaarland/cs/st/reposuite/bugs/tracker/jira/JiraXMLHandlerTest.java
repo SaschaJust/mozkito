@@ -2,14 +2,13 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import net.ownhero.dev.ioda.DateTimeUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 
 public class JiraXMLHandlerTest {
 	

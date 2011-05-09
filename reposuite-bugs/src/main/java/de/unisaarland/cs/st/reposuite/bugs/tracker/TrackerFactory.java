@@ -10,11 +10,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnregisteredTrackerTypeException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
-import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

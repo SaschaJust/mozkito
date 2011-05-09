@@ -9,6 +9,8 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.ownhero.dev.ioda.URIUtils;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 

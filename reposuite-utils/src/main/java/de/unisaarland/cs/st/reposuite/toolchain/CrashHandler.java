@@ -36,7 +36,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

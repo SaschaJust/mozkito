@@ -13,7 +13,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.wc.ISVNDiffGenerator;
 
-import de.unisaarland.cs.st.reposuite.utils.FileUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;

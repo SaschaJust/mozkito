@@ -6,6 +6,8 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.settings;
 import java.net.URI;
 import java.util.Map;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.TrackerFactory;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.TrackerType;
@@ -17,8 +19,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
-import de.unisaarland.cs.st.reposuite.utils.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

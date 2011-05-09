@@ -14,6 +14,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kisa.Logger;
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatch;
@@ -30,14 +34,10 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.AttachmentEntry;
-import de.unisaarland.cs.st.reposuite.exceptions.FetchException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.infozilla.exceptions.EncodingDeterminationException;
 import de.unisaarland.cs.st.reposuite.infozilla.exceptions.MIMETypeDeterminationException;
 import de.unisaarland.cs.st.reposuite.infozilla.model.Attachable;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.IOUtils;
-import net.ownhero.dev.kisa.Logger;
 
 @Entity
 public class Attachment implements Annotated {

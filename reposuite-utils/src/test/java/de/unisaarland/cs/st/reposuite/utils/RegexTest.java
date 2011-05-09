@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -55,7 +56,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#checkRegex(String)}
+	 * {@link net.ownhero.dev.ioda.Regex#checkRegex(String)}
 	 */
 	@Test
 	public void testCheckRegex() {
@@ -100,7 +101,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#find(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -126,7 +127,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#findAll(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#findAll(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -163,7 +164,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#find(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -181,7 +182,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#findLongestMatchingPattern(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#findLongestMatchingPattern(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -196,7 +197,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#getGroupCount()}.
+	 * {@link net.ownhero.dev.ioda.Regex#getGroupCount()}.
 	 */
 	@Test
 	public void testGetGroupCount() {
@@ -220,7 +221,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#matchesFull(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#matchesFull(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -257,7 +258,7 @@ public class RegexTest {
 	
 	/**
 	 * Test method for
-	 * {@link de.unisaarland.cs.st.reposuite.utils.Regex#find(java.lang.String)}
+	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
 	 * .
 	 */
 	@Test

@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.interfaces.Storable;
+
 import org.jdom.Document;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -23,8 +26,6 @@ import com.google.gdata.data.projecthosting.Label;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.reposuite.utils.RawContent;
-import de.unisaarland.cs.st.reposuite.utils.Storable;
 
 /**
  * The Class GoogleRawContent.

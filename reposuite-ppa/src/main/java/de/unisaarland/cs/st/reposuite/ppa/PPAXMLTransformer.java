@@ -14,6 +14,8 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -26,7 +28,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file
