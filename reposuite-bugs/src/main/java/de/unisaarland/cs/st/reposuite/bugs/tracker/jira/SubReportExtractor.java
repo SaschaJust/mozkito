@@ -3,10 +3,9 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.Element;
-
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class SubReportExtractor {
 	

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import de.unisaarland.cs.st.reposuite.utils.Regex;
+import net.ownhero.dev.regex.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

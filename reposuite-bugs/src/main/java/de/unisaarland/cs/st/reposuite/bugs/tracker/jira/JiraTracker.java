@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.regex.Regex;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,7 +43,6 @@ import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * The Class JiraTracker.

@@ -3,7 +3,7 @@ package de.unisaarland.cs.st.reposuite.untangling.voters.elements;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.utils.Regex;
+import net.ownhero.dev.regex.Regex;
 
 /**
  * The Class ImpactCSVRow.

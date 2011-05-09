@@ -21,6 +21,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -40,7 +41,6 @@ import de.unisaarland.cs.st.reposuite.utils.CommandExecutor;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 import de.unisaarland.cs.st.reposuite.utils.URIUtils;
 import difflib.Delta;

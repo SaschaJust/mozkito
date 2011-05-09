@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.reposuite.infozilla.model.log;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import net.ownhero.dev.regex.Regex;
 
-import de.unisaarland.cs.st.reposuite.utils.Regex;
+import org.joda.time.DateTime;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

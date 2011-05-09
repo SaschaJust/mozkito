@@ -28,14 +28,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

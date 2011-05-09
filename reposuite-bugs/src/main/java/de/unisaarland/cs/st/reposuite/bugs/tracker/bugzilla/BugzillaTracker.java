@@ -12,6 +12,7 @@ import java.util.List;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.regex.Regex;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -23,7 +24,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

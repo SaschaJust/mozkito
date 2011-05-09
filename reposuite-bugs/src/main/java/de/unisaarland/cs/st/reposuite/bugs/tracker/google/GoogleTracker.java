@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -49,8 +51,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**

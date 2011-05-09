@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.Interval;
 
@@ -24,8 +26,6 @@ import de.unisaarland.cs.st.reposuite.persistence.model.EnumTuple;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

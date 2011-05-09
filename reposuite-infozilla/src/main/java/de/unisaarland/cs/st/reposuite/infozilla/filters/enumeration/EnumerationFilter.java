@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.reposuite.infozilla.model.itemization.Itemization;
 import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;
 import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaSettings;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class EnumerationFilter extends InfozillaFilter {
 	

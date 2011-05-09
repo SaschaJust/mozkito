@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.jdom.Element;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -37,7 +39,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class BugzillaTrackerTest {
 	

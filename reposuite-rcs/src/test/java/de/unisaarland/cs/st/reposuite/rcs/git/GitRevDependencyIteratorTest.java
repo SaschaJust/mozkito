@@ -12,6 +12,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,7 +22,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 
 public class GitRevDependencyIteratorTest {
