@@ -1,36 +1,25 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite.mapping.engines;
+package de.unisaarland.cs.st.reposuite.mapping.splitters;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public abstract class MappingEngine {
+public abstract class MappingSplitter {
 	
-	private MappingSettings                                            settings;
-	private boolean                                                    registered  = false;
-	private boolean                                                    initialized = false;
-	private final Map<Class<? extends MappingStorage>, MappingStorage> storages    = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
-	
-	public MappingEngine() {
-		
-	}
+	private MappingSettings settings;
+	private boolean         initialized;
+	private boolean         registered;
 	
 	/**
 	 * @return
@@ -52,19 +41,10 @@ public abstract class MappingEngine {
 	}
 	
 	/**
-	 * @param key
-	 * @return
-	 */
-	@SuppressWarnings ("unchecked")
-	public <T extends MappingStorage> T getStorage(final Class<T> key) {
-		return (T) this.storages.get(key);
-	}
-	
-	/**
 	 * 
 	 */
 	public void init() {
-		Condition.check(isRegistered(), "The engine has to be registered before it is initialized. Engine: %s",
+		Condition.check(isRegistered(), "The splitter has to be registered before it is initialized. Engine: %s",
 		                this.getClass().getSimpleName());
 		setInitialized(true);
 	}
@@ -83,21 +63,7 @@ public abstract class MappingEngine {
 		return this.registered;
 	}
 	
-	/**
-	 * @param storage
-	 */
-	public void provideStorage(final MappingStorage storage) {
-		this.storages.put(storage.getClass(), storage);
-	}
-	
-	/**
-	 * @param storages
-	 */
-	public void provideStorages(final Set<? extends MappingStorage> storages) {
-		for (MappingStorage storage : storages) {
-			this.storages.put(storage.getClass(), storage);
-		}
-	}
+	public abstract List<Annotated> process();
 	
 	/**
 	 * @param settings
@@ -111,16 +77,6 @@ public abstract class MappingEngine {
 		setSettings(settings);
 		setRegistered(true);
 	}
-	
-	/**
-	 * @param transaction
-	 * @param report
-	 * @param score
-	 */
-	@NoneNull
-	public abstract void score(final RCSTransaction transaction,
-	                           final Report report,
-	                           final MapScore score);
 	
 	/**
 	 * @param initialized the initialized to set
@@ -143,13 +99,6 @@ public abstract class MappingEngine {
 		this.settings = settings;
 	}
 	
-	/**
-	 * @return
-	 */
-	public Set<Class<? extends MappingStorage>> storageDependency() {
-		return new HashSet<Class<? extends MappingStorage>>();
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -157,12 +106,12 @@ public abstract class MappingEngine {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("MappingEngine [class=");
-		builder.append(this.getClass().getSimpleName());
-		builder.append("registered=");
-		builder.append(this.registered);
+		builder.append("MappingSplitter [settings=");
+		builder.append(this.settings);
 		builder.append(", initialized=");
 		builder.append(this.initialized);
+		builder.append(", registered=");
+		builder.append(this.registered);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -174,5 +123,4 @@ public abstract class MappingEngine {
 	protected String truncate(final String string) {
 		return string.substring(0, Math.min(string.length() - 1, 254));
 	}
-	
 }

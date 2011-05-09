@@ -35,7 +35,7 @@ import net.ownhero.dev.ioda.FileUtils;
  * 
  */
 @Entity
-public class RCSFile2Bugs implements Annotated, Displayable {
+public class Class2Bugs implements Annotated, Displayable {
 	
 	/**
 	 * 
@@ -70,8 +70,8 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	/**
 	 * @return
 	 */
-	public static List<RCSFile2Bugs> getBugCounts() {
-		List<RCSFile2Bugs> ret = new LinkedList<RCSFile2Bugs>();
+	public static List<Class2Bugs> getBugCounts() {
+		List<Class2Bugs> ret = new LinkedList<Class2Bugs>();
 		PersistenceUtil util;
 		try {
 			util = PersistenceManager.getUtil();
@@ -90,7 +90,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 				
 				if (tmp != fileid) {
 					if (!reports.isEmpty()) {
-						ret.add(new RCSFile2Bugs(file, reports));
+						ret.add(new Class2Bugs(file, reports));
 						reports.clear();
 					}
 					
@@ -104,7 +104,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 			}
 			
 			if (!reports.isEmpty()) {
-				ret.add(new RCSFile2Bugs(file, reports));
+				ret.add(new Class2Bugs(file, reports));
 				reports.clear();
 			}
 		} catch (UninitializedDatabaseException e) {
@@ -118,7 +118,7 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 	 * @param file
 	 * @param reports
 	 */
-	public RCSFile2Bugs(final RCSFile file, final Set<Report> reports) {
+	public Class2Bugs(final RCSFile file, final Set<Report> reports) {
 		setFile(file);
 		setReports(reports);
 	}
@@ -135,10 +135,10 @@ public class RCSFile2Bugs implements Annotated, Displayable {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof RCSFile2Bugs)) {
+		if (!(obj instanceof Class2Bugs)) {
 			return false;
 		}
-		RCSFile2Bugs other = (RCSFile2Bugs) obj;
+		Class2Bugs other = (Class2Bugs) obj;
 		if (this.file == null) {
 			if (other.file != null) {
 				return false;
