@@ -5,13 +5,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class GitLogParserTest {
 	

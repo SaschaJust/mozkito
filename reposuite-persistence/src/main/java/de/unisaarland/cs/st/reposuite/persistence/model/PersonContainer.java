@@ -88,7 +88,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	protected Map<String, Person> getMap() {
-		return map;
+		return this.map;
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public void replace(final Person from,
 	                    final Person to) {
 		for (String key : getMap().keySet()) {
-			if (getMap().get(key).equals(from)) {
+			if (getMap().get(key).getGeneratedId() == from.getGeneratedId()) {
 				getMap().put(key, to);
 			}
 		}

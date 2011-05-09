@@ -12,22 +12,26 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class AuthorEngine extends MappingEngine {
+public class AuthorEqualityEngine extends MappingEngine {
 	
 	private double scoreAuthorEquality = 0.2d;
-	private double scoreAuthorInequality;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
+	 * ()
+	 */
 	@Override
 	public String getDescription() {
-		return "Scores according to the equality of committer and person who closes the bug (equal: "
-		        + getScoreAuthorEquality() + "/unequal: " + getScoreAuthorInequality() + ")";
+		return "Scores according to the equality of committer and person who closes the bug (at some time in the history).";
 	}
 	
 	/**
@@ -35,13 +39,6 @@ public class AuthorEngine extends MappingEngine {
 	 */
 	private double getScoreAuthorEquality() {
 		return this.scoreAuthorEquality;
-	}
-	
-	/**
-	 * @return the scoreAuthorInequality
-	 */
-	private double getScoreAuthorInequality() {
-		return this.scoreAuthorInequality;
 	}
 	
 	/*
@@ -52,7 +49,6 @@ public class AuthorEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		setScoreAuthorEquality((Double) getSettings().getSetting("mapping.score.AuthorEquality").getValue());
-		setScoreAuthorInequality((Double) getSettings().getSetting("mapping.score.AuthorInequality").getValue());
 	}
 	
 	/*
@@ -71,9 +67,6 @@ public class AuthorEngine extends MappingEngine {
 		arguments.addArgument(new DoubleArgument(settings, "mapping.score.AuthorEquality",
 		                                         "Score for equal authors in transaction and report comments.", "0.2",
 		                                         isRequired));
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.AuthorInequality",
-		                                         "Score for not equal authors in transaction and report comments.",
-		                                         "-0.8", isRequired));
 	}
 	
 	/*
@@ -90,8 +83,6 @@ public class AuthorEngine extends MappingEngine {
 	                  final Report report,
 	                  final MapScore score) {
 		double value = 0d;
-		boolean resolved = false;
-		
 		if (Logger.logDebug()) {
 			Logger.debug("Looking up changes in resolution for report " + report.getId() + ".");
 		}
@@ -107,8 +98,6 @@ public class AuthorEngine extends MappingEngine {
 					if (Logger.logDebug()) {
 						Logger.debug("Found history entry that marks the report as " + Resolution.RESOLVED.name() + ".");
 					}
-					
-					resolved = true;
 					
 					if (element.getAuthor().equals(transaction.getAuthor())) {
 						value += getScoreAuthorEquality();
@@ -126,12 +115,6 @@ public class AuthorEngine extends MappingEngine {
 			}
 		}
 		
-		// in case the report was marked as resolved but not by the same author
-		// score inquality
-		if (resolved && (Double.compare(value, 0d) == 0)) {
-			value += getScoreAuthorInequality();
-		}
-		
 		score.addFeature(value, "author", transaction.getAuthor().toString(), "author",
 		                 report.getResolver() != null
 		                                             ? report.getResolver().toString()
@@ -143,13 +126,6 @@ public class AuthorEngine extends MappingEngine {
 	 */
 	private void setScoreAuthorEquality(final double scoreAuthorEquality) {
 		this.scoreAuthorEquality = scoreAuthorEquality;
-	}
-	
-	/**
-	 * @param scoreAuthorInequality the scoreAuthorInequality to set
-	 */
-	private void setScoreAuthorInequality(final double scoreAuthorInequality) {
-		this.scoreAuthorInequality = scoreAuthorInequality;
 	}
 	
 }

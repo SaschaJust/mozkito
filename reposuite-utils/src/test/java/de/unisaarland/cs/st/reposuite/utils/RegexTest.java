@@ -10,6 +10,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -22,12 +22,12 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.Matches;
 import net.ownhero.dev.kanuni.annotations.string.Trimmed;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

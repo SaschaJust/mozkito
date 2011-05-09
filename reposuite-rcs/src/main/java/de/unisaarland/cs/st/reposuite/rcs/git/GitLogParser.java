@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 
@@ -13,9 +15,7 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class GitLogParser.

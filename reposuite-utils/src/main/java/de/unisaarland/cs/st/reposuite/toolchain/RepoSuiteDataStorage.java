@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.Tuple;
 
 /**
@@ -57,7 +57,7 @@ public class RepoSuiteDataStorage<E> {
 	 * 
 	 * @return the num readers
 	 */
-	public int getNumReaders(){
+	public int getNumReaders() {
 		return this.readers.size();
 	}
 	
@@ -106,7 +106,7 @@ public class RepoSuiteDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void registerInput(@NotNull("Registering null objects is not allowed.") final RepoSuiteGeneralThread<?, E> writerThread) {
+	public void registerInput(@NotNull ("Registering null objects is not allowed.") final RepoSuiteGeneralThread<?, E> writerThread) {
 		if (Logger.logInfo()) {
 			Logger.info("Registering input " + ((RepoSuiteThread<?, E>) writerThread).getName());
 		}

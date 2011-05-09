@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -34,8 +37,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnsupportedProtocolException;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.utils.DateTimeUtils;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
 
 public class SourceforgeTrackerTest {
 	

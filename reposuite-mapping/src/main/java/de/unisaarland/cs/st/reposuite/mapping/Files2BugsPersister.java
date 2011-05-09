@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSFile2Bugs;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -15,7 +14,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
+public class Files2BugsPersister extends RepoSuiteSinkThread<RCSFile2Bugs> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -24,16 +23,12 @@ public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
 	 * @param name
 	 * @param settings
 	 */
-	public MappingPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public Files2BugsPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil) {
-		super(threadGroup, MappingPersister.class.getSimpleName(), settings);
+		super(threadGroup, ScoringPersister.class.getSimpleName(), settings);
 		this.persistenceUtil = persistenceUtil;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
 	@Override
 	public void run() {
 		try {
@@ -45,13 +40,13 @@ public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			RCSBugMapping mapping;
+			RCSFile2Bugs files2Bugs;
 			this.persistenceUtil.beginTransaction();
 			int i = 0;
 			
-			while (!isShutdown() && ((mapping = read()) != null)) {
+			while (!isShutdown() && ((files2Bugs = read()) != null)) {
 				if (Logger.logDebug()) {
-					Logger.debug("Storing " + mapping);
+					Logger.debug("Storing " + files2Bugs);
 				}
 				
 				if (++i % 50 == 0) {
@@ -59,12 +54,10 @@ public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
 					this.persistenceUtil.beginTransaction();
 				}
 				
-				this.persistenceUtil.save(mapping);
-				
+				this.persistenceUtil.save(files2Bugs);
 			}
 			this.persistenceUtil.commitTransaction();
-			
-			RCSFile2Bugs.getBugCounts();
+			this.persistenceUtil.shutdown();
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {

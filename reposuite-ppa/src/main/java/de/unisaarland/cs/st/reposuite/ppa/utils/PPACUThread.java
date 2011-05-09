@@ -13,7 +13,7 @@ import org.eclipse.jdt.core.dom.PPATypeRegistry;
 import org.eclipse.jdt.internal.core.JavaProject;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class PPACUThread.

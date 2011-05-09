@@ -3,13 +3,14 @@ package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.unisaarland.cs.st.reposuite.utils.Logger;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
-import de.unisaarland.cs.st.reposuite.utils.RegexGroup;
+import net.ownhero.dev.kisa.Logger;
 
 public class JiraIDExtractor extends DefaultHandler {
 	

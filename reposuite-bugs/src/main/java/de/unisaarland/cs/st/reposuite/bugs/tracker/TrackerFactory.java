@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.reposuite.bugs.exceptions.UnregisteredTrackerTypeExc
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.WrongClassSearchMethodException;
 import de.unisaarland.cs.st.reposuite.utils.ClassFinder;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -16,6 +16,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
+import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 
@@ -31,9 +32,8 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 import de.unisaarland.cs.st.reposuite.utils.FileUtils;
 import de.unisaarland.cs.st.reposuite.utils.IOUtils;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.utils.RawContent;
-import de.unisaarland.cs.st.reposuite.utils.Regex;
 
 /**
  * {@link Tracker} is the super class all BTS classes have to extend. The

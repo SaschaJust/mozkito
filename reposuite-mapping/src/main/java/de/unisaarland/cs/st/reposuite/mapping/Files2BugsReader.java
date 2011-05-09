@@ -1,14 +1,13 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.reposuite;
+package de.unisaarland.cs.st.reposuite.mapping;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.mapping.model.RCSFile2Bugs;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import net.ownhero.dev.kisa.Logger;
@@ -17,19 +16,16 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class GraphReader extends RepoSuiteSourceThread<RCSTransaction> {
-	
-	private final PersistenceUtil persistenceUtil;
+public class Files2BugsReader extends RepoSuiteSourceThread<RCSFile2Bugs> {
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
 	 */
-	public GraphReader(final RepoSuiteThreadGroup threadGroup, final RepositorySettings settings,
+	public Files2BugsReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil) {
-		super(threadGroup, RepositoryPersister.class.getSimpleName(), settings);
-		this.persistenceUtil = persistenceUtil;
+		super(threadGroup, ScoringPersister.class.getSimpleName(), settings);
 	}
 	
 	@Override
@@ -44,15 +40,14 @@ public class GraphReader extends RepoSuiteSourceThread<RCSTransaction> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-			List<RCSTransaction> list = this.persistenceUtil.load(criteria);
+			List<RCSFile2Bugs> list = RCSFile2Bugs.getBugCounts();
 			
-			for (RCSTransaction transaction : list) {
+			for (RCSFile2Bugs file2Bugs : list) {
 				if (Logger.logDebug()) {
-					Logger.debug("Providing " + transaction + ".");
+					Logger.debug("Providing " + file2Bugs + ".");
 				}
 				
-				write(transaction);
+				write(file2Bugs);
 			}
 			
 			finish();
@@ -63,5 +58,4 @@ public class GraphReader extends RepoSuiteSourceThread<RCSTransaction> {
 			shutdown();
 		}
 	}
-	
 }

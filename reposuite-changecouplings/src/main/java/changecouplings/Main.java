@@ -4,7 +4,7 @@
 package changecouplings;
 
 import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplings;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import de.unisaarland.cs.st.reposuite.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -53,6 +53,10 @@ public class PersonsReader extends RepoSuiteSourceThread<PersonContainer> {
 			PersonContainer personContainer;
 			Criteria<PersonContainer> criteria = this.persistenceUtil.createCriteria(PersonContainer.class);
 			List<PersonContainer> containerList = this.persistenceUtil.load(criteria);
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Analyzing " + containerList.size() + " person containers.");
+			}
 			ListIterator<PersonContainer> iterator = containerList.listIterator();
 			
 			while (!isShutdown() && iterator.hasNext() && ((personContainer = iterator.next()) != null)) {
