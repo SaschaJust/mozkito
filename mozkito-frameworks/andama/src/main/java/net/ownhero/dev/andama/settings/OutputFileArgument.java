@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.utils.Logger;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class FileArgument.

@@ -1,38 +1,37 @@
 /**
  * 
  */
-package net.ownhero.dev.andama.model;
+package net.ownhero.dev.andama.threads;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
-import net.ownhero.dev.andama.utils.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.checks.Check;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * {@link AndamaThread}s are the edges of a {@link AndamaChain} graph,
- * connecting the {@link AndamaDataStorage} nodes. An example for such a
- * toolchain would look like this: {@link RepositoryReader} &rarr;
- * {@link RepositoryAnalyzer} &rarr; {@link RepositoryParser} &rarr;
- * {@link RepositoryPersister}.
+ * connecting the {@link AndamaDataStorage} nodes. 
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  * @param <K>
  * @param <V>
  */
+// TODO make package protected
 public abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V> {
 	
 	private final Logger                                      logger         = LoggerFactory.getLogger(this.getClass());
@@ -48,6 +47,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	private AndamaDataStorage<V>                              outputStorage;
 	private final AndamaSettings                              settings;
 	private boolean                                           parallelizable = false;
+	private K                                                 inputData;
+	
+	private V                                                 outputData;
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called
@@ -300,6 +302,13 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		return this.getClass().getSimpleName();
 	}
 	
+	/**
+	 * @return the inputData
+	 */
+	public K getInputData() {
+		return this.inputData;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -323,6 +332,13 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		}
 		
 		return list;
+	}
+	
+	/**
+	 * @return the outputData
+	 */
+	public V getOutputData() {
+		return this.outputData;
 	}
 	
 	/*
@@ -460,6 +476,11 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		}
 	}
 	
+	private K readInputData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/**
 	 * @return the next chunk from the inputStorage. Will be null if there isn't
 	 *         any input left and no writers are attached to the storage
@@ -475,7 +496,44 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
-	public abstract void run();
+	public final void run() {
+		try {
+			// TODO log
+			beforeExecution();
+			// TODO log
+			
+			if (!checkConnections() || !checkNotShutdown()) {
+				return;
+			}
+			
+			while (!isShutdown() && ((this.inputData = readInputData()) != null)) {
+				// TODO log
+				beforeProcess();
+				// TODO log
+				this.outputData = process(getInputData());
+				// TODO log
+				writeOutputData(getOutputData());
+				// TODO log
+				afterProcess();
+				// TODO log
+			}
+			
+			// TODO log
+			afterExecution();
+			// TODO log
+			finish();
+		} catch (Exception e) {
+			// TODO log
+			shutdown();
+		}
+	}
+	
+	/**
+	 * @param inputData the inputData to set
+	 */
+	public void setInputData(final K inputData) {
+		this.inputData = inputData;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -489,6 +547,13 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			this.inputStorage = storage;
 			storage.registerOutput(this);
 		}
+	}
+	
+	/**
+	 * @param outputData the outputData to set
+	 */
+	public void setOutputData(final V outputData) {
+		this.outputData = outputData;
 	}
 	
 	/*
@@ -585,6 +650,11 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		}
 		
 		return this.outputStorage.write(data);
+	}
+	
+	private void writeOutputData(final V outputData2) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

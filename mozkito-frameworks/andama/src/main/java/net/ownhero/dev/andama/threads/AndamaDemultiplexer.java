@@ -3,8 +3,6 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.model.AndamaGroup;
-import net.ownhero.dev.andama.model.AndamaThread;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**

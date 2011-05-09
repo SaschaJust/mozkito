@@ -4,6 +4,7 @@
 package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.threads.AndamaThread;
 
 /**
  * The {@link AndamaChain} is a wrapper to a tool chain consisting of

@@ -1,11 +1,13 @@
 /**
  * 
  */
-package net.ownhero.dev.andama.model;
+package net.ownhero.dev.andama.threads;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.model.AndamaCrashHandler;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 import org.slf4j.Logger;

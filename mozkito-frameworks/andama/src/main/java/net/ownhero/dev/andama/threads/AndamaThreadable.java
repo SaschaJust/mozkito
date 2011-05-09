@@ -1,7 +1,8 @@
-package net.ownhero.dev.andama.model;
+package net.ownhero.dev.andama.threads;
 
 import java.util.Collection;
 
+import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 
 /**
@@ -13,6 +14,14 @@ import net.ownhero.dev.andama.storages.AndamaDataStorage;
  * @param <V>
  */
 public interface AndamaThreadable<K, V> {
+	
+	public void afterExecution();
+	
+	public void afterProcess();
+	
+	public void beforeExecution();
+	
+	public void beforeProcess();
 	
 	/**
 	 * @return true if there are no glitches found in the connector setup.
@@ -129,6 +138,8 @@ public interface AndamaThreadable<K, V> {
 	 *         can also be called internally, after an error occured.
 	 */
 	public boolean isShutdown();
+	
+	public V process(K data);
 	
 	/**
 	 * Sets the input storage of the object. In case

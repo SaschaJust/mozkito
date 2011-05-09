@@ -10,10 +10,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaThread;
-import net.ownhero.dev.andama.model.AndamaThreadable;
-import net.ownhero.dev.andama.utils.Tuple;
+import net.ownhero.dev.andama.threads.AndamaThread;
+import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

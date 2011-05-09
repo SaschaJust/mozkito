@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.model.AndamaGroup;
-import net.ownhero.dev.andama.model.AndamaThread;
-import net.ownhero.dev.andama.model.AndamaThreadable;
-import net.ownhero.dev.andama.utils.Logger;
-import net.ownhero.dev.andama.utils.Tuple;
+import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaThread;
+import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.kisa.Tuple;
 
 import org.kohsuke.graphviz.Edge;
 import org.kohsuke.graphviz.Graph;

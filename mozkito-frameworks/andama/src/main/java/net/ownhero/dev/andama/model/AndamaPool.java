@@ -14,11 +14,13 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.threads.AndamaFilter;
+import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.utils.AndamaUtils;
-import net.ownhero.dev.andama.utils.Tuple;
+import net.ownhero.dev.kisa.Tuple;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;

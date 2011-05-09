@@ -2,8 +2,8 @@ package net.ownhero.dev.andama.settings;
 
 import java.net.URL;
 
-import net.ownhero.dev.andama.utils.LogLevel;
-import net.ownhero.dev.andama.utils.Logger;
+import net.ownhero.dev.kisa.LogLevel;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
