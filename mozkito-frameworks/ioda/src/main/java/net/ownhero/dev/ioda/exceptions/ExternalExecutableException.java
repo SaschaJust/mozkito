@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ownhero.dev.ioda;
+package net.ownhero.dev.ioda.exceptions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

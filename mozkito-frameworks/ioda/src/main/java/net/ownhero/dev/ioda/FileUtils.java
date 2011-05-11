@@ -20,6 +20,7 @@ import java.util.zip.ZipInputStream;
 
 import lzma.sdk.lzma.Decoder;
 import lzma.streams.LzmaInputStream;
+import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
