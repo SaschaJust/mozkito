@@ -67,6 +67,40 @@ public class Logger {
 		}
 	}
 	
+	private static class Tuple<K, M> {
+		
+		private final K first;
+		private final M second;
+		
+		public Tuple(final K f, final M s) {
+			this.first = f;
+			this.second = s;
+		}
+		
+		/**
+		 * @return the first
+		 */
+		public K getFirst() {
+			return this.first;
+		}
+		
+		/**
+		 * @return the second
+		 */
+		public M getSecond() {
+			return this.second;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "Tuple [first=" + this.first + ", second=" + this.second + "]";
+		}
+	}
+	
 	private static LogLevel logLevel = LogLevel.WARN;
 	
 	private static boolean  debug    = false;
