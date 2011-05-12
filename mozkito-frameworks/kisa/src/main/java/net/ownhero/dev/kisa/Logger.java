@@ -5,13 +5,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.EnhancedPatternLayout;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.varia.LevelRangeFilter;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -47,14 +56,14 @@ public class Logger {
 		@Override
 		public void close() throws IOException {
 			super.close();
-			this.latch.countDown();
+			latch.countDown();
 		}
 		
 		/**
 		 * @return
 		 */
 		public CountDownLatch latch() {
-			return this.latch;
+			return latch;
 		}
 	}
 	
@@ -63,12 +72,74 @@ public class Logger {
 	private static boolean  debug    = false;
 	
 	static {
-		setLogLevel(LogLevel.valueOf(System.getProperty("log.level", "WARN").toUpperCase()));
 		// FIXME what if we do not use log4j?
-		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(getLogLevel().toString()));
+		
+		LogLevel maxLevel = null;
+		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
+		
+		// CONSOLE APPENDER
+		ConsoleAppender consoleAppender = new ConsoleAppender();
+		consoleAppender.setLayout(layout);
+		LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
+		// set levels and minLevel
+		LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO"));
+		consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
+			maxLevel = consoleLevel;
+		}
+		
+		consoleAppender.addFilter(consoleLevelRangeFilter);
+		consoleAppender.activateOptions();
+		org.apache.log4j.Logger.getRootLogger().addAppender(consoleAppender);
+		
+		// FILE APPENDER
+		long timestamp = new java.util.Date().getTime();
+		String logFileName = System.getProperty("log.file", timestamp + ".log");
+		FileAppender fileAppender = new RollingFileAppender();
+		fileAppender.setLayout(layout);
+		LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
+		// set levels and minLevel
+		LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO"));
+		fileLevelRangeFilter.setLevelMin(Level.toLevel(fileLevel.toString()));
+		if ((maxLevel == null) || (fileLevel.compareTo(maxLevel) > 0)) {
+			maxLevel = fileLevel;
+		}
+		
+		fileAppender.setFile(logFileName);
+		fileAppender.addFilter(fileLevelRangeFilter);
+		fileAppender.activateOptions();
+		org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+		
+		for (Entry<Object, Object> prop : System.getProperties().entrySet()) {
+			if (prop.getKey().toString().startsWith("log.class.")) {
+				String className = prop.getKey().toString().substring(10);
+				String[] values = prop.getValue().toString().split(",");
+				Condition.check(values.length < 3, "log.class. arguments can have two options at most.");
+				Condition.check(values.length > 0, "log.class. arguments must have at least a log level specified.");
+				org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
+				LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
+				classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
+				if (values.length > 1) {
+					FileAppender classFileAppender = new RollingFileAppender();
+					classFileAppender.setFile(values[1]);
+					classFileAppender.setLayout(layout);
+					classFileAppender.activateOptions();
+					classLogger.addAppender(classFileAppender);
+				}
+				// set maxLevel
+				if ((maxLevel == null) || (classLogLevel.compareTo(maxLevel) > 0)) {
+					maxLevel = classLogLevel;
+				}
+			}
+		}
+		
+		setLogLevel(maxLevel);
+		
+		// org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(getLogLevel().toString()));
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
 			Logger.debug = true;
 		}
+		
 	}
 	
 	/**
@@ -600,6 +671,12 @@ public class Logger {
 		Condition.notNull(logger, "Requested logger must never be null.");
 		
 		return new Tuple<org.slf4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
+	}
+	
+	protected static void testDebug() {
+		if (Logger.logDebug()) {
+			Logger.debug("This is a test debug message");
+		}
 	}
 	
 	/**
