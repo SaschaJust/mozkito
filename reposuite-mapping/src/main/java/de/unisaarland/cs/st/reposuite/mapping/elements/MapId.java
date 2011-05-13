@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.mapping;
+package de.unisaarland.cs.st.reposuite.mapping.elements;
 
 public class MapId {
 	

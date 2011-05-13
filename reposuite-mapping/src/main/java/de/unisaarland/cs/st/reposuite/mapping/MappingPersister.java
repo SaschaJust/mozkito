@@ -4,7 +4,7 @@
 package de.unisaarland.cs.st.reposuite.mapping;
 
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSFile2Bugs;
+import de.unisaarland.cs.st.reposuite.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
@@ -64,7 +64,7 @@ public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
 			}
 			this.persistenceUtil.commitTransaction();
 			
-			RCSFile2Bugs.getBugCounts();
+			File2Bugs.getBugCounts();
 			finish();
 		} catch (Exception e) {
 			if (Logger.logError()) {

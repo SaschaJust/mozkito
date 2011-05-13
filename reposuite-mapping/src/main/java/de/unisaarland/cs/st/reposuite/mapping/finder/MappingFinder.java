@@ -5,22 +5,26 @@ package de.unisaarland.cs.st.reposuite.mapping.finder;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
+import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -43,11 +47,9 @@ public class MappingFinder {
 					MappingStorage storage = key.newInstance();
 					this.storages.put(key, storage);
 				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new UnrecoverableError(e.getMessage(), e);
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
 			engine.provideStorage(this.storages.get(key));
@@ -59,6 +61,15 @@ public class MappingFinder {
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
 		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
+	}
+	
+	/**
+	 * @param mapping
+	 * @return
+	 */
+	public FilteredMapping filter(final RCSBugMapping mapping) {
+		// TODO
+		return null;
 	}
 	
 	/**
@@ -126,6 +137,13 @@ public class MappingFinder {
 			mappingEngine.score(transaction, report, score);
 		}
 		return score;
+	}
+	
+	/**
+	 * @return
+	 */
+	public List<Annotated> split() {
+		return new LinkedList<Annotated>();
 	}
 	
 }
