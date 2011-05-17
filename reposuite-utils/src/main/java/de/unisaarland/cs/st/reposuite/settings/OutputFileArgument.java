@@ -36,9 +36,6 @@ public class OutputFileArgument extends RepoSuiteArgument {
 	 *            Set to <code>true</code> if you want the RepoSuite tool to
 	 *            attempt overwriting the file located at given path if
 	 *            possible.
-	 * @param mustExist
-	 *            Set to true if you want to ensure that the file at given
-	 *            location must already exist.
 	 */
 	public OutputFileArgument(final RepoSuiteSettings settings, final String name, final String description,
 	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
@@ -54,35 +51,35 @@ public class OutputFileArgument extends RepoSuiteArgument {
 	public File getValue() {
 		// FIME seprate input and output files. Fix the mustExist and overwrite
 		// conbinations!
-		if (this.stringValue == null) {
+		if (stringValue == null) {
 			return null;
 		}
-		File file = new File(this.stringValue.trim());
+		File file = new File(stringValue.trim());
 		
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is a directory. Expected file. Abort.");
+				             + "` is a directory. Expected file. Abort.");
 			}
 			throw new Shutdown();
 		}
-		if (file.exists() && (!this.overwrite) && (!this.selfWritten)) {
+		if (file.exists() && (!this.overwrite) && (!selfWritten)) {
 			if (this.isRequired()) {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already. Please remove file or choose different argument value.");
+					             + "` exists already. Please remove file or choose different argument value.");
 				}
 				throw new Shutdown();
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already and cannot be overwritten. Ignoring argument!.");
+					            + "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
 				return null;
 			}
 			
-		} else if (file.exists() && (this.overwrite)) {
+		} else if (file.exists() && (overwrite)) {
 			
 			if (Logger.logDebug()) {
 				if (Logger.logDebug()) {
@@ -117,7 +114,7 @@ public class OutputFileArgument extends RepoSuiteArgument {
 					if (Logger.logError()) {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					if (this.isRequired()) {
+					if(this.isRequired()){
 						throw new Shutdown();
 					} else {
 						return null;
@@ -128,7 +125,7 @@ public class OutputFileArgument extends RepoSuiteArgument {
 					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					Logger.error(e.getMessage());
 				}
-				if (this.isRequired()) {
+				if(this.isRequired()){
 					throw new Shutdown();
 				} else {
 					return null;
