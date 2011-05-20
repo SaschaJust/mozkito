@@ -357,12 +357,12 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public RCSTransaction getChild(final RCSBranch branch) {
-		if (branch.getEnd().equals(this)) {
-			return this.getChildren().isEmpty()
-			                                   ? null
-			                                   : this.getChildren().iterator().next();
+		if ((branch.getEnd() != null) && (branch.getEnd().equals(this))) {
+			return getChildren().isEmpty()
+			                              ? null
+			                              : getChildren().iterator().next();
 		} else {
-			return (RCSTransaction) CollectionUtils.find(this.getChildren(), new Predicate() {
+			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
