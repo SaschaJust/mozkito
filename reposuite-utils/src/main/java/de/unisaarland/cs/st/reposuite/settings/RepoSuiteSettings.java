@@ -14,10 +14,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -42,7 +42,7 @@ public class RepoSuiteSettings {
 		noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false", false);
 		helpArg = new BooleanArgument(this, "help", "Shows this help menu.", "false", false);
 		disableCrashArg = new BooleanArgument(this, "disableCrashEmail",
-		                                      "If set to `true` no crash emails will be send!", "false", false);
+		                                      "If set to `true` no crash emails will be send!", null, false);
 		settingsArg = new URIArgument(
 		                              this,
 		                              "repoSuiteSettings",
