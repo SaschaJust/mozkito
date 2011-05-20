@@ -12,7 +12,6 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
@@ -20,6 +19,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.WriterAppender;
 import org.apache.log4j.varia.LevelRangeFilter;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +112,7 @@ public class Logger {
 		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
 		
 		// CONSOLE APPENDER
-		ConsoleAppender consoleAppender = new ConsoleAppender();
+		WriterAppender consoleAppender = new WriterAppender(layout, System.err);
 		consoleAppender.setLayout(layout);
 		LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 		// set levels and minLevel
@@ -127,8 +127,7 @@ public class Logger {
 		org.apache.log4j.Logger.getRootLogger().addAppender(consoleAppender);
 		
 		// FILE APPENDER
-		long timestamp = new java.util.Date().getTime();
-		String logFileName = System.getProperty("log.file", timestamp + ".log");
+		String logFileName = System.getProperty("log.file", ".log");
 		FileAppender fileAppender = new RollingFileAppender();
 		fileAppender.setLayout(layout);
 		LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();

@@ -30,11 +30,12 @@ public class LoggerTest {
 	@Before
 	public void setUp() throws Exception {
 		orgProperties = (Properties) System.getProperties().clone();
-		fileName = System.getProperty("java.io.tmpdir") + "testFileLog.log";
+		fileName = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "testFileLog.log";
 		logFile = new File(fileName);
-		stdoutFile = new File(System.getProperty("java.io.tmpdir") + "testLog.stdout");
-		orgStdOut = System.out;
-		System.setOut(new PrintStream(new FileOutputStream(stdoutFile)));
+		stdoutFile = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator")
+		        + "testLog.stdout");
+		orgStdOut = System.err;
+		System.setErr(new PrintStream(new FileOutputStream(stdoutFile)));
 		classLogFile = new File(System.getProperty("java.io.tmpdir") + "testClassLog.log");
 	}
 	
