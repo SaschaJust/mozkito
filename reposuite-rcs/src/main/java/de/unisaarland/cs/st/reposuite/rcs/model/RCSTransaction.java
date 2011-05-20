@@ -456,7 +456,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
 		return parents;
