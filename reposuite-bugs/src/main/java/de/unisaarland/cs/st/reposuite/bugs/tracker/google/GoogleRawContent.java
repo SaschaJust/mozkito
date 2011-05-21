@@ -47,7 +47,7 @@ public class GoogleRawContent extends XmlReport implements Storable {
 	private DateTime                 closeDate;
 	private final DateTime           editDate;
 	private final DateTime           updateDate;
-	private final GooglePerson       owner;
+	private GooglePerson             owner            = null;
 	private String                   type;
 	private String                   state            = "<unknown>";
 	private String                   status           = "<unknown>";
@@ -138,7 +138,10 @@ public class GoogleRawContent extends XmlReport implements Storable {
 			}
 		}
 		
-		owner = new GooglePerson(null, entry.getOwner().getUsername().getValue(), null);
+		if ((entry.getOwner() != null) && (entry.getOwner().getUsername() != null)) {
+			owner = new GooglePerson(null, entry.getOwner().getUsername().getValue(), null);
+		}
+		
 		if ((entry.getState() != null) && (entry.getState().getValue() != null)) {
 			state = entry.getState().getValue().toString();
 		}
