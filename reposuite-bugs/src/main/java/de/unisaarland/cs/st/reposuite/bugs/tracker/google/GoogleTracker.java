@@ -17,7 +17,6 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -60,12 +59,11 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  */
 public class GoogleTracker extends Tracker {
 	
-	protected static Regex        fetchRegex    = new Regex(
-	                                                        "https://code.google.com/feeds/issues/p/({project}\\S+)/issues/full");
+	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
 	private String                projectName;
 	private ProjectHostingService service;
 	
-	private static Person         unknownPerson = new Person("<unknown>", null, null);
+	private static Person         unknownPerson     = new Person("<unknown>", null, null);
 	
 	/*
 	 * (non-Javadoc)
@@ -117,7 +115,7 @@ public class GoogleTracker extends Tracker {
 			Long bugId = Long.valueOf(uri.toString());
 			IssuesQuery iQuery = new IssuesQuery(getUri().toURL());
 			iQuery.setId(bugId.intValue());
-			IssuesFeed resultFeed = this.service.query(iQuery, IssuesFeed.class);
+			IssuesFeed resultFeed = service.query(iQuery, IssuesFeed.class);
 			List<IssuesEntry> entries = resultFeed.getEntries();
 			
 			CollectionCondition.minSize(entries, 1, "There has to be at least one entry in the issue list.");
@@ -176,7 +174,7 @@ public class GoogleTracker extends Tracker {
 	 * @return the project name
 	 */
 	public String getProjectName() {
-		return this.projectName;
+		return projectName;
 	}
 	
 	/*
@@ -325,8 +323,8 @@ public class GoogleTracker extends Tracker {
 		
 		URL baseFeedUrl = null;
 		try {
-			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/"
-			        + report.getId() + "/comments/full?max-result=" + max_result);
+			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/" + report.getId()
+			        + "/comments/full?max-result=" + max_result);
 			
 		} catch (MalformedURLException e) {
 			if (Logger.logWarn()) {
@@ -564,22 +562,21 @@ public class GoogleTracker extends Tracker {
 	                  final String cacheDirPath) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
+		Regex fetchRegex = new Regex(fetchRegexPattern);
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
-		Condition.check(groups != null,
-		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
-		Condition.check(groups.size() == 2,
-		                "Google code fetch uri should have the following format: " + fetchRegex.getPattern());
-		CompareCondition.equals(groups.get(1).getName(), "project", "The name of the first group has to be 'project'.");
+		if ((groups == null) || (groups.size() < 2) || (fetchRegex.getGroup("project") == null)) {
+			throw new UnrecoverableError("The specified fetchUri cannot be parser (is invalid). Abort.");
+		}
 		
-		this.projectName = groups.get(1).getMatch();
+		projectName = fetchRegex.getGroup("project");
 		
 		try {
-			this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+			service = new ProjectHostingService("unisaarland-reposuite-0.1");
 			if ((username != null) && (password != null) && (!username.trim().equals(""))) {
-				this.service.setUserCredentials(username, password);
+				service.setUserCredentials(username, password);
 			}
 			
-			IssuesFeed resultFeed = this.service.getFeed(fetchURI.toURL(), IssuesFeed.class);
+			IssuesFeed resultFeed = service.getFeed(fetchURI.toURL(), IssuesFeed.class);
 			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 				IssuesEntry entry = resultFeed.getEntries().get(i);
 				long bugId = entry.getIssueId().getValue().longValue();
