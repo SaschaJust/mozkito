@@ -58,7 +58,6 @@
 		<module>reposuite-changecouplings</module>
 		<module>reposuite-ppa</module>
 		<module>reposuite-callgraph</module>
-		<module>reposuite-changeprediction</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
