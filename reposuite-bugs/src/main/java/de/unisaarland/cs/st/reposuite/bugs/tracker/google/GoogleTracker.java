@@ -115,6 +115,12 @@ public class GoogleTracker extends Tracker {
 			Long bugId = Long.valueOf(uri.toString());
 			IssuesQuery iQuery = new IssuesQuery(getUri().toURL());
 			iQuery.setId(bugId.intValue());
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Fetching RawReport form url: " + iQuery.getFeedUrl().toString()
+				        + iQuery.getQueryUri().toString());
+			}
+			
 			IssuesFeed resultFeed = service.query(iQuery, IssuesFeed.class);
 			List<IssuesEntry> entries = resultFeed.getEntries();
 			
@@ -122,8 +128,15 @@ public class GoogleTracker extends Tracker {
 			
 			IssuesEntry issuesEntry = entries.get(0);
 			
+			if (issuesEntry == null) {
+				if (Logger.logWarn()) {
+					Logger.warn("Skipping report #" + bugId + ". Feed returned no entries!");;
+				}
+				return null;
+			}
+			
 			byte[] digest = MessageDigest.getInstance("MD5").digest(issuesEntry.toString().getBytes());
-			return new GoogleRawContent(bugId, new DateTime(), entries.get(0), digest);
+			return new GoogleRawContent(bugId, new DateTime(), issuesEntry, digest);
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -560,7 +573,6 @@ public class GoogleTracker extends Tracker {
 	                  final Long startAt,
 	                  final Long stopAt,
 	                  final String cacheDirPath) throws InvalidParameterException {
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		Regex fetchRegex = new Regex(fetchRegexPattern);
 		List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
@@ -577,6 +589,7 @@ public class GoogleTracker extends Tracker {
 				throw new UnrecoverableError(e.getMessage(), e);
 			}
 		}
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		try {
 			service = new ProjectHostingService("unisaarland-reposuite-0.1");
