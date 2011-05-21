@@ -552,7 +552,7 @@ public class GoogleTracker extends Tracker {
 	 * java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI fetchURI,
+	public void setup(URI fetchURI,
 	                  final URI overviewURI,
 	                  final String pattern,
 	                  final String username,
@@ -569,6 +569,14 @@ public class GoogleTracker extends Tracker {
 		}
 		
 		projectName = fetchRegex.getGroup("project");
+		
+		if (!fetchURI.toString().contains("feeds/issues")) {
+			try {
+				fetchURI = new URI("https://code.google.com/feeds/issues/p/" + projectName + "/issues/full");
+			} catch (URISyntaxException e) {
+				throw new UnrecoverableError(e.getMessage(), e);
+			}
+		}
 		
 		try {
 			service = new ProjectHostingService("unisaarland-reposuite-0.1");
