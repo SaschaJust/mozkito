@@ -1,0 +1,18 @@
+database.name=reposuite_jruby_july2010
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/jruby/git_repo_03_07_2010/
+repository.type=GIT
+tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
+tracker.type=JIRA
+tracker.stop=5804
+#tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
+headless
+#mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
+#mapping.score.AuthorEquality=1
+#mapping.score.AuthorInequality=0
+#mapping.score.ReportCreatedAfterTransaction=1
+#mapping.score.ReportResolvedWithinWindow=1
+#mapping.window.ReportResolvedAfterTransaction=00d 00h 00m 00s,+03d 00h 00m 00s
+#mapping.strategies=MajorityStrategy

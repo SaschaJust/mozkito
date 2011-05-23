@@ -49,10 +49,6 @@ public class LoggerArguments extends RepoSuiteArgumentSet {
 		System.setProperty("log.class.openjpa.jdbc.SQL", "WARN");
 		System.setProperty("log.class.openjpa.jdbc.JDBC", "WARN");
 		System.setProperty("log.class.openjpa.jdbc.Schema", "WARN");
-		// this.logConfig = new InputFileArgument(settings, "log.config",
-		// "Configuration file for the logging engine",
-		// null, false);
-		
 	}
 	
 	/*

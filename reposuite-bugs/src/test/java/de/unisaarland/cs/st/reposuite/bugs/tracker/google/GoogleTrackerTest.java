@@ -69,10 +69,15 @@ public class GoogleTrackerTest {
 	@Test
 	public void testFetchRegex() {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
-		List<RegexGroup> groups = GoogleTracker.fetchRegex.find(fetchURI);
-		assertEquals(2, groups.size());
-		assertEquals("project", groups.get(1).getName());
-		assertEquals("webtoolkit", groups.get(1).getMatch());
+		Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
+		List<RegexGroup> groups = regex.find(fetchURI);
+		assertTrue(groups.size() > 1);
+		assertEquals("webtoolkit", regex.getGroup("project"));
+		
+		fetchURI = "http://code.google.com/p/google-web-toolkit/issues/list";
+		groups = regex.find(fetchURI);
+		assertTrue(groups.size() > 1);
+		assertEquals("google-web-toolkit", regex.getGroup("project"));
 	}
 	
 	@Test

@@ -47,6 +47,8 @@ public interface PersistenceUtil {
 	public <T, I> T loadById(final I id,
 	                         Class<T> clazz);
 	
+	public void rollbackTransaction();
+	
 	public void save(final Annotated object);
 	
 	public void saveOrUpdate(final Annotated object);

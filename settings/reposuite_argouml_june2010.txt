@@ -1,0 +1,7 @@
+database.name=reposuite_argouml_june2010
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/argoUML/git_repo_17_06_2010/
+repository.type=GIT
+headless

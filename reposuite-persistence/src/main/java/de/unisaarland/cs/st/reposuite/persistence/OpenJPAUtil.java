@@ -18,6 +18,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.Root;
 
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
@@ -33,8 +35,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -202,7 +202,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * 
 	 */
 	private OpenJPAUtil() {
-		this.entityManager = factory.createEntityManager();
+		entityManager = factory.createEntityManager();
 	}
 	
 	/*
@@ -213,7 +213,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public boolean activeTransaction() {
-		return this.entityManager.getTransaction().isActive();
+		return entityManager.getTransaction().isActive();
 	}
 	
 	/*
@@ -224,7 +224,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void beginTransaction() {
-		this.entityManager.getTransaction().begin();
+		entityManager.getTransaction().begin();
 	}
 	
 	/*
@@ -235,8 +235,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void commitTransaction() {
-		if (this.entityManager.getTransaction().isActive()) {
-			this.entityManager.getTransaction().commit();
+		if (entityManager.getTransaction().isActive()) {
+			entityManager.getTransaction().commit();
 		}
 	}
 	
@@ -263,7 +263,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public Query createQuery(final String query) {
-		return this.entityManager.createQuery(query);
+		return entityManager.createQuery(query);
 	}
 	
 	/*
@@ -274,7 +274,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void delete(final Annotated object) {
-		this.entityManager.remove(object);
+		entityManager.remove(object);
 	}
 	
 	/*
@@ -286,24 +286,36 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public void executeNativeQuery(final String queryString) {
 		try {
-			this.entityManager.getTransaction().begin();
-			OpenJPAEntityManager ojem = (OpenJPAEntityManager) this.entityManager;
+			entityManager.getTransaction().begin();
+			OpenJPAEntityManager ojem = (OpenJPAEntityManager) entityManager;
 			Connection conn = (Connection) ojem.getConnection();
 			Statement statement = conn.createStatement();
 			statement.executeUpdate(queryString);
 			statement.close();
-			this.entityManager.getTransaction().commit();
+			entityManager.getTransaction().commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			this.entityManager.getTransaction().rollback();
+			entityManager.getTransaction().rollback();
 		}
 	}
 	
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public List executeNativeSelectQuery(final String queryString) {
-		Query nativeQuery = this.entityManager.createNativeQuery(queryString);
+		Query nativeQuery = entityManager.createNativeQuery(queryString);
 		return nativeQuery.getResultList();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#executeQuery
+	 * (java.lang.String)
+	 */
+	@Override
+	public void executeQuery(final String queryString) {
+		Query query = entityManager.createQuery(queryString);
+		query.executeUpdate();
 	}
 	
 	// @Override
@@ -337,25 +349,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#executeQuery
-	 * (java.lang.String)
-	 */
-	@Override
-	public void executeQuery(final String queryString) {
-		Query query = this.entityManager.createQuery(queryString);
-		query.executeUpdate();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
 	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#exmerge(de
 	 * .unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public void exmerge(final Annotated object) {
-		this.entityManager.detach(object);
-		this.entityManager.merge(object);
+		entityManager.detach(object);
+		entityManager.merge(object);
 	}
 	
 	/*
@@ -364,7 +364,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void flush() {
-		this.entityManager.flush();
+		entityManager.flush();
 	}
 	
 	/*
@@ -431,7 +431,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria) {
-		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
+		TypedQuery<T> query = entityManager.createQuery(criteria.getQuery());
 		return query.getResultList();
 	}
 	
@@ -475,12 +475,25 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#commitTransaction
+	 * ()
+	 */
+	@Override
+	public void rollbackTransaction() {
+		if (entityManager.getTransaction().isActive()) {
+			entityManager.getTransaction().rollback();
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#save(de.
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public void save(final Annotated object) {
-		this.entityManager.persist(object);
+		entityManager.persist(object);
 	}
 	
 	/*
@@ -491,7 +504,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void saveOrUpdate(final Annotated object) {
-		if (this.entityManager.contains(object)) {
+		if (entityManager.contains(object)) {
 			update(object);
 		} else {
 			save(object);
@@ -505,8 +518,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void shutdown() {
-		if (this.entityManager.isOpen()) {
-			this.entityManager.close();
+		if (entityManager.isOpen()) {
+			entityManager.close();
 		}
 	}
 	
@@ -518,7 +531,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void update(final Annotated object) {
-		this.entityManager.merge(object);
+		entityManager.merge(object);
 	}
 	
 	/**

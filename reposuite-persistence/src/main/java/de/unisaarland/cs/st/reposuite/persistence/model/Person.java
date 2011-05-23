@@ -19,10 +19,8 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.string.Matches;
 import net.ownhero.dev.kanuni.annotations.string.Trimmed;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
@@ -148,7 +146,7 @@ public class Person implements Annotated {
 	 * @param email
 	 */
 	@Transient
-	public boolean addEmail(@Matches (pattern = Regex.emailPattern) @Trimmed final String email) {
+	public boolean addEmail(@Trimmed final String email) {
 		boolean ret = false;
 		if (email != null) {
 			Set<String> addresses = getEmailAddresses();
@@ -211,7 +209,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getEmailAddresses() {
-		return this.emailAddresses;
+		return emailAddresses;
 	}
 	
 	/**
@@ -219,7 +217,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getFullnames() {
-		return this.fullnames;
+		return fullnames;
 	}
 	
 	/**
@@ -230,7 +228,7 @@ public class Person implements Annotated {
 	@Column (name = "id")
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public long getGeneratedId() {
-		return this.generatedId;
+		return generatedId;
 	}
 	
 	/**
@@ -238,7 +236,7 @@ public class Person implements Annotated {
 	 */
 	@ElementCollection
 	public Set<String> getUsernames() {
-		return this.usernames;
+		return usernames;
 	}
 	
 	/*

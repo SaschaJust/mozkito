@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -48,7 +49,6 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.rcs.elements.PreviousTransactionIterator;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)}
@@ -133,11 +133,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
 	        final String originalId) {
-		this.setId(id);
-		this.setMessage(message);
-		this.setTimestamp(timestamp);
-		this.setAuthor(author);
-		this.setOriginalId(originalId);
+		setId(id);
+		setMessage(message);
+		setTimestamp(timestamp);
+		setAuthor(author);
+		setOriginalId(originalId);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -153,9 +153,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public boolean addAllTags(final Collection<String> tagNames) {
 		boolean ret = false;
-		Set<String> tags = this.getTags();
+		Set<String> tags = getTags();
 		ret = tags.addAll(tagNames);
-		this.setTags(tags);
+		setTags(tags);
 		return ret;
 	}
 	
@@ -167,10 +167,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this);
 		boolean ret = false;
 		
-		if (!this.getChildren().contains(rcsTransaction)) {
-			Set<RCSTransaction> children = this.getChildren();
+		if (!getChildren().contains(rcsTransaction)) {
+			Set<RCSTransaction> children = getChildren();
 			ret = children.add(rcsTransaction);
-			this.setChildren(children);
+			setChildren(children);
 		}
 		
 		return ret;
@@ -184,10 +184,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		CompareCondition.notEquals(parentTransaction, this, "a transaction may never be a parent of its own: %s", this);
 		boolean ret = false;
 		
-		if (!this.getParents().contains(parentTransaction)) {
-			Set<RCSTransaction> parents = this.getParents();
+		if (!getParents().contains(parentTransaction)) {
+			Set<RCSTransaction> parents = getParents();
 			ret = parents.add(parentTransaction);
-			this.setParents(parents);
+			setParents(parents);
 		}
 		
 		return ret;
@@ -203,9 +203,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	protected boolean addRevision(@NotNull final RCSRevision revision) {
-		Collection<RCSRevision> revisions = this.getRevisions();
+		Collection<RCSRevision> revisions = getRevisions();
 		boolean ret = revisions.add(revision);
-		this.setRevisions(revisions);
+		setRevisions(revisions);
 		return ret;
 	}
 	
@@ -218,9 +218,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public boolean addTag(@NotNull final String tagName) {
 		boolean ret = false;
-		Set<String> tags = this.getTags();
+		Set<String> tags = getTags();
 		tags.add(tagName);
-		this.setTags(tags);
+		setTags(tags);
 		return ret;
 	}
 	
@@ -234,43 +234,43 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			return 1;
 		}
 		
-		if (this.getBranch() == null) {
+		if (getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction should never be NULL");
 		}
 		if (transaction.getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("Comparing transactions: `" + this.getId() + "` and `" + transaction.getId() + "`");
+			Logger.debug("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
 		}
-		if (this.equals(transaction)) {
+		if (equals(transaction)) {
 			return 0;
-		} else if (this.getBranch().equals(transaction.getBranch())) {
-			if ((this.getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
+		} else if (getBranch().equals(transaction.getBranch())) {
+			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
 				
 				if (Logger.logWarn()) {
 					Logger.warn("Comparing transactions of uninitialized branches: start transaction is unknown");
 				}
 				return -1;
 			}
-			if (this.getBranch().getBegin().equals(this)) {
+			if (getBranch().getBegin().equals(this)) {
 				return -1;
-			} else if (this.getBranch().getBegin().equals(transaction)) {
+			} else if (getBranch().getBegin().equals(transaction)) {
 				return 1;
 			} else {
-				RCSTransaction cache = this.getParent(this.getBranch());
+				RCSTransaction cache = getParent(getBranch());
 				if (cache == null) {
 					return -1;
 				}
-				while (cache != this.getBranch().getBegin()) {
+				while (cache != getBranch().getBegin()) {
 					if (cache.equals(transaction)) {
 						return 1;
 					}
-					cache = cache.getParent(this.getBranch());
+					cache = cache.getParent(getBranch());
 				}
 				return -1;
 			}
-		} else if (this.getBranch().equals(RCSBranch.MASTER)) {
+		} else if (getBranch().equals(RCSBranch.MASTER)) {
 			if (Logger.logDebug()) {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
@@ -278,17 +278,17 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
-			int subresult = this.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 			if (subresult >= 0) {
 				return 1;
 			} else {
 				return -1;
 			}
 		} else if (transaction.getBranch().equals(RCSBranch.MASTER)) {
-			if ((this.getBranch().getEnd() == null) || (this.getBranch().getEnd().getChild(this.getBranch()) == null)) {
+			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			}
-			int sub_result = this.getBranch().getEnd().getChild(this.getBranch()).compareTo(transaction);
+			int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
 			if (sub_result <= 0) {
 				return -1;
 			} else {
@@ -298,18 +298,17 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 			if ((transaction.getBranch().getEnd() == null)
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
-			} else if ((this.getBranch().getEnd() == null)
-			        || (this.getBranch().getEnd().getChild(this.getBranch()) == null)) {
+			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			} else {
-				int r = this.getBranch().getEnd().getChild(this.getBranch())
-				            .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+				int r = getBranch().getEnd().getChild(getBranch())
+				                   .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 				if (r != 0) {
 					return r;
 				} else {
-					if (this.getTimestamp().isBefore(transaction.getTimestamp())) {
+					if (getTimestamp().isBefore(transaction.getTimestamp())) {
 						return -1;
-					} else if (this.getTimestamp().isAfter(transaction.getTimestamp())) {
+					} else if (getTimestamp().isAfter(transaction.getTimestamp())) {
 						return 1;
 					}
 					return 0;
@@ -323,7 +322,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public Person getAuthor() {
-		return this.getPersons().get("author");
+		return getPersons().get("author");
 	}
 	
 	/**
@@ -334,7 +333,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	            optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
-		return this.branch;
+		return branch;
 	}
 	
 	/**
@@ -345,7 +344,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Transient
 	public Collection<RCSFile> getChangedFiles() {
 		List<RCSFile> changedFiles = new LinkedList<RCSFile>();
-		for (RCSRevision revision : this.getRevisions()) {
+		for (RCSRevision revision : getRevisions()) {
 			changedFiles.add(revision.getChangedFile());
 		}
 		return changedFiles;
@@ -357,12 +356,12 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public RCSTransaction getChild(final RCSBranch branch) {
-		if (branch.getEnd().equals(this)) {
-			return this.getChildren().isEmpty()
-			                                   ? null
-			                                   : this.getChildren().iterator().next();
+		if ((branch.getEnd() != null) && (branch.getEnd().equals(this))) {
+			return getChildren().isEmpty()
+			                              ? null
+			                              : getChildren().iterator().next();
 		} else {
-			return (RCSTransaction) CollectionUtils.find(this.getChildren(), new Predicate() {
+			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -377,10 +376,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @return the children
 	 */
 	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return this.children;
+		return children;
 	}
 	
 	/**
@@ -391,7 +390,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Id
 	@Index (name = "idx_transactionid")
 	public String getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -403,9 +402,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	@Column (name = "timestamp")
 	@Index (name = "idx_timestamp")
 	protected Date getJavaTimestamp() {
-		return this.getTimestamp() != null
-		                                  ? this.getTimestamp().toDate()
-		                                  : null;
+		return getTimestamp() != null
+		                             ? getTimestamp().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -415,14 +414,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Lob
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 	
 	/**
 	 * @return
 	 */
 	public String getOriginalId() {
-		return this.originalId;
+		return originalId;
 	}
 	
 	/**
@@ -436,11 +435,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		
 		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
-			return this.getParents().isEmpty()
-			                                  ? null
-			                                  : this.getParents().iterator().next();
+			return getParents().isEmpty()
+			                             ? null
+			                             : getParents().iterator().next();
 		} else {
-			return (RCSTransaction) CollectionUtils.find(this.getParents(), new Predicate() {
+			return (RCSTransaction) CollectionUtils.find(getParents(), new Predicate() {
 				
 				@Override
 				public boolean evaluate(final Object object) {
@@ -457,10 +456,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
-		return this.parents;
+		return parents;
 	}
 	
 	/**
@@ -468,7 +467,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
-		return this.persons;
+		return persons;
 	}
 	
 	@Transient
@@ -486,7 +485,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public RCSRevision getRevisionForPath(final String path) {
-		for (RCSRevision revision : this.getRevisions()) {
+		for (RCSRevision revision : getRevisions()) {
 			if (revision.getChangedFile().equals(path)) {
 				return revision;
 			}
@@ -501,7 +500,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return this.revisions;
+		return revisions;
 	}
 	
 	/**
@@ -509,7 +508,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@ElementCollection
 	public Set<String> getTags() {
-		return this.tags;
+		return tags;
 	}
 	
 	/**
@@ -519,7 +518,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/**
@@ -527,7 +526,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 */
 	@Transient
 	public void setAuthor(final Person author) {
-		this.getPersons().add("author", author);
+		getPersons().add("author", author);
 	}
 	
 	/**
@@ -563,9 +562,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 *            the new java timestamp
 	 */
 	protected void setJavaTimestamp(final Date date) {
-		this.timestamp = date != null
-		                             ? new DateTime(date)
-		                             : null;
+		timestamp = date != null
+		                        ? new DateTime(date)
+		                        : null;
 	}
 	
 	/**
@@ -615,7 +614,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * @param tagName
 	 */
 	public void setTags(final Set<String> tagName) {
-		this.tags = tagName;
+		tags = tagName;
 	}
 	
 	/**
@@ -661,20 +660,20 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		
 		StringBuilder string = new StringBuilder();
 		string.append("RCSTransaction [id=");
-		string.append(this.getId());
+		string.append(getId());
 		string.append(", message=");
-		string.append(StringEscapeUtils.escapeJava(this.getMessage()));
+		string.append(StringEscapeUtils.escapeJava(getMessage()));
 		string.append(", timestamp=");
-		string.append(this.getTimestamp());
+		string.append(getTimestamp());
 		string.append(", revisionCount=");
-		string.append(this.getRevisions().size());
+		string.append(getRevisions().size());
 		string.append(", author=");
-		string.append(this.getAuthor());
+		string.append(getAuthor());
 		string.append(", parents=");
 		string.append("[");
 		StringBuilder builder = new StringBuilder();
 		
-		for (RCSTransaction transaction : this.getParents()) {
+		for (RCSTransaction transaction : getParents()) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -687,7 +686,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		string.append("[");
 		StringBuilder builder2 = new StringBuilder();
 		
-		for (RCSTransaction transaction : this.getChildren()) {
+		for (RCSTransaction transaction : getChildren()) {
 			if (builder2.length() > 0) {
 				builder2.append(", ");
 			}
@@ -696,9 +695,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		string.append(builder2.toString());
 		string.append("]");
 		
-		if (this.getBranch() != null) {
+		if (getBranch() != null) {
 			string.append(", branch=");
-			string.append(this.getBranch());
+			string.append(getBranch());
 		}
 		string.append("]");
 		return string.toString();
