@@ -17,10 +17,6 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
-import de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector;
-import de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter;
-import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
@@ -31,12 +27,9 @@ import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
  */
 public class MappingArguments extends RepoSuiteArgumentSet {
 	
-	private final Set<MappingEngine>         engines    = new HashSet<MappingEngine>();
-	private final Set<MappingFilter>         filters    = new HashSet<MappingFilter>();
-	private final Set<MappingSelector<?, ?>> selectors  = new HashSet<MappingSelector<?, ?>>();
-	private final Set<MappingSplitter>       splitters  = new HashSet<MappingSplitter>();
-	private final Set<MappingStorage>        storages   = new HashSet<MappingStorage>();
-	private final Set<MappingStrategy>       strategies = new HashSet<MappingStrategy>();
+	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
+	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
+	private final Set<MappingFilter>   filters    = new HashSet<MappingFilter>();
 	
 	/**
 	 * @param isRequired 
@@ -45,46 +38,193 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	 */
 	public MappingArguments(final MappingSettings settings, final boolean isRequired) {
 		super();
-		for (MappingEngine registered : register(settings, isRequired, MappingEngine.class)) {
-			this.engines.add(registered);
-		}
-		
-		for (MappingFilter registered : register(settings, isRequired, MappingFilter.class)) {
-			this.filters.add(registered);
-		}
-		
-		for (MappingSelector<?, ?> registered : register(settings, isRequired, MappingSelector.class)) {
-			this.selectors.add(registered);
-		}
-		
-		for (MappingSplitter registered : register(settings, isRequired, MappingSplitter.class)) {
-			this.splitters.add(registered);
-		}
-		
-		for (MappingStrategy registered : register(settings, isRequired, MappingStrategy.class)) {
-			this.strategies.add(registered);
+		try {
+			Package package1 = MappingEngine.class.getPackage();
+			Collection<Class<? extends MappingEngine>> engineClasses = ClassFinder.getClassesExtendingClass(package1,
+			                                                                                                MappingEngine.class,
+			                                                                                                Modifier.ABSTRACT
+			                                                                                                        | Modifier.INTERFACE
+			                                                                                                        | Modifier.PRIVATE);
+			
+			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used: "
+			        + buildEngineList(engineClasses), "[all]", false));
+			
+			String engines = System.getProperty("mapping.engines");
+			Set<String> engineNames = new HashSet<String>();
+			
+			if (engines != null) {
+				for (String engineName : engines.split(",")) {
+					engineNames.add(MappingEngine.class.getPackage().getName() + "." + engineName);
+				}
+				
+			}
+			
+			for (Class<? extends MappingEngine> klass : engineClasses) {
+				if (engineNames.isEmpty() || engineNames.contains(klass.getCanonicalName())) {
+					if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
+						if (Logger.logInfo()) {
+							Logger.info("Adding new MappingEngine " + klass.getCanonicalName());
+						}
+						
+						MappingEngine engine = klass.newInstance();
+						engine.register(settings, this, isRequired);
+						this.engines.add(engine);
+					}
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("Not loading available engine: " + klass.getSimpleName());
+					}
+				}
+			}
+			
+			Package package2 = MappingStrategy.class.getPackage();
+			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(package2,
+			                                                                                                    MappingStrategy.class,
+			                                                                                                    Modifier.ABSTRACT
+			                                                                                                            | Modifier.INTERFACE
+			                                                                                                            | Modifier.PRIVATE);
+			addArgument(new ListArgument(
+			                             settings,
+			                             "mapping.strategies",
+			                             "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
+			                                     + buildStrategyList(strategyClasses), null, true));
+			
+			String strategies = System.getProperty("mapping.strategies");
+			Set<String> strategyNames = new HashSet<String>();
+			
+			if (strategies != null) {
+				for (String strategyName : strategies.split(",")) {
+					strategyNames.add(MappingStrategy.class.getPackage().getName() + "." + strategyName);
+				}
+			}
+			
+			for (Class<? extends MappingStrategy> klass : strategyClasses) {
+				if (strategyNames.isEmpty() || strategyNames.contains(klass.getCanonicalName())) {
+					if (Logger.logInfo()) {
+						Logger.info("Adding new MappingStrategy " + klass.getCanonicalName());
+					}
+					MappingStrategy strategy = klass.newInstance();
+					strategy.register(settings, this, isRequired);
+					this.strategies.add(strategy);
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("Not loading available strategy: " + klass.getSimpleName());
+					}
+				}
+			}
+			
+			MappingFilter.class.getPackage();
+			Collection<Class<? extends MappingFilter>> filterClasses = ClassFinder.getClassesExtendingClass(package2,
+			                                                                                                MappingFilter.class,
+			                                                                                                Modifier.ABSTRACT
+			                                                                                                        | Modifier.INTERFACE
+			                                                                                                        | Modifier.PRIVATE);
+			addArgument(new ListArgument(
+			                             settings,
+			                             "mapping.filters",
+			                             "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
+			                                     + buildFilterList(filterClasses), null, true));
+			
+			String filters = System.getProperty("mapping.filters");
+			Set<String> filterNames = new HashSet<String>();
+			
+			if (filters != null) {
+				for (String filterName : filters.split(",")) {
+					strategyNames.add(MappingFilter.class.getPackage().getName() + "." + filterName);
+				}
+			}
+			
+			for (Class<? extends MappingFilter> klass : filterClasses) {
+				if (filterNames.isEmpty() || filterNames.contains(klass.getCanonicalName())) {
+					if (Logger.logInfo()) {
+						Logger.info("Adding new MappingFilter " + klass.getCanonicalName());
+					}
+					MappingFilter filter = klass.newInstance();
+					filter.register(settings, this, isRequired);
+					this.filters.add(filter);
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("Not loading available strategy: " + klass.getSimpleName());
+					}
+				}
+			}
+			
+		} catch (IllegalArgumentException e) {
+			throw new UnrecoverableError(e);
+		} catch (InstantiationException e) {
+			throw new UnrecoverableError(e);
+		} catch (IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		} catch (ClassNotFoundException e) {
+			throw new UnrecoverableError(e);
+		} catch (WrongClassSearchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (IOException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
 	
 	/**
-	 * @param registereds
+	 * @param engines
 	 * @return
 	 */
-	private String buildRegisteredList(final Collection<Class<Registered>> registereds) {
+	private String buildEngineList(final Collection<Class<? extends MappingEngine>> engines) {
 		StringBuilder builder = new StringBuilder();
-		
-		int max = 0;
-		for (Class<Registered> klass : registereds) {
-			max = Math.max(max, klass.getSimpleName().length());
-		}
-		
-		for (Class<Registered> klass : registereds) {
+		builder.append(FileUtils.lineSeparator);
+		for (Class<? extends MappingEngine> klass : engines) {
 			try {
-				builder.append(FileUtils.lineSeparator);
-				builder.append('\t').append("  ").append(String.format("%-" + max + "s", klass.getSimpleName()))
-				       .append(" : ").append(klass.newInstance().getDescription());
+				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
+				       .append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
+			}
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
+			}
+		}
+		return builder.toString();
+	}
+	
+	/**
+	 * @param filters
+	 * @return
+	 */
+	private String buildFilterList(final Collection<Class<? extends MappingFilter>> filters) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(FileUtils.lineSeparator);
+		for (Class<? extends MappingFilter> klass : filters) {
+			try {
+				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
+				       .append(klass.newInstance().getDescription());
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
+			}
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
+			}
+		}
+		return builder.toString();
+	}
+	
+	/**
+	 * @param strategies
+	 * @return
+	 */
+	private String buildStrategyList(final Collection<Class<? extends MappingStrategy>> strategies) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(FileUtils.lineSeparator);
+		for (Class<? extends MappingStrategy> klass : strategies) {
+			try {
+				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
+				       .append(klass.newInstance().getDescription());
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
+			}
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
 			}
 		}
 		return builder.toString();
@@ -104,109 +244,12 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			finder.addEngine(engine);
 		}
 		
-		for (MappingFilter filter : this.filters) {
-			filter.init();
-			finder.addFilter(filter);
-		}
-		
-		for (MappingSelector<?, ?> selector : this.selectors) {
-			selector.init();
-			finder.addSelector(selector);
-		}
-		
-		for (MappingSplitter splitter : this.splitters) {
-			splitter.init();
-			finder.addSplitter(splitter);
-		}
-		
-		for (MappingStorage storage : this.storages) {
-			storage.init();
-			finder.addStorage(storage);
-		}
-		
 		for (MappingStrategy strategy : this.strategies) {
 			strategy.init();
 			finder.addStrategy(strategy);
 		}
 		
 		return finder;
-	}
-	
-	/**
-	 * @param <T>
-	 * @param <K>
-	 * @param settings
-	 * @param isRequired
-	 * @param clazz
-	 * @return
-	 */
-	@SuppressWarnings ("unchecked")
-	private <T extends Registered, K extends T> Set<K> register(final MappingSettings settings,
-	                                                            final boolean isRequired,
-	                                                            final Class<T> clazz) {
-		// simpleName startsWith "Mapping
-		// superclass == registered
-		Set<K> registereds = new HashSet<K>();
-		Package package1 = clazz.getPackage();
-		try {
-			Collection<?> registeredClasses = ClassFinder.getClassesExtendingClass(package1, clazz, Modifier.ABSTRACT
-			        | Modifier.INTERFACE | Modifier.PRIVATE);
-			
-			if (!registeredClasses.isEmpty()) {
-				boolean singleton = ((Class<Registered>) registeredClasses.iterator().next()).newInstance().singleton();
-				addArgument(new ListArgument(settings, "mapping."
-				        + clazz.getSimpleName().replace("Mapping", "").toLowerCase() + "s", "A list of "
-				        + clazz.getSimpleName() + " that shall be used: (" + (singleton
-				                                                                       ? "choose one"
-				                                                                       : "all if none specified") + ")"
-				        + buildRegisteredList((Collection<Class<Registered>>) registeredClasses), null, singleton));
-				
-				String engines = System.getProperty("mapping."
-				        + clazz.getSimpleName().replace("Mapping", "").toLowerCase());
-				Set<String> engineNames = new HashSet<String>();
-				
-				if (engines != null) {
-					for (String engineName : engines.split(",")) {
-						engineNames.add(MappingEngine.class.getPackage().getName() + "." + engineName);
-					}
-				}
-				
-				for (Object oklass : registeredClasses) {
-					Class<K> klass = (Class<K>) oklass;
-					if (engineNames.isEmpty() || engineNames.contains(klass.getCanonicalName())) {
-						if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
-							if (Logger.logInfo()) {
-								Logger.info("Adding new " + clazz.getSimpleName() + " " + klass.getCanonicalName());
-							}
-							
-							K engine = klass.newInstance();
-							engine.register(settings, this, isRequired);
-							for (Class<? extends MappingStorage> storageClass : engine.storageDependency()) {
-								MappingStorage storage = storageClass.newInstance();
-								storage.register(settings, this, true);
-								this.storages.add(storage);
-							}
-							registereds.add(engine);
-						}
-					} else {
-						if (Logger.logInfo()) {
-							Logger.info("Not loading available " + clazz.getSimpleName() + ": " + klass.getSimpleName());
-						}
-					}
-				}
-			}
-		} catch (ClassNotFoundException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (WrongClassSearchMethodException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (InstantiationException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		}
-		return registereds;
 	}
 	
 }

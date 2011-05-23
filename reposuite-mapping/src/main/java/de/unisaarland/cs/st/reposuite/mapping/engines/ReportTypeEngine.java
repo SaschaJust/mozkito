@@ -56,8 +56,9 @@ public class ReportTypeEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		
-		setConfidence((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
-		setType((Type) getSettings().getSetting(getOptionName("type")).getValue());
+		setConfidence((Double) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".confidence")
+		                                    .getValue());
+		setType((Type) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".type").getValue());
 	}
 	
 	/*
@@ -73,11 +74,10 @@ public class ReportTypeEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
-		                                         "Confidence that is used if the report isn't of the specified type.",
-		                                         "-1", isRequired));
-		arguments.addArgument(new EnumArgument(settings, getOptionName("type"),
-		                                       "Type the report has to match, e.g. BUG.", Type.BUG.name(), isRequired,
+		arguments.addArgument(new DoubleArgument(settings, "mapping.engine." + getHandle().toLowerCase()
+		        + ".confidence", "Confidence that is used if the report isn't of the specified type.", "-1", isRequired));
+		arguments.addArgument(new EnumArgument(settings, "mapping.engine." + getHandle().toLowerCase() + ".type",
+		                                       "Type the report has to match, e.g. BUG.", null, isRequired,
 		                                       JavaUtils.enumToArray(Type.BUG)));
 	}
 	
@@ -94,8 +94,8 @@ public class ReportTypeEngine extends MappingEngine {
 	                  final Report report,
 	                  final MapScore score) {
 		if (report.getType() != getType()) {
-			addFeature(score, getConfidence(), MappingEngine.unused, MappingEngine.unused, MappingEngine.unknown,
-			           "type", report.getType(), null);
+			score.addFeature(getConfidence(), "none", "not available", "type", report.getType().toString(),
+			                 this.getClass());
 		}
 	}
 	

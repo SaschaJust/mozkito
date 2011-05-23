@@ -56,8 +56,8 @@ public class CommentSearchEngine extends SearchEngine {
 				Long bugId = Long.parseLong(hitDoc.get("bugid"));
 				
 				if (bugId.compareTo(report.getId()) == 0) {
-					addFeature(score, hit.score, "message", transaction.getMessage(), transaction.getMessage(),
-					           "comment", report.getSummary(), report.getSummary());
+					score.addFeature(hit.score, "message", truncate(transaction.getMessage()), "comment",
+					                 truncate(report.getSummary()), this.getClass());
 					break;
 				}
 			}

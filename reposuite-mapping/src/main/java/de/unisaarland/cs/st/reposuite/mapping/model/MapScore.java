@@ -18,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -26,6 +25,7 @@ import de.unisaarland.cs.st.reposuite.mapping.elements.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import net.ownhero.dev.ioda.JavaUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -60,10 +60,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	@Transient
 	public void addFeature(final double confidence,
 	                       @NotNull @NotEmpty final String transactionFieldName,
-	                       @NotNull @NotEmpty final String transactionFieldContent,
 	                       @NotNull @NotEmpty final String transactionSubstring,
 	                       @NotNull @NotEmpty final String reportFieldName,
-	                       @NotNull @NotEmpty final String reportFieldContent,
 	                       @NotNull @NotEmpty final String reportSubstring,
 	                       @NotNull final Class<? extends MappingEngine> mappingEngine) {
 		this.totalConfidence += confidence;

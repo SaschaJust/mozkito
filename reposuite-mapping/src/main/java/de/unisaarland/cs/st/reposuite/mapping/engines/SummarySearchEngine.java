@@ -57,8 +57,8 @@ public class SummarySearchEngine extends SearchEngine {
 				Long bugId = Long.parseLong(hitDoc.get("bugid"));
 				
 				if (bugId.compareTo(report.getId()) == 0) {
-					addFeature(score, hit.score, "message", transaction.getMessage(), null, "summary",
-					           report.getSummary(), report.getSummary());
+					score.addFeature(hit.score, "message", truncate(transaction.getMessage()), "summary",
+					                 truncate(report.getSummary()), this.getClass());
 					break;
 				}
 			}
@@ -66,4 +66,5 @@ public class SummarySearchEngine extends SearchEngine {
 			throw new UnrecoverableError(e);
 		}
 	}
+	
 }

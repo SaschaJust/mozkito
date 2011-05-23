@@ -51,8 +51,8 @@ public class DescriptionSearchEngine extends SearchEngine {
 				Long bugId = Long.parseLong(hitDoc.get("bugid"));
 				
 				if (bugId.compareTo(report.getId()) == 0) {
-					addFeature(score, hit.score, "message", transaction.getMessage(), transaction.getMessage(),
-					           "description", report.getDescription(), report.getDescription());
+					score.addFeature(hit.score, "message", truncate(transaction.getMessage()), "description",
+					                 truncate(report.getSummary()), this.getClass());
 					break;
 				}
 			}

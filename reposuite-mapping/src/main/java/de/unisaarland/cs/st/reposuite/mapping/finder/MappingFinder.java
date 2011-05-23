@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.finder;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -13,15 +12,14 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
-import de.unisaarland.cs.st.reposuite.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
-import de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector;
-import de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -34,15 +32,9 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class MappingFinder {
 	
-	private final Map<String, MappingEngine>                                         engines    = new HashMap<String, MappingEngine>();
-	
-	private final Map<String, MappingStrategy>                                       strategies = new HashMap<String, MappingStrategy>();
-	
-	private final Map<Class<? extends MappingStorage>, MappingStorage>               storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
-	
-	private final Map<Class<? extends MappingFilter>, MappingFilter>                 filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
-	private final Map<Class<? extends MappingSplitter>, MappingSplitter>             splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
-	private final Map<Class<? extends MappingSelector<?, ?>>, MappingSelector<?, ?>> selectors  = new HashMap<Class<? extends MappingSelector<?, ?>>, MappingSelector<?, ?>>();
+	private final Map<String, MappingEngine>                           engines    = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingStrategy>                         strategies = new HashMap<String, MappingStrategy>();
+	private final Map<Class<? extends MappingStorage>, MappingStorage> storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	
 	/**
 	 * @param engine
@@ -65,48 +57,6 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param filter
-	 */
-	public void addFilter(final MappingFilter filter) {
-		this.filters.put(filter.getClass(), filter);
-	}
-	
-	/**
-	 * @param selector
-	 */
-	@SuppressWarnings ("unchecked")
-	public void addSelector(final MappingSelector<?, ?> selector) {
-		this.selectors.put((Class<? extends MappingSelector<?, ?>>) selector.getClass(), selector);
-		for (Class<? extends MappingStorage> key : selector.storageDependency()) {
-			if (!this.storages.keySet().contains(key)) {
-				try {
-					MappingStorage storage = key.newInstance();
-					this.storages.put(key, storage);
-				} catch (InstantiationException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				} catch (IllegalAccessException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
-			}
-			selector.provideStorage(this.storages.get(key));
-		}
-	}
-	
-	/**
-	 * @param splitter
-	 */
-	public void addSplitter(final MappingSplitter splitter) {
-		this.splitters.put(splitter.getClass(), splitter);
-	}
-	
-	/**
-	 * @param storage
-	 */
-	public void addStorage(final MappingStorage storage) {
-		this.storages.put(storage.getClass(), storage);
-	}
-	
-	/**
 	 * @param strategy
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
@@ -123,43 +73,19 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param <K>
-	 * @param <V>
-	 * @param fromClazz
-	 * @param toClazz
+	 * @param transaction
 	 * @return
 	 */
-	@SuppressWarnings ("unchecked")
-	private <K, V> List<MappingSelector<K, V>> findSelectors(final Class<K> fromClazz,
-	                                                         final Class<V> toClazz) {
-		List<MappingSelector<K, V>> list = new LinkedList<MappingSelector<K, V>>();
+	public Set<Long> getCandidates(final RCSTransaction transaction) {
+		Set<Long> candidates = new HashSet<Long>();
 		
-		for (Class<? extends MappingSelector<?, ?>> klass : this.selectors.keySet()) {
-			ParameterizedType type = (ParameterizedType) klass.getGenericSuperclass();
-			if ((type.getActualTypeArguments()[0] == fromClazz) && (type.getActualTypeArguments()[1] == toClazz)) {
-				list.add((MappingSelector<K, V>) this.selectors.get(klass));
+		Regex pattern = new Regex("({id}\\d{2,})");
+		List<List<RegexGroup>> findAll = pattern.findAll(transaction.getMessage());
+		
+		if (findAll != null) {
+			for (List<RegexGroup> match : findAll) {
+				candidates.add(Long.parseLong(match.get(0).getMatch()));
 			}
-		}
-		
-		return list;
-	}
-	
-	/**
-	 * @param <K>
-	 * @param <V>
-	 * @param source
-	 * @param targetClass
-	 * @return
-	 */
-	public <K, V> Set<V> getCandidates(final K source,
-	                                   final Class<V> targetClass) {
-		Set<V> candidates = new HashSet<V>();
-		
-		@SuppressWarnings ("unchecked")
-		List<MappingSelector<K, V>> selectors = findSelectors((Class<K>) source.getClass(), targetClass);
-		
-		for (MappingSelector<K, V> selector : selectors) {
-			candidates.addAll(selector.parse(source));
 		}
 		
 		return candidates;

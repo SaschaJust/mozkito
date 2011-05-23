@@ -21,7 +21,7 @@ public class VetoStrategy extends MappingStrategy {
 	 */
 	@Override
 	public String getDescription() {
-		return "Maps only if there is no feature with negative confidence.";
+		return "Maps only if the is no feature with negative confidence.";
 	}
 	
 	/*

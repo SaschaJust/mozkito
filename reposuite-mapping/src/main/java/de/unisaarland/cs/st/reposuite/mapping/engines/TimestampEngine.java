@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
-import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -26,6 +25,7 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.model.EnumTuple;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -55,7 +55,8 @@ public class TimestampEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		@SuppressWarnings ("unchecked")
-		List<String> list = new LinkedList<String>((Set<String>) getSettings().getSetting(getOptionName("init"))
+		List<String> list = new LinkedList<String>(
+		                                           (Set<String>) getSettings().getSetting("mapping.window.ReportResolvedAfterTransaction")
 		                                                                      .getValue());
 		CollectionCheck.minSize(list,
 		                        1,
@@ -124,7 +125,7 @@ public class TimestampEngine extends MappingEngine {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new ListArgument(
 		                                       settings,
-		                                       getOptionName("window"),
+		                                       "mapping.window.ReportResolvedAfterTransaction",
 		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
 		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired));
 	}
@@ -166,8 +167,8 @@ public class TimestampEngine extends MappingEngine {
 				}
 			}
 			
-			addFeature(score, value, "timestamp", transaction.getTimestamp(), null, "resolutionTimestamp",
-			           report.getResolutionTimestamp(), null);
+			score.addFeature(value, "timestamp", transaction.getTimestamp().toString(), "resolutionTimestamp",
+			                 report.getResolutionTimestamp().toString(), this.getClass());
 		}
 	}
 	

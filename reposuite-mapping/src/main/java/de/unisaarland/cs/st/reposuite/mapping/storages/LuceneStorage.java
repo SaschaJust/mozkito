@@ -3,7 +3,6 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.storages;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,11 +19,8 @@ import org.apache.lucene.util.Version;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -37,6 +33,13 @@ public class LuceneStorage extends MappingStorage {
 	private IndexWriter                   iwriterReports   = null;
 	private final HashMap<Long, Document> reportDocuments  = new HashMap<Long, Document>();
 	private IndexSearcher                 isearcherReports = null;
+	
+	/**
+	 * 
+	 */
+	public LuceneStorage() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	/**
 	 * @param report
@@ -62,12 +65,6 @@ public class LuceneStorage extends MappingStorage {
 	 */
 	public Analyzer getAnalyzer() {
 		return this.analyzer;
-	}
-	
-	@Override
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return "";
 	}
 	
 	/**
@@ -100,27 +97,6 @@ public class LuceneStorage extends MappingStorage {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.mapping.register.Registered#init()
-	 */
-	@Override
-	public void init() {
-		super.init();
-		String value = (String) getSettings().getSetting(getOptionName("language")).getValue();
-		String[] split = value.split(":");
-		try {
-			if (getAnalyzer() == null) {
-				Class<?> clazz = Class.forName("org.apache.lucene.analysis." + split[0] + "." + split[1] + "Analyzer");
-				Constructor<?> constructor = clazz.getConstructor(Version.class);
-				Analyzer newInstance = (Analyzer) constructor.newInstance(Version.LUCENE_31);
-				setAnalyzer(newInstance);
-			}
-		} catch (Exception e) {
-			throw new UnrecoverableError(e);
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage#loadData
 	 * (de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil)
@@ -143,23 +119,6 @@ public class LuceneStorage extends MappingStorage {
 				throw new UnrecoverableError(e);
 			}
 		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#register(de
-	 * .unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments,
-	 * boolean)
-	 */
-	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
-	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new StringArgument(settings, getOptionName("language"),
-		                                         "Language of the documents under subject.", "en:English", isRequired));
 	}
 	
 	/**

@@ -86,8 +86,8 @@ public class Scoring extends RepoSuiteToolchain {
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
 				finder.loadData(persistenceUtil);
-				new ScoringTransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new ScoringTransactionProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				
