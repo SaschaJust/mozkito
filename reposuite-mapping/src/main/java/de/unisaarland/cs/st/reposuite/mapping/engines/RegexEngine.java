@@ -386,7 +386,7 @@ public class RegexEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
+		arguments.addArgument(new URIArgument(settings, getOptionName("file"),
 		                                      "URI to file containing the regular expressions used to map the IDs.",
 		                                      null, isRequired));
 	}
@@ -454,7 +454,8 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		if (!relevantString.isEmpty()) {
-			score.addFeature(value, "message", relevantString, "id", report.getId() + "", this.getClass());
+			addFeature(score, value, "message", transaction.getMessage(), relevantString, "id", report.getId(),
+			           report.getId());
 		}
 	}
 	

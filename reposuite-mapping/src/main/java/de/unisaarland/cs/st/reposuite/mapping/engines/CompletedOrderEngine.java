@@ -49,7 +49,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreReportResolvedBeforeTransaction((Double) getSettings().getSetting("mapping.score.ReportResolvedBeforeTransaction")
+		setScoreReportResolvedBeforeTransaction((Double) getSettings().getSetting(getOptionName("confidence"))
 		                                                              .getValue());
 	}
 	
@@ -66,7 +66,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.ReportResolvedBeforeTransaction",
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score in case the report was resolved before the transaction.", "-1",
 		                                         isRequired));
 	}
@@ -85,11 +85,9 @@ public class CompletedOrderEngine extends MappingEngine {
 	                  final MapScore score) {
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			score.addFeature(getScoreReportResolvedBeforeTransaction(), "timestamp", transaction.getTimestamp()
-			                                                                                    .toString(),
-			                 "creationTimestamp", report.getResolution() != null
-			                                                                    ? report.getResolution().toString()
-			                                                                    : "(null)", this.getClass());
+			addFeature(score, getScoreReportResolvedBeforeTransaction(), "timestamp", transaction.getTimestamp(),
+			           transaction.getTimestamp(), "creationTimestamp", report.getResolutionTimestamp(),
+			           report.getResolutionTimestamp());
 		}
 	}
 	

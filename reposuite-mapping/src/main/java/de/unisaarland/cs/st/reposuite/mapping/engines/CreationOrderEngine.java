@@ -42,8 +42,7 @@ public class CreationOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		setScoreReportCreatedAfterTransaction((Double) getSettings().getSetting("mapping.score.ReportCreatedAfterTransaction")
-		                                                            .getValue());
+		setScoreReportCreatedAfterTransaction((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
 	}
 	
 	/*
@@ -59,7 +58,7 @@ public class CreationOrderEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.ReportCreatedAfterTransaction",
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score in case the report was created after the transaction.", "-1",
 		                                         isRequired));
 	}
@@ -77,9 +76,9 @@ public class CreationOrderEngine extends MappingEngine {
 	                  final Report report,
 	                  final MapScore score) {
 		if (transaction.getTimestamp().isBefore(report.getCreationTimestamp())) {
-			score.addFeature(getScoreReportCreatedAfterTransaction(), "timestamp", transaction.getTimestamp()
-			                                                                                  .toString(),
-			                 "creationTimestamp", report.getCreationTimestamp().toString(), this.getClass());
+			addFeature(score, getScoreReportCreatedAfterTransaction(), "timestamp", transaction.getTimestamp(),
+			           transaction.getTimestamp(), "creationTimestamp", report.getCreationTimestamp(),
+			           report.getCreationTimestamp());
 		}
 	}
 	

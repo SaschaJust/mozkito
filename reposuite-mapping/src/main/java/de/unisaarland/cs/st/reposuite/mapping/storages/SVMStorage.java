@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class LingPipeStorage extends MappingStorage {
+public class SVMStorage extends MappingStorage {
 	
 	@Override
 	public String getDescription() {
@@ -17,6 +17,12 @@ public class LingPipeStorage extends MappingStorage {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage#loadData
+	 * (de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil)
+	 */
 	@Override
 	public void loadData(final PersistenceUtil util) {
 		// TODO Auto-generated method stub

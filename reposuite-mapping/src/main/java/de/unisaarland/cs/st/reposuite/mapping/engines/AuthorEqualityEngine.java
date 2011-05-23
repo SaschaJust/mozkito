@@ -3,6 +3,8 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
@@ -12,8 +14,6 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
-import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.ioda.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -48,7 +48,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreAuthorEquality((Double) getSettings().getSetting("mapping.score.AuthorEquality").getValue());
+		setScoreAuthorEquality((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
 	}
 	
 	/*
@@ -64,7 +64,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.AuthorEquality",
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score for equal authors in transaction and report comments.", "0.2",
 		                                         isRequired));
 	}
@@ -115,10 +115,8 @@ public class AuthorEqualityEngine extends MappingEngine {
 			}
 		}
 		
-		score.addFeature(value, "author", transaction.getAuthor().toString(), "author",
-		                 report.getResolver() != null
-		                                             ? report.getResolver().toString()
-		                                             : "(null)", this.getClass());
+		addFeature(score, value, "author", transaction.getAuthor(), transaction.getAuthor(), "resolver",
+		           report.getResolver(), report.getResolver());
 	}
 	
 	/**

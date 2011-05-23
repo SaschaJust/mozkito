@@ -44,8 +44,7 @@ public class EssentialChangeEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		// TODO set the values of your registered config options
-		setConfidence((Double) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".confidence")
-		                                    .getValue());
+		setConfidence((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
 	}
 	
 	/*
@@ -62,8 +61,10 @@ public class EssentialChangeEngine extends MappingEngine {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		// TODO register further config options if you need some
-		arguments.addArgument(new DoubleArgument(settings, "mapping.engine." + getHandle().toLowerCase()
-		        + ".confidence", "Confidence that is used if the changes done in the transaction arent essential.",
+		arguments.addArgument(new DoubleArgument(
+		                                         settings,
+		                                         getOptionName("confidence"),
+		                                         "Confidence that is used if the changes done in the transaction arent essential.",
 		                                         "-1", isRequired));
 	}
 	

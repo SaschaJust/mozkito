@@ -14,10 +14,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
-import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -126,7 +126,10 @@ public class RepoSuiteSettings {
 			ss.append("-D");
 			ss.append(arg.getName());
 			ss.append(": ");
-			ss.append(arg.getDescription());
+			ss.append(arg.getDescription().trim());
+			if (arg.getDefaultValue() != null) {
+				ss.append(" (Default: \"").append(arg.getDefaultValue()).append("\")");
+			}
 			if (arg.isRequired()) {
 				ss.append(" (required!)");
 			}

@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
@@ -44,7 +45,7 @@ public class BackrefEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreBackRef((Double) getSettings().getSetting("mapping.score.BackRef").getValue());
+		setScoreBackRef((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
 	}
 	
 	/*
@@ -60,7 +61,7 @@ public class BackrefEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.BackRef",
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score for backreference in transaction and report.", "0.5",
 		                                         isRequired));
 	}
@@ -78,20 +79,28 @@ public class BackrefEngine extends MappingEngine {
 	                  final Report report,
 	                  final MapScore score) {
 		if (report.getDescription().contains(transaction.getId())) {
-			score.addFeature(getScoreBackRef(), "id", transaction.getId(), "description",
-			                 truncate(report.getDescription()), this.getClass());
+			addFeature(score, getScoreBackRef(), "id", transaction.getId(), transaction.getId(), "description",
+			           report.getDescription(), transaction.getId());
 		} else {
 			boolean found = false;
 			for (Comment comment : report.getComments()) {
 				if (comment.getMessage().contains(transaction.getId())) {
 					found = true;
-					score.addFeature(getScoreBackRef(), "id", transaction.getId(), "comment" + comment.getId()
-					        + ":message", truncate(comment.getMessage()), this.getClass());
+					addFeature(score, getScoreBackRef(), "id", transaction.getId(), transaction.getId(), "comments["
+					        + comment.getId() + "]:message", comment.getMessage(), transaction.getId());
 					break;
 				}
 			}
 			if (!found) {
-				score.addFeature(0, "id", transaction.getId(), "report", "description|comments", this.getClass());
+				StringBuilder builder = new StringBuilder();
+				builder.append(report.getDescription());
+				for (Comment comment : report.getComments()) {
+					builder.append(FileUtils.lineSeparator);
+					builder.append(comment.getMessage());
+				}
+				
+				addFeature(score, getScoreBackRef(), "id", transaction.getId(), transaction.getId(),
+				           "description,comments[*]", builder, transaction.getId());
 			}
 		}
 	}
