@@ -52,6 +52,16 @@
 			<version>3.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>libsvm</groupId>
+			<artifactId>libsvm</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>lingpipe</groupId>
+			<artifactId>lingpipe</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers</artifactId>
 			<version>3.1.0</version>
