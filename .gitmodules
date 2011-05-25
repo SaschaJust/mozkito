@@ -1,0 +1,6 @@
+[submodule "tools/libs/git-svn-migrate"]
+	path = tools/libs/git-svn-migrate
+	url = git://github.com/JohnAlbin/git-svn-migrate.git
+[submodule "tools/libs/hg-fast-export"]
+	path = tools/libs/hg-fast-export
+	url = git://repo.or.cz/fast-export.git
