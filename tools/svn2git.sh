@@ -16,6 +16,10 @@ if [ ${SOURCE_REPO::1} != "/" ]; then
 	SOURCE_REPO="${PWD}/${SOURCE_REPO}"
 fi
 
+if [ ${TARGET_DIR::1} != "/" ]; then
+	TARGET_DIR="${PWD}/${TARGET_DIR}"
+fi
+
 if [ -z $GITSVNMIGRATE_DIR ]; then
 	EXEC_DIR=$(dirname $0)
 	if [ ${EXEC_DIR::1} != "/" ]; then

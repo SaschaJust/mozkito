@@ -4,3 +4,6 @@
 [submodule "tools/libs/hg-fast-export"]
 	path = tools/libs/hg-fast-export
 	url = git://repo.or.cz/fast-export.git
+[submodule "tools/libs/darcs-to-git"]
+	path = tools/libs/darcs-to-git
+	url = git://git.sanityinc.com/darcs-to-git.git
