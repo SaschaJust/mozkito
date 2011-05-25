@@ -81,4 +81,6 @@ fi
 
 rm -f "${TARGET_DIR}/hg2git-*"
 
+cd "${OLDPWD}"
+
 echo "Converted repository to '${TARGET_DIR}'"
