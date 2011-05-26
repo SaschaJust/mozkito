@@ -99,7 +99,7 @@ public class GoogleTracker extends Tracker {
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
 		Condition.check(rawReport instanceof GoogleRawContent,
-		                "The rawReport has to be an instance of GoogleRawContent.");
+		"The rawReport has to be an instance of GoogleRawContent.");
 		return (GoogleRawContent) rawReport;
 	}
 	
@@ -118,7 +118,7 @@ public class GoogleTracker extends Tracker {
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Fetching RawReport form url: " + iQuery.getFeedUrl().toString()
-				        + iQuery.getQueryUri().toString());
+				             + iQuery.getQueryUri().toString());
 			}
 			
 			IssuesFeed resultFeed = service.query(iQuery, IssuesFeed.class);
@@ -199,11 +199,15 @@ public class GoogleTracker extends Tracker {
 	@Override
 	public Report parse(final XmlReport xmlReport) {
 		Condition.check(xmlReport instanceof GoogleRawContent,
-		                "The xmlReport has to be an instance of GoogleRawContent.");
+		"The xmlReport has to be an instance of GoogleRawContent.");
 		
 		GoogleRawContent issue = (GoogleRawContent) xmlReport;
 		Report report = new Report(issue.getId());
-		report.setAssignedTo(issue.getOwner().toPerson());
+		
+		if ((issue.getOwner() != null) && (issue.getOwner().toPerson() != null)) {
+			report.setAssignedTo(issue.getOwner().toPerson());
+		}
+		
 		report.setCategory(issue.getCategory());
 		
 		report.setCreationTimestamp(issue.getCreationDate());
@@ -226,7 +230,7 @@ public class GoogleTracker extends Tracker {
 				report.setPriority(Priority.UNKNOWN);
 				if (Logger.logWarn()) {
 					Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-					        + "`. Setting prioroty to UNKNOWN.");
+					            + "`. Setting prioroty to UNKNOWN.");
 				}
 			}
 		}
@@ -298,28 +302,33 @@ public class GoogleTracker extends Tracker {
 		report.setSummary(issue.getSummary());
 		report.setDescription(issue.getDescription());
 		
-		String type = issue.getType().toLowerCase();
-		if (type.equals("defect")) {
-			report.setType(Type.BUG);
-		} else if (type.equals("enhancement")) {
-			report.setType(Type.RFE);
-		} else if (type.equals("task")) {
-			report.setType(Type.TASK);
-		} else if (type.equals("docs")) {
-			report.setType(Type.OTHER);
-		} else if (type.equals("----")) {
+		if (issue.getType() == null) {
 			report.setType(Type.UNKNOWN);
-		} else if (type.equals("feature")) {
-			report.setType(Type.RFE);
-		} else if (type.equals("optimization")) {
-			report.setType(Type.OTHER);
 		} else {
-			report.setType(Type.UNKNOWN);
-			if (Logger.logWarn()) {
-				Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
-				        + "`. Setting type to UNKNOWN.");
+			String type = issue.getType().toLowerCase();
+			if (type.equals("defect")) {
+				report.setType(Type.BUG);
+			} else if (type.equals("enhancement")) {
+				report.setType(Type.RFE);
+			} else if (type.equals("task")) {
+				report.setType(Type.TASK);
+			} else if (type.equals("docs")) {
+				report.setType(Type.OTHER);
+			} else if (type.equals("----")) {
+				report.setType(Type.UNKNOWN);
+			} else if (type.equals("feature")) {
+				report.setType(Type.RFE);
+			} else if (type.equals("optimization")) {
+				report.setType(Type.OTHER);
+			} else {
+				report.setType(Type.UNKNOWN);
+				if (Logger.logWarn()) {
+					Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
+					            + "`. Setting type to UNKNOWN.");
+				}
 			}
 		}
+		
 		report.setVersion(issue.getVersion());
 		
 		parseComments(report);
@@ -337,7 +346,7 @@ public class GoogleTracker extends Tracker {
 		URL baseFeedUrl = null;
 		try {
 			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/" + report.getId()
-			        + "/comments/full?max-result=" + max_result);
+			                      + "/comments/full?max-result=" + max_result);
 			
 		} catch (MalformedURLException e) {
 			if (Logger.logWarn()) {
@@ -480,7 +489,7 @@ public class GoogleTracker extends Tracker {
 					
 					if (updates.getOwnerUpdate() != null) {
 						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
-						                                                                     .getValue(), null, null));
+						                                                              .getValue(), null, null));
 					}
 					
 					if (updates.getStatus() != null) {
@@ -597,14 +606,26 @@ public class GoogleTracker extends Tracker {
 				service.setUserCredentials(username, password);
 			}
 			
-			IssuesFeed resultFeed = service.getFeed(fetchURI.toURL(), IssuesFeed.class);
-			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-				IssuesEntry entry = resultFeed.getEntries().get(i);
-				long bugId = entry.getIssueId().getValue().longValue();
-				if ((bugId >= startAt) && (bugId <= stopAt)) {
-					addBugId(bugId);
+			int startIndex = 1;
+			int maxResults = 100;
+			
+			IssuesFeed resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
+			                                                + "&amp;max-results=" + maxResults), IssuesFeed.class);
+			List<IssuesEntry> feedEntries = resultFeed.getEntries();
+			while (feedEntries.size() > 0) {
+				for (int i = 0; i < feedEntries.size(); i++) {
+					IssuesEntry entry = feedEntries.get(i);
+					long bugId = entry.getIssueId().getValue().longValue();
+					if ((bugId >= startAt) && (bugId <= stopAt)) {
+						addBugId(bugId);
+					}
 				}
+				startIndex += maxResults;
+				resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
+				                                     + "&amp;max-results=" + maxResults), IssuesFeed.class);
+				feedEntries = resultFeed.getEntries();
 			}
+			
 			
 		} catch (AuthenticationException e) {
 			if (Logger.logError()) {
