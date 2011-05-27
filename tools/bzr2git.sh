@@ -1,4 +1,8 @@
 #!/bin/bash
+## TODO check for bzr executable
+## TODO check for python-fastimport
+#@ TODO check for git executable
+
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
 }
@@ -18,10 +22,6 @@ fi
 if [ ${TARGET_DIR::1} != "/" ]; then
 	TARGET_DIR="${PWD}/${TARGET_DIR}"
 fi
-
-
-## TODO check for darcs executable
-## TODO check for python-fastimport
 
 MYOLDPWD="$PWD"
 

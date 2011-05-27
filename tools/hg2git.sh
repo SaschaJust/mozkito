@@ -1,4 +1,6 @@
 #!/bin/bash
+## TODO check for script dependencies
+#@ TODO check for git executable
 
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]

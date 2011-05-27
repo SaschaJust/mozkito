@@ -1,21 +1,23 @@
 #!/bin/bash
 # TODO check dependencies of git-svn-migrate
 # TODO check for git executable
+# TODO check for cvsps installation
 
 function help() {
-	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
+	echo $(basename $0) [TARGET_DIRECTORY] [CVSROOT] [PROJECT_NAME]
 }
 
-if [ -z $2 ]; then
+if [ -z $3 ]; then
 	help
 	exit 1
 fi
 
 TARGET_DIR=$1
-SOURCE_REPO=$2
+CVSROOT=$2
+PROJECT_NAME=$3
 
-if [ ${SOURCE_REPO::1} != "/" ]; then
-	SOURCE_REPO="${PWD}/${SOURCE_REPO}"
+if [ ${CVSROOT::1} != "/" ]; then
+	CVSROOT="${PWD}/${CVSROOT}"
 fi
 
 if [ ${TARGET_DIR::1} != "/" ]; then
@@ -37,14 +39,14 @@ if [ -z $GITSVNMIGRATE_DIR ]; then
 else
 	if [ ! -f "${EXEC_DIR}/libs/git-svn-migrate/git-svn-migrate.sh" ]; then
 		echo "error: Couldn't find git-svn-migrate script at: ${EXEC_DIR}/libs/git-svn-migrate/git-svn-migrate.sh"
-		exit 1
+			exit 1
 	fi
 fi
 
 OLDPWD="$PWD"
 
 REPOURI=$(mktemp -t "svn2git_uri")
-echo "file://${SOURCE_REPO}" > "${REPOURI}"
+echo "file://${CVSROOT}" > "${REPOURI}"
 
 AUTHORFILE=$(mktemp -t "svn2git_authors")
 bash "${GITSVNMIGRATE_DIR}/fetch-svn-authors.sh" --url-file="${REPOURI}" > "${AUTHORFILE}"
@@ -68,7 +70,7 @@ if [ $ret -ne 0 ]; then
 	echo "Converting failed with exit code $?."
 	exit 1
 else
-	REPONAME=$(basename ${SOURCE_REPO})
+	REPONAME=$(basename ${CVSROOT})
 	cp -r "${TEMPDIR}/${REPONAME}.git/" "${TARGET_DIR}"
 	rm -rf "${TEMPDIR}"
 fi
