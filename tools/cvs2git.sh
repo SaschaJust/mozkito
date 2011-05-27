@@ -58,7 +58,7 @@ fi
 
 TEMPDIR=$(mktemp -d -t svn2git_target)
 
-bash "${GITSVNMIGRATE_DIR}/git-svn-migrate.sh" --url-file="${REPOURI}" --authors-file="${AUTHORFILE}" --destination "${TEMPDIR}"
+git cvsimport -k -i -d "${CVSROOT}" -C "${TEMPDIR}" ${PROJECT_NAME}
 
 ret=$?
 
