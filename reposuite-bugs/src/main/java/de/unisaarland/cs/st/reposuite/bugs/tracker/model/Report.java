@@ -114,12 +114,12 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * @param comment
-	 * @return 
+	 * @return
 	 */
 	@Transient
 	public boolean addComment(@NotNull final Comment comment) {
 		Condition.notNull(getComments(),
-		                  "The container holding the comments must be initialized before adding a comment to the report.");
+		"The container holding the comments must be initialized before adding a comment to the report.");
 		
 		SortedSet<Comment> comments = getComments();
 		boolean ret = comments.add(comment);
@@ -131,7 +131,7 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * @param historyElement
-	 * @return 
+	 * @return
 	 */
 	@Transient
 	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
@@ -145,7 +145,7 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * @param sibling
-	 * @return 
+	 * @return
 	 */
 	@Transient
 	public boolean addSibling(@NotNull final Long sibling) {
@@ -212,7 +212,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public List<AttachmentEntry> getAttachmentEntries() {
-		return this.attachmentEntries;
+		return attachmentEntries;
 	}
 	
 	/**
@@ -220,7 +220,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getCategory() {
-		return this.category;
+		return category;
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@OrderBy
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
-		return this.comments;
+		return comments;
 	}
 	
 	/**
@@ -237,7 +237,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getComponent() {
-		return this.component;
+		return component;
 	}
 	
 	/**
@@ -248,8 +248,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
-		                                     ? getCreationTimestamp().toDate()
-		                                     : null;
+		? getCreationTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getCreationTimestamp() {
-		return this.creationTimestamp;
+		return creationTimestamp;
 	}
 	
 	/**
@@ -265,8 +265,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	@Lob
+	@Column (columnDefinition = "TEXT")
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 	
 	public Object getField(final String lowerFieldName) {
@@ -305,7 +306,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public byte[] getHash() {
-		return this.hash;
+		return hash;
 	}
 	
 	/**
@@ -313,7 +314,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public History getHistory() {
-		return this.history;
+		return history;
 	}
 	
 	/**
@@ -321,7 +322,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Id
 	public long getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -329,7 +330,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getLastFetch() {
-		return this.lastFetch;
+		return lastFetch;
 	}
 	
 	/**
@@ -340,8 +341,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return getLastFetch() != null
-		                             ? getLastFetch().toDate()
-		                             : null;
+		? getLastFetch().toDate()
+		: null;
 	}
 	
 	/**
@@ -352,8 +353,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
-		                                       ? getLastUpdateTimestamp().toDate()
-		                                       : null;
+		? getLastUpdateTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -361,7 +362,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getLastUpdateTimestamp() {
-		return this.lastUpdateTimestamp;
+		return lastUpdateTimestamp;
 	}
 	
 	/**
@@ -369,7 +370,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return this.personContainer;
+		return personContainer;
 	}
 	
 	/**
@@ -377,7 +378,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Priority getPriority() {
-		return this.priority;
+		return priority;
 	}
 	
 	/**
@@ -385,7 +386,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getProduct() {
-		return this.product;
+		return product;
 	}
 	
 	/**
@@ -393,7 +394,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Resolution getResolution() {
-		return this.resolution;
+		return resolution;
 	}
 	
 	/**
@@ -404,8 +405,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
-		                                       ? getResolutionTimestamp().toDate()
-		                                       : null;
+		? getResolutionTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -413,7 +414,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getResolutionTimestamp() {
-		return this.resolutionTimestamp;
+		return resolutionTimestamp;
 	}
 	
 	/**
@@ -430,7 +431,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Severity getSeverity() {
-		return this.severity;
+		return severity;
 	}
 	
 	/**
@@ -439,7 +440,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@ElementCollection
 	@OrderBy
 	public SortedSet<Long> getSiblings() {
-		return this.siblings;
+		return siblings;
 	}
 	
 	/**
@@ -447,15 +448,17 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Status getStatus() {
-		return this.status;
+		return status;
 	}
 	
 	/**
 	 * @return the subject
 	 */
 	@Basic
+	@Lob
+	@Column (columnDefinition = "TEXT")
 	public String getSubject() {
-		return this.subject;
+		return subject;
 	}
 	
 	/**
@@ -472,8 +475,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	@Lob
+	@Column (columnDefinition = "TEXT")
 	public String getSummary() {
-		return this.summary;
+		return summary;
 	}
 	
 	/**
@@ -481,7 +485,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Type getType() {
-		return this.type;
+		return type;
 	}
 	
 	/**
@@ -489,7 +493,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getVersion() {
-		return this.version;
+		return version;
 	}
 	
 	/**
@@ -497,7 +501,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the assignedTo to set
 	 */
 	public void setAssignedTo(final Person assignedTo) {
-		this.getPersonContainer().add("assignedTo", assignedTo);
+		getPersonContainer().add("assignedTo", assignedTo);
 	}
 	
 	/**
@@ -540,8 +544,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		setCreationTimestamp(creationTimestamp != null
-		                                              ? new DateTime(creationTimestamp)
-		                                              : null);
+		                     ? new DateTime(creationTimestamp)
+		: null);
 	}
 	
 	/**
@@ -573,7 +577,7 @@ public class Report implements Annotated, Comparable<Report> {
 		
 		for (Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
-			        && ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
+					&& ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
 				try {
 					method.invoke(this, fieldValue);
 				} catch (IllegalArgumentException e) {
@@ -635,8 +639,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		setLastFetch(lastFetch != null
-		                              ? new DateTime(lastFetch)
-		                              : null);
+		             ? new DateTime(lastFetch)
+		: null);
 	}
 	
 	/**
@@ -645,8 +649,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
 		setLastUpdateTimestamp(date != null
-		                                   ? new DateTime(date)
-		                                   : null);
+		                       ? new DateTime(date)
+		: null);
 	}
 	
 	/**
@@ -693,8 +697,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
 		setResolutionTimestamp(date != null
-		                                   ? new DateTime(date)
-		                                   : null);
+		                       ? new DateTime(date)
+		: null);
 	}
 	
 	/**
@@ -709,7 +713,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the resolver to set
 	 */
 	public void setResolver(final Person resolver) {
-		this.getPersonContainer().add("resolver", resolver);
+		getPersonContainer().add("resolver", resolver);
 	}
 	
 	/**
@@ -749,7 +753,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the submitter to set
 	 */
 	public void setSubmitter(final Person submitter) {
-		this.getPersonContainer().add("submitter", submitter);
+		getPersonContainer().add("submitter", submitter);
 	}
 	
 	/**
@@ -825,28 +829,28 @@ public class Report implements Annotated, Comparable<Report> {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		        + getId()
-		        + ", assignedTo="
-		        + getAssignedTo()
-		        + ", category="
-		        + getCategory()
-		        + ", comments="
-		        + (getComments() != null
-		                                ? getComments().size()
-		                                : 0)
-		        + ", description="
-		        + getDescription().substring(0,
-		                                     getDescription().length() > 10
-		                                                                   ? 10
-		                                                                   : Math.max(getDescription().length() - 1, 0))
-		        + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
-		        + ", submitter=" + getSubmitter() + ", subject="
-		        + getSubject().substring(0, getSubject().length() > 10
-		                                                              ? 10
-		                                                              : Math.max(getSubject().length() - 1, 0))
-		        + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
-		        + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
-		        + "]";
+		+ getId()
+		+ ", assignedTo="
+		+ getAssignedTo()
+		+ ", category="
+		+ getCategory()
+		+ ", comments="
+		+ (getComments() != null
+				? getComments().size()
+				: 0)
+				+ ", description="
+				+ getDescription().substring(0,
+				                             getDescription().length() > 10
+				                             ? 10
+				                             : Math.max(getDescription().length() - 1, 0))
+				                             + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
+				                             + ", submitter=" + getSubmitter() + ", subject="
+				                             + getSubject().substring(0, getSubject().length() > 10
+				                                                      ? 10
+				                                                      : Math.max(getSubject().length() - 1, 0))
+				                                                      + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
+				                                                      + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
+				                                                      + "]";
 	}
 	
 }

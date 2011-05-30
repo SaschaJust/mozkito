@@ -74,6 +74,9 @@ public class GoogleTracker extends Tracker {
 	@Override
 	public boolean checkRAW(final RawReport rawReport) {
 		if ((rawReport == null) || (!(rawReport instanceof GoogleRawContent))) {
+			if (Logger.logDebug()) {
+				Logger.debug("GOOGLE TRACKER: raw check for issue #" + rawReport.getId() + "failed!");
+			}
 			return false;
 		}
 		return true;
@@ -203,6 +206,10 @@ public class GoogleTracker extends Tracker {
 		
 		GoogleRawContent issue = (GoogleRawContent) xmlReport;
 		Report report = new Report(issue.getId());
+		
+		if (Logger.logDebug()) {
+			Logger.debug("GOOGLE TRACKER: parsing issue #" + issue.getId());
+		}
 		
 		if ((issue.getOwner() != null) && (issue.getOwner().toPerson() != null)) {
 			report.setAssignedTo(issue.getOwner().toPerson());
@@ -610,7 +617,10 @@ public class GoogleTracker extends Tracker {
 			int maxResults = 100;
 			
 			IssuesFeed resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-			                                                + "&amp;max-results=" + maxResults), IssuesFeed.class);
+			                                                + "&max-results=" + maxResults), IssuesFeed.class);
+			if (Logger.logDebug()) {
+				Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
+			}
 			List<IssuesEntry> feedEntries = resultFeed.getEntries();
 			while (feedEntries.size() > 0) {
 				for (int i = 0; i < feedEntries.size(); i++) {
@@ -618,11 +628,17 @@ public class GoogleTracker extends Tracker {
 					long bugId = entry.getIssueId().getValue().longValue();
 					if ((bugId >= startAt) && (bugId <= stopAt)) {
 						addBugId(bugId);
+						if (Logger.logDebug()) {
+							Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
+						}
 					}
 				}
 				startIndex += maxResults;
 				resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-				                                     + "&amp;max-results=" + maxResults), IssuesFeed.class);
+				                                     + "&max-results=" + maxResults), IssuesFeed.class);
+				if (Logger.logDebug()) {
+					Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
+				}
 				feedEntries = resultFeed.getEntries();
 			}
 			
