@@ -1,10 +1,54 @@
 #!/bin/bash
-## TODO check for darcs executable
-#@ TODO check for git executable
 
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
 }
+
+function check_git() {
+	TOOL=$(which git)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'git' tool. Please install the git version control system from: http://git-scm.com"
+		return 1
+	else
+		echo "Using git installation: ${TOOL}"
+	fi
+}
+
+function check_darcs() {
+	TOOL=$(which darcs)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'darcs' tool. Please install the darcs version control system from: http://darcs.net/"
+		return 1
+	else
+		echo "Using darcs installation: ${TOOL}"
+	fi
+}
+
+function check_targetdir() {
+	local TARGET_DIR=$1
+	
+	if [ -x "${TARGET_DIR}" ]; then
+		if [ -d "${TARGET_DIR}" ]; then
+			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXX")
+			ret=$?
+			rm -f "${TESTFILE}"
+			retrun $ret
+		else
+			echo "Eror: target directory exists, but is not of type file."
+			echo "Aborting..."
+			return 1
+		fi
+	else
+		mkdir -p "${TARGET_DIR}"
+		return $?
+	fi
+}
+
+
 
 if [ -z $2 ]; then
 	help
@@ -22,6 +66,9 @@ if [ ${TARGET_DIR::1} != "/" ]; then
 	TARGET_DIR="${PWD}/${TARGET_DIR}"
 fi
 
+check_git || exit 1
+check_darcs || exit 1
+check_targetdir "${TARGET_DIR}" || exit 1
 
 if [ -z $DARCSTOGIT_DIR ]; then
 	EXEC_DIR=$(dirname $0)

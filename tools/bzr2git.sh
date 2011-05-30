@@ -1,7 +1,4 @@
 #!/bin/bash
-## TODO check for bzr executable
-## TODO check for python-fastimport
-#@ TODO check for git executable
 
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
@@ -11,7 +8,7 @@ function check_bzr() {
 	TOOL=$(which bzr)
 	ret=$?
 	
-	if [ ret -ne 0 ]; then
+	if [ $ret -ne 0 ]; then
 		echo "Couldn't find 'bzr' tool. Please install the bazaar version control system from: http://bazaar-vcs.org"
 		return 1
 	else
@@ -23,7 +20,7 @@ function check_git() {
 	TOOL=$(which git)
 	ret=$?
 	
-	if [ ret -ne 0 ]; then
+	if [ $ret -ne 0 ]; then
 		echo "Couldn't find 'git' tool. Please install the git version control system from: http://git-scm.com"
 		return 1
 	else
@@ -108,7 +105,7 @@ exit(0)
 		
 }
 
-check_bzr_fastimport() {
+function check_bzr_fastimport() {
 	if [ ! -d ~/.bazaar/plugins/fastimport ]; then
 		echo "Missing bzr plugin: fastimport."
 		echo "Installing..."
@@ -116,6 +113,26 @@ check_bzr_fastimport() {
 		cd ~/.bazaar/plugins
 		bzr branch lp:bzr-fastimport fastimport
 		ret=$?
+		return $ret
+	fi
+}
+
+function check_targetdir() {
+	local TARGET_DIR=$1
+	
+	if [ -x "${TARGET_DIR}" ]; then
+		if [ -d "${TARGET_DIR}" ]; then
+			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXX")
+			ret=$?
+			rm -f "${TESTFILE}"
+			retrun $ret
+		else
+			echo "Eror: target directory exists, but is not of type file."
+			echo "Aborting..."
+			return 1
+		fi
+	else
+		mkdir -p "${TARGET_DIR}"
 		return $?
 	fi
 }
@@ -138,6 +155,7 @@ fi
 
 MYOLDPWD="$PWD"
 
+check_targetdir "${TARGET_DIR}" || exit 1
 check_git || exit 1
 check_bzr || exit 1
 check_python_fastimport || exit 1

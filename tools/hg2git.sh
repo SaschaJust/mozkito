@@ -1,9 +1,78 @@
 #!/bin/bash
 ## TODO check for script dependencies
 #@ TODO check for git executable
+# from mercurial import repo,hg,cmdutil,util,ui,revlog,node
+
 
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
+}
+
+function check_python_bindings() {
+	local MYOLDPWD="$PWD"
+	TEMPFILE=$(mktemp -t hg2git_fastimport_check)
+	cat >"${TEMPFILE}" <<-EOF
+#!/usr/bin/python
+from mercurial import repo,hg,cmdutil,util,ui,revlog,node
+exit(0)
+	EOF
+	
+	python "${TEMPFILE}" >/dev/null 2>&1
+	ret=$?
+	
+	rm -f "${TEMPFILE}"
+	
+	if [ $ret -ne 0 ]; then
+		echo "This tool requires the python mercurial bindings to be installed."
+		echo "Please install mercurial with the corresponding python libraries."
+		return 1
+	else
+		echo "Found python module requirements."
+	fi
+}
+
+function check_git() {
+	TOOL=$(which git)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'git' tool. Please install the git version control system from: http://git-scm.com"
+		return 1
+	else
+		echo "Using git installation: ${TOOL}"
+	fi
+}
+
+function check_hg() {
+	TOOL=$(which hg)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'hg' tool. Please install the git version control system from: http://mercurial.selenic.com"
+		return 1
+	else
+		echo "Using hg installation: ${TOOL}"
+	fi
+}
+
+function check_targetdir() {
+	local TARGET_DIR=$1
+	
+	if [ -x "${TARGET_DIR}" ]; then
+		if [ -d "${TARGET_DIR}" ]; then
+			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXX")
+			ret=$?
+			rm -f "${TESTFILE}"
+			retrun $ret
+		else
+			echo "Eror: target directory exists, but is not of type file."
+			echo "Aborting..."
+			return 1
+		fi
+	else
+		mkdir -p "${TARGET_DIR}"
+		return $?
+	fi
 }
 
 if [ -z $2 ]; then
@@ -21,6 +90,10 @@ fi
 if [ ${TARGET_DIR::1} != "/" ]; then
 	TARGET_DIR="${PWD}/${TARGET_DIR}"
 fi
+
+check_git || exit 1
+check_hg || exit 1
+check_targetdir "${TARGET_DIR}" || exit 1
 
 if [ -z $HGFASTEXPORT_DIR ]; then
 	EXEC_DIR=$(dirname $0)
