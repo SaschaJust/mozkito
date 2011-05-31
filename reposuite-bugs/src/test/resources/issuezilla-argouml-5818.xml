@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE issuezilla SYSTEM "http://argouml.tigris.org/issues/issuezilla.dtd">
+<issuezilla exporter="guest" charset="UTF-8" version="2.11" urlbase="http://argouml.tigris.org/issues/" maintainer="owner@argouml.tigris.org" project_domain="tigris.org" project_name="argouml" project_id="4" dtd_version="Revision: 1.2">
+<issue status_code="200" status_message="OK">
+  <issue_id>5818</issue_id>
+  <issue_status>VERIFIED</issue_status>
+  <priority>P2</priority>
+  <resolution>FIXED</resolution>
+  <component>argouml</component>
+  <version>0.28</version>
+  <rep_platform>All</rep_platform>
+  <assigned_to>bobtarling</assigned_to>
+  <delta_ts>2011-01-29 08:06:48</delta_ts>
+  <subcomponent>Diagrams</subcomponent>
+  <reporter>rdi</reporter>
+  <target_milestone>0.29.1</target_milestone>
+  <issue_type>DEFECT</issue_type>
+  <creation_ts>2009-06-25 02:05:03</creation_ts>
+  <qa_contact></qa_contact>
+  <status_whiteboard></status_whiteboard>
+  <issue_file_loc></issue_file_loc>
+  <votes></votes>
+  <op_sys>All</op_sys>
+  <short_desc>Moving vertex in association corrupts model if within component</short_desc>
+  <keywords></keywords>
+  <long_desc>
+   <who>rdi</who>
+   <issue_when>2009-06-25 02:05:03</issue_when>
+   <thetext>When a class diagramm contains a component with two classes, associations
+between the classes can cet lost when one edge of the line gets moved.
+
+How to reproduce:
+* Drag a component from project view to the class diagramm
+* place two clases into the component
+* create a association between the two classes
+* change the line top have a endge within the comonent box
+* move this edge to somewhere else within the component box
+Now the association end switches from the second class to the containing component.</thetext>
+  </long_desc>
+  <long_desc>
+   <who>rdi</who>
+   <issue_when>2009-06-25 02:07:48</issue_when>
+   <thetext>Created an attachment (id=1957)
+A project File where this Problem apears when the edge of the &quot;blubber&quot; association is moved.
+</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-25 07:15:27</issue_when>
+   <thetext>In theory you could say that there is nothing wrong with the current behaviour
+although maybe we could demonstrate the association from class to component better.
+
+An association can exist between any two classifiers. Therefore an association
+can be drawn between a class and a component (unless someone can find a
+well-formedness rule that proves me wrong).
+
+So what is wrong in this case is that there is no graphical representation of
+the association line when the class is placed in the bounds of the component.
+
+Drag the class out of that component and you&apos;ll correctly see the association.
+
+If you when you drag the original association end you correctly place it in
+another class (or back to the same class) then it will draw correctly. It only
+shows this problem when dropped on the component instead of a class. So the fact
+that it attaches I can&apos;t consider a defect.
+
+What I think should happen is that the association line should go from the class
+box to the nearest edge of the component.
+
+If this was done in error then the user can move the line back to the correct place.</thetext>
+  </long_desc>
+  <long_desc>
+   <who>rdi</who>
+   <issue_when>2009-06-26 00:13:37</issue_when>
+   <thetext>Well, this is not the behavior I meant. My problem is, when in the following
+diagramm the &quot;*&quot; edge point is moved a bit left or right, the association end is
+reassigned from class b to component foo. I think this is an error, because it
+is not the behavior which I expect when I move a point on the line. When I move
+the point I expect the graphical path to change, but not the target of the
+association.
+   _______________________________
+ _|_      _________  foo          |
+|___|    | Class A |              |
+ _|_     |_________|              |
+|___|           |      _________  |
+  |             *----&gt;| Class B | |
+  | Moving this ^     |_________| |
+  | egde point left or right      |
+  | causes the association to be  |
+  | assigned to the embedding     |
+  | component.                    |
+  |_______________________________|
+</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-26 00:30:54</issue_when>
+   <thetext>If I drag the edge end to the right I see no problem as it is being dropped onto 
+Class B. That works fine for me. The edge stays attach to class B both on the 
+diagram on the model.
+
+If you drag the edge end out of the class then that is a user interaction to 
+indicate that you wish to reattach the edge to some other classifier and adjust 
+the model the same way. You could change that association to attach to some 
+other class, interface or in this case a component.
+
+So I still see nothing wrong here other than the fact that the edge connecting 
+the class to the component is not visible when one is on top of the other.
+
+If you didn&apos;t want the association to attach to the component then why drag it 
+there and not to some class?</thetext>
+  </long_desc>
+  <long_desc>
+   <who>rdi</who>
+   <issue_when>2009-06-26 04:56:21</issue_when>
+   <thetext>Well, I think we talk about different points in the line, It seems you talk
+about an endpoint (a or c) while I talk about a point in the middle (point b).
+
+  _______________________________
+ _|_      _________  foo          |
+|___|    | Class A |              |
+ _|_     |_____(a)_|              |
+|___|           |      _________  |
+  |             b---&gt;(c) Class B| |
+  |                   |_________| |</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-26 06:06:42</issue_when>
+   <thetext>Aha - I see what you mean now, yes this is bad.
+
+I&apos;m upping the priority to P2 for this. I&apos;ll take a look as soon possible.
+
+At the moment it seems like your only workaround is to remove the components
+when reposition such edges ad then replace them later.
+</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-26 06:07:18</issue_when>
+   <thetext>Changing priority</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-26 06:49:08</issue_when>
+   <thetext>Changing the summary with latest understanding.
+
+I need to check also that this doesn&apos;t occur under similar circumstances with
+other elements
+
+e.g. a usage between classifiers inside a package.</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-28 08:18:36</issue_when>
+   <thetext>Fixed in r17160
+
+However I notice the component currently is drawing correctly in subversion.
+
+I suspect this is due to the new release of GEF which has new code to use 
+Graphics2D rather than Graphics</thetext>
+  </long_desc>
+  <long_desc>
+   <who>bobtarling</who>
+   <issue_when>2009-06-28 08:52:35</issue_when>
+   <thetext>I found the problem in some of the new Graphics2D work in GEF. Not sure of the 
+cause as yet so I&apos;m reverting the change in GEF till its sorted.
+
+This issue is now fixed release 0.29.1</thetext>
+  </long_desc>
+  <long_desc>
+   <who>linus</who>
+   <issue_when>2011-01-29 08:06:48</issue_when>
+   <thetext>The solution to this issue is included in 
+the stable release 0.32 that can be downloaded from 
+http://argouml-downloads.tigris.org/argouml-0.32.
+
+If you, when you test this, find that the issue is 
+not solved, please reopen the issue. If you don&apos;t the
+issue will be closed in April.
+
+If you find other problems when testing this, 
+please create a new issue.</thetext>
+  </long_desc>
+  <attachment encoding='Base64'>
+    <mimetype>application/x-compressed</mimetype>
+    <attachid>1957</attachid>
+    <date>2009-06-25 02:07:48</date>
+    <desc>A project File where this Problem apears when the edge of the &quot;blubber&quot; association is moved.</desc>
+    <ispatch></ispatch>
+    <filename>problem.zargo</filename>
+    <submitter_id>27833</submitter_id>
+    <submitting_username>rdi</submitting_username>
+    <data>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
+</data>
+  <attachment_iz_url>http://argouml.tigris.org/nonav/issues/showattachment.cgi/1957/problem.zargo</attachment_iz_url>
+  </attachment>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-25 07:15:27</when>
+    <field_name>short_desc</field_name>
+    <field_desc>Summary</field_desc>
+    <oldvalue>An association in a class diagram gets assigned to a component wehen a line point is moved</oldvalue>
+    <newvalue>An association from class to component should be attached to component edge.</newvalue>
+  </activity>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-26 06:07:18</when>
+    <field_name>priority</field_name>
+    <field_desc>Priority</field_desc>
+    <oldvalue>P3</oldvalue>
+    <newvalue>P2</newvalue>
+  </activity>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-26 06:49:08</when>
+    <field_name>short_desc</field_name>
+    <field_desc>Summary</field_desc>
+    <oldvalue>An association from class to component should be attached to component edge.</oldvalue>
+    <newvalue>Moving vertex in association corrupts model if within component</newvalue>
+  </activity>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-28 08:52:35</when>
+    <field_name>issue_status</field_name>
+    <field_desc>Status</field_desc>
+    <oldvalue>NEW</oldvalue>
+    <newvalue>RESOLVED</newvalue>
+  </activity>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-28 08:52:35</when>
+    <field_name>resolution</field_name>
+    <field_desc>Resolution</field_desc>
+    <oldvalue></oldvalue>
+    <newvalue>FIXED</newvalue>
+  </activity>
+  <activity>
+    <user>bobtarling</user>
+    <when>2009-06-28 08:52:35</when>
+    <field_name>target_milestone</field_name>
+    <field_desc>Target Milestone</field_desc>
+    <oldvalue>---</oldvalue>
+    <newvalue>0.29.1</newvalue>
+  </activity>
+  <activity>
+    <user>linus</user>
+    <when>2011-01-29 08:06:48</when>
+    <field_name>issue_status</field_name>
+    <field_desc>Status</field_desc>
+    <oldvalue>RESOLVED</oldvalue>
+    <newvalue>VERIFIED</newvalue>
+  </activity>
+</issue>
+</issuezilla>

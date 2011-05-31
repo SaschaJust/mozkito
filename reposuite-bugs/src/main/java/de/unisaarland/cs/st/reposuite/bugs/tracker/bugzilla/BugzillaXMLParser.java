@@ -335,7 +335,6 @@ public class BugzillaXMLParser {
 						whatIndex -= 2;
 					}
 					
-					// TODO Add test cases for history parsing
 					String what = tds.get(whatIndex).getText().trim().toLowerCase();
 					String removed = tds.get(++whatIndex).getText().trim();
 					String added = tds.get(++whatIndex).getText().trim();
