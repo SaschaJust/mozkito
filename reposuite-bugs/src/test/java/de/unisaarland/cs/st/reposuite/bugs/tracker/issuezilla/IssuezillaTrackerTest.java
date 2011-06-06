@@ -5,14 +5,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -37,10 +41,46 @@ public class IssuezillaTrackerTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		Logger.logDebug();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testFetch(){
+		IssuezillaTracker tracker = new IssuezillaTracker();
+		File randomDir = FileUtils.createRandomDir(new File("/tmp/"), "test", "reposuite", FileShutdownAction.DELETE);
+		try {
+			tracker.setup(new URI("http://argouml.tigris.org/issues/"), null, "xml.cgi?id=<BUGID>", null, null, 6297l,
+			              6297l, randomDir.getAbsolutePath());
+			URI uri = tracker.getLinkFromId(6297l);
+			assertEquals("http://argouml.tigris.org/issues/xml.cgi?id=6297", uri.toString());
+			RawReport rawReport = tracker.fetchSource(uri);
+			assertTrue(rawReport != null);
+		} catch (InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		} catch (FetchException e) {
+			e.printStackTrace();
+			fail();
+		} catch (UnsupportedProtocolException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				FileUtils.deleteDirectory(randomDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		
 	}
 	
 	@Test
