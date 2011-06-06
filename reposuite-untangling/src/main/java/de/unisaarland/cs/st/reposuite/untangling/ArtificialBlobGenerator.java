@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.reposuite.untangling;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,37 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 public class ArtificialBlobGenerator {
+	
+	protected static boolean canCombine(final String pathA, final String pathB, final int packageDistance){
+		List<String> pathAParts = Arrays.asList(StringUtils.removeEnd(pathA, FileUtils.fileSeparator)
+		                                        .split(FileUtils.fileSeparator));
+		List<String> pathBParts = Arrays.asList(StringUtils.removeEnd(pathB, FileUtils.fileSeparator)
+		                                        .split(FileUtils.fileSeparator));
+		
+		
+		// ignore the last packageDistance parts.
+		int pathLengthDist = Math.abs(pathAParts.size() - pathBParts.size());
+		if (pathLengthDist != 0) {
+			// different long paths
+			if (pathAParts.size() > pathBParts.size()) {
+				pathAParts = pathAParts.subList(0, pathAParts.size() - packageDistance);
+				int bIndex = packageDistance - pathLengthDist;
+				if (bIndex > 0) {
+					pathBParts = pathBParts.subList(0, pathBParts.size() - bIndex);
+				}
+			} else {
+				pathBParts = pathBParts.subList(0, pathBParts.size() - packageDistance);
+				int aIndex = packageDistance - pathLengthDist;
+				if (aIndex > 0) {
+					pathAParts = pathAParts.subList(0, pathAParts.size() - aIndex);
+				}
+			}
+		} else {
+			pathAParts = pathAParts.subList(0, pathAParts.size() - packageDistance);
+			pathBParts = pathBParts.subList(0, pathBParts.size() - packageDistance);
+		}
+		return pathAParts.equals(pathBParts);
+	}
 	
 	/**
 	 * Generate all artificial blobs from the set of atomicChanges supplied.
@@ -95,17 +125,7 @@ public class ArtificialBlobGenerator {
 			for (int j = i + 1; i < paths.keySet().size(); ++j) {
 				String pathA = pathArray[i];
 				String pathB = pathArray[j];
-				String commonPath = getLongestCommonPath(pathA, pathB);
-				pathA = StringUtils.removeStart(pathA, commonPath);
-				pathB = StringUtils.removeStart(pathB, commonPath);
-				List<String> pathAParts = Arrays.asList(pathA.split(FileUtils.fileSeparator));
-				List<String> pathBParts = Arrays.asList(pathB.split(FileUtils.fileSeparator));
-				
-				@SuppressWarnings ("unchecked")
-				Collection<String> intersection = CollectionUtils.intersection(pathAParts, pathBParts);
-				
-				int diff = Math.max(pathAParts.size() - intersection.size(), pathBParts.size() - intersection.size());
-				if (diff <= packageDistance) {
+				if (canCombine(pathA, pathB, packageDistance)) {
 					Set<String> l = new HashSet<String>();
 					l.add(pathA);
 					l.add(pathB);
@@ -115,7 +135,7 @@ public class ArtificialBlobGenerator {
 		}
 		
 		Set<Set<String>> pathsToCombine = transitiveClosure(newAdded);
-
+		
 		/*
 		 * for each transaction touching packages satisfying the
 		 * packageDistanceCriteria (and all packages touching the same package),

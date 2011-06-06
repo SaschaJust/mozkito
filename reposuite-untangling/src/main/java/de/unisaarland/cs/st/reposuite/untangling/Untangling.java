@@ -26,6 +26,7 @@ import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVis
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -131,8 +132,9 @@ public class Untangling {
 		                                     null, true, false);
 		
 		atomicChangesArg = new ListArgument(settings, "atomic.transactions",
-		                                    "A list of transactions to be considered as atomic transactions", null,
-		                                    true);
+		                                    "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
+		                                    null,
+		                                    false);
 		
 		transactionArg = new StringArgument(
 		                                    settings,
@@ -254,14 +256,23 @@ public class Untangling {
 		// TODO add semdiff visitor
 		
 		// load the atomic transactions and their change operations
-		HashSet<String> atomicTransactions = atomicChangesArg.getValue();
-		
 		Map<RCSTransaction, List<JavaChangeOperation>> atomicChangeOperations = new HashMap<RCSTransaction, List<JavaChangeOperation>>();
-		for (String transactionId : atomicTransactions) {
-			RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
-			List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-			atomicChangeOperations.put(t, ops);
+		if (atomicChangesArg.getValue() != null) {
+			HashSet<String> atomicTransactions = atomicChangesArg.getValue();
+			for (String transactionId : atomicTransactions) {
+				RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+				atomicChangeOperations.put(t, ops);
+			}
+		} else {
+			Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+			List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
+			for (RCSTransaction t : atomicTransactions) {
+				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+				atomicChangeOperations.put(t, ops);
+			}
 		}
+		
 		
 		// build all artificial blobs. Combine all atomic transactions.
 		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(atomicChangeOperations,

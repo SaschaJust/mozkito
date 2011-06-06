@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.untangling;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
@@ -11,6 +12,46 @@ import org.junit.Test;
 
 
 public class ArtificialBlobGeneratorTest {
+	
+	@Test
+	public void  testCanCombine1(){
+		String pathA = "a/b/c/d/";
+		String pathB = "a/b/";
+		int packageDistance = 2;
+		assertTrue(ArtificialBlobGenerator.canCombine(pathA, pathB, packageDistance));
+	}
+	
+	@Test
+	public void testCanCombine2() {
+		String pathA = "a/b/c/d/";
+		String pathB = "a/b/";
+		int packageDistance = 1;
+		assertFalse(ArtificialBlobGenerator.canCombine(pathA, pathB, packageDistance));
+	}
+	
+	@Test
+	public void testCanCombine3() {
+		String pathB = "a/b/c/d/";
+		String pathA = "a/b/";
+		int packageDistance = 2;
+		assertTrue(ArtificialBlobGenerator.canCombine(pathA, pathB, packageDistance));
+	}
+	
+	@Test
+	public void testCanCombine4() {
+		String pathB = "a/b/c/d/";
+		String pathA = "a/b/";
+		int packageDistance = 1;
+		assertFalse(ArtificialBlobGenerator.canCombine(pathA, pathB, packageDistance));
+	}
+	
+	@Test
+	public void testCanCombine5() {
+		String pathB = "a/x/c/d/";
+		String pathA = "a/y/c/d/";
+		int packageDistance = 2;
+		assertFalse(ArtificialBlobGenerator.canCombine(pathA, pathB, packageDistance));
+	}
 	
 	@Test
 	public void testTransitiveClosure() {
@@ -70,5 +111,4 @@ public class ArtificialBlobGeneratorTest {
 		l3l4l5.addAll(l5);
 		assertTrue(transitiveClosure.contains(l3l4l5));
 	}
-	
 }
