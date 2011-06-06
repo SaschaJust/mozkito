@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.clustering;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -7,8 +8,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 /**
  * The Class MultilevelPartitioning.
@@ -73,8 +74,9 @@ public class MultilevelClustering<T> {
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final Set<T> nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	public MultilevelClustering(final Collection<T> nodes,
+	                            final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings ("unchecked")
 		T[] array = (T[]) nodes.toArray();
 		this.scoreVisitors = scoreVisitors;
@@ -95,7 +97,7 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);

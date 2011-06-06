@@ -1,34 +1,48 @@
 package de.unisaarland.cs.st.reposuite.untangling;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.uncommons.maths.combinatorics.PermutationGenerator;
+
 import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
+import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.ppa.PPAXMLTransformer;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
-import de.unisaarland.cs.st.reposuite.settings.InputFileArgument;
+import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
+import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
+import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
-import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 
 /**
  * The Class Untangling.
@@ -49,7 +63,7 @@ public class Untangling {
 	 * @return the sets the
 	 */
 	@NoneNull
-	public static Set<Set<JavaChangeOperation>> untangle(final Set<JavaChangeOperation> blob,
+	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob,
 	                                                     final int numClusters,
 	                                                     final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
 	                                                     final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor) {
@@ -57,9 +71,9 @@ public class Untangling {
 		Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
 		
 		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-		                                                                                                     blob,
-		                                                                                                     scoreVisitors,
-		                                                                                                     collapseVisitor);
+				blob.getAllChangeOperations(),
+				scoreVisitors,
+				collapseVisitor);
 		
 		return clustering.getPartitions(numClusters);
 	}
@@ -74,7 +88,7 @@ public class Untangling {
 	private final StringArgument                                        transactionArg;
 	
 	/** The blob arg. */
-	private final InputFileArgument                                     blobArg;
+	private final ListArgument                                          atomicChangesArg;
 	
 	/** The score visitors. */
 	private List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors;
@@ -88,41 +102,110 @@ public class Untangling {
 	/** The num partition arg. */
 	private final LongArgument                                          numPartitionArg;
 	
+	private final BooleanArgument                                       useChangeCouplings;
+	
+	private final LongArgument                                          changeCouplingsMinSupport;
+	
+	private final DoubleArgument                                        changeCouplingsMinConfidence;
+	
+	private final LongArgument                                          packageDistanceArg;
+	
+	private final LongArgument                                          minBlobSizeArg;
+	
+	private final LongArgument                                          maxBlobSizeArg;
+	
+	private final OutputFileArgument                                    outArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
 	public Untangling() {
 		RepositorySettings settings = new RepositorySettings();
 		
-		this.repositoryArg = settings.setRepositoryArg(true);
-		this.databaseArgs = settings.setDatabaseArgs(true, RCS.class.getSimpleName().toLowerCase());
-		this.callgraphArg = new DirectoryArgument(
-		                                          settings,
-		                                          "callgraph.eclipse",
-		                                          "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
-		                                          null, true, false);
-		
-		this.blobArg = new InputFileArgument(
+		repositoryArg = settings.setRepositoryArg(true);
+		databaseArgs = settings.setDatabaseArgs(true, RCS.class.getSimpleName().toLowerCase());
+		callgraphArg = new DirectoryArgument(
 		                                     settings,
-		                                     "blob.xml",
-		                                     "XML file containing change operations to be considered as a single change blob. (This option will ignore the databse arguments!)",
-		                                     null, false);
+		                                     "callgraph.eclipse",
+		                                     "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
+		                                     null, true, false);
 		
-		this.transactionArg = new StringArgument(
-		                                         settings,
-		                                         "transaction.id",
-		                                         "The transaction id identifying the transaction to be untangled. (If argument '"
-		                                                 + this.blobArg.getName()
-		                                                 + "' is provided, this transaction id will be used to untangle the blob, if necessary).",
-		                                         null, true);
+		atomicChangesArg = new ListArgument(settings, "atomic.transactions",
+		                                    "A list of transactions to be considered as atomic transactions", null,
+		                                    true);
 		
-		this.useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling",
-		                                        "true", false);
+		transactionArg = new StringArgument(
+		                                    settings,
+		                                    "transaction.id",
+		                                    "The transaction id identifying the transaction to be untangled. (If argument '"
+		                                    + atomicChangesArg.getName()
+		                                    + "' is provided, this transaction id will be used to untangle the blob, if necessary).",
+		                                    null, true);
 		
-		this.numPartitionArg = new LongArgument(settings, "num.partitions",
-		                                        "Specifies the number of partitions to be generated.", null, true);
+		useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling", "true",
+		                                   false);
+		
+		useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
+		                                         "Use change coupling voter when untangling", "true", false);
+		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
+		                                             "Set the minimum support for used change couplings to this value",
+		                                             "3", false);
+		changeCouplingsMinConfidence = new DoubleArgument(
+		                                                  settings,
+		                                                  "vote.changecouplings.minconfidence",
+		                                                  "Set minimum confidence for used change couplings to this value",
+		                                                  "0.7", false);
+		
+		numPartitionArg = new LongArgument(settings, "num.partitions",
+		                                   "Specifies the number of partitions to be generated.", null, true);
+		
+		packageDistanceArg = new LongArgument(
+		                                      settings,
+		                                      "package.distance",
+		                                      "The maximal allowed distance between packages allowed when generating blobs.",
+		                                      "0", true);
+		
+		minBlobSizeArg = new LongArgument(settings, "blobsize.min",
+		                                  "The minimal number of transactions to be combined within a blob.", "2", true);
+		
+		maxBlobSizeArg = new LongArgument(
+		                                  settings,
+		                                  "blobsize.max",
+		                                  "The maximal number of transactions to be combined within a blob. (-1 means not limit)",
+		                                  "-1", true);
+		
+		outArg = new OutputFileArgument(settings, "out.file", "Write descriptive statistics into this file", null,
+		                                true, true);
 		
 		settings.parseArguments();
+	}
+	
+	private int comparePartitions(final ArtificialBlob blob,
+	                              final Set<Set<JavaChangeOperation>> partitions) {
+		
+		Condition.check(blob.getTransactions().size() == partitions.size(),
+		"The size of partitions in artificial blob and the size of untangled partitions must be equal.");
+		
+		List<List<JavaChangeOperation>> originalPartitions = blob.getChangeOperationPartitions();
+		
+		PermutationGenerator<Set<JavaChangeOperation>> pGen = new PermutationGenerator<Set<JavaChangeOperation>>(
+				partitions);
+		
+		int minDiff = 0;
+		
+		while (pGen.hasMore()) {
+			List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
+			int diff = 0;
+			for (int i = 0; i < nextPermutation.size(); ++i) {
+				Set<JavaChangeOperation> untangledPart = nextPermutation.get(i);
+				List<JavaChangeOperation> originalPart = originalPartitions.get(i);
+				diff += CollectionUtils.subtract(originalPart, untangledPart).size();
+			}
+			if (diff < minDiff) {
+				minDiff = diff;
+			}
+		}
+		return minDiff;
 	}
 	
 	/**
@@ -130,69 +213,90 @@ public class Untangling {
 	 */
 	public void run() {
 		
+		databaseArgs.getValue();
+		PersistenceUtil persistenceUtil = null;
+		try {
+			persistenceUtil = PersistenceManager.getUtil();
+		} catch (UninitializedDatabaseException e1) {
+			throw new UnrecoverableError(e1.getMessage(), e1);
+		}
+		
 		List<String> eclipseArgs = new LinkedList<String>();
 		
-		eclipseArgs.add(" -Drepository.uri=" + this.repositoryArg.getRepoDirArg().getValue().toString());
-		eclipseArgs.add(" -Drepository.password" + this.repositoryArg.getPassArg().getValue());
-		eclipseArgs.add(" -Drepository.type" + this.repositoryArg.getRepoTypeArg().getValue());
-		eclipseArgs.add(" -Drepository.user" + this.repositoryArg.getUserArg().getValue());
+		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
+		eclipseArgs.add(" -Drepository.password" + repositoryArg.getPassArg().getValue());
+		eclipseArgs.add(" -Drepository.type" + repositoryArg.getRepoTypeArg().getValue());
+		eclipseArgs.add(" -Drepository.user" + repositoryArg.getUserArg().getValue());
 		
-		this.scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 		
 		// add call graph visitor
-		if (this.useCallGraph.getValue()) {
-			this.scoreVisitors.add(new CallGraphVoter(this.callgraphArg.getValue(),
-			                                          eclipseArgs.toArray(new String[eclipseArgs.size()]),
-			                                          this.transactionArg.getValue()));
+		if (useCallGraph.getValue()) {
+			scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(),
+			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]),
+			                                     transactionArg.getValue()));
 		}
 		
-		// TODO add change coupling visitor
+		// add change coupling visitor
+		if (useChangeCouplings.getValue()) {
+			if ((changeCouplingsMinConfidence.getValue() == null) || (changeCouplingsMinSupport.getValue() == null)) {
+				throw new UnrecoverableError(
+				"When using change couplings, you have to specify a min support and min confidence value.");
+			}
+			scoreVisitors.add(new ChangeCouplingVoter(transactionArg.getValue(), changeCouplingsMinSupport.getValue()
+			                                          .intValue(),
+			                                          changeCouplingsMinConfidence.getValue().doubleValue(),
+			                                          persistenceUtil));
+		}
+		
 		// TODO add test impact visitor
-		// TODO add yana's change rule visitor
+		// TODO add Yana's change rule visitor
 		// TODO add semdiff visitor
 		
-		File blobXML = this.blobArg.getValue();
+		// load the atomic transactions and their change operations
+		HashSet<String> atomicTransactions = atomicChangesArg.getValue();
 		
-		new HashSet<Set<JavaChangeOperation>>();
-		Set<JavaChangeOperation> blob = new HashSet<JavaChangeOperation>();
-		
-		if (blobXML != null) {
-			// read and convert blob
-			blob.addAll(PPAXMLTransformer.readOperations(blobXML));
-			
-		} else {
-			String transactionId = this.transactionArg.getValue();
-			if (transactionId == null) {
-				throw new UnrecoverableError("If " + this.blobArg.getName() + " argument not set, you have to specify "
-				        + this.transactionArg.getName() + " argument.");
-			}
-			
-			if (!this.databaseArgs.getValue()) {
-				throw new UnrecoverableError("Could not connect to specified database using specified credentials.");
-			}
-			
-			// get method change operations from DB.
-			try {
-				PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
-				List<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-				                                                                                   this.transactionArg.getValue());
-				for (JavaChangeOperation op : changeOperations) {
-					if ((op.getChangedElementLocation() != null)
-					        && (op.getChangedElementLocation().getElement() != null)
-					        && (op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-						blob.add(op);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (Logger.logError()) {
-					throw new UnrecoverableError("Database connection could not be established.", e);
-				}
-			}
+		Map<RCSTransaction, List<JavaChangeOperation>> atomicChangeOperations = new HashMap<RCSTransaction, List<JavaChangeOperation>>();
+		for (String transactionId : atomicTransactions) {
+			RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+			List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+			atomicChangeOperations.put(t, ops);
 		}
-		untangle(blob, this.numPartitionArg.getValue().intValue(), this.scoreVisitors,
-		         new MaxCollapseVisitor<JavaChangeOperation>());
 		
-		// TODO think of a clever was to report partition
+		// build all artificial blobs. Combine all atomic transactions.
+		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(atomicChangeOperations,
+		                                                                          packageDistanceArg.getValue()
+		                                                                          .intValue(),
+		                                                                          minBlobSizeArg.getValue().intValue(),
+		                                                                          maxBlobSizeArg.getValue().intValue());
+		
+		// for each artificial blob
+		DescriptiveStatistics stat = new DescriptiveStatistics();
+		for (ArtificialBlob blob : artificialBlobs) {
+			// run the untangling algorithm
+			Set<Set<JavaChangeOperation>> partitions = untangle(blob, numPartitionArg.getValue().intValue(),
+			                                                    scoreVisitors,
+			                                                    new MaxCollapseVisitor<JavaChangeOperation>());
+			
+			// compare the true and the computed partitions and score the
+			// similarity score in a descriptive statistic
+			stat.addValue(comparePartitions(blob, partitions));
+		}
+		
+		// report the descriptive statistics about the partition scores.
+		File outFile = outArg.getValue();
+		BufferedWriter outWriter;
+		try {
+			outWriter = new BufferedWriter(new FileWriter(outFile));
+			for (Double d : stat.getValues()) {
+				outWriter.append(d.toString());
+				outWriter.append(FileUtils.lineSeparator);
+			}
+			outWriter.append("Avg. MissRate:," + stat.getMean());
+			outWriter.append("Med. MissRate:," + stat.getPercentile(50));
+			outWriter.close();
+		} catch (IOException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
 	}
 }

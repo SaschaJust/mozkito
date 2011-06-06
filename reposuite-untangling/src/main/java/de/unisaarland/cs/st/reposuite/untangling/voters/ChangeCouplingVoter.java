@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.MethodChangeCoupling;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
@@ -16,7 +17,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.kisa.Logger;
 
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
@@ -35,9 +35,9 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 *            should be considered, pass an empty list.
 	 */
 	@NoneNull
-	public ChangeCouplingVoter(final RCSTransaction transaction, final int minSupport, final double minConfidence,
-	        final PersistenceUtil persistenceUtil) {
-		this.transaction = transaction;
+	public ChangeCouplingVoter(final String transactionId, final int minSupport, final double minConfidence,
+	                           final PersistenceUtil persistenceUtil) {
+		transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
@@ -63,12 +63,12 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		Condition.check(element1 != null, "The changed elements must not be null!");
 		Condition.check(element2 != null, "The changed elements must not be null!");
 		Condition.check(element1.getElementType().equals(element2.getElementType()),
-		                "The change operations must be on the same types of elements");
+		"The change operations must be on the same types of elements");
 		
 		if (!element1.getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
 			if (Logger.logWarn()) {
 				Logger.warn("ChangeCouplingVoter does not support change operations on element type "
-				        + element1.getElementType() + ". Returning 0.");
+				            + element1.getElementType() + ". Returning 0.");
 			}
 			return 0;
 		}
@@ -78,11 +78,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		relevantMethodNames.add(element1.getFullQualifiedName());
 		relevantMethodNames.add(element2.getFullQualifiedName());
 		
-		List<MethodChangeCoupling> couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.transaction,
-		                                                                                          this.minSupport,
-		                                                                                          this.minConfidence,
+		List<MethodChangeCoupling> couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction,
+		                                                                                          minSupport,
+		                                                                                          minConfidence,
 		                                                                                          relevantMethodNames,
-		                                                                                          this.persistenceUtil);
+		                                                                                          persistenceUtil);
 		if (couplings.size() > 0) {
 			Collections.sort(couplings, new Comparator<MethodChangeCoupling>() {
 				
