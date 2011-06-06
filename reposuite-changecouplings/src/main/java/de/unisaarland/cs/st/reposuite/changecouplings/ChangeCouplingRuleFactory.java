@@ -39,7 +39,7 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	// TODO add @LessOrEqualDouble (ref = 1d) for minConfidence
+	// FIXME add @LessOrEqualDouble (ref = 1d) for minConfidence
 	public static List<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction transaction,
 	                                                              @Positive final int minSupport,
 	                                                              @Positive final double minConfidence,
@@ -48,7 +48,7 @@ public class ChangeCouplingRuleFactory {
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-			        + persistenceUtil.getType() + ").");
+			                             + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
@@ -56,9 +56,9 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.commitTransaction();
 		
 		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
-		        + tablename + "')");
+		                                   + tablename + "')");
 		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-		        + tablename);
+		                                                               + tablename);
 		if (list == null) {
 			return null;
 		}
@@ -107,7 +107,7 @@ public class ChangeCouplingRuleFactory {
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-			        + persistenceUtil.getType() + ").");
+			                             + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
@@ -131,7 +131,7 @@ public class ChangeCouplingRuleFactory {
 		
 		@SuppressWarnings ("unchecked")
 		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-		        + tablename);
+		                                                               + tablename);
 		if (list == null) {
 			return null;
 		}

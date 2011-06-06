@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -59,7 +60,7 @@ public class JavaChangeOperation implements Annotated {
 		} catch (IllegalArgumentException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not detect ChangeType of JavaChangeOperation. Unknown value '" + element.getName()
-				        + "'. Returning null.");
+				            + "'. Returning null.");
 			}
 			return null;
 		}
@@ -112,6 +113,8 @@ public class JavaChangeOperation implements Annotated {
 	
 	/** The revision. */
 	private RCSRevision         revision;
+	
+	private boolean       essential = true;
 	
 	@Deprecated
 	public JavaChangeOperation() {
@@ -237,12 +240,17 @@ public class JavaChangeOperation implements Annotated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((getChangedElementLocation() == null)
-		                                                                ? 0
-		                                                                : getChangedElementLocation().hashCode());
+				? 0
+				: getChangedElementLocation().hashCode());
 		result = prime * result + ((getRevision() == null)
-		                                                  ? 0
-		                                                  : getRevision().hashCode());
+				? 0
+				: getRevision().hashCode());
 		return result;
+	}
+	
+	@Column (columnDefinition = "boolean default 'TRUE'")
+	public boolean isEssential() {
+		return essential;
 	}
 	
 	/**
@@ -263,6 +271,10 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	protected void setChangeType(final ChangeType changeType) {
 		this.changeType = changeType;
+	}
+	
+	public void setEssential(final boolean isEssential) {
+		essential = isEssential;
 	}
 	
 	/**
