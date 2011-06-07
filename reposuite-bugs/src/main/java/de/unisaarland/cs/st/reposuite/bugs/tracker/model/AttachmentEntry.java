@@ -51,7 +51,7 @@ public class AttachmentEntry implements Annotated {
 	 * @param attachId
 	 */
 	public AttachmentEntry(final String attachId) {
-		this.id = attachId;
+		id = attachId;
 	}
 	
 	/**
@@ -66,22 +66,23 @@ public class AttachmentEntry implements Annotated {
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
-		return this.deltaTS;
+		return deltaTS;
 	}
 	
 	/**
 	 * @return the description
 	 */
 	@Basic
+	@Column (columnDefinition = "TEXT")
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 	
 	/**
 	 * @return the filename
 	 */
 	public String getFilename() {
-		return this.filename;
+		return filename;
 	}
 	
 	/**
@@ -89,7 +90,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Id
 	public String getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**
@@ -99,8 +100,8 @@ public class AttachmentEntry implements Annotated {
 	@Temporal (TemporalType.TIMESTAMP)
 	public Date getJavaTimestamp() {
 		return getTimestamp() != null
-		                             ? getTimestamp().toDate()
-		                             : null;
+		? getTimestamp().toDate()
+		: null;
 	}
 	
 	/**
@@ -108,7 +109,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getLink() {
-		return this.link;
+		return link;
 	}
 	
 	/**
@@ -116,7 +117,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getMime() {
-		return this.mime;
+		return mime;
 	}
 	
 	/**
@@ -124,7 +125,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return this.personContainer;
+		return personContainer;
 	}
 	
 	/**
@@ -132,7 +133,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public long getSize() {
-		return this.size;
+		return size;
 	}
 	
 	/**
@@ -140,7 +141,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 	
 	/**
