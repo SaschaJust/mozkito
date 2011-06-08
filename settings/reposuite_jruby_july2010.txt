@@ -6,8 +6,8 @@ repository.uri=/data/kim/miner_repos/jruby/git_repo_03_07_2010/
 repository.type=GIT
 tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
 tracker.type=JIRA
-tracker.stop=5804
-#tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
+tracker.stop=5811
+tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
 headless
 #mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
 #mapping.score.AuthorEquality=1

@@ -5,3 +5,7 @@ log.level=info
 repository.uri=/data/kim/miner_repos/argoUML/git_repo_17_06_2010/
 repository.type=GIT
 headless
+tracker.fetchURI=http://argouml.tigris.org/issues/
+tracker.pattern=xml.cgi?id=<BUGID>
+tracker.type=ISSUEZILLA
+tracker.stop=6297
