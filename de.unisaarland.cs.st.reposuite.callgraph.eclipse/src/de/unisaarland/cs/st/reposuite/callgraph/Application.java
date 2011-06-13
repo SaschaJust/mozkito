@@ -1,9 +1,9 @@
 package de.unisaarland.cs.st.reposuite.callgraph;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-
-import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * This class controls all aspects of the application's execution
@@ -22,9 +22,9 @@ public class Application implements IApplication {
 		
 		String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
 		+ "reposuite-utils-0.1-SNAPSHOT.jar";
-		String core = baseDir + "-core" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
-		+ "reposuite-core-0.1-SNAPSHOT.jar";
-		String ppaStr = baseDir + "-ppa" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
+		String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
+		        + "reposuite-rcs-0.1-SNAPSHOT.jar";
+		String ppaStr = baseDir + "-callgraph" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
 		+ "reposuite-callgraph-0.1-SNAPSHOT.jar";
 		
 		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppaStr);
