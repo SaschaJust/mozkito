@@ -41,7 +41,6 @@ import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 
@@ -85,9 +84,6 @@ public class Untangling {
 	/** The callgraph arg. */
 	private final DirectoryArgument                                     callgraphArg;
 	
-	/** The transaction arg. */
-	private final StringArgument                                        transactionArg;
-	
 	/** The blob arg. */
 	private final ListArgument                                          atomicChangesArg;
 	
@@ -117,6 +113,8 @@ public class Untangling {
 	
 	private final OutputFileArgument                                    outArg;
 	
+	private final DirectoryArgument                                     callGraphCacheDirArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -131,18 +129,11 @@ public class Untangling {
 		                                     "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
 		                                     null, true, false);
 		
-		atomicChangesArg = new ListArgument(settings, "atomic.transactions",
-		                                    "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
-		                                    null,
-		                                    false);
-		
-		transactionArg = new StringArgument(
+		atomicChangesArg = new ListArgument(
 		                                    settings,
-		                                    "transaction.id",
-		                                    "The transaction id identifying the transaction to be untangled. (If argument '"
-		                                    + atomicChangesArg.getName()
-		                                    + "' is provided, this transaction id will be used to untangle the blob, if necessary).",
-		                                    null, true);
+		                                    "atomic.transactions",
+		                                    "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
+		                                    null, false);
 		
 		useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling", "true",
 		                                   false);
@@ -178,6 +169,12 @@ public class Untangling {
 		
 		outArg = new OutputFileArgument(settings, "out.file", "Write descriptive statistics into this file", null,
 		                                true, true);
+		
+		callGraphCacheDirArg = new DirectoryArgument(
+		                                             settings,
+		                                             "callgraph.cache.dir",
+		                                             "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
+		                                             null, false, false);
 		
 		settings.parseArguments();
 	}
@@ -230,31 +227,7 @@ public class Untangling {
 		eclipseArgs.add(" -Drepository.type" + repositoryArg.getRepoTypeArg().getValue());
 		eclipseArgs.add(" -Drepository.user" + repositoryArg.getUserArg().getValue());
 		
-		scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
-		
-		// add call graph visitor
-		if (useCallGraph.getValue()) {
-			scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(),
-			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]),
-			                                     transactionArg.getValue()));
-		}
-		
-		// add change coupling visitor
-		if (useChangeCouplings.getValue()) {
-			if ((changeCouplingsMinConfidence.getValue() == null) || (changeCouplingsMinSupport.getValue() == null)) {
-				throw new UnrecoverableError(
-				"When using change couplings, you have to specify a min support and min confidence value.");
-			}
-			scoreVisitors.add(new ChangeCouplingVoter(transactionArg.getValue(), changeCouplingsMinSupport.getValue()
-			                                          .intValue(),
-			                                          changeCouplingsMinConfidence.getValue().doubleValue(),
-			                                          persistenceUtil));
-		}
-		
-		// TODO add test impact visitor
-		// TODO add Yana's change rule visitor
-		// TODO add semdiff visitor
-		
+
 		// load the atomic transactions and their change operations
 		Map<RCSTransaction, List<JavaChangeOperation>> atomicChangeOperations = new HashMap<RCSTransaction, List<JavaChangeOperation>>();
 		if (atomicChangesArg.getValue() != null) {
@@ -273,7 +246,6 @@ public class Untangling {
 			}
 		}
 		
-		
 		// build all artificial blobs. Combine all atomic transactions.
 		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(atomicChangeOperations,
 		                                                                          packageDistanceArg.getValue()
@@ -284,7 +256,36 @@ public class Untangling {
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
 		for (ArtificialBlob blob : artificialBlobs) {
-			// run the untangling algorithm
+			
+			scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+			
+			RCSTransaction baseT = blob.getLatestTransaction();
+			
+			// add call graph visitor
+			if (useCallGraph.getValue()) {
+				scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(),
+				                                     eclipseArgs.toArray(new String[eclipseArgs.size()]), baseT,
+				                                     callGraphCacheDirArg.getValue()));
+			}
+			
+			// add change coupling visitor
+			if (useChangeCouplings.getValue()) {
+				if ((changeCouplingsMinConfidence.getValue() == null) || (changeCouplingsMinSupport.getValue() == null)) {
+					throw new UnrecoverableError(
+					"When using change couplings, you have to specify a min support and min confidence value.");
+				}
+				scoreVisitors.add(new ChangeCouplingVoter(baseT,
+				                                          changeCouplingsMinSupport.getValue().intValue(),
+				                                          changeCouplingsMinConfidence.getValue().doubleValue(),
+				                                          persistenceUtil));
+			}
+			
+			// TODO add test coupling visitor
+			// TODO add Yana's change rule visitor
+			// TODO add semdiff visitor
+			// TODO add data dependency visitor
+			
+			// run the partitioning algorithm
 			Set<Set<JavaChangeOperation>> partitions = untangle(blob, numPartitionArg.getValue().intValue(),
 			                                                    scoreVisitors,
 			                                                    new MaxCollapseVisitor<JavaChangeOperation>());

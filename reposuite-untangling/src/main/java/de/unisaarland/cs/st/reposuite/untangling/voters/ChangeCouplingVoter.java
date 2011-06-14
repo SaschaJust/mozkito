@@ -35,9 +35,9 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 *            should be considered, pass an empty list.
 	 */
 	@NoneNull
-	public ChangeCouplingVoter(final String transactionId, final int minSupport, final double minConfidence,
+	public ChangeCouplingVoter(final RCSTransaction transaction, final int minSupport, final double minConfidence,
 	                           final PersistenceUtil persistenceUtil) {
-		transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		this.transaction = transaction;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;

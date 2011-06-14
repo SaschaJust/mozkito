@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -17,6 +18,7 @@ public class ArtificialBlob {
 	
 	/** The change operations. */
 	Map<RCSTransaction, List<JavaChangeOperation>> changeOperations;
+	TreeSet<RCSTransaction>                        treeSet = new TreeSet<RCSTransaction>();
 	
 	/**
 	 * Instantiates a new artificial blob.
@@ -26,6 +28,9 @@ public class ArtificialBlob {
 	 */
 	public ArtificialBlob(final Map<RCSTransaction, List<JavaChangeOperation>> changeOperations) {
 		this.changeOperations = changeOperations;
+		for (RCSTransaction t : changeOperations.keySet()) {
+			treeSet.add(t);
+		}
 	}
 	
 	/**
@@ -47,6 +52,10 @@ public class ArtificialBlob {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
 		result.addAll(changeOperations.values());
 		return result;
+	}
+	
+	public RCSTransaction getLatestTransaction() {
+		return treeSet.last();
 	}
 	
 	/**
