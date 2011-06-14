@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.ppa.utils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -97,7 +98,7 @@ public class PPACUThread implements Runnable {
 			parser2.setStatementsRecovery(true);
 			parser2.setResolveBindings(true);
 			parser2.setSource(icu);
-			node = parser2.createAST(null);
+			node = parser2.createAST(false, new NullProgressMonitor());
 			PPAEngine ppaEngine = new PPAEngine(registry, options);
 			
 			cu = (CompilationUnit) node;

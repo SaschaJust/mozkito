@@ -11,7 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -68,32 +67,32 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	 */
 	public PPAToolChain() {
 		super(new RepositorySettings());
-		this.threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
-		RepositorySettings settings = (RepositorySettings) this.getSettings();
+		threadPool = new RepoSuiteThreadPool(PPAToolChain.class.getSimpleName(), this);
+		RepositorySettings settings = (RepositorySettings) getSettings();
 		
-		this.repoSettings = settings.setRepositoryArg(true);
-		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
+		repoSettings = settings.setRepositoryArg(true);
+		databaseSettings = settings.setDatabaseArgs(false, "ppa");
 		settings.setLoggerArg(true);
-		this.testCaseTransactionArg = new ListArgument(
-		                                               settings,
-		                                               "testCaseTransactions",
-		                                               "List of transactions that will be passed for test case purposes. "
-		                                                       + "If this option is set, this module will start in test case mode. "
-		                                                       + "If will generate change operations to specified transactions, only;"
-		                                                       + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                                                       + "or to specified XML file.", null, false);
+		testCaseTransactionArg = new ListArgument(
+		                                          settings,
+		                                          "testCaseTransactions",
+		                                          "List of transactions that will be passed for test case purposes. "
+		                                          + "If this option is set, this module will start in test case mode. "
+		                                          + "If will generate change operations to specified transactions, only;"
+		                                          + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                                          + "or to specified XML file.", null, false);
 		
-		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
-		                                  "false", false);
+		ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
+		                             "false", false);
 		
-		this.asXML = new OutputFileArgument(
-		                                    settings,
-		                                    "output.xml",
-		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                                    null, false, true);
+		asXML = new OutputFileArgument(
+		                               settings,
+		                               "output.xml",
+		                               "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+		                               null, false, true);
 		
-		this.startWithArg = new StringArgument(settings, "startTransaction",
-		                                       "Use this transaction ID as the first one.", null, false);
+		startWithArg = new StringArgument(settings, "startTransaction",
+		                                  "Use this transaction ID as the first one.", null, false);
 		
 		settings.parseArguments();
 		
@@ -105,10 +104,10 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void run() {
-		if (!this.shutdown) {
-			this.setup();
-			if (!this.shutdown) {
-				this.threadPool.execute();
+		if (!shutdown) {
+			setup();
+			if (!shutdown) {
+				threadPool.execute();
 			}
 		}
 		if (Logger.logInfo()) {
@@ -123,31 +122,31 @@ public class PPAToolChain extends RepoSuiteToolchain {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public void setup() {
-		if (!this.databaseSettings.getValue()) {
+		if (!databaseSettings.getValue()) {
 			if (Logger.logError()) {
 				Logger.error("Could not connect to database!");
 			}
 		}
 		try {
-			this.persistenceUtil = PersistenceManager.getUtil();
+			persistenceUtil = PersistenceManager.getUtil();
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
 		
-		File xmlFile = this.asXML.getValue();
-		Repository repository = this.repoSettings.getValue();
+		File xmlFile = asXML.getValue();
+		Repository repository = repoSettings.getValue();
 		
 		// get the transactions to be processed
 		List<RCSTransaction> transactions = new LinkedList<RCSTransaction>();
 		@SuppressWarnings ("rawtypes")
-		Criteria criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-		HashSet<String> transactionLimit = this.testCaseTransactionArg.getValue();
+		Criteria criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+		HashSet<String> transactionLimit = testCaseTransactionArg.getValue();
 		if (transactionLimit != null) {
 			criteria.in("id", transactionLimit);
 		}
-		transactions.addAll(this.persistenceUtil.load(criteria));
+		transactions.addAll(persistenceUtil.load(criteria));
 		
-		JavaElementFactory.init(this.persistenceUtil);
+		JavaElementFactory.init(persistenceUtil);
 		
 		// the xml file set, create XMLSinkThread. Otherwise the persistence
 		// middleware persister thread
@@ -160,18 +159,18 @@ public class PPAToolChain extends RepoSuiteToolchain {
 				stdout = true;
 			} else {
 				try {
-					new PPAXMLTransformer(this.threadPool.getThreadGroup(), this.getSettings(),
+					new PPAXMLTransformer(threadPool.getThreadGroup(), getSettings(),
 					                      new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						        + "Writing to sstdout!");
+						             + "Writing to sstdout!");
 					}
 					stdout = true;
 				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						        + "Writing to sstdout!");
+						             + "Writing to sstdout!");
 					}
 					stdout = true;
 				}
@@ -179,19 +178,19 @@ public class PPAToolChain extends RepoSuiteToolchain {
 			
 			if (stdout) {
 				try {
-					new PPAXMLTransformer(this.threadPool.getThreadGroup(), this.getSettings(), System.out);
+					new PPAXMLTransformer(threadPool.getThreadGroup(), getSettings(), System.out);
 				} catch (ParserConfigurationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
 			
 		} else {
-			new ChangeOperationPersister(this.threadPool.getThreadGroup(), this.getSettings(), this.persistenceUtil);
+			new ChangeOperationPersister(threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 		}
 		
 		// generate the change operation reader
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), this.getSettings(), repository, transactions,
-		                          this.startWithArg.getValue(), this.ppaArg.getValue());
+		new ChangeOperationReader(threadPool.getThreadGroup(), getSettings(), repository, transactions,
+		                          startWithArg.getValue(), ppaArg.getValue());
 	}
 	
 	/*
@@ -204,7 +203,7 @@ public class PPAToolChain extends RepoSuiteToolchain {
 		if (Logger.logInfo()) {
 			Logger.info("Toolchain shutdown.");
 		}
-		this.threadPool.shutdown();
-		this.shutdown = true;
+		threadPool.shutdown();
+		shutdown = true;
 	}
 }

@@ -73,7 +73,7 @@ public class PPAUtils {
 		private IFile            iFile;
 		
 		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
-		        final PPAOptions options) {
+		                  final PPAOptions options) {
 			this.project = project;
 			this.file = file;
 			this.packagename = packagename;
@@ -82,25 +82,25 @@ public class PPAUtils {
 		}
 		
 		public CompilationUnit getCompilationUnit() {
-			return this.cu;
+			return cu;
 		}
 		
 		public IFile getIFile() {
-			return this.iFile;
+			return iFile;
 		}
 		
 		@Override
 		public void run() {
 			try {
-				this.iFile = PPAResourceUtil.copyJavaSourceFile(this.project, this.file, this.packagename,
-				                                                this.filename);
-				if (this.iFile == null) {
+				iFile = PPAResourceUtil.copyJavaSourceFile(project, file, packagename,
+				                                           filename);
+				if (iFile == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
 					}
 					return;
 				}
-				this.cu = getCU(this.iFile, this.options);
+				cu = getCU(iFile, options);
 			} catch (CoreException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not import file into eclipse workspace", e);
@@ -179,7 +179,7 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			
 			// first copy files!
@@ -189,7 +189,7 @@ public class PPAUtils {
 				if (!file.exists()) {
 					if (Logger.logDebug()) {
 						Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-						        + " (might be added in next revision?)");
+						             + " (might be added in next revision?)");
 					}
 					continue;
 				}
@@ -207,7 +207,7 @@ public class PPAUtils {
 			for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 				CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-				                                                                                         .getSecond(),
+				                                       .getSecond(),
 				                                       visitors);
 			}
 		}
@@ -216,7 +216,7 @@ public class PPAUtils {
 		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 		if (!newCheckoutFile.exists()) {
 			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
-			        + ". Ignoring!");
+			                             + ". Ignoring!");
 		}
 		
 		// first copy files!
@@ -226,7 +226,7 @@ public class PPAUtils {
 			if (!file.exists()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-					        + " (might be added in next revision?)");
+					             + " (might be added in next revision?)");
 				}
 				continue;
 			}
@@ -244,7 +244,7 @@ public class PPAUtils {
 		for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 			CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-			                                                                                       .getSecond(),
+			                                     .getSecond(),
 			                                     visitors);
 		}
 		
@@ -256,7 +256,7 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
@@ -265,7 +265,7 @@ public class PPAUtils {
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCU(newFile, new PPAOptions());
@@ -465,7 +465,7 @@ public class PPAUtils {
 						TreeSet<JavaElementLocation> delSet = removeCallCandidates.get(addedCallId);
 						TreeSet<JavaElementLocation> addSet = addCallCandidates.get(addedCallId);
 						for (JavaElementLocation addedCall : new TreeSet<JavaElementLocation>(
-						                                                                      addCallCandidates.get(addedCallId))) {
+								addCallCandidates.get(addedCallId))) {
 							JavaElementLocation ceiling = delSet.ceiling(addedCall);
 							JavaElementLocation floor = delSet.floor(addedCall);
 							if ((ceiling != null) || (floor != null)) {
@@ -571,7 +571,7 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			
 			for (Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
@@ -586,7 +586,7 @@ public class PPAUtils {
 		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 		if (!newCheckoutFile.exists()) {
 			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
-			        + ". Ignoring!");
+			                             + ". Ignoring!");
 		}
 		
 		for (Entry<RCSRevision, String> entry : addRevs.entrySet()) {
@@ -604,7 +604,7 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCUNoPPA(oldFile);
@@ -613,7 +613,7 @@ public class PPAUtils {
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				                             + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCUNoPPA(newFile);
@@ -795,7 +795,7 @@ public class PPAUtils {
 			parser2.setStatementsRecovery(true);
 			parser2.setResolveBindings(true);
 			parser2.setSource(icu);
-			node = parser2.createAST(null);
+			node = parser2.createAST(false, new NullProgressMonitor());
 			cu = (CompilationUnit) node;
 		} catch (Exception e) {
 			if (Logger.logError()) {
@@ -894,7 +894,7 @@ public class PPAUtils {
 		if (!oldCheckoutFile.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
-				        + ". Ignoring!");
+				             + ". Ignoring!");
 			}
 			return result;
 		}
@@ -933,7 +933,7 @@ public class PPAUtils {
 			if (!file.exists()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-					        + " (might be added in next revision?)");
+					             + " (might be added in next revision?)");
 				}
 				continue;
 			}
@@ -986,7 +986,7 @@ public class PPAUtils {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not analyze file " + relativePath
-				        + ". CompilationUnit cannot be created. Skipping ... ");
+				             + ". CompilationUnit cannot be created. Skipping ... ");
 			}
 		}
 		return locationSet.getJavaElementLocations();
@@ -1031,7 +1031,7 @@ public class PPAUtils {
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not analyze file " + file.getAbsolutePath()
-					        + ". CompilationUnit cannot be created. Skipping ... ");
+					             + ". CompilationUnit cannot be created. Skipping ... ");
 				}
 			}
 		}
@@ -1093,7 +1093,7 @@ public class PPAUtils {
 			if (cu == null) {
 				if (Logger.logError()) {
 					Logger.error("Could not analyze file " + file.getAbsolutePath()
-					        + ". CompilationUnit cannot be created. Skipping ... ");
+					             + ". CompilationUnit cannot be created. Skipping ... ");
 				}
 				continue;
 			}
@@ -1126,7 +1126,7 @@ public class PPAUtils {
 		parser2.setStatementsRecovery(true);
 		parser2.setResolveBindings(true);
 		parser2.setSource(PPAResourceUtil.getContent(file).toCharArray());
-		CompilationUnit cu = (CompilationUnit) parser2.createAST(null);
+		CompilationUnit cu = (CompilationUnit) parser2.createAST(false, new NullProgressMonitor());
 		PackageDeclaration pDec = cu.getPackage();
 		if (pDec != null) {
 			packageName = pDec.getName().getFullyQualifiedName();

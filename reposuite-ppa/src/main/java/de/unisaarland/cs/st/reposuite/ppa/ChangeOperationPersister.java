@@ -37,24 +37,24 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 	@Override
 	public void run() {
 		
-		if (!this.checkConnections()) {
+		if (!checkConnections()) {
 			return;
 		}
 		
-		if (!this.checkNotShutdown()) {
+		if (!checkNotShutdown()) {
 			return;
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Starting " + this.getHandle());
+			Logger.info("Starting " + getHandle());
 		}
 		
-		this.persistenceUtil.beginTransaction();
+		persistenceUtil.beginTransaction();
 		JavaChangeOperation currentOperation;
 		String lastTransactionId = "";
 		
 		try {
-			while (!this.isShutdown() && ((currentOperation = this.read()) != null)) {
+			while (!isShutdown() && ((currentOperation = read()) != null)) {
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);
@@ -66,23 +66,23 @@ public class ChangeOperationPersister extends RepoSuiteSinkThread<JavaChangeOper
 					lastTransactionId = currentTransactionId;
 				}
 				if (!currentTransactionId.equals(lastTransactionId)) {
-					this.persistenceUtil.commitTransaction();
+					persistenceUtil.commitTransaction();
 					lastTransactionId = currentTransactionId;
-					this.persistenceUtil.beginTransaction();
+					persistenceUtil.beginTransaction();
 				}
-				this.persistenceUtil.save(currentOperation);
+				persistenceUtil.save(currentOperation);
 			}
-			this.persistenceUtil.commitTransaction();
+			persistenceUtil.commitTransaction();
 			if (Logger.logInfo()) {
 				Logger.info("ChangeOperationPersister done. Terminating... ");
 			}
-			this.finish();
+			finish();
 		} catch (InterruptedException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			this.shutdown();
+			shutdown();
 		}
 	}
 }

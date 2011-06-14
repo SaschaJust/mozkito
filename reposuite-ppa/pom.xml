@@ -23,17 +23,17 @@
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>jdt-core</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.mcgill.cs.swevo.ppa</groupId>
 			<artifactId>ppa</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>core-resources</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>osgi</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
