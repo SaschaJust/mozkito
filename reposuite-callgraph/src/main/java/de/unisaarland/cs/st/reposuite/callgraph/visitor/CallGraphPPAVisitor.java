@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -20,12 +22,11 @@ import de.unisaarland.cs.st.reposuite.callgraph.model.ClassVertex;
 import de.unisaarland.cs.st.reposuite.callgraph.model.MethodVertex;
 import de.unisaarland.cs.st.reposuite.callgraph.model.VertexFactory;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAVisitor;
-import net.ownhero.dev.kisa.Logger;
 
 public class CallGraphPPAVisitor implements PPAVisitor {
 	
@@ -37,7 +38,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	private final JavaElementLocationSet  javaElementCache;
 	
 	public CallGraphPPAVisitor(final CallGraph callGraph, final boolean update, final String fileName,
-	        final JavaElementLocationSet javaElementCache) {
+	                           final JavaElementLocationSet javaElementCache) {
 		this.callGraph = callGraph;
 		this.update = update;
 		filename = fileName;
@@ -150,11 +151,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(methodContext.getElement().getFullQualifiedName() + " calls "
-				        + to.getFullQualifiedMethodName());
+				             + to.getFullQualifiedMethodName());
 			}
 			
 		} else {
@@ -164,7 +165,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -243,7 +244,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -256,7 +257,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -301,10 +302,10 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 				
 				MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(), filename);
 				MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent()
-				                                                                                                             .getFullQualifiedName(),
+				                                                                                                 .getFullQualifiedName(),
 				                                                                                                 "<init>",
 				                                                                                                 new ArrayList<String>()),
-				                                                   filename);
+				                                                                                                 filename);
 				addEdge(from, to);
 				if (Logger.logDebug()) {
 					Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -349,11 +350,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		if ((methodContextLocation != null) && (methodContextLocation.getElement() != null)) {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
-			                                                                          .getFullQualifiedName(), filename);
+			                                                     .getFullQualifiedName(), filename);
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -362,7 +363,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			if (Logger.logError()) {
 				Logger.error("Found method call outside method declaration in class `"
-				                     + classContext.getFullQualifiedName() + "` in line " + line,
+				             + classContext.getFullQualifiedName() + "` in line " + line,
 				             new RuntimeException());
 			}
 		}
@@ -434,11 +435,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		if ((methodContextLocation != null) && (methodContextLocation.getElement() != null)) {
 			// add edge in call graph
 			MethodVertex from = VertexFactory.createMethodVertex(methodContextLocation.getElement()
-			                                                                          .getFullQualifiedName(), filename);
+			                                                     .getFullQualifiedName(), filename);
 			MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(calledObject.getFullQualifiedName(),
 			                                                                                                 methodName,
 			                                                                                                 arguments),
-			                                                   filename);
+			                                                                                                 filename);
 			addEdge(from, to);
 			if (Logger.logDebug()) {
 				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
@@ -447,7 +448,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			// add edge in call graph
 			if (Logger.logError()) {
 				Logger.error("Found method call outside method declaration in class `"
-				                     + classContext.getFullQualifiedName() + "` in line " + line,
+				             + classContext.getFullQualifiedName() + "` in line " + line,
 				             new RuntimeException());
 			}
 		}
