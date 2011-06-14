@@ -95,9 +95,9 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			this.anonymClass = true;
+			anonymClass = true;
 		}
-		this.setParent(parent);
+		setParent(parent);
 	}
 	
 	/**
@@ -121,12 +121,12 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Transient
 	private HashMap<Integer, Integer> getAnonCounters() {
-		return this.anonCounters;
+		return anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return this.parent;
+		return parent;
 	}
 	
 	/**
@@ -134,8 +134,8 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @return the super class name
 	 */
-	protected String getSuperClassName() {
-		return this.superClassName;
+	public String getSuperClassName() {
+		return superClassName;
 	}
 	
 	/*
@@ -149,7 +149,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		Element thisElement = new Element(JAVA_CLASS_DEFINITION);
 		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(this.getFullQualifiedName());
+		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}
@@ -160,7 +160,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return true, if is anonym class
 	 */
 	public boolean isAnonymClass() {
-		return this.anonymClass;
+		return anonymClass;
 	}
 	
 	/**
@@ -174,15 +174,15 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	@Transient
 	@NoneNull
 	public int nextAnonCounter(final PPATypeVisitor v) {
-		if (this.isAnonymClass()) {
-			return this.getParent().nextAnonCounter(v);
+		if (isAnonymClass()) {
+			return getParent().nextAnonCounter(v);
 		} else {
 			int vId = System.identityHashCode(v);
-			if (!this.getAnonCounters().containsKey(vId)) {
-				this.getAnonCounters().put(vId, 0);
+			if (!getAnonCounters().containsKey(vId)) {
+				getAnonCounters().put(vId, 0);
 			}
-			this.getAnonCounters().put(vId, this.getAnonCounters().get(vId) + 1);
-			return this.getAnonCounters().get(vId);
+			getAnonCounters().put(vId, getAnonCounters().get(vId) + 1);
+			return getAnonCounters().get(vId);
 		}
 	}
 	
@@ -223,13 +223,13 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public String toLongString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(this.getSuperClassName());
+		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(this.isAnonymClass());
+		sb.append(isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
-		sb.append(this.getFullQualifiedName());
+		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
-		sb.append(this.getShortName());
+		sb.append(getShortName());
 		return sb.toString();
 	}
 	
@@ -241,13 +241,13 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
-		sb.append(this.getSuperClassName());
+		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
-		sb.append(this.isAnonymClass());
+		sb.append(isAnonymClass());
 		sb.append(", getFullQualifiedName()=");
-		sb.append(this.getFullQualifiedName());
+		sb.append(getFullQualifiedName());
 		sb.append(", getShortName()=");
-		sb.append(this.getShortName());
+		sb.append(getShortName());
 		sb.append("]");
 		return sb.toString();
 	}

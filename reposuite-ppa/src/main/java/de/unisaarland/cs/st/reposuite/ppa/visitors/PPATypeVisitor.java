@@ -45,8 +45,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	
 	/** The prim types. */
 	private static String[]                  primTypes        = { "Class", "Character", "Byte", "Short", "Integer",
-	        "Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper", "Thread", "ClassLoader",
-	        "Color", "AbstractCollectionConverter", "ObjectTree" };
+		"Long", "Float", "Double", "Boolean", "Void", "String", "TestCase", "ClassMapper", "Thread", "ClassLoader",
+		"Color", "AbstractCollectionConverter", "ObjectTree" };
 	
 	/** The class stack. */
 	private final Stack<JavaElementLocation> classStack       = new Stack<JavaElementLocation>();
@@ -94,22 +94,22 @@ public class PPATypeVisitor extends ASTVisitor {
 	 */
 	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final String relativeFilePath, final String[] packageFilter,
-	        final JavaElementLocationSet locationSet) {
+	                      final JavaElementLocationSet locationSet) {
 		this.packageFilter = packageFilter;
 		this.cu = cu;
-		this.elementCache = locationSet;
+		elementCache = locationSet;
 		
 		this.relativeFilePath = relativeFilePath;
 		
 		PackageDeclaration packageDecl = this.cu.getPackage();
 		if (packageDecl != null) {
-			this.packageName = packageDecl.getName().toString();
+			packageName = packageDecl.getName().toString();
 		} else {
-			this.packageName = UNKNOWN_PACKAGE;
+			packageName = UNKNOWN_PACKAGE;
 		}
 		
-		this.primitives = new HashSet<String>();
-		this.primitives.addAll(Arrays.asList(primTypes));
+		primitives = new HashSet<String>();
+		primitives.addAll(Arrays.asList(primTypes));
 	}
 	
 	/**
@@ -128,13 +128,13 @@ public class PPATypeVisitor extends ASTVisitor {
 		
 		String[] calledObjectParts = localCalledObject.split("\\.");
 		String calledObjectName = calledObjectParts[calledObjectParts.length - 1];
-		if (this.primitives.contains(calledObjectName)) {
+		if (primitives.contains(calledObjectName)) {
 			return false;
 		}
-		if (this.packageFilter.length > 0) {
+		if (packageFilter.length > 0) {
 			boolean filterPass = false;
-			for (int i = 0; i < this.packageFilter.length; ++i) {
-				if (localCalledObject.startsWith(this.packageFilter[i])) {
+			for (int i = 0; i < packageFilter.length; ++i) {
+				if (localCalledObject.startsWith(packageFilter[i])) {
 					filterPass = true;
 				}
 			}
@@ -154,19 +154,19 @@ public class PPATypeVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(final CompilationUnit node) {
 		super.endVisit(node);
-		for (PPAVisitor visitor : this.visitors) {
-			if (this.methodStack.isEmpty()) {
-				if (!this.classStack.isEmpty()) {
-					visitor.endVisit(this, this.cu, node, this.classStack.peek(), null, this.elementCache);
+		for (PPAVisitor visitor : visitors) {
+			if (methodStack.isEmpty()) {
+				if (!classStack.isEmpty()) {
+					visitor.endVisit(this, cu, node, classStack.peek(), null, elementCache);
 				} else {
-					visitor.endVisit(this, this.cu, node, null, null, this.elementCache);
+					visitor.endVisit(this, cu, node, null, null, elementCache);
 					if (Logger.logDebug()) {
-						Logger.debug("Found empty classStack on compilation unit end in file: " + this.relativeFilePath);
+						Logger.debug("Found empty classStack on compilation unit end in file: " + relativeFilePath);
 					}
 				}
 			} else {
-				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
-				                 this.elementCache);
+				visitor.endVisit(this, cu, node, classStack.peek(), methodStack.peek(),
+				                 elementCache);
 			}
 		}
 	}
@@ -177,7 +177,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * @return the compilation unit
 	 */
 	public CompilationUnit getCompilationUnit() {
-		return this.cu;
+		return cu;
 	}
 	
 	/**
@@ -186,7 +186,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * @return the relative file path
 	 */
 	public String getRelativeFilePath() {
-		return this.relativeFilePath;
+		return relativeFilePath;
 	}
 	
 	/**
@@ -198,20 +198,20 @@ public class PPATypeVisitor extends ASTVisitor {
 	@Override
 	public void postVisit(final ASTNode node) {
 		super.postVisit(node);
-		int currentLine = this.cu.getLineNumber(node.getStartPosition());
-		for (PPAVisitor visitor : this.visitors) {
-			if (this.classStack.isEmpty()) {
-				visitor.postVisit(this, this.cu, node, null, null, currentLine, this.elementCache);
+		int currentLine = cu.getLineNumber(node.getStartPosition());
+		for (PPAVisitor visitor : visitors) {
+			if (classStack.isEmpty()) {
+				visitor.postVisit(this, cu, node, null, null, currentLine, elementCache);
 			} else {
-				if (this.methodStack.isEmpty()) {
-					visitor.postVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, this.elementCache);
+				if (methodStack.isEmpty()) {
+					visitor.postVisit(this, cu, node, classStack.peek(), null, currentLine, elementCache);
 				} else {
-					visitor.postVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
-					                  currentLine, this.elementCache);
+					visitor.postVisit(this, cu, node, classStack.peek(), methodStack.peek(),
+					                  currentLine, elementCache);
 				}
 			}
 		}
-		this.previousNode = node;
+		previousNode = node;
 	}
 	
 	/*
@@ -223,39 +223,39 @@ public class PPATypeVisitor extends ASTVisitor {
 	@Override
 	public void preVisit(final ASTNode node) {
 		
-		int currentLine = this.cu.getLineNumber(node.getStartPosition());
-		int endLine = this.cu.getLineNumber(node.getStartPosition() + node.getLength() - 1);
+		int currentLine = cu.getLineNumber(node.getStartPosition());
+		int endLine = cu.getLineNumber(node.getStartPosition() + node.getLength() - 1);
 		
-		while ((!this.methodStack.isEmpty()) && (this.methodStack.peek().getEndLine() < currentLine)) {
-			this.methodStack.pop();
+		while ((!methodStack.isEmpty()) && (methodStack.peek().getEndLine() < currentLine)) {
+			methodStack.pop();
 		}
 		
-		while ((!this.classStack.isEmpty()) && (currentLine > this.classStack.peek().getEndLine())) {
-			this.classStack.pop();
+		while ((!classStack.isEmpty()) && (currentLine > classStack.peek().getEndLine())) {
+			classStack.pop();
 		}
 		
 		// mark comment in definitions and handle them when checking for covered
 		// lines
 		if (node instanceof Comment) {
-			int startline = this.cu.getLineNumber(node.getStartPosition());
-			int endline = this.cu.getLineNumber(node.getStartPosition() + node.getLength());
+			int startline = cu.getLineNumber(node.getStartPosition());
+			int endline = cu.getLineNumber(node.getStartPosition() + node.getLength());
 			boolean markComment = true;
 			if (node instanceof LineComment) {
 				int previousLine = -1;
-				if (this.previousNode != null) {
-					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
-					        + this.previousNode.getLength());
+				if (previousNode != null) {
+					previousLine = cu.getLineNumber(previousNode.getStartPosition()
+					                                + previousNode.getLength());
 				}
 				if (previousLine == startline) {
 					markComment = false;
 				}
 			}
 			if (markComment) {
-				if (!this.methodStack.isEmpty()) {
-					this.methodStack.peek().addCommentLines(startline, endline);
+				if (!methodStack.isEmpty()) {
+					methodStack.peek().addCommentLines(startline, endline);
 				}
-				if (!this.classStack.isEmpty()) {
-					this.classStack.peek().addCommentLines(startline, endline);
+				if (!classStack.isEmpty()) {
+					classStack.peek().addCommentLines(startline, endline);
 				}
 			}
 			
@@ -269,14 +269,14 @@ public class PPATypeVisitor extends ASTVisitor {
 			List<ASTNode> modifiers = (List<ASTNode>) td.getStructuralProperty(td.getModifiersProperty());
 			for (ASTNode modifier : modifiers) {
 				if (modifier instanceof Modifier) {
-					startLine = this.cu.getLineNumber(modifier.getStartPosition());
+					startLine = cu.getLineNumber(modifier.getStartPosition());
 					startLineShifted = true;
 					break;
 				}
 			}
 			if (!startLineShifted) {
 				ASTNode nameNode = (ASTNode) td.getStructuralProperty(td.getNameProperty());
-				startLine = this.cu.getLineNumber(nameNode.getStartPosition());
+				startLine = cu.getLineNumber(nameNode.getStartPosition());
 			}
 			
 			@SuppressWarnings ("unchecked")
@@ -286,38 +286,40 @@ public class PPATypeVisitor extends ASTVisitor {
 			int bodyStartLine = startLine;
 			if (bodyDeclarations.size() > 0) {
 				ASTNode bodyDeclaration = bodyDeclarations.get(0);
-				bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
+				bodyStartLine = cu.getLineNumber(bodyDeclaration.getStartPosition());
 			}
-			JavaElementLocation classDefLoc = this.elementCache.addClassDefinition(this.packageName + "."
-			                                                                               + td.getName().toString(),
-			                                                                       this.relativeFilePath, startLine,
-			                                                                       endLine, td.getStartPosition(),
-			                                                                       bodyStartLine);
+			JavaElementLocation classDefLoc = elementCache.addClassDefinition(packageName + "."
+			                                                                  + td.getName().toString(),
+			                                                                  relativeFilePath, startLine,
+			                                                                  endLine, td.getStartPosition(),
+			                                                                  bodyStartLine);
 			
 			if (Logger.logDebug()) {
-				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
-				        + "` and class name `" + td.getName().toString() + "`");
+				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + packageName
+				             + "` and class name `" + td.getName().toString() + "`");
 			}
-			this.classStack.push(classDefLoc);
+			classStack.push(classDefLoc);
 			
 			Type superClassType = td.getSuperclassType();
-			if (superClassType != null) {
+			JavaClassDefinition element = ((JavaClassDefinition) classStack.peek().getElement());
+			if ((superClassType != null)
+			        && ((element.getSuperClassName() == null) || (element.getSuperClassName().equals("")))) {
 				ITypeBinding superClassBinding = superClassType.resolveBinding();
 				if (superClassBinding != null) {
 					String superClassName = superClassBinding.getQualifiedName();
 					if (superClassName.startsWith("src.")) {
 						superClassName = superClassName.substring(4);
 					}
-					((JavaClassDefinition) this.classStack.peek().getElement()).setSuperClassName(superClassName);
+					element.setSuperClassName(superClassName);
 				}
 			}
 			
 		} else if (node instanceof AnonymousClassDeclaration) {
 			
-			if (this.classStack.isEmpty()) {
+			if (classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of anonymous class outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 				return;
 			}
@@ -326,32 +328,32 @@ public class PPATypeVisitor extends ASTVisitor {
 			@SuppressWarnings ("unchecked")
 			List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() > 0, "Found type declaration with " + bodyDeclarations.size()
-			        + " body declarations!");
+			                + " body declarations!");
 			
 			int bodyStartLine = currentLine;
 			if (bodyDeclarations.size() > 0) {
-				bodyStartLine = this.cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
+				bodyStartLine = cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
 			}
-			int anonCount = ((JavaClassDefinition) this.classStack.peek().getElement()).nextAnonCounter(this);
-			if (!this.classStack.peek().getElement().getShortName()
-			                    .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
+			int anonCount = ((JavaClassDefinition) classStack.peek().getElement()).nextAnonCounter(this);
+			if (!classStack.peek().getElement().getShortName()
+					.equals(classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
-				String parentName = this.classStack.peek().getElement().getFullQualifiedName();
+				String parentName = classStack.peek().getElement().getFullQualifiedName();
 				if (parentName.contains("$")) {
 					int index = parentName.lastIndexOf("$");
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaElementLocation classDefLoc = this.elementCache.addAnonymousClassDefinition(((JavaClassDefinition) this.classStack.peek()
-				                                                                                                                      .getElement()),
-				                                                                                parentName + "$"
-				                                                                                        + anonCount,
-				                                                                                this.relativeFilePath,
-				                                                                                currentLine,
-				                                                                                endLine,
-				                                                                                node.getStartPosition(),
-				                                                                                bodyStartLine);
-				this.classStack.push(classDefLoc);
+				JavaElementLocation classDefLoc = elementCache.addAnonymousClassDefinition(((JavaClassDefinition) classStack.peek()
+						.getElement()),
+						parentName + "$"
+						+ anonCount,
+						relativeFilePath,
+						currentLine,
+						endLine,
+						node.getStartPosition(),
+						bodyStartLine);
+				classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
 			MethodDeclaration md = (MethodDeclaration) node;
@@ -363,27 +365,27 @@ public class PPATypeVisitor extends ASTVisitor {
 			List<ASTNode> modifiers = (List<ASTNode>) md.getStructuralProperty(md.getModifiersProperty());
 			for (ASTNode modifier : modifiers) {
 				if (modifier instanceof Modifier) {
-					startLine = this.cu.getLineNumber(modifier.getStartPosition());
+					startLine = cu.getLineNumber(modifier.getStartPosition());
 					startLineShifted = true;
 					break;
 				}
 			}
 			if (!startLineShifted) {
 				if (md.getReturnType2() != null) {
-					startLine = this.cu.getLineNumber(md.getReturnType2().getStartPosition());
+					startLine = cu.getLineNumber(md.getReturnType2().getStartPosition());
 				}
 			}
 			
 			Block body = md.getBody();
 			int bodyStartLine = -1;
 			if (body != null) {
-				bodyStartLine = this.cu.getLineNumber(body.getStartPosition());
+				bodyStartLine = cu.getLineNumber(body.getStartPosition());
 			}
 			
-			if (this.classStack.isEmpty()) {
+			if (classStack.isEmpty()) {
 				if (Logger.logError()) {
 					Logger.error("Found declaration of method outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					             + ". Ignoring node!");
 				}
 			} else {
 				List<String> arguments = new ArrayList<String>();
@@ -396,34 +398,34 @@ public class PPATypeVisitor extends ASTVisitor {
 					arguments.add(dec.getType().toString());
 				}
 				
-				JavaClassDefinition parent = ((JavaClassDefinition) this.classStack.peek().getElement());
-				JavaElementLocation methodDefLoc = this.elementCache.addMethodDefinition(parent.getFullQualifiedName(),
-				                                                                         md.getName().toString(),
-				                                                                         arguments,
-				                                                                         this.getRelativeFilePath(),
-				                                                                         startLine, endLine,
-				                                                                         node.getStartPosition(),
-				                                                                         bodyStartLine);
+				JavaClassDefinition parent = ((JavaClassDefinition) classStack.peek().getElement());
+				JavaElementLocation methodDefLoc = elementCache.addMethodDefinition(parent.getFullQualifiedName(),
+				                                                                    md.getName().toString(),
+				                                                                    arguments,
+				                                                                    getRelativeFilePath(),
+				                                                                    startLine, endLine,
+				                                                                    node.getStartPosition(),
+				                                                                    bodyStartLine);
 				
-				if (!this.methodStack.isEmpty()) {
+				if (!methodStack.isEmpty()) {
 					if (Logger.logError()) {
 						Logger.warn("Adding method definition to method stack while stack is not empty. This is not impossible but happens rarely!");
 					}
 				}
-				this.methodStack.push(methodDefLoc);
+				methodStack.push(methodDefLoc);
 			}
 		}
 		
-		for (PPAVisitor visitor : this.visitors) {
-			if (this.classStack.isEmpty()) {
-				visitor.preVisit(this, this.cu, node, null, null, currentLine, endLine, this.elementCache);
+		for (PPAVisitor visitor : visitors) {
+			if (classStack.isEmpty()) {
+				visitor.preVisit(this, cu, node, null, null, currentLine, endLine, elementCache);
 			} else {
-				if (this.methodStack.isEmpty()) {
-					visitor.preVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, endLine,
-					                 this.elementCache);
+				if (methodStack.isEmpty()) {
+					visitor.preVisit(this, cu, node, classStack.peek(), null, currentLine, endLine,
+					                 elementCache);
 				} else {
-					visitor.preVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), currentLine,
-					                 endLine, this.elementCache);
+					visitor.preVisit(this, cu, node, classStack.peek(), methodStack.peek(), currentLine,
+					                 endLine, elementCache);
 				}
 			}
 		}
@@ -449,6 +451,6 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * @return true, if successful
 	 */
 	public boolean registerVisitor(final PPAVisitor visitor) {
-		return this.visitors.add(visitor);
+		return visitors.add(visitor);
 	}
 }
