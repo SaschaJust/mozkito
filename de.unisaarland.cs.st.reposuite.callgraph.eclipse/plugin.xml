@@ -11,5 +11,17 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.reposuite.callgraph.application"
+            name="de.unisaarland.cs.st.reposuite.callgraph.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.reposuite.callgraph.eclipse.product">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
