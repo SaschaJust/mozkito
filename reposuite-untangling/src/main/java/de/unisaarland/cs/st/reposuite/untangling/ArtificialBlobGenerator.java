@@ -122,7 +122,7 @@ public class ArtificialBlobGenerator {
 		
 		String[] pathArray = paths.keySet().toArray(new String[paths.keySet().size()]);
 		for (int i = 0; i < pathArray.length; ++i) {
-			for (int j = i + 1; i < paths.keySet().size(); ++j) {
+			for (int j = i + 1; j < paths.keySet().size(); ++j) {
 				String pathA = pathArray[i];
 				String pathB = pathArray[j];
 				if (canCombine(pathA, pathB, packageDistance)) {
