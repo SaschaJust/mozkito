@@ -20,7 +20,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
-import de.unisaarland.cs.st.reposuite.RCS;
 import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
@@ -122,7 +121,7 @@ public class Untangling {
 		RepositorySettings settings = new RepositorySettings();
 		
 		repositoryArg = settings.setRepositoryArg(true);
-		databaseArgs = settings.setDatabaseArgs(true, RCS.class.getSimpleName().toLowerCase());
+		databaseArgs = settings.setDatabaseArgs(true, "untangling");
 		callgraphArg = new DirectoryArgument(
 		                                     settings,
 		                                     "callgraph.eclipse",
