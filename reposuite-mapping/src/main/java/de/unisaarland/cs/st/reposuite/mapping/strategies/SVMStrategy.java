@@ -26,7 +26,7 @@ public class SVMStrategy extends MappingStrategy {
 	 */
 	@SuppressWarnings ("unused")
 	private void loadModel() {
-		// TODO
+		// REMARK
 	}
 	
 	/*

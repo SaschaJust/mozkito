@@ -18,7 +18,6 @@ public class Bzip2Archive extends Archive {
 	
 	public Bzip2Archive(final Attachment attachment) {
 		super(attachment);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

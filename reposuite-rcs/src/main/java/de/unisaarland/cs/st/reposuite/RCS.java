@@ -3,6 +3,7 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -14,7 +15,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * {@link RCS} is the standard {@link RepoSuiteToolchain} to mine a repository.
@@ -33,11 +33,11 @@ public class RCS extends RepoSuiteToolchain {
 	
 	public RCS() {
 		super(new RepositorySettings());
-		this.threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
+		threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
 		RepositorySettings settings = (RepositorySettings) getSettings();
-		this.repoSettings = settings.setRepositoryArg(true);
-		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");
-		this.logSettings = settings.setLoggerArg(true);
+		repoSettings = settings.setRepositoryArg(true);
+		databaseSettings = settings.setDatabaseArgs(false, "rcs");
+		logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);
 		new LongArgument(settings, "cache.size",
@@ -58,10 +58,10 @@ public class RCS extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void run() {
-		if (!this.shutdown) {
+		if (!shutdown) {
 			setup();
-			if (!this.shutdown) {
-				this.threadPool.execute();
+			if (!shutdown) {
+				threadPool.execute();
 			}
 		}
 	}
@@ -72,13 +72,13 @@ public class RCS extends RepoSuiteToolchain {
 	 */
 	@Override
 	public void setup() {
-		this.logSettings.getValue();
+		logSettings.getValue();
 		
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
-		if (this.databaseSettings.getValue() != null) {
+		if (databaseSettings.getValue() != null) {
 			try {
-				this.persistenceUtil = PersistenceManager.getUtil();
+				persistenceUtil = PersistenceManager.getUtil();
 			} catch (Exception e) {
 				e.printStackTrace();
 				if (Logger.logError()) {
@@ -94,9 +94,9 @@ public class RCS extends RepoSuiteToolchain {
 			shutdown();
 		}
 		
-		Repository repository = this.repoSettings.getValue();
+		Repository repository = repoSettings.getValue();
 		
-		// TODO i din't think we can resume repository mining at all.
+		// i din't think we can resume repository mining at all.
 		// if (this.persistenceUtil != null) {
 		// String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
 		// ? repository.getHEAD()
@@ -173,15 +173,15 @@ public class RCS extends RepoSuiteToolchain {
 		// }
 		// }
 		
-		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
-		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
+		new RepositoryReader(threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
+		new RepositoryAnalyzer(threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
+		new RepositoryParser(threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository);
 		
-		if (this.persistenceUtil != null) {
-			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                        this.persistenceUtil);
+		if (persistenceUtil != null) {
+			new RepositoryPersister(threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
+			                        persistenceUtil);
 		} else {
-			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
+			new RepositoryVoidSink(threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}
 	}
 	
@@ -195,7 +195,7 @@ public class RCS extends RepoSuiteToolchain {
 		if (Logger.logInfo()) {
 			Logger.info("Toolchain shutdown.");
 		}
-		this.threadPool.shutdown();
-		this.shutdown = true;
+		threadPool.shutdown();
+		shutdown = true;
 	}
 }

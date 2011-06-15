@@ -639,25 +639,25 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	
 	@Override
 	public String toCSV() {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	public void toCSV(final OutputStream stream) {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		
 	}
 	
 	@Override
 	public HTMLDocument toHTML() {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	public void toHTML(final OutputStream stream) {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		
 	}
 	
@@ -740,19 +740,19 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	
 	@Override
 	public void toText(final OutputStream stream) {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		
 	}
 	
 	@Override
 	public Document toXML() {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	public void toXML(final OutputStream stream) {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		
 	}
 	

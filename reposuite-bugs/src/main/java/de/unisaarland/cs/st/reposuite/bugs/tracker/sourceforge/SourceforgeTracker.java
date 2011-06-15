@@ -93,12 +93,6 @@ public class SourceforgeTracker extends Tracker {
 				                                                         Report.class.getDeclaredField("category"));
 				                                                     put("artifact_group_id",
 				                                                         Report.class.getDeclaredField("component"));
-				                                                     // FIXME
-				                                                     // what a
-				                                                     // field to
-				                                                     // set here
-				                                                     // put("assigned_to",
-				                                                     // Report.class.getDeclaredField("product"));
 				                                                     put("summary",
 				                                                         Report.class.getDeclaredField("subject"));
 			                                                     } catch (Exception e) {

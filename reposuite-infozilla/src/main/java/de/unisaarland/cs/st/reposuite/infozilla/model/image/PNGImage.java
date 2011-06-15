@@ -13,7 +13,7 @@ public class PNGImage extends Image {
 	 * 
 	 */
 	public PNGImage() {
-		// TODO Auto-generated constructor stub
+		// REMARK Auto-generated constructor stub
 	}
 	
 }

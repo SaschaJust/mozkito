@@ -13,7 +13,7 @@ public class JPGImage extends Image {
 	 * 
 	 */
 	public JPGImage() {
-		// TODO Auto-generated constructor stub
+		// REMARK Auto-generated constructor stub
 	}
 	
 }

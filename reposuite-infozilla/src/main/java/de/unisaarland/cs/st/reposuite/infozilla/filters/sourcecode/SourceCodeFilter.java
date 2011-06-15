@@ -17,7 +17,7 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 	 * 
 	 */
 	public SourceCodeFilter() {
-		// TODO Auto-generated constructor stub
+		// REMARK Auto-generated constructor stub
 	}
 	
 	/*
@@ -27,7 +27,7 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 	 */
 	@Override
 	public String getOutputText() {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		return null;
 	}
 	
@@ -39,7 +39,7 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 	 */
 	@Override
 	public List<?> runFilter(final String inputText) {
-		// TODO Auto-generated method stub
+		// REMARK Auto-generated method stub
 		return null;
 	}
 	

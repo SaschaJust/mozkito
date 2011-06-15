@@ -18,7 +18,6 @@ public class GzipArchive extends Archive {
 	
 	public GzipArchive(final Attachment attachment) {
 		super(attachment);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
