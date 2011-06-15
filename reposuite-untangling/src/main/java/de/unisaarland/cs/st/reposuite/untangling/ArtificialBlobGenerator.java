@@ -134,6 +134,10 @@ public class ArtificialBlobGenerator {
 			}
 		}
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Found " + newAdded.size() + " path sets that can be combined.");
+		}
+
 		Set<Set<String>> pathsToCombine = transitiveClosure(newAdded);
 		
 		/*
