@@ -139,10 +139,10 @@ public class Untangling {
 		                                   false);
 		
 		useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
-		                                         "Use change coupling voter when untangling", "true", true);
+		                                         "Use change coupling voter when untangling", "true", false);
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
 		                                             "Set the minimum support for used change couplings to this value",
-		                                             "3", true);
+		                                             "3", false);
 		changeCouplingsMinConfidence = new DoubleArgument(
 		                                                  settings,
 		                                                  "vote.changecouplings.minconfidence",
