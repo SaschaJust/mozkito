@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,10 +40,9 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	// FIXME add @LessOrEqualDouble (ref = 1d) for minConfidence
 	public static List<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction transaction,
 	                                                              @Positive final int minSupport,
-	                                                              @Positive final double minConfidence,
+	                                                              @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                              final PersistenceUtil persistenceUtil) {
 		List<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
@@ -97,10 +97,9 @@ public class ChangeCouplingRuleFactory {
 	 * @return the method change couplings
 	 */
 	@NoneNull
-	// TODO add @LessOrEqualDouble (ref = 1d) for minConfidence
 	public static List<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
 	                                                                  @Positive final int minSupport,
-	                                                                  @Positive final double minConfidence,
+	                                                                  @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                                  final Set<String> relevantMethodNames,
 	                                                                  final PersistenceUtil persistenceUtil) {
 		List<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
