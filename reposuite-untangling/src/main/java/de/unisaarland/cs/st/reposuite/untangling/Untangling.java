@@ -122,6 +122,7 @@ public class Untangling {
 		
 		repositoryArg = settings.setRepositoryArg(true);
 		databaseArgs = settings.setDatabaseArgs(true, "untangling");
+		settings.setLoggerArg(false);
 		callgraphArg = new DirectoryArgument(
 		                                     settings,
 		                                     "callgraph.eclipse",
