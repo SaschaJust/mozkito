@@ -14,6 +14,7 @@ import java.util.Set;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -96,9 +97,6 @@ public class Untangling {
 	/** The database args. */
 	private final DatabaseArguments                                     databaseArgs;
 	
-	/** The num partition arg. */
-	private final LongArgument                                          numPartitionArg;
-	
 	private final BooleanArgument                                       useChangeCouplings;
 	
 	private final LongArgument                                          changeCouplingsMinSupport;
@@ -114,6 +112,8 @@ public class Untangling {
 	private final OutputFileArgument                                    outArg;
 	
 	private final DirectoryArgument                                     callGraphCacheDirArg;
+	
+	private final BooleanArgument                                       dryRunArg;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -139,18 +139,15 @@ public class Untangling {
 		                                   false);
 		
 		useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
-		                                         "Use change coupling voter when untangling", "true", false);
+		                                         "Use change coupling voter when untangling", "true", true);
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
 		                                             "Set the minimum support for used change couplings to this value",
-		                                             "3", false);
+		                                             "3", true);
 		changeCouplingsMinConfidence = new DoubleArgument(
 		                                                  settings,
 		                                                  "vote.changecouplings.minconfidence",
 		                                                  "Set minimum confidence for used change couplings to this value",
 		                                                  "0.7", false);
-		
-		numPartitionArg = new LongArgument(settings, "num.partitions",
-		                                   "Specifies the number of partitions to be generated.", null, true);
 		
 		packageDistanceArg = new LongArgument(
 		                                      settings,
@@ -175,6 +172,12 @@ public class Untangling {
 		                                             "callgraph.cache.dir",
 		                                             "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
 		                                             null, false, false);
+		
+		dryRunArg = new BooleanArgument(
+		                                settings,
+		                                "dryrun",
+		                                "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
+		                                "false", false);
 		
 		settings.parseArguments();
 	}
@@ -212,6 +215,8 @@ public class Untangling {
 	 */
 	public void run() {
 		
+		boolean dryrun = dryRunArg.getValue();
+		
 		databaseArgs.getValue();
 		PersistenceUtil persistenceUtil = null;
 		try {
@@ -227,7 +232,7 @@ public class Untangling {
 		eclipseArgs.add(" -Drepository.type" + repositoryArg.getRepoTypeArg().getValue());
 		eclipseArgs.add(" -Drepository.user" + repositoryArg.getUserArg().getValue());
 		
-
+		
 		// load the atomic transactions and their change operations
 		Map<RCSTransaction, List<JavaChangeOperation>> atomicChangeOperations = new HashMap<RCSTransaction, List<JavaChangeOperation>>();
 		if (atomicChangesArg.getValue() != null) {
@@ -253,9 +258,19 @@ public class Untangling {
 		                                                                          minBlobSizeArg.getValue().intValue(),
 		                                                                          maxBlobSizeArg.getValue().intValue());
 		
+		int blobSetSize = artificialBlobs.size();
+		if (Logger.logInfo()) {
+			Logger.info("Generated " + blobSetSize + " artificial blobs.");
+		}
+		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
+		int counter = 0;
 		for (ArtificialBlob blob : artificialBlobs) {
+			
+			if (Logger.logInfo()) {
+				Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
+			}
 			
 			scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 			
@@ -286,13 +301,14 @@ public class Untangling {
 			// TODO add data dependency visitor
 			
 			// run the partitioning algorithm
-			Set<Set<JavaChangeOperation>> partitions = untangle(blob, numPartitionArg.getValue().intValue(),
-			                                                    scoreVisitors,
-			                                                    new MaxCollapseVisitor<JavaChangeOperation>());
-			
-			// compare the true and the computed partitions and score the
-			// similarity score in a descriptive statistic
-			stat.addValue(comparePartitions(blob, partitions));
+			if (!dryrun) {
+				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(),
+				                                                    scoreVisitors,
+				                                                    new MaxCollapseVisitor<JavaChangeOperation>());
+				// compare the true and the computed partitions and score the
+				// similarity score in a descriptive statistic
+				stat.addValue(comparePartitions(blob, partitions));
+			}
 		}
 		
 		// report the descriptive statistics about the partition scores.
