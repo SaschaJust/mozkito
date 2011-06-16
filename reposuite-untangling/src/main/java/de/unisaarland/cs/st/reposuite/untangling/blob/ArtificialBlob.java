@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
@@ -26,7 +27,11 @@ public class ArtificialBlob {
 	
 	@NoneNull
 	public ArtificialBlob(final BlobTransaction transaction) {
-		add(transaction);
+		if (!add(transaction)) {
+			if (Logger.logDebug()) {
+				Logger.debug("Adding transaction " + transaction.getTransaction().getId() + " failed!");
+			}
+		}
 	}
 	
 	/**
@@ -37,7 +42,11 @@ public class ArtificialBlob {
 	 */
 	@NoneNull
 	public ArtificialBlob(final Set<BlobTransaction> blobTransaction) {
-		addAll(blobTransactions);
+		if (!addAll(blobTransactions)) {
+			if (Logger.logDebug()) {
+				Logger.debug("Adding transactions failed!");
+			}
+		}
 	}
 	
 	@NoneNull
