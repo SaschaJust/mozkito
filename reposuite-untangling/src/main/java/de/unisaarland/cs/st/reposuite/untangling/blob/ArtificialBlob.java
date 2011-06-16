@@ -8,6 +8,9 @@ import java.util.TreeSet;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
@@ -44,7 +47,7 @@ public class ArtificialBlob {
 	public ArtificialBlob(final Set<BlobTransaction> blobTransaction) {
 		if (!addAll(blobTransactions)) {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding transactions failed!");
+				Logger.debug("Adding transactions failed!" + StringUtils.join(blobTransaction, ","));
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 public class BlobTransaction implements Comparable<BlobTransaction> {
 	
-
+	
 	private final RCSTransaction            transaction;
 	
 	private final List<JavaChangeOperation> operations;
@@ -64,4 +64,9 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 		return result;
 	}
 	
+	@Override
+	public String toString() {
+		return getTransaction().getId();
+	}
+
 }
