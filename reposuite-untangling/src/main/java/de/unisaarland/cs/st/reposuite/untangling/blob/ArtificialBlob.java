@@ -1,11 +1,12 @@
-package de.unisaarland.cs.st.reposuite.untangling;
+package de.unisaarland.cs.st.reposuite.untangling.blob;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
@@ -16,9 +17,17 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class ArtificialBlob {
 	
-	/** The change operations. */
-	Map<RCSTransaction, List<JavaChangeOperation>> changeOperations;
-	TreeSet<RCSTransaction>                        treeSet = new TreeSet<RCSTransaction>();
+	@NoneNull
+	public static ArtificialBlob clone(final ArtificialBlob blob){
+		return new ArtificialBlob(blob.blobTransactions);
+	}
+	
+	private final TreeSet<BlobTransaction> blobTransactions = new TreeSet<BlobTransaction>();
+	
+	@NoneNull
+	public ArtificialBlob(final BlobTransaction transaction) {
+		add(transaction);
+	}
 	
 	/**
 	 * Instantiates a new artificial blob.
@@ -26,11 +35,19 @@ public class ArtificialBlob {
 	 * @param changeOperations
 	 *            the change operations
 	 */
-	public ArtificialBlob(final Map<RCSTransaction, List<JavaChangeOperation>> changeOperations) {
-		this.changeOperations = changeOperations;
-		for (RCSTransaction t : changeOperations.keySet()) {
-			treeSet.add(t);
-		}
+	@NoneNull
+	public ArtificialBlob(final Set<BlobTransaction> blobTransaction) {
+		addAll(blobTransactions);
+	}
+	
+	@NoneNull
+	public boolean add(final BlobTransaction transaction) {
+		return blobTransactions.add(transaction);
+	}
+	
+	private boolean addAll(final TreeSet<BlobTransaction> blobTransactions) {
+		return this.blobTransactions.addAll(blobTransactions);
+		
 	}
 	
 	/**
@@ -41,21 +58,22 @@ public class ArtificialBlob {
 	public List<JavaChangeOperation> getAllChangeOperations() {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
-		for (List<JavaChangeOperation> operations : changeOperations.values()) {
-			result.addAll(operations);
+		for (BlobTransaction t : blobTransactions) {
+			result.addAll(t.getOperations());
 		}
-		
 		return result;
 	}
 	
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
-		result.addAll(changeOperations.values());
+		for (BlobTransaction t : blobTransactions) {
+			result.add(t.getOperations());
+		}
 		return result;
 	}
 	
 	public RCSTransaction getLatestTransaction() {
-		return treeSet.last();
+		return blobTransactions.last().getTransaction();
 	}
 	
 	/**
@@ -64,7 +82,11 @@ public class ArtificialBlob {
 	 * @return the transactions
 	 */
 	public Set<RCSTransaction> getTransactions() {
-		return changeOperations.keySet();
+		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+		for (BlobTransaction t : blobTransactions) {
+			result.add(t.getTransaction());
+		}
+		return result;
 	}
 	
 	/**
@@ -73,7 +95,6 @@ public class ArtificialBlob {
 	 * @return the number of transaction
 	 */
 	public int size() {
-		return getTransactions().size();
+		return blobTransactions.size();
 	}
-	
 }

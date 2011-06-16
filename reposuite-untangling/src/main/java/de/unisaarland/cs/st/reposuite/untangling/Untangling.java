@@ -4,11 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
@@ -41,6 +39,9 @@ import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlob;
+import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
+import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 
@@ -234,25 +235,26 @@ public class Untangling {
 		
 		
 		// load the atomic transactions and their change operations
-		Map<RCSTransaction, List<JavaChangeOperation>> atomicChangeOperations = new HashMap<RCSTransaction, List<JavaChangeOperation>>();
+		Set<BlobTransaction> transactions = new HashSet<BlobTransaction>();
+		
 		if (atomicChangesArg.getValue() != null) {
 			HashSet<String> atomicTransactions = atomicChangesArg.getValue();
 			for (String transactionId : atomicTransactions) {
 				RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				atomicChangeOperations.put(t, ops);
+				transactions.add(new BlobTransaction(t, ops));
 			}
 		} else {
 			Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
 			List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
 			for (RCSTransaction t : atomicTransactions) {
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				atomicChangeOperations.put(t, ops);
+				transactions.add(new BlobTransaction(t, ops));
 			}
 		}
 		
 		// build all artificial blobs. Combine all atomic transactions.
-		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(atomicChangeOperations,
+		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(transactions,
 		                                                                          packageDistanceArg.getValue()
 		                                                                          .intValue(),
 		                                                                          minBlobSizeArg.getValue().intValue(),
