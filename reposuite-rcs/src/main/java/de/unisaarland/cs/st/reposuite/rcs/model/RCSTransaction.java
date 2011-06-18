@@ -244,9 +244,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		if (transaction.getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
 		}
-		if (Logger.logDebug()) {
-			Logger.debug("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
-		}
+		if (Logger.logTrace()) {
+	        Logger.trace("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
+        }
 		if (equals(transaction)) {
 			return 0;
 		} else {
