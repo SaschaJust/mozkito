@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -65,6 +67,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 	 * 
 	 */
 	private static final long serialVersionUID = -7619009648634901112L;
+	
+	private static Map<String, Map<String, Integer>> comparisonCache  = new HashMap<String, Map<String, Integer>>();
 	
 	/**
 	 * Creates the transaction.
@@ -234,7 +238,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		if (transaction == null) {
 			return 1;
 		}
-		
 		if (getBranch() == null) {
 			throw new UnrecoverableError("Branch of a transaction should never be NULL");
 		}
@@ -246,7 +249,32 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		}
 		if (equals(transaction)) {
 			return 0;
-		} else if (getBranch().equals(transaction.getBranch())) {
+		} else {
+			String id1 = getId();
+			String id2 = transaction.getId();
+			if ((comparisonCache.containsKey(id1)) && (comparisonCache.get(id1).containsKey(id2))) {
+				return comparisonCache.get(id1).get(id2);
+			} else if ((comparisonCache.containsKey(id2)) && (comparisonCache.get(id2).containsKey(id1))) {
+				return -1 * comparisonCache.get(id2).get(id1);
+			}
+			if (comparisonCache.size() > 10000) {
+				comparisonCache.clear();
+			}
+			int result = compareToTransaction(transaction);
+			if (!comparisonCache.containsKey(id1)) {
+				comparisonCache.put(id1, new HashMap<String, Integer>());
+			}
+			if (!comparisonCache.get(id1).containsKey(id2)) {
+				comparisonCache.get(id1).put(id2, result);
+			}
+			return result;
+		}
+	}
+	
+	@Transient
+	private int compareToTransaction(final RCSTransaction transaction) {
+		if (getBranch().equals(transaction.getBranch())) {
+			
 			// both transaction are in the same branch
 			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
 				
