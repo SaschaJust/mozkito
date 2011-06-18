@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,10 +45,10 @@ public class ArtificialBlob {
 	 *            the change operations
 	 */
 	@NoneNull
-	public ArtificialBlob(final Set<BlobTransaction> blobTransaction) {
-		if (!addAll(blobTransactions)) {
+	public ArtificialBlob(final Set<BlobTransaction> input) {
+		if (!addAll(input)) {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding transactions failed!" + StringUtils.join(blobTransaction, ","));
+				Logger.debug("Adding transactions failed!" + StringUtils.join(input, ","));
 			}
 		}
 	}
@@ -57,7 +58,7 @@ public class ArtificialBlob {
 		return blobTransactions.add(transaction);
 	}
 	
-	private boolean addAll(final TreeSet<BlobTransaction> blobTransactions) {
+	private boolean addAll(final Collection<BlobTransaction> blobTransactions) {
 		return this.blobTransactions.addAll(blobTransactions);
 		
 	}
