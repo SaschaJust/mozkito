@@ -247,6 +247,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 		if (equals(transaction)) {
 			return 0;
 		} else if (getBranch().equals(transaction.getBranch())) {
+			// both transaction are in the same branch
 			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
 				
 				if (Logger.logWarn()) {
@@ -263,11 +264,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction>, Di
 				if (cache == null) {
 					return -1;
 				}
-				while (cache != getBranch().getBegin()) {
+				while ((cache != getBranch().getBegin()) && (cache != null)) {
 					if (cache.equals(transaction)) {
 						return 1;
 					}
-					cache = cache.getParent(getBranch());
+					cache = cache.getParent(cache.getBranch());
 				}
 				return -1;
 			}
