@@ -51,7 +51,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-			        + ".cg");
+			                           + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 			}
@@ -67,7 +67,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("eclipse",
+			Tuple<Integer, List<String>> response = CommandExecutor.execute("./eclipse",
 			                                                                arguments.toArray(new String[arguments.size()]),
 			                                                                eclipseDir, null, new HashMap<String, String>());
 			if (response.getFirst() != 0) {
@@ -77,9 +77,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 					sb.append(transaction);
 					sb.append(". Reason:");
 					sb.append(FileUtils.lineSeparator);
-					for (String s : response.getSecond()) {
-						sb.append(s);
-						sb.append(FileUtils.lineSeparator);
+					if (response.getSecond() != null) {
+						for (String s : response.getSecond()) {
+							sb.append(s);
+							sb.append(FileUtils.lineSeparator);
+						}
 					}
 					Logger.error(sb.toString());
 				}
