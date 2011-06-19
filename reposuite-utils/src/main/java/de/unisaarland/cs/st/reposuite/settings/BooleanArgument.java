@@ -16,8 +16,8 @@ public class BooleanArgument extends RepoSuiteArgument {
 	 * @param isRequired
 	 * 
 	 */
-	public BooleanArgument(RepoSuiteSettings settings, String name, String description, String defaultValue,
-	        boolean isRequired) {
+	public BooleanArgument(final RepoSuiteSettings settings, final String name, final String description, final String defaultValue,
+	                       final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -26,6 +26,9 @@ public class BooleanArgument extends RepoSuiteArgument {
 	public Boolean getValue() {
 		if (stringValue == null) {
 			return null;
+		}
+		if (stringValue.trim().equals("")) {
+			return true;
 		}
 		return Boolean.parseBoolean(stringValue);
 	}
