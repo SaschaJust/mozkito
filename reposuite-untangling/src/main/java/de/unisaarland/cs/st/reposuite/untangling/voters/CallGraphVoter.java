@@ -69,7 +69,9 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			// generate call graph
 			HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
-			Tuple<Integer, List<String>> response = CommandExecutor.execute("eclipse",
+			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
+			                                                                        + FileUtils.fileSeparator
+			                                                                        + "eclipse",
 			                                                                arguments.toArray(new String[arguments.size()]),
 			                                                                eclipseDir, null, environment);
 			if (response.getFirst() != 0) {
