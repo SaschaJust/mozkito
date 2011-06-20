@@ -229,10 +229,13 @@ public class Untangling {
 		List<String> eclipseArgs = new LinkedList<String>();
 		
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
-		eclipseArgs.add(" -Drepository.password" + repositoryArg.getPassArg().getValue());
-		eclipseArgs.add(" -Drepository.type" + repositoryArg.getRepoTypeArg().getValue());
-		eclipseArgs.add(" -Drepository.user" + repositoryArg.getUserArg().getValue());
-		
+		if (repositoryArg.getPassArg().getValue() != null) {
+			eclipseArgs.add(" -Drepository.password=" + repositoryArg.getPassArg().getValue());
+		}
+		eclipseArgs.add(" -Drepository.type=" + repositoryArg.getRepoTypeArg().getValue());
+		if (repositoryArg.getUserArg().getValue() != null) {
+			eclipseArgs.add(" -Drepository.user=" + repositoryArg.getUserArg().getValue());
+		}
 		
 		// load the atomic transactions and their change operations
 		Set<BlobTransaction> transactions = new HashSet<BlobTransaction>();
