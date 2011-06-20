@@ -66,8 +66,11 @@ public class CallGraphToolChain {
 		
 		if (transactionId != null) {
 			repository = repoSettings.getValue();
-			
 			sourceDir = repository.checkoutPath("/", transactionId);
+			if (sourceDir == null) {
+				throw new UnrecoverableError("Could not checkout transaction " + transactionId + " from repository "
+				        + repository.getUri().toString() + ". See errors above.");
+			}
 		} else {
 			sourceDir = dirArg.getValue();
 		}
