@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.callgraph;
+package de.unisaarland.cs.st.reposuite.callgraph.eclipse;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

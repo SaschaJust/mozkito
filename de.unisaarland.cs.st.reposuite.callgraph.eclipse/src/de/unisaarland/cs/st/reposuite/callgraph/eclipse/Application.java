@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.callgraph;
+package de.unisaarland.cs.st.reposuite.callgraph.eclipse;
 
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -9,12 +9,11 @@ import org.eclipse.equinox.app.IApplicationContext;
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
-	@Override
-	public Object start(final IApplicationContext context) throws Exception {
+	public Object start(IApplicationContext context) throws Exception {
 		String baseDir = System.getProperty("user.home") + FileUtils.fileSeparator + ".m2" + FileUtils.fileSeparator
 		+ "repository" + FileUtils.fileSeparator + "de" + FileUtils.fileSeparator + "unisaarland"
 		+ FileUtils.fileSeparator + "cs" + FileUtils.fileSeparator + "st" + FileUtils.fileSeparator
@@ -32,11 +31,10 @@ public class Application implements IApplication {
 		callgraph.Main.main(new String[0]);
 		return IApplication.EXIT_OK;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
-	@Override
 	public void stop() {
 		// nothing to do
 	}

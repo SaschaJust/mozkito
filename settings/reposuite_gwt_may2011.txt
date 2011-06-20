@@ -1,0 +1,11 @@
+database.name=reposuite_gwt_may2011
+database.user=miner
+database.password=miner
+database.host=quentin.cs.uni-saarland.de
+log.level=info
+repository.uri=/data/kim/miner_repos/web-toolkit/svn_repo_19.05.2011.git/
+repository.type=GIT
+tracker.fetchURI=http://code.google.com/p/google-web-toolkit/issues/list
+tracker.type=GOOGLE
+tracker.stop=6386
+headless
