@@ -16,3 +16,17 @@ mapping.score.ReportCreatedAfterTransaction=1
 mapping.score.ReportResolvedWithinWindow=1
 mapping.window.ReportResolvedAfterTransaction=00d 00h 00m 00s,+03d 00h 00m 00s
 mapping.strategies=MajorityStrategy
+
+##### Untangling options: #####
+
+blobsize.max=5
+blobsize.min=3
+callgraph.cache.dir=/data/kim/cache.callgraph/xstream/
+callgraph.eclipse=/data/kim/reposuite/eclipse-apps/linux/eclipse/
+out.file=/data/kim/result.untangling/xstream/try.csv
+package.distance=2
+vote.callgraph=true
+vote.changecouplings=true
+vote.changecouplings.minconfidence=0.8
+vote.changecouplings.minsupport=10
+
