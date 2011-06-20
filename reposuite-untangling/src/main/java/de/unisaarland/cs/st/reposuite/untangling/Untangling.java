@@ -268,8 +268,19 @@ public class Untangling {
 			Logger.info("Generated " + blobSetSize + " artificial blobs.");
 		}
 		
+		File outFile = outArg.getValue();
+		BufferedWriter outWriter;
+		try {
+			outWriter = new BufferedWriter(new FileWriter(outFile));
+			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize");
+			outWriter.append(FileUtils.lineSeparator);
+		} catch (IOException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
+		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
+		DescriptiveStatistics relativeStat = new DescriptiveStatistics();
 		int counter = 0;
 		for (ArtificialBlob blob : artificialBlobs) {
 			
@@ -312,21 +323,31 @@ public class Untangling {
 				                                                    new MaxCollapseVisitor<JavaChangeOperation>());
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
-				stat.addValue(comparePartitions(blob, partitions));
+				int diff = comparePartitions(blob, partitions);
+				stat.addValue(diff);
+				double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
+				relativeStat.addValue(relDiff);
+				try {
+					outWriter.append(String.valueOf(diff));
+					outWriter.append(",");
+					outWriter.append(String.valueOf(relDiff));
+					outWriter.append(FileUtils.lineSeparator);
+				} catch (IOException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				}
 			}
 		}
 		
 		// report the descriptive statistics about the partition scores.
-		File outFile = outArg.getValue();
-		BufferedWriter outWriter;
 		try {
-			outWriter = new BufferedWriter(new FileWriter(outFile));
-			for (Double d : stat.getValues()) {
-				outWriter.append(d.toString());
-				outWriter.append(FileUtils.lineSeparator);
-			}
 			outWriter.append("Avg. MissRate:," + stat.getMean());
+			outWriter.append(FileUtils.lineSeparator);
 			outWriter.append("Med. MissRate:," + stat.getPercentile(50));
+			outWriter.append(FileUtils.lineSeparator);
+			outWriter.append("Avg. relative MissRate:," + relativeStat.getMean());
+			outWriter.append(FileUtils.lineSeparator);
+			outWriter.append("Med. relative MissRate:," + relativeStat.getPercentile(50));
+			outWriter.append(FileUtils.lineSeparator);
 			outWriter.close();
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
