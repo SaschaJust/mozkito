@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
@@ -120,6 +121,8 @@ public class Untangling {
 	
 	private final DirectoryArgument                                     datadepArg;
 	
+	private final LongArgument                                          nArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -193,6 +196,8 @@ public class Untangling {
 		                                "dryrun",
 		                                "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
 		                                "false", false);
+		
+		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
 		
 		settings.parseArguments();
 	}
@@ -272,11 +277,12 @@ public class Untangling {
 		}
 		
 		// build all artificial blobs. Combine all atomic transactions.
-		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(transactions,
-		                                                                          packageDistanceArg.getValue()
-		                                                                          .intValue(),
-		                                                                          minBlobSizeArg.getValue().intValue(),
-		                                                                          maxBlobSizeArg.getValue().intValue());
+		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
+		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
+		                                                           packageDistanceArg.getValue()
+		                                                           .intValue(),
+		                                                           minBlobSizeArg.getValue().intValue(),
+		                                                           maxBlobSizeArg.getValue().intValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -291,6 +297,16 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
+		}
+		
+		if((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())){
+			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
+			Random generator = new Random();
+			for(int i = 0; i < nArg.getValue(); ++i){
+				int r = generator.nextInt(artificialBlobs.size());
+				selectedArtificialBlobs.add(artificialBlobs.remove(r));
+			}
+			artificialBlobs = selectedArtificialBlobs;
 		}
 		
 		// for each artificial blob
