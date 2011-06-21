@@ -40,6 +40,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
@@ -280,6 +281,8 @@ public class Untangling {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
 		
+		Repository repository = repositoryArg.getValue();
+		
 		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
@@ -382,7 +385,7 @@ public class Untangling {
 				if(dataDepEclipseDir == null){
 					throw new UnrecoverableError("When using data dependencies -D"+useDataDependencies.getName()+" you must set the -D"+datadepArg.getName()+"!");
 				}
-				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repositoryArg.getValue(), baseT));
+				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, baseT));
 			}
 			
 			// TODO add test coupling visitor
