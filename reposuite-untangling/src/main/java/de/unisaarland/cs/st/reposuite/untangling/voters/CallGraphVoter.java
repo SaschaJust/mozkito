@@ -80,8 +80,8 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
 			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-			                                                                        + FileUtils.fileSeparator
-			                                                                        + "eclipse",
+			                                                                + FileUtils.fileSeparator
+			                                                                + "eclipse",
 			                                                                arguments.toArray(new String[arguments.size()]),
 			                                                                eclipseDir, null, environment);
 			if (response.getFirst() != 0) {
@@ -152,9 +152,14 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			return 0;
 		}
 		
+		if ((!callGraph.containsVertex(v1)) || (!callGraph.containsVertex(v2))) {
+			return Double.MAX_VALUE;
+		}
+		
 		DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
 				callGraph,
 				dijkstraTransformer);
+		
 		List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
 		double d1 = Double.MAX_VALUE;
 		if (sp1 != null) {
