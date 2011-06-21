@@ -124,7 +124,7 @@ public class ChangeCouplingRuleFactory {
 	                                                                  final Set<String> relevantMethodNames,
 	                                                                  final PersistenceUtil persistenceUtil) {
 		updateProcedures(persistenceUtil);
-
+		
 		List<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
@@ -178,16 +178,16 @@ public class ChangeCouplingRuleFactory {
 	private static void updateProcedures(final PersistenceUtil persistenceUtil){
 		if (!updatedQueries) {
 			try {
-				URL sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
-				                                                             + "change_file_couplings.psql");
+				URL sqlURL = ChangeCouplingRuleFactory.class.getResource(FileUtils.fileSeparator
+				                                                         + "change_file_couplings.psql");
 				File sqlFile = new File(sqlURL.toURI());
 				String query = FileUtils.readFileToString(sqlFile);
 				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
 				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
 				persistenceUtil.executeNativeQuery(query);
 				
-				sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
-				                                                         + "change_method_couplings.psql");
+				sqlURL = ChangeCouplingRuleFactory.class.getResource(FileUtils.fileSeparator
+				                                                     + "change_method_couplings.psql");
 				sqlFile = new File(sqlURL.toURI());
 				query = FileUtils.readFileToString(sqlFile);
 				persistenceUtil.executeNativeQuery(query);
