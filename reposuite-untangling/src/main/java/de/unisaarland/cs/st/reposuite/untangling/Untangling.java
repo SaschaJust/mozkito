@@ -340,6 +340,7 @@ public class Untangling {
 				selectedArtificialBlobs.add(artificialBlobs.remove(r));
 			}
 			artificialBlobs = selectedArtificialBlobs;
+			blobSetSize = artificialBlobs.size();
 		}
 		
 		// for each artificial blob
