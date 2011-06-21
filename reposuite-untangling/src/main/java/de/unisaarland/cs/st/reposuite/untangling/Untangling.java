@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Kim Herzig, Sascha Just.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     Kim Herzig, Sascha Just - initial API and implementation
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling;
 
 import java.io.BufferedWriter;
@@ -49,11 +59,13 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
 
 /**
  * The Class Untangling.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Untangling {
 	
 	/**
-	 * Untangle.
+	 * Untangle.̋
 	 * 
 	 * @param blob
 	 *            the blob
@@ -99,28 +111,40 @@ public class Untangling {
 	/** The database args. */
 	private final DatabaseArguments                                     databaseArgs;
 	
+	/** The use change couplings. */
 	private final BooleanArgument                                       useChangeCouplings;
 	
+	/** The change couplings min support. */
 	private final LongArgument                                          changeCouplingsMinSupport;
 	
+	/** The change couplings min confidence. */
 	private final DoubleArgument                                        changeCouplingsMinConfidence;
 	
+	/** The package distance arg. */
 	private final LongArgument                                          packageDistanceArg;
 	
+	/** The min blob size arg. */
 	private final LongArgument                                          minBlobSizeArg;
 	
+	/** The max blob size arg. */
 	private final LongArgument                                          maxBlobSizeArg;
 	
+	/** The out arg. */
 	private final OutputFileArgument                                    outArg;
 	
+	/** The call graph cache dir arg. */
 	private final DirectoryArgument                                     callGraphCacheDirArg;
 	
+	/** The dry run arg. */
 	private final BooleanArgument                                       dryRunArg;
 	
+	/** The use data dependencies. */
 	private final BooleanArgument                                       useDataDependencies;
 	
+	/** The datadep arg. */
 	private final DirectoryArgument                                     datadepArg;
 	
+	/** The n arg. */
 	private final LongArgument                                          nArg;
 	
 	/**
@@ -202,6 +226,15 @@ public class Untangling {
 		settings.parseArguments();
 	}
 	
+	/**
+	 * Compare partitions.
+	 * 
+	 * @param blob
+	 *            the blob
+	 * @param partitions
+	 *            the partitions
+	 * @return the int
+	 */
 	private int comparePartitions(final ArtificialBlob blob,
 	                              final Set<Set<JavaChangeOperation>> partitions) {
 		
