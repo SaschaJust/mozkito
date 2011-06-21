@@ -1,20 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2011 Kim Herzig, Sascha Just.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Contributors:
- *     Kim Herzig, Sascha Just - initial API and implementation
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -175,28 +179,36 @@ public class ChangeCouplingRuleFactory {
 		return result;
 	}
 	
-	private static void updateProcedures(final PersistenceUtil persistenceUtil){
+	private static void updateProcedures(final PersistenceUtil persistenceUtil) {
 		if (!updatedQueries) {
 			try {
-				URL sqlURL = ChangeCouplingRuleFactory.class.getResource(FileUtils.fileSeparator
-				                                                         + "change_file_couplings.psql");
-				File sqlFile = new File(sqlURL.toURI());
-				String query = FileUtils.readFileToString(sqlFile);
+				BufferedReader reader = new BufferedReader(
+				                                           new InputStreamReader(
+				                                                                 ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                                                                                     + "change_file_couplings.psql")));
+				
+				StringBuilder query = new StringBuilder();
+				String line = "";
+				while ((line = reader.readLine()) != null) {
+					query.append(line);
+					query.append(FileUtils.lineSeparator);
+				}
 				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
 				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
-				persistenceUtil.executeNativeQuery(query);
+				persistenceUtil.executeNativeQuery(query.toString());
 				
-				sqlURL = ChangeCouplingRuleFactory.class.getResource(FileUtils.fileSeparator
-				                                                     + "change_method_couplings.psql");
-				sqlFile = new File(sqlURL.toURI());
-				query = FileUtils.readFileToString(sqlFile);
-				persistenceUtil.executeNativeQuery(query);
-				
-			} catch (URISyntaxException e) {
-				if (Logger.logWarn()) {
-					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
-					            + e.getMessage());
+				reader = new BufferedReader(
+				                            new InputStreamReader(
+				                                                  ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                                                                      + "change_method_couplings.psql")));
+				query = new StringBuilder();
+				line = "";
+				while ((line = reader.readLine()) != null) {
+					query.append(line);
+					query.append(FileUtils.lineSeparator);
 				}
+				persistenceUtil.executeNativeQuery(query.toString());
+				
 			} catch (IOException e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
