@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Kim Herzig, Sascha Just.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     Kim Herzig, Sascha Just - initial API and implementation
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling;
 
 import java.io.BufferedWriter;
@@ -7,6 +17,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
@@ -44,14 +55,17 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
 
 /**
  * The Class Untangling.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Untangling {
 	
 	/**
-	 * Untangle.
+	 * Untangle.̋
 	 * 
 	 * @param blob
 	 *            the blob
@@ -97,23 +111,41 @@ public class Untangling {
 	/** The database args. */
 	private final DatabaseArguments                                     databaseArgs;
 	
+	/** The use change couplings. */
 	private final BooleanArgument                                       useChangeCouplings;
 	
+	/** The change couplings min support. */
 	private final LongArgument                                          changeCouplingsMinSupport;
 	
+	/** The change couplings min confidence. */
 	private final DoubleArgument                                        changeCouplingsMinConfidence;
 	
+	/** The package distance arg. */
 	private final LongArgument                                          packageDistanceArg;
 	
+	/** The min blob size arg. */
 	private final LongArgument                                          minBlobSizeArg;
 	
+	/** The max blob size arg. */
 	private final LongArgument                                          maxBlobSizeArg;
 	
+	/** The out arg. */
 	private final OutputFileArgument                                    outArg;
 	
+	/** The call graph cache dir arg. */
 	private final DirectoryArgument                                     callGraphCacheDirArg;
 	
+	/** The dry run arg. */
 	private final BooleanArgument                                       dryRunArg;
+	
+	/** The use data dependencies. */
+	private final BooleanArgument                                       useDataDependencies;
+	
+	/** The datadep arg. */
+	private final DirectoryArgument                                     datadepArg;
+	
+	/** The n arg. */
+	private final LongArgument                                          nArg;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -141,6 +173,15 @@ public class Untangling {
 		
 		useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
 		                                         "Use change coupling voter when untangling", "true", false);
+		
+		useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
+		                                          "Use data dependency voter when untangling", "true", false);
+		datadepArg = new DirectoryArgument(
+		                                   settings,
+		                                   "datadependency.eclipse",
+		                                   "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
+		                                   null, true, false);
+		
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
 		                                             "Set the minimum support for used change couplings to this value",
 		                                             "3", false);
@@ -180,9 +221,20 @@ public class Untangling {
 		                                "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
 		                                "false", false);
 		
+		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
+		
 		settings.parseArguments();
 	}
 	
+	/**
+	 * Compare partitions.
+	 * 
+	 * @param blob
+	 *            the blob
+	 * @param partitions
+	 *            the partitions
+	 * @return the int
+	 */
 	private int comparePartitions(final ArtificialBlob blob,
 	                              final Set<Set<JavaChangeOperation>> partitions) {
 		
@@ -228,6 +280,7 @@ public class Untangling {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
 		
+		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
 			eclipseArgs.add(" -Drepository.password=" + repositoryArg.getPassArg().getValue());
@@ -257,11 +310,12 @@ public class Untangling {
 		}
 		
 		// build all artificial blobs. Combine all atomic transactions.
-		Set<ArtificialBlob> artificialBlobs = ArtificialBlobGenerator.generateAll(transactions,
-		                                                                          packageDistanceArg.getValue()
-		                                                                          .intValue(),
-		                                                                          minBlobSizeArg.getValue().intValue(),
-		                                                                          maxBlobSizeArg.getValue().intValue());
+		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
+		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
+		                                                           packageDistanceArg.getValue()
+		                                                           .intValue(),
+		                                                           minBlobSizeArg.getValue().intValue(),
+		                                                           maxBlobSizeArg.getValue().intValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -276,6 +330,16 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
+		}
+		
+		if((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())){
+			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
+			Random generator = new Random();
+			for(int i = 0; i < nArg.getValue(); ++i){
+				int r = generator.nextInt(artificialBlobs.size());
+				selectedArtificialBlobs.add(artificialBlobs.remove(r));
+			}
+			artificialBlobs = selectedArtificialBlobs;
 		}
 		
 		// for each artificial blob
@@ -311,10 +375,19 @@ public class Untangling {
 				                                          persistenceUtil));
 			}
 			
+			// add data dependency visitor
+			if(useDataDependencies.getValue()){
+				File dataDepEclipseDir = datadepArg.getValue();
+				if(dataDepEclipseDir == null){
+					throw new UnrecoverableError("When using data dependencies -D"+useDataDependencies.getName()+" you must set the -D"+datadepArg.getName()+"!");
+				}
+				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repositoryArg.getValue(), baseT));
+			}
+			
 			// TODO add test coupling visitor
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
-			// TODO add data dependency visitor
+			
 			
 			// run the partitioning algorithm
 			if (!dryrun) {

@@ -14,4 +14,6 @@ de.unisaarland.cs.st.reposuite.callgraph.eclipse/bin/
 /eclipse-apps/
 /DiffCompare/*
 /ca.mcgill.*
-de.unisaarland.cs.st.reposuite.callgraph.eclipse/lib/*
+ArtificialBlobTest.java
+de.unisaarland.cs.st.reposuite.datadependency.eclipse/lib
+~$Ground_Truth.xlsx
