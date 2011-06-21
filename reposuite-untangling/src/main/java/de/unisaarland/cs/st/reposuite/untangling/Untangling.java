@@ -180,7 +180,7 @@ public class Untangling {
 		                                   settings,
 		                                   "datadependency.eclipse",
 		                                   "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
-		                                   null, true, false);
+		                                   null, false, false);
 		
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
 		                                             "Set the minimum support for used change couplings to this value",
