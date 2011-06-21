@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2011 Kim Herzig, Sascha Just.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2011 Kim Herzig, Sascha Just. All rights reserved. This program
+ * and the accompanying materials are made available under the terms of the GNU
+ * Public License v2.0 which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * 
- * Contributors:
- *     Kim Herzig, Sascha Just - initial API and implementation
+ * Contributors: Kim Herzig, Sascha Just - initial API and implementation
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.voters;
 
@@ -36,19 +34,40 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * The Class CallGraphHandler.
  * 
  * Works only for JavaMethodDefinitions so far.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	private final File eclipseDir;
-	private final File checkoutDir;
-	private static Double defaultReturnValue = 0d;
+	/** The eclipse dir. */
+	private final File           eclipseDir;
 	
+	/** The checkout dir. */
+	private File                 checkoutDir        = null;
+	
+	/** The repository. */
+	private final Repository     repository;
+	
+	/** The transaction. */
+	private final RCSTransaction transaction;
+	
+	/** The default return value. */
+	private static Double        defaultReturnValue = 0d;
+	
+	/**
+	 * Instantiates a new data dependency voter.
+	 * 
+	 * @param eclipseDir
+	 *            the eclipse dir
+	 * @param repository
+	 *            the repository
+	 * @param transaction
+	 *            the transaction
+	 */
 	public DataDependencyVoter(final File eclipseDir, final Repository repository, final RCSTransaction transaction) {
 		this.eclipseDir = eclipseDir;
-		checkoutDir = repository.checkoutPath("/", transaction.getId());
-		if ((checkoutDir == null) || (!checkoutDir.exists())) {
-			throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
-		}
+		this.repository = repository;
+		this.transaction = transaction;
 	}
 	
 	/*
@@ -72,14 +91,19 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
+		if (checkoutDir == null) {
+			checkoutDir = repository.checkoutPath("/", transaction.getId());
+			if ((checkoutDir == null) || (!checkoutDir.exists())) {
+				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
+			}
+		}
+		
 		String filePath1 = op1.getChangedElementLocation().getFilePath();
 		String filePath2 = op2.getChangedElementLocation().getFilePath();
 		
 		if (!filePath1.equals(filePath2)) {
 			return 0;
 		}
-		
-		// FIXME implement this
 		
 		// build path for file to analyze
 		File file = new File(eclipseDir.getAbsolutePath() + op1.getChangedPath());

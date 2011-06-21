@@ -15,25 +15,47 @@ import java.util.List;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
-
+/**
+ * The Class BlobTransaction.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class BlobTransaction implements Comparable<BlobTransaction> {
 	
 	
+	/** The transaction. */
 	private final RCSTransaction            transaction;
 	
+	/** The operations. */
 	private final List<JavaChangeOperation> operations;
 	
+	/**
+	 * Instantiates a new blob transaction.
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 * @param operations
+	 *            the operations
+	 */
 	public BlobTransaction(final RCSTransaction transaction, final List<JavaChangeOperation> operations){
 		this.transaction = transaction;
 		this.operations = operations;
 	}
 	
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final BlobTransaction other) {
 		return transaction.compareTo(other.getTransaction()) * -1;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -56,14 +78,28 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 		return true;
 	}
 	
+	/**
+	 * Gets the operations.
+	 * 
+	 * @return the operations
+	 */
 	public List<JavaChangeOperation> getOperations() {
 		return operations;
 	}
 	
+	/**
+	 * Gets the transaction.
+	 * 
+	 * @return the transaction
+	 */
 	public RCSTransaction getTransaction() {
 		return transaction;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -74,9 +110,13 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 		return result;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return getTransaction().getId();
 	}
-
+	
 }

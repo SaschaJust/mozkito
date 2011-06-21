@@ -16,13 +16,35 @@ import java.util.Map;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+/**
+ * The Class ImpactMatrix.
+ * 
+ * @param <T>
+ *            the generic type
+ * @param <S>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ImpactMatrix<T, S> {
 	
+	/** The impact matrix. */
 	private final Map<T, Map<S, Integer>> impactMatrix        = new HashMap<T, Map<S, Integer>>();
+	
+	/** The sum source changed. */
 	private final Map<T, Integer>         sumSourceChanged    = new HashMap<T, Integer>();
+	
+	/** The sum source impacted. */
 	private final Map<S, Integer>         sumSourceImpacted   = new HashMap<S, Integer>();
+	
+	/** The impact weighted churn. */
 	private final Map<T, Long>            impactWeightedChurn = new HashMap<T, Long>();
 	
+	/**
+	 * Adds the churn.
+	 * 
+	 * @param t
+	 *            the t
+	 */
 	public void addChurn(final T t) {
 		if (!sumSourceChanged.containsKey(t)) {
 			sumSourceChanged.put(t, 1);
@@ -32,6 +54,16 @@ public class ImpactMatrix<T, S> {
 		
 	}
 	
+	/**
+	 * Adds the relation.
+	 * 
+	 * @param changedSource
+	 *            the changed source
+	 * @param impactedSource
+	 *            the impacted source
+	 * @param numDiff
+	 *            the num diff
+	 */
 	@NoneNull
 	public void addRelation(final T changedSource,
 	                        final S impactedSource,

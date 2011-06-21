@@ -28,6 +28,11 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 
+/**
+ * The Class ArtificialBlobGenerator.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ArtificialBlobGenerator {
 	
 	/**
@@ -40,8 +45,8 @@ public class ArtificialBlobGenerator {
 	 * paths by '<FileUtils.fileSeparator>' 3) The longest array of split
 	 * remaining file path segments defines the distance.
 	 * 
-	 * @param atomicChangeOperations
-	 *            the atomic change operations
+	 * @param transactions
+	 *            the transactions
 	 * @param packageDistance
 	 *            The maximal number of path segements allowed to combine two
 	 *            transactions. E.g. <code>a/b/x</code> and
@@ -99,6 +104,19 @@ public class ArtificialBlobGenerator {
 		return result;
 	}
 	
+	/**
+	 * Gets the all combinations.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param elements
+	 *            the elements
+	 * @param operator
+	 *            the operator
+	 * @param maxBlobSize
+	 *            the max blob size
+	 * @return the all combinations
+	 */
 	@SuppressWarnings ("unchecked")
 	protected static <T> Set<Set<T>> getAllCombinations(final Collection<T> elements,
 	                                                    final CombineOperator<T> operator,
@@ -158,6 +176,15 @@ public class ArtificialBlobGenerator {
 		return combinations.keySet();
 	}
 	
+	/**
+	 * Gets the longest common path.
+	 * 
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @return the longest common path
+	 */
 	public static String getLongestCommonPath(final String x,
 	                                          final String y) {
 		int M = x.length();
@@ -195,6 +222,13 @@ public class ArtificialBlobGenerator {
 		return sb.toString();
 	}
 	
+	/**
+	 * Transitive closure.
+	 * 
+	 * @param original
+	 *            the original
+	 * @return the sets the
+	 */
 	protected static Set<Set<String>> transitiveClosure(final Set<Set<String>> original) {
 		Set<Set<String>> newAdded = new HashSet<Set<String>>();
 		newAdded.addAll(original);

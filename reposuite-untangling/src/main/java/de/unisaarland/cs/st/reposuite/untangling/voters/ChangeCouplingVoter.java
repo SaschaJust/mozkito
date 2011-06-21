@@ -28,21 +28,36 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
+/**
+ * The Class ChangeCouplingVoter.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/** The transaction. */
 	private final RCSTransaction  transaction;
+	
+	/** The min support. */
 	private final int             minSupport;
+	
+	/** The min confidence. */
 	private final double          minConfidence;
+	
+	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
 	
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @param relevantMethodNames
-	 *            An optional list of method names to be considered. If all
-	 *            should be considered, pass an empty list.
+	 * @param transaction
+	 *            the transaction
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	@NoneNull
 	public ChangeCouplingVoter(final RCSTransaction transaction, final int minSupport, final double minConfidence,
@@ -53,11 +68,23 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.persistenceUtil = persistenceUtil;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor
+	 * #getMaxPossibleScore()
+	 */
 	@Override
 	public double getMaxPossibleScore() {
 		return 1;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor
+	 * #getScore(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	@NoneNull
 	public double getScore(final JavaChangeOperation t1,

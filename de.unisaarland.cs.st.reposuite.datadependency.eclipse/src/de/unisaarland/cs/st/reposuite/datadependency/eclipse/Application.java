@@ -21,7 +21,9 @@ import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 
 /**
- * This class controls all aspects of the application's execution
+ * This class controls all aspects of the application's execution.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Application implements IApplication {
 	
@@ -57,7 +59,7 @@ public class Application implements IApplication {
 			writer.append(StringUtils.join(dependencies.get(vId), ","));
 			writer.append(FileUtils.lineSeparator);
 		}
-
+		
 		writer.close();
 		return IApplication.EXIT_OK;
 	}

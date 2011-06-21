@@ -17,6 +17,8 @@ import net.ownhero.dev.regex.Regex;
 
 /**
  * The Class ImpactCSVRow.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ImpactCSVRow {
 	

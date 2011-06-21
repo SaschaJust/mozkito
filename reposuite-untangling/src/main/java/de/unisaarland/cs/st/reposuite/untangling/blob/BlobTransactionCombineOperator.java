@@ -19,9 +19,24 @@ import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 
-
+/**
+ * The Class BlobTransactionCombineOperator.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class BlobTransactionCombineOperator implements CombineOperator<BlobTransaction> {
 	
+	/**
+	 * Can combine paths.
+	 * 
+	 * @param pathA
+	 *            the path a
+	 * @param pathB
+	 *            the path b
+	 * @param packageDistance
+	 *            the package distance
+	 * @return true, if successful
+	 */
 	protected static boolean canCombinePaths(final String pathA,
 	                                         final String pathB,
 	                                         final int packageDistance) {
@@ -55,12 +70,25 @@ public class BlobTransactionCombineOperator implements CombineOperator<BlobTrans
 		return pathAParts.equals(pathBParts);
 	}
 	
+	/** The max package distance. */
 	private final int maxPackageDistance;
-
+	
+	/**
+	 * Instantiates a new blob transaction combine operator.
+	 * 
+	 * @param maxPackageDistance
+	 *            the max package distance
+	 */
 	public BlobTransactionCombineOperator(final int maxPackageDistance) {
 		this.maxPackageDistance = maxPackageDistance;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.untangling.blob.CombineOperator#canBeCombined
+	 * (java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public boolean canBeCombined(final BlobTransaction t1,
 	                             final BlobTransaction t2) {

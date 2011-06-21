@@ -10,9 +10,24 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
-
+/**
+ * The Interface CombineOperator.
+ * 
+ * @param <T>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public interface CombineOperator<T> {
 	
+	/**
+	 * Can be combined.
+	 * 
+	 * @param t1
+	 *            the t1
+	 * @param t2
+	 *            the t2
+	 * @return true, if successful
+	 */
 	public boolean canBeCombined(T t1,
 	                             T t2);
 }

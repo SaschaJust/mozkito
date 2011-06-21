@@ -32,13 +32,27 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class ArtificialBlob {
 	
+	/**
+	 * Clone.
+	 * 
+	 * @param blob
+	 *            the blob
+	 * @return the artificial blob
+	 */
 	@NoneNull
 	public static ArtificialBlob clone(final ArtificialBlob blob){
 		return new ArtificialBlob(blob.blobTransactions);
 	}
 	
+	/** The blob transactions. */
 	private final TreeSet<BlobTransaction> blobTransactions = new TreeSet<BlobTransaction>();
 	
+	/**
+	 * Instantiates a new artificial blob.
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 */
 	@NoneNull
 	public ArtificialBlob(final BlobTransaction transaction) {
 		if (!add(transaction)) {
@@ -51,8 +65,8 @@ public class ArtificialBlob {
 	/**
 	 * Instantiates a new artificial blob.
 	 * 
-	 * @param changeOperations
-	 *            the change operations
+	 * @param input
+	 *            the input
 	 */
 	@NoneNull
 	public ArtificialBlob(final Set<BlobTransaction> input) {
@@ -63,11 +77,25 @@ public class ArtificialBlob {
 		}
 	}
 	
+	/**
+	 * Adds the.
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 * @return true, if successful
+	 */
 	@NoneNull
 	public boolean add(final BlobTransaction transaction) {
 		return blobTransactions.add(transaction);
 	}
 	
+	/**
+	 * Adds the all.
+	 * 
+	 * @param blobTransactions
+	 *            the blob transactions
+	 * @return true, if successful
+	 */
 	private boolean addAll(final Collection<BlobTransaction> blobTransactions) {
 		return this.blobTransactions.addAll(blobTransactions);
 		
@@ -87,6 +115,11 @@ public class ArtificialBlob {
 		return result;
 	}
 	
+	/**
+	 * Gets the change operation partitions.
+	 * 
+	 * @return the change operation partitions
+	 */
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
 		for (BlobTransaction t : blobTransactions) {
@@ -95,6 +128,11 @@ public class ArtificialBlob {
 		return result;
 	}
 	
+	/**
+	 * Gets the latest transaction.
+	 * 
+	 * @return the latest transaction
+	 */
 	public RCSTransaction getLatestTransaction() {
 		return blobTransactions.last().getTransaction();
 	}

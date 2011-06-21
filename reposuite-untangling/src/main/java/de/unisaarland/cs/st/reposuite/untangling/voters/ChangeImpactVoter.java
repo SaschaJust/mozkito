@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -30,15 +31,17 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.elements.ImpactCSVRow;
 import de.unisaarland.cs.st.reposuite.untangling.voters.elements.ImpactMatrix;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ChangeImpactVoter.
  * 
  * Works only for JavaMethodDefinitions and SVN (or converted) repositories!!!
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/** The impact matrix. */
 	private final ImpactMatrix<String, String> impactMatrix = new ImpactMatrix<String, String>();
 	
 	/**
@@ -52,7 +55,7 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 	 *            the persistence util
 	 */
 	public ChangeImpactVoter(final RCSTransaction transaction, final File impactDataFile,
-	        final PersistenceUtil persistenceUtil) {
+	                         final PersistenceUtil persistenceUtil) {
 		
 		Map<String, ImpactCSVRow> impactData = parseImpactCSV(impactDataFile);
 		
@@ -66,7 +69,7 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 			ImpactCSVRow impactCSVRow = impactData.get(parent.getOriginalId());
 			
 			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
-			                                                        .in("revision_revisionid", parent.getRevisions());
+			.in("revision_revisionid", parent.getRevisions());
 			for (JavaChangeOperation op : persistenceUtil.load(criteria)) {
 				JavaElement element = op.getChangedElementLocation().getElement();
 				if (element instanceof JavaMethodDefinition) {
@@ -94,6 +97,13 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 		return 1;
 	}
 	
+	/**
+	 * Gets the method name.
+	 * 
+	 * @param def
+	 *            the def
+	 * @return the method name
+	 */
 	private String getMethodName(final JavaMethodDefinition def) {
 		String result = def.getFullQualifiedName();
 		String signature = JavaMethodDefinition.getSignatureString(def.getSignature());
@@ -135,7 +145,7 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 		if ((!(e1 instanceof JavaMethodDefinition)) || (!(e2 instanceof JavaMethodDefinition))) {
 			if (Logger.logError()) {
 				Logger.error(ChangeCouplingVoter.class.getCanonicalName()
-				        + " currently support JavaMethodDefinition only! Returning 0.");
+				             + " currently support JavaMethodDefinition only! Returning 0.");
 			}
 			return 0;
 		}
@@ -180,7 +190,7 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 					}
 					if (Logger.logError()) {
 						throw new UnrecoverableError("Impact line must contain `[` character (in line " + counter
-						        + "): " + line);
+						                             + "): " + line);
 					}
 				}
 				String diffMethodsCSV = lineParts[1].trim();
@@ -204,7 +214,7 @@ public class ChangeImpactVoter implements MultilevelClusteringScoreVisitor<JavaC
 				} catch (NumberFormatException e) {
 					throw new UnrecoverableError(
 					                             "One of the long values in impact file could not be converted from String to Long (in line "
-					                                     + counter + "): " + line);
+					                             + counter + "): " + line);
 				}
 			}
 		} catch (IOException e) {
