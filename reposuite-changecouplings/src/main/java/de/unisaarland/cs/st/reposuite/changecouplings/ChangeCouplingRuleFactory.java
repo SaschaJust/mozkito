@@ -10,16 +10,22 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,6 +41,8 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ChangeCouplingRuleFactory {
+	
+	private static boolean updatedQueries = false;
 	
 	/**
 	 * Gets the change coupling rules.
@@ -54,6 +62,9 @@ public class ChangeCouplingRuleFactory {
 	                                                              @Positive final int minSupport,
 	                                                              @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                              final PersistenceUtil persistenceUtil) {
+		
+		updateProcedures(persistenceUtil);
+		
 		List<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
@@ -112,6 +123,8 @@ public class ChangeCouplingRuleFactory {
 	                                                                  @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                                  final Set<String> relevantMethodNames,
 	                                                                  final PersistenceUtil persistenceUtil) {
+		updateProcedures(persistenceUtil);
+
 		List<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
@@ -160,5 +173,37 @@ public class ChangeCouplingRuleFactory {
 		
 		Collections.sort(result);
 		return result;
+	}
+	
+	private static void updateProcedures(final PersistenceUtil persistenceUtil){
+		if (!updatedQueries) {
+			try {
+				URL sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
+				                                                             + "change_file_couplings.psql");
+				File sqlFile = new File(sqlURL.toURI());
+				String query = FileUtils.readFileToString(sqlFile);
+				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
+				persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
+				persistenceUtil.executeNativeQuery(query);
+				
+				sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
+				                                                         + "change_method_couplings.psql");
+				sqlFile = new File(sqlURL.toURI());
+				query = FileUtils.readFileToString(sqlFile);
+				persistenceUtil.executeNativeQuery(query);
+				
+			} catch (URISyntaxException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
+					            + e.getMessage());
+				}
+			} catch (IOException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
+					            + e.getMessage());
+				}
+			}
+			updatedQueries = true;
+		}
 	}
 }

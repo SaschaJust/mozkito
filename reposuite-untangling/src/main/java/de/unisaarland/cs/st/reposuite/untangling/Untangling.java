@@ -40,6 +40,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
@@ -308,6 +309,13 @@ public class Untangling {
 			List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
 			for (RCSTransaction t : atomicTransactions) {
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+				Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
+				for (JavaChangeOperation op : ops) {
+					if (op.getChangedElementLocation().getElement() instanceof JavaMethodCall) {
+						toRemove.add(op);
+					}
+				}
+				ops.retainAll(toRemove);
 				transactions.add(new BlobTransaction(t, ops));
 			}
 		}
