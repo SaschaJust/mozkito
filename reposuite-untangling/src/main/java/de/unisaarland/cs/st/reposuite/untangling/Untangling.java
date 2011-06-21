@@ -228,6 +228,7 @@ public class Untangling {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
 		
+		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
 			eclipseArgs.add(" -Drepository.password=" + repositoryArg.getPassArg().getValue());
