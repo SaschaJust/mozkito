@@ -44,6 +44,7 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
 
 /**
  * The Class Untangling.
@@ -115,6 +116,10 @@ public class Untangling {
 	
 	private final BooleanArgument                                       dryRunArg;
 	
+	private final BooleanArgument                                       useDataDependencies;
+	
+	private final DirectoryArgument                                     datadepArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -141,6 +146,15 @@ public class Untangling {
 		
 		useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
 		                                         "Use change coupling voter when untangling", "true", false);
+		
+		useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
+		                                          "Use data dependency voter when untangling", "true", false);
+		datadepArg = new DirectoryArgument(
+		                                   settings,
+		                                   "datadependency.eclipse",
+		                                   "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
+		                                   null, true, false);
+		
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
 		                                             "Set the minimum support for used change couplings to this value",
 		                                             "3", false);
@@ -312,10 +326,19 @@ public class Untangling {
 				                                          persistenceUtil));
 			}
 			
+			// add data dependency visitor
+			if(useDataDependencies.getValue()){
+				File dataDepEclipseDir = datadepArg.getValue();
+				if(dataDepEclipseDir == null){
+					throw new UnrecoverableError("When using data dependencies -D"+useDataDependencies.getName()+" you must set the -D"+datadepArg.getName()+"!");
+				}
+				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repositoryArg.getValue(), baseT));
+			}
+			
 			// TODO add test coupling visitor
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
-			// TODO add data dependency visitor
+			
 			
 			// run the partitioning algorithm
 			if (!dryrun) {
