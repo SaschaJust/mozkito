@@ -106,7 +106,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		}
 		
 		// build path for file to analyze
-		File file = new File(eclipseDir.getAbsolutePath() + op1.getChangedPath());
+		File file = new File(checkoutDir.getAbsolutePath() + op1.getChangedPath());
 		if (!file.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning 0.5.");

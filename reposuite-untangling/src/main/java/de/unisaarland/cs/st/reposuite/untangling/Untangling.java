@@ -315,7 +315,7 @@ public class Untangling {
 						toRemove.add(op);
 					}
 				}
-				ops.retainAll(toRemove);
+				ops.removeAll(toRemove);
 				transactions.add(new BlobTransaction(t, ops));
 			}
 		}
