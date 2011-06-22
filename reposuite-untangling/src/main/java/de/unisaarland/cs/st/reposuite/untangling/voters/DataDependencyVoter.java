@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.CommandExecutor;
@@ -60,6 +61,8 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/** The default return value. */
 	private static Double        defaultReturnValue = 0d;
+	
+	private final Map<String, Set<Set<Integer>>> cache              = new HashMap<String, Set<Set<Integer>>>();
 	
 	/**
 	 * Instantiates a new data dependency voter.
@@ -114,64 +117,72 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		// build path for file to analyze
 		File file = new File(checkoutDir.getAbsolutePath() + op1.getChangedPath());
-		if (!file.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning 0.5.");
+		
+		if(!cache.containsKey(file.getAbsolutePath())){
+			if (!file.exists()) {
+				if (Logger.logError()) {
+					Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning 0.5.");
+				}
+				cache.put(file.getAbsolutePath(), null);
 			}
-			return defaultReturnValue;
-		}
-		
-		File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-		
-		String[] arguments = new String[] { "-vmargs", "-Din=" + file.getAbsolutePath(),
-				"-Dout=" + eclipseOutFile.getAbsolutePath() };
-		
-		// run the data dependency eclipse app on that file
-		Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-		                                                                + FileUtils.fileSeparator + "eclipse", arguments, eclipseDir, null, new HashMap<String, String>());
-		if (response.getFirst() != 0) {
-			if (Logger.logError()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("Could not generate data dependency for file ");
-				sb.append(file.getAbsolutePath());
-				sb.append(". Reason:");
-				sb.append(FileUtils.lineSeparator);
-				if (response.getSecond() != null) {
-					for (String s : response.getSecond()) {
-						sb.append(s);
-						sb.append(FileUtils.lineSeparator);
+			
+			File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			
+			String[] arguments = new String[] { "-vmargs", "-Din=" + file.getAbsolutePath(),
+					"-Dout=" + eclipseOutFile.getAbsolutePath() };
+			
+			// run the data dependency eclipse app on that file
+			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
+			                                                                + FileUtils.fileSeparator + "eclipse", arguments, eclipseDir, null, new HashMap<String, String>());
+			if (response.getFirst() != 0) {
+				if (Logger.logError()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Could not generate data dependency for file ");
+					sb.append(file.getAbsolutePath());
+					sb.append(". Reason:");
+					sb.append(FileUtils.lineSeparator);
+					if (response.getSecond() != null) {
+						for (String s : response.getSecond()) {
+							sb.append(s);
+							sb.append(FileUtils.lineSeparator);
+						}
 					}
+					Logger.error(sb.toString());
 				}
-				Logger.error(sb.toString());
+				cache.put(file.getAbsolutePath(), null);
 			}
-			return defaultReturnValue;
+			
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(eclipseOutFile));
+			} catch (FileNotFoundException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				cache.put(file.getAbsolutePath(), null);
+			}
+			
+			Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
+			String line = "";
+			try {
+				while ((line = reader.readLine()) != null) {
+					String[] lineParts = line.split(",");
+					Set<Integer> set = new HashSet<Integer>();
+					for (String s : lineParts) {
+						set.add(Integer.valueOf(s));
+					}
+					lineDependencies.add(set);
+				}
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				cache.put(file.getAbsolutePath(), null);
+			}
 		}
 		
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(eclipseOutFile));
-		} catch (FileNotFoundException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return defaultReturnValue;
-		}
-		
-		Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
-		String line = "";
-		try {
-			while ((line = reader.readLine()) != null) {
-				String[] lineParts = line.split(",");
-				Set<Integer> set = new HashSet<Integer>();
-				for (String s : lineParts) {
-					set.add(Integer.valueOf(s));
-				}
-				lineDependencies.add(set);
-			}
-		} catch (IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
+		Set<Set<Integer>> lineDependencies = cache.get(file.getAbsolutePath());
+		if (lineDependencies == null) {
 			return defaultReturnValue;
 		}
 		

@@ -253,7 +253,7 @@ public class Untangling {
 		PermutationGenerator<Set<JavaChangeOperation>> pGen = new PermutationGenerator<Set<JavaChangeOperation>>(
 				partitions);
 		
-		int minDiff = 0;
+		int minDiff = Integer.MAX_VALUE;
 		
 		while (pGen.hasMore()) {
 			List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
