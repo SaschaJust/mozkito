@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -179,7 +179,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		Logger.setLogLevel(LogLevel.OFF);
 		Properties properties = new Properties();
 		String url = "jdbc:postgresql://" + System.getProperty("database.host", "quentin.cs.uni-saarland.de") + "/"
-		        + System.getProperty("database.name", "reposuite_test");
+		+ System.getProperty("database.name", "reposuite_test");
 		properties.put("openjpa.ConnectionURL", url);
 		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
@@ -305,7 +305,11 @@ public class OpenJPAUtil implements PersistenceUtil {
 			OpenJPAEntityManager ojem = (OpenJPAEntityManager) entityManager;
 			Connection conn = (Connection) ojem.getConnection();
 			Statement statement = conn.createStatement();
-			statement.executeUpdate(queryString);
+			if (queryString.trim().toLowerCase().startsWith("select")) {
+				statement.execute(queryString);
+			} else {
+				statement.executeUpdate(queryString);
+			}
 			statement.close();
 			entityManager.getTransaction().commit();
 		} catch (SQLException e) {
@@ -464,7 +468,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			// found
 			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) {
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
-				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
+						|| wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
 					
@@ -478,14 +482,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 					}
 				} else {
 					throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
-					        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
-					        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
+					                             + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
+					                             + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
 				}
 			}
 		}
 		
 		throw new UnrecoverableError("Class " + clazz.getCanonicalName()
-		        + " does not have an Id column defined for a getter.");
+		                             + " does not have an Id column defined for a getter.");
 	}
 	
 	/*

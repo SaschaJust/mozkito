@@ -92,7 +92,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
 			if (Logger.logWarn()) {
 				Logger.warn("Unrecognized JavaElementLocation tag. Expected <" + JAVA_ELEMENT_LOCATION_TAG
-				        + "> but got <" + element.getName() + ">. Retuning null.");
+				            + "> but got <" + element.getName() + ">. Retuning null.");
 			}
 			return null;
 		}
@@ -248,7 +248,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	private int          bodyStartLine;
 	
 	/** The comment lines. */
-	private Set<Integer> commentLines = new HashSet<Integer>();
+	private final Set<Integer> commentLines = new HashSet<Integer>();
 	
 	/**
 	 * Instantiates a new java element location.
@@ -273,17 +273,17 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 *            the file path
 	 */
 	public JavaElementLocation(@NotNull final JavaElement element, @NotNegative final int startLine,
-	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
-	        @NotNull final String filePath) {
+	                           @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
+	                           @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		
 		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
 			Condition.check(bodyStartLine <= endLine,
 			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
-			                        + " startLine=" + endLine);
+			                + " startLine=" + endLine);
 			Condition.check(bodyStartLine >= startLine,
 			                "Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
-			                        + " startLine=" + startLine);
+			                + " startLine=" + startLine);
 		}
 		setElement(element);
 		setStartLine(startLine);
@@ -577,11 +577,11 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((getElement() == null)
-		                                                 ? 0
-		                                                 : getElement().hashCode());
+				? 0
+				: getElement().hashCode());
 		result = prime * result + ((getFilePath() == null)
-		                                                  ? 0
-		                                                  : getFilePath().hashCode());
+				? 0
+				: getFilePath().hashCode());
 		if (getElement() instanceof JavaMethodCall) {
 			result = prime * result + getEndLine();
 			result = prime * result + getPosition();
@@ -608,7 +608,10 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@NoneNull
 	protected void setCommentLines(final Set<Integer> commentLines) {
-		this.commentLines = commentLines;
+		if (commentLines != null) {
+			this.commentLines.clear();
+			this.commentLines.addAll(commentLines);
+		}
 	}
 	
 	/**
