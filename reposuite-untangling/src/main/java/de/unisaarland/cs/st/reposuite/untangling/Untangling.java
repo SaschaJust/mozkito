@@ -316,7 +316,7 @@ public class Untangling {
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
 				for (JavaChangeOperation op : ops) {
-					if (!op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition) {
+					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
 						toRemove.add(op);
 					}
 				}
