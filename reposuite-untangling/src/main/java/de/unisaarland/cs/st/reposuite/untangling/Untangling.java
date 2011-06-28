@@ -34,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
+import de.unisaarland.cs.st.reposuite.clustering.AvgCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
@@ -52,6 +53,7 @@ import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
+import de.unisaarland.cs.st.reposuite.settings.EnumArgument;
 import de.unisaarland.cs.st.reposuite.settings.InputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.ListArgument;
 import de.unisaarland.cs.st.reposuite.settings.LongArgument;
@@ -88,17 +90,13 @@ public class Untangling {
 	 * @return the sets the
 	 */
 	@NoneNull
-	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob,
-			final int numClusters,
+	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob, final int numClusters,
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
 			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor) {
-		@SuppressWarnings ("unused")
-		Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
+		@SuppressWarnings("unused") Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
 		
 		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				blob.getAllChangeOperations(),
-				scoreVisitors,
-				collapseVisitor);
+				blob.getAllChangeOperations(), scoreVisitors, collapseVisitor);
 		
 		return clustering.getPartitions(numClusters);
 	}
@@ -163,6 +161,8 @@ public class Untangling {
 	
 	private final LongArgument                                          timeArg;
 	
+	private final EnumArgument                                          aggregateArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -172,11 +172,9 @@ public class Untangling {
 		repositoryArg = settings.setRepositoryArg(true);
 		databaseArgs = settings.setDatabaseArgs(true, "untangling");
 		settings.setLoggerArg(false);
-		callgraphArg = new DirectoryArgument(
-				settings,
-				"callgraph.eclipse",
-				"Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
-				null, true, false);
+		callgraphArg = new DirectoryArgument(settings, "callgraph.eclipse",
+				"Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).", null,
+				true, false);
 		
 		atomicChangesArg = new ListArgument(
 				settings,
@@ -200,44 +198,30 @@ public class Untangling {
 		testCoverageFileArg = new InputFileArgument(settings, "testcoverage.in",
 				"File containing David's test coverage diff info", null, false);
 		
-		datadepArg = new DirectoryArgument(
-				settings,
-				"datadependency.eclipse",
-				"Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
-				null, false, false);
+		datadepArg = new DirectoryArgument(settings, "datadependency.eclipse",
+				"Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).", null,
+				false, false);
 		
 		changeCouplingsMinSupport = new LongArgument(settings, "vote.changecouplings.minsupport",
-				"Set the minimum support for used change couplings to this value",
-				"3", false);
-		changeCouplingsMinConfidence = new DoubleArgument(
-				settings,
-				"vote.changecouplings.minconfidence",
-				"Set minimum confidence for used change couplings to this value",
-				"0.7", false);
+				"Set the minimum support for used change couplings to this value", "3", false);
+		changeCouplingsMinConfidence = new DoubleArgument(settings, "vote.changecouplings.minconfidence",
+				"Set minimum confidence for used change couplings to this value", "0.7", false);
 		
-		packageDistanceArg = new LongArgument(
-				settings,
-				"package.distance",
-				"The maximal allowed distance between packages allowed when generating blobs.",
-				"0", true);
+		packageDistanceArg = new LongArgument(settings, "package.distance",
+				"The maximal allowed distance between packages allowed when generating blobs.", "0", true);
 		
 		minBlobSizeArg = new LongArgument(settings, "blobsize.min",
 				"The minimal number of transactions to be combined within a blob.", "2", true);
 		
-		maxBlobSizeArg = new LongArgument(
-				settings,
-				"blobsize.max",
-				"The maximal number of transactions to be combined within a blob. (-1 means not limit)",
-				"-1", true);
+		maxBlobSizeArg = new LongArgument(settings, "blobsize.max",
+				"The maximal number of transactions to be combined within a blob. (-1 means not limit)", "-1", true);
 		
 		outArg = new OutputFileArgument(settings, "out.file", "Write descriptive statistics into this file", null,
 				true, true);
 		
-		callGraphCacheDirArg = new DirectoryArgument(
-				settings,
-				"callgraph.cache.dir",
-				"Cache directory containing call graphs using the naming converntion <transactionId>.cg",
-				null, false, false);
+		callGraphCacheDirArg = new DirectoryArgument(settings, "callgraph.cache.dir",
+				"Cache directory containing call graphs using the naming converntion <transactionId>.cg", null, false,
+				false);
 		
 		dryRunArg = new BooleanArgument(
 				settings,
@@ -246,6 +230,9 @@ public class Untangling {
 				"false", false);
 		
 		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
+		
+		aggregateArg = new EnumArgument(settings, "aggregate", "Method to aggregate when untangling.", "MAX", false,
+				new String[] { "MAX", "AVG" });
 		
 		timeArg = new LongArgument(settings, "blobWindow",
 				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
@@ -262,8 +249,7 @@ public class Untangling {
 	 *            the partitions
 	 * @return the int
 	 */
-	private int comparePartitions(final ArtificialBlob blob,
-			final Set<Set<JavaChangeOperation>> partitions) {
+	private int comparePartitions(final ArtificialBlob blob, final Set<Set<JavaChangeOperation>> partitions) {
 		
 		Condition.check(blob.getTransactions().size() == partitions.size(),
 				"The size of partitions in artificial blob and the size of untangled partitions must be equal.");
@@ -364,11 +350,8 @@ public class Untangling {
 		
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
-		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
-				packageDistanceArg.getValue()
-				.intValue(),
-				minBlobSizeArg.getValue().intValue(),
-				maxBlobSizeArg.getValue().intValue()));
+		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions, packageDistanceArg.getValue()
+				.intValue(), minBlobSizeArg.getValue().intValue(), maxBlobSizeArg.getValue().intValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -396,10 +379,10 @@ public class Untangling {
 			blobSetSize = artificialBlobs.size();
 		}
 		
-		if((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())){
+		if ((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())) {
 			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
 			Random generator = new Random();
-			for(int i = 0; i < nArg.getValue(); ++i){
+			for (int i = 0; i < nArg.getValue(); ++i) {
 				int r = generator.nextInt(artificialBlobs.size());
 				selectedArtificialBlobs.add(artificialBlobs.remove(r));
 			}
@@ -410,6 +393,11 @@ public class Untangling {
 		Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
 		FileDistanceVoter fileDistanceVoter = new FileDistanceVoter();
+		
+		MultilevelClusteringCollapseVisitor<JavaChangeOperation> aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+		if (aggregateArg.getValue().equals("AVG")) {
+			aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+		}
 		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
@@ -427,9 +415,8 @@ public class Untangling {
 			
 			// add call graph visitor
 			if (useCallGraph.getValue()) {
-				scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(),
-						eclipseArgs.toArray(new String[eclipseArgs.size()]), baseT,
-						callGraphCacheDirArg.getValue()));
+				scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(), eclipseArgs
+						.toArray(new String[eclipseArgs.size()]), baseT, callGraphCacheDirArg.getValue()));
 			}
 			
 			// add change coupling visitor
@@ -438,17 +425,16 @@ public class Untangling {
 					throw new UnrecoverableError(
 							"When using change couplings, you have to specify a min support and min confidence value.");
 				}
-				scoreVisitors.add(new ChangeCouplingVoter(baseT,
-						changeCouplingsMinSupport.getValue().intValue(),
-						changeCouplingsMinConfidence.getValue().doubleValue(),
-						persistenceUtil));
+				scoreVisitors.add(new ChangeCouplingVoter(baseT, changeCouplingsMinSupport.getValue().intValue(),
+						changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil));
 			}
 			
 			// add data dependency visitor
-			if(useDataDependencies.getValue()){
+			if (useDataDependencies.getValue()) {
 				File dataDepEclipseDir = datadepArg.getValue();
-				if(dataDepEclipseDir == null){
-					throw new UnrecoverableError("When using data dependencies -D"+useDataDependencies.getName()+" you must set the -D"+datadepArg.getName()+"!");
+				if (dataDepEclipseDir == null) {
+					throw new UnrecoverableError("When using data dependencies -D" + useDataDependencies.getName()
+							+ " you must set the -D" + datadepArg.getName() + "!");
 				}
 				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, baseT));
 			}
@@ -463,12 +449,9 @@ public class Untangling {
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
 			
-			
 			// run the partitioning algorithm
 			if (!dryrun) {
-				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(),
-						scoreVisitors,
-						new MaxCollapseVisitor<JavaChangeOperation>());
+				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, aggregateVisitor);
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
 				int diff = comparePartitions(blob, partitions);
