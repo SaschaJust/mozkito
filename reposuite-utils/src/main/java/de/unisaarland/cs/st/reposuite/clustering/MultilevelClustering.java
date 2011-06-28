@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class MultilevelPartitioning.
@@ -90,8 +91,8 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final Collection<T> nodes,
-	                            final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings ("unchecked")
 		T[] array = (T[]) nodes.toArray();
 		this.scoreVisitors = scoreVisitors;
@@ -112,7 +113,7 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	                            final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.scoreVisitors = scoreVisitors;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);
@@ -166,6 +167,10 @@ public class MultilevelClustering<T> {
 				scores.offer(tmpCluster);
 			}
 			
+			if (Logger.logDebug()) {
+				Logger.debug("Chose new cluser with overall score: " + highestScore.getScore());
+			}
+			
 			// add new combined cluster
 			existingClusters.add(highestScore);
 		}
@@ -187,7 +192,7 @@ public class MultilevelClustering<T> {
 	 * @return the score
 	 */
 	public double getScore(final T t1,
-	                       final T t2) {
+			final T t2) {
 		double score = 0d;
 		for (MultilevelClusteringScoreVisitor<T> visitor : this.scoreVisitors) {
 			score += visitor.getScore(t1, t2);

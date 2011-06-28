@@ -64,6 +64,7 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.FileDistanceVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.TestCoverageVoter;
 
 /**
@@ -192,7 +193,7 @@ public class Untangling {
 		useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
 				"Use data dependency voter when untangling", "true", false);
 		
-		//TODO maek this default true
+		//TODO make this default true
 		useTestCoverage = new BooleanArgument(settings, "vote.testcoverage", "Use test coverage information", "false",
 				false);
 		
@@ -408,6 +409,8 @@ public class Untangling {
 		
 		Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
+		FileDistanceVoter fileDistanceVoter = new FileDistanceVoter();
+		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
 		DescriptiveStatistics relativeStat = new DescriptiveStatistics();
@@ -449,6 +452,8 @@ public class Untangling {
 				}
 				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, baseT));
 			}
+			
+			scoreVisitors.add(fileDistanceVoter);
 			
 			// TODO add test coupling visitor
 			if (testCoverageVoter != null) {
