@@ -26,6 +26,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -131,6 +133,15 @@ public class ArtificialBlob {
 			result.add(t.getOperations());
 		}
 		return result;
+	}
+	
+	public Long getDayWindow() {
+		TreeSet<DateTime> timeStamps = new TreeSet<DateTime>();
+		for (RCSTransaction t : getTransactions()) {
+			timeStamps.add(t.getTimestamp());
+		}
+		Days daysBetween = Days.daysBetween(timeStamps.first(), timeStamps.last());
+		return Long.valueOf(daysBetween.getDays());
 	}
 	
 	/**

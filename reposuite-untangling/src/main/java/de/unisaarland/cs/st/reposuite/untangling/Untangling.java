@@ -64,6 +64,7 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.TestCoverageVoter;
 
 /**
  * The Class Untangling.
@@ -159,6 +160,8 @@ public class Untangling {
 	
 	private final InputFileArgument                                     testCoverageFileArg;
 	
+	private final LongArgument                                          timeArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -242,6 +245,9 @@ public class Untangling {
 				"false", false);
 		
 		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
+		
+		timeArg = new LongArgument(settings, "blobWindow",
+				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
 		
 		settings.parseArguments();
 	}
@@ -338,6 +344,23 @@ public class Untangling {
 			}
 		}
 		
+		TestCoverageVoter testCoverageVoter = null;
+		if (useTestCoverage.getValue()) {
+			File testCoverageIn = testCoverageFileArg.getValue();
+			if (testCoverageIn == null) {
+				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
+						+ testCoverageFileArg.getName());
+			}
+			try {
+				testCoverageVoter = new TestCoverageVoter(testCoverageIn);
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
+					Logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
 		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
@@ -359,6 +382,17 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
+		}
+		
+		if (timeArg.getValue() > -1) {
+			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
+			for (ArtificialBlob blob : artificialBlobs) {
+				if (blob.getDayWindow() < timeArg.getValue()) {
+					selectedArtificialBlobs.add(blob);
+				}
+			}
+			artificialBlobs = selectedArtificialBlobs;
+			blobSetSize = artificialBlobs.size();
 		}
 		
 		if((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())){
@@ -417,6 +451,10 @@ public class Untangling {
 			}
 			
 			// TODO add test coupling visitor
+			if (testCoverageVoter != null) {
+				scoreVisitors.add(testCoverageVoter);
+			}
+			
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
 			
