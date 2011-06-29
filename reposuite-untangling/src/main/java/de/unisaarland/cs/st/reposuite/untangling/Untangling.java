@@ -191,7 +191,6 @@ public class Untangling {
 		useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
 				"Use data dependency voter when untangling", "true", false);
 		
-		//TODO make this default true
 		useTestImpact = new BooleanArgument(settings, "vote.testimpact", "Use test coverage information", "true",
 				false);
 		

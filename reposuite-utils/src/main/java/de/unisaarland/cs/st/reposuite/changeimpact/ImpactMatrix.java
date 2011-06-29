@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.untangling.voters;
+package de.unisaarland.cs.st.reposuite.changeimpact;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,11 +60,11 @@ public class ImpactMatrix implements Serializable {
 		impactWeightedChurn.put(changedSource, impactWeightedChurn.get(changedSource) + numDiff);
 	}
 	
-	public int getOccurence(final String changed, final String impacted){
-		if(!impactMatrix.containsKey(changed)){
+	public int getOccurence(final String changed, final String impacted) {
+		if (!impactMatrix.containsKey(changed)) {
 			return 0;
 		}
-		if(!impactMatrix.get(changed).containsKey(impacted)){
+		if (!impactMatrix.get(changed).containsKey(impacted)) {
 			return 0;
 		}
 		return impactMatrix.get(changed).get(impacted).size();
