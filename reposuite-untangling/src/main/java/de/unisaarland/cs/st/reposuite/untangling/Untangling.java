@@ -67,7 +67,7 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.FileDistanceVoter;
-import de.unisaarland.cs.st.reposuite.untangling.voters.TestCoverageVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
 
 /**
  * The Class Untangling.
@@ -155,9 +155,9 @@ public class Untangling {
 	/** The n arg. */
 	private final LongArgument                                          nArg;
 	
-	private final BooleanArgument                                       useTestCoverage;
+	private final BooleanArgument                                       useTestImpact;
 	
-	private final InputFileArgument                                     testCoverageFileArg;
+	private final InputFileArgument                                     testImpactFileArg;
 	
 	private final LongArgument                                          timeArg;
 	
@@ -192,11 +192,11 @@ public class Untangling {
 				"Use data dependency voter when untangling", "true", false);
 		
 		//TODO make this default true
-		useTestCoverage = new BooleanArgument(settings, "vote.testcoverage", "Use test coverage information", "false",
+		useTestImpact = new BooleanArgument(settings, "vote.testimpact", "Use test coverage information", "true",
 				false);
 		
-		testCoverageFileArg = new InputFileArgument(settings, "testcoverage.in",
-				"File containing David's test coverage diff info", null, false);
+		testImpactFileArg = new InputFileArgument(settings, "testimpact.in",
+				"File containing a serial version of a ImpactMatrix", null, false);
 		
 		datadepArg = new DirectoryArgument(settings, "datadependency.eclipse",
 				"Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).", null,
@@ -331,16 +331,21 @@ public class Untangling {
 			}
 		}
 		
-		TestCoverageVoter testCoverageVoter = null;
-		if (useTestCoverage.getValue()) {
-			File testCoverageIn = testCoverageFileArg.getValue();
+		TestImpactVoter testImpactVoter = null;
+		if (useTestImpact.getValue()) {
+			File testCoverageIn = testImpactFileArg.getValue();
 			if (testCoverageIn == null) {
 				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
-						+ testCoverageFileArg.getName());
+						+ testImpactFileArg.getName());
 			}
 			try {
-				testCoverageVoter = new TestCoverageVoter(testCoverageIn);
+				testImpactVoter = new TestImpactVoter(testCoverageIn);
 			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
+					Logger.error(e.getMessage(), e);
+				}
+			} catch (ClassNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
 					Logger.error(e.getMessage(), e);
@@ -441,9 +446,9 @@ public class Untangling {
 			
 			scoreVisitors.add(fileDistanceVoter);
 			
-			// TODO add test coupling visitor
-			if (testCoverageVoter != null) {
-				scoreVisitors.add(testCoverageVoter);
+			// add test impact visitor
+			if (testImpactVoter != null) {
+				scoreVisitors.add(testImpactVoter);
 			}
 			
 			// TODO add Yana's change rule visitor
