@@ -31,6 +31,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
@@ -39,6 +40,7 @@ import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
+import de.unisaarland.cs.st.reposuite.clustering.SumCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -75,6 +77,18 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Untangling {
+	
+	public enum UntanglingAggregate {
+		AVG, MAX, SUM;
+		
+		public static String[] stringValues() {
+			Set<String> values = new HashSet<String>();
+			for (UntanglingAggregate g : UntanglingAggregate.values()) {
+				values.add(g.toString());
+			}
+			return values.toArray(new String[values.size()]);
+		}
+	}
 	
 	/**
 	 * Untangle.̋
@@ -230,8 +244,9 @@ public class Untangling {
 		
 		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
 		
-		aggregateArg = new EnumArgument(settings, "aggregate", "Method to aggregate when untangling.", "MAX", false,
-				new String[] { "MAX", "AVG" });
+		aggregateArg = new EnumArgument(settings, "aggregate", "Method to aggregate when untangling. Possible values "
+				+ StringUtils.join(UntanglingAggregate.stringValues()), "MAX", false,
+				UntanglingAggregate.stringValues());
 		
 		timeArg = new LongArgument(settings, "blobWindow",
 				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
@@ -398,9 +413,21 @@ public class Untangling {
 		
 		FileDistanceVoter fileDistanceVoter = new FileDistanceVoter();
 		
-		MultilevelClusteringCollapseVisitor<JavaChangeOperation> aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+		MultilevelClusteringCollapseVisitor<JavaChangeOperation> aggregateVisitor = null;
+		UntanglingAggregate aggregate = UntanglingAggregate.valueOf(aggregateArg.getValue());
+		switch (aggregate) {
+			case AVG:
+				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				break;
+			case SUM:
+				aggregateVisitor = new SumCollapseVisitor<JavaChangeOperation>();
+				break;
+			default:
+				aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+				break;
+		}
 		if (aggregateArg.getValue().equals("AVG")) {
-			aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+			
 		}
 		
 		// for each artificial blob
