@@ -40,7 +40,6 @@ import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
-import de.unisaarland.cs.st.reposuite.clustering.SumCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -79,7 +78,7 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
 public class Untangling {
 	
 	public enum UntanglingAggregate {
-		AVG, MAX, SUM;
+		AVG, MAX;
 		
 		public static String[] stringValues() {
 			Set<String> values = new HashSet<String>();
@@ -418,9 +417,6 @@ public class Untangling {
 		switch (aggregate) {
 			case AVG:
 				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
-				break;
-			case SUM:
-				aggregateVisitor = new SumCollapseVisitor<JavaChangeOperation>();
 				break;
 			default:
 				aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
