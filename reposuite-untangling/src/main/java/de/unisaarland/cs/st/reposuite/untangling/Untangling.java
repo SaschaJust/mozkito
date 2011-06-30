@@ -78,7 +78,7 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
 public class Untangling {
 	
 	public enum UntanglingAggregate {
-		AVG, MAX;
+		AVG, MAX, RATIO;
 		
 		public static String[] stringValues() {
 			Set<String> values = new HashSet<String>();
@@ -416,6 +416,9 @@ public class Untangling {
 		UntanglingAggregate aggregate = UntanglingAggregate.valueOf(aggregateArg.getValue());
 		switch (aggregate) {
 			case AVG:
+				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				break;
+			case RATIO:
 				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
 				break;
 			default:
