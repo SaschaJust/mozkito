@@ -30,6 +30,7 @@ import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraphEdge;
 import de.unisaarland.cs.st.reposuite.callgraph.model.MethodVertex;
 import de.unisaarland.cs.st.reposuite.callgraph.model.VertexFactory;
+import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
@@ -62,11 +63,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 *            the transaction id
 	 */
 	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
-	                      final File cacheDir) {
+			final File cacheDir) {
 		
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-			                           + ".cg");
+					+ ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 			}
@@ -85,10 +86,10 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
 			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-			                                                                + FileUtils.fileSeparator
-			                                                                + "eclipse",
-			                                                                arguments.toArray(new String[arguments.size()]),
-			                                                                eclipseDir, null, environment);
+					+ FileUtils.fileSeparator
+					+ "eclipse",
+					arguments.toArray(new String[arguments.size()]),
+					eclipseDir, null, environment);
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
 					StringBuilder sb = new StringBuilder();
@@ -151,7 +152,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @return the double
 	 */
 	private double distance(final MethodVertex v1,
-	                        final MethodVertex v2) {
+			final MethodVertex v2) {
 		
 		if (v1.equals(v2)) {
 			return 0;
@@ -197,13 +198,13 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,
-	                       final JavaChangeOperation op2) {
+			final JavaChangeOperation op2) {
 		
 		if (callGraph == null) {
 			if (Logger.logError()) {
 				Logger.error("Callgraph ot found! Returning zero as score.");
 			}
-			return 0d;
+			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
 		JavaElement e1 = op1.getChangedElementLocation().getElement();
@@ -214,17 +215,17 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			MethodVertex v2 = VertexFactory.createMethodVertex(e2.getFullQualifiedName(), "");
 			double distance = this.distance(v1, v2);
 			if (distance == Double.MAX_VALUE) {
-				// no path found. Return 0
+				// no path found.
 				return 0;
 			} else {
 				distance = Math.min(2d, distance);
 				Condition.check(distance <= 1, "The returned distance must be a value between 0 and 1, but was: "
-				                + distance);
+						+ distance);
 				Condition.check(distance >= 0, "The returned distance must be a value between 0 and 1, but was: "
-				                + distance);
+						+ distance);
 				return 1d - (distance / 2d);
 			}
 		}
-		return 0;
+		return MultilevelClustering.IGNORE_SCORE;
 	}
 }

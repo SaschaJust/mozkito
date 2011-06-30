@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import de.unisaarland.cs.st.reposuite.changeimpact.ImpactMatrix;
+import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
@@ -29,10 +30,16 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		String name0 = op0.getChangedElementLocation().getElement().getFullQualifiedName();
 		String name1 = op1.getChangedElementLocation().getElement().getFullQualifiedName();
 		
-		double conf0 = (((double) matrix.getOccurence(name0, name1)) / ((double) matrix.getSumChanged(name0)));
-		double conf1 = (((double) matrix.getOccurence(name1, name0)) / ((double) matrix.getSumChanged(name1)));
+		double occ0 = matrix.getOccurence(name0, name1);
+		double occ1 = matrix.getOccurence(name1, name0);
+		double sum0 = matrix.getSumChanged(name0);
+		double sum1 = matrix.getSumChanged(name1);
 		
-		return Math.max(conf0, conf1);
+		if ((occ0 == 0d) || (occ1 == 0d) || (sum0 == 0d) || (sum1 == 0d)) {
+			return MultilevelClustering.IGNORE_SCORE;
+		}
+		
+		return Math.max((occ0 / sum0), (occ1 / sum1));
 	}
 	
 }

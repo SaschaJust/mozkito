@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
+import serp.util.Strings;
 import de.unisaarland.cs.st.reposuite.clustering.AvgCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
@@ -105,11 +106,12 @@ public class Untangling {
 	@NoneNull
 	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob, final int numClusters,
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor) {
+			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor,
+			final MultilevelClustering.ScoreCombinationMode scoreMode) {
 		@SuppressWarnings("unused") Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
 		
 		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				blob.getAllChangeOperations(), scoreVisitors, collapseVisitor);
+				blob.getAllChangeOperations(), scoreVisitors, collapseVisitor, scoreMode);
 		
 		return clustering.getPartitions(numClusters);
 	}
@@ -175,6 +177,8 @@ public class Untangling {
 	private final LongArgument                                          timeArg;
 	
 	private final EnumArgument                                          aggregateArg;
+	
+	private final EnumArgument                                          scoreModeArg;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -249,6 +253,12 @@ public class Untangling {
 		
 		timeArg = new LongArgument(settings, "blobWindow",
 				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
+		
+		scoreModeArg = new EnumArgument(settings, "scoreMode",
+				"Method to combine single initial clustering matrix scores. Possbile values: "
+						+ Strings.join(MultilevelClustering.ScoreCombinationMode.values(), ","),
+						MultilevelClustering.ScoreCombinationMode.VARSUM.toString(), false,
+						MultilevelClustering.ScoreCombinationMode.stringValues());
 		
 		settings.parseArguments();
 	}
@@ -481,7 +491,8 @@ public class Untangling {
 			
 			// run the partitioning algorithm
 			if (!dryrun) {
-				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, aggregateVisitor);
+				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, aggregateVisitor,
+						MultilevelClustering.ScoreCombinationMode.valueOf(scoreModeArg.getValue()));
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
 				int diff = comparePartitions(blob, partitions);

@@ -31,6 +31,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -53,15 +54,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	/** The checkout dir. */
 	private File                 checkoutDir        = null;
 	
-	/** The repository. */
-	private final Repository     repository;
-	
-	/** The transaction. */
-	private final RCSTransaction transaction;
-	
-	/** The default return value. */
-	private static Double        defaultReturnValue = 0d;
-	
 	private final Map<String, Set<Set<Integer>>> cache              = new HashMap<String, Set<Set<Integer>>>();
 	
 	/**
@@ -76,8 +68,12 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	public DataDependencyVoter(final File eclipseDir, final Repository repository, final RCSTransaction transaction) {
 		this.eclipseDir = eclipseDir;
-		this.repository = repository;
-		this.transaction = transaction;
+		if (checkoutDir == null) {
+			checkoutDir = repository.checkoutPath("/", transaction.getId());
+			if ((checkoutDir == null) || (!checkoutDir.exists())) {
+				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
+			}
+		}
 	}
 	
 	/*
@@ -99,20 +95,13 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,
-	                       final JavaChangeOperation op2) {
-		
-		if (checkoutDir == null) {
-			checkoutDir = repository.checkoutPath("/", transaction.getId());
-			if ((checkoutDir == null) || (!checkoutDir.exists())) {
-				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
-			}
-		}
+			final JavaChangeOperation op2) {
 		
 		String filePath1 = op1.getChangedElementLocation().getFilePath();
 		String filePath2 = op2.getChangedElementLocation().getFilePath();
 		
 		if (!filePath1.equals(filePath2)) {
-			return 0;
+			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
 		// build path for file to analyze
@@ -133,7 +122,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			
 			// run the data dependency eclipse app on that file
 			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-			                                                                + FileUtils.fileSeparator + "eclipse", arguments, eclipseDir, null, new HashMap<String, String>());
+					+ FileUtils.fileSeparator + "eclipse", arguments, eclipseDir, null, new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
 					StringBuilder sb = new StringBuilder();
@@ -183,7 +172,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		Set<Set<Integer>> lineDependencies = cache.get(file.getAbsolutePath());
 		if (lineDependencies == null) {
-			return defaultReturnValue;
+			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
 		for (Set<Integer> set : lineDependencies) {
@@ -194,6 +183,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 		}
 		
-		return defaultReturnValue;
+		return 0;
 	}
 }
