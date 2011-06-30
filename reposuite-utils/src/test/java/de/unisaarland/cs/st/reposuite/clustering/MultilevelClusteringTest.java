@@ -34,10 +34,10 @@ import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering.Comparable
 public class MultilevelClusteringTest {
 	
 	private class StringScoreVisitor implements MultilevelClusteringScoreVisitor<String>,
-	        MultilevelClusteringCollapseVisitor<String> {
+	MultilevelClusteringCollapseVisitor<String> {
 		
 		public int getLevenshteinDistance(final String s,
-		                                  final String t) {
+				final String t) {
 			if ((s == null) || (t == null)) {
 				throw new IllegalArgumentException("Strings must not be null");
 			}
@@ -61,7 +61,7 @@ public class MultilevelClusteringTest {
 			 * this one does not cause an out of memory condition when
 			 * calculating the LD over two very large strings.
 			 */
-
+			
 			int n = s.length(); // length of s
 			int m = t.length(); // length of t
 			
@@ -93,8 +93,8 @@ public class MultilevelClusteringTest {
 				
 				for (i = 1; i <= n; i++) {
 					cost = s.charAt(i - 1) == t_j
-					                             ? 0
-					                             : 1;
+							? 0
+									: 1;
 					// minimum of cell to the left+1, to the top+1, diagonally
 					// left and up +cost
 					d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
@@ -119,8 +119,8 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final Cluster<String> newCluster,
-		                       final Cluster<String> otherCluster,
-		                       final Map<String, Map<String, Double>> originalScoreMatrix) {
+				final Cluster<String> otherCluster,
+				final Map<String, Map<String, Double>> originalScoreMatrix) {
 			double d = 1000d;
 			for (String s : newCluster.getAllElements()) {
 				for (String t : otherCluster.getAllElements()) {
@@ -139,7 +139,7 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final String t1,
-		                       final String t2) {
+				final String t2) {
 			
 			if (t1.equals(t2)) {
 				return 2d;
@@ -152,7 +152,7 @@ public class MultilevelClusteringTest {
 	}
 	
 	private class TestScoreVisitor implements MultilevelClusteringScoreVisitor<Integer>,
-	        MultilevelClusteringCollapseVisitor<Integer> {
+	MultilevelClusteringCollapseVisitor<Integer> {
 		
 		private int counter = 0;
 		
@@ -163,14 +163,14 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final Cluster<Integer> newCluster,
-		                       final Cluster<Integer> otherCluster,
-		                       final Map<Integer, Map<Integer, Double>> originalScoreMatrix) {
+				final Cluster<Integer> otherCluster,
+				final Map<Integer, Map<Integer, Double>> originalScoreMatrix) {
 			return (++counter);
 		}
 		
 		@Override
 		public double getScore(final Integer t1,
-		                       final Integer t2) {
+				final Integer t2) {
 			return (++counter);
 		}
 		
@@ -197,7 +197,7 @@ public class MultilevelClusteringTest {
 		Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
 		List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(1);
 		l.add(visitor);
-		MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, visitor);
+		MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, visitor, MultilevelClustering.ScoreCombinationMode.SUM);
 		
 		Set<Set<Integer>> partitions = mp.getPartitions(3);
 		assertEquals(3, partitions.size());
@@ -228,7 +228,8 @@ public class MultilevelClusteringTest {
 		String[] nodes = { "hallo", "hubba", "wurstsalat", "halli", "hubbo", "hullo", "habbo" };
 		List<MultilevelClusteringScoreVisitor<String>> l = new ArrayList<MultilevelClusteringScoreVisitor<String>>(1);
 		l.add(visitor);
-		MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, l, visitor);
+		MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, l, visitor,
+		        MultilevelClustering.ScoreCombinationMode.SUM);
 		
 		Set<Set<String>> clusters = mp.getPartitions(3);
 		assertEquals(3, clusters.size());
