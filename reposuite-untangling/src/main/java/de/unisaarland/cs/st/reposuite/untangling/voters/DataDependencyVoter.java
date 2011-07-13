@@ -110,7 +110,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		if(!cache.containsKey(file.getAbsolutePath())){
 			if (!file.exists()) {
 				if (Logger.logError()) {
-					Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning 0.5.");
+					Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning IGNORE_SCORE.");
 				}
 				cache.put(file.getAbsolutePath(), null);
 			}

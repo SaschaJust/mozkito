@@ -256,7 +256,8 @@ public class Untangling {
 		
 		scoreModeArg = new EnumArgument(settings, "scoreMode",
 				"Method to combine single initial clustering matrix scores. Possbile values: "
-						+ Strings.join(MultilevelClustering.ScoreCombinationMode.values(), ","),
+		                + Strings.join(MultilevelClustering.ScoreCombinationMode.values(), ",") + ". Default: "
+		                + MultilevelClustering.ScoreCombinationMode.VARSUM.toString(),
 						MultilevelClustering.ScoreCombinationMode.VARSUM.toString(), false,
 						MultilevelClustering.ScoreCombinationMode.stringValues());
 		
@@ -434,9 +435,6 @@ public class Untangling {
 			default:
 				aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
 				break;
-		}
-		if (aggregateArg.getValue().equals("AVG")) {
-			
 		}
 		
 		// for each artificial blob
