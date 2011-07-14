@@ -39,5 +39,10 @@
 			<artifactId>commons.math</artifactId>
 			<version>2.1</version>
 		</dependency>
+		<dependency>
+			<groupId>weka</groupId>
+			<artifactId>weka</artifactId>
+			<version>3.7.1</version>
+		</dependency>
 	</dependencies>
 </project>

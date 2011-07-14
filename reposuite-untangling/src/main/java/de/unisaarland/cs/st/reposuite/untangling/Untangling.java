@@ -41,6 +41,8 @@ import de.unisaarland.cs.st.reposuite.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringCollapseVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
+import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
+import de.unisaarland.cs.st.reposuite.clustering.SumAggregation;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -62,6 +64,8 @@ import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
+import de.unisaarland.cs.st.reposuite.untangling.aggregation.LinearRegressionAggregation;
+import de.unisaarland.cs.st.reposuite.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
@@ -78,17 +82,32 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
  */
 public class Untangling {
 	
-	public enum UntanglingAggregate {
-		AVG, MAX, RATIO;
+	public enum ScoreCombinationMode {
+		
+		SUM, VARSUM, LINEAR_REGRESSION;
 		
 		public static String[] stringValues() {
 			Set<String> values = new HashSet<String>();
-			for (UntanglingAggregate g : UntanglingAggregate.values()) {
+			for (UntanglingCollapse g : UntanglingCollapse.values()) {
 				values.add(g.toString());
 			}
 			return values.toArray(new String[values.size()]);
 		}
 	}
+	
+	public enum UntanglingCollapse {
+		AVG, MAX, RATIO;
+		
+		public static String[] stringValues() {
+			Set<String> values = new HashSet<String>();
+			for (UntanglingCollapse g : UntanglingCollapse.values()) {
+				values.add(g.toString());
+			}
+			return values.toArray(new String[values.size()]);
+		}
+	}
+	
+	public static Random random = new Random();
 	
 	/**
 	 * Untangle.̋
@@ -105,16 +124,16 @@ public class Untangling {
 	 */
 	@NoneNull
 	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob, final int numClusters,
-			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
 			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor,
-			final MultilevelClustering.ScoreCombinationMode scoreMode) {
+			final ScoreAggregation<JavaChangeOperation> aggregator) {
 		@SuppressWarnings("unused") Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
 		
 		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				blob.getAllChangeOperations(), scoreVisitors, collapseVisitor, scoreMode);
+				blob.getAllChangeOperations(), aggregator, collapseVisitor);
 		
 		return clustering.getPartitions(numClusters);
 	}
+	public long seed;
 	
 	/** The repository arg. */
 	private final RepositoryArguments                                   repositoryArg;
@@ -176,7 +195,7 @@ public class Untangling {
 	
 	private final LongArgument                                          timeArg;
 	
-	private final EnumArgument                                          aggregateArg;
+	private final EnumArgument                                          collapseArg;
 	
 	private final EnumArgument                                          scoreModeArg;
 	
@@ -208,8 +227,7 @@ public class Untangling {
 		useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
 				"Use data dependency voter when untangling", "true", false);
 		
-		useTestImpact = new BooleanArgument(settings, "vote.testimpact", "Use test coverage information", "true",
-				false);
+		useTestImpact = new BooleanArgument(settings, "vote.testimpact", "Use test coverage information", "true", false);
 		
 		testImpactFileArg = new InputFileArgument(settings, "testimpact.in",
 				"File containing a serial version of a ImpactMatrix", null, false);
@@ -247,21 +265,27 @@ public class Untangling {
 		
 		nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
 		
-		aggregateArg = new EnumArgument(settings, "aggregate", "Method to aggregate when untangling. Possible values "
-				+ StringUtils.join(UntanglingAggregate.stringValues()), "MAX", false,
-				UntanglingAggregate.stringValues());
+		LongArgument seedArg = new LongArgument(settings, "seed", "Use random seed.", null, false);
+		
+		collapseArg = new EnumArgument(settings, "collapse", "Method to collapse when untangling. Possible values "
+				+ StringUtils.join(UntanglingCollapse.stringValues()), "MAX", false, UntanglingCollapse.stringValues());
 		
 		timeArg = new LongArgument(settings, "blobWindow",
 				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
 		
 		scoreModeArg = new EnumArgument(settings, "scoreMode",
 				"Method to combine single initial clustering matrix scores. Possbile values: "
-		                + Strings.join(MultilevelClustering.ScoreCombinationMode.values(), ",") + ". Default: "
-		                + MultilevelClustering.ScoreCombinationMode.VARSUM.toString(),
-						MultilevelClustering.ScoreCombinationMode.VARSUM.toString(), false,
-						MultilevelClustering.ScoreCombinationMode.stringValues());
+						+ Strings.join(ScoreCombinationMode.values(), ",") + ". Default: "
+						+ ScoreCombinationMode.LINEAR_REGRESSION.toString(),
+						ScoreCombinationMode.LINEAR_REGRESSION.toString(), false, ScoreCombinationMode.stringValues());
 		
 		settings.parseArguments();
+		if (seedArg.getValue() != null) {
+			this.seed = seedArg.getValue();
+		} else {
+			this.seed = random.nextLong();
+		}
+		random.setSeed(seed);
 	}
 	
 	/**
@@ -387,6 +411,29 @@ public class Untangling {
 			Logger.info("Generated " + blobSetSize + " artificial blobs.");
 		}
 		
+		//create the corresponding score aggregation model
+		ScoreAggregation<JavaChangeOperation> aggregator = null;
+		ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(scoreModeArg.getValue());
+		switch (scoreAggregationMode) {
+			case SUM:
+				aggregator = new SumAggregation<JavaChangeOperation>(scoreVisitors);
+				break;
+			case VARSUM:
+				aggregator = new VarSumAggregation<JavaChangeOperation>(scoreVisitors);
+				break;
+			case LINEAR_REGRESSION:
+				LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(
+						scoreVisitors);
+				//train score aggregation model
+				linarRegressionAggregator.train(transactions);
+				aggregator = linarRegressionAggregator;
+				break;
+			default:
+				throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
+		}
+		
+		
+		
 		File outFile = outArg.getValue();
 		BufferedWriter outWriter;
 		try {
@@ -410,9 +457,8 @@ public class Untangling {
 		
 		if ((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())) {
 			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
-			Random generator = new Random();
 			for (int i = 0; i < nArg.getValue(); ++i) {
-				int r = generator.nextInt(artificialBlobs.size());
+				int r = random.nextInt(artificialBlobs.size());
 				selectedArtificialBlobs.add(artificialBlobs.remove(r));
 			}
 			artificialBlobs = selectedArtificialBlobs;
@@ -423,19 +469,21 @@ public class Untangling {
 		
 		FileDistanceVoter fileDistanceVoter = new FileDistanceVoter();
 		
-		MultilevelClusteringCollapseVisitor<JavaChangeOperation> aggregateVisitor = null;
-		UntanglingAggregate aggregate = UntanglingAggregate.valueOf(aggregateArg.getValue());
-		switch (aggregate) {
+		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
+		UntanglingCollapse collapse = UntanglingCollapse.valueOf(collapseArg.getValue());
+		switch (collapse) {
 			case AVG:
-				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
 				break;
 			case RATIO:
-				aggregateVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
 				break;
 			default:
-				aggregateVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+				collapseVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
 				break;
 		}
+		
+		
 		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
@@ -489,8 +537,9 @@ public class Untangling {
 			
 			// run the partitioning algorithm
 			if (!dryrun) {
-				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, aggregateVisitor,
-						MultilevelClustering.ScoreCombinationMode.valueOf(scoreModeArg.getValue()));
+				
+				
+				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), collapseVisitor, aggregator);
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
 				int diff = comparePartitions(blob, partitions);
@@ -528,6 +577,8 @@ public class Untangling {
 				outWriter.append(",");
 			}
 			outWriter.append(FileUtils.lineSeparator);
+			outWriter.append("Used random seed: ");
+			outWriter.append(String.valueOf(seed));
 			outWriter.close();
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.clustering;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,9 +28,6 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class MultilevelPartitioning.
  * 
@@ -74,70 +72,54 @@ public class MultilevelClustering<T> {
 		
 	}
 	
-	public static enum ScoreCombinationMode{
-		SUM, VARSUM;
-		
-		public static String[] stringValues() {
-			Set<String> values = new HashSet<String>();
-			for (ScoreCombinationMode g : ScoreCombinationMode.values()) {
-				values.add(g.toString());
-			}
-			return values.toArray(new String[values.size()]);
-		}
-	}
-	
 	/** The Constant IGNORE_SCORE. */
-	public static final double                              IGNORE_SCORE = -1d;
+	public static final double                           IGNORE_SCORE = -1d;
 	
 	/** The matrix. */
-	private final Map<T, Map<T, Double>>                    matrix = new HashMap<T, Map<T, Double>>();
-	
-	/** The score visitors. */
-	private final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors;
+	private final Map<T, Map<T, Double>>                 matrix       = new HashMap<T, Map<T, Double>>();
 	
 	/** The collapse visitor. */
-	private final MultilevelClusteringCollapseVisitor<T>    collapseVisitor;
+	private final MultilevelClusteringCollapseVisitor<T> collapseVisitor;
 	
-	private final ScoreCombinationMode                            scoreMode;
+	/** The aggregator. */
+	private final ScoreAggregation<T>                    aggregator;
 	
 	/**
-	 * Instantiates a new multilevel partitioning.
+	 * Instantiates a new multilevel partitioning. The aggregator must be
+	 * trained using an attribute ordering corresponding to the here given list
+	 * of score visitors.
 	 * 
 	 * @param nodes
 	 *            the nodes
-	 * @param scoreVisitors
-	 *            the score visitors
+	 * @param aggregator
+	 *            the aggregator
 	 * @param collapseVisitor
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final Collection<T> nodes,
-			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor, final ScoreCombinationMode scoreMode) {
-		this.scoreMode = scoreMode;
-		@SuppressWarnings ("unchecked")
-		T[] array = (T[]) nodes.toArray();
-		this.scoreVisitors = scoreVisitors;
+	public MultilevelClustering(final Collection<T> nodes, final ScoreAggregation<T> aggregator,
+			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
 		this.collapseVisitor = collapseVisitor;
+		this.aggregator = aggregator;
 		this.init(array);
-		
 	}
 	
 	/**
-	 * Instantiates a new multilevel partitioning.
+	 * Instantiates a new multilevel partitioning. The aggregator must be
+	 * trained using an attribute ordering corresponding to the here given list
 	 * 
 	 * @param nodes
 	 *            the nodes
-	 * @param scoreVisitors
-	 *            the score visitors
+	 * @param aggregator
+	 *            the aggregator
 	 * @param collapseVisitor
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor, final ScoreCombinationMode scoreMode) {
-		this.scoreMode = scoreMode;
-		this.scoreVisitors = scoreVisitors;
+	public MultilevelClustering(final T[] nodes, final ScoreAggregation<T> aggregator,
+			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+		this.aggregator = aggregator;
 		this.collapseVisitor = collapseVisitor;
 		this.init(nodes);
 	}
@@ -214,29 +196,15 @@ public class MultilevelClustering<T> {
 	 *            the t2
 	 * @return the score
 	 */
-	public double getScore(final T t1,
-			final T t2) {
-		DescriptiveStatistics stats = new DescriptiveStatistics();
-		for (MultilevelClusteringScoreVisitor<T> visitor : this.scoreVisitors) {
+	public double getScore(final T t1, final T t2) {
+		List<Double> scores = new ArrayList<Double>(aggregator.getScoreVisitors().size());
+		for (MultilevelClusteringScoreVisitor<T> visitor : aggregator.getScoreVisitors()) {
 			double score = visitor.getScore(t1, t2);
 			if (score != IGNORE_SCORE) {
-				stats.addValue(score);
+				scores.add(score);
 			}
 		}
-		switch (this.scoreMode) {
-			case VARSUM:
-				double sum = stats.getSum();
-				double avg = stats.getMean();
-				double avgDiff = 0d;
-				for (double value : stats.getValues()) {
-					avgDiff += Math.abs(value - avg);
-				}
-				avgDiff /= stats.getN();
-				return sum - avgDiff;
-			default:
-				return stats.getSum();
-		}
-		
+		return aggregator.aggregate(scores);
 	}
 	
 	/**
