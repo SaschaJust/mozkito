@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisito
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
-import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
+import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
 public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOperation> {
 	
@@ -85,15 +85,15 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
-	public boolean train(final Set<BlobTransaction> transactionSet) {
+	public boolean train(final Set<AtomicTransaction> transactionSet) {
 		
-		List<BlobTransaction> transactions = new ArrayList<BlobTransaction>(transactionSet.size());
+		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		//get random 30% of the transactions
 		int numSamples = (int) (transactions.size() * 0.3);
 		
-		List<BlobTransaction> selectedTransactions = new ArrayList<BlobTransaction>(numSamples);
+		List<AtomicTransaction> selectedTransactions = new ArrayList<AtomicTransaction>(numSamples);
 		for (int i = 0; i < numSamples; ++i) {
 			int r = Untangling.random.nextInt(transactions.size());
 			selectedTransactions.add(transactions.get(r));
@@ -102,7 +102,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		
 		//generate the positive examples
 		Set<Tuple<JavaChangeOperation, JavaChangeOperation>> operationPairs = new HashSet<Tuple<JavaChangeOperation, JavaChangeOperation>>();
-		for (BlobTransaction t : selectedTransactions) {
+		for (AtomicTransaction t : selectedTransactions) {
 			JavaChangeOperation[] operationArray = t.getOperations().toArray(
 					new JavaChangeOperation[t.getOperations().size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
@@ -133,8 +133,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				t1Index = Untangling.random.nextInt(transactions.size());
 				t2Index = Untangling.random.nextInt(transactions.size());
 			}
-			BlobTransaction t1 = transactions.get(t1Index);
-			BlobTransaction t2 = transactions.get(t2Index);
+			AtomicTransaction t1 = transactions.get(t1Index);
+			AtomicTransaction t2 = transactions.get(t2Index);
 			
 			List<JavaChangeOperation> t1Ops = t1.getOperations();
 			List<JavaChangeOperation> t2Ops = t2.getOperations();

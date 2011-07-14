@@ -52,7 +52,7 @@ public class ArtificialBlob {
 	}
 	
 	/** The blob transactions. */
-	private final TreeSet<BlobTransaction> blobTransactions = new TreeSet<BlobTransaction>();
+	private final TreeSet<AtomicTransaction> blobTransactions = new TreeSet<AtomicTransaction>();
 	
 	/**
 	 * Instantiates a new artificial blob.
@@ -61,7 +61,7 @@ public class ArtificialBlob {
 	 *            the transaction
 	 */
 	@NoneNull
-	public ArtificialBlob(final BlobTransaction transaction) {
+	public ArtificialBlob(final AtomicTransaction transaction) {
 		if (!add(transaction)) {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding transaction " + transaction.getTransaction().getId() + " failed!");
@@ -76,7 +76,7 @@ public class ArtificialBlob {
 	 *            the input
 	 */
 	@NoneNull
-	public ArtificialBlob(final Set<BlobTransaction> input) {
+	public ArtificialBlob(final Set<AtomicTransaction> input) {
 		if (!addAll(input)) {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding transactions failed!" + StringUtils.join(input, ","));
@@ -92,7 +92,7 @@ public class ArtificialBlob {
 	 * @return true, if successful
 	 */
 	@NoneNull
-	public boolean add(final BlobTransaction transaction) {
+	public boolean add(final AtomicTransaction transaction) {
 		return blobTransactions.add(transaction);
 	}
 	
@@ -103,7 +103,7 @@ public class ArtificialBlob {
 	 *            the blob transactions
 	 * @return true, if successful
 	 */
-	private boolean addAll(final Collection<BlobTransaction> blobTransactions) {
+	private boolean addAll(final Collection<AtomicTransaction> blobTransactions) {
 		return this.blobTransactions.addAll(blobTransactions);
 		
 	}
@@ -116,7 +116,7 @@ public class ArtificialBlob {
 	public List<JavaChangeOperation> getAllChangeOperations() {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
-		for (BlobTransaction t : blobTransactions) {
+		for (AtomicTransaction t : blobTransactions) {
 			result.addAll(t.getOperations());
 		}
 		return result;
@@ -129,7 +129,7 @@ public class ArtificialBlob {
 	 */
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
-		for (BlobTransaction t : blobTransactions) {
+		for (AtomicTransaction t : blobTransactions) {
 			result.add(t.getOperations());
 		}
 		return result;
@@ -160,7 +160,7 @@ public class ArtificialBlob {
 	 */
 	public Set<RCSTransaction> getTransactions() {
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
-		for (BlobTransaction t : blobTransactions) {
+		for (AtomicTransaction t : blobTransactions) {
 			result.add(t.getTransaction());
 		}
 		return result;

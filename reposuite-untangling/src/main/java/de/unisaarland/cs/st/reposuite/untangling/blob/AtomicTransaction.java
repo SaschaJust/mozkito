@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class BlobTransaction implements Comparable<BlobTransaction> {
+public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	
 	
 	/** The transaction. */
@@ -42,7 +42,7 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 	 * @param operations
 	 *            the operations
 	 */
-	public BlobTransaction(final RCSTransaction transaction, final List<JavaChangeOperation> operations){
+	public AtomicTransaction(final RCSTransaction transaction, final List<JavaChangeOperation> operations){
 		this.transaction = transaction;
 		this.operations = operations;
 	}
@@ -53,7 +53,7 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final BlobTransaction other) {
+	public int compareTo(final AtomicTransaction other) {
 		return transaction.compareTo(other.getTransaction()) * -1;
 	}
 	
@@ -72,7 +72,7 @@ public class BlobTransaction implements Comparable<BlobTransaction> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		BlobTransaction other = (BlobTransaction) obj;
+		AtomicTransaction other = (AtomicTransaction) obj;
 		if (transaction == null) {
 			if (other.transaction != null) {
 				return false;

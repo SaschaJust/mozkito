@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class BlobTransactionCombineOperator implements CombineOperator<BlobTransaction> {
+public class BlobTransactionCombineOperator implements CombineOperator<AtomicTransaction> {
 	
 	/**
 	 * Can combine paths.
@@ -95,8 +95,8 @@ public class BlobTransactionCombineOperator implements CombineOperator<BlobTrans
 	 * (java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean canBeCombined(final BlobTransaction t1,
-	                             final BlobTransaction t2) {
+	public boolean canBeCombined(final AtomicTransaction t1,
+	                             final AtomicTransaction t2) {
 		for (RCSRevision rev : t1.getTransaction().getRevisions()) {
 			String path = rev.getChangedFile().getPath(t1.getTransaction());
 			for (RCSRevision rev2 : t2.getTransaction().getRevisions()) {

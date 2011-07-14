@@ -68,7 +68,7 @@ import de.unisaarland.cs.st.reposuite.untangling.aggregation.LinearRegressionAgg
 import de.unisaarland.cs.st.reposuite.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
-import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransaction;
+import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
@@ -354,14 +354,14 @@ public class Untangling {
 		}
 		
 		// load the atomic transactions and their change operations
-		Set<BlobTransaction> transactions = new HashSet<BlobTransaction>();
+		Set<AtomicTransaction> transactions = new HashSet<AtomicTransaction>();
 		
 		if (atomicChangesArg.getValue() != null) {
 			HashSet<String> atomicTransactions = atomicChangesArg.getValue();
 			for (String transactionId : atomicTransactions) {
 				RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				transactions.add(new BlobTransaction(t, ops));
+				transactions.add(new AtomicTransaction(t, ops));
 			}
 		} else {
 			Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
@@ -375,7 +375,7 @@ public class Untangling {
 					}
 				}
 				ops.removeAll(toRemove);
-				transactions.add(new BlobTransaction(t, ops));
+				transactions.add(new AtomicTransaction(t, ops));
 			}
 		}
 		
@@ -410,29 +410,6 @@ public class Untangling {
 		if (Logger.logInfo()) {
 			Logger.info("Generated " + blobSetSize + " artificial blobs.");
 		}
-		
-		//create the corresponding score aggregation model
-		ScoreAggregation<JavaChangeOperation> aggregator = null;
-		ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(scoreModeArg.getValue());
-		switch (scoreAggregationMode) {
-			case SUM:
-				aggregator = new SumAggregation<JavaChangeOperation>(scoreVisitors);
-				break;
-			case VARSUM:
-				aggregator = new VarSumAggregation<JavaChangeOperation>(scoreVisitors);
-				break;
-			case LINEAR_REGRESSION:
-				LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(
-						scoreVisitors);
-				//train score aggregation model
-				linarRegressionAggregator.train(transactions);
-				aggregator = linarRegressionAggregator;
-				break;
-			default:
-				throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
-		}
-		
-		
 		
 		File outFile = outArg.getValue();
 		BufferedWriter outWriter;
@@ -532,6 +509,27 @@ public class Untangling {
 				scoreVisitors.add(testImpactVoter);
 			}
 			
+			//create the corresponding score aggregation model
+			ScoreAggregation<JavaChangeOperation> aggregator = null;
+			ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(scoreModeArg.getValue());
+			switch (scoreAggregationMode) {
+				case SUM:
+					aggregator = new SumAggregation<JavaChangeOperation>(scoreVisitors);
+					break;
+				case VARSUM:
+					aggregator = new VarSumAggregation<JavaChangeOperation>(scoreVisitors);
+					break;
+				case LINEAR_REGRESSION:
+					LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(
+					        scoreVisitors);
+					//train score aggregation model
+					linarRegressionAggregator.train(transactions);
+					aggregator = linarRegressionAggregator;
+					break;
+				default:
+					throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
+			}
+
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
 			

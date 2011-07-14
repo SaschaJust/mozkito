@@ -67,7 +67,7 @@ public class ArtificialBlobGenerator {
 	 * @return the set of generated artificial blobs
 	 */
 	@NoneNull
-	public static Set<ArtificialBlob> generateAll(final Set<BlobTransaction> transactions,
+	public static Set<ArtificialBlob> generateAll(final Set<AtomicTransaction> transactions,
 	                                              @NotNegative final int packageDistance,
 	                                              @GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
 	                                              @GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
@@ -82,23 +82,23 @@ public class ArtificialBlobGenerator {
 		
 		BlobTransactionCombineOperator operator = new BlobTransactionCombineOperator(packageDistance);
 		
-		Set<Set<BlobTransaction>> allCombinations = getAllCombinations(transactions, operator, maxBlobSize);
+		Set<Set<AtomicTransaction>> allCombinations = getAllCombinations(transactions, operator, maxBlobSize);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Found " + allCombinations.size() + " transaction combinations (may be decreased).");
 		}
 		
 		// Filter out too small combinations
-		Iterator<Set<BlobTransaction>> setIter = allCombinations.iterator();
+		Iterator<Set<AtomicTransaction>> setIter = allCombinations.iterator();
 		while (setIter.hasNext()) {
-			Set<BlobTransaction> next = setIter.next();
+			Set<AtomicTransaction> next = setIter.next();
 			if (next.size() < minBlobSize) {
 				setIter.remove();
 			}
 		}
 		
 		Set<ArtificialBlob> result = new HashSet<ArtificialBlob>();
-		for (Set<BlobTransaction> set : allCombinations) {
+		for (Set<AtomicTransaction> set : allCombinations) {
 			result.add(new ArtificialBlob(set));
 		}
 		
