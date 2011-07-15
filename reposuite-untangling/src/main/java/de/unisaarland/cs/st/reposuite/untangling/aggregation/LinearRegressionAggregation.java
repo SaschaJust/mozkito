@@ -18,6 +18,7 @@ import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
@@ -108,14 +109,18 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 					new JavaChangeOperation[t.getOperations().size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
-							.generateScoreVisitos(t.getTransaction());
-					List<Double> values = new ArrayList<Double>(scoreVisitors.size());
-					for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-						values.add(v.getScore(operationArray[i], operationArray[j]));
+					if ((operationArray[i].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)
+							&& (operationArray[j].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+						
+						List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
+								.generateScoreVisitos(t.getTransaction());
+						List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+						for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+							values.add(v.getScore(operationArray[i], operationArray[j]));
+						}
+						trainValues.add(values);
+						responseValues.add(1d);
 					}
-					trainValues.add(values);
-					responseValues.add(1d);
 				}
 			}
 		}
@@ -142,27 +147,31 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			JavaChangeOperation op1 = t1Ops.get(t1OpIndex);
 			JavaChangeOperation op2 = t2Ops.get(t2OpIndex);
 			
-			if (op1.equals(op2)) {
-				--i;
-				continue;
+			if ((op1.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)
+					&& (op2.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+				
+				if (op1.equals(op2)) {
+					--i;
+					continue;
+				}
+				
+				
+				if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
+					scoreVisitors = untangling.generateScoreVisitos(t1.getTransaction());
+				} else {
+					scoreVisitors = untangling.generateScoreVisitos(t2.getTransaction());
+				}
+				
+				List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+				for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+					double value = v.getScore(op1, op2);
+					values.add(value);
+				}
+				
+				
+				trainValues.add(values);
+				responseValues.add(0d);
 			}
-			
-			
-			if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
-				scoreVisitors = untangling.generateScoreVisitos(t1.getTransaction());
-			} else {
-				scoreVisitors = untangling.generateScoreVisitos(t2.getTransaction());
-			}
-			
-			List<Double> values = new ArrayList<Double>(scoreVisitors.size());
-			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-				double value = v.getScore(op1, op2);
-				values.add(value);
-			}
-			
-			
-			trainValues.add(values);
-			responseValues.add(0d);
 		}
 		
 		attributes = new ArrayList<Attribute>(scoreVisitors.size());
