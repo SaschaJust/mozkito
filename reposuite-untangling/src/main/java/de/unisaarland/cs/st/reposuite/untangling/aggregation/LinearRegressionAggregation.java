@@ -154,21 +154,12 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				scoreVisitors = untangling.generateScoreVisitos(t2.getTransaction());
 			}
 			
-			boolean passed = true;
 			List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 				double value = v.getScore(op1, op2);
-				if (value == MultilevelClustering.IGNORE_SCORE) {
-					passed = false;
-					break;
-				}
 				values.add(value);
 			}
 			
-			if (!passed) {
-				--i;
-				continue;
-			}
 			
 			trainValues.add(values);
 			responseValues.add(0d);
