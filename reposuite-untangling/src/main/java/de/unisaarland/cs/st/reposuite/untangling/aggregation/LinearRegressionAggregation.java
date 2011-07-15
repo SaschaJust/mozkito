@@ -1,13 +1,11 @@
 package de.unisaarland.cs.st.reposuite.untangling.aggregation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -31,10 +29,12 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	private ArrayList<Attribute>   attributes          = new ArrayList<Attribute>();
 	private final Attribute        confidenceAttribute = new Attribute("confidence");
 	private int                    index;
-	private double max_coefficient;
+	private double                 max_coefficient;
+	private final Untangling       untangling;
 	
-	public LinearRegressionAggregation(final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors) {
-		super(scoreVisitors);
+	public LinearRegressionAggregation(final Untangling untangling) {
+		super();
+		this.untangling = untangling;
 	}
 	
 	/*
@@ -81,7 +81,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	
 	/**
 	 * Train the underlying linear regression.
-	 *
+	 * 
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
@@ -99,34 +99,31 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			selectedTransactions.add(transactions.get(r));
 		}
 		
+		List<Double> responseValues = new LinkedList<Double>();
+		List<List<Double>> trainValues = new LinkedList<List<Double>>();
 		
 		//generate the positive examples
-		Set<Tuple<JavaChangeOperation, JavaChangeOperation>> operationPairs = new HashSet<Tuple<JavaChangeOperation, JavaChangeOperation>>();
 		for (AtomicTransaction t : selectedTransactions) {
 			JavaChangeOperation[] operationArray = t.getOperations().toArray(
 					new JavaChangeOperation[t.getOperations().size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					operationPairs.add(new Tuple<JavaChangeOperation, JavaChangeOperation>(operationArray[i],
-							operationArray[j]));
+					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
+							.generateScoreVisitos(t.getTransaction());
+					List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+					for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+						values.add(v.getScore(operationArray[i], operationArray[j]));
+					}
+					trainValues.add(values);
+					responseValues.add(1d);
 				}
 			}
 		}
 		
-		
-		List<Double> responseValues = new LinkedList<Double>();
-		List<List<Double>> trainValues = new LinkedList<List<Double>>();
-		for (Tuple<JavaChangeOperation, JavaChangeOperation> pair : operationPairs) {
-			List<Double> values = new ArrayList<Double>(super.getScoreVisitors().size());
-			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : super.getScoreVisitors()) {
-				values.add(v.getScore(pair.getFirst(), pair.getSecond()));
-			}
-			trainValues.add(values);
-			responseValues.add(1d);
-		}
-		
 		//generate the negative examples
-		for (int i = 0; i < trainValues.size(); ++i) {
+		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
+		int k = trainValues.size();
+		for (int i = 0; i < k; ++i) {
 			int t1Index = -1;
 			int t2Index = -1;
 			while (t1Index == t2Index) {
@@ -150,19 +147,36 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				continue;
 			}
 			
-			List<Double> values = new ArrayList<Double>(super.getScoreVisitors().size());
-			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : super.getScoreVisitors()) {
-				values.add(v.getScore(op1, op2));
+			
+			if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
+				scoreVisitors = untangling.generateScoreVisitos(t1.getTransaction());
+			} else {
+				scoreVisitors = untangling.generateScoreVisitos(t2.getTransaction());
 			}
+			
+			boolean passed = true;
+			List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+				double value = v.getScore(op1, op2);
+				if (value == MultilevelClustering.IGNORE_SCORE) {
+					passed = false;
+					break;
+				}
+				values.add(value);
+			}
+			
+			if (!passed) {
+				--i;
+				continue;
+			}
+			
 			trainValues.add(values);
 			responseValues.add(0d);
 		}
 		
-		///############################
-		
-		attributes = new ArrayList<Attribute>(super.getScoreVisitors().size());
+		attributes = new ArrayList<Attribute>(scoreVisitors.size());
 		// Declare attributes
-		for (MultilevelClusteringScoreVisitor<JavaChangeOperation> scoreVisitor : super.getScoreVisitors()) {
+		for (MultilevelClusteringScoreVisitor<JavaChangeOperation> scoreVisitor : scoreVisitors) {
 			attributes.add(new Attribute(scoreVisitor.getClass().getSimpleName()));
 		}
 		attributes.add(confidenceAttribute);

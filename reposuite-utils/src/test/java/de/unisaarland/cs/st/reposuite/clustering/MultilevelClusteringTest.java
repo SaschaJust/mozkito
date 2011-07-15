@@ -197,8 +197,8 @@ public class MultilevelClusteringTest {
 		Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
 		List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(1);
 		l.add(visitor);
-		SumAggregation<Integer> aggregator = new SumAggregation<Integer>(l);
-		MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, aggregator, visitor);
+		SumAggregation<Integer> aggregator = new SumAggregation<Integer>();
+		MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, aggregator, visitor);
 		
 		Set<Set<Integer>> partitions = mp.getPartitions(3);
 		assertEquals(3, partitions.size());
@@ -229,8 +229,8 @@ public class MultilevelClusteringTest {
 		String[] nodes = { "hallo", "hubba", "wurstsalat", "halli", "hubbo", "hullo", "habbo" };
 		List<MultilevelClusteringScoreVisitor<String>> l = new ArrayList<MultilevelClusteringScoreVisitor<String>>(1);
 		l.add(visitor);
-		SumAggregation<String> aggregator = new SumAggregation<String>(l);
-		MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, aggregator, visitor);
+		SumAggregation<String> aggregator = new SumAggregation<String>();
+		MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, l, aggregator, visitor);
 		
 		Set<Set<String>> clusters = mp.getPartitions(3);
 		assertEquals(3, clusters.size());

@@ -9,8 +9,8 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 public class SumAggregation<T> extends ScoreAggregation<T> {
 	
 	
-	public SumAggregation(final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors) {
-		super(scoreVisitors);
+	public SumAggregation() {
+		super();
 	}
 	
 	@Override

@@ -116,6 +116,7 @@ public class Untangling {
 	 *            the blob
 	 * @param numClusters
 	 *            the num clusters
+	 * @param scoreVisitors2
 	 * @param scoreVisitors
 	 *            the score visitors
 	 * @param collapseVisitor
@@ -124,80 +125,89 @@ public class Untangling {
 	 */
 	@NoneNull
 	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob, final int numClusters,
+			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
 			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor,
 			final ScoreAggregation<JavaChangeOperation> aggregator) {
 		@SuppressWarnings("unused") Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
 		
 		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				blob.getAllChangeOperations(), aggregator, collapseVisitor);
+				blob.getAllChangeOperations(), scoreVisitors, aggregator, collapseVisitor);
 		
 		return clustering.getPartitions(numClusters);
 	}
-	public long seed;
+	
+	public long                                   seed;
 	
 	/** The repository arg. */
-	private final RepositoryArguments                                   repositoryArg;
+	private final RepositoryArguments             repositoryArg;
 	
 	/** The callgraph arg. */
-	private final DirectoryArgument                                     callgraphArg;
+	private final DirectoryArgument               callgraphArg;
 	
 	/** The blob arg. */
-	private final ListArgument                                          atomicChangesArg;
-	
-	/** The score visitors. */
-	private List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors;
+	private final ListArgument                    atomicChangesArg;
 	
 	/** The use call graph. */
-	private final BooleanArgument                                       useCallGraph;
+	private final BooleanArgument                 useCallGraph;
 	
 	/** The database args. */
-	private final DatabaseArguments                                     databaseArgs;
+	private final DatabaseArguments               databaseArgs;
 	
 	/** The use change couplings. */
-	private final BooleanArgument                                       useChangeCouplings;
+	private final BooleanArgument                 useChangeCouplings;
 	
 	/** The change couplings min support. */
-	private final LongArgument                                          changeCouplingsMinSupport;
+	private final LongArgument                    changeCouplingsMinSupport;
 	
 	/** The change couplings min confidence. */
-	private final DoubleArgument                                        changeCouplingsMinConfidence;
+	private final DoubleArgument                  changeCouplingsMinConfidence;
 	
 	/** The package distance arg. */
-	private final LongArgument                                          packageDistanceArg;
+	private final LongArgument                    packageDistanceArg;
 	
 	/** The min blob size arg. */
-	private final LongArgument                                          minBlobSizeArg;
+	private final LongArgument                    minBlobSizeArg;
 	
 	/** The max blob size arg. */
-	private final LongArgument                                          maxBlobSizeArg;
+	private final LongArgument                    maxBlobSizeArg;
 	
 	/** The out arg. */
-	private final OutputFileArgument                                    outArg;
+	private final OutputFileArgument              outArg;
 	
 	/** The call graph cache dir arg. */
-	private final DirectoryArgument                                     callGraphCacheDirArg;
+	private final DirectoryArgument               callGraphCacheDirArg;
 	
 	/** The dry run arg. */
-	private final BooleanArgument                                       dryRunArg;
+	private final BooleanArgument                 dryRunArg;
 	
 	/** The use data dependencies. */
-	private final BooleanArgument                                       useDataDependencies;
+	private final BooleanArgument                 useDataDependencies;
 	
 	/** The datadep arg. */
-	private final DirectoryArgument                                     datadepArg;
+	private final DirectoryArgument               datadepArg;
 	
 	/** The n arg. */
-	private final LongArgument                                          nArg;
+	private final LongArgument                    nArg;
 	
-	private final BooleanArgument                                       useTestImpact;
+	private final BooleanArgument                 useTestImpact;
 	
-	private final InputFileArgument                                     testImpactFileArg;
+	private final InputFileArgument               testImpactFileArg;
 	
-	private final LongArgument                                          timeArg;
+	private final LongArgument                    timeArg;
 	
-	private final EnumArgument                                          collapseArg;
+	private final EnumArgument                    collapseArg;
 	
-	private final EnumArgument                                          scoreModeArg;
+	private final EnumArgument                    scoreModeArg;
+	
+	private ScoreAggregation<JavaChangeOperation> aggregator      = null;
+	
+	private TestImpactVoter                       testImpactVoter = null;
+	
+	private final Repository                      repository;
+	
+	private final boolean                         dryrun;
+	
+	private PersistenceUtil                       persistenceUtil;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -286,6 +296,16 @@ public class Untangling {
 			this.seed = random.nextLong();
 		}
 		random.setSeed(seed);
+		repository = repositoryArg.getValue();
+		dryrun = dryRunArg.getValue();
+		
+		databaseArgs.getValue();
+		persistenceUtil = null;
+		try {
+			persistenceUtil = PersistenceManager.getUtil();
+		} catch (UninitializedDatabaseException e1) {
+			throw new UnrecoverableError(e1.getMessage(), e1);
+		}
 	}
 	
 	/**
@@ -324,25 +344,31 @@ public class Untangling {
 		return minDiff;
 	}
 	
-	/**
-	 * Run.
-	 */
-	public void run() {
+	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitos(
+			final RCSTransaction transaction) {
 		
-		boolean dryrun = dryRunArg.getValue();
-		
-		databaseArgs.getValue();
-		PersistenceUtil persistenceUtil = null;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1.getMessage(), e1);
+		if ((testImpactVoter != null) && (useTestImpact.getValue())) {
+			File testCoverageIn = testImpactFileArg.getValue();
+			if (testCoverageIn == null) {
+				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
+						+ testImpactFileArg.getName());
+			}
+			try {
+				testImpactVoter = new TestImpactVoter(testCoverageIn);
+			} catch (IOException e) {
+				if (Logger.logError()) {
+					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
+					Logger.error(e.getMessage(), e);
+				}
+			} catch (ClassNotFoundException e) {
+				if (Logger.logError()) {
+					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
+					Logger.error(e.getMessage(), e);
+				}
+			}
 		}
 		
 		List<String> eclipseArgs = new LinkedList<String>();
-		
-		Repository repository = repositoryArg.getValue();
-		
 		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
@@ -352,6 +378,49 @@ public class Untangling {
 		if (repositoryArg.getUserArg().getValue() != null) {
 			eclipseArgs.add(" -Drepository.user=" + repositoryArg.getUserArg().getValue());
 		}
+		
+		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		// add call graph visitor
+		if (useCallGraph.getValue()) {
+			scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(), eclipseArgs.toArray(new String[eclipseArgs
+			                                                                                             .size()]), transaction, callGraphCacheDirArg.getValue()));
+		}
+		
+		// add change coupling visitor
+		if (useChangeCouplings.getValue()) {
+			if ((changeCouplingsMinConfidence.getValue() == null) || (changeCouplingsMinSupport.getValue() == null)) {
+				throw new UnrecoverableError(
+						"When using change couplings, you have to specify a min support and min confidence value.");
+			}
+			scoreVisitors.add(new ChangeCouplingVoter(transaction, changeCouplingsMinSupport.getValue().intValue(),
+					changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil));
+		}
+		
+		// add data dependency visitor
+		if (useDataDependencies.getValue()) {
+			File dataDepEclipseDir = datadepArg.getValue();
+			if (dataDepEclipseDir == null) {
+				throw new UnrecoverableError("When using data dependencies -D" + useDataDependencies.getName()
+						+ " you must set the -D" + datadepArg.getName() + "!");
+			}
+			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, transaction));
+		}
+		
+		scoreVisitors.add(new FileDistanceVoter());
+		
+		// add test impact visitor
+		if (testImpactVoter != null) {
+			scoreVisitors.add(testImpactVoter);
+		}
+		
+		return scoreVisitors;
+		
+	}
+	
+	/**
+	 * Run.
+	 */
+	public void run() {
 		
 		// load the atomic transactions and their change operations
 		Set<AtomicTransaction> transactions = new HashSet<AtomicTransaction>();
@@ -376,28 +445,6 @@ public class Untangling {
 				}
 				ops.removeAll(toRemove);
 				transactions.add(new AtomicTransaction(t, ops));
-			}
-		}
-		
-		TestImpactVoter testImpactVoter = null;
-		if (useTestImpact.getValue()) {
-			File testCoverageIn = testImpactFileArg.getValue();
-			if (testCoverageIn == null) {
-				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
-						+ testImpactFileArg.getName());
-			}
-			try {
-				testImpactVoter = new TestImpactVoter(testCoverageIn);
-			} catch (IOException e) {
-				if (Logger.logError()) {
-					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
-				}
-			} catch (ClassNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
-				}
 			}
 		}
 		
@@ -444,8 +491,6 @@ public class Untangling {
 		
 		Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
-		FileDistanceVoter fileDistanceVoter = new FileDistanceVoter();
-		
 		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
 		UntanglingCollapse collapse = UntanglingCollapse.valueOf(collapseArg.getValue());
 		switch (collapse) {
@@ -460,7 +505,24 @@ public class Untangling {
 				break;
 		}
 		
-		
+		//create the corresponding score aggregation model
+		ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(scoreModeArg.getValue());
+		switch (scoreAggregationMode) {
+			case SUM:
+				aggregator = new SumAggregation<JavaChangeOperation>();
+				break;
+			case VARSUM:
+				aggregator = new VarSumAggregation<JavaChangeOperation>();
+				break;
+			case LINEAR_REGRESSION:
+				LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
+				//train score aggregation model
+				linarRegressionAggregator.train(transactions);
+				aggregator = linarRegressionAggregator;
+				break;
+			default:
+				throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
+		}
 		
 		// for each artificial blob
 		DescriptiveStatistics stat = new DescriptiveStatistics();
@@ -472,72 +534,17 @@ public class Untangling {
 				Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
 			}
 			
-			scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = this.generateScoreVisitos(blob
+					.getLatestTransaction());
 			
-			RCSTransaction baseT = blob.getLatestTransaction();
-			
-			// add call graph visitor
-			if (useCallGraph.getValue()) {
-				scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(), eclipseArgs
-						.toArray(new String[eclipseArgs.size()]), baseT, callGraphCacheDirArg.getValue()));
-			}
-			
-			// add change coupling visitor
-			if (useChangeCouplings.getValue()) {
-				if ((changeCouplingsMinConfidence.getValue() == null) || (changeCouplingsMinSupport.getValue() == null)) {
-					throw new UnrecoverableError(
-							"When using change couplings, you have to specify a min support and min confidence value.");
-				}
-				scoreVisitors.add(new ChangeCouplingVoter(baseT, changeCouplingsMinSupport.getValue().intValue(),
-						changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil));
-			}
-			
-			// add data dependency visitor
-			if (useDataDependencies.getValue()) {
-				File dataDepEclipseDir = datadepArg.getValue();
-				if (dataDepEclipseDir == null) {
-					throw new UnrecoverableError("When using data dependencies -D" + useDataDependencies.getName()
-							+ " you must set the -D" + datadepArg.getName() + "!");
-				}
-				scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, baseT));
-			}
-			
-			scoreVisitors.add(fileDistanceVoter);
-			
-			// add test impact visitor
-			if (testImpactVoter != null) {
-				scoreVisitors.add(testImpactVoter);
-			}
-			
-			//create the corresponding score aggregation model
-			ScoreAggregation<JavaChangeOperation> aggregator = null;
-			ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(scoreModeArg.getValue());
-			switch (scoreAggregationMode) {
-				case SUM:
-					aggregator = new SumAggregation<JavaChangeOperation>(scoreVisitors);
-					break;
-				case VARSUM:
-					aggregator = new VarSumAggregation<JavaChangeOperation>(scoreVisitors);
-					break;
-				case LINEAR_REGRESSION:
-					LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(
-					        scoreVisitors);
-					//train score aggregation model
-					linarRegressionAggregator.train(transactions);
-					aggregator = linarRegressionAggregator;
-					break;
-				default:
-					throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
-			}
-
 			// TODO add Yana's change rule visitor
 			// TODO add semdiff visitor
 			
 			// run the partitioning algorithm
 			if (!dryrun) {
 				
-				
-				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), collapseVisitor, aggregator);
+				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, collapseVisitor,
+						aggregator);
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
 				int diff = comparePartitions(blob, partitions);
@@ -582,4 +589,5 @@ public class Untangling {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 	}
+	
 }

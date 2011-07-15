@@ -84,6 +84,8 @@ public class MultilevelClustering<T> {
 	/** The aggregator. */
 	private final ScoreAggregation<T>                    aggregator;
 	
+	private final List<MultilevelClusteringScoreVisitor<T>>    scoreVisitors;
+	
 	/**
 	 * Instantiates a new multilevel partitioning. The aggregator must be
 	 * trained using an attribute ordering corresponding to the here given list
@@ -91,17 +93,21 @@ public class MultilevelClustering<T> {
 	 * 
 	 * @param nodes
 	 *            the nodes
+	 * @param scoreVisitors
 	 * @param aggregator
 	 *            the aggregator
 	 * @param collapseVisitor
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final Collection<T> nodes, final ScoreAggregation<T> aggregator,
+	public MultilevelClustering(final Collection<T> nodes,
+			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+			final ScoreAggregation<T> aggregator,
 			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
 		this.collapseVisitor = collapseVisitor;
 		this.aggregator = aggregator;
+		this.scoreVisitors = scoreVisitors;
 		this.init(array);
 	}
 	
@@ -117,10 +123,12 @@ public class MultilevelClustering<T> {
 	 *            the collapse visitor
 	 */
 	@NoneNull
-	public MultilevelClustering(final T[] nodes, final ScoreAggregation<T> aggregator,
+	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
+	        final ScoreAggregation<T> aggregator,
 			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.aggregator = aggregator;
 		this.collapseVisitor = collapseVisitor;
+		this.scoreVisitors = scoreVisitors;
 		this.init(nodes);
 	}
 	
@@ -197,8 +205,8 @@ public class MultilevelClustering<T> {
 	 * @return the score
 	 */
 	public double getScore(final T t1, final T t2) {
-		List<Double> scores = new ArrayList<Double>(aggregator.getScoreVisitors().size());
-		for (MultilevelClusteringScoreVisitor<T> visitor : aggregator.getScoreVisitors()) {
+		List<Double> scores = new ArrayList<Double>(scoreVisitors.size());
+		for (MultilevelClusteringScoreVisitor<T> visitor : scoreVisitors) {
 			double score = visitor.getScore(t1, t2);
 			if (score != IGNORE_SCORE) {
 				scores.add(score);
