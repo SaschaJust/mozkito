@@ -88,7 +88,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	@NoneNull
 	public boolean train(final Set<AtomicTransaction> transactionSet) {
 		
-		Condition.check(transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		Condition
+		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
 		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
