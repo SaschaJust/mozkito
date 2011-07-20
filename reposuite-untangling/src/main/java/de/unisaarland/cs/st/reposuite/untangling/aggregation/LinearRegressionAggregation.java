@@ -184,7 +184,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		
 		//create an empty training set
 		Instances trainingSet = new Instances("TrainingSet", attributes, responseValues.size());
-		trainingSet.setClassIndex(attributes.size());
+		trainingSet.setClassIndex(attributes.size() - 1);
 		
 		//set the training values within the weka training set
 		for (int i = 0; i < trainValues.size(); ++i) {
