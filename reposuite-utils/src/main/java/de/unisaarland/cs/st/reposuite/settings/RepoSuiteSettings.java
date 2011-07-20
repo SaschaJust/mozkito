@@ -42,7 +42,7 @@ public class RepoSuiteSettings {
 	
 	public static final boolean            debug           = (System.getProperty("debug") != null);
 	public static final String             reportThis      = "Please file a bug report with this error message here: "
-	                                                               + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
+			+ "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
 	private Map<String, RepoSuiteArgument> arguments       = new HashMap<String, RepoSuiteArgument>();
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
@@ -57,12 +57,12 @@ public class RepoSuiteSettings {
 		noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false", false);
 		helpArg = new BooleanArgument(this, "help", "Shows this help menu.", "false", false);
 		disableCrashArg = new BooleanArgument(this, "disableCrashEmail",
-		                                      "If set to `true` no crash emails will be send!", null, false);
+				"If set to `true` no crash emails will be send!", null, false);
 		settingsArg = new URIArgument(
-		                              this,
-		                              "repoSuiteSettings",
-		                              "Setting file that contains the JavaVM arguments for the current repo suite task.",
-		                              null, false);
+				this,
+				"repoSuiteSettings",
+				"Setting file that contains the JavaVM arguments for the current repo suite task.",
+				null, false);
 		
 	}
 	
@@ -109,7 +109,7 @@ public class RepoSuiteSettings {
 	}
 	
 	protected void addToolInformation(final String tool,
-	                                  final String information) {
+			final String information) {
 		toolInformation.put(tool, information);
 	}
 	
@@ -142,6 +142,10 @@ public class RepoSuiteSettings {
 			ss.append(arg.getName());
 			ss.append(": ");
 			ss.append(arg.getDescription());
+			if ((arg.getDefaultValue() != null) && (arg.getDefaultValue().trim().length() > 0)) {
+				ss.append(" DEFAULT=)");
+				ss.append(arg.getDefaultValue().trim());
+			}
 			if (arg.isRequired()) {
 				ss.append(" (required!)");
 			}
@@ -202,13 +206,13 @@ public class RepoSuiteSettings {
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					        + "` does not exists. Ignoring ...");
+							+ "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
-					        + "` is a directory. Ignoring ...");
+							+ "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;
 			}
@@ -263,10 +267,10 @@ public class RepoSuiteSettings {
 	 *             If no argument with the specified name is registered.
 	 */
 	protected void setField(final String argument,
-	                        final String value) throws NoSuchFieldException {
+			final String value) throws NoSuchFieldException {
 		if (!arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
-			        + "The argument is not part of the current argument set.");
+					+ "The argument is not part of the current argument set.");
 		}
 		arguments.get(argument).setStringValue(value);
 	}
@@ -294,7 +298,7 @@ public class RepoSuiteSettings {
 		builder.append(RepoSuiteSettings.class.getSimpleName() + ":");
 		builder.append(FileUtils.lineSeparator);
 		
-		for (int i = 0; i < RepoSuiteSettings.class.getSimpleName().length() + ":".length(); ++i) {
+		for (int i = 0; i < (RepoSuiteSettings.class.getSimpleName().length() + ":".length()); ++i) {
 			builder.append('-');
 		}
 		
@@ -319,10 +323,10 @@ public class RepoSuiteSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-				                                arg.getName(), arg instanceof MaskedStringArgument
-				                                                                                  ? passwordMask
-				                                                                                  : arg.getValue(),
-				                                arg.toString()));
+						arg.getName(), arg instanceof MaskedStringArgument
+						? passwordMask
+								: arg.getValue(),
+								arg.toString()));
 				
 			}
 		}
