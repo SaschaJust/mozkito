@@ -219,11 +219,12 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				return 0;
 			} else {
 				distance = Math.min(2d, distance);
-				Condition.check(distance <= 1, "The returned distance must be a value between 0 and 1, but was: "
+				double result = 1d - (distance / 2d);
+				Condition.check(result <= 1, "The returned distance must be a value between 0 and 1, but was: "
 						+ distance);
-				Condition.check(distance >= 0, "The returned distance must be a value between 0 and 1, but was: "
+				Condition.check(result >= 0, "The returned distance must be a value between 0 and 1, but was: "
 						+ distance);
-				return 1d - (distance / 2d);
+				return result;
 			}
 		}
 		return MultilevelClustering.IGNORE_SCORE;
