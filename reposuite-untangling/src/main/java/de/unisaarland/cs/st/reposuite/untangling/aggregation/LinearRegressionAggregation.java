@@ -17,6 +17,7 @@ import weka.core.Instances;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
@@ -106,6 +107,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		List<Double> responseValues = new LinkedList<Double>();
 		List<List<Double>> trainValues = new LinkedList<List<Double>>();
 		
+		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
+		
 		//generate the positive examples
 		for (AtomicTransaction t : selectedTransactions) {
 			JavaChangeOperation[] operationArray = t.getOperations().toArray(
@@ -115,8 +118,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 					if ((operationArray[i].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)
 							&& (operationArray[j].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
 						
-						List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
-								.generateScoreVisitos(t.getTransaction());
+						scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
 						List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 						for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 							values.add(v.getScore(operationArray[i], operationArray[j]));
@@ -129,7 +131,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		}
 		
 		//generate the negative examples
-		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
 		int k = trainValues.size();
 		for (int i = 0; i < k; ++i) {
 			int t1Index = -1;
@@ -159,9 +160,9 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				}
 				
 				if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
-					scoreVisitors = untangling.generateScoreVisitos(t1.getTransaction());
+					scoreVisitors = untangling.generateScoreVisitors(t1.getTransaction());
 				} else {
-					scoreVisitors = untangling.generateScoreVisitos(t2.getTransaction());
+					scoreVisitors = untangling.generateScoreVisitors(t2.getTransaction());
 				}
 				
 				List<Double> values = new ArrayList<Double>(scoreVisitors.size());
@@ -173,6 +174,10 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				trainValues.add(values);
 				responseValues.add(0d);
 			}
+		}
+		
+		if((scoreVisitors == null) || (scoreVisitors.isEmpty())){
+			throw new UnrecoverableError("No score visitors found. Something went wrong.");
 		}
 		
 		attributes = new ArrayList<Attribute>(scoreVisitors.size());
