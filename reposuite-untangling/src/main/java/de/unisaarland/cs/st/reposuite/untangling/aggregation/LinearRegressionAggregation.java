@@ -88,6 +88,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	@NoneNull
 	public boolean train(final Set<AtomicTransaction> transactionSet) {
 		
+		Condition.check(transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		
 		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
@@ -155,7 +157,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 					continue;
 				}
 				
-				
 				if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
 					scoreVisitors = untangling.generateScoreVisitos(t1.getTransaction());
 				} else {
@@ -167,7 +168,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 					double value = v.getScore(op1, op2);
 					values.add(value);
 				}
-				
 				
 				trainValues.add(values);
 				responseValues.add(0d);
