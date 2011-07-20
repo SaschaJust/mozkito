@@ -278,8 +278,8 @@ public class Untangling {
 		LongArgument seedArg = new LongArgument(settings, "seed", "Use random seed.", null, false);
 		
 		collapseArg = new EnumArgument(settings, "collapse", "Method to collapse when untangling. Possible values "
-		        + StringUtils.join(UntanglingCollapse.stringValues(), ","), "MAX", false,
-		        UntanglingCollapse.stringValues());
+				+ StringUtils.join(UntanglingCollapse.stringValues(), ","), "MAX", false,
+				UntanglingCollapse.stringValues());
 		
 		timeArg = new LongArgument(settings, "blobWindow",
 				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)", "-1", false);
@@ -445,7 +445,9 @@ public class Untangling {
 					}
 				}
 				ops.removeAll(toRemove);
-				transactions.add(new AtomicTransaction(t, ops));
+				if (!ops.isEmpty()) {
+					transactions.add(new AtomicTransaction(t, ops));
+				}
 			}
 		}
 		
