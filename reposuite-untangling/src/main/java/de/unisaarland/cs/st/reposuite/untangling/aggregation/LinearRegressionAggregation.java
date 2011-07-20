@@ -193,7 +193,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			for (int j = 0; j < (instanceValues.size() - 1); ++j) {
 				instance.setValue(attributes.get(j), instanceValues.get(j));
 			}
-			instance.setValue(confidenceAttribute, instanceValues.get(i));
+			instance.setValue(confidenceAttribute, responseValues.get(i));
 			// add the instance
 			trainingSet.add(instance);
 		}
