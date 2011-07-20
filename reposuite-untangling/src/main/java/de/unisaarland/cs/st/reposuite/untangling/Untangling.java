@@ -345,7 +345,7 @@ public class Untangling {
 		return minDiff;
 	}
 	
-	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitos(
+	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(
 			final RCSTransaction transaction) {
 		
 		if ((testImpactVoter != null) && (useTestImpact.getValue())) {
@@ -537,7 +537,7 @@ public class Untangling {
 				Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
 			}
 			
-			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = this.generateScoreVisitos(blob
+			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = this.generateScoreVisitors(blob
 					.getLatestTransaction());
 			
 			// TODO add Yana's change rule visitor
