@@ -176,6 +176,9 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			}
 		}
 		
+		Condition.check(trainValues.size() == responseValues.size(),
+		        "Response and train values must have equal dimensions.");
+
 		if((scoreVisitors == null) || (scoreVisitors.isEmpty())){
 			throw new UnrecoverableError("No score visitors found. Something went wrong.");
 		}
