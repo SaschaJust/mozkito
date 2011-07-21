@@ -143,7 +143,7 @@ public class RepoSuiteSettings {
 			ss.append(": ");
 			ss.append(arg.getDescription());
 			if ((arg.getDefaultValue() != null) && (arg.getDefaultValue().trim().length() > 0)) {
-				ss.append(" DEFAULT=)");
+				ss.append("| DEFAULT=");
 				ss.append(arg.getDefaultValue().trim());
 			}
 			if (arg.isRequired()) {

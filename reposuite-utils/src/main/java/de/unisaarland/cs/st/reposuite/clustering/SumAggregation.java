@@ -17,7 +17,9 @@ public class SumAggregation<T> extends ScoreAggregation<T> {
 	public double aggregate(final List<Double> values) {
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		for (Double v : values) {
-			stats.addValue(v);
+			if (v != MultilevelClustering.IGNORE_SCORE) {
+				stats.addValue(v);
+			}
 		}
 		return stats.getSum();
 	}

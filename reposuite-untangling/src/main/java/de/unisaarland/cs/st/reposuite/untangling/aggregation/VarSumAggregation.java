@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
 
 
@@ -19,7 +20,9 @@ public class VarSumAggregation<T> extends ScoreAggregation<T> {
 		
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		for (Double v : values) {
-			stats.addValue(v);
+			if (v != MultilevelClustering.IGNORE_SCORE) {
+				stats.addValue(v);
+			}
 		}
 		
 		double sum = stats.getSum();

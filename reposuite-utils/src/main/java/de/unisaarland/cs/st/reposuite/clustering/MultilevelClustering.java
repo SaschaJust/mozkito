@@ -124,7 +124,7 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-	        final ScoreAggregation<T> aggregator,
+			final ScoreAggregation<T> aggregator,
 			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.aggregator = aggregator;
 		this.collapseVisitor = collapseVisitor;
@@ -207,10 +207,7 @@ public class MultilevelClustering<T> {
 	public double getScore(final T t1, final T t2) {
 		List<Double> scores = new ArrayList<Double>(scoreVisitors.size());
 		for (MultilevelClusteringScoreVisitor<T> visitor : scoreVisitors) {
-			double score = visitor.getScore(t1, t2);
-			if (score != IGNORE_SCORE) {
-				scores.add(score);
-			}
+			scores.add(visitor.getScore(t1, t2));
 		}
 		return aggregator.aggregate(scores);
 	}
