@@ -10,3 +10,6 @@ tracker.type=JIRA
 tracker.stop=212
 tracker.pattern=JAXEN-<BUGID>/JAXEN-<BUGID>.xml
 headless
+callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/jaxen/
