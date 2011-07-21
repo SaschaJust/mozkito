@@ -180,8 +180,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			int t1Index = -1;
 			int t2Index = -1;
 			while (t1Index == t2Index) {
-				t1Index = Untangling.random.nextInt(transactions.size());
-				t2Index = Untangling.random.nextInt(transactions.size());
+				t1Index = Untangling.random.nextInt(selectedTransactionList.size());
+				t2Index = Untangling.random.nextInt(selectedTransactionList.size());
 			}
 			
 			//get two random atomic transactions from the selected transaction
