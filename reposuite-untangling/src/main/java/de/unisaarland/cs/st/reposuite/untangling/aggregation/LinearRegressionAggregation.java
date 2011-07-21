@@ -241,7 +241,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			List<Double> instanceValues = trainValues.get(i);
 			
 			Condition.check(instanceValues.size() == attributes.size(),
-					"InstanceValues and attributes must have equal dimensios.");
+					"InstanceValues and attributes must have equal dimensions: dum(instanceValues)="
+			                + instanceValues.size() + ", dim(attributes)=" + attributes.size());
 			
 			Instance instance = new DenseInstance(instanceValues.size());
 			for (int j = 0; j < instanceValues.size(); ++j) {

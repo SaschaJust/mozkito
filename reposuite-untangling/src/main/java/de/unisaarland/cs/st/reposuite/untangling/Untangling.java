@@ -348,7 +348,7 @@ public class Untangling {
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(
 			final RCSTransaction transaction) {
 		
-		if ((testImpactVoter != null) && (useTestImpact.getValue())) {
+		if ((testImpactVoter == null) && (useTestImpact.getValue())) {
 			File testCoverageIn = testImpactFileArg.getValue();
 			if (testCoverageIn == null) {
 				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
