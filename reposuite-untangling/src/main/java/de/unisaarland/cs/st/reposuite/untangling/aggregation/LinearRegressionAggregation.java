@@ -1,8 +1,18 @@
 package de.unisaarland.cs.st.reposuite.untangling.aggregation;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
@@ -17,7 +27,6 @@ import weka.core.Instances;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
@@ -25,7 +34,7 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
 public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOperation> {
 	
-	private final LinearRegression model               = new LinearRegression();
+	private LinearRegression     model               = new LinearRegression();
 	
 	private boolean                trained             = false;
 	private ArrayList<Attribute>   attributes          = new ArrayList<Attribute>();
@@ -37,6 +46,29 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	public LinearRegressionAggregation(final Untangling untangling) {
 		super();
 		this.untangling = untangling;
+		if (System.getProperty("linerRegressionModel") != null) {
+			File serialFile = new File(System.getProperty("linerRegressionModel"));
+			if (serialFile.exists()) {
+				try {
+					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					this.model = (LinearRegression) in.readObject();
+					this.trained = true;
+				} catch (FileNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				}
+				
+			}
+		}
 	}
 	
 	/*
@@ -89,48 +121,60 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	@NoneNull
 	public boolean train(final Set<AtomicTransaction> transactionSet) {
 		
+		if (trained) {
+			return true;
+		}
+		
 		Condition
 		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		
 		
 		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		//get random 30% of the transactions
-		int numSamples = (int) (transactions.size() * 0.3);
+		int numSamples = (int) (transactions.size() * 0.1);
 		
-		List<AtomicTransaction> selectedTransactions = new ArrayList<AtomicTransaction>(numSamples);
-		for (int i = 0; i < numSamples; ++i) {
-			int r = Untangling.random.nextInt(transactions.size());
-			selectedTransactions.add(transactions.get(r));
+		if (Logger.logInfo()) {
+			Logger.info("Using " + numSamples + " samples as positive training set.");
 		}
 		
-		List<Double> responseValues = new LinkedList<Double>();
+		Map<AtomicTransaction, Set<JavaChangeOperation>> selectedTransactions = new HashMap<AtomicTransaction, Set<JavaChangeOperation>>();
+		for (int i = 0; i < numSamples; ++i) {
+			int r = Untangling.random.nextInt(transactions.size());
+			
+			AtomicTransaction t = transactions.get(r);
+			Set<JavaChangeOperation> changeOperations = t.getChangeOperation(JavaMethodDefinition.class);
+			
+			if (changeOperations.size() < 2) {
+				numSamples = Math.min(numSamples + 1, transactions.size());
+			}
+			selectedTransactions.put(t, changeOperations);
+		}
+		
 		List<List<Double>> trainValues = new LinkedList<List<Double>>();
 		
-		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
-		
 		//generate the positive examples
-		for (AtomicTransaction t : selectedTransactions) {
-			JavaChangeOperation[] operationArray = t.getOperations().toArray(
-					new JavaChangeOperation[t.getOperations().size()]);
+		for (Entry<AtomicTransaction, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
+			AtomicTransaction t = e.getKey();
+			JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue().size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					if ((operationArray[i].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)
-							&& (operationArray[j].getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-						
-						scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
-						List<Double> values = new ArrayList<Double>(scoreVisitors.size());
-						for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-							values.add(v.getScore(operationArray[i], operationArray[j]));
-						}
-						trainValues.add(values);
-						responseValues.add(1d);
+					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
+							.generateScoreVisitors(t.getTransaction());
+					List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
+					for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+						values.add(v.getScore(operationArray[i], operationArray[j]));
 					}
+					values.add(1d);
+					trainValues.add(values);
 				}
 			}
 		}
 		
 		//generate the negative examples
+		List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
+		selectedTransactionList.addAll(selectedTransactions.keySet());
 		int k = trainValues.size();
 		for (int i = 0; i < k; ++i) {
 			int t1Index = -1;
@@ -139,11 +183,17 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				t1Index = Untangling.random.nextInt(transactions.size());
 				t2Index = Untangling.random.nextInt(transactions.size());
 			}
-			AtomicTransaction t1 = transactions.get(t1Index);
-			AtomicTransaction t2 = transactions.get(t2Index);
 			
-			List<JavaChangeOperation> t1Ops = t1.getOperations();
-			List<JavaChangeOperation> t2Ops = t2.getOperations();
+			//get two random atomic transactions from the selected transaction
+			AtomicTransaction t1 = selectedTransactionList.get(t1Index);
+			AtomicTransaction t2 = selectedTransactionList.get(t2Index);
+			
+			
+			List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
+			t1Ops.addAll(selectedTransactions.get(t1));
+			
+			List<JavaChangeOperation> t2Ops = new LinkedList<JavaChangeOperation>();
+			t2Ops.addAll(selectedTransactions.get(t2));
 			
 			int t1OpIndex = Untangling.random.nextInt(t1Ops.size());
 			int t2OpIndex = Untangling.random.nextInt(t2Ops.size());
@@ -151,57 +201,52 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			JavaChangeOperation op1 = t1Ops.get(t1OpIndex);
 			JavaChangeOperation op2 = t2Ops.get(t2OpIndex);
 			
-			if ((op1.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)
-					&& (op2.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-				
-				if (op1.equals(op2)) {
-					--i;
-					continue;
-				}
-				
-				if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
-					scoreVisitors = untangling.generateScoreVisitors(t1.getTransaction());
-				} else {
-					scoreVisitors = untangling.generateScoreVisitors(t2.getTransaction());
-				}
-				
-				List<Double> values = new ArrayList<Double>(scoreVisitors.size());
-				for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-					double value = v.getScore(op1, op2);
-					values.add(value);
-				}
-				
-				trainValues.add(values);
-				responseValues.add(0d);
+			if (op1.equals(op2)) {
+				--i;
+				continue;
 			}
+			
+			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
+			
+			if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
+				scoreVisitors = untangling.generateScoreVisitors(t1.getTransaction());
+			} else {
+				scoreVisitors = untangling.generateScoreVisitors(t2.getTransaction());
+			}
+			
+			List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
+			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+				double value = v.getScore(op1, op2);
+				values.add(value);
+			}
+			values.add(0d);
+			trainValues.add(values);
 		}
 		
-		Condition.check(trainValues.size() == responseValues.size(),
-		        "Response and train values must have equal dimensions.");
-
-		if((scoreVisitors == null) || (scoreVisitors.isEmpty())){
-			throw new UnrecoverableError("No score visitors found. Something went wrong.");
-		}
+		List<String> scoreVisitorNames = untangling.getScoreVisitorNames();
+		attributes = new ArrayList<Attribute>(scoreVisitorNames.size());
 		
-		attributes = new ArrayList<Attribute>(scoreVisitors.size());
 		// Declare attributes
-		for (MultilevelClusteringScoreVisitor<JavaChangeOperation> scoreVisitor : scoreVisitors) {
-			attributes.add(new Attribute(scoreVisitor.getClass().getSimpleName()));
+		for (String scoreVisitorName : scoreVisitorNames) {
+			attributes.add(new Attribute(scoreVisitorName));
 		}
 		attributes.add(confidenceAttribute);
 		
 		//create an empty training set
-		Instances trainingSet = new Instances("TrainingSet", attributes, responseValues.size());
+		Instances trainingSet = new Instances("TrainingSet", attributes, trainValues.size());
 		trainingSet.setClassIndex(attributes.size() - 1);
 		
 		//set the training values within the weka training set
 		for (int i = 0; i < trainValues.size(); ++i) {
 			List<Double> instanceValues = trainValues.get(i);
+			
+			Condition.check(instanceValues.size() == attributes.size(),
+					"InstanceValues and attributes must have equal dimensios.");
+			
 			Instance instance = new DenseInstance(instanceValues.size());
-			for (int j = 0; j < (instanceValues.size() - 1); ++j) {
+			for (int j = 0; j < instanceValues.size(); ++j) {
 				instance.setValue(attributes.get(j), instanceValues.get(j));
 			}
-			instance.setValue(confidenceAttribute, responseValues.get(i));
 			// add the instance
 			trainingSet.add(instance);
 		}
@@ -212,6 +257,25 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
+		}
+		
+		//serialize model for later use
+		File serialFile = new File("linearRegressionModel.ser");
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
+			out.writeObject(model);
+			out.close();
+			if (Logger.logInfo()) {
+				Logger.info("Wrote trained model to file: " + serialFile.getAbsolutePath());
+			}
+		} catch (FileNotFoundException e1) {
+			if (Logger.logError()) {
+				Logger.error(e1.getMessage(), e1);
+			}
+		} catch (IOException e1) {
+			if (Logger.logError()) {
+				Logger.error(e1.getMessage(), e1);
+			}
 		}
 		
 		int counter = 0;

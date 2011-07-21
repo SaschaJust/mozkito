@@ -381,6 +381,7 @@ public class Untangling {
 		}
 		
 		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		scoreVisitors.add(new FileDistanceVoter());
 		// add call graph visitor
 		if (useCallGraph.getValue()) {
 			scoreVisitors.add(new CallGraphVoter(callgraphArg.getValue(), eclipseArgs.toArray(new String[eclipseArgs
@@ -407,8 +408,6 @@ public class Untangling {
 			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, transaction));
 		}
 		
-		scoreVisitors.add(new FileDistanceVoter());
-		
 		// add test impact visitor
 		if (testImpactVoter != null) {
 			scoreVisitors.add(testImpactVoter);
@@ -416,6 +415,24 @@ public class Untangling {
 		
 		return scoreVisitors;
 		
+	}
+	
+	public List<String> getScoreVisitorNames() {
+		List<String> result = new LinkedList<String>();
+		result.add(FileDistanceVoter.class.getSimpleName());
+		if(useCallGraph.getValue()){
+			result.add(CallGraphVoter.class.getSimpleName());
+		}
+		if(useChangeCouplings.getValue()){
+			result.add(ChangeCouplingVoter.class.getSimpleName());
+		}
+		if(useDataDependencies.getValue()){
+			result.add(DataDependencyVoter.class.getSimpleName());
+		}
+		if(useTestImpact.getValue()){
+			result.add(TestImpactVoter.class.getSimpleName());
+		}
+		return result;
 	}
 	
 	/**

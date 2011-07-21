@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -83,6 +86,18 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		return true;
 	}
 	
+	public Set<JavaChangeOperation> getChangeOperation(final Class<? extends JavaElement> clazz) {
+		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		
+		for(JavaChangeOperation op : this.getOperations()){
+			JavaElement element = op.getChangedElementLocation().getElement();
+			if (element.getClass().equals(clazz)) {
+				result.add(op);
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Gets the operations.
 	 * 
@@ -109,9 +124,9 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((transaction == null)
+		result = (prime * result) + ((transaction == null)
 				? 0
-				: transaction.hashCode());
+						: transaction.hashCode());
 		return result;
 	}
 	
