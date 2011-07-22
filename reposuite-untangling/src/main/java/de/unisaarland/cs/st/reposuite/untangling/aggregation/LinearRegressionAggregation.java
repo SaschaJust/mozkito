@@ -86,7 +86,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				"The given set of values differ from the trained attribute's dimension");
 		
 		Instance instance = new DenseInstance(values.size());
-		for (int j = 0; j < (values.size() - 1); ++j) {
+		for (int j = 0; j < values.size(); ++j) {
 			instance.setValue(attributes.get(j), values.get(j));
 		}
 		try {
@@ -242,7 +242,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			
 			Condition.check(instanceValues.size() == attributes.size(),
 					"InstanceValues and attributes must have equal dimensions: dum(instanceValues)="
-			                + instanceValues.size() + ", dim(attributes)=" + attributes.size());
+							+ instanceValues.size() + ", dim(attributes)=" + attributes.size());
 			
 			Instance instance = new DenseInstance(instanceValues.size());
 			for (int j = 0; j < instanceValues.size(); ++j) {
