@@ -43,6 +43,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	private double                 max_coefficient;
 	private final Untangling       untangling;
 	
+	private Instances            trainingInstances;
+	
 	public LinearRegressionAggregation(final Untangling untangling) {
 		super();
 		this.untangling = untangling;
@@ -89,10 +91,10 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		for (int j = 0; j < values.size(); ++j) {
 			instance.setValue(attributes.get(j), values.get(j));
 		}
+		
+		instance.setDataset(trainingInstances);
 		try {
-			double r = model.classifyInstance(instance);
-			r += max_coefficient * values.get(index);
-			return r;
+			return model.distributionForInstance(instance)[0];
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -233,8 +235,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		attributes.add(confidenceAttribute);
 		
 		//create an empty training set
-		Instances trainingSet = new Instances("TrainingSet", attributes, trainValues.size());
-		trainingSet.setClassIndex(attributes.size() - 1);
+		trainingInstances = new Instances("TrainingSet", attributes, trainValues.size());
+		trainingInstances.setClassIndex(attributes.size() - 1);
 		
 		//set the training values within the weka training set
 		for (int i = 0; i < trainValues.size(); ++i) {
@@ -249,10 +251,10 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 				instance.setValue(attributes.get(j), instanceValues.get(j));
 			}
 			// add the instance
-			trainingSet.add(instance);
+			trainingInstances.add(instance);
 		}
 		try {
-			model.buildClassifier(trainingSet);
+			model.buildClassifier(trainingInstances);
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
