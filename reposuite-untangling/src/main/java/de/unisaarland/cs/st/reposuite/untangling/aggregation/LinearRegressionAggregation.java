@@ -39,8 +39,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 	private boolean                trained             = false;
 	private ArrayList<Attribute>   attributes          = new ArrayList<Attribute>();
 	private final Attribute        confidenceAttribute = new Attribute("confidence");
-	private int                    index;
-	private double                 max_coefficient;
 	private final Untangling       untangling;
 	
 	private Instances            trainingInstances;
@@ -87,7 +85,7 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		Condition.check((values.size() + 1) == attributes.size(),
 				"The given set of values differ from the trained attribute's dimension");
 		
-		Instance instance = new DenseInstance(values.size());
+		Instance instance = new DenseInstance(values.size() + 1);
 		for (int j = 0; j < values.size(); ++j) {
 			instance.setValue(attributes.get(j), values.get(j));
 		}
@@ -279,17 +277,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			if (Logger.logError()) {
 				Logger.error(e1.getMessage(), e1);
 			}
-		}
-		
-		int counter = 0;
-		index = 0;
-		max_coefficient = 0d;
-		for (double c : model.coefficients()) {
-			if (c > max_coefficient) {
-				index = counter;
-				max_coefficient = c;
-			}
-			++counter;
 		}
 		
 		trained = true;
