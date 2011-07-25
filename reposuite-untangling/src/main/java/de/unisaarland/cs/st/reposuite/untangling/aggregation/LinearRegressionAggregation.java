@@ -34,12 +34,13 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
 public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOperation> {
 	
+	private static double        TRAIN_FRACTION      = .3;
 	private LinearRegression     model               = new LinearRegression();
 	
-	private boolean                trained             = false;
-	private ArrayList<Attribute>   attributes          = new ArrayList<Attribute>();
-	private final Attribute        confidenceAttribute = new Attribute("confidence");
-	private final Untangling       untangling;
+	private boolean              trained             = false;
+	private ArrayList<Attribute> attributes          = new ArrayList<Attribute>();
+	private final Attribute      confidenceAttribute = new Attribute("confidence");
+	private final Untangling     untangling;
 	
 	private Instances            trainingInstances;
 	
@@ -128,12 +129,11 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		Condition
 		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		
 		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		//get random 30% of the transactions
-		int numSamples = (int) (transactions.size() * 0.1);
+		int numSamples = (int) (transactions.size() * TRAIN_FRACTION);
 		
 		if (Logger.logInfo()) {
 			Logger.info("Using " + numSamples + " samples as positive training set.");
@@ -188,7 +188,6 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 			AtomicTransaction t1 = selectedTransactionList.get(t1Index);
 			AtomicTransaction t2 = selectedTransactionList.get(t2Index);
 			
-			
 			List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
 			t1Ops.addAll(selectedTransactions.get(t1));
 			
@@ -240,7 +239,8 @@ public class LinearRegressionAggregation extends ScoreAggregation<JavaChangeOper
 		for (int i = 0; i < trainValues.size(); ++i) {
 			List<Double> instanceValues = trainValues.get(i);
 			
-			Condition.check(instanceValues.size() == attributes.size(),
+			Condition.check(
+					instanceValues.size() == attributes.size(),
 					"InstanceValues and attributes must have equal dimensions: dum(instanceValues)="
 							+ instanceValues.size() + ", dim(attributes)=" + attributes.size());
 			
