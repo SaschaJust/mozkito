@@ -29,12 +29,9 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
 	private static double        TRAIN_FRACTION      = .3;
 	private LinearRegression     model               = new LinearRegression();
-	
 	private boolean              trained             = false;
 	private ArrayList<Attribute> attributes          = new ArrayList<Attribute>();
-	private final Attribute      confidenceAttribute = new Attribute("confidence");
 	private final Untangling     untangling;
-	
 	private Instances            trainingInstances;
 	
 	public LinearRegressionAggregation(final Untangling untangling) {
@@ -45,7 +42,9 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			if (serialFile.exists()) {
 				try {
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					this.model = (LinearRegression) in.readObject();
+					Object[] objects = (Object[]) in.readObject();
+					this.model = (LinearRegression) objects[0];
+					this.trainingInstances = (Instances) objects[1];
 					this.trained = true;
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
@@ -83,10 +82,9 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		
 		Instance instance = new DenseInstance(values.size() + 1);
 		for (int j = 0; j < values.size(); ++j) {
-			instance.setValue(j, values.get(j));
+			instance.setValue(trainingInstances.attribute(j), values.get(j));
 		}
-		
-		//		instance.setDataset(trainingInstances);
+		instance.setDataset(trainingInstances);
 		try {
 			return model.distributionForInstance(instance)[0];
 		} catch (Exception e) {
@@ -137,7 +135,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		for (String scoreVisitorName : scoreVisitorNames) {
 			attributes.add(new Attribute(scoreVisitorName));
 		}
-		attributes.add(confidenceAttribute);
+		attributes.add(new Attribute("confidence"));
 		
 		//create an empty training set
 		trainingInstances = new Instances("TrainingSet", attributes, trainValues.size());
@@ -172,7 +170,9 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		File serialFile = new File("linearRegressionModel.ser");
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
-			out.writeObject(model);
+			
+			Object[] toWrite = new Object[] { model, trainingInstances };
+			out.writeObject(toWrite);
 			out.close();
 			if (Logger.logInfo()) {
 				Logger.info("Wrote trained model to file: " + serialFile.getAbsolutePath());
