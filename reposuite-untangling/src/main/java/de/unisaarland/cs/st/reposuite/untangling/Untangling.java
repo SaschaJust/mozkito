@@ -65,6 +65,7 @@ import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.untangling.aggregation.LinearRegressionAggregation;
+import de.unisaarland.cs.st.reposuite.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.reposuite.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
@@ -84,7 +85,7 @@ public class Untangling {
 	
 	public enum ScoreCombinationMode {
 		
-		SUM, VARSUM, LINEAR_REGRESSION;
+		SUM, VARSUM, LINEAR_REGRESSION, SVM;
 		
 		public static String[] stringValues() {
 			Set<String> values = new HashSet<String>();
@@ -286,8 +287,7 @@ public class Untangling {
 		
 		scoreModeArg = new EnumArgument(settings, "scoreMode",
 				"Method to combine single initial clustering matrix scores. Possbile values: "
-						+ Strings.join(ScoreCombinationMode.values(), ",") + ". Default: "
-						+ ScoreCombinationMode.LINEAR_REGRESSION.toString(),
+						+ Strings.join(ScoreCombinationMode.values(), ","),
 						ScoreCombinationMode.LINEAR_REGRESSION.toString(), false, ScoreCombinationMode.stringValues());
 		
 		settings.parseArguments();
@@ -539,6 +539,12 @@ public class Untangling {
 				//train score aggregation model
 				linarRegressionAggregator.train(transactions);
 				aggregator = linarRegressionAggregator;
+				break;
+			case SVM:
+				SVMAggregation svmAggregator = new SVMAggregation(this);
+				//train score aggregation model
+				svmAggregator.train(transactions);
+				aggregator = svmAggregator;
 				break;
 			default:
 				throw new UnrecoverableError("Unknown score aggregation mode found: " + scoreModeArg.getValue());
