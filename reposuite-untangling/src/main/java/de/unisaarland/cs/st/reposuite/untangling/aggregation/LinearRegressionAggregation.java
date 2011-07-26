@@ -80,13 +80,13 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			Condition.check((values.size() + 1) == attributes.size(),
 					"The given set of values differ from the trained attribute's dimension");
 		}
-
+		
 		Instance instance = new DenseInstance(values.size() + 1);
 		for (int j = 0; j < values.size(); ++j) {
 			instance.setValue(j, values.get(j));
 		}
 		
-		instance.setDataset(trainingInstances);
+		//		instance.setDataset(trainingInstances);
 		try {
 			return model.distributionForInstance(instance)[0];
 		} catch (Exception e) {
