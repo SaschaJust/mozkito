@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -27,10 +28,10 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
 public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
-	private static double        TRAIN_FRACTION      = .3;
-	private LinearRegression     model               = new LinearRegression();
-	private boolean              trained             = false;
-	private ArrayList<Attribute> attributes          = new ArrayList<Attribute>();
+	private static double        TRAIN_FRACTION = .5;
+	private LinearRegression     model          = new LinearRegression();
+	private boolean              trained        = false;
+	private ArrayList<Attribute> attributes     = new ArrayList<Attribute>();
 	private final Untangling     untangling;
 	private Instances            trainingInstances;
 	
@@ -97,7 +98,11 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
 	@Override
 	public String getInfo() {
-		return model.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("Type: " + LinearRegressionAggregation.class.getSimpleName());
+		sb.append(FileUtils.lineSeparator);
+		sb.append(model.toString());
+		return sb.toString();
 	}
 	
 	/**

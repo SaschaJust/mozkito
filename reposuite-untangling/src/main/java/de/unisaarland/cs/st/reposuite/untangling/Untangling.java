@@ -563,9 +563,6 @@ public class Untangling {
 			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = this.generateScoreVisitors(blob
 					.getLatestTransaction());
 			
-			// TODO add Yana's change rule visitor
-			// TODO add semdiff visitor
-			
 			// run the partitioning algorithm
 			if (!dryrun) {
 				
@@ -610,6 +607,10 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 			outWriter.append("Used random seed: ");
 			outWriter.append(String.valueOf(seed));
+			outWriter.append("Aggregation-Model info:");
+			outWriter.append(FileUtils.lineSeparator);
+			outWriter.append(aggregator.getInfo());
+			outWriter.append(FileUtils.lineSeparator);
 			outWriter.close();
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);

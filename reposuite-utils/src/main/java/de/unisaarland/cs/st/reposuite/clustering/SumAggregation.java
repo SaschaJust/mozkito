@@ -2,6 +2,8 @@ package de.unisaarland.cs.st.reposuite.clustering;
 
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 
@@ -26,7 +28,10 @@ public class SumAggregation<T> extends ScoreAggregation<T> {
 	
 	@Override
 	public String getInfo() {
-		return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append("Type: " + SumAggregation.class.getSimpleName());
+		sb.append(FileUtils.lineSeparator);
+		return sb.toString();
 	}
 	
 }

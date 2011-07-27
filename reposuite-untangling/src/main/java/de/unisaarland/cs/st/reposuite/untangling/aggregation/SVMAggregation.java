@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import weka.classifiers.functions.LibSVM;
@@ -27,7 +28,7 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
 public class SVMAggregation extends UntanglingScoreAggregation {
 	
-	private static final double TRAIN_FRACTION = .3;
+	private static final double  TRAIN_FRACTION      = .5;
 	private boolean              trained             = false;
 	private final Untangling    untangling;
 	private ArrayList<Attribute> attributes          = new ArrayList<Attribute>();
@@ -87,7 +88,11 @@ public class SVMAggregation extends UntanglingScoreAggregation {
 	
 	@Override
 	public String getInfo() {
-		return model.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("Type: " + SVMAggregation.class.getSimpleName());
+		sb.append(FileUtils.lineSeparator);
+		sb.append(model.toString());
+		return sb.toString();
 	}
 	
 	public boolean train(final Set<AtomicTransaction> transactionSet) {
