@@ -112,23 +112,23 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		prob.y = new double[prob.l];
 		prob.x = new svm_node[prob.l][positiveSamples.get(0).size()];
 		
-		for (int i = 0; i < positiveSamples.size(); i++) {
+		for (int i = 0; i < positiveSamples.size(); ++i) {
 			List<Double> list = positiveSamples.get(i);
 			for (int j = 0; j < list.size(); ++j) {
 				prob.x[i][j] = new svm_node();
 				prob.x[i][j].index = j + 1;
 				prob.x[i][j].value = list.get(j);
-				prob.y = new double[] { 1d };
+				prob.y[i] = 1d;
 			}
 		}
 		
-		for (int i = 0; i < negativeSamples.size(); i++) {
+		for (int i = 0; i < negativeSamples.size(); ++i) {
 			List<Double> list = negativeSamples.get(i);
 			for (int j = 0; j < list.size(); ++j) {
-				prob.x[i][j] = new svm_node();
-				prob.x[i][j].index = j + 1;
-				prob.x[i][j].value = list.get(j);
-				prob.y = new double[] { 0d };
+				prob.x[i + positiveSamples.size()][j] = new svm_node();
+				prob.x[i + positiveSamples.size()][j].index = j + 1;
+				prob.x[i + positiveSamples.size()][j].value = list.get(j);
+				prob.y[i + positiveSamples.size()] = 0d;
 			}
 		}
 		
