@@ -541,7 +541,7 @@ public class Untangling {
 				aggregator = linarRegressionAggregator;
 				break;
 			case SVM:
-				SVMAggregation svmAggregator = new SVMAggregation(this);
+				SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 				//train score aggregation model
 				svmAggregator.train(transactions);
 				aggregator = svmAggregator;
