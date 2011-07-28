@@ -89,7 +89,7 @@ public class Untangling {
 		
 		public static String[] stringValues() {
 			Set<String> values = new HashSet<String>();
-			for (UntanglingCollapse g : UntanglingCollapse.values()) {
+			for (ScoreCombinationMode g : ScoreCombinationMode.values()) {
 				values.add(g.toString());
 			}
 			return values.toArray(new String[values.size()]);
