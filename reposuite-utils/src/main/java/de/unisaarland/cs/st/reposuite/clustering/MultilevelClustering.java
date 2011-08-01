@@ -73,18 +73,20 @@ public class MultilevelClustering<T> {
 	}
 	
 	/** The Constant IGNORE_SCORE. */
-	public static final double                           IGNORE_SCORE = -1d;
+	public static final double                              IGNORE_SCORE      = -1d;
 	
 	/** The matrix. */
-	private final Map<T, Map<T, Double>>                 matrix       = new HashMap<T, Map<T, Double>>();
+	private final Map<T, Map<T, Double>>                    matrix            = new HashMap<T, Map<T, Double>>();
 	
 	/** The collapse visitor. */
-	private final MultilevelClusteringCollapseVisitor<T> collapseVisitor;
+	private final MultilevelClusteringCollapseVisitor<T>    collapseVisitor;
 	
 	/** The aggregator. */
-	private final ScoreAggregation<T>                    aggregator;
+	private final ScoreAggregation<T>                       aggregator;
 	
-	private final List<MultilevelClusteringScoreVisitor<T>>    scoreVisitors;
+	private final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors;
+	
+	private double                                          lastSelectedScore = -1d;
 	
 	/**
 	 * Instantiates a new multilevel partitioning. The aggregator must be
@@ -101,8 +103,7 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final Collection<T> nodes,
-			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final ScoreAggregation<T> aggregator,
+			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors, final ScoreAggregation<T> aggregator,
 			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
 		this.collapseVisitor = collapseVisitor;
@@ -124,12 +125,15 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final ScoreAggregation<T> aggregator,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+			final ScoreAggregation<T> aggregator, final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.aggregator = aggregator;
 		this.collapseVisitor = collapseVisitor;
 		this.scoreVisitors = scoreVisitors;
 		this.init(nodes);
+	}
+	
+	public double getLowestScore(){
+		return lastSelectedScore;
 	}
 	
 	/**
@@ -162,7 +166,7 @@ public class MultilevelClustering<T> {
 		
 		while (existingClusters.size() > numPartitions) {
 			Cluster<T> highestScore = scores.poll();
-			
+			lastSelectedScore = highestScore.getScore();
 			Tuple<Cluster<T>, Cluster<T>> children = highestScore.getChildren();
 			if ((!existingClusters.contains(children.getFirst())) || (!existingClusters.contains(children.getSecond()))) {
 				continue;
@@ -228,4 +232,5 @@ public class MultilevelClustering<T> {
 			}
 		}
 	}
+
 }

@@ -26,7 +26,6 @@ import java.util.Random;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -124,18 +123,6 @@ public class Untangling {
 	 *            the collapse visitor
 	 * @return the sets the
 	 */
-	@NoneNull
-	public static Set<Set<JavaChangeOperation>> untangle(final ArtificialBlob blob, final int numClusters,
-			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors,
-			final MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor,
-			final ScoreAggregation<JavaChangeOperation> aggregator) {
-		@SuppressWarnings("unused") Set<Set<JavaChangeOperation>> result = new HashSet<Set<JavaChangeOperation>>();
-		
-		MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				blob.getAllChangeOperations(), scoreVisitors, aggregator, collapseVisitor);
-		
-		return clustering.getPartitions(numClusters);
-	}
 	
 	public long                                   seed;
 	
@@ -482,7 +469,7 @@ public class Untangling {
 		BufferedWriter outWriter;
 		try {
 			outWriter = new BufferedWriter(new FileWriter(outFile));
-			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize");
+			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore");
 			outWriter.append(FileUtils.lineSeparator);
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
@@ -566,8 +553,11 @@ public class Untangling {
 			// run the partitioning algorithm
 			if (!dryrun) {
 				
-				Set<Set<JavaChangeOperation>> partitions = untangle(blob, blob.size(), scoreVisitors, collapseVisitor,
-						aggregator);
+				MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
+						blob.getAllChangeOperations(), scoreVisitors, aggregator, collapseVisitor);
+				
+				Set<Set<JavaChangeOperation>> partitions = clustering.getPartitions(blob.size());
+				
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
 				int diff = comparePartitions(blob, partitions);
@@ -580,6 +570,8 @@ public class Untangling {
 					outWriter.append(String.valueOf(blob.getAllChangeOperations().size()));
 					outWriter.append(",");
 					outWriter.append(String.valueOf(relDiff));
+					outWriter.append(",");
+					outWriter.append(String.valueOf(clustering.getLowestScore()));
 					outWriter.append(FileUtils.lineSeparator);
 				} catch (IOException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
@@ -611,6 +603,7 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 			outWriter.append(aggregator.getInfo());
 			outWriter.append(FileUtils.lineSeparator);
+			
 			outWriter.close();
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
