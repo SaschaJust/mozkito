@@ -197,6 +197,8 @@ public class Untangling {
 	
 	private PersistenceUtil                       persistenceUtil;
 	
+	private final DirectoryArgument               changeCouplingsCacheDirArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -254,6 +256,12 @@ public class Untangling {
 		callGraphCacheDirArg = new DirectoryArgument(settings, "callgraph.cache.dir",
 				"Cache directory containing call graphs using the naming converntion <transactionId>.cg", null, false,
 				false);
+		
+		changeCouplingsCacheDirArg = new DirectoryArgument(
+				settings,
+				"changecouplings.cache.dir",
+				"Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
+				null, false, false);
 		
 		dryRunArg = new BooleanArgument(
 				settings,
@@ -381,8 +389,10 @@ public class Untangling {
 				throw new UnrecoverableError(
 						"When using change couplings, you have to specify a min support and min confidence value.");
 			}
+			
+			File ccCacheDir =  changeCouplingsCacheDirArg.getValue();
 			scoreVisitors.add(new ChangeCouplingVoter(transaction, changeCouplingsMinSupport.getValue().intValue(),
-					changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil));
+			        changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil, ccCacheDir));
 		}
 		
 		// add data dependency visitor

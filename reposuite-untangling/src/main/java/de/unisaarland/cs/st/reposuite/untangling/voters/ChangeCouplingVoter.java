@@ -15,13 +15,23 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.voters;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplingRuleFactory;
@@ -41,17 +51,11 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	/** The transaction. */
-	private final RCSTransaction  transaction;
-	
-	/** The min support. */
-	private final int             minSupport;
-	
-	/** The min confidence. */
-	private final double          minConfidence;
-	
-	/** The persistence util. */
-	private final PersistenceUtil persistenceUtil;
+	private List<MethodChangeCoupling> couplings;
+	private final RCSTransaction             transaction;
+	private final int                        minSupport;
+	private final double                     minConfidence;
+	private final PersistenceUtil            persistenceUtil;
 	
 	/**
 	 * Instantiates a new change coupling voter.
@@ -65,17 +69,62 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 * @param persistenceUtil
 	 *            the persistence util
 	 */
-	@NoneNull
-	public ChangeCouplingVoter(final RCSTransaction transaction, final int minSupport, final double minConfidence,
-			final PersistenceUtil persistenceUtil) {
+	
+	@SuppressWarnings("unchecked")
+	public ChangeCouplingVoter(@NotNull final RCSTransaction transaction, final int minSupport,
+			final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
+		
 		this.transaction = transaction;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
+
+		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
+			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
+					+ ".cc");
+			if (serialFile.exists()) {
+				//load serial file
+				try {
+					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					couplings = (List<MethodChangeCoupling>) in.readObject();
+				} catch (FileNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				}
+			}
+			if (couplings == null) {
+				//run query and save tmp file
+				couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport, minConfidence,
+						new HashSet<String>(), persistenceUtil);
+				try {
+					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
+					out.writeObject(couplings);
+					out.close();
+				} catch (FileNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				} catch (IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor
 	 * #getMaxPossibleScore()
@@ -87,14 +136,14 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor
 	 * #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	@NoneNull
-	public double getScore(final JavaChangeOperation t1,
-			final JavaChangeOperation t2) {
+	public double getScore(final JavaChangeOperation t1, final JavaChangeOperation t2) {
 		double score = 0d;
 		
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
@@ -121,22 +170,33 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		relevantMethodNames.add(element1.getFullQualifiedName());
 		relevantMethodNames.add(element2.getFullQualifiedName());
 		
-		List<MethodChangeCoupling> couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction,
-				minSupport,
-				minConfidence,
-				relevantMethodNames,
-				persistenceUtil);
-		if (couplings.size() > 0) {
-			Collections.sort(couplings, new Comparator<MethodChangeCoupling>() {
+		List<MethodChangeCoupling> currentCouplings = new LinkedList<MethodChangeCoupling>();
+		
+		if (couplings != null) {
+			for (MethodChangeCoupling cc : couplings) {
+				if (((cc.getPremise().size() == 1) && (cc.getPremise().contains(element1)) && (cc.getImplication()
+						.equals(element2)))
+						|| ((cc.getPremise().size() == 1) && (cc.getPremise().contains(element2)) && (cc.getImplication()
+								.equals(element1)))) {
+					currentCouplings.add(cc);
+				}
+				
+			}
+		} else {
+			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport,
+					minConfidence, relevantMethodNames, persistenceUtil);
+		}
+		
+		if (!currentCouplings.isEmpty()) {
+			Collections.sort(currentCouplings, new Comparator<MethodChangeCoupling>() {
 				
 				@Override
-				public int compare(final MethodChangeCoupling c1,
-						final MethodChangeCoupling c2) {
+				public int compare(final MethodChangeCoupling c1, final MethodChangeCoupling c2) {
 					return c1.getConfidence().compareTo(c2.getConfidence());
 				}
 				
 			});
-			score = couplings.get(0).getConfidence();
+			score = currentCouplings.get(0).getConfidence();
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);
 		Condition.check(score >= 0d, "The returned distance must be a value between 0 and 1, but was: " + score);
