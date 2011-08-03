@@ -19,6 +19,7 @@
  */
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -124,7 +125,7 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	// @Column (name = "fullqualifiedname", nullable = false)
+	@Column(columnDefinition = "TEXT")
 	public String getFullQualifiedName() {
 		return this.fullQualifiedName;
 	}
@@ -175,12 +176,12 @@ public abstract class JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getElementType() == null)
-		                                                          ? 0
-		                                                          : this.getElementType().hashCode());
-		result = prime * result + ((this.getFullQualifiedName() == null)
-		                                                                ? 0
-		                                                                : this.getFullQualifiedName().hashCode());
+		result = (prime * result) + ((this.getElementType() == null)
+				? 0
+						: this.getElementType().hashCode());
+		result = (prime * result) + ((this.getFullQualifiedName() == null)
+				? 0
+						: this.getFullQualifiedName().hashCode());
 		return result;
 	}
 	
