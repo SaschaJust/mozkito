@@ -70,8 +70,8 @@ import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.reposuite.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
-import de.unisaarland.cs.st.reposuite.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.FileChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.FileDistanceVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
 
@@ -391,8 +391,8 @@ public class Untangling {
 			}
 			
 			File ccCacheDir =  changeCouplingsCacheDirArg.getValue();
-			scoreVisitors.add(new ChangeCouplingVoter(transaction, changeCouplingsMinSupport.getValue().intValue(),
-			        changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil, ccCacheDir));
+			scoreVisitors.add(new FileChangeCouplingVoter(transaction, changeCouplingsMinSupport.getValue().intValue(),
+					changeCouplingsMinConfidence.getValue().doubleValue(), persistenceUtil, ccCacheDir));
 		}
 		
 		// add data dependency visitor
@@ -421,7 +421,7 @@ public class Untangling {
 			result.add(CallGraphVoter.class.getSimpleName());
 		}
 		if(useChangeCouplings.getValue()){
-			result.add(ChangeCouplingVoter.class.getSimpleName());
+			result.add(FileChangeCouplingVoter.class.getSimpleName());
 		}
 		if(useDataDependencies.getValue()){
 			result.add(DataDependencyVoter.class.getSimpleName());

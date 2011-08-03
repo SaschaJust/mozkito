@@ -24,10 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -35,13 +33,11 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplingRuleFactory;
-import de.unisaarland.cs.st.reposuite.changecouplings.model.MethodChangeCoupling;
-import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
+import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -49,13 +45,13 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	private List<MethodChangeCoupling> couplings;
-	private final RCSTransaction             transaction;
-	private final int                        minSupport;
-	private final double                     minConfidence;
-	private final PersistenceUtil            persistenceUtil;
+	private List<FileChangeCoupling> couplings;
+	private final RCSTransaction     transaction;
+	private final int                minSupport;
+	private final double             minConfidence;
+	private final PersistenceUtil    persistenceUtil;
 	
 	/**
 	 * Instantiates a new change coupling voter.
@@ -71,7 +67,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	
 	@SuppressWarnings("unchecked")
-	public ChangeCouplingVoter(@NotNull final RCSTransaction transaction, final int minSupport,
+	public FileChangeCouplingVoter(@NotNull final RCSTransaction transaction, final int minSupport,
 			final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 		
 		this.transaction = transaction;
@@ -81,12 +77,12 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-					+ ".cc");
+					+ "_file.cc");
 			if (serialFile.exists()) {
 				//load serial file
 				try {
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					couplings = (List<MethodChangeCoupling>) in.readObject();
+					couplings = (List<FileChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
@@ -103,8 +99,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 			if (couplings == null) {
 				//run query and save tmp file
-				couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport, minConfidence,
-						new HashSet<String>(), persistenceUtil);
+				couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction, minSupport, minConfidence,
+						persistenceUtil);
 				try {
 					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
 					out.writeObject(couplings);
@@ -149,54 +145,46 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
 		Condition.check(t2.getChangedElementLocation() != null, "The changed element location must not be null!");
 		
-		JavaElement element1 = t1.getChangedElementLocation().getElement();
-		JavaElement element2 = t2.getChangedElementLocation().getElement();
+		String path1 = t1.getChangedElementLocation().getFilePath();
+		String path2 = t2.getChangedElementLocation().getFilePath();
 		
-		Condition.check(element1 != null, "The changed elements must not be null!");
-		Condition.check(element2 != null, "The changed elements must not be null!");
-		Condition.check(element1.getElementType().equals(element2.getElementType()),
-				"The change operations must be on the same types of elements");
+		Condition.check(path1 != null, "The changed elements must not be null!");
+		Condition.check(path2 != null, "The changed elements must not be null!");
 		
-		if (!element1.getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
-			if (Logger.logWarn()) {
-				Logger.warn("ChangeCouplingVoter does not support change operations on element type "
-						+ element1.getElementType() + ". Returning 0.");
-			}
-			return MultilevelClustering.IGNORE_SCORE;
+		if (couplings == null) {
+			couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction, minSupport, minConfidence,
+					persistenceUtil);
 		}
 		
-		// get relevant method names
-		Set<String> relevantMethodNames = new HashSet<String>();
-		relevantMethodNames.add(element1.getFullQualifiedName());
-		relevantMethodNames.add(element2.getFullQualifiedName());
-		
-		List<MethodChangeCoupling> currentCouplings = new LinkedList<MethodChangeCoupling>();
-		
-		if (couplings != null) {
-			for (MethodChangeCoupling cc : couplings) {
-				if (((cc.getPremise().size() == 1) && (cc.getPremise().contains(element1)) && (cc.getImplication()
-						.equals(element2)))
-						|| ((cc.getPremise().size() == 1) && (cc.getPremise().contains(element2)) && (cc.getImplication()
-								.equals(element1)))) {
-					currentCouplings.add(cc);
+		if (!couplings.isEmpty()) {
+			
+			List<FileChangeCoupling> currentCouplings = new LinkedList<FileChangeCoupling>();
+			
+			for (FileChangeCoupling c : couplings) {
+				boolean found = false;
+				for (RCSFile f : c.getPremise()) {
+					String fPath = f.getPath(transaction);
+					if (fPath.equals(path1) || fPath.equals(path2)) {
+						found = true;
+						break;
+					}
 				}
 				
+				String iPath = c.getImplication().getPath(this.transaction);
+				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
+					currentCouplings.add(c);
+				}
 			}
-		} else {
-			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport,
-					minConfidence, relevantMethodNames, persistenceUtil);
-		}
-		
-		if (!currentCouplings.isEmpty()) {
-			Collections.sort(currentCouplings, new Comparator<MethodChangeCoupling>() {
+			
+			Collections.sort(currentCouplings, new Comparator<FileChangeCoupling>() {
 				
 				@Override
-				public int compare(final MethodChangeCoupling c1, final MethodChangeCoupling c2) {
+				public int compare(final FileChangeCoupling c1, final FileChangeCoupling c2) {
 					return c1.getConfidence().compareTo(c2.getConfidence());
 				}
 				
 			});
-			score = currentCouplings.get(0).getConfidence();
+			score = couplings.get(0).getConfidence();
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);
 		Condition.check(score >= 0d, "The returned distance must be a value between 0 and 1, but was: " + score);
