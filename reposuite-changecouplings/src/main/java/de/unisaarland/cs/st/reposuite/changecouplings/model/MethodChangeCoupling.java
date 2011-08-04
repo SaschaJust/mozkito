@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -27,15 +28,20 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 
-public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
+public class MethodChangeCoupling implements Comparable<MethodChangeCoupling>, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long               serialVersionUID = -8979762950581759064L;
+
 	private final Set<JavaMethodDefinition> premise;
 	private final JavaMethodDefinition      implication;
 	private final Integer                   support;
 	private final Double                    confidence;
 	
 	public MethodChangeCoupling(final String[] premise, final String implication, final Integer support,
-	        final Double confidence, final PersistenceUtil persistenceUtil) {
+			final Double confidence, final PersistenceUtil persistenceUtil) {
 		this.premise = new HashSet<JavaMethodDefinition>();
 		
 		boolean commit = false;
@@ -46,7 +52,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		for (String p : premise) {
 			
 			Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-			                                                         .eq("fullQualifiedName", p);
+					.eq("fullQualifiedName", p);
 			List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 			if ((defs == null) || (defs.size() != 1)) {
 				throw new UnrecoverableError("Could not retrieve RCSFile with id " + p);
@@ -55,7 +61,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		}
 		
 		Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-		                                                         .eq("fullQualifiedName", implication);
+				.eq("fullQualifiedName", implication);
 		List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 		if ((defs == null) || (defs.size() != 1)) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
@@ -111,8 +117,8 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	@Override
 	public String toString() {
 		return "ChangeCouplingRule [premise="
-		        + Arrays.toString(premise.toArray(new JavaMethodDefinition[premise.size()])) + ", implication="
-		        + implication + ", support=" + support + ", confidence=" + confidence + "]";
+				+ Arrays.toString(premise.toArray(new JavaMethodDefinition[premise.size()])) + ", implication="
+				+ implication + ", support=" + support + ", confidence=" + confidence + "]";
 	}
 	
 }

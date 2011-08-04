@@ -51,7 +51,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	private List<MethodChangeCoupling> couplings;
+	private LinkedList<MethodChangeCoupling> couplings;
 	private final RCSTransaction             transaction;
 	private final int                        minSupport;
 	private final double                     minConfidence;
@@ -86,7 +86,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				//load serial file
 				try {
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					couplings = (List<MethodChangeCoupling>) in.readObject();
+					couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.ppa.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  */
 @Entity
 @DiscriminatorValue ("JAVAMETHODDEFINITION")
-public class JavaMethodDefinition extends JavaElement implements Annotated {
+public class JavaMethodDefinition extends JavaElement implements Annotated, Serializable {
 	
 	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";
 	public static final String JAVA_METHOD_DEFINITION = "JavaMethodDefinition";
@@ -58,8 +59,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	 */
 	@NoneNull
 	public static String composeFullQualifiedName(final String parentName,
-	                                              final String methodName,
-	                                              final List<String> signature) {
+			final String methodName,
+			final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		
 		String localParentName = parentName;
@@ -240,9 +241,9 @@ public class JavaMethodDefinition extends JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((getSignature() == null)
-		                                                   ? 0
-		                                                   : getSignature().hashCode());
+		result = (prime * result) + ((getSignature() == null)
+				? 0
+						: getSignature().hashCode());
 		return result;
 	}
 	

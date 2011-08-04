@@ -18,6 +18,7 @@
  */
 package de.unisaarland.cs.st.reposuite.rcs.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,9 +35,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -44,7 +45,7 @@ import net.ownhero.dev.kisa.Logger;
  */
 @Entity
 @Table (name = "rcsfile")
-public class RCSFile implements Annotated {
+public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * 
@@ -82,7 +83,7 @@ public class RCSFile implements Annotated {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction,
-	                              final String pathName) {
+			final String pathName) {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
@@ -181,7 +182,7 @@ public class RCSFile implements Annotated {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
-				        + transaction.getId());
+						+ transaction.getId());
 			}
 			return null;
 		}
@@ -195,7 +196,7 @@ public class RCSFile implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (getGeneratedId() ^ (getGeneratedId() >>> 32));
+		result = (prime * result) + (int) (getGeneratedId() ^ (getGeneratedId() >>> 32));
 		return result;
 	}
 	
@@ -226,7 +227,7 @@ public class RCSFile implements Annotated {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
+				+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }

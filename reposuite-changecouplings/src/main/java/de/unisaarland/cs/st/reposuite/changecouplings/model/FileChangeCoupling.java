@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,15 +26,20 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 
-public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
+public class FileChangeCoupling implements Comparable<FileChangeCoupling>, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long  serialVersionUID = 8503447813022173288L;
+
 	private final Set<RCSFile> premise;
 	private final RCSFile      implication;
 	private final Integer      support;
 	private final Double       confidence;
 	
 	public FileChangeCoupling(final Integer[] premise, final Integer implication, final Integer support,
-	        final Double confidence, final PersistenceUtil persistenceUtil) {
+			final Double confidence, final PersistenceUtil persistenceUtil) {
 		this.premise = new HashSet<RCSFile>();
 		
 		boolean commit = false;
@@ -105,7 +111,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	@Override
 	public String toString() {
 		return "ChangeCouplingRule [premise=" + Arrays.toString(premise.toArray(new RCSFile[premise.size()]))
-		        + ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
+				+ ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
 	}
 	
 }
