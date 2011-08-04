@@ -15,9 +15,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings.model;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Id;
@@ -25,14 +26,10 @@ import javax.persistence.Id;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
-public class FileChangeCoupling implements Comparable<FileChangeCoupling>, Serializable {
+public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
-	/**
-	 * 
-	 */
-	private static final long  serialVersionUID = 8503447813022173288L;
-
 	private final Set<RCSFile> premise;
 	private final RCSFile      implication;
 	private final Integer      support;
@@ -106,6 +103,15 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling>, Seria
 	
 	public Integer getSupport() {
 		return support;
+	}
+	
+	public SerialFileChangeCoupling serialize(final RCSTransaction transaction){
+		List<String> premise = new LinkedList<String>();
+		for (RCSFile file : getPremise()) {
+			premise.add(file.getPath(transaction));
+		}
+		return new SerialFileChangeCoupling(premise, getImplication().getPath(transaction), getSupport(),
+		        getConfidence());
 	}
 	
 	@Override

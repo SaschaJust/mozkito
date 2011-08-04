@@ -34,10 +34,10 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
+import de.unisaarland.cs.st.reposuite.changecouplings.model.SerialFileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
@@ -47,7 +47,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	private LinkedList<FileChangeCoupling> couplings;
+	private LinkedList<SerialFileChangeCoupling> couplings;
 	private final RCSTransaction     transaction;
 	private final int                minSupport;
 	private final double             minConfidence;
@@ -82,7 +82,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				//load serial file
 				try {
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					couplings = (LinkedList<FileChangeCoupling>) in.readObject();
+					couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
@@ -99,8 +99,13 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			}
 			if (couplings == null) {
 				//run query and save tmp file
-				couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction, minSupport, minConfidence,
+				LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
+						transaction, minSupport, minConfidence,
 						persistenceUtil);
+				this.couplings = new LinkedList<SerialFileChangeCoupling>();
+				for (FileChangeCoupling c : fileChangeCouplings) {
+					couplings.add(c.serialize(transaction));
+				}
 				try {
 					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
 					out.writeObject(couplings);
@@ -152,34 +157,38 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
 		if (couplings == null) {
-			couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction, minSupport, minConfidence,
+			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
+					transaction, minSupport, minConfidence,
 					persistenceUtil);
+			this.couplings = new LinkedList<SerialFileChangeCoupling>();
+			for (FileChangeCoupling c : fileChangeCouplings) {
+				couplings.add(c.serialize(transaction));
+			}
 		}
 		
 		if (!couplings.isEmpty()) {
 			
-			List<FileChangeCoupling> currentCouplings = new LinkedList<FileChangeCoupling>();
+			List<SerialFileChangeCoupling> currentCouplings = new LinkedList<SerialFileChangeCoupling>();
 			
-			for (FileChangeCoupling c : couplings) {
+			for (SerialFileChangeCoupling c : couplings) {
 				boolean found = false;
-				for (RCSFile f : c.getPremise()) {
-					String fPath = f.getPath(transaction);
+				for (String fPath : c.getPremise()) {
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;
 						break;
 					}
 				}
 				
-				String iPath = c.getImplication().getPath(this.transaction);
+				String iPath = c.getImplication();
 				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
 					currentCouplings.add(c);
 				}
 			}
 			
-			Collections.sort(currentCouplings, new Comparator<FileChangeCoupling>() {
+			Collections.sort(currentCouplings, new Comparator<SerialFileChangeCoupling>() {
 				
 				@Override
-				public int compare(final FileChangeCoupling c1, final FileChangeCoupling c2) {
+				public int compare(final SerialFileChangeCoupling c1, final SerialFileChangeCoupling c2) {
 					return c1.getConfidence().compareTo(c2.getConfidence());
 				}
 				

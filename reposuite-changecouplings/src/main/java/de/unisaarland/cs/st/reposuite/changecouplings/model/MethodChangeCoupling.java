@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.changecouplings.model;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -28,13 +27,9 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 
-public class MethodChangeCoupling implements Comparable<MethodChangeCoupling>, Serializable {
+public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
-	/**
-	 * 
-	 */
-	private static final long               serialVersionUID = -8979762950581759064L;
-
+	
 	private final Set<JavaMethodDefinition> premise;
 	private final JavaMethodDefinition      implication;
 	private final Integer                   support;
