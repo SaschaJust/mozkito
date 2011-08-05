@@ -182,8 +182,9 @@ public class RCSFile implements Annotated, Serializable {
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
-				        + transaction.getId() + ". Returning latestPath.");
+						+ transaction.getId() + ". Returning latestPath.");
 			}
+			//FIXME see https://hg.st.cs.uni-saarland.de/issues/271
 			return getLatestPath();
 		}
 	}
