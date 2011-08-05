@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
@@ -13,4 +14,33 @@
 	<properties>
 		<moduleName>genealogies</moduleName>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>reposuite-ppa</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop</groupId>
+			<artifactId>frames</artifactId>
+			<version>0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-neo4j-graph</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-core</artifactId>
+			<version>0.9</version>
+		</dependency>
+	</dependencies>
+	<!-- <repositories>
+		<repository> 
+            <id>tinkerpop-repository</id> 
+            <name>TinkerPop Public Maven2 Repository</name> 
+            <url>http://tinkerpop.com/maven2</url> 
+        </repository> 
+	</repositories> -->
 </project>
