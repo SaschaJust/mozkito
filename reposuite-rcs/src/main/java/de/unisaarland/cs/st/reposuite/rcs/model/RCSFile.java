@@ -180,11 +180,11 @@ public class RCSFile implements Annotated, Serializable {
 		if (current != null) {
 			return getChangedNames().get(current.getId());
 		} else {
-			if (Logger.logError()) {
-				Logger.error("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
-						+ transaction.getId());
+			if (Logger.logWarn()) {
+				Logger.warn("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
+				        + transaction.getId() + ". Returning latestPath.");
 			}
-			return null;
+			return getLatestPath();
 		}
 	}
 	
