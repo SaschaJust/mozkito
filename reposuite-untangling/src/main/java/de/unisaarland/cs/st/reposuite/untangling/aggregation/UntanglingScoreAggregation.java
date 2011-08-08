@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.untangling.aggregation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		POSITIVE, NEGATIVE;
 	}
 	
-	public Map<SampleType, List<List<Double>>> getSamples(final Set<AtomicTransaction> transactionSet,
+	public Map<SampleType, List<List<Double>>> getSamples(final Collection<AtomicTransaction> transactionSet,
 			final double trainFraction, final Untangling untangling) {
 		Condition
 		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");

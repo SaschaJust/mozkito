@@ -438,7 +438,7 @@ public class Untangling {
 	public void run() {
 		
 		// load the atomic transactions and their change operations
-		Set<AtomicTransaction> transactions = new HashSet<AtomicTransaction>();
+		List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
 		
 		if (atomicChangesArg.getValue() != null) {
 			HashSet<String> atomicTransactions = atomicChangesArg.getValue();
@@ -467,6 +467,18 @@ public class Untangling {
 		
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
+		
+		if (transactions.size() > 50) {
+			Set<AtomicTransaction> randomTransactions = new HashSet<AtomicTransaction>();
+			for (int i = 0; i < 50; ++i) {
+				random.nextInt(transactions.size());
+				randomTransactions.add(transactions.get(i));
+				transactions.remove(i);
+			}
+			transactions.clear();
+			transactions.addAll(randomTransactions);
+		}
+
 		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions, packageDistanceArg.getValue()
 				.intValue(), minBlobSizeArg.getValue().intValue(), maxBlobSizeArg.getValue().intValue()));
 		

@@ -67,16 +67,16 @@ public class ArtificialBlobGenerator {
 	 * @return the set of generated artificial blobs
 	 */
 	@NoneNull
-	public static Set<ArtificialBlob> generateAll(final Set<AtomicTransaction> transactions,
-	                                              @NotNegative final int packageDistance,
-	                                              @GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
-	                                              @GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
+	public static Set<ArtificialBlob> generateAll(final Collection<AtomicTransaction> transactions,
+			@NotNegative final int packageDistance,
+			@GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
+			@GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
 		
 		// check the more complicated preconditions
 		if (maxBlobSize > -1) {
 			if (maxBlobSize < minBlobSize) {
 				throw new UnrecoverableError(
-				"The 'maxBlobSize' argument must either be -1 (for unlimited size) or greater or equals than minBlobSize. All other settings make no sense.");
+						"The 'maxBlobSize' argument must either be -1 (for unlimited size) or greater or equals than minBlobSize. All other settings make no sense.");
 			}
 		}
 		
@@ -124,8 +124,8 @@ public class ArtificialBlobGenerator {
 	 */
 	@SuppressWarnings ("unchecked")
 	protected static <T> Set<Set<T>> getAllCombinations(final Collection<T> elements,
-	                                                    final CombineOperator<T> operator,
-	                                                    final int maxBlobSize) {
+			final CombineOperator<T> operator,
+			final int maxBlobSize) {
 		List<T> elementList = new ArrayList<T>(elements.size());
 		elementList.addAll(elements);
 		
@@ -191,7 +191,7 @@ public class ArtificialBlobGenerator {
 	 * @return the longest common path
 	 */
 	public static String getLongestCommonPath(final String x,
-	                                          final String y) {
+			final String y) {
 		int M = x.length();
 		int N = y.length();
 		

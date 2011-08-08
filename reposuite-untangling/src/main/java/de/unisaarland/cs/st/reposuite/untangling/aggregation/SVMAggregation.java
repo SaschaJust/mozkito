@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import libsvm.svm;
 import libsvm.svm_model;
@@ -93,7 +93,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		return sb.toString();
 	}
 	
-	public boolean train(final Set<AtomicTransaction> transactionSet) {
+	public boolean train(final Collection<AtomicTransaction> transactionSet) {
 		
 		if (trained) {
 			return true;

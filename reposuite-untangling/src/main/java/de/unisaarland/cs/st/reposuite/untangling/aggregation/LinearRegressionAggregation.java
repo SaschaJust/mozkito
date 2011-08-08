@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -111,7 +111,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
-	public boolean train(final Set<AtomicTransaction> transactionSet) {
+	public boolean train(final Collection<AtomicTransaction> transactionSet) {
 		
 		if (trained) {
 			return true;
