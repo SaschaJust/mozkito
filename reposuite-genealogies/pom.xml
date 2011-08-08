@@ -36,11 +36,11 @@
 			<version>0.9</version>
 		</dependency>
 	</dependencies>
-	<!-- <repositories>
+	<repositories>
 		<repository> 
             <id>tinkerpop-repository</id> 
             <name>TinkerPop Public Maven2 Repository</name> 
             <url>http://tinkerpop.com/maven2</url> 
         </repository> 
-	</repositories> -->
+	</repositories>
 </project>
