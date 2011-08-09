@@ -2,75 +2,106 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.genealogies.model.GraphDBChangeOperation;
-import de.unisaarland.cs.st.reposuite.genealogies.model.GraphDBVertex;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
+
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
+/**
+ * The Class GenealogyVertex.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class GenealogyVertex {
 	
-	public static enum GenealogyEdgeType {
-		DefinitionOnDefinition,
-		DefinitionOnDeletedDefinition,
-		CallOnDefinition,
-		DeletedDefinitionOnDefinition,
-		DeletedCallOnCall,
-		DeletedCallOnDeletedDefinition,
-		UNKNOWN
+	/** The transaction_id. */
+	public static String transaction_id = "transaction_id";
+	
+	/**
+	 * Creates a GenealogyVertex
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param transactionId
+	 *            the transaction id
+	 * @return the genealogy vertex
+	 */
+	public static GenealogyVertex create(final GraphDatabaseService graph, final String transactionId) {
+		Transaction tx = graph.beginTx();
+		Node node = graph.createNode();
+		node.setProperty(transaction_id, transactionId);
+		Index<Node> index = node.getGraphDatabase().index().forNodes(transaction_id);
+		index.add(node, transaction_id, node.getProperty(transaction_id));
+		tx.success();
+		tx.finish();
+		return new GenealogyVertex(node);
 	}
 	
-	private final GraphDBVertex node;
-	private final ChangeGenealogy genealogy;
+	/** The node. */
+	private final Node node;
 	
-	protected GenealogyVertex(final ChangeGenealogy genealogy, final GraphDBVertex node) {
+	/**
+	 * Instantiates a new genealogy vertex.
+	 * 
+	 * @param node
+	 *            the node
+	 */
+	protected GenealogyVertex(final Node node) {
 		this.node = node;
-		this.genealogy = genealogy;
-	}
-	
-	public GenealogyChangeOperation addChangeOperation(final JavaChangeOperation op) {
-		return this.genealogy.addChangeOperationToVertex(op, this);
 	}
 	
 	/**
-	 * Adds a dependency between this --> v. Which means that this vertex
-	 * requires vertex v to be applied first.
+	 * Associates this vertex with the given GraphDBChangeOperation.
 	 * 
-	 * @param v
-	 *            the GenealogyVertex this vertex shall depend upon.
-	 * @param type
-	 *            the type of the dependency to be added
+	 * @param genOpVertex
+	 *            the GraphDBChangeOperation this vertex will be associated with
 	 */
-	public void addDependency(final GenealogyVertex v, final GenealogyEdgeType type) {
-		switch (type) {
-			case DefinitionOnDefinition:
-				this.node.addDoDDependency(v.getNode());
-				break;
-			case DefinitionOnDeletedDefinition:
-				this.node.addDoDDDependency(v.getNode());
-				break;
-			case CallOnDefinition:
-				this.node.addCoDDependency(v.getNode());
-				break;
-			case DeletedDefinitionOnDefinition:
-				this.node.addDDoDDependency(v.getNode());
-				break;
-			case DeletedCallOnCall:
-				this.node.addDCoCDependency(v.getNode());
-				break;
-			case DeletedCallOnDeletedDefinition:
-				this.node.addDCoDDDependency(v.getNode());
-				break;
-			default:
-				this.node.addUnknownDependency(v.getNode());
-				break;
-		}
+	protected void addChangeOperation(final GraphDBChangeOperation genOpVertex) {
+		Transaction tx = node.getGraphDatabase().beginTx();
+		node.createRelationshipTo(genOpVertex.getNode(), RelationshipTypes.CONTAINS);
+		tx.success();
+		tx.finish();
 	}
 	
+	/**
+	 * Make this vertex dependent on the given GenealogyVertex (outgoing edge).
+	 * The edge added will be of type edgeType: other <--edgeType-- this
+	 * 
+	 * @param other
+	 *            the vertex this vertex will be depending on
+	 * @param edgeType
+	 *            the type of the edge to be added
+	 */
+	public void addDepencyTo(final GenealogyVertex other, final GenealogyEdgeType edgeType) {
+		node.createRelationshipTo(other.getNode(), edgeType);
+	}
+	
+	/**
+	 * Associates this vertex with the given JavaChangeOperation.
+	 * 
+	 * @param operation
+	 *            the operation this vertex will be associated with
+	 */
+	public void addJavaChangeOperation(final JavaChangeOperation operation) {
+		GraphDBChangeOperation op = ChangeGenealogy.getGraphDBChangeOperationById(node.getGraphDatabase(),
+				operation.getId());
+		if (op == null) {
+			op = GraphDBChangeOperation.create(node.getGraphDatabase(), operation.getId());
+		}
+		this.addChangeOperation(op);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -83,114 +114,110 @@ public class GenealogyVertex {
 			return false;
 		}
 		GenealogyVertex other = (GenealogyVertex) obj;
-		return node.getId().equals(other.node.getId());
+		if (node == null) {
+			if (other.node != null) {
+				return false;
+			}
+		} else if (node.getId() != other.node.getId()) {
+			return false;
+		}
+		return true;
 	}
 	
-	public Collection<GenealogyVertex> getAllIncomingDependencies() {
-		Set<GenealogyVertex> result = new HashSet<GenealogyVertex>();
-		for (GenealogyEdgeType t : GenealogyEdgeType.values()) {
-			result.addAll(getIncomingDependencies(t));
+	/**
+	 * Returns a collection containing the vertices that depend on this vertex
+	 * (incoming edges).
+	 * 
+	 * @return all dependents
+	 */
+	public Collection<GenealogyVertex> getAllDependents() {
+		//TODO implement
+		return null;
+	}
+	
+	/**
+	 * Returns the collection of vertices this vertex depends on (outgoing
+	 * edges).
+	 * 
+	 * @return the parents
+	 */
+	public Collection<GenealogyVertex> getAllVerticesDependingOn() {
+		//TODO implement
+		return null;
+	}
+	
+	/**
+	 * Gets the change operation IDs associated with this vertex.
+	 * 
+	 * @return the change operation ids
+	 */
+	protected Collection<Long> getChangeOperationIds() {
+		Set<Long> result = new HashSet<Long>();
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
+				RelationshipTypes.CONTAINS);
+		for (Relationship rel : relationships) {
+			Node opNode = rel.getEndNode();
+			result.add(GraphDBChangeOperation.getChangeOperationId(opNode));
 		}
 		return result;
 	}
 	
-	public Collection<GenealogyVertex> getAllOutgoingDependencies(){
-		Set<GenealogyVertex> result = new HashSet<GenealogyVertex>();
-		for (GenealogyEdgeType t : GenealogyEdgeType.values()) {
-			result.addAll(getOutgoingDependencies(t));
-		}
-		return result;
+	/**
+	 * Returns a collection containing vertices depending on this vertex via an
+	 * edge of a type is contained within the specified edge type array.
+	 * 
+	 * @param types
+	 *            consider only edges of these types
+	 * @return the dependants
+	 */
+	public Collection<GenealogyVertex> getDependants(final GenealogyEdgeType[] types) {
+		//TODO implement
+		return null;
 	}
 	
-	public Collection<JavaChangeOperation> getChangeOperations(){
-		Collection<GraphDBChangeOperation> dbOps = this.node.getChangeOperations();
-		Set<Long> opIds = new HashSet<Long>();
-		for (GraphDBChangeOperation dbOp : dbOps) {
-			opIds.add(dbOp.getChangeOperationId());
-		}
-		
-		//get the JavaChangeOperation instances out of the relational database
-		PersistenceUtil persistenceUtil = this.genealogy.getPersistenceUtil();
-		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
-		
-		Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-		criteria.in("id", opIds);
-		result.addAll(persistenceUtil.load(criteria));
-		
-		return result;
+	/**
+	 * Gets the java change operations.
+	 * 
+	 * @return the java change operations
+	 */
+	public Collection<JavaChangeOperation> getJavaChangeOperations() {
+		//TODO implement
+		return null;
 	}
 	
-	public Collection<GenealogyVertex> getIncomingDependencies(final GenealogyEdgeType type) {
-		Collection<GraphDBVertex> dependencies;
-		switch (type) {
-			case DefinitionOnDefinition:
-				dependencies = this.node.getIncomingDoDDependencies();
-				break;
-			case DefinitionOnDeletedDefinition:
-				dependencies = this.node.getIncomingDoDDDependencies();
-				break;
-			case CallOnDefinition:
-				dependencies = this.node.getIncomingCoDDependencies();
-				break;
-			case DeletedDefinitionOnDefinition:
-				dependencies = this.node.getIncomingDDoDDependencies();
-				break;
-			case DeletedCallOnCall:
-				dependencies = this.node.getIncomingDCoCDependencies();
-				break;
-			case DeletedCallOnDeletedDefinition:
-				dependencies = this.node.getIncomingDCoDDDependencies();
-				break;
-			default:
-				dependencies = this.node.getIncomingUnknownDependencies();
-				break;
-		}
-		Set<GenealogyVertex> result = new HashSet<GenealogyVertex>();
-		for (GraphDBVertex v : dependencies) {
-			result.add(new GenealogyVertex(this.genealogy, v));
-		}
-		return result;
+	/**
+	 * Gets the node.
+	 * 
+	 * @return the node
+	 */
+	protected Node getNode() {
+		return node;
 	}
 	
-	protected GraphDBVertex getNode() {
-		return this.node;
+	/**
+	 * Returns a collection containing vertices this vertex depends on via an
+	 * edge of a type is contained within the specified edge type array.
+	 * 
+	 * @param types
+	 *            consider only edges of these types
+	 * @return the vertices depending on
+	 */
+	public Collection<GenealogyVertex> getVerticesDependingOn(final GenealogyEdgeType[] types) {
+		//TODO implement
+		return null;
 	}
 	
-	public Collection<GenealogyVertex> getOutgoingDependencies(final GenealogyEdgeType type) {
-		Collection<GraphDBVertex> dependencies;
-		switch (type) {
-			case DefinitionOnDefinition:
-				dependencies = this.node.getDoDDependencies();
-				break;
-			case DefinitionOnDeletedDefinition:
-				dependencies = this.node.getDoDDDependencies();
-				break;
-			case CallOnDefinition:
-				dependencies = this.node.getCoDDependencies();
-				break;
-			case DeletedDefinitionOnDefinition:
-				dependencies = this.node.getDDoDDependencies();
-				break;
-			case DeletedCallOnCall:
-				dependencies = this.node.getDCoCDependencies();
-				break;
-			case DeletedCallOnDeletedDefinition:
-				dependencies = this.node.getDCoDDDependencies();
-				break;
-			default:
-				dependencies = this.node.getUnknownDependencies();
-				break;
-		}
-		Set<GenealogyVertex> result = new HashSet<GenealogyVertex>();
-		for (GraphDBVertex v : dependencies) {
-			result.add(new GenealogyVertex(this.genealogy, v));
-		}
-		return result;
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return this.node.getId().hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = (int) ((prime * result) + ((node == null) ? 0 : node.getId()));
+		return result;
 	}
 	
 }

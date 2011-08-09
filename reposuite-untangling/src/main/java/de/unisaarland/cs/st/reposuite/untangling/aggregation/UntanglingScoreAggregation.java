@@ -3,20 +3,26 @@ package de.unisaarland.cs.st.reposuite.untangling.aggregation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.joda.time.Days;
+
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransactionCombineOperator;
 
 
 public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaChangeOperation> {
@@ -72,12 +78,19 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
+		int packageDistance = Integer.valueOf(System.getProperty("package.distance", "2"));
+		BlobTransactionCombineOperator packageDistanceChecker = new BlobTransactionCombineOperator(packageDistance);
+		int blobWindow = Integer.valueOf(System.getProperty("blobWindow", "5"));
+		
+		Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
+		
 		//generate the negative examples
 		List<List<Double>> negativeValues = new LinkedList<List<Double>>();
 		List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
 		selectedTransactionList.addAll(selectedTransactions.keySet());
 		int k = positiveValues.size();
-		for (int i = 0; i < k; ++i) {
+		long factorial = ((k - 1) * k) / 2;
+		for (int i = 0; (i < k) && (seenCombinations.size() < factorial); ++i) {
 			int t1Index = -1;
 			int t2Index = -1;
 			while (t1Index == t2Index) {
@@ -88,6 +101,25 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			//get two random atomic transactions from the selected transaction
 			AtomicTransaction t1 = selectedTransactionList.get(t1Index);
 			AtomicTransaction t2 = selectedTransactionList.get(t2Index);
+			
+			if (t1Index < t2Index) {
+				seenCombinations.add(new Tuple<Integer, Integer>(t1Index, t2Index));
+			} else {
+				seenCombinations.add(new Tuple<Integer, Integer>(t2Index, t1Index));
+			}
+			
+			
+			//check for closeness: package and temporal
+			int daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction().getTimestamp())
+					.getDays();
+			if (daysBetween > blobWindow) {
+				--i;
+				continue;
+			}
+			if (!packageDistanceChecker.canBeCombined(t1, t2)) {
+				--i;
+				continue;
+			}
 			
 			List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
 			t1Ops.addAll(selectedTransactions.get(t1));

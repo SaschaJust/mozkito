@@ -21,26 +21,11 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.tinkerpop</groupId>
-			<artifactId>frames</artifactId>
-			<version>0.4</version>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j</artifactId>
+			<version>1.4</version>
+			<type>pom</type>
 		</dependency>
-		<dependency>
-			<groupId>com.tinkerpop.blueprints</groupId>
-			<artifactId>blueprints-neo4j-graph</artifactId>
-			<version>0.9</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tinkerpop.blueprints</groupId>
-			<artifactId>blueprints-core</artifactId>
-			<version>0.9</version>
-		</dependency>
+
 	</dependencies>
-	<repositories>
-		<repository> 
-            <id>tinkerpop-repository</id> 
-            <name>TinkerPop Public Maven2 Repository</name> 
-            <url>http://tinkerpop.com/maven2</url> 
-        </repository> 
-	</repositories>
 </project>

@@ -1,93 +1,177 @@
 package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
-import com.tinkerpop.blueprints.pgm.AutomaticIndex;
-import com.tinkerpop.blueprints.pgm.CloseableSequence;
-import com.tinkerpop.blueprints.pgm.Edge;
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.IndexableGraph;
-import com.tinkerpop.blueprints.pgm.Vertex;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.frames.FramesManager;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
-import de.unisaarland.cs.st.reposuite.genealogies.model.GraphDBChangeOperation;
-import de.unisaarland.cs.st.reposuite.genealogies.model.GraphDBVertex;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * The Class ChangeGenealogy.
  * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ChangeGenealogy {
 	
+	/** The genealogies. */
+	private static Set<ChangeGenealogy> genealogies = new HashSet<ChangeGenealogy>();
+	
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			
+			@Override
+			public void run() {
+				for (ChangeGenealogy genealogy : genealogies) {
+					genealogy.close();
+				}
+			}
+		});
+	}
+	
 	/**
-	 * Read from db.
+	 * Gets the graph db change operation by id.
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param id
+	 *            the id
+	 * @return the graphDbChangeOperation by id iff exists. Return
+	 *         <code>null</code> otherwise.
+	 */
+	protected static GraphDBChangeOperation getGraphDBChangeOperationById(final GraphDatabaseService graph,
+			final long id) {
+		Node hit = graph.index().forNodes(GraphDBChangeOperation.keyName).get(GraphDBChangeOperation.keyName, id)
+				.getSingle();
+		if (hit == null) {
+			return null;
+		}
+		return new GraphDBChangeOperation(hit);
+	}
+	
+	/**
+	 * Gets the vertex.
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param transactionId
+	 *            the transaction id
+	 * @param javaChangeOperationIds
+	 *            the java change operation ids
+	 * @return the vertex
+	 */
+	protected static GenealogyVertex getVertex(final GraphDatabaseService graph, final String transactionId,
+			final Collection<Long> javaChangeOperationIds) {
+		
+		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
+				.get(GenealogyVertex.transaction_id, transactionId);
+		for (Node hit : hits) {
+			GenealogyVertex vertex = new GenealogyVertex(hit);
+			if (vertex.getChangeOperationIds().containsAll(javaChangeOperationIds)) {
+				return vertex;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB
+	 * directory. If there exists a graph DB within the dbFile directory, the
+	 * ChangeGenealogy will load the ChangeGenealogy from this directory.
+	 * Otherwise it will create a new one.
 	 * 
 	 * @param dbFile
 	 *            the db file
-	 * @return the change genealogy
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the change genealogy stored within5 the graph DB directory, if
+	 *         possible. Otherwise, creates a new ChangeGenealogy using graph DB
+	 *         within specified directory.
 	 */
 	@NoneNull
 	public static ChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
-		Graph graph = new Neo4jGraph(dbFile.getAbsolutePath());
+		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		ChangeGenealogy genealogy = new ChangeGenealogy(graph);
 		genealogy.setPersistenceUtil(persistenceUtil);
+		genealogies.add(genealogy);
 		return genealogy;
 	}
 	
 	/** The graph. */
-	private final Graph                  graph;
+	private final GraphDatabaseService graph;
 	
-	private final FramesManager framesManager;
-	private final AutomaticIndex<Vertex> transactionIdIndex;
-	private final AutomaticIndex<Vertex> javaChangeOperationIndex;
-	private PersistenceUtil              persistenceUtil;
+	/** The persistence util. */
+	private PersistenceUtil            persistenceUtil;
+	
 	/**
 	 * Instantiates a new change genealogy.
 	 * 
 	 * @param graph
 	 *            the graph
-	 * @param persistenceUtil
 	 */
 	@NoneNull
-	protected ChangeGenealogy(final Graph graph) {
+	protected ChangeGenealogy(final GraphDatabaseService graph) {
 		this.graph = graph;
-		framesManager = new FramesManager(graph);
-		
-		//create indices for GenealogyVertex and GenealogyChangeOperation
-		Set<String> indexKeys = new HashSet<String>();
-		indexKeys.add(GraphDBVertex.keyName);
-		transactionIdIndex = ((IndexableGraph) graph)
-				.createAutomaticIndex("transactionId-idx", Vertex.class, indexKeys);
-		
-		Set<String> indexKeys2 = new HashSet<String>();
-		indexKeys2.add(GraphDBChangeOperation.keyName);
-		javaChangeOperationIndex = ((IndexableGraph) graph).createAutomaticIndex("javachangeoperationId-idx",
-				Vertex.class, indexKeys2);
 	}
 	
-	public GenealogyChangeOperation addChangeOperationToVertex(final JavaChangeOperation operation, final GenealogyVertex vertex){
-		GraphDBChangeOperation genOp = getGraphDBChangeOperationById(operation.getId());
-		if (genOp == null) {
-			genOp = addGraphDBChangeOPeration(operation.getId());
+	/**
+	 * Adds a directed edge between op1 <--type-- op2 of type edgeType. Adds
+	 * missing vertices before adding edge, if necessary.
+	 * 
+	 * @param dependant
+	 *            The collection of JavaChangeOperations that represent the edge
+	 *            source vertex.
+	 * @param target
+	 *            The collection of JavaChangeOperations that represent the edge
+	 *            target vertex.
+	 * @param edgeType
+	 *            the GenealogyEdgeType of the edge to be added
+	 * @return true, if successful
+	 */
+	public boolean addEdge(@NotEmpty final Collection<JavaChangeOperation> dependant,
+			@NotEmpty final Collection<JavaChangeOperation> target, final GenealogyEdgeType edgeType) {
+		
+		String transactionId1 = null;
+		for (JavaChangeOperation op : dependant) {
+			if (transactionId1 == null) {
+				transactionId1 = op.getRevision().getTransaction().getId();
+			} else {
+				Condition
+				.check(transactionId1.equals(op.getRevision().getTransaction().getId()),
+						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+			}
 		}
-		vertex.getNode().addChangeOperations(genOp);
-		return new GenealogyChangeOperation(genOp);
-	}
-	
-	@NoneNull
-	private GraphDBChangeOperation addGraphDBChangeOPeration(final Long id) {
-		Vertex opVertex = graph.addVertex(null);
-		GraphDBChangeOperation genOpVertex = framesManager.frame(opVertex, GraphDBChangeOperation.class);
-		genOpVertex.setChangeOperationId(id);
-		return genOpVertex;
+		String transactionId2 = null;
+		for (JavaChangeOperation op : dependant) {
+			if (transactionId2 == null) {
+				transactionId2 = op.getRevision().getTransaction().getId();
+			} else {
+				Condition
+				.check(transactionId2.equals(op.getRevision().getTransaction().getId()),
+						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+			}
+		}
+		Condition.check(transactionId1 != null,
+				"Something went wrong. Could not get a valid transaction id from first operation set.");
+		Condition.check(transactionId2 != null,
+				"Something went wrong. Could not get a valid transaction id from second operation set.");
+		
+		GenealogyVertex dependantVertex = this.addVertex(dependant);
+		GenealogyVertex targetVertex = this.addVertex(target);
+		
+		dependantVertex.addDepencyTo(targetVertex, edgeType);
+		
+		return true;
 	}
 	
 	/**
@@ -95,66 +179,93 @@ public class ChangeGenealogy {
 	 * transactionId and the specified javaChangeOPerationIds. This method also
 	 * checks if such a vertex exists already.
 	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @param javaChangeOperationIds
-	 *            the java change operation ids
+	 * @param operations
+	 *            the operations
 	 * @return the newly generated genealogy vertex if no such vertex was added
 	 *         before. Otherwise, returns the already added genealogy vertex.
 	 */
-	public GenealogyVertex addVertex(final String transactionId, final Long[] javaChangeOperationIds) {
+	@NoneNull
+	public GenealogyVertex addVertex(@NotEmpty final Collection<JavaChangeOperation> operations) {
 		
-		//check if such a vertex exists already
-		GenealogyVertex existingVertex = getVertex(transactionId, javaChangeOperationIds);
+		String transactionId = null;
+		Set<Long> operationIds = new HashSet<Long>();
+		for (JavaChangeOperation op : operations) {
+			if (transactionId == null) {
+				transactionId = op.getRevision().getTransaction().getId();
+			} else {
+				Condition
+				.check(transactionId.equals(op.getRevision().getTransaction().getId()),
+						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+			}
+			operationIds.add(op.getId());
+		}
+		return this.addVertex(transactionId, operationIds);
+		
+	}
+	
+	/**
+	 * Adds the vertex.
+	 * 
+	 * @param transaction_id
+	 *            the transaction_id
+	 * @param operation_ids
+	 *            the operation_ids
+	 * @return the genealogy vertex
+	 */
+	protected GenealogyVertex addVertex(final String transaction_id, final Collection<Long> operation_ids) {
+		GenealogyVertex existingVertex = getVertex(transaction_id, operation_ids);
 		if (existingVertex != null) {
 			return existingVertex;
 		}
 		
-		//generate the main vertex
-		Vertex vertex = graph.addVertex(null);
-		GraphDBVertex gVertex = framesManager.frame(vertex, GraphDBVertex.class);
-		gVertex.setTransactionId(transactionId);
+		GenealogyVertex vertex = GenealogyVertex.create(this.graph, transaction_id);
 		
 		//generate the vertices referencing the java change operations
-		for (Long oId : javaChangeOperationIds) {
+		for (Long oId : operation_ids) {
 			
 			//check if change operation vertex exists already
 			GraphDBChangeOperation genOpVertex = getGraphDBChangeOperationById(oId);
 			if (genOpVertex == null) {
-				genOpVertex = addGraphDBChangeOPeration(oId);
+				genOpVertex = GraphDBChangeOperation.create(graph, oId);
 			}
-			gVertex.addChangeOperations(genOpVertex);
+			vertex.addChangeOperation(genOpVertex);
 		}
-		return new GenealogyVertex(this, gVertex);
+		
+		return vertex;
 	}
 	
-	public void close(){
+	/**
+	 * Must be called to ensure the Graph DB to be shut down properly! This will
+	 * be taken care of by a separate ShutdownHook. So make sure to call this
+	 * method only when you are know what you are doing!
+	 */
+	protected void close() {
 		this.graph.shutdown();
+	}
+	
+	/**
+	 * Gets the graph db.
+	 * 
+	 * @return the graph db
+	 */
+	protected GraphDatabaseService getGraphDB(){
+		return this.graph;
 	}
 	
 	/**
 	 * Gets the graph db change operation by id.
 	 * 
-	 * @param id
-	 *            the id
-	 * @return the graphDbChangeOperation by id iff exists. Return
-	 *         <code>null</code> otherwise.
+	 * @param oId
+	 *            the o id
+	 * @return the graph db change operation by id
 	 */
-	private GraphDBChangeOperation getGraphDBChangeOperationById(final long id){
-		CloseableSequence<Vertex> sequence = null;
-		if (javaChangeOperationIndex != null) {
-			sequence = javaChangeOperationIndex.get(GraphDBChangeOperation.keyName, id);
-		}
-		if ((sequence != null) && sequence.hasNext()) {
-			Vertex opVertex = sequence.next();
-			return framesManager.frame(opVertex, GraphDBChangeOperation.class);
-		}
-		return null;
+	private GraphDBChangeOperation getGraphDBChangeOperationById(final Long oId) {
+		return getGraphDBChangeOperationById(graph, oId);
 	}
 	
 	/**
 	 * Gets the PersistenceUtil registered with the ChangeGenealogy.
-	 *
+	 * 
 	 * @return the persistence util. Returns <code>null</code> if none set.
 	 */
 	protected PersistenceUtil getPersistenceUtil() {
@@ -172,32 +283,28 @@ public class ChangeGenealogy {
 	 *            the java change operation ids
 	 * @return the vertex if found. Returns <code>Null</code> otherwise.
 	 */
-	public GenealogyVertex getVertex(final String transactionId, final Long[] javaChangeOperationIds) {
-		Set<Long> opIdSet = new HashSet<Long>(Arrays.asList(javaChangeOperationIds));
-		Set<Long> foundOpIds = new HashSet<Long>();
-		
-		CloseableSequence<Vertex> sequence = null;
-		if (transactionIdIndex != null) {
-			sequence = transactionIdIndex.get(GraphDBVertex.keyName, transactionId);
-		}
-		if ((sequence != null) && (sequence.hasNext())) {
-			Vertex v = sequence.next();
-			for (Edge edge : v.getOutEdges(GraphDBVertex.toOperationLabel)) {
-				GraphDBChangeOperation operation = this.framesManager.frame(edge.getInVertex(),
-						GraphDBChangeOperation.class);
-				foundOpIds.add(operation.getChangeOperationId());
-			}
-			if (foundOpIds.containsAll(opIdSet)) {
-				return new GenealogyVertex(this, this.framesManager.frame(v, GraphDBVertex.class));
-			}
-			
-		}
-		
-		return null;
+	public GenealogyVertex getVertex(final String transactionId, final Collection<Long> javaChangeOperationIds) {
+		return getVertex(graph, transactionId, javaChangeOperationIds);
 	}
 	
-	private void setPersistenceUtil(final PersistenceUtil persistenceUtil2) {
-		this.persistenceUtil = persistenceUtil2;
+	/**
+	 * Sets the persistence util.
+	 * 
+	 * @param persistenceUtil
+	 *            the new persistence util
+	 */
+	private void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+		this.persistenceUtil = persistenceUtil;
 	}
 	
+	/**
+	 * Vertex set.
+	 * 
+	 * @return the genealogy vertex iterator
+	 */
+	public GenealogyVertexIterator vertexSet() {
+		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
+				.query(GenealogyVertex.transaction_id, "*");
+		return new DefaultGenealogyVertexIterator(indexHits);
+	}
 }

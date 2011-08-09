@@ -34,8 +34,8 @@ public class GitRepositoryTest {
 	
 	@After
 	public void tearDown() throws Exception {
-		
-	}
+			
+		}
 	
 	@Test
 	public void testFormerPathRegex() {
