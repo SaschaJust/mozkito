@@ -28,7 +28,7 @@ public class MethodVertex extends CallGraphVertex implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 4013481775627394171L;
-	private String methodName;
+	private final String methodName;
 	/**
 	 * Instantiates a new method vertex.
 	 * 
@@ -39,6 +39,8 @@ public class MethodVertex extends CallGraphVertex implements Serializable {
 		super(id, filename);
 		this.parent = VertexFactory.createClassVertex(this);
 		this.parent.addChild(this);
+		int index = id.lastIndexOf(".");
+		this.methodName = id.substring(index + 1);
 	}
 	
 	

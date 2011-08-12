@@ -44,14 +44,8 @@ public class VertexFactory {
 	 */
 	public static ClassVertex createClassVertex(final MethodVertex v) {
 		String fullname = v.getId();
-		String[] nameParts = fullname.split("\\.");
-		StringBuilder ss = new StringBuilder();
-		ss.append(nameParts[0]);
-		for (int i = 1; i < nameParts.length - 1; ++i) {
-			ss.append(".");
-			ss.append(nameParts[i]);
-		}
-		String parentName = ss.toString();
+		
+		String parentName = fullname.substring(0, fullname.lastIndexOf("."));
 		if (classVertices.containsKey(parentName)) {
 			return classVertices.get(parentName);
 		}
