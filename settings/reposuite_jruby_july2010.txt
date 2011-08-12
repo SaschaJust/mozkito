@@ -16,3 +16,12 @@ headless
 #mapping.score.ReportResolvedWithinWindow=1
 #mapping.window.ReportResolvedAfterTransaction=00d 00h 00m 00s,+03d 00h 00m 00s
 #mapping.strategies=MajorityStrategy
+
+##### Untangling options: #####
+
+callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/jruby/
+changecouplings.cache.dir = /data/kim/cache.filechangecouplings/jruby/
+package.distance = 2
+
