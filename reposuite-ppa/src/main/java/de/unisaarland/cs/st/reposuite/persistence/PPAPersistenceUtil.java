@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
@@ -33,7 +37,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 public class PPAPersistenceUtil {
 	
 	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
-	                                                           final RCSTransaction transaction) {
+			final RCSTransaction transaction) {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		for (RCSRevision revision : transaction.getRevisions()) {
@@ -45,7 +49,7 @@ public class PPAPersistenceUtil {
 	}
 	
 	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
-	                                                           final String transactionId) {
+			final String transactionId) {
 		List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
 		RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
@@ -66,9 +70,14 @@ public class PPAPersistenceUtil {
 	 * @return the java element
 	 */
 	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil,
-	                                         final JavaElement e) {
+			final JavaElement e) {
 		Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
-		criteria.eq("fullQualifiedName", e.getFullQualifiedName()).eq("elementType", e.getElementType());
+		CriteriaBuilder cb = criteria.getBuilder();
+		Root<? extends JavaElement> root = criteria.getRoot();
+		Predicate predicate = cb.and(cb.equal(root.get("fullQualifiedName"), e.getFullQualifiedName()),
+		        cb.equal(root.get("elementType"), e.getElementType()));
+		criteria.getQuery().where(predicate);
+
 		List<? extends JavaElement> elements = persistenceUtil.load(criteria);
 		if (elements.isEmpty()) {
 			return null;

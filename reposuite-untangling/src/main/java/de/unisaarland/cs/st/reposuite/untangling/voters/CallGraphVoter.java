@@ -50,7 +50,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/** The dijkstra transformer. */
 	private static EdgeWeightTransformer dijkstraTransformer = new EdgeWeightTransformer();
-	
+	private File                         usedGraphFile;
 	/**
 	 * Instantiates a new call graph handler.
 	 * 
@@ -70,6 +70,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 					+ ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
+				usedGraphFile = serialFile;
 			}
 		}
 		if (callGraph == null) {
@@ -107,6 +108,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				}
 			} else {
 				callGraph = CallGraph.unserialize(callGraphFile);
+				usedGraphFile = callGraphFile;
 			}
 		}
 	}
@@ -213,6 +215,21 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		if ((e1 instanceof JavaMethodDefinition) && (e2 instanceof JavaMethodDefinition)) {
 			MethodVertex v1 = VertexFactory.createMethodVertex(e1.getFullQualifiedName(), "");
 			MethodVertex v2 = VertexFactory.createMethodVertex(e2.getFullQualifiedName(), "");
+			
+			if (!(callGraph.containsVertex(v1)) && (!callGraph.containsVertex(v2))) {
+				if (Logger.logWarn()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Could not found any vertex in the call graph. This should never happen:\n");
+					sb.append("Vertex1: ");
+					sb.append(v1.getFullQualifiedMethodName());
+					sb.append("\nVertex2: ");
+					sb.append(v2.getFullQualifiedMethodName());
+					sb.append("\ngraph file: ");
+					sb.append(usedGraphFile.getAbsolutePath());
+					Logger.warn(sb.toString());
+				}
+			}
+			
 			double distance = this.distance(v1, v2);
 			if (distance == Double.MAX_VALUE) {
 				// no path found.

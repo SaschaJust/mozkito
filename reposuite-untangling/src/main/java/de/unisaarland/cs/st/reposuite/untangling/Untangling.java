@@ -199,6 +199,8 @@ public class Untangling {
 	
 	private final DirectoryArgument               changeCouplingsCacheDirArg;
 	
+	private final DirectoryArgument               dataDependencyCacheDirArg;
+	
 	/**
 	 * Instantiates a new untangling.
 	 */
@@ -261,6 +263,12 @@ public class Untangling {
 				settings,
 				"changecouplings.cache.dir",
 				"Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
+				null, false, false);
+		
+		dataDependencyCacheDirArg = new DirectoryArgument(
+				settings,
+				"datadependency.cache.dir",
+				"Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
 				null, false, false);
 		
 		dryRunArg = new BooleanArgument(
@@ -366,6 +374,7 @@ public class Untangling {
 		
 		List<String> eclipseArgs = new LinkedList<String>();
 		eclipseArgs.add("-vmargs");
+		eclipseArgs.add(" -Dppa");
 		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
 			eclipseArgs.add(" -Drepository.password=" + repositoryArg.getPassArg().getValue());
@@ -402,7 +411,8 @@ public class Untangling {
 				throw new UnrecoverableError("When using data dependencies -D" + useDataDependencies.getName()
 						+ " you must set the -D" + datadepArg.getName() + "!");
 			}
-			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, transaction));
+			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, transaction,
+			        dataDependencyCacheDirArg.getValue()));
 		}
 		
 		// add test impact visitor
@@ -478,7 +488,7 @@ public class Untangling {
 			transactions.clear();
 			transactions.addAll(randomTransactions);
 		}
-
+		
 		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions, packageDistanceArg.getValue()
 				.intValue(), minBlobSizeArg.getValue().intValue(), maxBlobSizeArg.getValue().intValue()));
 		

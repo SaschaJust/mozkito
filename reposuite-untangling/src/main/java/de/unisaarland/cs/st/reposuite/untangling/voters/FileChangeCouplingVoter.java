@@ -100,7 +100,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			if (couplings == null) {
 				//run query and save tmp file
 				LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
-						transaction, minSupport, minConfidence,
+				        transaction, 0, 0,
 						persistenceUtil);
 				this.couplings = new LinkedList<SerialFileChangeCoupling>();
 				for (FileChangeCoupling c : fileChangeCouplings) {
@@ -193,7 +193,10 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				}
 				
 			});
-			score = couplings.get(0).getConfidence();
+			SerialFileChangeCoupling coupling = couplings.get(0);
+			if ((coupling.getSupport() >= this.minSupport) && (coupling.getConfidence() >= this.minConfidence)) {
+				score = couplings.get(0).getConfidence();
+			}
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);
 		Condition.check(score >= 0d, "The returned distance must be a value between 0 and 1, but was: " + score);
