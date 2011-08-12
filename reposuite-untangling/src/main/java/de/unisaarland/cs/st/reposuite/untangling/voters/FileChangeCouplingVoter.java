@@ -100,7 +100,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			if (couplings == null) {
 				//run query and save tmp file
 				LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
-				        transaction, 0, 0,
+						transaction, 3, 0.1,
 						persistenceUtil);
 				this.couplings = new LinkedList<SerialFileChangeCoupling>();
 				for (FileChangeCoupling c : fileChangeCouplings) {
@@ -158,7 +158,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		
 		if (couplings == null) {
 			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
-					transaction, minSupport, minConfidence,
+			        transaction, 3, 0.1,
 					persistenceUtil);
 			this.couplings = new LinkedList<SerialFileChangeCoupling>();
 			for (FileChangeCoupling c : fileChangeCouplings) {
