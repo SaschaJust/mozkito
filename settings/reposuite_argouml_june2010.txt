@@ -9,3 +9,9 @@ tracker.fetchURI=http://argouml.tigris.org/issues/
 tracker.pattern=xml.cgi?id=<BUGID>
 tracker.type=ISSUEZILLA
 tracker.stop=6297
+
+callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/argouml/
+changecouplings.cache.dir = /data/kim/cache.filechangecouplings/argouml
+package.distance = 2

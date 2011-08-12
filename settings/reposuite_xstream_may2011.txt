@@ -19,14 +19,8 @@ mapping.strategies=MajorityStrategy
 
 ##### Untangling options: #####
 
-blobsize.max=5
-blobsize.min=3
-callgraph.cache.dir=/data/kim/cache.callgraph/xstream/
-callgraph.eclipse=/data/kim/reposuite/eclipse-apps/linux/eclipse/
-out.file=/data/kim/result.untangling/xstream/try.csv
-package.distance=2
-vote.callgraph=true
-vote.changecouplings=true
-vote.changecouplings.minconfidence=0.8
-vote.changecouplings.minsupport=10
-
+callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/xstream
+changecouplings.cache.dir = /data/kim/cache.filechangecouplings/xstream
+package.distance = 2
