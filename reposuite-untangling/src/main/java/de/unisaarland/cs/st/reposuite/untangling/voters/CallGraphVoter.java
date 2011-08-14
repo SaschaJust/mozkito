@@ -81,7 +81,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			
 			File callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
-			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
+			arguments.add("-Doutput=file://" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph
 			HashMap<String, String> environment = new HashMap<String, String>();

@@ -21,6 +21,7 @@ import java.util.List;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.Days;
 
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 
@@ -43,12 +44,12 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	 * @return true, if successful
 	 */
 	protected static boolean canCombinePaths(final String pathA,
-	                                         final String pathB,
-	                                         final int packageDistance) {
+			final String pathB,
+			final int packageDistance) {
 		List<String> pathAParts = Arrays.asList(StringUtils.removeEnd(pathA, FileUtils.fileSeparator)
-		                                        .split(FileUtils.fileSeparator));
+				.split(FileUtils.fileSeparator));
 		List<String> pathBParts = Arrays.asList(StringUtils.removeEnd(pathB, FileUtils.fileSeparator)
-		                                        .split(FileUtils.fileSeparator));
+				.split(FileUtils.fileSeparator));
 		
 		
 		// ignore the last packageDistance parts.
@@ -77,15 +78,18 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	
 	/** The max package distance. */
 	private final int maxPackageDistance;
+	private final Long timeWindowSize;
 	
 	/**
 	 * Instantiates a new blob transaction combine operator.
 	 * 
 	 * @param maxPackageDistance
 	 *            the max package distance
+	 * @param timeWindowSize
 	 */
-	public BlobTransactionCombineOperator(final int maxPackageDistance) {
+	public BlobTransactionCombineOperator(final int maxPackageDistance, final Long timeWindowSize) {
 		this.maxPackageDistance = maxPackageDistance;
+		this.timeWindowSize = timeWindowSize;
 	}
 	
 	/*
@@ -96,7 +100,15 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	 */
 	@Override
 	public boolean canBeCombined(final AtomicTransaction t1,
-	                             final AtomicTransaction t2) {
+			final AtomicTransaction t2) {
+		
+		if (this.timeWindowSize > -1) {
+			Days daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction().getTimestamp());
+			if (daysBetween.getDays() > this.timeWindowSize) {
+				return false;
+			}
+		}
+		
 		for (RCSRevision rev : t1.getTransaction().getRevisions()) {
 			String path = rev.getChangedFile().getPath(t1.getTransaction());
 			for (RCSRevision rev2 : t2.getTransaction().getRevisions()) {

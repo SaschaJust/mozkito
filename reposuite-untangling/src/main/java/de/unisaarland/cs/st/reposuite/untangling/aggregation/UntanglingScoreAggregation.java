@@ -13,16 +13,12 @@ import java.util.Set;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-
-import org.joda.time.Days;
-
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
-import de.unisaarland.cs.st.reposuite.untangling.blob.BlobTransactionCombineOperator;
 
 
 public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaChangeOperation> {
@@ -78,10 +74,6 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
-		int packageDistance = Integer.valueOf(System.getProperty("package.distance", "2"));
-		BlobTransactionCombineOperator packageDistanceChecker = new BlobTransactionCombineOperator(packageDistance);
-		int blobWindow = Integer.valueOf(System.getProperty("blobWindow", "5"));
-		
 		Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
 		
 		//generate the negative examples
@@ -106,19 +98,6 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 				seenCombinations.add(new Tuple<Integer, Integer>(t1Index, t2Index));
 			} else {
 				seenCombinations.add(new Tuple<Integer, Integer>(t2Index, t1Index));
-			}
-			
-			
-			//check for closeness: package and temporal
-			int daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction().getTimestamp())
-					.getDays();
-			if (daysBetween > blobWindow) {
-				--i;
-				continue;
-			}
-			if (!packageDistanceChecker.canBeCombined(t1, t2)) {
-				--i;
-				continue;
 			}
 			
 			List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();

@@ -123,6 +123,15 @@ public class ArtificialBlob {
 	}
 	
 	/**
+	 * Gets the transactions.
+	 * 
+	 * @return the transactions
+	 */
+	public Set<AtomicTransaction> getAtomicTransactions() {
+		return this.blobTransactions;
+	}
+	
+	/**
 	 * Gets the change operation partitions.
 	 * 
 	 * @return the change operation partitions

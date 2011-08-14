@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -64,13 +64,13 @@ public class ArtificialBlobGenerator {
 	 * @param maxBlobSize
 	 *            generate no artificial blobs larger than
 	 *            <code>maxBlobSize</code> transactions.
+	 * @param long1
 	 * @return the set of generated artificial blobs
 	 */
-	@NoneNull
-	public static Set<ArtificialBlob> generateAll(final Collection<AtomicTransaction> transactions,
+	public static Set<ArtificialBlob> generateAll(@NotNull final Collection<AtomicTransaction> transactions,
 			@NotNegative final int packageDistance,
 			@GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
-			@GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
+			@GreaterOrEqualInt(ref = -1) final int maxBlobSize, final Long timeWindowSize) {
 		
 		// check the more complicated preconditions
 		if (maxBlobSize > -1) {
@@ -80,7 +80,7 @@ public class ArtificialBlobGenerator {
 			}
 		}
 		
-		BlobTransactionCombineOperator operator = new BlobTransactionCombineOperator(packageDistance);
+		BlobTransactionCombineOperator operator = new BlobTransactionCombineOperator(packageDistance, timeWindowSize);
 		
 		Set<Set<AtomicTransaction>> allCombinations = getAllCombinations(transactions, operator, maxBlobSize);
 		

@@ -493,7 +493,8 @@ public class Untangling {
 		}
 		
 		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions, packageDistanceArg.getValue()
-				.intValue(), minBlobSizeArg.getValue().intValue(), maxBlobSizeArg.getValue().intValue()));
+				.intValue(), minBlobSizeArg.getValue().intValue(), maxBlobSizeArg.getValue().intValue(), timeArg
+				.getValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -510,16 +511,7 @@ public class Untangling {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		if (timeArg.getValue() > -1) {
-			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
-			for (ArtificialBlob blob : artificialBlobs) {
-				if (blob.getDayWindow() < timeArg.getValue()) {
-					selectedArtificialBlobs.add(blob);
-				}
-			}
-			artificialBlobs = selectedArtificialBlobs;
-			blobSetSize = artificialBlobs.size();
-		}
+		
 		
 		if ((nArg.getValue() != -1l) && (nArg.getValue() < artificialBlobs.size())) {
 			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
@@ -559,13 +551,21 @@ public class Untangling {
 			case LINEAR_REGRESSION:
 				LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
 				//train score aggregation model
-				linarRegressionAggregator.train(transactions);
+				Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
+				for (ArtificialBlob blob : artificialBlobs) {
+					trainTransactions.addAll(blob.getAtomicTransactions());
+				}
+				linarRegressionAggregator.train(trainTransactions);
 				aggregator = linarRegressionAggregator;
 				break;
 			case SVM:
 				SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 				//train score aggregation model
-				svmAggregator.train(transactions);
+				Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
+				for (ArtificialBlob blob : artificialBlobs) {
+					svmTrainTransactions.addAll(blob.getAtomicTransactions());
+				}
+				svmAggregator.train(svmTrainTransactions);
 				aggregator = svmAggregator;
 				break;
 			default:
