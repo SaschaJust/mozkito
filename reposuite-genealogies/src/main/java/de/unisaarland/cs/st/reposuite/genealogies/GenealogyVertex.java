@@ -2,6 +2,8 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
@@ -20,9 +22,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
  */
 public class GenealogyVertex {
 	
-	/** The transaction_id. */
-	public static String transaction_id = "transaction_id";
-	
 	/**
 	 * Creates a GenealogyVertex
 	 * 
@@ -32,6 +31,8 @@ public class GenealogyVertex {
 	 *            the transaction id
 	 * @return the genealogy vertex
 	 */
+	public static String transaction_id = "transaction_id";
+	
 	public static GenealogyVertex create(final GraphDatabaseService graph, final String transactionId) {
 		Transaction tx = graph.beginTx();
 		Node node = graph.createNode();
@@ -42,6 +43,7 @@ public class GenealogyVertex {
 		tx.finish();
 		return new GenealogyVertex(node);
 	}
+	
 	
 	/** The node. */
 	private final Node node;
@@ -131,8 +133,14 @@ public class GenealogyVertex {
 	 * @return all dependents
 	 */
 	public Collection<GenealogyVertex> getAllDependents() {
-		//TODO implement
-		return null;
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
+		for(Relationship rel : relationships){
+			result.add(new GenealogyVertex(rel.getStartNode()));
+		}
+		return result;
 	}
 	
 	/**
@@ -142,8 +150,15 @@ public class GenealogyVertex {
 	 * @return the parents
 	 */
 	public Collection<GenealogyVertex> getAllVerticesDependingOn() {
-		//TODO implement
-		return null;
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
+				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
+		for (Relationship rel : relationships) {
+			result.add(new GenealogyVertex(rel.getStartNode()));
+		}
+		return result;
 	}
 	
 	/**
@@ -151,13 +166,13 @@ public class GenealogyVertex {
 	 * 
 	 * @return the change operation ids
 	 */
-	protected Collection<Long> getChangeOperationIds() {
-		Set<Long> result = new HashSet<Long>();
+	protected Collection<GraphDBChangeOperation> getChangeOperationIds() {
+		Set<GraphDBChangeOperation> result = new HashSet<GraphDBChangeOperation>();
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
 				RelationshipTypes.CONTAINS);
 		for (Relationship rel : relationships) {
 			Node opNode = rel.getEndNode();
-			result.add(GraphDBChangeOperation.getChangeOperationId(opNode));
+			result.add(new GraphDBChangeOperation(opNode));
 		}
 		return result;
 	}
@@ -165,24 +180,19 @@ public class GenealogyVertex {
 	/**
 	 * Returns a collection containing vertices depending on this vertex via an
 	 * edge of a type is contained within the specified edge type array.
+	 * (incoming edges)
 	 * 
 	 * @param types
 	 *            consider only edges of these types
 	 * @return the dependants
 	 */
-	public Collection<GenealogyVertex> getDependants(final GenealogyEdgeType[] types) {
-		//TODO implement
-		return null;
-	}
-	
-	/**
-	 * Gets the java change operations.
-	 * 
-	 * @return the java change operations
-	 */
-	public Collection<JavaChangeOperation> getJavaChangeOperations() {
-		//TODO implement
-		return null;
+	public Collection<GenealogyVertex> getDependants(final GenealogyEdgeType... types) {
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, types);
+		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
+		for (Relationship rel : relationships) {
+			result.add(new GenealogyVertex(rel.getStartNode()));
+		}
+		return result;
 	}
 	
 	/**
@@ -194,17 +204,26 @@ public class GenealogyVertex {
 		return node;
 	}
 	
+	public String getTransactionId(){
+		return node.getProperty(transaction_id).toString();
+	}
+	
 	/**
 	 * Returns a collection containing vertices this vertex depends on via an
 	 * edge of a type is contained within the specified edge type array.
+	 * (outgoing edges)
 	 * 
 	 * @param types
 	 *            consider only edges of these types
 	 * @return the vertices depending on
 	 */
-	public Collection<GenealogyVertex> getVerticesDependingOn(final GenealogyEdgeType[] types) {
-		//TODO implement
-		return null;
+	public Collection<GenealogyVertex> getVerticesDependingOn(final GenealogyEdgeType... types) {
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, types);
+		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
+		for (Relationship rel : relationships) {
+			result.add(new GenealogyVertex(rel.getStartNode()));
+		}
+		return result;
 	}
 	
 	/*
@@ -219,5 +238,4 @@ public class GenealogyVertex {
 		result = (int) ((prime * result) + ((node == null) ? 0 : node.getId()));
 		return result;
 	}
-	
 }

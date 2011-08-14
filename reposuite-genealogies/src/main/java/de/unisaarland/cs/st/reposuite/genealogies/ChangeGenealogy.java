@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -14,8 +15,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * The Class ChangeGenealogy.
@@ -264,12 +268,39 @@ public class ChangeGenealogy {
 	}
 	
 	/**
+	 * Gets the java change operations.
+	 * 
+	 * @return the java change operations
+	 */
+	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v) {
+		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		Collection<GraphDBChangeOperation> operationIds = v.getChangeOperationIds();
+		for (GraphDBChangeOperation dbOp : operationIds) {
+			Long javaOpId = dbOp.getJavaChangeOperationId();
+			result.add(persistenceUtil.loadById(javaOpId, JavaChangeOperation.class));
+		}
+		return result;
+	}
+	
+	/**
 	 * Gets the PersistenceUtil registered with the ChangeGenealogy.
 	 * 
 	 * @return the persistence util. Returns <code>null</code> if none set.
 	 */
 	protected PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
+	}
+	
+	public RCSTransaction getTransactionForVertex(final GenealogyVertex v){
+		Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("id",
+				v.getTransactionId());
+		List<RCSTransaction> load = persistenceUtil.load(criteria);
+		if (load.isEmpty()) {
+			throw new UnrecoverableError(
+					"Could not find RCSTransaction for GenealogyNode! This means the GenealogyGraph is corrupt! (transaction_di = "
+							+ v.getTransactionId() + ")");
+		}
+		return load.get(0);
 	}
 	
 	/**

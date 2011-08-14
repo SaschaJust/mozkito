@@ -36,6 +36,8 @@ public interface PersistenceUtil {
 	
 	public <T> Criteria<T> createCriteria(final Class<T> clazz);
 	
+	public <T> Query createNativeQuery(String query, Class<T> clazz);
+	
 	public Query createQuery(final String query);
 	
 	public void delete(final Annotated object);
@@ -59,8 +61,10 @@ public interface PersistenceUtil {
 	
 	public <T> List<T> load(final Criteria<T> criteria);
 	
+	public <T> List<T> load(final Criteria<T> criteria, int sizeLimit);
+	
 	public <T, I> T loadById(final I id,
-	                         Class<T> clazz);
+			Class<T> clazz);
 	
 	public void rollbackTransaction();
 	

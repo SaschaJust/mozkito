@@ -21,9 +21,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
+
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -53,12 +60,19 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation.LineCover;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation_;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition_;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
@@ -133,6 +147,163 @@ public class PPAUtils {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		workspace.getRoot().clearHistory(new NullProgressMonitor());
+	}
+	
+	/**
+	 * Find previous call corresponding to the supplied JavaChangeOperation that
+	 * must be a JavaMethodCall delete operation.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param op
+	 *            the JavaChangeOperation to base the search on
+	 * @return the previous JavaChangeOperation on the very same JavaMethodCall
+	 *         within the same file, same method and closest location. Returns
+	 *         null if no such operation exists or if supplied
+	 *         JavaChangeOperation is not based on a JavaMethodCall or not a
+	 *         delete operation.
+	 */
+	@NoneNull
+	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil, final JavaChangeOperation op) {
+		JavaElementLocation location = op.getChangedElementLocation();
+		JavaElement element = location.getElement();
+		
+		if ((!(element instanceof JavaMethodCall)) || (!op.getChangeType().equals(ChangeType.Deleted))) {
+			if (Logger.logError()) {
+				Logger.error("Cannot find previous JMethodCall operation based on a non method call delete operation!");
+			}
+			return null;
+		}
+		
+		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		CriteriaBuilder cb = criteria.getBuilder();
+		Root<JavaElementLocation> root = criteria.getRoot();
+		Predicate eq = cb.equal(root.get("element"), element);
+		Predicate eq1 = cb.equal(root.get("filePath"), location.getFilePath());
+		
+		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
+		criteria.getQuery().where(cb.and(cb.and(eq, eq1), lt));
+		criteria.getQuery().orderBy(cb.asc(root.get("id")));
+		List<JavaElementLocation> hits = persistenceUtil.load(criteria);
+		
+		if (hits.isEmpty()) {
+			return null;
+		}
+		
+		//should be in same method
+		//get the javaelement location of surrounding method definition
+		String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
+				+ location.getFilePath()
+				+ "' AND startline <= "
+				+ location.getStartLine()
+				+ " and endline >= "
+				+ location.getStartLine()
+				+ " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
+				+ location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
+		Query defIdQuery = persistenceUtil.createNativeQuery(defIdQueryStr, JavaElementLocation.class);
+		@SuppressWarnings("unchecked") List<JavaElementLocation> methodDefHits = defIdQuery.getResultList();
+		
+		if (!methodDefHits.isEmpty()) {
+			List<JavaElementLocation> strongCandidates = new LinkedList<JavaElementLocation>();
+			JavaElementLocation methodDefinition = methodDefHits.get(0);
+			//check whcih hit is in the same method
+			for (JavaElementLocation tmpLoc : hits) {
+				if (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals(LineCover.FALSE)) {
+					strongCandidates.add(tmpLoc);
+				}
+			}
+			hits = strongCandidates;
+		}
+		
+		//now search for the closest call
+		int minDistance = Integer.MAX_VALUE;
+		JavaElementLocation bestHit = null;
+		for (JavaElementLocation loc : hits) {
+			int distance = Math.abs(loc.getStartLine() - location.getStartLine());
+			if (distance < minDistance) {
+				minDistance = distance;
+				bestHit = loc;
+			}
+		}
+		
+		if (bestHit == null) {
+			return null;
+		}
+		
+		//get the corresponding javachangeoperation
+		
+		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		operationCriteria.eq("changedElementLocation : JavaElementLocation", bestHit);
+		List<JavaChangeOperation> result = persistenceUtil.load(operationCriteria, 1);
+		return result.get(0);
+	}
+	
+	/**
+	 * Finds the change operation that touched the definition corresponding to
+	 * the JavaElement definition.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util to use for accessing the relational
+	 *            database
+	 * @param op
+	 *            the operation containing the JavaElement to search for
+	 * @return the JavaChangeOperation that touched the definition corresponding
+	 *         to the JavaElement associated to <code>op</code>. If no such
+	 *         operation exists, returns <code>null</code>.
+	 */
+	@NoneNull
+	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil, final JavaChangeOperation op) {
+		JavaElementLocation location = op.getChangedElementLocation();
+		JavaElement element = location.getElement();
+		JavaElement searchElement = element;
+		
+		
+		
+		//distinguish between definitions and calls
+		if (element instanceof JavaMethodCall) {
+			
+			String[] defNames = getDefinitionNamesForCallName((JavaMethodCall) element);
+			
+			for (String elementName : defNames) {
+				Criteria<JavaMethodDefinition> elementCriteria = persistenceUtil
+						.createCriteria(JavaMethodDefinition.class);
+				
+				CriteriaBuilder cb = elementCriteria.getBuilder();
+				Predicate like = cb.like(elementCriteria.getRoot().get(JavaMethodDefinition_.fullQualifiedName),
+						elementName);
+				elementCriteria.getQuery().where(like);
+				List<JavaMethodDefinition> defHits = persistenceUtil.load(elementCriteria, 1);
+				if (defHits.isEmpty()) {
+					continue;
+				}
+				searchElement = defHits.get(0);
+				break;
+			}
+		}
+		
+		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		CriteriaBuilder cb = criteria.getBuilder();
+		Root<JavaElementLocation> root = criteria.getRoot();
+		Predicate eq = cb.equal(root.get("element"), searchElement);
+		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
+		criteria.getQuery().where(cb.and(eq, lt));
+		criteria.getQuery().orderBy(cb.asc(root.get("id")));
+		
+		List<JavaElementLocation> hits = persistenceUtil.load(criteria,1);
+		if (hits.isEmpty()) {
+			return null;
+		}
+		
+		JavaElementLocation hitLocation = hits.get(0);
+		
+		//search for corresponding JavaChangeOperation
+		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		operationCriteria.eq("changedElementLocation : JavaElementLocation", hitLocation);
+		List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
+		if (operationHits.isEmpty()) {
+			return null;
+		}
+		return operationHits.get(0);
 	}
 	
 	/**
@@ -976,6 +1147,64 @@ public class PPAUtils {
 	}
 	
 	/**
+	 * Computes the possible matching method definition names based on the full
+	 * qualified name of the supplied JavaMethodCall; The returned array of
+	 * Strings is sorted in descending importance order.
+	 * 
+	 * @param call
+	 *            the JavaMethodCall to base the method definition name
+	 *            generation on.
+	 * @return the definition names corresponding to the supplied
+	 *         JavaMethodCall. Sorted in descending importance and likelyhood
+	 *         order.
+	 */
+	protected static String[] getDefinitionNamesForCallName(final JavaMethodCall call) {
+		String name = String.valueOf(call.getFullQualifiedName());
+		
+		//replace "<init>" from name
+		if (name.contains("<init>()")) {
+			int index = 0;
+			String[] nameParts = name.split("\\.");
+			for (String namePart : nameParts) {
+				if (namePart.equals("<init>()")) {
+					break;
+				}
+				++index;
+			}
+			if (index < 1) {
+				if (Logger.logError()) {
+					Logger.error("Could not find the class name for the constructor call. Returning null;");
+				}
+				return null;
+			}
+			String className = nameParts[index - 1];
+			name = name.replace("<init>()", className + "()");
+		}
+		//if it starts with src. get rid of prefix
+		if (name.startsWith("src.")) {
+			name = name.substring(4);
+		}
+		//the all might call an inner class
+		StringBuilder alternativeName = new StringBuilder();
+		String[] nameParts = name.split("\\.");
+		if (nameParts.length > 3) {
+			nameParts[nameParts.length - 3] = "";
+			for (int i = 0; i < nameParts.length; ++i) {
+				if (!nameParts[i].equals("")) {
+					alternativeName.append(nameParts[i]);
+					if (i != (nameParts.length - 1)) {
+						alternativeName.append(".");
+					}
+				}
+			}
+			
+		}
+		
+		return new String[] { name, alternativeName.toString(), name.replaceAll("UNKNOWN", "%"),
+				alternativeName.toString().replaceAll("UNKNOWN", "%") };
+	}
+	
+	/**
 	 * Gets the java element locations by file.
 	 * 
 	 * @param file
@@ -1188,18 +1417,6 @@ public class PPAUtils {
 			}
 		}
 		return project;
-	}
-	
-	@NoneNull
-	public JavaChangeOperation findPreviousCall(final JavaChangeOperation op) {
-		//TODO implement
-		return null;
-	}
-	
-	@NoneNull
-	public JavaChangeOperation findPreviousDefinition(final JavaChangeOperation op) {
-		//TODO implement
-		return null;
 	}
 	
 }
