@@ -171,6 +171,9 @@ public class ArtificialBlobGenerator {
 					possibleCombinations.addAll(combinations.get(t));
 					HashSet<T> tmpSet = new HashSet<T>();
 					tmpSet.add(t2);
+					if (!combinations.containsKey(tmpSet)) {
+						continue;
+					}
 					possibleCombinations.addAll(combinations.get(tmpSet));
 					Collection<T> newCombinations = CollectionUtils.subtract(possibleCombinations, newT);
 					combinations.put(newT, newCombinations);
