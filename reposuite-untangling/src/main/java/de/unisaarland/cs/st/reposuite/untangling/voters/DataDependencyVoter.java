@@ -64,7 +64,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	private final RCSTransaction           transaction;
 	private Map<String, Set<Set<Integer>>> cache            = new HashMap<String, Set<Set<Integer>>>();
-	private final File                     currentCacheFile = null;
+	private File                           currentCacheFile = null;
 	
 	/**
 	 * Instantiates a new data dependency voter.
@@ -125,7 +125,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		String cacheFileName = this.transaction.getId() + ".dd";
 		File cacheFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
 		try {
-			if (!currentCacheFile.getName().equals(cacheFile.getName())) {
+			if ((currentCacheFile != null) && (!currentCacheFile.getName().equals(cacheFile.getName()))) {
 				if ((this.cacheDir != null) && (cacheFile.exists())) {
 					ObjectInputStream objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(
 							cacheFile)));
@@ -204,6 +204,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cacheFile));
 				out.writeObject(cache);
 				out.close();
+				currentCacheFile = cacheFile;
 			} catch (FileNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
