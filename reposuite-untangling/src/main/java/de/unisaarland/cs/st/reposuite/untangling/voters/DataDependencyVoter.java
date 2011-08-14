@@ -138,7 +138,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		} catch (ClassNotFoundException e) {
 		}
 		
-		if (!cache.containsKey(file.getAbsolutePath())) {
+		if ((!cache.containsKey(file.getAbsolutePath())) && (file.exists())) {
 			if (!file.exists()) {
 				if (Logger.logError()) {
 					Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning IGNORE_SCORE.");
@@ -199,6 +199,9 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				}
 				cache.put(file.getAbsolutePath(), null);
 			}
+			
+			cache.put(file.getAbsolutePath(), lineDependencies);
+			
 			//store changed cache
 			try {
 				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cacheFile));
