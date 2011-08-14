@@ -155,6 +155,9 @@ public class ArtificialBlobGenerator {
 		while (!newAdded.isEmpty()){
 			Set<Set<T>> newNewAdded = new HashSet<Set<T>>();
 			for (Set<T> t : newAdded) {
+				if (!combinations.containsKey(t)) {
+					continue;
+				}
 				for (T t2 : combinations.get(t)) {
 					Set<T> newT = new HashSet<T>();
 					newT.addAll(t);
