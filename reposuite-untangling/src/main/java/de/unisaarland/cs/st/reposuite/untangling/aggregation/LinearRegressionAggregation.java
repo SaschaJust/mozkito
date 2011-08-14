@@ -25,6 +25,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
@@ -167,10 +168,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		try {
 			model.buildClassifier(trainingInstances);
 		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return false;
+			throw new UnrecoverableError(e.getMessage());
 		}
 		
 		try {
@@ -179,7 +177,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			writer.write(trainingInstances.toString());
 			writer.close();
 		} catch (IOException e) {
-			
+			throw new UnrecoverableError(e.getMessage());
 		}
 		
 		//serialize model for later use
