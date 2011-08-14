@@ -15,20 +15,17 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.voters;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation.LineCover;
 
 /**
  * The Class CallGraphHandler.
  * 
  * Works only for JavaMethodDefinitions so far.
  */
-public class FileDistanceVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
 	
 	
@@ -56,17 +53,21 @@ public class FileDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 		String path1 = op1.getChangedPath();
 		String path2 = op2.getChangedPath();
 		
-		if (path1.equals(path2)) {
+		if (!path1.equals(path2)) {
+			return 0;
+		}
+		
+		JavaElementLocation location1 = op1.getChangedElementLocation();
+		JavaElementLocation location2 = op2.getChangedElementLocation();
+		
+		//check if one location is covered by the other one => 1
+		if ((!location1.coversLine(location2.getStartLine()).equals(LineCover.FALSE))
+		        || (!location2.coversLine(location1.getStartLine()).equals(LineCover.FALSE))) {
 			return 1;
 		}
 		
-		// [0,0.5[
-		List<String> path1Segments = Arrays.asList(path1.split("/"));
-		List<String> path2Segments = Arrays.asList(path2.split("/"));
-		int pathDistance = Math.max(CollectionUtils.subtract(path1Segments, path2Segments).size(), CollectionUtils
-				.subtract(path2Segments, path1Segments).size());
-		return 1 - (((double) pathDistance) / (Math.max(path1Segments.size(), path2Segments.size())));
-		
-		
+		double lineDistance = Math.abs(location1.getStartLine() - location2.getStartLine()) + 0.1;
+		return 1 / lineDistance;
+
 	}
 }

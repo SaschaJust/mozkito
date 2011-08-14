@@ -73,6 +73,7 @@ import de.unisaarland.cs.st.reposuite.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.DataDependencyVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.FileChangeCouplingVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.FileDistanceVoter;
+import de.unisaarland.cs.st.reposuite.untangling.voters.LineDistanceVoter;
 import de.unisaarland.cs.st.reposuite.untangling.voters.TestImpactVoter;
 
 /**
@@ -385,6 +386,7 @@ public class Untangling {
 		}
 		
 		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());
 		// add call graph visitor
 		if (useCallGraph.getValue()) {
@@ -426,6 +428,7 @@ public class Untangling {
 	
 	public List<String> getScoreVisitorNames() {
 		List<String> result = new LinkedList<String>();
+		result.add(LineDistanceVoter.class.getSimpleName());
 		result.add(FileDistanceVoter.class.getSimpleName());
 		if(useCallGraph.getValue()){
 			result.add(CallGraphVoter.class.getSimpleName());
