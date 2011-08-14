@@ -1,9 +1,11 @@
 package de.unisaarland.cs.st.reposuite.untangling.aggregation;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -169,6 +171,15 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
+		}
+		
+		try {
+			File instancesFile = new File("linearRegressionModel_Instances.arff");
+			BufferedWriter writer = new BufferedWriter(new FileWriter(instancesFile));
+			writer.write(trainingInstances.toString());
+			writer.close();
+		} catch (IOException e) {
+			
 		}
 		
 		//serialize model for later use

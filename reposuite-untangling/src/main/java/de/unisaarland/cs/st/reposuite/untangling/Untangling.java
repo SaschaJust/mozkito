@@ -375,7 +375,7 @@ public class Untangling {
 		List<String> eclipseArgs = new LinkedList<String>();
 		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Dppa");
-		eclipseArgs.add(" -Drepository.uri=" + repositoryArg.getRepoDirArg().getValue().toString());
+		eclipseArgs.add(" -Drepository.uri=file://" + repositoryArg.getRepoDirArg().getValue().toString());
 		if (repositoryArg.getPassArg().getValue() != null) {
 			eclipseArgs.add(" -Drepository.password=" + repositoryArg.getPassArg().getValue());
 		}
@@ -412,7 +412,7 @@ public class Untangling {
 						+ " you must set the -D" + datadepArg.getName() + "!");
 			}
 			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, repository, transaction,
-			        dataDependencyCacheDirArg.getValue()));
+					dataDependencyCacheDirArg.getValue()));
 		}
 		
 		// add test impact visitor
