@@ -40,11 +40,12 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 public class RCS extends RepoSuiteToolchain {
 	
 	private final RepoSuiteThreadPool threadPool;
-	private final RepositoryArguments repoSettings;
-	private final LoggerArguments     logSettings;
-	private final DatabaseArguments   databaseSettings;
+	private RepositoryArguments       repoSettings;
+	private LoggerArguments           logSettings;
+	private DatabaseArguments         databaseSettings;
 	private boolean                   shutdown;
 	private PersistenceUtil           persistenceUtil;
+	private Repository                repository;
 	
 	public RCS() {
 		super(new RepositorySettings());
@@ -54,13 +55,20 @@ public class RCS extends RepoSuiteToolchain {
 		databaseSettings = settings.setDatabaseArgs(false, "rcs");
 		logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
+				false);
 		new LongArgument(settings, "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		                    false);
+				false);
 		
 		settings.parseArguments();
+	}
+	
+	public RCS(final Repository repository, final PersistenceUtil persistenceUtil) {
+		super(new RepositorySettings());
+		threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
+		this.persistenceUtil = persistenceUtil;
+		this.repository = repository;
 	}
 	
 	/*
@@ -91,26 +99,29 @@ public class RCS extends RepoSuiteToolchain {
 		
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
-		if (databaseSettings.getValue() != null) {
-			try {
-				persistenceUtil = PersistenceManager.getUtil();
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (Logger.logError()) {
-					Logger.error("Database connection could not be established.", e);
+		if (persistenceUtil == null) {
+			if (databaseSettings.getValue() != null) {
+				try {
+					persistenceUtil = PersistenceManager.getUtil();
+				} catch (Exception e) {
+					e.printStackTrace();
+					if (Logger.logError()) {
+						Logger.error("Database connection could not be established.", e);
+					}
+					shutdown();
 				}
+			} else {
+				if (Logger.logError()) {
+					Logger.error("Missing database settings.");
+				}
+				
 				shutdown();
 			}
-		} else {
-			if (Logger.logError()) {
-				Logger.error("Missing database settings.");
-			}
-			
-			shutdown();
 		}
 		
-		Repository repository = repoSettings.getValue();
-		
+		if (repository == null) {
+			repository = repoSettings.getValue();
+		}
 		// i din't think we can resume repository mining at all.
 		// if (this.persistenceUtil != null) {
 		// String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
@@ -194,7 +205,7 @@ public class RCS extends RepoSuiteToolchain {
 		
 		if (persistenceUtil != null) {
 			new RepositoryPersister(threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                        persistenceUtil);
+					persistenceUtil);
 		} else {
 			new RepositoryVoidSink(threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}
