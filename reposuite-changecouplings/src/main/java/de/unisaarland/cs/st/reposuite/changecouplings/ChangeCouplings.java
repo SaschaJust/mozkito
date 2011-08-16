@@ -123,7 +123,7 @@ public class ChangeCouplings {
 		}
 		
 		minSupport = minSupportArg.getValue();
-		if (minConf < 1) {
+		if (minSupport < 1) {
 			throw new UnrecoverableError("The minimal support value must be larger or equal than one.");
 		}
 		
