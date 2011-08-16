@@ -24,14 +24,15 @@ import java.util.Set;
 import javax.persistence.Id;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
-	private final Set<RCSFile> premise;
-	private final RCSFile      implication;
+	private Set<RCSFile>  premise;
+	private RCSFile       implication;
 	private final Integer      support;
 	private final Double       confidence;
 	
@@ -53,7 +54,14 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 			this.premise.add(rcsFile);
 		}
 		
-		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);;
+		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);
+		
+		Criteria<RCSFile> criteria = persistenceUtil.createCriteria(RCSFile.class)
+				.eq("generatedId", (long) implication);
+		List<RCSFile> load = persistenceUtil.load(criteria);
+		rcsFile = load.get(0);
+		
+		
 		if (rcsFile == null) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
 		}
@@ -105,13 +113,14 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		return support;
 	}
 	
-	public SerialFileChangeCoupling serialize(final RCSTransaction transaction){
+	public SerialFileChangeCoupling serialize(RCSTransaction transaction) {
+		Set<RCSTransaction> parents = transaction.getParents();
 		List<String> premise = new LinkedList<String>();
 		for (RCSFile file : getPremise()) {
 			premise.add(file.getPath(transaction));
 		}
 		return new SerialFileChangeCoupling(premise, getImplication().getPath(transaction), getSupport(),
-		        getConfidence());
+				getConfidence());
 	}
 	
 	@Override

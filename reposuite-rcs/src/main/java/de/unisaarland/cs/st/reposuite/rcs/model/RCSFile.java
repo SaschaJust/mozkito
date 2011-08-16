@@ -148,7 +148,7 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return
 	 */
 	@Transient
-	public String getPath(final RCSTransaction transaction) {
+	public String getPath(RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		
 		while ((current != null) && !getChangedNames().containsKey(current.getId())) {

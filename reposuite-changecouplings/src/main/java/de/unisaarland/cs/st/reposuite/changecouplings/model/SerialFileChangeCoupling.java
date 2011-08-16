@@ -16,7 +16,7 @@ public class SerialFileChangeCoupling implements Serializable {
 	private final Integer           support;
 	private final Double            confidence;
 	
-	protected SerialFileChangeCoupling(final List<String> premise, final String implication,
+	protected SerialFileChangeCoupling(List<String> premise, final String implication,
 			final Integer support, final Double confidence) {
 		this.getPremise().addAll(premise);
 		this.implication = new String(implication);
