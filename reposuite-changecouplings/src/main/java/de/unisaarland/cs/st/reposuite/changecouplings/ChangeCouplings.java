@@ -58,7 +58,7 @@ public class ChangeCouplings {
 	public ChangeCouplings() {
 		RepositorySettings settings = new RepositorySettings();
 		
-		databaseArgs = settings.setDatabaseArgs(true, "ppa");
+		databaseArgs = settings.setDatabaseArgs(true, "untangling");
 		
 		levelArgument = new EnumArgument(settings, "changecouplings.level",
 				"The level to compute change couplings on.", "FILE", true, new String[] { "FILE", "METHOD" });
