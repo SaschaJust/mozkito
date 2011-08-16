@@ -18,8 +18,8 @@
  */
 package changecouplings;
 
-import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplings;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -34,6 +34,7 @@ public class Main {
 		try {
 			ChangeCouplings changeCouplings = new ChangeCouplings();
 			changeCouplings.setName(changeCouplings.getClass().getSimpleName());
+			changeCouplings.setup();
 			changeCouplings.start();
 			changeCouplings.join();
 			if (Logger.logInfo()) {
