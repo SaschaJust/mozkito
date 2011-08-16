@@ -37,14 +37,13 @@ import de.unisaarland.cs.st.reposuite.settings.LongArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
 
 /**
  * The Class ChangeCouplings.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ChangeCouplings extends RepoSuiteToolchain {
+public class ChangeCouplings {
 	
 	private final DatabaseArguments databaseArgs;
 	private final EnumArgument      levelArgument;
@@ -57,8 +56,7 @@ public class ChangeCouplings extends RepoSuiteToolchain {
 	private final OutputFileArgument outputFileArgument;
 	
 	public ChangeCouplings() {
-		super(new RepositorySettings());
-		RepositorySettings settings = (RepositorySettings) super.getSettings();
+		RepositorySettings settings = new RepositorySettings();
 		
 		databaseArgs = settings.setDatabaseArgs(true, "rcs");
 		
@@ -81,7 +79,6 @@ public class ChangeCouplings extends RepoSuiteToolchain {
 		settings.parseArguments();
 	}
 	
-	@Override
 	public void run(){
 		RCSTransaction transaction = persistenceUtil.loadById(transactionArg.getValue(), RCSTransaction.class);
 		
@@ -114,7 +111,6 @@ public class ChangeCouplings extends RepoSuiteToolchain {
 		}
 	}
 	
-	@Override
 	public void setup() {
 		
 		if (!databaseArgs.getValue()) {
@@ -139,8 +135,4 @@ public class ChangeCouplings extends RepoSuiteToolchain {
 		
 	}
 	
-	@Override
-	public void shutdown() {
-		
-	}
 }
