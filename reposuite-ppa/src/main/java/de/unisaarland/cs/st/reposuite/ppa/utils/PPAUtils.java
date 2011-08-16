@@ -164,13 +164,15 @@ public class PPAUtils {
 	 *         delete operation.
 	 */
 	@NoneNull
-	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil, final JavaChangeOperation op) {
+	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil,
+			final Repository repository, final JavaChangeOperation op) {
+		//FIXME it's better to use annotate
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
 		
 		if ((!(element instanceof JavaMethodCall)) || (!op.getChangeType().equals(ChangeType.Deleted))) {
-			if (Logger.logError()) {
-				Logger.error("Cannot find previous JMethodCall operation based on a non method call delete operation!");
+			if (Logger.logDebug()) {
+				Logger.debug("Cannot find previous JMethodCall operation based on a non method call delete operation!");
 			}
 			return null;
 		}
@@ -252,7 +254,9 @@ public class PPAUtils {
 	 *         operation exists, returns <code>null</code>.
 	 */
 	@NoneNull
-	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil, final JavaChangeOperation op) {
+	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil,
+	        final Repository repository, final JavaChangeOperation op) {
+		//FIXME it's better to use annotate
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
 		JavaElement searchElement = element;

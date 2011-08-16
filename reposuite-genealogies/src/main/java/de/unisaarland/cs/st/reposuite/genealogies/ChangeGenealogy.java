@@ -173,8 +173,16 @@ public class ChangeGenealogy {
 		GenealogyVertex dependantVertex = this.addVertex(dependant);
 		GenealogyVertex targetVertex = this.addVertex(target);
 		
-		dependantVertex.addDepencyTo(targetVertex, edgeType);
+		return this.addEdge(dependantVertex, targetVertex, edgeType);
+	}
+	
+	public boolean addEdge(@NotEmpty final GenealogyVertex dependantVertex,
+			@NotEmpty final GenealogyVertex targetVertex, final GenealogyEdgeType edgeType) {
 		
+		if ((!this.containsVertex(dependantVertex)) || (!this.containsVertex(targetVertex))) {
+			return false;
+		}
+		dependantVertex.addDepencyTo(targetVertex, edgeType);
 		return true;
 	}
 	
@@ -245,6 +253,12 @@ public class ChangeGenealogy {
 	 */
 	protected void close() {
 		this.graph.shutdown();
+	}
+	
+	public boolean containsVertex(final GenealogyVertex vertex){
+		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
+				.get(GenealogyVertex.transaction_id, vertex.getTransactionId());
+		return hits.hasNext();
 	}
 	
 	/**
@@ -337,5 +351,17 @@ public class ChangeGenealogy {
 		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
 				.query(GenealogyVertex.transaction_id, "*");
 		return new DefaultGenealogyVertexIterator(indexHits);
+	}
+	
+	/**
+	 * Number of vertices. In most scenarios this number is exact. In some
+	 * scenarios this number will be close to accurate.
+	 * 
+	 * @return the #vertices
+	 */
+	public int vertexSize() {
+		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
+				.query(GenealogyVertex.transaction_id, "*");
+		return indexHits.size();
 	}
 }
