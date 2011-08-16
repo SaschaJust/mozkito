@@ -21,13 +21,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -61,6 +59,7 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
@@ -76,6 +75,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition_;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
+import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -166,7 +166,7 @@ public class PPAUtils {
 	@NoneNull
 	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil,
 			final Repository repository, final JavaChangeOperation op) {
-		//FIXME it's better to use annotate
+		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
 		
@@ -177,67 +177,108 @@ public class PPAUtils {
 			return null;
 		}
 		
-		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
-		CriteriaBuilder cb = criteria.getBuilder();
-		Root<JavaElementLocation> root = criteria.getRoot();
-		Predicate eq = cb.equal(root.get("element"), element);
-		Predicate eq1 = cb.equal(root.get("filePath"), location.getFilePath());
+		List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(), op.getRevision()
+				.getTransaction().getId());
 		
-		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
-		criteria.getQuery().where(cb.and(cb.and(eq, eq1), lt));
-		criteria.getQuery().orderBy(cb.asc(root.get("id")));
-		List<JavaElementLocation> hits = persistenceUtil.load(criteria);
-		
-		if (hits.isEmpty()) {
+		//get annotation for line: INDEX vs LineNumber
+		if (annotation.size() <= (location.getStartLine() - 1)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+			}
 			return null;
 		}
 		
-		//should be in same method
-		//get the javaelement location of surrounding method definition
-		String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
-				+ location.getFilePath()
-				+ "' AND startline <= "
-				+ location.getStartLine()
-				+ " and endline >= "
-				+ location.getStartLine()
-				+ " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
-				+ location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
-		Query defIdQuery = persistenceUtil.createNativeQuery(defIdQueryStr, JavaElementLocation.class);
-		@SuppressWarnings("unchecked") List<JavaElementLocation> methodDefHits = defIdQuery.getResultList();
+		AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
+		String lastTId = annoEntry.getRevision();
+		if (lastTId == null) {
+			if (Logger.logError()) {
+				Logger.error("Found annotation entry with NULL revision! Should not happen!");
+			}
+			return null;
+		}
+		RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
+		String alternativePath = annoEntry.getAlternativeFilePath();
+		String changedPath = location.getFilePath();
+		if (alternativePath != null) {
+			changedPath = alternativePath;
+		}
 		
-		if (!methodDefHits.isEmpty()) {
-			List<JavaElementLocation> strongCandidates = new LinkedList<JavaElementLocation>();
-			JavaElementLocation methodDefinition = methodDefHits.get(0);
-			//check whcih hit is in the same method
-			for (JavaElementLocation tmpLoc : hits) {
-				if (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals(LineCover.FALSE)) {
-					strongCandidates.add(tmpLoc);
+		int distance = Integer.MAX_VALUE;
+		JavaChangeOperation previousOperation = null;
+		List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+				lastChangeTransaction);
+		for (JavaChangeOperation previousOp : previousOperations) {
+			//search for the previous operation that matches filePath and line number
+			if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
+					&& (previousOp.getChangedElementLocation().getElement().equals(element))) {
+				if (previousOperation == null) {
+					previousOperation = previousOp;
+				} else if (distance > Math.abs(previousOp.getChangedElementLocation().getStartLine()
+						- location.getStartLine())) {
+					previousOperation = previousOp;
 				}
 			}
-			hits = strongCandidates;
 		}
 		
-		//now search for the closest call
-		int minDistance = Integer.MAX_VALUE;
-		JavaElementLocation bestHit = null;
-		for (JavaElementLocation loc : hits) {
-			int distance = Math.abs(loc.getStartLine() - location.getStartLine());
-			if (distance < minDistance) {
-				minDistance = distance;
-				bestHit = loc;
-			}
-		}
+		return previousOperation;
 		
-		if (bestHit == null) {
-			return null;
-		}
+		//it's better to use annotate
 		
-		//get the corresponding javachangeoperation
-		
-		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-		operationCriteria.eq("changedElementLocation : JavaElementLocation", bestHit);
-		List<JavaChangeOperation> result = persistenceUtil.load(operationCriteria, 1);
-		return result.get(0);
+		/*
+		 * Criteria<JavaElementLocation> criteria =
+		 * persistenceUtil.createCriteria(JavaElementLocation.class);
+		 * CriteriaBuilder cb = criteria.getBuilder(); Root<JavaElementLocation>
+		 * root = criteria.getRoot(); Predicate eq =
+		 * cb.equal(root.get("element"), element); Predicate eq1 =
+		 * cb.equal(root.get("filePath"), location.getFilePath());
+		 * 
+		 * Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id),
+		 * location.getId()); criteria.getQuery().where(cb.and(cb.and(eq, eq1),
+		 * lt)); criteria.getQuery().orderBy(cb.asc(root.get("id")));
+		 * List<JavaElementLocation> hits = persistenceUtil.load(criteria);
+		 * 
+		 * if (hits.isEmpty()) { return null; }
+		 * 
+		 * //should be in same method //get the javaelement location of
+		 * surrounding method definition String defIdQueryStr =
+		 * "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
+		 * + location.getFilePath() + "' AND startline <= " +
+		 * location.getStartLine() + " and endline >= " +
+		 * location.getStartLine() +
+		 * " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
+		 * + location.getId() + " OR transaction_id = '" +
+		 * op.getRevision().getTransaction().getId() + "'))"; Query defIdQuery =
+		 * persistenceUtil.createNativeQuery(defIdQueryStr,
+		 * JavaElementLocation.class);
+		 * 
+		 * @SuppressWarnings("unchecked") List<JavaElementLocation>
+		 * methodDefHits = defIdQuery.getResultList();
+		 * 
+		 * if (!methodDefHits.isEmpty()) { List<JavaElementLocation>
+		 * strongCandidates = new LinkedList<JavaElementLocation>();
+		 * JavaElementLocation methodDefinition = methodDefHits.get(0); //check
+		 * whcih hit is in the same method for (JavaElementLocation tmpLoc :
+		 * hits) { if
+		 * (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals
+		 * (LineCover.FALSE)) { strongCandidates.add(tmpLoc); } } hits =
+		 * strongCandidates; }
+		 * 
+		 * //now search for the closest call int minDistance =
+		 * Integer.MAX_VALUE; JavaElementLocation bestHit = null; for
+		 * (JavaElementLocation loc : hits) { int distance =
+		 * Math.abs(loc.getStartLine() - location.getStartLine()); if (distance
+		 * < minDistance) { minDistance = distance; bestHit = loc; } }
+		 * 
+		 * if (bestHit == null) { return null; }
+		 * 
+		 * //get the corresponding javachangeoperation
+		 * 
+		 * Criteria<JavaChangeOperation> operationCriteria =
+		 * persistenceUtil.createCriteria(JavaChangeOperation.class);
+		 * operationCriteria.eq("changedElementLocation : JavaElementLocation",
+		 * bestHit); List<JavaChangeOperation> result =
+		 * persistenceUtil.load(operationCriteria, 1); return result.get(0);
+		 */
 	}
 	
 	/**
@@ -255,8 +296,8 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil,
-	        final Repository repository, final JavaChangeOperation op) {
-		//FIXME it's better to use annotate
+			final Repository repository, final JavaChangeOperation op) {
+		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
 		JavaElement searchElement = element;
@@ -283,31 +324,72 @@ public class PPAUtils {
 				searchElement = defHits.get(0);
 				break;
 			}
-		}
-		
-		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
-		CriteriaBuilder cb = criteria.getBuilder();
-		Root<JavaElementLocation> root = criteria.getRoot();
-		Predicate eq = cb.equal(root.get("element"), searchElement);
-		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
-		criteria.getQuery().where(cb.and(eq, lt));
-		criteria.getQuery().orderBy(cb.asc(root.get("id")));
-		
-		List<JavaElementLocation> hits = persistenceUtil.load(criteria,1);
-		if (hits.isEmpty()) {
+			Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+			CriteriaBuilder cb = criteria.getBuilder();
+			Root<JavaElementLocation> root = criteria.getRoot();
+			Predicate eq = cb.equal(root.get("element"), searchElement);
+			Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
+			criteria.getQuery().where(cb.and(eq, lt));
+			criteria.getQuery().orderBy(cb.asc(root.get("id")));
+			
+			List<JavaElementLocation> hits = persistenceUtil.load(criteria, 1);
+			if (hits.isEmpty()) {
+				return null;
+			}
+			
+			JavaElementLocation hitLocation = hits.get(0);
+			
+			//search for corresponding JavaChangeOperation
+			Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+			operationCriteria.eq("changedElementLocation : JavaElementLocation", hitLocation);
+			List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
+			if (operationHits.isEmpty()) {
+				return null;
+			}
+			return operationHits.get(0);
+		} else {
+			//if its a definition we can use annotate
+			List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(), op.getRevision()
+			        .getTransaction().getId());
+			
+			//get annotation for line: INDEX vs LineNumber
+			if (annotation.size() <= (location.getStartLine() - 1)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+				}
+				return null;
+			}
+			
+			AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
+			String lastTId = annoEntry.getRevision();
+			if (lastTId == null) {
+				if (Logger.logError()) {
+					Logger.error("Found annotation entry with NULL revision! Should not happen!");
+				}
+				return null;
+			}
+			RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
+			String alternativePath = annoEntry.getAlternativeFilePath();
+			String changedPath = location.getFilePath();
+			if (alternativePath != null) {
+				changedPath = alternativePath;
+			}
+			
+			List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+					lastChangeTransaction);
+			for (JavaChangeOperation previousOp : previousOperations) {
+				//search for the previous operation that matches filePath and line number
+				if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
+				        && (previousOp.getChangedElementLocation().getElement().getShortName().equals(element
+				                .getShortName()))) {
+					return previousOp;
+				}
+			}
+			//not found
 			return null;
 		}
 		
-		JavaElementLocation hitLocation = hits.get(0);
 		
-		//search for corresponding JavaChangeOperation
-		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-		operationCriteria.eq("changedElementLocation : JavaElementLocation", hitLocation);
-		List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
-		if (operationHits.isEmpty()) {
-			return null;
-		}
-		return operationHits.get(0);
 	}
 	
 	/**
