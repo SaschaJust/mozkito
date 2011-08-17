@@ -71,7 +71,7 @@ CREATE OR REPLACE FUNCTION reposuite_file_changecouplings(tid character varying(
 	  insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES(ARRAY[$1], $2,$3,$4)",["integer","integer","integer","float"])
 	  plpy.execute(insertq,[q_row['premise'],q_row['implication'],support,confidence])
 	
-	if (len(premises) < 11):
+      if (len(premises) < 11):
         multies = cc_subsets(premises)
         plpy.notice("implications:"+str(implications))
         plpy.notice("multies:"+str(multies))
