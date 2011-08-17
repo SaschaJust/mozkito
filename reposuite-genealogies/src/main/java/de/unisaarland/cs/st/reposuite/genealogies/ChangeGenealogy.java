@@ -2,8 +2,10 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -12,6 +14,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -29,15 +33,42 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 public class ChangeGenealogy {
 	
 	/** The genealogies. */
-	private static Set<ChangeGenealogy> genealogies = new HashSet<ChangeGenealogy>();
+	private static Map<ChangeGenealogy, File> genealogies = new HashMap<ChangeGenealogy, File>();
+	
+	/**
+	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB
+	 * directory. If there exists a graph DB within the dbFile directory, the
+	 * ChangeGenealogy will load the ChangeGenealogy from this directory.
+	 * Otherwise it will create a new one.
+	 * 
+	 * @param dbFile
+	 *            the db file
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the change genealogy stored within5 the graph DB directory, if
+	 *         possible. Otherwise, creates a new ChangeGenealogy using graph DB
+	 *         within specified directory.
+	 */
+	@NoneNull
+	public static ChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
+		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
+		ChangeGenealogy genealogy = new ChangeGenealogy(graph);
+		genealogy.setPersistenceUtil(persistenceUtil);
+		genealogies.put(genealogy, dbFile);
+		return genealogy;
+	}
+	
+	private Map<Node, GenealogyVertex>        nodes2Vertices = new HashMap<Node, GenealogyVertex>();
 	
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			
 			@Override
 			public void run() {
-				for (ChangeGenealogy genealogy : genealogies) {
-					genealogy.close();
+				for (ChangeGenealogy genealogy : genealogies.keySet()) {
+					if (genealogies.get(genealogy).exists()) {
+						genealogy.close();
+					}
 				}
 			}
 		});
@@ -63,53 +94,6 @@ public class ChangeGenealogy {
 		return new GraphDBChangeOperation(hit);
 	}
 	
-	/**
-	 * Gets the vertex.
-	 * 
-	 * @param graph
-	 *            the graph
-	 * @param transactionId
-	 *            the transaction id
-	 * @param javaChangeOperationIds
-	 *            the java change operation ids
-	 * @return the vertex
-	 */
-	protected static GenealogyVertex getVertex(final GraphDatabaseService graph, final String transactionId,
-			final Collection<Long> javaChangeOperationIds) {
-		
-		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
-				.get(GenealogyVertex.transaction_id, transactionId);
-		for (Node hit : hits) {
-			GenealogyVertex vertex = new GenealogyVertex(hit);
-			if (vertex.getChangeOperationIds().containsAll(javaChangeOperationIds)) {
-				return vertex;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB
-	 * directory. If there exists a graph DB within the dbFile directory, the
-	 * ChangeGenealogy will load the ChangeGenealogy from this directory.
-	 * Otherwise it will create a new one.
-	 * 
-	 * @param dbFile
-	 *            the db file
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @return the change genealogy stored within5 the graph DB directory, if
-	 *         possible. Otherwise, creates a new ChangeGenealogy using graph DB
-	 *         within specified directory.
-	 */
-	@NoneNull
-	public static ChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
-		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
-		ChangeGenealogy genealogy = new ChangeGenealogy(graph);
-		genealogy.setPersistenceUtil(persistenceUtil);
-		genealogies.add(genealogy);
-		return genealogy;
-	}
 	
 	/** The graph. */
 	private final GraphDatabaseService graph;
@@ -198,7 +182,6 @@ public class ChangeGenealogy {
 	 */
 	@NoneNull
 	public GenealogyVertex addVertex(@NotEmpty final Collection<JavaChangeOperation> operations) {
-		
 		String transactionId = null;
 		Set<Long> operationIds = new HashSet<Long>();
 		for (JavaChangeOperation op : operations) {
@@ -229,8 +212,14 @@ public class ChangeGenealogy {
 		if (existingVertex != null) {
 			return existingVertex;
 		}
+		Transaction tx = this.graph.beginTx();
 		
-		GenealogyVertex vertex = GenealogyVertex.create(this.graph, transaction_id);
+		Node node = graph.createNode();
+		node.setProperty(GenealogyVertex.transaction_id, transaction_id);
+		Index<Node> index = graph.index().forNodes(GenealogyVertex.transaction_id);
+		index.add(node, GenealogyVertex.transaction_id, node.getProperty(GenealogyVertex.transaction_id));
+		
+		GenealogyVertex vertex = this.getVertexForNode(node);
 		
 		//generate the vertices referencing the java change operations
 		for (Long oId : operation_ids) {
@@ -242,7 +231,8 @@ public class ChangeGenealogy {
 			}
 			vertex.addChangeOperation(genOpVertex);
 		}
-		
+		tx.success();
+		tx.finish();
 		return vertex;
 	}
 	
@@ -288,10 +278,9 @@ public class ChangeGenealogy {
 	 */
 	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v) {
 		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
-		Collection<GraphDBChangeOperation> operationIds = v.getChangeOperationIds();
-		for (GraphDBChangeOperation dbOp : operationIds) {
-			Long javaOpId = dbOp.getJavaChangeOperationId();
-			result.add(persistenceUtil.loadById(javaOpId, JavaChangeOperation.class));
+		Collection<Long> javaOperationIds = v.getJavaChangeOperationIds();
+		for (Long id : javaOperationIds) {
+			result.add(persistenceUtil.loadById(id, JavaChangeOperation.class));
 		}
 		return result;
 	}
@@ -329,7 +318,23 @@ public class ChangeGenealogy {
 	 * @return the vertex if found. Returns <code>Null</code> otherwise.
 	 */
 	public GenealogyVertex getVertex(final String transactionId, final Collection<Long> javaChangeOperationIds) {
-		return getVertex(graph, transactionId, javaChangeOperationIds);
+		
+		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
+				.get(GenealogyVertex.transaction_id, transactionId);
+		for (Node hit : hits) {
+			GenealogyVertex vertex = this.getVertexForNode(hit);
+			if (vertex.getJavaChangeOperationIds().containsAll(javaChangeOperationIds)) {
+				return vertex;
+			}
+		}
+		return null;
+	}
+	
+	protected GenealogyVertex getVertexForNode(Node node) {
+		if(!nodes2Vertices.containsKey(node)){
+			nodes2Vertices.put(node, new GenealogyVertex(this, node));
+		}
+		return nodes2Vertices.get(node);
 	}
 	
 	/**
@@ -350,7 +355,7 @@ public class ChangeGenealogy {
 	public GenealogyVertexIterator vertexSet() {
 		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
 				.query(GenealogyVertex.transaction_id, "*");
-		return new DefaultGenealogyVertexIterator(indexHits);
+		return new DefaultGenealogyVertexIterator(indexHits, this);
 	}
 	
 	/**

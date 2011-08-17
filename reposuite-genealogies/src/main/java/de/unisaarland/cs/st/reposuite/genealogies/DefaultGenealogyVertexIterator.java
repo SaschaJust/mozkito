@@ -10,9 +10,11 @@ import org.neo4j.graphdb.index.IndexHits;
 public class DefaultGenealogyVertexIterator implements GenealogyVertexIterator {
 	
 	private final IndexHits<Node> hits;
+	private ChangeGenealogy       changeGenealogy;
 	
-	public DefaultGenealogyVertexIterator(final IndexHits<Node> hits) {
+	public DefaultGenealogyVertexIterator(final IndexHits<Node> hits, ChangeGenealogy changeGenealogy) {
 		this.hits = hits;
+		this.changeGenealogy = changeGenealogy;
 	}
 	
 	@Override
@@ -40,7 +42,7 @@ public class DefaultGenealogyVertexIterator implements GenealogyVertexIterator {
 			return null;
 		}
 		Node node = this.hits.next();
-		return new GenealogyVertex(node);
+		return changeGenealogy.getVertexForNode(node);
 	}
 	
 	@Override

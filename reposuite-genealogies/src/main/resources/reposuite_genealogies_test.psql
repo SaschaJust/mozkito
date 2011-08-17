@@ -1,0 +1,1216 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = off;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET escape_string_warning = off;
+
+SET search_path = public, pg_catalog;
+
+DROP INDEX public.idx_transactionid;
+DROP INDEX public.idx_timestamp;
+DROP INDEX public.idx_personid;
+DROP INDEX public.idx_name;
+DROP INDEX public.idx_id;
+DROP INDEX public.idx_elemlocid;
+DROP INDEX public.idx_branchid;
+DROP INDEX public.i_rcstvsn_rcstransaction_id;
+DROP INDEX public.i_rcstvsn_element;
+DROP INDEX public.i_rcsttgs_rcstransaction_id;
+DROP INDEX public.i_rcstnts_parentsid;
+DROP INDEX public.i_rcstnts_element;
+DROP INDEX public.i_rcstdrn_element;
+DROP INDEX public.i_rcstdrn_childrenid;
+DROP INDEX public.i_rcstctn_persons;
+DROP INDEX public.i_rcstctn_branch;
+DROP INDEX public.i_rcsrvsn_transaction;
+DROP INDEX public.i_rcsrvsn_changedfile;
+DROP INDEX public.i_rcsbnch_parent;
+DROP INDEX public.i_rcsbnch_end;
+DROP INDEX public.i_rcsbnch_begin;
+DROP INDEX public.i_prsnsss_person_id;
+DROP INDEX public.i_prsnnms_person_id1;
+DROP INDEX public.i_prsnnms_person_id;
+DROP INDEX public.i_prsn_mp_value;
+DROP INDEX public.i_prsn_mp_personcontainer_id;
+DROP INDEX public.i_jvmtntr_javamethoddefinition_generatedid;
+DROP INDEX public.i_jvmtntr_javamethodcall_generatedid;
+DROP INDEX public.i_jvlmlns_javaelementlocation_id;
+DROP INDEX public.i_jvlment_dtype;
+DROP INDEX public.i_jvlmctn_element;
+DROP INDEX public.i_jvclntn_parent;
+DROP INDEX public.i_jvchrtn_revision;
+DROP INDEX public.i_jvchrtn_changedelementlocation;
+DROP INDEX public.i_filnmes_fileid;
+ALTER TABLE ONLY public.rcsrevision DROP CONSTRAINT u_rcsrvsn_transaction_id;
+ALTER TABLE ONLY public.javaelement DROP CONSTRAINT u_jvlment_elementtype;
+ALTER TABLE ONLY public.rcstransaction DROP CONSTRAINT rcstransaction_pkey;
+ALTER TABLE ONLY public.rcsrevision DROP CONSTRAINT rcsrevision_pkey;
+ALTER TABLE ONLY public.rcsfile DROP CONSTRAINT rcsfile_pkey;
+ALTER TABLE ONLY public.rcsbranch DROP CONSTRAINT rcsbranch_pkey;
+ALTER TABLE ONLY public.personcontainer DROP CONSTRAINT personcontainer_pkey;
+ALTER TABLE ONLY public.person DROP CONSTRAINT person_pkey;
+ALTER TABLE ONLY public.openjpa_sequence_table DROP CONSTRAINT openjpa_sequence_table_pkey;
+ALTER TABLE ONLY public.javamethoddefinition DROP CONSTRAINT javamethoddefinition_pkey;
+ALTER TABLE ONLY public.javamethodcall DROP CONSTRAINT javamethodcall_pkey;
+ALTER TABLE ONLY public.javaelementlocation DROP CONSTRAINT javaelementlocation_pkey;
+ALTER TABLE ONLY public.javaelement DROP CONSTRAINT javaelement_pkey;
+ALTER TABLE ONLY public.javaclassdefinition DROP CONSTRAINT javaclassdefinition_pkey;
+ALTER TABLE ONLY public.javachangeoperation DROP CONSTRAINT javachangeoperation_pkey;
+DROP TABLE public.rcstransaction_tags;
+DROP TABLE public.rcstransaction_rcsrevision;
+DROP TABLE public.rcstransaction_parents;
+DROP TABLE public.rcstransaction_children;
+DROP TABLE public.rcstransaction;
+DROP TABLE public.rcsrevision;
+DROP TABLE public.rcsfile;
+DROP TABLE public.rcsbranch;
+DROP TABLE public.personcontainer_map;
+DROP TABLE public.personcontainer;
+DROP TABLE public.person_usernames;
+DROP TABLE public.person_fullnames;
+DROP TABLE public.person_emailaddresses;
+DROP TABLE public.person;
+DROP TABLE public.openjpa_sequence_table;
+DROP TABLE public.javamethoddefinition_signature;
+DROP TABLE public.javamethoddefinition;
+DROP TABLE public.javamethodcall_signature;
+DROP TABLE public.javamethodcall;
+DROP TABLE public.javaelementlocation_commentlines;
+DROP TABLE public.javaelementlocation;
+DROP TABLE public.javaelement;
+DROP TABLE public.javaclassdefinition;
+DROP TABLE public.javachangeoperation;
+DROP TABLE public.filenames;
+DROP PROCEDURAL LANGUAGE plpython2u;
+DROP PROCEDURAL LANGUAGE plpgsql;
+--
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: miner
+--
+
+CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
+
+
+ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO miner;
+
+--
+-- Name: plpython2u; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: miner
+--
+
+CREATE OR REPLACE PROCEDURAL LANGUAGE plpython2u;
+
+
+ALTER PROCEDURAL LANGUAGE plpython2u OWNER TO miner;
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: filenames; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE filenames (
+    fileid bigint NOT NULL,
+    key0 character varying(255),
+    value character varying(255)
+);
+
+
+ALTER TABLE public.filenames OWNER TO miner;
+
+--
+-- Name: javachangeoperation; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javachangeoperation (
+    id bigint NOT NULL,
+    changetype smallint,
+    essential boolean DEFAULT true,
+    changedelementlocation_id bigint,
+    revision_revisionid bigint
+);
+
+
+ALTER TABLE public.javachangeoperation OWNER TO miner;
+
+--
+-- Name: javaclassdefinition; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javaclassdefinition (
+    generatedid bigint NOT NULL,
+    anonymclass boolean,
+    superclassname character varying(255),
+    parent_generatedid bigint
+);
+
+
+ALTER TABLE public.javaclassdefinition OWNER TO miner;
+
+--
+-- Name: javaelement; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javaelement (
+    generatedid bigint NOT NULL,
+    elementtype character varying(255),
+    fullqualifiedname text,
+    type character varying(31)
+);
+
+
+ALTER TABLE public.javaelement OWNER TO miner;
+
+--
+-- Name: javaelementlocation; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javaelementlocation (
+    id bigint NOT NULL,
+    bodystartline integer,
+    endline integer,
+    filepath character varying(255),
+    "position" integer,
+    startline integer,
+    element_generatedid bigint
+);
+
+
+ALTER TABLE public.javaelementlocation OWNER TO miner;
+
+--
+-- Name: javaelementlocation_commentlines; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javaelementlocation_commentlines (
+    javaelementlocation_id bigint,
+    element integer
+);
+
+
+ALTER TABLE public.javaelementlocation_commentlines OWNER TO miner;
+
+--
+-- Name: javamethodcall; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javamethodcall (
+    generatedid bigint NOT NULL,
+    calledpackagename character varying(255)
+);
+
+
+ALTER TABLE public.javamethodcall OWNER TO miner;
+
+--
+-- Name: javamethodcall_signature; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javamethodcall_signature (
+    javamethodcall_generatedid bigint,
+    element character varying(255)
+);
+
+
+ALTER TABLE public.javamethodcall_signature OWNER TO miner;
+
+--
+-- Name: javamethoddefinition; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javamethoddefinition (
+    generatedid bigint NOT NULL
+);
+
+
+ALTER TABLE public.javamethoddefinition OWNER TO miner;
+
+--
+-- Name: javamethoddefinition_signature; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE javamethoddefinition_signature (
+    javamethoddefinition_generatedid bigint,
+    element character varying(255)
+);
+
+
+ALTER TABLE public.javamethoddefinition_signature OWNER TO miner;
+
+--
+-- Name: openjpa_sequence_table; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE openjpa_sequence_table (
+    id smallint NOT NULL,
+    sequence_value bigint
+);
+
+
+ALTER TABLE public.openjpa_sequence_table OWNER TO miner;
+
+--
+-- Name: person; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE person (
+    id bigint NOT NULL
+);
+
+
+ALTER TABLE public.person OWNER TO miner;
+
+--
+-- Name: person_emailaddresses; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE person_emailaddresses (
+    person_id bigint,
+    element character varying(255)
+);
+
+
+ALTER TABLE public.person_emailaddresses OWNER TO miner;
+
+--
+-- Name: person_fullnames; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE person_fullnames (
+    person_id bigint,
+    element character varying(255)
+);
+
+
+ALTER TABLE public.person_fullnames OWNER TO miner;
+
+--
+-- Name: person_usernames; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE person_usernames (
+    person_id bigint,
+    element character varying(255)
+);
+
+
+ALTER TABLE public.person_usernames OWNER TO miner;
+
+--
+-- Name: personcontainer; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE personcontainer (
+    id bigint NOT NULL
+);
+
+
+ALTER TABLE public.personcontainer OWNER TO miner;
+
+--
+-- Name: personcontainer_map; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE personcontainer_map (
+    personcontainer_id bigint,
+    value_id bigint,
+    key0 character varying(255)
+);
+
+
+ALTER TABLE public.personcontainer_map OWNER TO miner;
+
+--
+-- Name: rcsbranch; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcsbranch (
+    id bigint NOT NULL,
+    mergedin character varying(255),
+    name character varying(255),
+    begin_id character varying(255),
+    end_id character varying(255),
+    parent_id bigint
+);
+
+
+ALTER TABLE public.rcsbranch OWNER TO miner;
+
+--
+-- Name: rcsfile; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcsfile (
+    id bigint NOT NULL
+);
+
+
+ALTER TABLE public.rcsfile OWNER TO miner;
+
+--
+-- Name: rcsrevision; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcsrevision (
+    revisionid bigint NOT NULL,
+    changetype smallint,
+    changedfile_id bigint NOT NULL,
+    transaction_id character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.rcsrevision OWNER TO miner;
+
+--
+-- Name: rcstransaction; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcstransaction (
+    id character varying(255) NOT NULL,
+    atomic boolean DEFAULT false,
+    "timestamp" timestamp without time zone,
+    message text,
+    originalid character varying(255),
+    branch_id bigint NOT NULL,
+    persons_id bigint
+);
+
+
+ALTER TABLE public.rcstransaction OWNER TO miner;
+
+--
+-- Name: rcstransaction_children; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcstransaction_children (
+    childrenid character varying(255),
+    children_id character varying(255)
+);
+
+
+ALTER TABLE public.rcstransaction_children OWNER TO miner;
+
+--
+-- Name: rcstransaction_parents; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcstransaction_parents (
+    parentsid character varying(255),
+    parents_id character varying(255)
+);
+
+
+ALTER TABLE public.rcstransaction_parents OWNER TO miner;
+
+--
+-- Name: rcstransaction_rcsrevision; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcstransaction_rcsrevision (
+    rcstransaction_id character varying(255),
+    revisions_revisionid bigint
+);
+
+
+ALTER TABLE public.rcstransaction_rcsrevision OWNER TO miner;
+
+--
+-- Name: rcstransaction_tags; Type: TABLE; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE TABLE rcstransaction_tags (
+    rcstransaction_id character varying(255),
+    element character varying(255)
+);
+
+
+ALTER TABLE public.rcstransaction_tags OWNER TO miner;
+
+--
+-- Data for Name: filenames; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO filenames VALUES (201, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', '/src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java');
+INSERT INTO filenames VALUES (202, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', '/.classpath');
+INSERT INTO filenames VALUES (203, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', '/src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java');
+INSERT INTO filenames VALUES (204, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', '/.project');
+INSERT INTO filenames VALUES (205, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', '/.gitignore');
+INSERT INTO filenames VALUES (206, 'a10344533c2b442235aa3bf3dc87dd0ac37cb0af', '/src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java');
+INSERT INTO filenames VALUES (207, 'b38a68d16490c120920fe2281c40317fae960f86', '/src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java');
+
+
+--
+-- Data for Name: javachangeoperation; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javachangeoperation VALUES (251, 0, true, 301, 103);
+INSERT INTO javachangeoperation VALUES (252, 0, true, 302, 103);
+INSERT INTO javachangeoperation VALUES (253, 0, true, 303, 101);
+INSERT INTO javachangeoperation VALUES (254, 0, true, 304, 101);
+INSERT INTO javachangeoperation VALUES (255, 0, true, 305, 106);
+INSERT INTO javachangeoperation VALUES (256, 0, true, 306, 106);
+INSERT INTO javachangeoperation VALUES (257, 0, true, 307, 106);
+INSERT INTO javachangeoperation VALUES (258, 0, true, 308, 106);
+INSERT INTO javachangeoperation VALUES (259, 0, true, 309, 107);
+INSERT INTO javachangeoperation VALUES (260, 1, true, 310, 107);
+INSERT INTO javachangeoperation VALUES (261, 2, true, 311, 108);
+INSERT INTO javachangeoperation VALUES (262, 2, true, 312, 108);
+INSERT INTO javachangeoperation VALUES (263, 0, true, 313, 108);
+INSERT INTO javachangeoperation VALUES (264, 0, true, 314, 109);
+INSERT INTO javachangeoperation VALUES (265, 0, true, 315, 109);
+INSERT INTO javachangeoperation VALUES (266, 0, true, 316, 109);
+INSERT INTO javachangeoperation VALUES (267, 2, true, 317, 110);
+INSERT INTO javachangeoperation VALUES (268, 0, true, 318, 110);
+INSERT INTO javachangeoperation VALUES (269, 1, true, 319, 110);
+INSERT INTO javachangeoperation VALUES (270, 2, true, 320, 110);
+INSERT INTO javachangeoperation VALUES (271, 0, true, 321, 111);
+INSERT INTO javachangeoperation VALUES (272, 2, true, 322, 111);
+INSERT INTO javachangeoperation VALUES (273, 2, true, 323, 111);
+INSERT INTO javachangeoperation VALUES (274, 1, true, 324, 112);
+INSERT INTO javachangeoperation VALUES (275, 1, true, 325, 112);
+INSERT INTO javachangeoperation VALUES (276, 1, true, 326, 112);
+INSERT INTO javachangeoperation VALUES (277, 0, true, 327, 113);
+INSERT INTO javachangeoperation VALUES (278, 0, true, 328, 113);
+INSERT INTO javachangeoperation VALUES (279, 0, true, 329, 113);
+INSERT INTO javachangeoperation VALUES (280, 2, true, 330, 114);
+INSERT INTO javachangeoperation VALUES (281, 1, true, 331, 114);
+INSERT INTO javachangeoperation VALUES (282, 2, true, 332, 114);
+INSERT INTO javachangeoperation VALUES (283, 1, true, 333, 115);
+INSERT INTO javachangeoperation VALUES (284, 1, true, 334, 115);
+INSERT INTO javachangeoperation VALUES (285, 1, true, 335, 116);
+INSERT INTO javachangeoperation VALUES (286, 1, true, 336, 116);
+INSERT INTO javachangeoperation VALUES (287, 2, true, 337, 116);
+INSERT INTO javachangeoperation VALUES (288, 2, true, 338, 116);
+INSERT INTO javachangeoperation VALUES (289, 2, true, 339, 117);
+INSERT INTO javachangeoperation VALUES (290, 1, true, 340, 117);
+INSERT INTO javachangeoperation VALUES (291, 2, true, 341, 117);
+
+
+--
+-- Data for Name: javaclassdefinition; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javaclassdefinition VALUES (351, false, NULL, NULL);
+INSERT INTO javaclassdefinition VALUES (354, false, NULL, NULL);
+INSERT INTO javaclassdefinition VALUES (358, false, NULL, NULL);
+INSERT INTO javaclassdefinition VALUES (361, false, NULL, NULL);
+
+
+--
+-- Data for Name: javaelement; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javaelement VALUES (351, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (352, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (353, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(int)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (354, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (355, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (356, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.<init>()', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (357, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.C.C()', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (358, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.C', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (359, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (360, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (361, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.D', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (362, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.D.D()', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (363, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'java.Object.foo(float)', 'JAVAMETHODCALL');
+
+
+--
+-- Data for Name: javaelementlocation; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javaelementlocation VALUES (301, 6, 10, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 70, 4, 351);
+INSERT INTO javaelementlocation VALUES (302, 6, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 90, 6, 352);
+INSERT INTO javaelementlocation VALUES (303, 6, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 90, 6, 353);
+INSERT INTO javaelementlocation VALUES (304, 6, 10, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 70, 4, 354);
+INSERT INTO javaelementlocation VALUES (305, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 125, 8, 355);
+INSERT INTO javaelementlocation VALUES (306, -1, 7, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 111, 7, 356);
+INSERT INTO javaelementlocation VALUES (307, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 90, 6, 357);
+INSERT INTO javaelementlocation VALUES (308, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 70, 4, 358);
+INSERT INTO javaelementlocation VALUES (309, 6, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 90, 6, 359);
+INSERT INTO javaelementlocation VALUES (310, 6, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 90, 6, 353);
+INSERT INTO javaelementlocation VALUES (311, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 90, 6, 352);
+INSERT INTO javaelementlocation VALUES (312, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 70, 4, 351);
+INSERT INTO javaelementlocation VALUES (313, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 129, 8, 360);
+INSERT INTO javaelementlocation VALUES (314, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 128, 8, 360);
+INSERT INTO javaelementlocation VALUES (315, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 70, 4, 361);
+INSERT INTO javaelementlocation VALUES (316, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 90, 6, 362);
+INSERT INTO javaelementlocation VALUES (317, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 90, 6, 357);
+INSERT INTO javaelementlocation VALUES (318, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 125, 8, 360);
+INSERT INTO javaelementlocation VALUES (319, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 125, 8, 355);
+INSERT INTO javaelementlocation VALUES (320, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 70, 4, 358);
+INSERT INTO javaelementlocation VALUES (321, -1, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 150, 9, 360);
+INSERT INTO javaelementlocation VALUES (322, 6, 10, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 90, 6, 362);
+INSERT INTO javaelementlocation VALUES (323, 6, 12, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 70, 4, 361);
+INSERT INTO javaelementlocation VALUES (324, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 129, 8, 360);
+INSERT INTO javaelementlocation VALUES (325, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 70, 4, 351);
+INSERT INTO javaelementlocation VALUES (326, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 90, 6, 352);
+INSERT INTO javaelementlocation VALUES (327, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 130, 8, 360);
+INSERT INTO javaelementlocation VALUES (328, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 70, 4, 351);
+INSERT INTO javaelementlocation VALUES (329, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 90, 6, 352);
+INSERT INTO javaelementlocation VALUES (330, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 90, 6, 352);
+INSERT INTO javaelementlocation VALUES (331, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 130, 8, 360);
+INSERT INTO javaelementlocation VALUES (332, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java', 70, 4, 351);
+INSERT INTO javaelementlocation VALUES (333, 6, 10, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 70, 4, 354);
+INSERT INTO javaelementlocation VALUES (334, 6, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java', 90, 6, 359);
+INSERT INTO javaelementlocation VALUES (335, -1, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 150, 9, 363);
+INSERT INTO javaelementlocation VALUES (336, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 128, 8, 363);
+INSERT INTO javaelementlocation VALUES (337, 6, 12, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 70, 4, 361);
+INSERT INTO javaelementlocation VALUES (338, 6, 10, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java', 90, 6, 362);
+INSERT INTO javaelementlocation VALUES (339, 6, 11, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 70, 4, 358);
+INSERT INTO javaelementlocation VALUES (340, -1, 8, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 125, 8, 363);
+INSERT INTO javaelementlocation VALUES (341, 6, 9, 'src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java', 90, 6, 357);
+
+
+--
+-- Data for Name: javaelementlocation_commentlines; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+
+
+--
+-- Data for Name: javamethodcall; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javamethodcall VALUES (355, 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment');
+INSERT INTO javamethodcall VALUES (356, 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment');
+INSERT INTO javamethodcall VALUES (360, 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment');
+INSERT INTO javamethodcall VALUES (363, 'java');
+
+
+--
+-- Data for Name: javamethodcall_signature; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javamethodcall_signature VALUES (355, 'int');
+INSERT INTO javamethodcall_signature VALUES (360, 'float');
+INSERT INTO javamethodcall_signature VALUES (363, 'float');
+
+
+--
+-- Data for Name: javamethoddefinition; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javamethoddefinition VALUES (352);
+INSERT INTO javamethoddefinition VALUES (353);
+INSERT INTO javamethoddefinition VALUES (357);
+INSERT INTO javamethoddefinition VALUES (359);
+INSERT INTO javamethoddefinition VALUES (362);
+
+
+--
+-- Data for Name: javamethoddefinition_signature; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO javamethoddefinition_signature VALUES (352, 'int');
+INSERT INTO javamethoddefinition_signature VALUES (353, 'int');
+INSERT INTO javamethoddefinition_signature VALUES (359, 'float');
+
+
+--
+-- Data for Name: openjpa_sequence_table; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO openjpa_sequence_table VALUES (0, 401);
+
+
+--
+-- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO person VALUES (151);
+INSERT INTO person VALUES (152);
+INSERT INTO person VALUES (153);
+INSERT INTO person VALUES (154);
+INSERT INTO person VALUES (155);
+INSERT INTO person VALUES (156);
+INSERT INTO person VALUES (157);
+INSERT INTO person VALUES (158);
+INSERT INTO person VALUES (159);
+INSERT INTO person VALUES (160);
+
+
+--
+-- Data for Name: person_emailaddresses; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO person_emailaddresses VALUES (151, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (152, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (153, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (154, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (155, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (156, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (157, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (158, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (159, 'kim@cs.uni-saarland.de');
+INSERT INTO person_emailaddresses VALUES (160, 'kim@cs.uni-saarland.de');
+
+
+--
+-- Data for Name: person_fullnames; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO person_fullnames VALUES (151, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (152, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (153, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (154, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (155, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (156, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (157, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (158, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (159, 'Kim Herzig');
+INSERT INTO person_fullnames VALUES (160, 'Kim Herzig');
+
+
+--
+-- Data for Name: person_usernames; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+
+
+--
+-- Data for Name: personcontainer; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO personcontainer VALUES (51);
+INSERT INTO personcontainer VALUES (52);
+INSERT INTO personcontainer VALUES (53);
+INSERT INTO personcontainer VALUES (54);
+INSERT INTO personcontainer VALUES (55);
+INSERT INTO personcontainer VALUES (56);
+INSERT INTO personcontainer VALUES (57);
+INSERT INTO personcontainer VALUES (58);
+INSERT INTO personcontainer VALUES (59);
+INSERT INTO personcontainer VALUES (60);
+
+
+--
+-- Data for Name: personcontainer_map; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO personcontainer_map VALUES (51, 151, 'author');
+INSERT INTO personcontainer_map VALUES (52, 152, 'author');
+INSERT INTO personcontainer_map VALUES (53, 153, 'author');
+INSERT INTO personcontainer_map VALUES (54, 154, 'author');
+INSERT INTO personcontainer_map VALUES (55, 155, 'author');
+INSERT INTO personcontainer_map VALUES (56, 156, 'author');
+INSERT INTO personcontainer_map VALUES (57, 157, 'author');
+INSERT INTO personcontainer_map VALUES (58, 158, 'author');
+INSERT INTO personcontainer_map VALUES (59, 159, 'author');
+INSERT INTO personcontainer_map VALUES (60, 160, 'author');
+
+
+--
+-- Data for Name: rcsbranch; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcsbranch VALUES (1, NULL, 'master', 'a64df287a21f8a7b0690d13c1561171cbf48a0e1', NULL, NULL);
+
+
+--
+-- Data for Name: rcsfile; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcsfile VALUES (201);
+INSERT INTO rcsfile VALUES (202);
+INSERT INTO rcsfile VALUES (203);
+INSERT INTO rcsfile VALUES (204);
+INSERT INTO rcsfile VALUES (205);
+INSERT INTO rcsfile VALUES (206);
+INSERT INTO rcsfile VALUES (207);
+
+
+--
+-- Data for Name: rcsrevision; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcsrevision VALUES (101, 0, 201, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcsrevision VALUES (102, 0, 202, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcsrevision VALUES (103, 0, 203, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcsrevision VALUES (104, 0, 204, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcsrevision VALUES (105, 0, 205, 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcsrevision VALUES (106, 0, 206, 'a10344533c2b442235aa3bf3dc87dd0ac37cb0af');
+INSERT INTO rcsrevision VALUES (107, 2, 201, 'f281d550d264f53c7e5fd8c7390627c2aaaf2b8a');
+INSERT INTO rcsrevision VALUES (108, 2, 203, 'f281d550d264f53c7e5fd8c7390627c2aaaf2b8a');
+INSERT INTO rcsrevision VALUES (109, 0, 207, 'b38a68d16490c120920fe2281c40317fae960f86');
+INSERT INTO rcsrevision VALUES (110, 2, 206, 'b38a68d16490c120920fe2281c40317fae960f86');
+INSERT INTO rcsrevision VALUES (111, 2, 207, '47e6e4206b716af283f583e4d1963a32bef38a92');
+INSERT INTO rcsrevision VALUES (112, 2, 203, '2005a1a45c9d28a03166d2f61df82552e9b9d502');
+INSERT INTO rcsrevision VALUES (113, 2, 203, 'f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0');
+INSERT INTO rcsrevision VALUES (114, 2, 203, '0c078d2b779e24fe341028ee132f9613e58763c2');
+INSERT INTO rcsrevision VALUES (115, 2, 201, '3039e34e53c1bfecfac2e21544b041c890bac8b4');
+INSERT INTO rcsrevision VALUES (116, 2, 207, '5658606e2f80c30d0b835ed4216e9f8e0cc996fb');
+INSERT INTO rcsrevision VALUES (117, 2, 206, '5658606e2f80c30d0b835ed4216e9f8e0cc996fb');
+
+
+--
+-- Data for Name: rcstransaction; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcstransaction VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', false, '2011-08-16 15:32:59', 'Initial commit for genealogies test environment Git repo
+', '', 1, 51);
+INSERT INTO rcstransaction VALUES ('a10344533c2b442235aa3bf3dc87dd0ac37cb0af', false, '2011-08-16 15:35:02', 'adding call to B.bar(int) in C
+', '', 1, 52);
+INSERT INTO rcstransaction VALUES ('f281d550d264f53c7e5fd8c7390627c2aaaf2b8a', false, '2011-08-16 15:38:58', 'replacing A.foor(int) with A.foo(float) and adding call to A.foo(5f) in B
+', '', 1, 53);
+INSERT INTO rcstransaction VALUES ('b38a68d16490c120920fe2281c40317fae960f86', false, '2011-08-16 15:41:24', 'replacing call to B.bar(5) to call on A.foo(5f) within B. Also adding call to A.foo(float) within D
+', '', 1, 54);
+INSERT INTO rcstransaction VALUES ('47e6e4206b716af283f583e4d1963a32bef38a92', false, '2011-08-16 15:42:29', 'Adding second call to A.foo(float) within D
+', '', 1, 55);
+INSERT INTO rcstransaction VALUES ('2005a1a45c9d28a03166d2f61df82552e9b9d502', false, '2011-08-16 15:44:38', 'deleting method definition void B.bar(int)
+', '', 1, 56);
+INSERT INTO rcstransaction VALUES ('f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0', false, '2011-08-16 15:49:45', 're-adding method definition void B.bar(int)
+', '', 1, 57);
+INSERT INTO rcstransaction VALUES ('0c078d2b779e24fe341028ee132f9613e58763c2', false, '2011-08-16 15:50:15', 'changing body of method definition void B.bar(int)
+', '', 1, 58);
+INSERT INTO rcstransaction VALUES ('3039e34e53c1bfecfac2e21544b041c890bac8b4', false, '2011-08-16 15:51:00', 'deleting method definition A.foo(float)
+', '', 1, 59);
+INSERT INTO rcstransaction VALUES ('5658606e2f80c30d0b835ed4216e9f8e0cc996fb', false, '2011-08-16 15:51:49', 'removing calls to A.foo(float)
+', '', 1, 60);
+
+
+--
+-- Data for Name: rcstransaction_children; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcstransaction_children VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 'a10344533c2b442235aa3bf3dc87dd0ac37cb0af');
+INSERT INTO rcstransaction_children VALUES ('a10344533c2b442235aa3bf3dc87dd0ac37cb0af', 'f281d550d264f53c7e5fd8c7390627c2aaaf2b8a');
+INSERT INTO rcstransaction_children VALUES ('f281d550d264f53c7e5fd8c7390627c2aaaf2b8a', 'b38a68d16490c120920fe2281c40317fae960f86');
+INSERT INTO rcstransaction_children VALUES ('b38a68d16490c120920fe2281c40317fae960f86', '47e6e4206b716af283f583e4d1963a32bef38a92');
+INSERT INTO rcstransaction_children VALUES ('47e6e4206b716af283f583e4d1963a32bef38a92', '2005a1a45c9d28a03166d2f61df82552e9b9d502');
+INSERT INTO rcstransaction_children VALUES ('2005a1a45c9d28a03166d2f61df82552e9b9d502', 'f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0');
+INSERT INTO rcstransaction_children VALUES ('f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0', '0c078d2b779e24fe341028ee132f9613e58763c2');
+INSERT INTO rcstransaction_children VALUES ('0c078d2b779e24fe341028ee132f9613e58763c2', '3039e34e53c1bfecfac2e21544b041c890bac8b4');
+INSERT INTO rcstransaction_children VALUES ('3039e34e53c1bfecfac2e21544b041c890bac8b4', '5658606e2f80c30d0b835ed4216e9f8e0cc996fb');
+
+
+--
+-- Data for Name: rcstransaction_parents; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcstransaction_parents VALUES ('a10344533c2b442235aa3bf3dc87dd0ac37cb0af', 'a64df287a21f8a7b0690d13c1561171cbf48a0e1');
+INSERT INTO rcstransaction_parents VALUES ('f281d550d264f53c7e5fd8c7390627c2aaaf2b8a', 'a10344533c2b442235aa3bf3dc87dd0ac37cb0af');
+INSERT INTO rcstransaction_parents VALUES ('b38a68d16490c120920fe2281c40317fae960f86', 'f281d550d264f53c7e5fd8c7390627c2aaaf2b8a');
+INSERT INTO rcstransaction_parents VALUES ('47e6e4206b716af283f583e4d1963a32bef38a92', 'b38a68d16490c120920fe2281c40317fae960f86');
+INSERT INTO rcstransaction_parents VALUES ('2005a1a45c9d28a03166d2f61df82552e9b9d502', '47e6e4206b716af283f583e4d1963a32bef38a92');
+INSERT INTO rcstransaction_parents VALUES ('f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0', '2005a1a45c9d28a03166d2f61df82552e9b9d502');
+INSERT INTO rcstransaction_parents VALUES ('0c078d2b779e24fe341028ee132f9613e58763c2', 'f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0');
+INSERT INTO rcstransaction_parents VALUES ('3039e34e53c1bfecfac2e21544b041c890bac8b4', '0c078d2b779e24fe341028ee132f9613e58763c2');
+INSERT INTO rcstransaction_parents VALUES ('5658606e2f80c30d0b835ed4216e9f8e0cc996fb', '3039e34e53c1bfecfac2e21544b041c890bac8b4');
+
+
+--
+-- Data for Name: rcstransaction_rcsrevision; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+INSERT INTO rcstransaction_rcsrevision VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 101);
+INSERT INTO rcstransaction_rcsrevision VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 102);
+INSERT INTO rcstransaction_rcsrevision VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 103);
+INSERT INTO rcstransaction_rcsrevision VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 104);
+INSERT INTO rcstransaction_rcsrevision VALUES ('a64df287a21f8a7b0690d13c1561171cbf48a0e1', 105);
+INSERT INTO rcstransaction_rcsrevision VALUES ('a10344533c2b442235aa3bf3dc87dd0ac37cb0af', 106);
+INSERT INTO rcstransaction_rcsrevision VALUES ('f281d550d264f53c7e5fd8c7390627c2aaaf2b8a', 107);
+INSERT INTO rcstransaction_rcsrevision VALUES ('f281d550d264f53c7e5fd8c7390627c2aaaf2b8a', 108);
+INSERT INTO rcstransaction_rcsrevision VALUES ('b38a68d16490c120920fe2281c40317fae960f86', 109);
+INSERT INTO rcstransaction_rcsrevision VALUES ('b38a68d16490c120920fe2281c40317fae960f86', 110);
+INSERT INTO rcstransaction_rcsrevision VALUES ('47e6e4206b716af283f583e4d1963a32bef38a92', 111);
+INSERT INTO rcstransaction_rcsrevision VALUES ('2005a1a45c9d28a03166d2f61df82552e9b9d502', 112);
+INSERT INTO rcstransaction_rcsrevision VALUES ('f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0', 113);
+INSERT INTO rcstransaction_rcsrevision VALUES ('0c078d2b779e24fe341028ee132f9613e58763c2', 114);
+INSERT INTO rcstransaction_rcsrevision VALUES ('3039e34e53c1bfecfac2e21544b041c890bac8b4', 115);
+INSERT INTO rcstransaction_rcsrevision VALUES ('5658606e2f80c30d0b835ed4216e9f8e0cc996fb', 116);
+INSERT INTO rcstransaction_rcsrevision VALUES ('5658606e2f80c30d0b835ed4216e9f8e0cc996fb', 117);
+
+
+--
+-- Data for Name: rcstransaction_tags; Type: TABLE DATA; Schema: public; Owner: miner
+--
+
+
+
+--
+-- Name: javachangeoperation_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javachangeoperation
+    ADD CONSTRAINT javachangeoperation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: javaclassdefinition_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javaclassdefinition
+    ADD CONSTRAINT javaclassdefinition_pkey PRIMARY KEY (generatedid);
+
+
+--
+-- Name: javaelement_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javaelement
+    ADD CONSTRAINT javaelement_pkey PRIMARY KEY (generatedid);
+
+
+--
+-- Name: javaelementlocation_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javaelementlocation
+    ADD CONSTRAINT javaelementlocation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: javamethodcall_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javamethodcall
+    ADD CONSTRAINT javamethodcall_pkey PRIMARY KEY (generatedid);
+
+
+--
+-- Name: javamethoddefinition_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javamethoddefinition
+    ADD CONSTRAINT javamethoddefinition_pkey PRIMARY KEY (generatedid);
+
+
+--
+-- Name: openjpa_sequence_table_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY openjpa_sequence_table
+    ADD CONSTRAINT openjpa_sequence_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY person
+    ADD CONSTRAINT person_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: personcontainer_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY personcontainer
+    ADD CONSTRAINT personcontainer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcsbranch_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY rcsbranch
+    ADD CONSTRAINT rcsbranch_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcsfile_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY rcsfile
+    ADD CONSTRAINT rcsfile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcsrevision_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY rcsrevision
+    ADD CONSTRAINT rcsrevision_pkey PRIMARY KEY (revisionid);
+
+
+--
+-- Name: rcstransaction_pkey; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY rcstransaction
+    ADD CONSTRAINT rcstransaction_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: u_jvlment_elementtype; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY javaelement
+    ADD CONSTRAINT u_jvlment_elementtype UNIQUE (elementtype, fullqualifiedname);
+
+
+--
+-- Name: u_rcsrvsn_transaction_id; Type: CONSTRAINT; Schema: public; Owner: miner; Tablespace: 
+--
+
+ALTER TABLE ONLY rcsrevision
+    ADD CONSTRAINT u_rcsrvsn_transaction_id UNIQUE (transaction_id, changedfile_id);
+
+
+--
+-- Name: i_filnmes_fileid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_filnmes_fileid ON filenames USING btree (fileid);
+
+
+--
+-- Name: i_jvchrtn_changedelementlocation; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvchrtn_changedelementlocation ON javachangeoperation USING btree (changedelementlocation_id);
+
+
+--
+-- Name: i_jvchrtn_revision; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvchrtn_revision ON javachangeoperation USING btree (revision_revisionid);
+
+
+--
+-- Name: i_jvclntn_parent; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvclntn_parent ON javaclassdefinition USING btree (parent_generatedid);
+
+
+--
+-- Name: i_jvlmctn_element; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvlmctn_element ON javaelementlocation USING btree (element_generatedid);
+
+
+--
+-- Name: i_jvlment_dtype; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvlment_dtype ON javaelement USING btree (type);
+
+
+--
+-- Name: i_jvlmlns_javaelementlocation_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvlmlns_javaelementlocation_id ON javaelementlocation_commentlines USING btree (javaelementlocation_id);
+
+
+--
+-- Name: i_jvmtntr_javamethodcall_generatedid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvmtntr_javamethodcall_generatedid ON javamethodcall_signature USING btree (javamethodcall_generatedid);
+
+
+--
+-- Name: i_jvmtntr_javamethoddefinition_generatedid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_jvmtntr_javamethoddefinition_generatedid ON javamethoddefinition_signature USING btree (javamethoddefinition_generatedid);
+
+
+--
+-- Name: i_prsn_mp_personcontainer_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_prsn_mp_personcontainer_id ON personcontainer_map USING btree (personcontainer_id);
+
+
+--
+-- Name: i_prsn_mp_value; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_prsn_mp_value ON personcontainer_map USING btree (value_id);
+
+
+--
+-- Name: i_prsnnms_person_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_prsnnms_person_id ON person_fullnames USING btree (person_id);
+
+
+--
+-- Name: i_prsnnms_person_id1; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_prsnnms_person_id1 ON person_usernames USING btree (person_id);
+
+
+--
+-- Name: i_prsnsss_person_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_prsnsss_person_id ON person_emailaddresses USING btree (person_id);
+
+
+--
+-- Name: i_rcsbnch_begin; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsbnch_begin ON rcsbranch USING btree (begin_id);
+
+
+--
+-- Name: i_rcsbnch_end; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsbnch_end ON rcsbranch USING btree (end_id);
+
+
+--
+-- Name: i_rcsbnch_parent; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsbnch_parent ON rcsbranch USING btree (parent_id);
+
+
+--
+-- Name: i_rcsrvsn_changedfile; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsrvsn_changedfile ON rcsrevision USING btree (changedfile_id);
+
+
+--
+-- Name: i_rcsrvsn_transaction; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsrvsn_transaction ON rcsrevision USING btree (transaction_id);
+
+
+--
+-- Name: i_rcstctn_branch; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstctn_branch ON rcstransaction USING btree (branch_id);
+
+
+--
+-- Name: i_rcstctn_persons; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstctn_persons ON rcstransaction USING btree (persons_id);
+
+
+--
+-- Name: i_rcstdrn_childrenid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstdrn_childrenid ON rcstransaction_children USING btree (childrenid);
+
+
+--
+-- Name: i_rcstdrn_element; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstdrn_element ON rcstransaction_children USING btree (children_id);
+
+
+--
+-- Name: i_rcstnts_element; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstnts_element ON rcstransaction_parents USING btree (parents_id);
+
+
+--
+-- Name: i_rcstnts_parentsid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstnts_parentsid ON rcstransaction_parents USING btree (parentsid);
+
+
+--
+-- Name: i_rcsttgs_rcstransaction_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcsttgs_rcstransaction_id ON rcstransaction_tags USING btree (rcstransaction_id);
+
+
+--
+-- Name: i_rcstvsn_element; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstvsn_element ON rcstransaction_rcsrevision USING btree (revisions_revisionid);
+
+
+--
+-- Name: i_rcstvsn_rcstransaction_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX i_rcstvsn_rcstransaction_id ON rcstransaction_rcsrevision USING btree (rcstransaction_id);
+
+
+--
+-- Name: idx_branchid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_branchid ON rcsbranch USING btree (id);
+
+
+--
+-- Name: idx_elemlocid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_elemlocid ON javaelementlocation USING btree (id);
+
+
+--
+-- Name: idx_id; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_id ON personcontainer USING btree (id);
+
+
+--
+-- Name: idx_name; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_name ON rcsbranch USING btree (name);
+
+
+--
+-- Name: idx_personid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_personid ON person USING btree (id);
+
+
+--
+-- Name: idx_timestamp; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_timestamp ON rcstransaction USING btree ("timestamp");
+
+
+--
+-- Name: idx_transactionid; Type: INDEX; Schema: public; Owner: miner; Tablespace: 
+--
+
+CREATE INDEX idx_transactionid ON rcstransaction USING btree (id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

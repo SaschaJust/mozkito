@@ -66,7 +66,15 @@ public class RCS extends RepoSuiteToolchain {
 	
 	public RCS(final Repository repository, final PersistenceUtil persistenceUtil) {
 		super(new RepositorySettings());
+		RepositorySettings settings = (RepositorySettings) getSettings();
 		threadPool = new RepoSuiteThreadPool(RCS.class.getSimpleName(), this);
+		logSettings = settings.setLoggerArg(true);
+		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
+		        false);
+		new LongArgument(settings, "cache.size",
+		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
+		        false);
 		this.persistenceUtil = persistenceUtil;
 		this.repository = repository;
 	}

@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
@@ -33,20 +31,10 @@ public class GenealogyVertex {
 	 */
 	public static String transaction_id = "transaction_id";
 	
-	public static GenealogyVertex create(final GraphDatabaseService graph, final String transactionId) {
-		Transaction tx = graph.beginTx();
-		Node node = graph.createNode();
-		node.setProperty(transaction_id, transactionId);
-		Index<Node> index = node.getGraphDatabase().index().forNodes(transaction_id);
-		index.add(node, transaction_id, node.getProperty(transaction_id));
-		tx.success();
-		tx.finish();
-		return new GenealogyVertex(node);
-	}
-	
-	
 	/** The node. */
 	private final Node node;
+	
+	private ChangeGenealogy changeGenealogy;
 	
 	/**
 	 * Instantiates a new genealogy vertex.
@@ -54,8 +42,9 @@ public class GenealogyVertex {
 	 * @param node
 	 *            the node
 	 */
-	protected GenealogyVertex(final Node node) {
+	protected GenealogyVertex(ChangeGenealogy changeGenealogy, final Node node) {
 		this.node = node;
+		this.changeGenealogy = changeGenealogy;
 	}
 	
 	/**
@@ -81,7 +70,10 @@ public class GenealogyVertex {
 	 *            the type of the edge to be added
 	 */
 	public void addDepencyTo(final GenealogyVertex other, final GenealogyEdgeType edgeType) {
+		Transaction tx = node.getGraphDatabase().beginTx();
 		node.createRelationshipTo(other.getNode(), edgeType);
+		tx.success();
+		tx.finish();
 	}
 	
 	/**
@@ -133,12 +125,13 @@ public class GenealogyVertex {
 	 * @return all dependents
 	 */
 	public Collection<GenealogyVertex> getAllDependents() {
-		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING,
+		        GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+		        GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		        GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for(Relationship rel : relationships){
-			result.add(new GenealogyVertex(rel.getStartNode()));
+			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
 		}
 		return result;
 	}
@@ -151,28 +144,12 @@ public class GenealogyVertex {
 	 */
 	public Collection<GenealogyVertex> getAllVerticesDependingOn() {
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		        GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+		        GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		        GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {
-			result.add(new GenealogyVertex(rel.getStartNode()));
-		}
-		return result;
-	}
-	
-	/**
-	 * Gets the change operation IDs associated with this vertex.
-	 * 
-	 * @return the change operation ids
-	 */
-	protected Collection<GraphDBChangeOperation> getChangeOperationIds() {
-		Set<GraphDBChangeOperation> result = new HashSet<GraphDBChangeOperation>();
-		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
-				RelationshipTypes.CONTAINS);
-		for (Relationship rel : relationships) {
-			Node opNode = rel.getEndNode();
-			result.add(new GraphDBChangeOperation(opNode));
+			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
 		}
 		return result;
 	}
@@ -190,7 +167,23 @@ public class GenealogyVertex {
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, types);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {
-			result.add(new GenealogyVertex(rel.getStartNode()));
+			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the change operation IDs associated with this vertex.
+	 * 
+	 * @return the change operation ids
+	 */
+	protected Collection<Long> getJavaChangeOperationIds() {
+		Set<Long> result = new HashSet<Long>();
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
+				RelationshipTypes.CONTAINS);
+		for (Relationship rel : relationships) {
+			GraphDBChangeOperation graphDBChangeOperation = new GraphDBChangeOperation(rel.getEndNode());
+			result.add(graphDBChangeOperation.getJavaChangeOperationId());
 		}
 		return result;
 	}
@@ -218,10 +211,10 @@ public class GenealogyVertex {
 	 * @return the vertices depending on
 	 */
 	public Collection<GenealogyVertex> getVerticesDependingOn(final GenealogyEdgeType... types) {
-		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, types);
+		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING, types);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {
-			result.add(new GenealogyVertex(rel.getStartNode()));
+			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
 		}
 		return result;
 	}
