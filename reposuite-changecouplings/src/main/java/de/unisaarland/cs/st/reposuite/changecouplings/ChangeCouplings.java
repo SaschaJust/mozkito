@@ -83,7 +83,7 @@ public class ChangeCouplings {
 		RCSTransaction transaction = persistenceUtil.loadById(transactionArg.getValue(), RCSTransaction.class);
 		
 		transaction.getParents();
-
+		
 		if (levelArgument.getValue().equals("FILE")) {
 			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(
 					transaction, minSupport.intValue(), minConf.doubleValue(), persistenceUtil);
@@ -93,6 +93,10 @@ public class ChangeCouplings {
 				couplings.add(c.serialize(transaction));
 			}
 			
+			if (Logger.logInfo()) {
+				Logger.info("Serializing " + couplings.size() + " file change couplings ... ");
+			}
+
 			File serialFile = outputFileArgument.getValue();
 			
 			try {
@@ -108,6 +112,11 @@ public class ChangeCouplings {
 					Logger.error(e.getMessage(), e);
 				}
 			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("done");
+			}
+
 		} else {
 			throw new UnrecoverableError("Not yet implemented!");
 		}
