@@ -24,3 +24,6 @@ datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuit
 callgraph.cache.dir = /data/kim/cache.callgraph/xstream
 changecouplings.cache.dir = /data/kim/cache.filechangecouplings/xstream
 package.distance = 2
+vote.changecouplings.minconfidence = 0.1
+vote.changecouplings.minsupport = 3
+datadependency.cache.dir = /data/kim/cache.datadependency/xstream/

@@ -14,4 +14,6 @@ callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/2/eclipse-reposuite-c
 datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/2/eclipse-reposuite-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/gwt
 package.distance = 2
-
+vote.changecouplings.minconfidence = 0.1
+vote.changecouplings.minsupport = 3
+datadependency.cache.dir = /data/kim/cache.datadependency/gwt/
