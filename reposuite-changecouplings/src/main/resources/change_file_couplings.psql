@@ -71,30 +71,30 @@ CREATE OR REPLACE FUNCTION reposuite_file_changecouplings(tid character varying(
 	  insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES(ARRAY[$1], $2,$3,$4)",["integer","integer","integer","float"])
 	  plpy.execute(insertq,[q_row['premise'],q_row['implication'],support,confidence])
 	
-      if (len(premises) < 11):
-        multies = cc_subsets(premises)
-        plpy.notice("implications:"+str(implications))
-        plpy.notice("multies:"+str(multies))
-        
-        for m in multies:
-          if (len(m) > 0) and (not m in seen):
-            seen.append(m)
-            for c in implications:
-              if c in m:
-                plpy.notice("!(c) m:"+str(m)+" c:"+str(c))
-                continue;
-              m_and_c = list(m)
-              m_and_c.append(c)
-              support = cc_support(m_and_c,ctime)
-              if support < 1:
-                plpy.notice("!(s) m:"+str(m)+" c:"+str(c))
-                continue
-              freq = cc_support(m,ctime)
-              confidence = cc_confidence(support,freq)
-              plpy.notice("m:"+str(m)+" c:"+str(c))
-              insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES($1, $2,$3,$4)",["integer[]","integer","integer","float"])
-              plpy.execute(insertq,[m,c,support,confidence])
-	    
+        if (len(premises) < 11):
+          multies = cc_subsets(premises)
+          plpy.notice("implications:"+str(implications))
+          plpy.notice("multies:"+str(multies))
+          
+          for m in multies:
+            if (len(m) > 0) and (not m in seen):
+              seen.append(m)
+              for c in implications:
+                if c in m:
+                  plpy.notice("!(c) m:"+str(m)+" c:"+str(c))
+                  continue;
+                m_and_c = list(m)
+                m_and_c.append(c)
+                support = cc_support(m_and_c,ctime)
+                if support < 1:
+                  plpy.notice("!(s) m:"+str(m)+" c:"+str(c))
+                  continue
+                freq = cc_support(m,ctime)
+                confidence = cc_confidence(support,freq)
+                plpy.notice("m:"+str(m)+" c:"+str(c))
+                insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES($1, $2,$3,$4)",["integer[]","integer","integer","float"])
+                plpy.execute(insertq,[m,c,support,confidence])
+	
 	  
 	return 1
 $$ LANGUAGE plpython2u;
