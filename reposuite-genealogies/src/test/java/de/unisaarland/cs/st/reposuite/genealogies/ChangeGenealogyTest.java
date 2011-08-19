@@ -36,7 +36,7 @@ public class ChangeGenealogyTest extends TestEnvironment {
 		File tmpGraphDBFile = FileUtils
 				.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
 		
-		ChangeGenealogy changeGenealogy = ChangeGenealogy.readFromDB(tmpGraphDBFile, getPersistenceUtil());
+		CoreChangeGenealogy changeGenealogy = CoreChangeGenealogy.readFromDB(tmpGraphDBFile, getPersistenceUtil());
 		assertTrue(changeGenealogy != null);
 		
 		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {

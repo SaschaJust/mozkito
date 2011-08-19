@@ -9,9 +9,11 @@ import java.util.Map;
 
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.GenealogyAnalyzer;
 import de.unisaarland.cs.st.reposuite.genealogies.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.genealogies.GenealogyVertex;
+import de.unisaarland.cs.st.reposuite.genealogies.GenealogyVertexIterator;
 import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -22,10 +24,10 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class TransactionChangeGenealogy {
+public class TransactionChangeGenealogy implements ChangeGenealogy {
 	
 	/** The genealogy. */
-	private final ChangeGenealogy   genealogy;
+	private final CoreChangeGenealogy   genealogy;
 	
 	/** The persistence util. */
 	private final PersistenceUtil   persistenceUtil;
@@ -45,9 +47,14 @@ public class TransactionChangeGenealogy {
 	 */
 	public TransactionChangeGenealogy(final File graphDBFile, final PersistenceUtil persistenceUtil,
 			final GenealogyAnalyzer genealogyAnalyzer) {
-		this.genealogy = ChangeGenealogy.readFromDB(graphDBFile, persistenceUtil);
+		this.genealogy = CoreChangeGenealogy.readFromDB(graphDBFile, persistenceUtil);
 		this.persistenceUtil = persistenceUtil;
 		this.genealogyAnalyzer = genealogyAnalyzer;
+	}
+	
+	@Override
+	public boolean addEdge(GenealogyVertex dependantVertex, GenealogyVertex targetVertex, GenealogyEdgeType edgeType) {
+		return this.genealogy.addEdge(dependantVertex, targetVertex, edgeType);
 	}
 	
 	/**
@@ -89,6 +96,31 @@ public class TransactionChangeGenealogy {
 		}
 	}
 	
+	@Override
+	public boolean containsEdge(GenealogyVertex from, GenealogyVertex to) {
+		return this.genealogy.containsEdge(from, to);
+	}
+	
+	@Override
+	public boolean containsVertex(GenealogyVertex vertex) {
+		return this.genealogy.containsVertex(vertex);
+	}
+	
+	@Override
+	public Collection<GenealogyEdgeType> getEdges(GenealogyVertex from, GenealogyVertex to) {
+		return this.genealogy.getEdges(from, to);
+	}
+	
+	@Override
+	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(GenealogyVertex v) {
+		return this.genealogy.getJavaChangeOperationsForVertex(v);
+	}
+	
+	@Override
+	public RCSTransaction getTransactionForVertex(GenealogyVertex v) {
+		return this.genealogy.getTransactionForVertex(v);
+	}
+	
 	/**
 	 * Gets the vertex.
 	 * 
@@ -99,5 +131,15 @@ public class TransactionChangeGenealogy {
 	public GenealogyVertex getVertex(final RCSTransaction transaction) {
 		//		PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction);
 		return this.genealogy.getVertex(transaction.getId(), new HashSet<Long>());
+	}
+	
+	@Override
+	public GenealogyVertexIterator vertexSet() {
+		return this.genealogy.vertexSet();
+	}
+	
+	@Override
+	public int vertexSize(){
+		return this.genealogy.vertexSize();
 	}
 }

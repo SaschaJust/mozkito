@@ -10,9 +10,9 @@ import org.neo4j.graphdb.index.IndexHits;
 public class DefaultGenealogyVertexIterator implements GenealogyVertexIterator {
 	
 	private final IndexHits<Node> hits;
-	private ChangeGenealogy       changeGenealogy;
+	private CoreChangeGenealogy       changeGenealogy;
 	
-	public DefaultGenealogyVertexIterator(final IndexHits<Node> hits, ChangeGenealogy changeGenealogy) {
+	public DefaultGenealogyVertexIterator(final IndexHits<Node> hits, CoreChangeGenealogy changeGenealogy) {
 		this.hits = hits;
 		this.changeGenealogy = changeGenealogy;
 	}
