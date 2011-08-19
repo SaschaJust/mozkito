@@ -150,7 +150,7 @@ public class GenealogyVertex {
 				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {
-			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
+			result.add(changeGenealogy.getVertexForNode(rel.getEndNode()));
 		}
 		return result;
 	}
@@ -236,5 +236,10 @@ public class GenealogyVertex {
 		int result = 1;
 		result = (int) ((prime * result) + ((node == null) ? 0 : node.getId()));
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getTransactionId();
 	}
 }

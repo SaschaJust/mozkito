@@ -85,6 +85,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 						persistenceUtil);
 				for (JavaChangeOperation parent : dependencies) {
 					GenealogyEdgeType edgeType = GenealogyAnalyzer.getEdgeTypeForDependency(operation, parent);
+					if (edgeType == null) {
+						continue;
+					}
 					if (!cache.containsKey(parent.getRevision().getTransaction().getId())) {
 						cache.put(parent.getRevision().getTransaction().getId(), PPAPersistenceUtil.getChangeOperation(
 								persistenceUtil, parent.getRevision().getTransaction()));
@@ -94,6 +97,11 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void close() {
+		this.genealogy.close();
 	}
 	
 	@Override

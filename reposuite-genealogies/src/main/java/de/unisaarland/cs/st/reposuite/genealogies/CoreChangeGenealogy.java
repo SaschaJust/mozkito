@@ -36,6 +36,26 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
 	/**
+	 * Gets the graph db change operation by id.
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param id
+	 *            the id
+	 * @return the graphDbChangeOperation by id iff exists. Return
+	 *         <code>null</code> otherwise.
+	 */
+	protected static GraphDBChangeOperation getGraphDBChangeOperationById(final GraphDatabaseService graph,
+			final long id) {
+		Node hit = graph.index().forNodes(GraphDBChangeOperation.keyName).get(GraphDBChangeOperation.keyName, id)
+				.getSingle();
+		if (hit == null) {
+			return null;
+		}
+		return new GraphDBChangeOperation(hit);
+	}
+	
+	/**
 	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB
 	 * directory. If there exists a graph DB within the dbFile directory, the
 	 * ChangeGenealogy will load the ChangeGenealogy from this directory.
@@ -58,41 +78,21 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		return genealogy;
 	}
 	
+	//	static {
+	//		Runtime.getRuntime().addShutdownHook(new Thread() {
+	//
+	//			@Override
+	//			public void run() {
+	//				for (CoreChangeGenealogy genealogy : genealogies.keySet()) {
+	//					if (genealogies.get(genealogy).exists()) {
+	//						genealogy.close();
+	//					}
+	//				}
+	//			}
+	//		});
+	//	}
+	
 	private Map<Node, GenealogyVertex> nodes2Vertices = new HashMap<Node, GenealogyVertex>();
-	
-	static {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			
-			@Override
-			public void run() {
-				for (CoreChangeGenealogy genealogy : genealogies.keySet()) {
-					if (genealogies.get(genealogy).exists()) {
-						genealogy.close();
-					}
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Gets the graph db change operation by id.
-	 * 
-	 * @param graph
-	 *            the graph
-	 * @param id
-	 *            the id
-	 * @return the graphDbChangeOperation by id iff exists. Return
-	 *         <code>null</code> otherwise.
-	 */
-	protected static GraphDBChangeOperation getGraphDBChangeOperationById(final GraphDatabaseService graph,
-			final long id) {
-		Node hit = graph.index().forNodes(GraphDBChangeOperation.keyName).get(GraphDBChangeOperation.keyName, id)
-				.getSingle();
-		if (hit == null) {
-			return null;
-		}
-		return new GraphDBChangeOperation(hit);
-	}
 	
 	/** The graph. */
 	private final GraphDatabaseService graph;
@@ -241,13 +241,14 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * be taken care of by a separate ShutdownHook. So make sure to call this
 	 * method only when you are know what you are doing!
 	 */
-	protected void close() {
+	@Override
+	public void close() {
 		this.graph.shutdown();
 	}
 	
 	@Override
 	public boolean containsEdge(GenealogyVertex from, GenealogyVertex to) {
-		Collection<GenealogyVertex> allDependents = from.getAllDependents();
+		Collection<GenealogyVertex> allDependents = from.getAllVerticesDependingOn();
 		return allDependents.contains(to);
 	}
 	
@@ -340,15 +341,19 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @return the vertex if found. Returns <code>Null</code> otherwise.
 	 */
 	public GenealogyVertex getVertex(final String transactionId, final Collection<Long> javaChangeOperationIds) {
-		
+		Transaction tx = graph.beginTx();
 		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
 				.get(GenealogyVertex.transaction_id, transactionId);
 		for (Node hit : hits) {
 			GenealogyVertex vertex = this.getVertexForNode(hit);
 			if (vertex.getJavaChangeOperationIds().containsAll(javaChangeOperationIds)) {
+				tx.success();
+				tx.finish();
 				return vertex;
 			}
 		}
+		tx.success();
+		tx.finish();
 		return null;
 	}
 	

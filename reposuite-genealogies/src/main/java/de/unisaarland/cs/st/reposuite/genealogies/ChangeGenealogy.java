@@ -11,6 +11,8 @@ public interface ChangeGenealogy {
 	public boolean addEdge(@NotEmpty final GenealogyVertex dependantVertex,
 			@NotEmpty final GenealogyVertex targetVertex, final GenealogyEdgeType edgeType);
 	
+	public void close();
+	
 	public boolean containsEdge(final GenealogyVertex from, final GenealogyVertex to);
 	
 	public boolean containsVertex(final GenealogyVertex vertex);
