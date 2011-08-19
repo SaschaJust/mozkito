@@ -75,7 +75,7 @@ public class JavaChangeOperation implements Annotated {
 		} catch (IllegalArgumentException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not detect ChangeType of JavaChangeOperation. Unknown value '" + element.getName()
-				            + "'. Returning null.");
+						+ "'. Returning null.");
 			}
 			return null;
 		}
@@ -254,12 +254,12 @@ public class JavaChangeOperation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getChangedElementLocation() == null)
+		result = (prime * result) + ((getChangedElementLocation() == null)
 				? 0
-				: getChangedElementLocation().hashCode());
-		result = prime * result + ((getRevision() == null)
+						: getChangedElementLocation().hashCode());
+		result = (prime * result) + ((getRevision() == null)
 				? 0
-				: getRevision().hashCode());
+						: getRevision().hashCode());
 		return result;
 	}
 	
@@ -312,4 +312,19 @@ public class JavaChangeOperation implements Annotated {
 		this.revision = revision;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(this.getId());
+		sb.append(": ");
+		sb.append(this.getChangeType().toString());
+		sb.append(" <path = ");
+		sb.append(this.getChangedElementLocation().getFilePath());
+		sb.append(", element: ");
+		sb.append(this.getChangedElementLocation().getElement().getFullQualifiedName());
+		sb.append(">");
+		return sb.toString();
+	}
+
 }

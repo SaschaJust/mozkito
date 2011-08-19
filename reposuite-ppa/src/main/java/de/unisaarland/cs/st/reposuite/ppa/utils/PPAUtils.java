@@ -21,11 +21,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -59,7 +61,6 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.model.ChangeOperations;
@@ -75,7 +76,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition_;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -121,8 +121,7 @@ public class PPAUtils {
 		@Override
 		public void run() {
 			try {
-				iFile = PPAResourceUtil.copyJavaSourceFile(project, file, packagename,
-						filename);
+				iFile = PPAResourceUtil.copyJavaSourceFile(project, file, packagename, filename);
 				if (iFile == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while getting CU from PPA. Timeout copy to workspace exceeded.");
@@ -177,108 +176,135 @@ public class PPAUtils {
 			return null;
 		}
 		
-		List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(), op.getRevision()
-				.getTransaction().getId());
-		
-		//get annotation for line: INDEX vs LineNumber
-		if (annotation.size() <= (location.getStartLine() - 1)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-			}
-			return null;
-		}
-		
-		AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
-		String lastTId = annoEntry.getRevision();
-		if (lastTId == null) {
-			if (Logger.logError()) {
-				Logger.error("Found annotation entry with NULL revision! Should not happen!");
-			}
-			return null;
-		}
-		RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
-		String alternativePath = annoEntry.getAlternativeFilePath();
-		String changedPath = location.getFilePath();
-		if (alternativePath != null) {
-			changedPath = alternativePath;
-		}
-		
-		int distance = Integer.MAX_VALUE;
-		JavaChangeOperation previousOperation = null;
-		List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-				lastChangeTransaction);
-		for (JavaChangeOperation previousOp : previousOperations) {
-			//search for the previous operation that matches filePath and line number
-			if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
-					&& (previousOp.getChangedElementLocation().getElement().equals(element))) {
-				if (previousOperation == null) {
-					previousOperation = previousOp;
-				} else if (distance > Math.abs(previousOp.getChangedElementLocation().getStartLine()
-						- location.getStartLine())) {
-					previousOperation = previousOp;
-				}
-			}
-		}
-		
-		return previousOperation;
+		//		RCSTransaction opTransaction = op.getRevision().getTransaction();
+		//
+		//		List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(),
+		//				opTransaction.getId());
+		//
+		//		//get annotation for line: INDEX vs LineNumber
+		//		if (annotation.size() <= (location.getStartLine() - 1)) {
+		//			if (Logger.logWarn()) {
+		//				Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+		//			}
+		//			return null;
+		//		}
+		//
+		//		AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
+		//		String lastTId = annoEntry.getRevision();
+		//
+		//		if (lastTId.equals(opTransaction.getId())) {
+		//			annotation = repository.annotate(location.getFilePath(), opTransaction.getParent(opTransaction.getBranch())
+		//					.getId());
+		//
+		//			//get annotation for line: INDEX vs LineNumber
+		//			if (annotation.size() <= (location.getStartLine() - 1)) {
+		//				if (Logger.logWarn()) {
+		//					Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+		//				}
+		//				return null;
+		//			}
+		//
+		//			annoEntry = annotation.get(location.getStartLine() - 1);
+		//			lastTId = annoEntry.getRevision();
+		//		}
+		//
+		//		if (lastTId == null) {
+		//			if (Logger.logError()) {
+		//				Logger.error("Found annotation entry with NULL revision! Should not happen!");
+		//			}
+		//			return null;
+		//		}
+		//		RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
+		//		String alternativePath = annoEntry.getAlternativeFilePath();
+		//		String changedPath = location.getFilePath();
+		//		if (alternativePath != null) {
+		//			changedPath = alternativePath;
+		//		}
+		//
+		//		int distance = Integer.MAX_VALUE;
+		//		JavaChangeOperation previousOperation = null;
+		//		List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+		//				lastChangeTransaction);
+		//		for (JavaChangeOperation previousOp : previousOperations) {
+		//			//search for the previous operation that matches filePath and line number
+		//			if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
+		//					&& (previousOp.getChangedElementLocation().getElement().equals(element))) {
+		//				if (previousOperation == null) {
+		//					previousOperation = previousOp;
+		//				} else if (distance > Math.abs(previousOp.getChangedElementLocation().getStartLine()
+		//						- location.getStartLine())) {
+		//					previousOperation = previousOp;
+		//				}
+		//			}
+		//		}
+		//
+		//		return previousOperation;
 		
 		//it's better to use annotate
 		
-		/*
-		 * Criteria<JavaElementLocation> criteria =
-		 * persistenceUtil.createCriteria(JavaElementLocation.class);
-		 * CriteriaBuilder cb = criteria.getBuilder(); Root<JavaElementLocation>
-		 * root = criteria.getRoot(); Predicate eq =
-		 * cb.equal(root.get("element"), element); Predicate eq1 =
-		 * cb.equal(root.get("filePath"), location.getFilePath());
-		 * 
-		 * Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id),
-		 * location.getId()); criteria.getQuery().where(cb.and(cb.and(eq, eq1),
-		 * lt)); criteria.getQuery().orderBy(cb.asc(root.get("id")));
-		 * List<JavaElementLocation> hits = persistenceUtil.load(criteria);
-		 * 
-		 * if (hits.isEmpty()) { return null; }
-		 * 
-		 * //should be in same method //get the javaelement location of
-		 * surrounding method definition String defIdQueryStr =
-		 * "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
-		 * + location.getFilePath() + "' AND startline <= " +
-		 * location.getStartLine() + " and endline >= " +
-		 * location.getStartLine() +
-		 * " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
-		 * + location.getId() + " OR transaction_id = '" +
-		 * op.getRevision().getTransaction().getId() + "'))"; Query defIdQuery =
-		 * persistenceUtil.createNativeQuery(defIdQueryStr,
-		 * JavaElementLocation.class);
-		 * 
-		 * @SuppressWarnings("unchecked") List<JavaElementLocation>
-		 * methodDefHits = defIdQuery.getResultList();
-		 * 
-		 * if (!methodDefHits.isEmpty()) { List<JavaElementLocation>
-		 * strongCandidates = new LinkedList<JavaElementLocation>();
-		 * JavaElementLocation methodDefinition = methodDefHits.get(0); //check
-		 * whcih hit is in the same method for (JavaElementLocation tmpLoc :
-		 * hits) { if
-		 * (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals
-		 * (LineCover.FALSE)) { strongCandidates.add(tmpLoc); } } hits =
-		 * strongCandidates; }
-		 * 
-		 * //now search for the closest call int minDistance =
-		 * Integer.MAX_VALUE; JavaElementLocation bestHit = null; for
-		 * (JavaElementLocation loc : hits) { int distance =
-		 * Math.abs(loc.getStartLine() - location.getStartLine()); if (distance
-		 * < minDistance) { minDistance = distance; bestHit = loc; } }
-		 * 
-		 * if (bestHit == null) { return null; }
-		 * 
-		 * //get the corresponding javachangeoperation
-		 * 
-		 * Criteria<JavaChangeOperation> operationCriteria =
-		 * persistenceUtil.createCriteria(JavaChangeOperation.class);
-		 * operationCriteria.eq("changedElementLocation : JavaElementLocation",
-		 * bestHit); List<JavaChangeOperation> result =
-		 * persistenceUtil.load(operationCriteria, 1); return result.get(0);
-		 */
+		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		CriteriaBuilder cb = criteria.getBuilder();
+		Root<JavaElementLocation> root = criteria.getRoot();
+		Predicate eq = cb.equal(root.get("element"), element);
+		Predicate eq1 = cb.equal(root.get("filePath"), location.getFilePath());
+		
+		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
+		criteria.getQuery().where(cb.and(cb.and(eq, eq1), lt));
+		criteria.getQuery().orderBy(cb.asc(root.get("id")));
+		List<JavaElementLocation> hits = persistenceUtil.load(criteria);
+		
+		if (hits.isEmpty()) {
+			return null;
+		}
+		
+		//should be in same method
+		//get the javaelement location of surrounding method definition
+		String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
+				+ location.getFilePath()
+				+ "' AND startline <= "
+				+ location.getStartLine()
+				+ " and endline >= "
+				+ location.getStartLine()
+				+ " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
+				+ location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
+		Query defIdQuery = persistenceUtil.createNativeQuery(defIdQueryStr, JavaElementLocation.class);
+		
+		@SuppressWarnings("unchecked") List<JavaElementLocation> methodDefHits = defIdQuery.getResultList();
+		
+		if (!methodDefHits.isEmpty()) {
+			List<JavaElementLocation> strongCandidates = new LinkedList<JavaElementLocation>();
+			JavaElementLocation methodDefinition = methodDefHits.get(0);
+			//check	which hit is in the same method
+			for (JavaElementLocation tmpLoc : hits) {
+				if (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals(LineCover.FALSE)) {
+					strongCandidates.add(tmpLoc);
+				}
+			}
+			hits = strongCandidates;
+		}
+		
+		//now search for the closest call
+		int minDistance = Integer.MAX_VALUE;
+		JavaElementLocation bestHit = null;
+		for (JavaElementLocation loc : hits) {
+			int distance = Math.abs(loc.getStartLine() - location.getStartLine());
+			if (distance < minDistance) {
+				minDistance = distance;
+				bestHit = loc;
+			}
+		}
+		
+		if (bestHit == null) {
+			return null;
+		}
+		
+		//get the corresponding javachangeoperation
+		
+		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		operationCriteria.eq("changedElementLocation", bestHit);
+		List<JavaChangeOperation> result = persistenceUtil.load(operationCriteria, 1);
+		return result.get(0);
+		
 	}
 	
 	/**
@@ -300,12 +326,12 @@ public class PPAUtils {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
-		JavaElement searchElement = element;
-		
-		
+		RCSTransaction opTransaction = op.getRevision().getTransaction();
 		
 		//distinguish between definitions and calls
 		if (element instanceof JavaMethodCall) {
+			
+			JavaElement searchElement = null;
 			
 			String[] defNames = getDefinitionNamesForCallName((JavaMethodCall) element);
 			
@@ -324,71 +350,86 @@ public class PPAUtils {
 				searchElement = defHits.get(0);
 				break;
 			}
-			Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
-			CriteriaBuilder cb = criteria.getBuilder();
-			Root<JavaElementLocation> root = criteria.getRoot();
-			Predicate eq = cb.equal(root.get("element"), searchElement);
-			Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), location.getId());
-			criteria.getQuery().where(cb.and(eq, lt));
-			criteria.getQuery().orderBy(cb.asc(root.get("id")));
 			
-			List<JavaElementLocation> hits = persistenceUtil.load(criteria, 1);
-			if (hits.isEmpty()) {
+			if (searchElement == null) {
 				return null;
 			}
 			
-			JavaElementLocation hitLocation = hits.get(0);
-			
-			//search for corresponding JavaChangeOperation
-			Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			operationCriteria.eq("changedElementLocation : JavaElementLocation", hitLocation);
-			List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
-			if (operationHits.isEmpty()) {
+			JavaChangeOperation result = getLastOperationOnElement(persistenceUtil, searchElement, opTransaction,
+					location);
+			if ((result == null) || (result.equals(op))) {
 				return null;
 			}
-			return operationHits.get(0);
+			return result;
 		} else {
-			//if its a definition we can use annotate
-			List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(), op.getRevision()
-			        .getTransaction().getId());
 			
-			//get annotation for line: INDEX vs LineNumber
-			if (annotation.size() <= (location.getStartLine() - 1)) {
-				if (Logger.logWarn()) {
-					Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-				}
+			//			if (!op.getChangeType().equals(ChangeType.Added)) {
+			//				//if its a definition we can use annotate
+			//				List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(),
+			//						opTransaction.getId());
+			//
+			//				//get annotation for line: INDEX vs LineNumber
+			//				if (annotation.size() <= (location.getStartLine() - 1)) {
+			//					if (Logger.logWarn()) {
+			//						Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+			//					}
+			//					return null;
+			//				}
+			//
+			//				AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
+			//				String lastTId = annoEntry.getRevision();
+			//
+			//				if (lastTId.equals(opTransaction.getId())) {
+			//					annotation = repository.annotate(location.getFilePath(),
+			//							opTransaction.getParent(opTransaction.getBranch()).getId());
+			//
+			//					//get annotation for line: INDEX vs LineNumber
+			//					if (annotation.size() <= (location.getStartLine() - 1)) {
+			//						if (Logger.logWarn()) {
+			//							Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
+			//						}
+			//						return null;
+			//					}
+			//
+			//					annoEntry = annotation.get(location.getStartLine() - 1);
+			//					lastTId = annoEntry.getRevision();
+			//				}
+			//
+			//				if (lastTId == null) {
+			//					if (Logger.logError()) {
+			//						Logger.error("Found annotation entry with NULL revision! Should not happen!");
+			//					}
+			//					return null;
+			//				}
+			//				RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
+			//				String alternativePath = annoEntry.getAlternativeFilePath();
+			//				String changedPath = location.getFilePath();
+			//				if (alternativePath != null) {
+			//					changedPath = alternativePath;
+			//				}
+			//
+			//				List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+			//						lastChangeTransaction);
+			//				for (JavaChangeOperation previousOp : previousOperations) {
+			//					//search for the previous operation that matches filePath and line number
+			//					if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
+			//							&& (previousOp.getChangedElementLocation().getElement().getShortName().equals(element
+			//									.getShortName()))) {
+			//						return previousOp;
+			//					}
+			//				}
+			//				//not found
+			//				return null;
+			//			} else {
+			//search for the last delete operation of the very same method
+			JavaChangeOperation result = getLastOperationOnElement(persistenceUtil, element, opTransaction, location);
+			if ((result == null) || result.equals(op)) {
 				return null;
 			}
+			return result;
 			
-			AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
-			String lastTId = annoEntry.getRevision();
-			if (lastTId == null) {
-				if (Logger.logError()) {
-					Logger.error("Found annotation entry with NULL revision! Should not happen!");
-				}
-				return null;
-			}
-			RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
-			String alternativePath = annoEntry.getAlternativeFilePath();
-			String changedPath = location.getFilePath();
-			if (alternativePath != null) {
-				changedPath = alternativePath;
-			}
-			
-			List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-					lastChangeTransaction);
-			for (JavaChangeOperation previousOp : previousOperations) {
-				//search for the previous operation that matches filePath and line number
-				if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
-				        && (previousOp.getChangedElementLocation().getElement().getShortName().equals(element
-				                .getShortName()))) {
-					return previousOp;
-				}
-			}
-			//not found
-			return null;
+			//}
 		}
-		
 		
 	}
 	
@@ -404,8 +445,7 @@ public class PPAUtils {
 	 *            the visitors
 	 * @param usePPA
 	 */
-	public static void generateChangeOperations(final Repository repository,
-			final RCSTransaction transaction,
+	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
 			final Collection<ChangeOperationVisitor> visitors) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
@@ -479,8 +519,7 @@ public class PPAUtils {
 			for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 				CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-						.getSecond(),
-						visitors);
+						.getSecond(), visitors);
 			}
 		}
 		
@@ -516,8 +555,7 @@ public class PPAUtils {
 		for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 			CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-					.getSecond(),
-					visitors);
+					.getSecond(), visitors);
 		}
 		
 		// handle modified files
@@ -532,7 +570,8 @@ public class PPAUtils {
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
-			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+			JavaElementLocations oldElems = PPAUtils
+					.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -541,18 +580,16 @@ public class PPAUtils {
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCU(newFile, new PPAOptions());
-			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+			JavaElementLocations newElems = PPAUtils
+					.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 					entry.getValue(), visitors);
 		}
 	}
 	
 	private static void generateChangeOperationsForAddedFile(final Repository repository,
-			final RCSTransaction transaction,
-			final RCSRevision revision,
-			final CompilationUnit cu,
-			final String changedPath,
-			final Collection<ChangeOperationVisitor> visitors) {
+			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
+			final String changedPath, final Collection<ChangeOperationVisitor> visitors) {
 		ChangeOperations operations = new ChangeOperations();
 		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0]);
 		for (JavaElementLocation classDef : newElems.getClassDefs(changedPath)) {
@@ -577,11 +614,8 @@ public class PPAUtils {
 	}
 	
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
-			final RCSTransaction transaction,
-			final RCSRevision revision,
-			final CompilationUnit cu,
-			final String changedPath,
-			final Collection<ChangeOperationVisitor> visitors) {
+			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
+			final String changedPath, final Collection<ChangeOperationVisitor> visitors) {
 		
 		ChangeOperations operations = new ChangeOperations();
 		
@@ -617,14 +651,11 @@ public class PPAUtils {
 	 * @param visitors
 	 *            the visitors
 	 */
-	@SuppressWarnings ({ "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@NoneNull
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
-			final RCSTransaction transaction,
-			final RCSRevision revision,
-			final JavaElementLocations oldElems,
-			final JavaElementLocations newElems,
-			final String changedPath,
+			final RCSTransaction transaction, final RCSRevision revision, final JavaElementLocations oldElems,
+			final JavaElementLocations newElems, final String changedPath,
 			final Collection<ChangeOperationVisitor> visitors) {
 		
 		// generate diff
@@ -798,8 +829,7 @@ public class PPAUtils {
 		}
 	}
 	
-	public static void generateChangeOperationsNOPPA(final Repository repository,
-			final RCSTransaction transaction,
+	public static void generateChangeOperationsNOPPA(final Repository repository, final RCSTransaction transaction,
 			final Collection<ChangeOperationVisitor> visitors) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
@@ -880,7 +910,8 @@ public class PPAUtils {
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCUNoPPA(oldFile);
-			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+			JavaElementLocations oldElems = PPAUtils
+					.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -889,7 +920,8 @@ public class PPAUtils {
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCUNoPPA(newFile);
-			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+			JavaElementLocations newElems = PPAUtils
+					.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 					entry.getValue(), visitors);
 		}
@@ -905,8 +937,7 @@ public class PPAUtils {
 	 *            the options
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final File file,
-			final PPAOptions options) {
+	public static CompilationUnit getCU(final File file, final PPAOptions options) {
 		return getCU(file, options, Thread.currentThread().getName());
 	}
 	
@@ -921,9 +952,7 @@ public class PPAUtils {
 	 *            the request name
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final File file,
-			final PPAOptions options,
-			final String requestName) {
+	public static CompilationUnit getCU(final File file, final PPAOptions options, final String requestName) {
 		CompilationUnit cu = null;
 		String fileName = file.getName();
 		
@@ -973,8 +1002,7 @@ public class PPAUtils {
 	 *            the options
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final IFile file,
-			final PPAOptions options) {
+	public static CompilationUnit getCU(final IFile file, final PPAOptions options) {
 		CompilationUnit cu = null;
 		
 		try {
@@ -1087,8 +1115,7 @@ public class PPAUtils {
 	 *            the options
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
-			final PPAOptions options) {
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files, final PPAOptions options) {
 		return getCUs(files, options, Thread.currentThread().getName());
 	}
 	
@@ -1103,8 +1130,7 @@ public class PPAUtils {
 	 *            the request name
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
-			final PPAOptions options,
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files, final PPAOptions options,
 			final String requestName) {
 		Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
 		Map<IFile, File> iFiles = new HashMap<IFile, File>();
@@ -1156,8 +1182,7 @@ public class PPAUtils {
 	}
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
-			final RCSTransaction transaction,
-			final ChangeType changeType) {
+			final RCSTransaction transaction, final ChangeType changeType) {
 		
 		Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
@@ -1302,8 +1327,7 @@ public class PPAUtils {
 	 * @return the java element locations by file
 	 */
 	@NoneNull
-	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
-			final String relativePath,
+	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu, final String relativePath,
 			final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		
@@ -1333,8 +1357,7 @@ public class PPAUtils {
 	 *            the package filter
 	 * @return the java element locations by file
 	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File file,
-			final String filePrefixPath,
+	public static JavaElementLocations getJavaElementLocationsByFile(final File file, final String filePrefixPath,
 			final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
@@ -1378,8 +1401,7 @@ public class PPAUtils {
 	 *            the package filter
 	 * @return the java method elements
 	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
-			final String[] packageFilter) {
+	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir, final String[] packageFilter) {
 		
 		try {
 			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
@@ -1404,8 +1426,7 @@ public class PPAUtils {
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
-			final String filePrefixPath,
-			final String[] packageFilter) {
+			final String filePrefixPath, final String[] packageFilter) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
@@ -1439,6 +1460,47 @@ public class PPAUtils {
 		}
 		
 		return locationSet.getJavaElementLocations();
+	}
+	
+	private static JavaChangeOperation getLastOperationOnElement(final PersistenceUtil persistenceUtil,
+			JavaElement searchElement, RCSTransaction opTransaction, JavaElementLocation notMatch) {
+		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		CriteriaBuilder cb = criteria.getBuilder();
+		Root<JavaElementLocation> root = criteria.getRoot();
+		Predicate eq = cb.equal(root.get("element"), searchElement);
+		
+		//it might be an operation within the same transaction having a larger id.
+		
+		//get the highest location id within the same transaction
+		
+		@SuppressWarnings("unchecked") List<Long> maxIdResultList = persistenceUtil
+				.executeNativeSelectQuery("select max(l.id) from javaelementlocation l, javachangeoperation o WHERE l.id = o.changedelementlocation_id and o.revision_revisionid IN (select revisionid from rcsrevision where transaction_id = '"
+						+ opTransaction.getId() + "')");
+		
+		Long maxId = maxIdResultList.get(0);
+		
+		Predicate lt = cb.lt(criteria.getRoot().get(JavaElementLocation_.id), maxId);
+		
+		Predicate ne = cb.notEqual(criteria.getRoot().get(JavaElementLocation_.id), notMatch.getId());
+		
+		criteria.getQuery().where(cb.and(cb.and(eq, lt), ne));
+		criteria.getQuery().orderBy(cb.desc(root.get("id")));
+		
+		List<JavaElementLocation> hits = persistenceUtil.load(criteria, 1);
+		if (hits.isEmpty()) {
+			return null;
+		}
+		
+		JavaElementLocation hitLocation = hits.get(0);
+		
+		//search for corresponding JavaChangeOperation
+		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		operationCriteria.eq("changedElementLocation", hitLocation);
+		List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
+		if (operationHits.isEmpty()) {
+			return null;
+		}
+		return operationHits.get(0);
 	}
 	
 	/**

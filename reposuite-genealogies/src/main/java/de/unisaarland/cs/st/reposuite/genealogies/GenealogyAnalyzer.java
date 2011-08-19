@@ -165,8 +165,11 @@ public class GenealogyAnalyzer {
 		}
 		//check all other possibilities
 		JavaChangeOperation previousDefinition = PPAUtils
-		        .findPreviousDefinition(persistenceUtil, repository, operation);
-		if (previousDefinition != null) {
+				.findPreviousDefinition(persistenceUtil, repository, operation);
+		if ((previousDefinition != null)
+		        && (!(operation.getChangeType().equals(ChangeType.Deleted) && (javaElement.getElementType().equals(
+		                JavaMethodCall.class.getCanonicalName()) && (!previousDefinition.getChangeType().equals(
+		                ChangeType.Deleted)))))) {
 			result.add(previousDefinition);
 		}
 		return result;
