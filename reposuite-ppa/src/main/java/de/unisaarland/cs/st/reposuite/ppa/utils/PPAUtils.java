@@ -176,72 +176,6 @@ public class PPAUtils {
 			return null;
 		}
 		
-		//		RCSTransaction opTransaction = op.getRevision().getTransaction();
-		//
-		//		List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(),
-		//				opTransaction.getId());
-		//
-		//		//get annotation for line: INDEX vs LineNumber
-		//		if (annotation.size() <= (location.getStartLine() - 1)) {
-		//			if (Logger.logWarn()) {
-		//				Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-		//			}
-		//			return null;
-		//		}
-		//
-		//		AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
-		//		String lastTId = annoEntry.getRevision();
-		//
-		//		if (lastTId.equals(opTransaction.getId())) {
-		//			annotation = repository.annotate(location.getFilePath(), opTransaction.getParent(opTransaction.getBranch())
-		//					.getId());
-		//
-		//			//get annotation for line: INDEX vs LineNumber
-		//			if (annotation.size() <= (location.getStartLine() - 1)) {
-		//				if (Logger.logWarn()) {
-		//					Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-		//				}
-		//				return null;
-		//			}
-		//
-		//			annoEntry = annotation.get(location.getStartLine() - 1);
-		//			lastTId = annoEntry.getRevision();
-		//		}
-		//
-		//		if (lastTId == null) {
-		//			if (Logger.logError()) {
-		//				Logger.error("Found annotation entry with NULL revision! Should not happen!");
-		//			}
-		//			return null;
-		//		}
-		//		RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
-		//		String alternativePath = annoEntry.getAlternativeFilePath();
-		//		String changedPath = location.getFilePath();
-		//		if (alternativePath != null) {
-		//			changedPath = alternativePath;
-		//		}
-		//
-		//		int distance = Integer.MAX_VALUE;
-		//		JavaChangeOperation previousOperation = null;
-		//		List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-		//				lastChangeTransaction);
-		//		for (JavaChangeOperation previousOp : previousOperations) {
-		//			//search for the previous operation that matches filePath and line number
-		//			if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
-		//					&& (previousOp.getChangedElementLocation().getElement().equals(element))) {
-		//				if (previousOperation == null) {
-		//					previousOperation = previousOp;
-		//				} else if (distance > Math.abs(previousOp.getChangedElementLocation().getStartLine()
-		//						- location.getStartLine())) {
-		//					previousOperation = previousOp;
-		//				}
-		//			}
-		//		}
-		//
-		//		return previousOperation;
-		
-		//it's better to use annotate
-		
 		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
 		CriteriaBuilder cb = criteria.getBuilder();
 		Root<JavaElementLocation> root = criteria.getRoot();
@@ -326,13 +260,11 @@ public class PPAUtils {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
+		JavaElement searchElement = element;
 		RCSTransaction opTransaction = op.getRevision().getTransaction();
 		
 		//distinguish between definitions and calls
 		if (element instanceof JavaMethodCall) {
-			
-			JavaElement searchElement = null;
-			
 			String[] defNames = getDefinitionNamesForCallName((JavaMethodCall) element);
 			
 			for (String elementName : defNames) {
@@ -351,86 +283,16 @@ public class PPAUtils {
 				break;
 			}
 			
-			if (searchElement == null) {
+			if (searchElement.equals(element)) {
 				return null;
 			}
 			
-			JavaChangeOperation result = getLastOperationOnElement(persistenceUtil, searchElement, opTransaction,
-					location);
-			if ((result == null) || (result.equals(op))) {
-				return null;
-			}
-			return result;
-		} else {
-			
-			//			if (!op.getChangeType().equals(ChangeType.Added)) {
-			//				//if its a definition we can use annotate
-			//				List<AnnotationEntry> annotation = repository.annotate(location.getFilePath(),
-			//						opTransaction.getId());
-			//
-			//				//get annotation for line: INDEX vs LineNumber
-			//				if (annotation.size() <= (location.getStartLine() - 1)) {
-			//					if (Logger.logWarn()) {
-			//						Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-			//					}
-			//					return null;
-			//				}
-			//
-			//				AnnotationEntry annoEntry = annotation.get(location.getStartLine() - 1);
-			//				String lastTId = annoEntry.getRevision();
-			//
-			//				if (lastTId.equals(opTransaction.getId())) {
-			//					annotation = repository.annotate(location.getFilePath(),
-			//							opTransaction.getParent(opTransaction.getBranch()).getId());
-			//
-			//					//get annotation for line: INDEX vs LineNumber
-			//					if (annotation.size() <= (location.getStartLine() - 1)) {
-			//						if (Logger.logWarn()) {
-			//							Logger.warn("Annotation for file is smaller than change operation location. Somethign went wrong!");
-			//						}
-			//						return null;
-			//					}
-			//
-			//					annoEntry = annotation.get(location.getStartLine() - 1);
-			//					lastTId = annoEntry.getRevision();
-			//				}
-			//
-			//				if (lastTId == null) {
-			//					if (Logger.logError()) {
-			//						Logger.error("Found annotation entry with NULL revision! Should not happen!");
-			//					}
-			//					return null;
-			//				}
-			//				RCSTransaction lastChangeTransaction = persistenceUtil.loadById(lastTId, RCSTransaction.class);
-			//				String alternativePath = annoEntry.getAlternativeFilePath();
-			//				String changedPath = location.getFilePath();
-			//				if (alternativePath != null) {
-			//					changedPath = alternativePath;
-			//				}
-			//
-			//				List<JavaChangeOperation> previousOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-			//						lastChangeTransaction);
-			//				for (JavaChangeOperation previousOp : previousOperations) {
-			//					//search for the previous operation that matches filePath and line number
-			//					if ((previousOp.getChangedElementLocation().getFilePath().equals(changedPath))
-			//							&& (previousOp.getChangedElementLocation().getElement().getShortName().equals(element
-			//									.getShortName()))) {
-			//						return previousOp;
-			//					}
-			//				}
-			//				//not found
-			//				return null;
-			//			} else {
-			//search for the last delete operation of the very same method
-			JavaChangeOperation result = getLastOperationOnElement(persistenceUtil, element, opTransaction, location);
-			if ((result == null) || result.equals(op)) {
-				return null;
-			}
-			return result;
-			
-			//}
 		}
-		
+		JavaChangeOperation result = getLastOperationOnElement(persistenceUtil, searchElement, opTransaction, location);
+		if ((result == null) || result.equals(op)) {
+			return null;
+		}
+		return result;
 	}
 	
 	/**
