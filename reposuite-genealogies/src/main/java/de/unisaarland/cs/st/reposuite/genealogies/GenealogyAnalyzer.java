@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;
@@ -20,113 +19,50 @@ public class GenealogyAnalyzer {
 	
 	public static GenealogyEdgeType getEdgeTypeForDependency(final JavaChangeOperation depending,
 			final JavaChangeOperation parent) {
-		if (depending.getChangedElementLocation().getElement().getElementType()
-				.equals(JavaMethodDefinition.class.getCanonicalName())) {
-			switch (parent.getChangeType()) {
-				case Added:
-				case Modified:
-				case Renamed:
-					switch (depending.getChangeType()) {
-						case Added:
-							return GenealogyEdgeType.DefinitionOnDefinition;
-						case Modified:
-							return GenealogyEdgeType.DefinitionOnDefinition;
-						case Deleted:
-							return GenealogyEdgeType.DeletedDefinitionOnDefinition;
-						case Renamed:
-							return GenealogyEdgeType.DeletedDefinitionOnDefinition;
-						default:
-							if (Logger.logWarn()) {
-								Logger.warn("Found unexpected operation of type: "
-										+ depending.getChangeType().toString() + ". Ignoring!");
-							}
-							break;
-					}
-					break;
-				case Deleted:
-					switch (depending.getChangeType()) {
-						case Added:
-							return GenealogyEdgeType.DefinitionOnDeletedDefinition;
-						case Modified:
-							if (Logger.logWarn()) {
-								Logger.warn("Modified definition cannot  depend on deleted definition. This should never occur. Ignoring!");
-							}
-							break;
-						case Deleted:
-							if (Logger.logWarn()) {
-								Logger.warn("Deleted definition cannot  depend on deleted definition. This should never occur. Ignoring!");
-							}
-							break;
-						case Renamed:
-							if (Logger.logWarn()) {
-								Logger.warn("Renamed definition cannot  depend on deleted definition. This should never occur. Ignoring!");
-							}
-							break;
-						default:
-							if (Logger.logWarn()) {
-								Logger.warn("Found unexpected operation of type: "
-										+ depending.getChangeType().toString() + ". Ignoring!");
-							}
-							break;
-					}
-					break;
-				default:
-					if (Logger.logWarn()) {
-						Logger.warn("Found unexpected previousDefinition operation of type: "
-								+ parent.getChangeType().toString() + ". Ignoring!");
-					}
-					break;
+		
+		String callType = JavaMethodCall.class.getCanonicalName();
+		String methodDefType = JavaMethodDefinition.class.getCanonicalName();
+		
+		ChangeType dependingChangeType = depending.getChangeType();
+		ChangeType parentChangeType = parent.getChangeType();
+		
+		String dependingElementType = depending.getChangedElementLocation().getElement().getElementType();
+		String parentElementType = parent.getChangedElementLocation().getElement().getElementType();
+		
+		if(dependingElementType.equals(methodDefType)){
+			if(parentElementType.equals(callType)){
+				return null;
 			}
-		} else {
-			switch (parent.getChangeType()) {
-				case Added:
-				case Modified:
-				case Renamed:
-					switch (depending.getChangeType()) {
-						case Added:
-							return GenealogyEdgeType.CallOnDefinition;
-						case Modified:
-							return GenealogyEdgeType.CallOnDefinition;
-						case Deleted:
-							return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
-						case Renamed:
-							return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
-						default:
-							if (Logger.logWarn()) {
-								Logger.warn("Found unexpected operation of type: "
-										+ depending.getChangeType().toString() + ". Ignoring!");
-							}
-							break;
-					}
-					break;
-				case Deleted:
-					switch (depending.getChangeType()) {
-						case Added:
-							if (Logger.logWarn()) {
-								Logger.warn("Added call cannot  depend on deleted definition. This should never occur. Ignoring!");
-							}
-							break;
-						case Modified:
-							return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
-						case Deleted:
-							return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
-						case Renamed:
-							return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
-						default:
-							if (Logger.logWarn()) {
-								Logger.warn("Found unexpected operation of type: "
-										+ depending.getChangeType().toString() + ". Ignoring!");
-							}
-							break;
-					}
-					break;
-				default:
-					if (Logger.logWarn()) {
-						Logger.warn("Found unexpected previousDefinition operation of type: "
-								+ parent.getChangeType().toString() + ". Ignoring!");
-					}
-					break;
+			if(dependingChangeType.equals(ChangeType.Deleted)){
+				if(parentChangeType.equals(ChangeType.Deleted)){
+					return null;
+				}
+				return GenealogyEdgeType.DeletedDefinitionOnDefinition;
 			}
+			if(parentChangeType.equals(ChangeType.Deleted)){
+				return GenealogyEdgeType.DefinitionOnDeletedDefinition;
+			}
+			return GenealogyEdgeType.DefinitionOnDefinition;
+		}else if (dependingElementType.equals(callType)){
+			if(dependingChangeType.equals(ChangeType.Deleted)){
+				if(parentElementType.equals(callType)){
+					if(parentChangeType.equals(ChangeType.Deleted)){
+						return null;
+					}
+					return GenealogyEdgeType.DeletedCallOnCall;
+				}else if(parentElementType.equals(methodDefType)){
+					if(parentChangeType.equals(ChangeType.Deleted)){
+						return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
+					}
+					return null;
+				}
+			}else{
+				if(parentElementType.equals(methodDefType) && (!parentChangeType.equals(ChangeType.Deleted))){
+					return GenealogyEdgeType.CallOnDefinition;
+				}
+				return null;
+			}
+			
 		}
 		return GenealogyEdgeType.UNKNOWN;
 	}
@@ -167,9 +103,9 @@ public class GenealogyAnalyzer {
 		JavaChangeOperation previousDefinition = PPAUtils
 				.findPreviousDefinition(persistenceUtil, repository, operation);
 		if ((previousDefinition != null)
-		        && (!(operation.getChangeType().equals(ChangeType.Deleted) && (javaElement.getElementType().equals(
-		                JavaMethodCall.class.getCanonicalName()) && (!previousDefinition.getChangeType().equals(
-		                ChangeType.Deleted)))))) {
+				&& (!(operation.getChangeType().equals(ChangeType.Deleted) && (javaElement.getElementType().equals(
+						JavaMethodCall.class.getCanonicalName()) && (!previousDefinition.getChangeType().equals(
+								ChangeType.Deleted)))))) {
 			result.add(previousDefinition);
 		}
 		return result;
