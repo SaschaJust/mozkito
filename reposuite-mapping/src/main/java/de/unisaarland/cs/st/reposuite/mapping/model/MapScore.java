@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2011 MappableEntityim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, MappableEntityersion 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -9,7 +9,7 @@
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY MappableEntityIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
@@ -32,14 +32,14 @@ import javax.persistence.FetchType;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.mapping.elements.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.ioda.JavaUtils;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 
 /**
@@ -48,15 +48,15 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
  */
 @Entity
 @IdClass(MapId.class)
-public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
+public class MapScore implements Annotated, Comparable<MapScore> {
 	
-	private static final long  serialVersionUID = -8606759070008468513L;
+	private static final long  serialMappableEntityersionUID = -8606759070008468513L;
 	
-	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
-	double                     totalConfidence  = 0.0d;
-	private K                  element1;
+	List<MappingEngineFeature> features                      = new LinkedList<MappingEngineFeature>();
+	double                     totalConfidence               = 0.0d;
+	private MappableEntity     element1;
 	
-	private V                  element2;
+	private MappableEntity     element2;
 	
 	private String             id1;
 	private String             class1;
@@ -98,13 +98,13 @@ public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
 	
 	@SuppressWarnings("unchecked")
 	@Transient
-	public K getElement1() {
+	public MappableEntity getElement1() {
 		if (element1 != null) {
 			return element1;
 		} else {
 			try {
 				Class<?> clazz = Class.forName(getClass1());
-				return (K) PersistenceManager.getUtil().loadById(getId1(), clazz);
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getId1(), clazz);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -116,20 +116,20 @@ public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
 		}
 	}
 	
-	public void setElement1(K element1) {
+	public void setElement1(MappableEntity element1) {
 		this.element1 = element1;
 		setClass1(element1.getClass().getCanonicalName());
 		setId1(fetchId(element1));
 	}
 	
 	@Transient
-	public V getElement2() {
+	public MappableEntity getElement2() {
 		if (element2 != null) {
 			return element2;
 		} else {
 			try {
 				Class<?> clazz = Class.forName(getClass2());
-				return (V) PersistenceManager.getUtil().loadById(getId2(), clazz);
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getId2(), clazz);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -141,7 +141,7 @@ public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
 		}
 	}
 	
-	public void setElement2(V element2) {
+	public void setElement2(MappableEntity element2) {
 		this.element2 = element2;
 		setClass2(element2.getClass().getCanonicalName());
 		setId2(fetchId(element2));
@@ -164,7 +164,7 @@ public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
 	 * @param transaction
 	 * @param report
 	 */
-	public MapScore(final K element1, final V element2) {
+	public MapScore(final MappableEntity element1, final MappableEntity element2) {
 		setElement1(element1);
 		setElement2(element2);
 	}
@@ -192,7 +192,7 @@ public class MapScore<K, V> implements Annotated, Comparable<MapScore<K, V>> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final MapScore<K, V> arg0) {
+	public int compareTo(final MapScore arg0) {
 		return Double.compare(this.totalConfidence, arg0.totalConfidence);
 	}
 	

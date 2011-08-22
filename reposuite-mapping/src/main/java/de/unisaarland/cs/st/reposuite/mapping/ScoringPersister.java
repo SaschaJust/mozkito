@@ -19,10 +19,8 @@
 package de.unisaarland.cs.st.reposuite.mapping;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
@@ -31,7 +29,7 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringPersister extends RepoSuiteSinkThread<MapScore<RCSTransaction, Report>> {
+public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -63,7 +61,7 @@ public class ScoringPersister extends RepoSuiteSinkThread<MapScore<RCSTransactio
 				Logger.info("Starting " + getHandle());
 			}
 			
-			MapScore<RCSTransaction, Report> score;
+			MapScore score;
 			this.persistenceUtil.beginTransaction();
 			int i = 0;
 			

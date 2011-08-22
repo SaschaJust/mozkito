@@ -21,12 +21,10 @@ package de.unisaarland.cs.st.reposuite.mapping;
 import java.util.List;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 
@@ -34,7 +32,7 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingReader extends RepoSuiteSourceThread<MapScore<RCSTransaction, Report>> {
+public class MappingReader extends RepoSuiteSourceThread<MapScore> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -66,11 +64,10 @@ public class MappingReader extends RepoSuiteSourceThread<MapScore<RCSTransaction
 				Logger.info("Starting " + getHandle());
 			}
 			
-			@SuppressWarnings("unchecked") Criteria<MapScore<RCSTransaction, Report>> criteria = (Criteria<MapScore<RCSTransaction, Report>>) (Object) this.persistenceUtil
-			        .createCriteria(MapScore.class);
-			List<MapScore<RCSTransaction, Report>> list = this.persistenceUtil.load(criteria);
+			Criteria<MapScore> criteria = this.persistenceUtil.createCriteria(MapScore.class);
+			List<MapScore> list = this.persistenceUtil.load(criteria);
 			
-			for (MapScore<RCSTransaction, Report> score : list) {
+			for (MapScore score : list) {
 				if (Logger.logDebug()) {
 					Logger.debug("Providing " + score + ".");
 				}

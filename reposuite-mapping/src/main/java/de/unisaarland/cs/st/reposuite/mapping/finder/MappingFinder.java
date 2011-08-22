@@ -18,6 +18,7 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.finder;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,23 +28,15 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
-<<<<<<< Updated upstream
-import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-=======
->>>>>>> Stashed changes
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
+import de.unisaarland.cs.st.reposuite.mapping.filters.MappingFilter;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-<<<<<<< Updated upstream
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
-=======
 import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter;
->>>>>>> Stashed changes
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -55,9 +48,12 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
  */
 public class MappingFinder {
 	
-	private final Map<String, MappingEngine>                           engines    = new HashMap<String, MappingEngine>();
-	private final Map<String, MappingStrategy>                         strategies = new HashMap<String, MappingStrategy>();
-	private final Map<Class<? extends MappingStorage>, MappingStorage> storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<String, MappingEngine>                             engines    = new HashMap<String, MappingEngine>();
+	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
+	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
+	private final Map<Class<?>, MappingSplitter>                         splitters  = new HashMap<Class<?>, MappingSplitter>();
+	private final Map<Class<?>, MappingFilter>                           filters    = new HashMap<Class<?>, MappingFilter>();
 	
 	/**
 	 * @param engine
@@ -79,6 +75,7 @@ public class MappingFinder {
 		}
 	}
 	
+	/**
 	 * @param filter
 	 */
 	public void addFilter(final MappingFilter filter) {
@@ -88,9 +85,8 @@ public class MappingFinder {
 	/**
 	 * @param selector
 	 */
-	@SuppressWarnings("unchecked")
-	public void addSelector(final MappingSelector<?, ?> selector) {
-		this.selectors.put((Class<? extends MappingSelector<?, ?>>) selector.getClass(), selector);
+	public void addSelector(final MappingSelector selector) {
+		this.selectors.put(selector.getClass(), selector);
 		for (Class<? extends MappingStorage> key : selector.storageDependency()) {
 			if (!this.storages.keySet().contains(key)) {
 				try {
@@ -143,14 +139,13 @@ public class MappingFinder {
 	 * @param toClazz
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private <K, V> List<MappingSelector<K, V>> findSelectors(final Class<K> fromClazz, final Class<V> toClazz) {
-		List<MappingSelector<K, V>> list = new LinkedList<MappingSelector<K, V>>();
+	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz, final Class<V> toClazz) {
+		List<MappingSelector> list = new LinkedList<MappingSelector>();
 		
-		for (Class<? extends MappingSelector<?, ?>> klass : this.selectors.keySet()) {
+		for (Class<? extends MappingSelector> klass : this.selectors.keySet()) {
 			ParameterizedType type = (ParameterizedType) klass.getGenericSuperclass();
 			if ((type.getActualTypeArguments()[0] == fromClazz) && (type.getActualTypeArguments()[1] == toClazz)) {
-				list.add((MappingSelector<K, V>) this.selectors.get(klass));
+				list.add(this.selectors.get(klass));
 			}
 		}
 		
@@ -164,15 +159,19 @@ public class MappingFinder {
 	 * @param targetClass
 	 * @return
 	 */
-	public <K, V> Set<V> getCandidates(final K source, final Class<V> targetClass) {
-		Set<V> candidates = new HashSet<V>();
+	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source, final Class<T> targetClass) {
+		Set<T> candidates = new HashSet<T>();
 		
-		@SuppressWarnings("unchecked") List<MappingSelector<K, V>> selectors = findSelectors(
-		        (Class<K>) source.getClass(), targetClass);
-		
-		if (findAll != null) {
-			for (List<RegexGroup> match : findAll) {
-				candidates.add(Long.parseLong(match.get(0).getMatch()));
+		try {
+			List<MappingSelector> selectors = findSelectors(source.getBaseType(),
+			        ((MappableEntity) targetClass.newInstance()).getBaseType());
+			
+			for (MappingSelector selector : selectors) {
+				candidates.addAll(selector.parse(source, targetClass));
+			}
+		} catch (Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
 			}
 		}
 		
@@ -192,7 +191,7 @@ public class MappingFinder {
 	 * @param score
 	 * @return
 	 */
-	public <K, V> PersistentMapping map(final MapScore<K, V> score) {
+	public PersistentMapping map(final MapScore score) {
 		PersistentMapping mapping = new PersistentMapping(score);
 		for (String key : this.strategies.keySet()) {
 			MappingStrategy strategy = this.strategies.get(key);
@@ -211,8 +210,8 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public <K, V> MapScore<K, V> score(final K element1, final V element2) {
-		MapScore<K, V> score = new MapScore<K, V>(element1, element2);
+	public MapScore score(final MappableEntity element1, final MappableEntity element2) {
+		MapScore score = new MapScore(element1, element2);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Scoring with " + this.engines.size() + " engines: "
@@ -221,7 +220,7 @@ public class MappingFinder {
 		
 		for (String engineName : this.engines.keySet()) {
 			MappingEngine mappingEngine = this.engines.get(engineName);
-			mappingEngine.score((Annotated) element1, (Annotated) element2, score);
+			mappingEngine.score(element1, element2, score);
 		}
 		return score;
 	}

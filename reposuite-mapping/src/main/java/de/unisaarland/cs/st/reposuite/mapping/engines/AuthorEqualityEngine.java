@@ -18,25 +18,21 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
-
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
-import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.ioda.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -103,7 +99,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void score(final Annotated element1, Annotated element2, final MapScore score) {
+	public void score(final MappableEntity element1, MappableEntity element2, final MapScore score) {
 		double value = 0d;
 		if (Logger.logDebug()) {
 			Logger.debug("Looking up changes in resolution for report " + report.getId() + ".");

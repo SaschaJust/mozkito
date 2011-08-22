@@ -19,12 +19,10 @@
 package de.unisaarland.cs.st.reposuite.mapping;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
 
@@ -32,7 +30,7 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingProcessor extends RepoSuiteTransformerThread<MapScore<RCSTransaction, Report>, PersistentMapping> {
+public class MappingProcessor extends RepoSuiteTransformerThread<MapScore, PersistentMapping> {
 	
 	private final MappingFinder mappingFinder;
 	
@@ -59,7 +57,7 @@ public class MappingProcessor extends RepoSuiteTransformerThread<MapScore<RCSTra
 				Logger.info("Starting " + getHandle());
 			}
 			
-			MapScore<RCSTransaction, Report> score = null;
+			MapScore score = null;
 			
 			while (!isShutdown() && ((score = read()) != null)) {
 				PersistentMapping mapping = this.mappingFinder.map(score);
