@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 
-public class TransactionChangeGenealogyTest {
+public class TransactionChangeGenealogyLongTest {
 	
 	@BeforeClass
 	public static void beforeClass() {

@@ -20,7 +20,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
-public class ChangeGenealogyTest extends TestEnvironment {
+public class ChangeGenealogyLongTest extends TestEnvironment {
 	
 	@BeforeClass
 	public static void beforeClass() {
