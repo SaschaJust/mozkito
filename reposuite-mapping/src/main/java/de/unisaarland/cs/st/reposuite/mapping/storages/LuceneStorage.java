@@ -39,7 +39,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class LuceneStorage extends MappingStorage {
 	
@@ -112,6 +112,7 @@ public class LuceneStorage extends MappingStorage {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage#loadData
 	 * (de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil)
@@ -137,7 +138,8 @@ public class LuceneStorage extends MappingStorage {
 	}
 	
 	/**
-	 * @param analyzer the analyzer to set
+	 * @param analyzer
+	 *            the analyzer to set
 	 */
 	public void setAnalyzer(final Analyzer analyzer) {
 		this.analyzer = analyzer;
@@ -150,16 +152,24 @@ public class LuceneStorage extends MappingStorage {
 	}
 	
 	/**
-	 * @param isearcherReports the isearcherReports to set
+	 * @param isearcherReports
+	 *            the isearcherReports to set
 	 */
 	public void setIsearcherReports(final IndexSearcher isearcherReports) {
 		this.isearcherReports = isearcherReports;
 	}
 	
 	/**
-	 * @param iwriterReports the iwriterReports to set
+	 * @param iwriterReports
+	 *            the iwriterReports to set
 	 */
 	public void setIwriterReports(final IndexWriter iwriterReports) {
 		this.iwriterReports = iwriterReports;
+	}
+	
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

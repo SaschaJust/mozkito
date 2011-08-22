@@ -18,7 +18,7 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
+public class MappingPersister extends RepoSuiteSinkThread<PersistentMapping> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -60,7 +60,7 @@ public class MappingPersister extends RepoSuiteSinkThread<RCSBugMapping> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			RCSBugMapping mapping;
+			PersistentMapping mapping;
 			this.persistenceUtil.beginTransaction();
 			int i = 0;
 			

@@ -31,10 +31,18 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import java.util.Set;
+
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public abstract class MappingEngine {
 	
@@ -128,6 +136,33 @@ public abstract class MappingEngine {
 	}
 	
 	/**
+	 * @param score
+	 * @param confidence
+	 * @param transactionFieldName
+	 * @param transactionFieldContent
+	 * @param transactionSubstring
+	 * @param reportFieldName
+	 * @param reportFieldContent
+	 * @param reportSubstring
+	 */
+	
+	public void addFeature(@NotNull final MapScore score, final double confidence,
+	        @NotNull @NotEmpty final String transactionFieldName, final Object transactionFieldContent,
+	        final Object transactionSubstring, @NotNull @NotEmpty final String reportFieldName,
+	        final Object reportFieldContent, final Object reportSubstring) {
+		score.addFeature(confidence, truncate(transactionFieldName),
+		        truncate(transactionFieldContent != null ? transactionFieldContent.toString() : unused),
+		        truncate(transactionSubstring != null ? transactionSubstring.toString()
+		                : truncate(transactionFieldContent != null ? transactionFieldContent.toString() : unused)),
+		        truncate(reportFieldName),
+		        truncate(reportFieldContent != null ? reportFieldContent.toString() : unused),
+		        truncate(reportSubstring != null ? reportSubstring.toString()
+		                : truncate(reportFieldContent != null ? reportFieldContent.toString() : unused)), getClass());
+	}
+	
+	public abstract Set<Class<?>> supported();
+	
+	/**
 	 * @param transaction
 	 * @param report
 	 * @param score
@@ -189,5 +224,5 @@ public abstract class MappingEngine {
 	protected String truncate(final String string) {
 		return string.substring(0, Math.min(string.length() - 1, 254));
 	}
-	
+
 }

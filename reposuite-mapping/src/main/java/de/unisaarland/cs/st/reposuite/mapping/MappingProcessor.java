@@ -18,19 +18,21 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
-public class MappingProcessor extends RepoSuiteTransformerThread<MapScore, RCSBugMapping> {
+public class MappingProcessor extends RepoSuiteTransformerThread<MapScore<RCSTransaction, Report>, PersistentMapping> {
 	
 	private final MappingFinder mappingFinder;
 	
@@ -57,10 +59,10 @@ public class MappingProcessor extends RepoSuiteTransformerThread<MapScore, RCSBu
 				Logger.info("Starting " + getHandle());
 			}
 			
-			MapScore score = null;
+			MapScore<RCSTransaction, Report> score = null;
 			
 			while (!isShutdown() && ((score = read()) != null)) {
-				RCSBugMapping mapping = this.mappingFinder.map(score);
+				PersistentMapping mapping = this.mappingFinder.map(score);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);

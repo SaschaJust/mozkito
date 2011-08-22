@@ -18,7 +18,7 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping.strategies;
 
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -43,7 +43,7 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public RCSBugMapping map(final RCSBugMapping mapping) {
+	public PersistentMapping map(final PersistentMapping mapping) {
 		switch (Double.compare(mapping.getScore().getTotalConfidence(), 0d)) {
 			case -1:
 				mapping.setValid(false);

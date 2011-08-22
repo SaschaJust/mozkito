@@ -18,18 +18,20 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
-public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
+public class ScoringPersister extends RepoSuiteSinkThread<MapScore<RCSTransaction, Report>> {
 	
 	private final PersistenceUtil persistenceUtil;
 	
@@ -37,7 +39,7 @@ public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
-	 * @param persistenceUtil 
+	 * @param persistenceUtil
 	 */
 	public ScoringPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
 	        final PersistenceUtil persistenceUtil) {
@@ -47,6 +49,7 @@ public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -60,7 +63,7 @@ public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
 				Logger.info("Starting " + getHandle());
 			}
 			
-			MapScore score;
+			MapScore<RCSTransaction, Report> score;
 			this.persistenceUtil.beginTransaction();
 			int i = 0;
 			

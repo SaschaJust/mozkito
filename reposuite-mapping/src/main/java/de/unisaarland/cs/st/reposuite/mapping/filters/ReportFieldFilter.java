@@ -20,7 +20,7 @@ package de.unisaarland.cs.st.reposuite.mapping.filters;
 
 import java.util.Set;
 
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -36,7 +36,7 @@ public class ReportFieldFilter extends MappingFilter {
 	}
 	
 	@Override
-	public Set<MappingFilter> filter(final RCSBugMapping mapping,
+	public Set<MappingFilter> filter(final PersistentMapping mapping,
 	                                 final Set<MappingFilter> triggeringFilters) {
 		// TODO Auto-generated method stub
 		return null;

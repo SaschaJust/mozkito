@@ -26,7 +26,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -43,13 +45,13 @@ import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class RegexEngine extends MappingEngine {
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
-	 *
+	 * 
 	 */
 	private class Matcher {
 		
@@ -63,11 +65,8 @@ public class RegexEngine extends MappingEngine {
 		 */
 		public Matcher(final String score, final String pattern, final String options) {
 			setScore(Double.parseDouble(score));
-			setRegex(new Regex(
-			                   pattern,
-			                   !options.isEmpty() && options.equalsIgnoreCase("CASE_INSENSITIVE")
-			                                                                                     ? Pattern.CASE_INSENSITIVE
-			                                                                                     : 0));
+			setRegex(new Regex(pattern,
+			        !options.isEmpty() && options.equalsIgnoreCase("CASE_INSENSITIVE") ? Pattern.CASE_INSENSITIVE : 0));
 		}
 		
 		/**
@@ -85,14 +84,16 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
-		 * @param regex the regex to set
+		 * @param regex
+		 *            the regex to set
 		 */
 		public void setRegex(final Regex regex) {
 			this.regex = regex;
 		}
 		
 		/**
-		 * @param score the score to set
+		 * @param score
+		 *            the score to set
 		 */
 		public void setScore(final double score) {
 			this.score = score;
@@ -100,6 +101,7 @@ public class RegexEngine extends MappingEngine {
 		
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -134,6 +136,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -175,6 +178,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -305,20 +309,20 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.configPath == null)
-		                                                    ? 0
-		                                                    : this.configPath.hashCode());
+		result = prime * result + ((this.configPath == null) ? 0 : this.configPath.hashCode());
 		return result;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
 	 */
 	@Override
@@ -338,13 +342,10 @@ public class RegexEngine extends MappingEngine {
 		
 		try {
 			CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(getConfigPath().toURL()
-			                                                                                         .openStream())),
-			                                 ' ');
+			        .openStream())), ' ');
 			String[] line = null;
 			while ((line = reader.readNext()) != null) {
-				getMatchers().add(new Matcher(line[0], line[1], line.length > 2
-				                                                               ? line[2]
-				                                                               : ""));
+				getMatchers().add(new Matcher(line[0], line[1], line.length > 2 ? line[2] : ""));
 			}
 			
 			if (Logger.logDebug()) {
@@ -390,6 +391,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init(de.
 	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -397,13 +399,10 @@ public class RegexEngine extends MappingEngine {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
-	                     final boolean isRequired) {
+	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
-		                                      "URI to file containing the regular expressions used to map the IDs.",
-		                                      null, isRequired));
+		        "URI to file containing the regular expressions used to map the IDs.", null, isRequired));
 	}
 	
 	/**
@@ -435,6 +434,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
@@ -442,9 +442,7 @@ public class RegexEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(final RCSTransaction transaction,
-	                  final Report report,
-	                  final MapScore score) {
+	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
 		double value = 0d;
 		String relevantString = "";
 		
@@ -474,14 +472,16 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
-	 * @param uri the configPath to set
+	 * @param uri
+	 *            the configPath to set
 	 */
 	private void setConfigPath(final URI uri) {
 		this.configPath = uri;
 	}
 	
 	/**
-	 * @param matchers the matchers to set
+	 * @param matchers
+	 *            the matchers to set
 	 */
 	private void setMatchers(final Collection<Matcher> matchers) {
 		this.matchers = matchers;
@@ -511,6 +511,17 @@ public class RegexEngine extends MappingEngine {
 	 */
 	public URL toURL() throws MalformedURLException {
 		return this.configPath.toURL();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
+	@Override
+	public Set<Class<?>> supported() {
+		return new HashSet<Class<?>>();
 	}
 	
 }

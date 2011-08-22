@@ -25,6 +25,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -46,7 +48,7 @@ public abstract class MappingFilter {
 	 * @param score
 	 */
 	@NoneNull
-	public abstract Set<MappingFilter> filter(final RCSBugMapping mapping,
+	public abstract Set<MappingFilter> filter(final PersistentMapping mapping,
 	                                          Set<MappingFilter> triggeringFilters);
 	
 	/**

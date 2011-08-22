@@ -21,7 +21,7 @@ package de.unisaarland.cs.st.reposuite.mapping.strategies;
 import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature;
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -47,7 +47,7 @@ public class VetoStrategy extends MappingStrategy {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public RCSBugMapping map(final RCSBugMapping mapping) {
+	public PersistentMapping map(final PersistentMapping mapping) {
 		List<MappingEngineFeature> features = mapping.getScore().getFeatures();
 		for (MappingEngineFeature feature : features) {
 			if (Double.compare(feature.getConfidence(), 0.0d) < 0) {

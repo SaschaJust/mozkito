@@ -19,7 +19,7 @@
 package de.unisaarland.cs.st.reposuite.mapping.strategies;
 
 import de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature;
-import de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping;
+import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 
 /**
  * Only consider the feature with the highest impact.
@@ -41,7 +41,7 @@ public class HeavyImpactStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public RCSBugMapping map(final RCSBugMapping mapping) {
+	public PersistentMapping map(final PersistentMapping mapping) {
 		double maxabs = 0d;
 		for (MappingEngineFeature feature : mapping.getScore().getFeatures()) {
 			if (Math.abs(feature.getConfidence()) > Math.abs(maxabs)) {

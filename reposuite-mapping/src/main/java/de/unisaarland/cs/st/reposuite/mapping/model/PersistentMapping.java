@@ -43,7 +43,7 @@ import net.ownhero.dev.ioda.JavaUtils;
  */
 @Entity
 @IdClass (MapId.class)
-public class RCSBugMapping implements Annotated {
+public class PersistentMapping implements Annotated {
 	
 	private static final long     serialVersionUID = -6423537467677757941L;
 	
@@ -54,7 +54,7 @@ public class RCSBugMapping implements Annotated {
 	/**
 	 * @param score
 	 */
-	public RCSBugMapping(final MapScore score) {
+	public PersistentMapping(final MapScore score) {
 		setScore(score);
 	}
 	
@@ -70,10 +70,10 @@ public class RCSBugMapping implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof RCSBugMapping)) {
+		if (!(obj instanceof PersistentMapping)) {
 			return false;
 		}
-		RCSBugMapping other = (RCSBugMapping) obj;
+		PersistentMapping other = (PersistentMapping) obj;
 		if (getScore() == null) {
 			if (other.getScore() != null) {
 				return false;
