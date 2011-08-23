@@ -207,6 +207,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 *            the operation_ids
 	 * @return the genealogy vertex
 	 */
+	@NoneNull
 	protected GenealogyVertex addVertex(final String transaction_id, final Collection<Long> operation_ids) {
 		GenealogyVertex existingVertex = getVertex(transaction_id, operation_ids);
 		if (existingVertex != null) {
@@ -342,6 +343,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 *            the java change operation ids
 	 * @return the vertex if found. Returns <code>Null</code> otherwise.
 	 */
+	@NoneNull
 	public GenealogyVertex getVertex(final String transactionId, final Collection<Long> javaChangeOperationIds) {
 		Transaction tx = graph.beginTx();
 		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)

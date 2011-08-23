@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
@@ -72,7 +73,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 					transaction);
 			if (Logger.logInfo()) {
 				Logger.info("Adding transaction " + transaction.getId() + " ... (" + counter + "/"
-				        + transactions.size() + ")");
+						+ transactions.size() + ")");
 			}
 			this.genealogy.addVertex(changeOperations);
 		}
@@ -142,6 +143,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	 *            the transaction
 	 * @return the vertex
 	 */
+	@NoneNull
 	public GenealogyVertex getVertex(final RCSTransaction transaction) {
 		//		PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction);
 		return this.genealogy.getVertex(transaction.getId(), new HashSet<Long>());
