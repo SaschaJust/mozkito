@@ -29,7 +29,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	}
 	
 	/**
-	 * @return the scoreAuthorEquality
+	 * @return the scoreAuthorEquality 
 	 */
 	private double getScoreAuthorEquality() {
 		return this.scoreAuthorEquality;

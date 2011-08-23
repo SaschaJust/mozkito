@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.training;
 
 import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
