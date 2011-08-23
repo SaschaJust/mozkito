@@ -400,6 +400,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	public int vertexSize() {
 		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
 				.query(GenealogyVertex.transaction_id, "*");
-		return indexHits.size();
+		int result = indexHits.size();
+		indexHits.close();
+		return result;
 	}
 }
