@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import java.util.HashSet;
@@ -27,6 +9,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 
 /**
@@ -43,42 +26,30 @@ public abstract class MappingEngine extends Registered {
 	private final boolean      registered      = false;
 	private final boolean      initialized     = false;
 	
-	public MappingEngine() {
-		
-	}
-	
-	/**
-	 * @return
-	 */
-	@Override
-	public abstract String getDescription();
-	
 	/**
 	 * @param score
 	 * @param confidence
-	 * @param transactionFieldName
-	 * @param transactionFieldContent
-	 * @param transactionSubstring
-	 * @param reportFieldName
-	 * @param reportFieldContent
-	 * @param reportSubstring
+	 * @param fromFieldName
+	 * @param fromFieldContent
+	 * @param fromSubstring
+	 * @param toFieldName
+	 * @param toFieldContent
+	 * @param toSubstring
 	 */
 	
 	public void addFeature(@NotNull final MapScore score, final double confidence,
-	        @NotNull @NotEmpty final String transactionFieldName, final Object transactionFieldContent,
-	        final Object transactionSubstring, @NotNull @NotEmpty final String reportFieldName,
-	        final Object reportFieldContent, final Object reportSubstring) {
-		score.addFeature(confidence, truncate(transactionFieldName),
-		        truncate(transactionFieldContent != null ? transactionFieldContent.toString() : unused),
-		        truncate(transactionSubstring != null ? transactionSubstring.toString()
-		                : truncate(transactionFieldContent != null ? transactionFieldContent.toString() : unused)),
-		        truncate(reportFieldName),
-		        truncate(reportFieldContent != null ? reportFieldContent.toString() : unused),
-		        truncate(reportSubstring != null ? reportSubstring.toString()
-		                : truncate(reportFieldContent != null ? reportFieldContent.toString() : unused)), getClass());
+	        @NotNull @NotEmpty final String fromFieldName, final Object fromFieldContent, final Object fromSubstring,
+	        @NotNull @NotEmpty final String toFieldName, final Object toFieldContent, final Object toSubstring) {
+		score.addFeature(confidence, truncate(fromFieldName),
+		        truncate(fromFieldContent != null ? fromFieldContent.toString() : unused),
+		        truncate(fromSubstring != null ? fromSubstring.toString()
+		                : truncate(fromFieldContent != null ? fromFieldContent.toString() : unused)),
+		        truncate(toFieldName), truncate(toFieldContent != null ? toFieldContent.toString() : unused),
+		        truncate(toSubstring != null ? toSubstring.toString()
+		                : truncate(toFieldContent != null ? toFieldContent.toString() : unused)), getClass());
 	}
 	
-	public abstract Set<Class<?>> supported();
+	public abstract Expression supported();
 	
 	/**
 	 * @param transaction
@@ -86,7 +57,7 @@ public abstract class MappingEngine extends Registered {
 	 * @param score
 	 */
 	@NoneNull
-	public abstract void score(final MappableEntity element1, final MappableEntity element2, final MapScore score);
+	public abstract void score(final MappableEntity from, final MappableEntity to, final MapScore score);
 	
 	/**
 	 * @return

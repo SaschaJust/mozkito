@@ -1,12 +1,12 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.mappable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class MappableReport extends MappableEntity {
@@ -34,8 +34,37 @@ public class MappableReport extends MappableEntity {
 		return Report.class;
 	}
 	
-	@Override
-	public String getBodyText() {
+	public String getBody() {
 		return report.getDescription();
+	}
+	
+	@Override
+	public Object get(FieldKey key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Object get(FieldKey key, int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@SuppressWarnings("serial")
+	@Override
+	public Set<FieldKey> supported() {
+		// TODO complete this
+		return new HashSet<FieldKey>() {
+			
+			{
+				add(FieldKey.ID);
+			}
+		};
+	}
+	
+	@Override
+	public String getText() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.selectors;
 
 import java.util.LinkedList;
@@ -11,13 +8,13 @@ import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
@@ -66,7 +63,7 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public <T extends MappableEntity> List<T> parse(MappableEntity element, Class<T> targetType) {
-		List<RCSTransaction> list = new LinkedList<RCSTransaction>();
+		List<T> list = new LinkedList<T>();
 		try {
 			List<String> ids = new LinkedList<String>();
 			Regex regex = new Regex(this.pattern);
@@ -74,9 +71,10 @@ public class ReportRegexSelector extends MappingSelector {
 			
 			util = PersistenceManager.getUtil();
 			
-			Criteria<RCSTransaction> criteria = util.createCriteria(RCSTransaction.class);
+			Criteria<T> criteria = util.createCriteria(targetType);
 			
-			for (Comment comment : element.getComments()) {
+			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
+				Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
 				List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
 				
 				if (findAll != null) {

@@ -1,23 +1,9 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 /**
  * 
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
@@ -30,11 +16,10 @@ import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.LoggerArguments;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadPool;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class Mapping extends RepoSuiteToolchain {
 	
@@ -51,13 +36,14 @@ public class Mapping extends RepoSuiteToolchain {
 		this.logSettings = settings.setLoggerArg(true);
 		this.mappingArguments = settings.setMappingArgs(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
+		        false);
 		
 		settings.parseArguments();
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#getSettings()
 	 */
@@ -78,6 +64,7 @@ public class Mapping extends RepoSuiteToolchain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
 	 */
 	@Override
@@ -117,6 +104,7 @@ public class Mapping extends RepoSuiteToolchain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#shutdown()
 	 */

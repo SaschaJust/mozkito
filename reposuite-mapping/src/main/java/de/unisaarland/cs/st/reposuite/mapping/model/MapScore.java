@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Copyright 2011 MappableEntityim Herzig, Sascha Just
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, MappableEntityersion 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -9,7 +9,7 @@
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY MappableEntityIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
@@ -50,10 +50,10 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 @IdClass(MapId.class)
 public class MapScore implements Annotated, Comparable<MapScore> {
 	
-	private static final long  serialMappableEntityersionUID = -8606759070008468513L;
+	private static final long  serialVersionUID = -8606759070008468513L;
 	
-	List<MappingEngineFeature> features                      = new LinkedList<MappingEngineFeature>();
-	double                     totalConfidence               = 0.0d;
+	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
+	double                     totalConfidence  = 0.0d;
 	private MappableEntity     element1;
 	
 	private MappableEntity     element2;
@@ -96,7 +96,6 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 		this.class2 = class2;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Transient
 	public MappableEntity getElement1() {
 		if (element1 != null) {

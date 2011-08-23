@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.selectors;
 
 import java.util.LinkedList;
@@ -15,6 +12,7 @@ import org.apache.commons.collections.Transformer;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
@@ -81,7 +79,7 @@ public class TransactionRegexSelector extends MappingSelector {
 			
 			Criteria<Report> criteria = util.createCriteria(Report.class);
 			
-			List<List<RegexGroup>> findAll = regex.findAll(element.getBodyText());
+			List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
 			
 			if (findAll != null) {
 				for (List<RegexGroup> match : findAll) {

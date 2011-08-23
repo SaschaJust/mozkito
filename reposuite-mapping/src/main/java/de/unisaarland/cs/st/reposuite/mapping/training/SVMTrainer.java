@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 /**
  * 
  */
@@ -20,7 +35,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class SVMTrainer extends MappingStorage {
 	
@@ -57,32 +72,33 @@ public class SVMTrainer extends MappingStorage {
 	}
 	
 	private static void exit_with_help() {
-		System.out.print("Usage: svm_train [options] training_set_file [model_file]\n"
-		        + "options:\n"
-		        + "-s svm_type : set type of SVM (default 0)\n"
-		        + "	0 -- C-SVC\n"
-		        + "	1 -- nu-SVC\n"
-		        + "	2 -- one-class SVM\n"
-		        + "	3 -- epsilon-SVR\n"
-		        + "	4 -- nu-SVR\n"
-		        + "-t kernel_type : set type of kernel function (default 2)\n"
-		        + "	0 -- linear: u'*v\n"
-		        + "	1 -- polynomial: (gamma*u'*v + coef0)^degree\n"
-		        + "	2 -- radial basis function: exp(-gamma*|u-v|^2)\n"
-		        + "	3 -- sigmoid: tanh(gamma*u'*v + coef0)\n"
-		        + "	4 -- precomputed kernel (kernel values in training_set_file)\n"
-		        + "-d degree : set degree in kernel function (default 3)\n"
-		        + "-g gamma : set gamma in kernel function (default 1/num_features)\n"
-		        + "-r coef0 : set coef0 in kernel function (default 0)\n"
-		        + "-c cost : set the parameter C of C-SVC, epsilon-SVR, and nu-SVR (default 1)\n"
-		        + "-n nu : set the parameter nu of nu-SVC, one-class SVM, and nu-SVR (default 0.5)\n"
-		        + "-p epsilon : set the epsilon in loss function of epsilon-SVR (default 0.1)\n"
-		        + "-m cachesize : set cache memory size in MB (default 100)\n"
-		        + "-e epsilon : set tolerance of termination criterion (default 0.001)\n"
-		        + "-h shrinking : whether to use the shrinking heuristics, 0 or 1 (default 1)\n"
-		        + "-b probability_estimates : whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)\n"
-		        + "-wi weight : set the parameter C of class i to weight*C, for C-SVC (default 1)\n"
-		        + "-v n : n-fold cross validation mode\n" + "-q : quiet mode (no outputs)\n");
+		System.out
+		        .print("Usage: svm_train [options] training_set_file [model_file]\n"
+		                + "options:\n"
+		                + "-s svm_type : set type of SVM (default 0)\n"
+		                + "	0 -- C-SVC\n"
+		                + "	1 -- nu-SVC\n"
+		                + "	2 -- one-class SVM\n"
+		                + "	3 -- epsilon-SVR\n"
+		                + "	4 -- nu-SVR\n"
+		                + "-t kernel_type : set type of kernel function (default 2)\n"
+		                + "	0 -- linear: u'*v\n"
+		                + "	1 -- polynomial: (gamma*u'*v + coef0)^degree\n"
+		                + "	2 -- radial basis function: exp(-gamma*|u-v|^2)\n"
+		                + "	3 -- sigmoid: tanh(gamma*u'*v + coef0)\n"
+		                + "	4 -- precomputed kernel (kernel values in training_set_file)\n"
+		                + "-d degree : set degree in kernel function (default 3)\n"
+		                + "-g gamma : set gamma in kernel function (default 1/num_features)\n"
+		                + "-r coef0 : set coef0 in kernel function (default 0)\n"
+		                + "-c cost : set the parameter C of C-SVC, epsilon-SVR, and nu-SVR (default 1)\n"
+		                + "-n nu : set the parameter nu of nu-SVC, one-class SVM, and nu-SVR (default 0.5)\n"
+		                + "-p epsilon : set the epsilon in loss function of epsilon-SVR (default 0.1)\n"
+		                + "-m cachesize : set cache memory size in MB (default 100)\n"
+		                + "-e epsilon : set tolerance of termination criterion (default 0.001)\n"
+		                + "-h shrinking : whether to use the shrinking heuristics, 0 or 1 (default 1)\n"
+		                + "-b probability_estimates : whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)\n"
+		                + "-wi weight : set the parameter C of class i to weight*C, for C-SVC (default 1)\n"
+		                + "-v n : n-fold cross validation mode\n" + "-q : quiet mode (no outputs)\n");
 		System.exit(1);
 	}
 	
@@ -314,6 +330,7 @@ public class SVMTrainer extends MappingStorage {
 		fp.close();
 	}
 	
+	@SuppressWarnings("unused")
 	private void run(final String argv[]) throws IOException {
 		parse_command_line(argv);
 		read_problem();

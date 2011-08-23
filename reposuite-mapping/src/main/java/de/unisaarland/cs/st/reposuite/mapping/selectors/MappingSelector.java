@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.selectors;
 
 import java.util.List;

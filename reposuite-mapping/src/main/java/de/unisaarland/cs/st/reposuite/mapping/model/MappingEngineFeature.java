@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
 import java.util.HashMap;
@@ -24,13 +6,13 @@ import java.util.Map;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 @Embeddable
 public class MappingEngineFeature implements Annotated {
@@ -87,8 +69,8 @@ public class MappingEngineFeature implements Annotated {
 			if (cache.containsKey(this.fqClassName)) {
 				return cache.get(this.fqClassName);
 			} else {
-				@SuppressWarnings ("unchecked")
-				Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
+				@SuppressWarnings("unchecked") Class<MappingEngine> engineClass = (Class<MappingEngine>) Class
+				        .forName(this.fqClassName);
 				cache.put(this.fqClassName, engineClass);
 				return engineClass;
 			}
@@ -142,42 +124,48 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @param confidence the confidence to set
+	 * @param confidence
+	 *            the confidence to set
 	 */
 	public void setConfidence(final double confidence) {
 		this.confidence = confidence;
 	}
 	
 	/**
-	 * @param fqClassName the fqClassName to set
+	 * @param fqClassName
+	 *            the fqClassName to set
 	 */
 	public void setFqClassName(final String fqClassName) {
 		this.fqClassName = fqClassName;
 	}
 	
 	/**
-	 * @param reportFieldName the reportFieldName to set
+	 * @param reportFieldName
+	 *            the reportFieldName to set
 	 */
 	public void setReportFieldName(final String reportFieldName) {
 		this.reportFieldName = reportFieldName;
 	}
 	
 	/**
-	 * @param reportSubstring the reportSubstring to set
+	 * @param reportSubstring
+	 *            the reportSubstring to set
 	 */
 	public void setReportSubstring(final String reportSubstring) {
 		this.reportSubstring = reportSubstring;
 	}
 	
 	/**
-	 * @param transactionFieldName the transactionFieldName to set
+	 * @param transactionFieldName
+	 *            the transactionFieldName to set
 	 */
 	public void setTransactionFieldName(final String transactionFieldName) {
 		this.transactionFieldName = transactionFieldName;
 	}
 	
 	/**
-	 * @param transactionSubstring the transactionSubstring to set
+	 * @param transactionSubstring
+	 *            the transactionSubstring to set
 	 */
 	public void setTransactionSubstring(final String transactionSubstring) {
 		this.transactionSubstring = transactionSubstring;
@@ -185,6 +173,7 @@ public class MappingEngineFeature implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

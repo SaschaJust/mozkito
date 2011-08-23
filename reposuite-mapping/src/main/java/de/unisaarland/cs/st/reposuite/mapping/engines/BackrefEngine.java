@@ -1,34 +1,16 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class BackrefEngine extends MappingEngine {
 	
@@ -36,6 +18,7 @@ public class BackrefEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -54,6 +37,7 @@ public class BackrefEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
 	 */
 	@Override
@@ -64,6 +48,7 @@ public class BackrefEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#register
 	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -71,50 +56,47 @@ public class BackrefEngine extends MappingEngine {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
-	                     final boolean isRequired) {
+	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new DoubleArgument(settings, "mapping.score.BackRef",
-		                                         "Score for backreference in transaction and report.", "0.5",
-		                                         isRequired));
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction,
-	                  final Report report,
-	                  final MapScore score) {
-		if (report.getDescription().contains(transaction.getId())) {
-			score.addFeature(getScoreBackRef(), "id", transaction.getId(), "description",
-			                 truncate(report.getDescription()), this.getClass());
-		} else {
-			boolean found = false;
-			for (Comment comment : report.getComments()) {
-				if (comment.getMessage().contains(transaction.getId())) {
-					found = true;
-					score.addFeature(getScoreBackRef(), "id", transaction.getId(), "comment" + comment.getId()
-					        + ":message", truncate(comment.getMessage()), this.getClass());
-					break;
-				}
-			}
-			if (!found) {
-				score.addFeature(0, "id", transaction.getId(), "report", "description|comments", this.getClass());
-			}
-		}
+		        "Score for backreference in transaction and report.", "0.5", isRequired));
 	}
 	
 	/**
-	 * @param scoreBackRef the scoreBackRef to set
+	 * @param scoreBackRef
+	 *            the scoreBackRef to set
 	 */
 	public void setScoreBackRef(final double scoreBackRef) {
 		this.scoreBackRef = scoreBackRef;
+	}
+	
+	@Override
+	public Expression supported() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void score(MappableEntity element1, MappableEntity element2, MapScore score) {
+		String fullText = element2.getText();
+		String id = element1.get(FieldKey.ID).toString();
+		
+		if (fullText.contains(id.toString())) {
+			score.addFeature(getScoreBackRef(), FieldKey.ID.name(), id, id, "FULLTEXT", truncate(fullText),
+			        truncate(fullText), this.getClass());
+			//		} else {
+			//			boolean found = false;
+			//			for (Comment comment : report.getComments()) {
+			//				if (comment.getMessage().contains(transaction.getId())) {
+			//					found = true;
+			//					score.addFeature(getScoreBackRef(), "id", transaction.getId(), "comment" + comment.getId()
+			//					        + ":message", truncate(comment.getMessage()), this.getClass());
+			//					break;
+			//				}
+			//			}
+			//			if (!found) {
+			//				score.addFeature(0, "id", transaction.getId(), "report", "description|comments", this.getClass());
+			//			}
+		}
 	}
 }

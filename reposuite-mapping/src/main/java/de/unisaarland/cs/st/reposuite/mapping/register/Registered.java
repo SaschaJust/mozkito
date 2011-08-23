@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.register;
 
 import java.util.HashMap;
@@ -29,9 +44,8 @@ public abstract class Registered {
 	 * @param superTag
 	 * @return
 	 */
-	@SuppressWarnings ("unchecked")
-	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
-	                                          final String[] superTag) {
+	@SuppressWarnings("unchecked")
+	private static String findRegisteredSuper(final Class<? extends Registered> clazz, final String[] superTag) {
 		if (clazz.getSuperclass() == Registered.class) {
 			System.err.println("Settings superTag from " + superTag[0] + " to "
 			        + clazz.getSimpleName().replace("Mapping", ""));
@@ -87,7 +101,7 @@ public abstract class Registered {
 	 * @param settings
 	 * @param arguments
 	 * @param option
-	 * @return 
+	 * @return
 	 */
 	public final String getOptionName(final String option) {
 		StringBuilder builder = new StringBuilder();
@@ -108,7 +122,7 @@ public abstract class Registered {
 	 * @param key
 	 * @return
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings("unchecked")
 	public final <T extends MappingStorage> T getStorage(final Class<T> key) {
 		return (T) this.storages.get(key);
 	}
@@ -139,7 +153,7 @@ public abstract class Registered {
 	/**
 	 * @param storage
 	 */
-	public final void provideStorage(final MappingStorage storage) {
+	public void provideStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
 	}
 	
@@ -158,29 +172,30 @@ public abstract class Registered {
 	 * @param isRequired
 	 */
 	@NoneNull
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
-	                     final boolean isRequired) {
+	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
 		setSettings(settings);
 		setRegistered(true);
 	}
 	
 	/**
-	 * @param initialized the initialized to set
+	 * @param initialized
+	 *            the initialized to set
 	 */
 	final void setInitialized(final boolean initialized) {
 		this.initialized = initialized;
 	}
 	
 	/**
-	 * @param registered the registered to set
+	 * @param registered
+	 *            the registered to set
 	 */
 	final void setRegistered(final boolean registered) {
 		this.registered = registered;
 	}
 	
 	/**
-	 * @param settings the settings to set
+	 * @param settings
+	 *            the settings to set
 	 */
 	final public void setSettings(final MappingSettings settings) {
 		this.settings = settings;
@@ -202,6 +217,7 @@ public abstract class Registered {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

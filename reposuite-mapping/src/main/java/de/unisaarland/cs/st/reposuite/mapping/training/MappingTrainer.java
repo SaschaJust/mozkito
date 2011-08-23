@@ -5,10 +5,9 @@ package de.unisaarland.cs.st.reposuite.mapping.training;
 
 import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
 
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public abstract class MappingTrainer extends Registered {
 	
@@ -19,8 +18,12 @@ public abstract class MappingTrainer extends Registered {
 		// TODO Auto-generated constructor stub
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.mapping.register.Registered#getDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#getDescription
+	 * ()
 	 */
 	@Override
 	public String getDescription() {

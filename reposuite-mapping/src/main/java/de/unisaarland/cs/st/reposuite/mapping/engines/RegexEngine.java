@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import java.io.BufferedReader;
@@ -26,21 +8,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 
 /**
@@ -72,7 +55,7 @@ public class RegexEngine extends MappingEngine {
 		/**
 		 * @return the regex
 		 */
-		public Regex getRegex(final long id) {
+		public Regex getRegex(final String id) {
 			return new Regex(this.regex.getPattern().replace("##ID##", "" + id));
 		}
 		
@@ -432,45 +415,6 @@ public class RegexEngine extends MappingEngine {
 		return this.configPath.resolve(arg0);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
-		double value = 0d;
-		String relevantString = "";
-		
-		if (Logger.logDebug()) {
-			Logger.debug(this.getClass().getSimpleName() + " checking " + transaction);
-		}
-		
-		for (Matcher matcher : this.matchers) {
-			Regex regex = matcher.getRegex(report.getId());
-			
-			if (value < matcher.getScore()) {
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Using regex '" + regex.getPattern() + "'.");
-				}
-				if (regex.find(transaction.getMessage()) != null) {
-					
-					value += matcher.getScore();
-					relevantString = regex.getGroup("match");
-				}
-			}
-		}
-		
-		if (!relevantString.isEmpty()) {
-			score.addFeature(value, "message", relevantString, "id", report.getId() + "", this.getClass());
-		}
-	}
-	
 	/**
 	 * @param uri
 	 *            the configPath to set
@@ -520,8 +464,49 @@ public class RegexEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
-	public Set<Class<?>> supported() {
-		return new HashSet<Class<?>>();
+	public Expression supported() {
+		return new And(new Atom(1, FieldKey.BODY), new Atom(2, FieldKey.ID));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 */
+	@Override
+	public void score(MappableEntity element1, MappableEntity element2, MapScore score) {
+		double value = 0d;
+		String relevantString = "";
+		
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getSimpleName() + " checking " + element1);
+		}
+		
+		for (Matcher matcher : this.matchers) {
+			Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
+			
+			if (value < matcher.getScore()) {
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Using regex '" + regex.getPattern() + "'.");
+				}
+				if (regex.find(element1.get(FieldKey.BODY).toString()) != null) {
+					
+					value += matcher.getScore();
+					relevantString = regex.getGroup("match");
+				}
+			}
+		}
+		
+		if (!relevantString.isEmpty()) {
+			score.addFeature(value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
+			        FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID).toString(),
+			        this.getClass());
+		}
 	}
 	
 }
