@@ -65,9 +65,15 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	 */
 	public void addTransactions(final Collection<RCSTransaction> transactions) {
 		//add all vertices
+		int counter = 0;
 		for (RCSTransaction transaction : transactions) {
+			++counter;
 			List<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
 					transaction);
+			if (Logger.logInfo()) {
+				Logger.info("Adding transaction " + transaction.getId() + " ... (" + counter + "/"
+				        + transactions.size() + ")");
+			}
 			this.genealogy.addVertex(changeOperations);
 		}
 		if (Logger.logInfo()) {
