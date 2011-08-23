@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.splitters;
 
 import java.util.HashSet;
@@ -35,27 +17,26 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class Files2BugsSplitter extends MappingSplitter {
 	
 	static {
-		PersistenceManager.registerNativeQuery("postgresql",
-		                                       "files2bugsarray",
-		                                       "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
-		                                               + "FROM (                                                                                "
-		                                               + "SELECT changedfile_id, ARRAY(                                                         "
-		                                               + "	SELECT reportid                                                                     "
-		                                               + "	FROM rcsrevision AS revisions                                                       "
-		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 "
-		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           "
-		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
-		                                               + ") AS bugs                                                                             "
-		                                               + "FROM rcsrevision AS A                                                                 "
-		                                               + "ORDER BY changedfile_id                                                               "
-		                                               + ") innerquery                                                                          "
-		                                               + "WHERE array_length(bugs, 1) > 0                                                       "
-		                                               + "GROUP BY file_id, bugs;                                                               ");
+		PersistenceManager.registerNativeQuery("postgresql", "files2bugsarray",
+		        "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
+		                + "FROM (                                                                                "
+		                + "SELECT changedfile_id, ARRAY(                                                         "
+		                + "	SELECT reportid                                                                     "
+		                + "	FROM rcsrevision AS revisions                                                       "
+		                + "	INNER JOIN rcsbugmapping AS mapping                                                 "
+		                + "		ON (revisions.transaction_id = mapping.transactionid)                           "
+		                + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
+		                + ") AS bugs                                                                             "
+		                + "FROM rcsrevision AS A                                                                 "
+		                + "ORDER BY changedfile_id                                                               "
+		                + ") innerquery                                                                          "
+		                + "WHERE array_length(bugs, 1) > 0                                                       "
+		                + "GROUP BY file_id, bugs;                                                               ");
 		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
 		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
 		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
@@ -63,6 +44,7 @@ public class Files2BugsSplitter extends MappingSplitter {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter#
 	 * getDescription()
 	 */
@@ -73,6 +55,7 @@ public class Files2BugsSplitter extends MappingSplitter {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter#process
 	 * ()
@@ -84,8 +67,8 @@ public class Files2BugsSplitter extends MappingSplitter {
 		try {
 			util = PersistenceManager.getUtil();
 			
-			@SuppressWarnings ("unchecked")
-			List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util, "files2bugs"));
+			@SuppressWarnings("unchecked") List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager
+			        .getNativeQuery(util, "files2bugs"));
 			Criteria<RCSFile> fileCriteria;
 			Criteria<Report> reportCriteria;
 			long fileid = -1, tmp = -1, bugid = -1;

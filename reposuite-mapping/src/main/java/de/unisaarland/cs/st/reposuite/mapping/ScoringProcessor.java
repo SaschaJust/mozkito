@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 /**
  * 
  */
@@ -20,8 +5,12 @@ package de.unisaarland.cs.st.reposuite.mapping;
 
 import java.util.Set;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
@@ -29,12 +18,10 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteTransformerThread;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction, MapScore> {
 	
@@ -45,7 +32,7 @@ public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction,
 	/**
 	 * @param threadGroup
 	 * @param settings
-	 * @param persistenceUtil 
+	 * @param persistenceUtil
 	 */
 	public ScoringProcessor(final RepoSuiteThreadGroup threadGroup, final MappingSettings settings,
 	        final MappingFinder finder, final PersistenceUtil persistenceUtil) {
@@ -56,6 +43,7 @@ public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction,
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -71,9 +59,11 @@ public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction,
 			}
 			
 			RCSTransaction transaction = null;
+			MappableTransaction mapTransaction = null;
 			
 			while (!isShutdown() && ((transaction = read()) != null)) {
-				Set<Long> candidates = this.mappingFinder.getCandidates(transaction);
+				mapTransaction = new MappableTransaction(transaction);
+				Set<MappableReport> candidates = this.mappingFinder.getCandidates(mapTransaction, MappableReport.class);
 				
 				if (!candidates.isEmpty()) {
 					if (Logger.logDebug()) {
@@ -82,6 +72,8 @@ public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction,
 					}
 					
 					Criteria<Report> criteria = this.persistenceUtil.createCriteria(Report.class);
+					
+					// FIXME this should not be candidates but a set of actual report IDs
 					criteria.in("id", candidates);
 					
 					for (Report report : this.persistenceUtil.load(criteria)) {
@@ -90,7 +82,7 @@ public class ScoringProcessor extends RepoSuiteTransformerThread<RCSTransaction,
 							        + ".");
 						}
 						
-						MapScore score = this.mappingFinder.score(transaction, report);
+						MapScore score = this.mappingFinder.score(mapTransaction, new MappableReport(report));
 						if (score.compareTo(this.zeroScore) > 0) {
 							if (Logger.logInfo()) {
 								Logger.info("Providing for store operation: " + transaction.getId() + " -> "

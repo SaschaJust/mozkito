@@ -1,6 +1,5 @@
 #!/bin/bash
 # TODO check dependencies of git-svn-migrate
-# TODO check for git executable
 
 function check_git_svn() {
 	git help svn >?dev/null 2>&1

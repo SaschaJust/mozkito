@@ -1,8 +1,4 @@
 #!/bin/bash
-## TODO check for script dependencies
-#@ TODO check for git executable
-# from mercurial import repo,hg,cmdutil,util,ui,revlog,node
-
 
 function help() {
 	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
