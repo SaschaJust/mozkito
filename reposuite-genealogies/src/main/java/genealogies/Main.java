@@ -18,6 +18,8 @@
  */
 package genealogies;
 
+import de.unisaarland.cs.st.reposuite.genealogies.Genealogies;
+
 
 
 /**
@@ -30,8 +32,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		
-		
+		Genealogies genealogies = new Genealogies();
+		genealogies.run();
 	}
 	
 }
