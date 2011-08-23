@@ -256,7 +256,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	public boolean containsVertex(final GenealogyVertex vertex) {
 		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
 				.get(GenealogyVertex.transaction_id, vertex.getTransactionId());
-		return hits.hasNext();
+		boolean result = hits.hasNext();
+		hits.close();
+		return result;
 	}
 	
 	@Override
@@ -347,11 +349,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		for (Node hit : hits) {
 			GenealogyVertex vertex = this.getVertexForNode(hit);
 			if (vertex.getJavaChangeOperationIds().containsAll(javaChangeOperationIds)) {
+				hits.close();
 				tx.success();
 				tx.finish();
 				return vertex;
 			}
 		}
+		hits.close();
 		tx.success();
 		tx.finish();
 		return null;
