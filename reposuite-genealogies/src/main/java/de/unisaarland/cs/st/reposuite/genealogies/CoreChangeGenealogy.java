@@ -182,6 +182,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 */
 	@NoneNull
 	public GenealogyVertex addVertex(@NotEmpty final Collection<JavaChangeOperation> operations) {
+		Condition.check(!operations.isEmpty(), "Cannot add Genealogy vertex that would hold ne JavaChangeOPerations");
 		String transactionId = null;
 		Set<Long> operationIds = new HashSet<Long>();
 		for (JavaChangeOperation op : operations) {
@@ -194,7 +195,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 			}
 			operationIds.add(op.getId());
 		}
-		return this.addVertex(transactionId, operationIds);
+		if (transactionId != null) {
+			return this.addVertex(transactionId, operationIds);
+		} else {
+			return null;
+		}
 		
 	}
 	

@@ -75,6 +75,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 				Logger.info("Adding transaction " + transaction.getId() + " ... (" + counter + "/"
 						+ transactions.size() + ")");
 			}
+			if (changeOperations.isEmpty()) {
+				continue;
+			}
 			this.genealogy.addVertex(changeOperations);
 		}
 		if (Logger.logInfo()) {
