@@ -23,7 +23,7 @@ public class GenealogyAnalyzerLongTest {
 	
 	@Before
 	public void setup(){
-		analyzer = new GenealogyAnalyzer(TestEnvironment.getRepository());
+		analyzer = new GenealogyAnalyzer();
 	}
 	
 	@Test

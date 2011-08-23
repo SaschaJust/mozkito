@@ -12,7 +12,6 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
-import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 
 public class GenealogyAnalyzer {
@@ -29,35 +28,35 @@ public class GenealogyAnalyzer {
 		String dependingElementType = depending.getChangedElementLocation().getElement().getElementType();
 		String parentElementType = parent.getChangedElementLocation().getElement().getElementType();
 		
-		if(dependingElementType.equals(methodDefType)){
-			if(parentElementType.equals(callType)){
+		if (dependingElementType.equals(methodDefType)) {
+			if (parentElementType.equals(callType)) {
 				return null;
 			}
-			if(dependingChangeType.equals(ChangeType.Deleted)){
-				if(parentChangeType.equals(ChangeType.Deleted)){
+			if (dependingChangeType.equals(ChangeType.Deleted)) {
+				if (parentChangeType.equals(ChangeType.Deleted)) {
 					return null;
 				}
 				return GenealogyEdgeType.DeletedDefinitionOnDefinition;
 			}
-			if(parentChangeType.equals(ChangeType.Deleted)){
+			if (parentChangeType.equals(ChangeType.Deleted)) {
 				return GenealogyEdgeType.DefinitionOnDeletedDefinition;
 			}
 			return GenealogyEdgeType.DefinitionOnDefinition;
-		}else if (dependingElementType.equals(callType)){
-			if(dependingChangeType.equals(ChangeType.Deleted)){
-				if(parentElementType.equals(callType)){
-					if(parentChangeType.equals(ChangeType.Deleted)){
+		} else if (dependingElementType.equals(callType)) {
+			if (dependingChangeType.equals(ChangeType.Deleted)) {
+				if (parentElementType.equals(callType)) {
+					if (parentChangeType.equals(ChangeType.Deleted)) {
 						return null;
 					}
 					return GenealogyEdgeType.DeletedCallOnCall;
-				}else if(parentElementType.equals(methodDefType)){
-					if(parentChangeType.equals(ChangeType.Deleted)){
+				} else if (parentElementType.equals(methodDefType)) {
+					if (parentChangeType.equals(ChangeType.Deleted)) {
 						return GenealogyEdgeType.DeletedCallOnDeletedDefinition;
 					}
 					return null;
 				}
-			}else{
-				if(parentElementType.equals(methodDefType) && (!parentChangeType.equals(ChangeType.Deleted))){
+			} else {
+				if (parentElementType.equals(methodDefType) && (!parentChangeType.equals(ChangeType.Deleted))) {
 					return GenealogyEdgeType.CallOnDefinition;
 				}
 				return null;
@@ -67,10 +66,7 @@ public class GenealogyAnalyzer {
 		return GenealogyEdgeType.UNKNOWN;
 	}
 	
-	private final Repository repository;
-	
-	public GenealogyAnalyzer(final Repository repository){
-		this.repository = repository;
+	public GenealogyAnalyzer() {
 	}
 	
 	/**
@@ -94,14 +90,13 @@ public class GenealogyAnalyzer {
 				.equals(JavaMethodCall.class.getCanonicalName())))) {
 			//possible DeletedCallOnCall
 			
-			JavaChangeOperation previousCall = PPAUtils.findPreviousCall(persistenceUtil, repository, operation);
+			JavaChangeOperation previousCall = PPAUtils.findPreviousCall(persistenceUtil, operation);
 			if (previousCall != null) {
 				result.add(previousCall);
 			}
 		}
 		//check all other possibilities
-		JavaChangeOperation previousDefinition = PPAUtils
-				.findPreviousDefinition(persistenceUtil, repository, operation);
+		JavaChangeOperation previousDefinition = PPAUtils.findPreviousDefinition(persistenceUtil, operation);
 		if ((previousDefinition != null)
 				&& (!(operation.getChangeType().equals(ChangeType.Deleted) && (javaElement.getElementType().equals(
 						JavaMethodCall.class.getCanonicalName()) && (!previousDefinition.getChangeType().equals(

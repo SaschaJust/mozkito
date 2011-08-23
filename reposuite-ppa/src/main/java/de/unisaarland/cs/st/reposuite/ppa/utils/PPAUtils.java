@@ -164,7 +164,7 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil,
-			final Repository repository, final JavaChangeOperation op) {
+			final JavaChangeOperation op) {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
@@ -256,7 +256,7 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil,
-			final Repository repository, final JavaChangeOperation op) {
+	        final JavaChangeOperation op) {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
