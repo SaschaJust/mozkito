@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -299,9 +300,10 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	@Override
 	public Set<String> getExistingEdgeTypes() {
 		Set<String> result = new HashSet<String>();
+		List<GenealogyEdgeType> values = Arrays.asList(GenealogyEdgeType.values());
 		Iterable<RelationshipType> relationshipTypes = graph.getRelationshipTypes();
 		for (RelationshipType type : relationshipTypes) {
-			if (type instanceof GenealogyEdgeType) {
+			if (values.contains(type)) {
 				result.add(type.getClass().getName());
 			}
 		}
