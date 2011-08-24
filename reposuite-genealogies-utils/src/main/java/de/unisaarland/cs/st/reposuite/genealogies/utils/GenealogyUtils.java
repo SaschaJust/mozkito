@@ -47,6 +47,7 @@ public class GenealogyUtils {
 		sb.append(genealogy.vertexSize());
 		sb.append(FileUtils.lineSeparator);
 		sb.append("#Edges: ");
+		
 		sb.append(genealogy.edgeSize());
 		sb.append(FileUtils.lineSeparator);
 		sb.append("Edge types used: ");
@@ -62,6 +63,7 @@ public class GenealogyUtils {
 	public static void run() {
 		
 		RepositorySettings settings = new RepositorySettings();
+		
 		
 		DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
 				"Directory in which to load the GraphDB from.", null, true, true);
@@ -84,7 +86,7 @@ public class GenealogyUtils {
 		if (graphmlFile != null) {
 			exportToGraphML(genealogy, graphmlFile);
 		}
-		
+		genealogy.close();
 	}
 	
 }
