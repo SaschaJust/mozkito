@@ -26,7 +26,7 @@ public interface ChangeGenealogy {
 	
 	public Collection<GenealogyEdgeType> getEdges(final GenealogyVertex from, final GenealogyVertex to);
 	
-	Set<Class<GenealogyEdgeType>> getExistingEdgeTypes();
+	Set<String> getExistingEdgeTypes();
 	
 	public File getGraphDBDir();
 	
@@ -39,5 +39,5 @@ public interface ChangeGenealogy {
 	public GenealogyVertexIterator vertexSet();
 	
 	public int vertexSize();
-
+	
 }

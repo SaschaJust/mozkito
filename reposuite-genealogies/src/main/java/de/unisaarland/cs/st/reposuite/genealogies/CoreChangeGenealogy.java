@@ -297,13 +297,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public Set<Class<GenealogyEdgeType>> getExistingEdgeTypes() {
-		Set<Class<GenealogyEdgeType>> result = new HashSet<Class<GenealogyEdgeType>>();
+	public Set<String> getExistingEdgeTypes() {
+		Set<String> result = new HashSet<String>();
 		Iterable<RelationshipType> relationshipTypes = graph.getRelationshipTypes();
 		for (RelationshipType type : relationshipTypes) {
 			if (type instanceof GenealogyEdgeType) {
-				result.add((Class<GenealogyEdgeType>) type.getClass());
+				result.add(type.getClass().getName());
 			}
 		}
 		return result;

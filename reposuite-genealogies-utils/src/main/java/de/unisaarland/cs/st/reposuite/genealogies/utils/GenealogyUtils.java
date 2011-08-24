@@ -15,7 +15,6 @@ import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
 
 import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
-import de.unisaarland.cs.st.reposuite.genealogies.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
 import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
 import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
@@ -52,8 +51,8 @@ public class GenealogyUtils {
 		sb.append(FileUtils.lineSeparator);
 		sb.append("Edge types used: ");
 		
-		for (Class<GenealogyEdgeType> t : genealogy.getExistingEdgeTypes()) {
-			sb.append(t.getName());
+		for (String t : genealogy.getExistingEdgeTypes()) {
+			sb.append(t);
 			sb.append(" ");
 		}
 		sb.append(FileUtils.lineSeparator);

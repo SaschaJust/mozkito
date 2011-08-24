@@ -140,7 +140,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public Set<Class<GenealogyEdgeType>> getExistingEdgeTypes() {
+	public Set<String> getExistingEdgeTypes() {
 		return this.genealogy.getExistingEdgeTypes();
 	}
 	
