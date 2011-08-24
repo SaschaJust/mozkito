@@ -54,6 +54,7 @@
 		<module>reposuite-infozilla</module>
 		<module>reposuite-fixindchanges</module>
 		<module>reposuite-genealogies</module>
+		<module>reposuite-genealogies-utils</module>
 		<module>reposuite-untangling</module>
 		<module>reposuite-changecouplings</module>
 		<module>reposuite-ppa</module>

@@ -36,7 +36,8 @@ public class ChangeGenealogyLongTest extends TestEnvironment {
 		File tmpGraphDBFile = FileUtils
 				.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
 		
-		CoreChangeGenealogy changeGenealogy = CoreChangeGenealogy.readFromDB(tmpGraphDBFile, getPersistenceUtil());
+		CoreChangeGenealogy changeGenealogy = CoreChangeGenealogy.readFromDB(tmpGraphDBFile);
+		changeGenealogy.setPersistenceUtil(getPersistenceUtil());
 		assertTrue(changeGenealogy != null);
 		
 		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
@@ -67,14 +68,14 @@ public class ChangeGenealogyLongTest extends TestEnvironment {
 		assertEquals(true, success);
 		
 		Collection<GenealogyVertex> allDependents = transactions2Vertices.get(
-		        "a64df287a21f8a7b0690d13c1561171cbf48a0e1").getAllDependents();
+				"a64df287a21f8a7b0690d13c1561171cbf48a0e1").getAllDependents();
 		assertEquals(1, allDependents.size());
 		Collection<GenealogyVertex> allVerticesDependingOn = transactions2Vertices.get(
-		        "a64df287a21f8a7b0690d13c1561171cbf48a0e1").getAllVerticesDependingOn();
+				"a64df287a21f8a7b0690d13c1561171cbf48a0e1").getAllVerticesDependingOn();
 		assertEquals(0, allVerticesDependingOn.size());
 		
 		Collection<GenealogyVertex> dependants = transactions2Vertices.get("a64df287a21f8a7b0690d13c1561171cbf48a0e1")
-		        .getDependents(GenealogyEdgeType.DeletedDefinitionOnDefinition);
+				.getDependents(GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		assertEquals(1, dependants.size());
 		
 		dependants = transactions2Vertices.get("a64df287a21f8a7b0690d13c1561171cbf48a0e1").getDependents(

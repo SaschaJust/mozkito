@@ -1,8 +1,13 @@
 package de.unisaarland.cs.st.reposuite.genealogies;
 
+import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
@@ -17,7 +22,15 @@ public interface ChangeGenealogy {
 	
 	public boolean containsVertex(final GenealogyVertex vertex);
 	
+	int edgeSize();
+	
 	public Collection<GenealogyEdgeType> getEdges(final GenealogyVertex from, final GenealogyVertex to);
+	
+	Set<Class<GenealogyEdgeType>> getExistingEdgeTypes();
+	
+	public File getGraphDBDir();
+	
+	GraphDatabaseService getGraphDBService();
 	
 	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v);
 	
@@ -26,4 +39,5 @@ public interface ChangeGenealogy {
 	public GenealogyVertexIterator vertexSet();
 	
 	public int vertexSize();
+
 }
