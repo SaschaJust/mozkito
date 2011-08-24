@@ -74,10 +74,10 @@ public class ChangeGenealogyLongTest extends TestEnvironment {
 		assertEquals(0, allVerticesDependingOn.size());
 		
 		Collection<GenealogyVertex> dependants = transactions2Vertices.get("a64df287a21f8a7b0690d13c1561171cbf48a0e1")
-		        .getDependants(GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		        .getDependents(GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		assertEquals(1, dependants.size());
 		
-		dependants = transactions2Vertices.get("a64df287a21f8a7b0690d13c1561171cbf48a0e1").getDependants(
+		dependants = transactions2Vertices.get("a64df287a21f8a7b0690d13c1561171cbf48a0e1").getDependents(
 				GenealogyEdgeType.DefinitionOnDefinition, GenealogyEdgeType.DefinitionOnDeletedDefinition,
 				GenealogyEdgeType.DeletedCallOnCall, GenealogyEdgeType.DeletedCallOnDeletedDefinition,
 				GenealogyEdgeType.CallOnDefinition);
