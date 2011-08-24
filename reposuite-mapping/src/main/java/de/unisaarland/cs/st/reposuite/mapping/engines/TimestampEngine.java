@@ -25,6 +25,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.model.EnumTuple;
@@ -153,8 +154,8 @@ public class TimestampEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(1, FieldKey.CREATION_TIMESTAMP), new And(new Atom(2, Report.class), new Atom(2,
-		        FieldKey.RESOLUTION_TIMESTAMP)));
+		return new And(new Atom(Index.FROM, FieldKey.CREATION_TIMESTAMP), new And(new Atom(Index.TO, Report.class),
+		        new Atom(Index.TO, FieldKey.RESOLUTION_TIMESTAMP)));
 	}
 	
 	/*

@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
@@ -8,8 +10,14 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -35,26 +43,45 @@ public class CommentSearchEngine extends SearchEngine {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
+	@Override
+	public Expression supported() {
+		return new And(new And(new Atom(Index.TO, MappableReport.class), new Atom(Index.TO, FieldKey.ID)), new Atom(
+		        Index.FROM, FieldKey.BODY));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
+	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
+		        to.getBaseType());
+		
 		try {
+			String fromBody = from.get(FieldKey.BODY).toString();
+			String toId = to.get(FieldKey.ID).toString();
+			
 			this.parser = new QueryParser(Version.LUCENE_31, "comment", getStorage().getAnalyzer());
-			Query query = buildQuery(transaction.getMessage(), this.parser);
+			Query query = buildQuery(fromBody, this.parser);
 			
 			ScoreDoc[] hits = getStorage().getIsearcherReports().search(query, null, 1000).scoreDocs;
 			// Iterate through the results:
 			for (ScoreDoc hit : hits) {
 				Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-				Long bugId = Long.parseLong(hitDoc.get("bugid"));
+				String bugId = hitDoc.get("bugid");
 				
-				if (bugId.compareTo(report.getId()) == 0) {
-					score.addFeature(hit.score, "message", truncate(transaction.getMessage()), "comment",
-					        truncate(report.getSummary()), this.getClass());
+				if (bugId.compareTo(toId) == 0) {
+					score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody), truncate(query.toString()),
+					        FieldKey.COMMENT.name(), truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
+					        this.getClass());
 					break;
 				}
 			}

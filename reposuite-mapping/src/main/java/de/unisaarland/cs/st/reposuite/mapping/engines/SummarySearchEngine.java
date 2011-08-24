@@ -13,6 +13,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -42,7 +43,8 @@ public class SummarySearchEngine extends SearchEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new And(new Atom(2, FieldKey.SUMMARY), new Atom(2, FieldKey.ID)), new Atom(1, FieldKey.BODY));
+		return new And(new And(new Atom(Index.TO, FieldKey.SUMMARY), new Atom(Index.TO, FieldKey.ID)), new Atom(
+		        Index.FROM, FieldKey.BODY));
 	}
 	
 	/*

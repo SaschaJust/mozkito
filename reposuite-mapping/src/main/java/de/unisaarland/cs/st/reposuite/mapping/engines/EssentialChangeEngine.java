@@ -1,10 +1,10 @@
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
@@ -65,29 +65,24 @@ public class EssentialChangeEngine extends MappingEngine {
 		        "-1", isRequired));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
-		// TODO implement
-		// score.addFeature(confidence, transactionFieldName,
-		// transactionSubstring, reportFieldName, reportSubstring,
-		// this.getClass());
-	}
-	
 	/**
 	 * @param confidence
 	 *            the confidence to set
 	 */
 	public void setConfidence(final double confidence) {
 		this.confidence = confidence;
+	}
+	
+	@Override
+	public Expression supported() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

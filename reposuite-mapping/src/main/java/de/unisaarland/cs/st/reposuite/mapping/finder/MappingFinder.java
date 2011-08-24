@@ -123,7 +123,7 @@ public class MappingFinder {
 	 */
 	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz, final Class<V> toClazz) {
 		List<MappingSelector> list = new LinkedList<MappingSelector>();
-		
+		// FIXME this needs to be reimplemented after changes to the selector super
 		for (Class<? extends MappingSelector> klass : this.selectors.keySet()) {
 			ParameterizedType type = (ParameterizedType) klass.getGenericSuperclass();
 			if ((type.getActualTypeArguments()[0] == fromClazz) && (type.getActualTypeArguments()[1] == toClazz)) {
@@ -152,9 +152,7 @@ public class MappingFinder {
 				candidates.addAll(selector.parse(source, targetClass));
 			}
 		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
+			throw new UnrecoverableError(e);
 		}
 		
 		return candidates;

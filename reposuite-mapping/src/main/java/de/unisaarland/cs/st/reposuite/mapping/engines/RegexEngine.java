@@ -22,6 +22,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
@@ -465,7 +466,7 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(1, FieldKey.BODY), new Atom(2, FieldKey.ID));
+		return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
 	}
 	
 	/*

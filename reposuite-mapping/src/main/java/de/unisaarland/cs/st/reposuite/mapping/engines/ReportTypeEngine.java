@@ -8,6 +8,7 @@ import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Or;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
@@ -108,7 +109,7 @@ public class ReportTypeEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new Or(new Atom(1, Report.class), new Atom(2, Report.class));
+		return new Or(new Atom(Index.FROM, Report.class), new Atom(Index.TO, Report.class));
 		
 	}
 	

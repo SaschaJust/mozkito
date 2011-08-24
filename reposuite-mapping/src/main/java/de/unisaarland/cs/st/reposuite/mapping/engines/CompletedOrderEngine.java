@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction;
@@ -8,6 +9,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -90,7 +92,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(2, Report.class), new Atom(1, RCSTransaction.class));
+		return new And(new Atom(Index.TO, Report.class), new Atom(Index.FROM, RCSTransaction.class));
 	}
 	
 	@Override
@@ -100,9 +102,11 @@ public class CompletedOrderEngine extends MappingEngine {
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			score.addFeature(getScoreReportResolvedBeforeTransaction(), "timestamp", transaction.getTimestamp()
-			        .toString(), "creationTimestamp", report.getResolution() != null ? report.getResolution()
-			        .toString() : "(null)", this.getClass());
+			score.addFeature(getScoreReportResolvedBeforeTransaction(), FieldKey.CREATION_TIMESTAMP.name(), transaction
+			        .getTimestamp().toString(), transaction.getTimestamp().toString(), FieldKey.CREATION_TIMESTAMP
+			        .name(), report.getResolution() != null ? report.getResolutionTimestamp().toString() : unknown,
+			        report.getResolution() != null ? report.getResolutionTimestamp().toString() : unknown, this
+			                .getClass());
 		}
 	}
 	
