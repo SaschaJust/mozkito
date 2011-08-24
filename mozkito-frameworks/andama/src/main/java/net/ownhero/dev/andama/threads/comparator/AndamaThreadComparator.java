@@ -16,19 +16,19 @@ import net.ownhero.dev.andama.threads.AndamaTransformer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
-@SuppressWarnings ("rawtypes")
-public abstract class AndamaThreadComparator implements Comparator<AndamaThread> {
+@SuppressWarnings("rawtypes")
+public class AndamaThreadComparator implements Comparator<AndamaThread> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 * Source < Multiplexer < Filter < Transformer < Demultiplexer < Sink
 	 */
 	@Override
-	public int compare(final AndamaThread arg0,
-	                   final AndamaThread arg1) {
+	public int compare(final AndamaThread arg0, final AndamaThread arg1) {
 		if ((arg0 == null)) {
 			if ((arg1 == null)) {
 				return 0;

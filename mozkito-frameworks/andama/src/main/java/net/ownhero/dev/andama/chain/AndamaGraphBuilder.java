@@ -13,8 +13,8 @@ import java.util.Map;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.kisa.Tuple;
 
 import org.kohsuke.graphviz.Edge;
 import org.kohsuke.graphviz.Graph;
@@ -22,7 +22,7 @@ import org.kohsuke.graphviz.Node;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class AndamaGraphBuilder {
 	
@@ -92,8 +92,7 @@ public class AndamaGraphBuilder {
 	 * @param to
 	 * @return
 	 */
-	public Edge getEdge(final Node from,
-	                    final Node to) {
+	public Edge getEdge(final Node from, final Node to) {
 		Tuple<String, String> tuple = new Tuple<String, String>(from.attr("id"), to.attr("id"));
 		if (!this.edges.containsKey(tuple)) {
 			this.edges.put(tuple, new Edge(from, to));
