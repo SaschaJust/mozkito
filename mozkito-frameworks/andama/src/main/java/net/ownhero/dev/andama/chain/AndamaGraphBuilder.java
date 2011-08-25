@@ -13,8 +13,8 @@ import java.util.Map;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.kisa.Tuple;
 
 import org.kohsuke.graphviz.Edge;
 import org.kohsuke.graphviz.Graph;
@@ -26,15 +26,85 @@ import org.kohsuke.graphviz.Node;
  */
 public class AndamaGraphBuilder {
 	
-	private final Map<String, Node>                nodes = new HashMap<String, Node>();
-	private final Map<Tuple<String, String>, Edge> edges = new HashMap<Tuple<String, String>, Edge>();
+	private final Map<String, Node>                nodes  = new HashMap<String, Node>();
+	private final Map<Tuple<String, String>, Edge> edges  = new HashMap<Tuple<String, String>, Edge>();
+	private final List<AndamaGraph>                graphs = new LinkedList<AndamaGraph>();
 	
 	/**
 	 * @param threadGroup
 	 * @return
 	 */
-	public boolean buildGraph(final AndamaGroup threadGroup) {
-		return false;
+	public void buildGraph(final AndamaGraph graph,
+	                       final LinkedList<AndamaThread<?, ?>> threads) {
+		if (!threads.isEmpty()) {
+			LinkedList<AndamaThread<?, ?>> pThreads = new LinkedList<AndamaThread<?, ?>>();
+			
+			for (AndamaThread<?, ?> thread : threads) {
+				pThreads = cloneExcept(threads, thread);
+				
+				for (AndamaNode node : graph.getMatching(thread)) {
+					graph.attach(node, thread);
+					buildGraph(graph, pThreads);
+					graph.detach(thread);
+				}
+			}
+		} else {
+			this.graphs.add(graph);
+		}
+	}
+	
+	/**
+	 * @param <T>
+	 * @param list
+	 * @param object
+	 * @return
+	 */
+	public <T> LinkedList<T> cloneExcept(final List<T> list,
+	                                     final T object) {
+		LinkedList<T> ret = new LinkedList<T>();
+		for (T t : list) {
+			if (t != object) {
+				ret.add(t);
+			}
+		}
+		return ret;
+	}
+	
+	public void displayGraph(final AndamaGraph andamaGraph) {
+		
+		for (AndamaNode andamaNode : andamaGraph.getClosedBranches()) {
+			// create a node for this AndamaThread:thread
+			Node node = getNode(andamaNode.getName());
+			
+			for (AndamaNode inputNode : andamaNode.getInputs()) {
+				Node iNode = getNode(inputNode.getName());
+				getEdge(iNode, node);
+			}
+			for (AndamaNode outputNode : andamaNode.getOutputs()) {
+				Node iNode = getNode(outputNode.getName());
+				getEdge(node, iNode);
+			}
+			
+		}
+		
+		Graph graph = new Graph();
+		for (Edge edge : this.edges.values()) {
+			graph.edge(edge);
+		}
+		
+		List<String> commands = new LinkedList<String>();
+		commands.add("-Tplain");
+		try {
+			graph.generateTo(commands, System.err);
+		} catch (InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		}
 	}
 	
 	/**
@@ -103,6 +173,13 @@ public class AndamaGraphBuilder {
 	}
 	
 	/**
+	 * @return the graphs
+	 */
+	public List<AndamaGraph> getGraphs() {
+		return this.graphs;
+	}
+	
+	/**
 	 * @param name
 	 * @return
 	 */
@@ -114,4 +191,5 @@ public class AndamaGraphBuilder {
 		}
 		return this.nodes.get(name);
 	}
+	
 }

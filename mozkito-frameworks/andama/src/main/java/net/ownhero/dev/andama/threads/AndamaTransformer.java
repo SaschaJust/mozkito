@@ -48,4 +48,31 @@ public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append('[').append(this.getThreadGroup().getName()).append("] ");
+		
+		builder.append(getHandle());
+		
+		if ((this.getClass().getSuperclass() != null)
+		        && AndamaThread.class.isAssignableFrom(this.getClass().getSuperclass())) {
+			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
+		}
+		
+		builder.append(' ');
+		builder.append(getInputClassType()).append(':').append(getOutputClassType());
+		builder.append(' ');
+		
+		if (isParallelizable()) {
+			builder.append("(parallelizable)");
+		}
+		
+		return builder.toString();
+	}
 }

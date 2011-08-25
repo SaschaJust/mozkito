@@ -38,4 +38,32 @@ public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append('[').append(this.getThreadGroup().getName()).append("] ");
+		
+		builder.append(getHandle());
+		
+		if ((this.getClass().getSuperclass() != null)
+		        && AndamaThread.class.isAssignableFrom(this.getClass().getSuperclass())) {
+			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
+		}
+		
+		builder.append(' ');
+		builder.append('-').append(getInputClassType()).append('[');
+		builder.append(' ');
+		
+		if (isParallelizable()) {
+			builder.append("(parallelizable)");
+		}
+		
+		return builder.toString();
+	}
+	
 }

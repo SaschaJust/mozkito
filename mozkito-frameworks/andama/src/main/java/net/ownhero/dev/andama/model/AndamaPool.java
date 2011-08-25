@@ -20,7 +20,7 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.utils.AndamaUtils;
-import net.ownhero.dev.kisa.Tuple;
+import net.ownhero.dev.ioda.Tuple;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;

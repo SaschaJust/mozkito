@@ -20,4 +20,12 @@ public class AndamaStack {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public int processed() {
+		return -1;
+	}
+	
+	public int total() {
+		return -1;
+	}
+	
 }

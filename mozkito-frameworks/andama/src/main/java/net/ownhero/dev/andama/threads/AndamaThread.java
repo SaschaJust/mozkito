@@ -3,6 +3,8 @@
  */
 package net.ownhero.dev.andama.threads;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
@@ -12,12 +14,11 @@ import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.checks.Check;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,6 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	private final AndamaSettings                              settings;
 	private boolean                                           parallelizable = false;
 	private K                                                 inputData;
-	
 	private V                                                 outputData;
 	
 	/**
@@ -64,7 +64,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
 	 */
-	@NoneNull
+	// @NoneNull
 	public AndamaThread(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
 		super(threadGroup, "default");
 		setName(this.getClass().getSimpleName());
@@ -72,7 +72,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
 		this.settings = settings;
-		AndamaArgument<?> setting = settings.getSetting("cache.size");
+		AndamaArgument<?> setting = null; // settings.getSetting("cache.size");
 		
 		if (hasInputConnector()) {
 			if (setting != null) {
@@ -101,7 +101,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		                        "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
 		                        hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
-		Condition.notNull(settings, "`settings` must not be null.");
+		// Condition.notNull(settings, "`settings` must not be null.");
 		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
 	}
 	
@@ -303,6 +303,15 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	}
 	
 	/**
+	 * @param thread
+	 * @return the type of the input chunks of the given thread
+	 */
+	public Type getInputClassType() {
+		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
+		return type.getActualTypeArguments()[0];
+	}
+	
+	/**
 	 * @return the inputData
 	 */
 	public K getInputData() {
@@ -332,6 +341,17 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		}
 		
 		return list;
+	}
+	
+	/**
+	 * @param thread
+	 * @return the type of the output chunks of the given thread
+	 */
+	public Type getOutputClassType() {
+		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
+		return (type.getActualTypeArguments().length > 1
+		                                                ? type.getActualTypeArguments()[1]
+		                                                : type.getActualTypeArguments()[0]);
 	}
 	
 	/**
@@ -627,7 +647,34 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 */
 	@Override
 	public String toString() {
-		return "RepoSuiteThread [Class=" + getHandle() + ", threadGroup=" + this.threadGroup.getName() + "]";
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append('[').append(this.getThreadGroup().getName()).append("] ");
+		
+		builder.append(getHandle());
+		
+		if ((this.getClass().getSuperclass() != null)
+		        && AndamaThread.class.isAssignableFrom(this.getClass().getSuperclass())) {
+			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
+		}
+		
+		builder.append(' ');
+		
+		StringBuilder typeBuilder = new StringBuilder();
+		if (hasInputConnector()) {
+			typeBuilder.append(getInputClassType());
+		}
+		
+		if (hasOutputConnector()) {
+			if (typeBuilder.length() > 0) {
+				typeBuilder.append(":");
+			}
+			
+			typeBuilder.append(getOutputClassType());
+		}
+		
+		builder.append(typeBuilder);
+		return builder.toString();
 	}
 	
 	/**
