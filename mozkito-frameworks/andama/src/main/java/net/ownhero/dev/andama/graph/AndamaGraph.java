@@ -106,7 +106,8 @@ public class AndamaGraph {
 				// check for multiplexer
 				// attach to all
 				// remove all from openBranches
-			} else { // sink
+			} else {
+				// sink
 				// attach and remove
 			}
 		}
