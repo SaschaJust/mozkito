@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,9 +12,11 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -70,10 +73,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 *         within specified directory.
 	 */
 	@NoneNull
-	public static CoreChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
+	public static CoreChangeGenealogy readFromDB(final File dbFile) {
 		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
-		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph);
-		genealogy.setPersistenceUtil(persistenceUtil);
+		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile);
 		genealogies.put(genealogy, dbFile);
 		return genealogy;
 	}
@@ -100,15 +102,19 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	/** The persistence util. */
 	private PersistenceUtil            persistenceUtil;
 	
+	private File                       dbFile;
+	
 	/**
 	 * Instantiates a new change genealogy.
 	 * 
 	 * @param graph
 	 *            the graph
+	 * @param dbFile
 	 */
 	@NoneNull
-	protected CoreChangeGenealogy(final GraphDatabaseService graph) {
+	protected CoreChangeGenealogy(final GraphDatabaseService graph, File dbFile) {
 		this.graph = graph;
+		this.dbFile = dbFile;
 	}
 	
 	/**
@@ -268,6 +274,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
+	public int edgeSize(){
+		int result = 0;
+		GenealogyVertexIterator vertexIter = vertexSet();
+		for(GenealogyVertex v : vertexIter){
+			result += v.getAllDependents().size();
+		}
+		vertexIter.close();
+		return result;
+	}
+	
+	@Override
 	public Collection<GenealogyEdgeType> getEdges(GenealogyVertex from, GenealogyVertex to) {
 		Collection<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
 		if (this.containsEdge(from, to)) {
@@ -275,6 +292,19 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 				for (JavaChangeOperation toOp : getJavaChangeOperationsForVertex(to)) {
 					result.add(GenealogyAnalyzer.getEdgeTypeForDependency(fromOp, toOp));
 				}
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public Set<String> getExistingEdgeTypes() {
+		Set<String> result = new HashSet<String>();
+		List<GenealogyEdgeType> values = Arrays.asList(GenealogyEdgeType.values());
+		Iterable<RelationshipType> relationshipTypes = graph.getRelationshipTypes();
+		for (RelationshipType type : relationshipTypes) {
+			if (values.contains(type)) {
+				result.add(type.getClass().getName());
 			}
 		}
 		return result;
@@ -300,6 +330,16 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		return getGraphDBChangeOperationById(graph, oId);
 	}
 	
+	@Override
+	public File getGraphDBDir() {
+		return this.dbFile;
+	}
+	
+	@Override
+	public GraphDatabaseService getGraphDBService(){
+		return this.graph;
+	}
+	
 	/**
 	 * Gets the java change operations.
 	 * 
@@ -307,6 +347,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 */
 	@Override
 	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v) {
+		Condition
+		.check(persistenceUtil != null,
+				"Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+		if(persistenceUtil == null){
+			if (Logger.logError()) {
+				Logger.error("Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+			}
+			return new HashSet<JavaChangeOperation>();
+		}
 		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		Collection<Long> javaOperationIds = v.getJavaChangeOperationIds();
 		for (Long id : javaOperationIds) {
@@ -326,6 +375,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	
 	@Override
 	public RCSTransaction getTransactionForVertex(final GenealogyVertex v) {
+		Condition
+		.check(persistenceUtil != null,
+				"Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+		if (persistenceUtil == null) {
+			if (Logger.logError()) {
+				Logger.error("Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+			}
+			return null;
+		}
 		Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("id",
 				v.getTransactionId());
 		List<RCSTransaction> load = persistenceUtil.load(criteria);
@@ -381,7 +439,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @param persistenceUtil
 	 *            the new persistence util
 	 */
-	private void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;
 	}
 	

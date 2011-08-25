@@ -6,9 +6,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.GenealogyAnalyzer;
@@ -48,7 +52,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	 */
 	public TransactionChangeGenealogy(final File graphDBFile, final PersistenceUtil persistenceUtil,
 			final GenealogyAnalyzer genealogyAnalyzer) {
-		this.genealogy = CoreChangeGenealogy.readFromDB(graphDBFile, persistenceUtil);
+		this.genealogy = CoreChangeGenealogy.readFromDB(graphDBFile);
+		this.genealogy.setPersistenceUtil(persistenceUtil);
 		this.persistenceUtil = persistenceUtil;
 		this.genealogyAnalyzer = genealogyAnalyzer;
 	}
@@ -125,8 +130,28 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
+	public int edgeSize() {
+		return this.genealogy.edgeSize();
+	}
+	
+	@Override
 	public Collection<GenealogyEdgeType> getEdges(GenealogyVertex from, GenealogyVertex to) {
 		return this.genealogy.getEdges(from, to);
+	}
+	
+	@Override
+	public Set<String> getExistingEdgeTypes() {
+		return this.genealogy.getExistingEdgeTypes();
+	}
+	
+	@Override
+	public File getGraphDBDir() {
+		return genealogy.getGraphDBDir();
+	}
+	
+	@Override
+	public GraphDatabaseService getGraphDBService() {
+		return genealogy.getGraphDBService();
 	}
 	
 	@Override
