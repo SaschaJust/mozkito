@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.finder;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -138,11 +137,17 @@ public class MappingFinder {
 	 */
 	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz, final Class<V> toClazz) {
 		List<MappingSelector> list = new LinkedList<MappingSelector>();
-		// FIXME this needs to be reimplemented after changes to the selector super
+		
 		for (Class<? extends MappingSelector> klass : this.selectors.keySet()) {
-			ParameterizedType type = (ParameterizedType) klass.getGenericSuperclass();
-			if ((type.getActualTypeArguments()[0] == fromClazz) && (type.getActualTypeArguments()[1] == toClazz)) {
-				list.add(this.selectors.get(klass));
+			try {
+				if (klass.newInstance().supports(fromClazz, toClazz)) {
+					list.add(this.selectors.get(klass));
+				}
+			} catch (Exception e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Omitting selector " + klass.getSimpleName() + " due to instantiation error: "
+					        + e.getMessage());
+				}
 			}
 		}
 		
@@ -215,7 +220,15 @@ public class MappingFinder {
 		
 		for (String engineName : this.engines.keySet()) {
 			MappingEngine mappingEngine = this.engines.get(engineName);
-			mappingEngine.score(element1, element2, score);
+			int check = mappingEngine.supported().check(element1.getClass(), element2.getClass());
+			
+			if (check > 0) {
+				mappingEngine.score(element1, element2, score);
+			} else if (check < 0) {
+				mappingEngine.score(element2, element1, score);
+			} else if (Logger.logInfo()) {
+				Logger.info("Skipping engine %s due to type incompatibility.", engineName);
+			}
 		}
 		return score;
 	}

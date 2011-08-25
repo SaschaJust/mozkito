@@ -32,4 +32,10 @@ public abstract class MappingSelector extends Registered {
 	 */
 	public abstract <T extends MappableEntity> List<T> parse(MappableEntity element, Class<T> targetType);
 	
+	/**
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public abstract boolean supports(Class<?> from, Class<?> to);
 }

@@ -35,6 +35,7 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
@@ -144,4 +145,15 @@ public class TransactionRegexSelector extends MappingSelector {
 		this.pattern = pattern;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector#supports
+	 * (java.lang.Class, java.lang.Class)
+	 */
+	@Override
+	public boolean supports(Class<?> from, Class<?> to) {
+		return to.equals(Report.class) && from.equals(RCSTransaction.class);
+	}
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
@@ -30,6 +31,7 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
@@ -131,6 +133,18 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	public void setPattern(final String pattern) {
 		this.pattern = pattern;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector#supports
+	 * (java.lang.Class, java.lang.Class)
+	 */
+	@Override
+	public boolean supports(Class<?> from, Class<?> to) {
+		return from.equals(Report.class) && to.equals(RCSTransaction.class);
 	}
 	
 }
