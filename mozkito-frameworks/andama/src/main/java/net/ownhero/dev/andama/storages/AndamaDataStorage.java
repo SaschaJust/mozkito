@@ -112,7 +112,8 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public void registerInput(
+	        @NotNull("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		if (this.logger.isInfoEnabled()) {
 			this.logger.info("Registering input " + ((AndamaThread<?, E>) writerThread).getName());
 		}
@@ -129,7 +130,8 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public void registerOutput(
+	        @NotNull("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		if (this.logger.isInfoEnabled()) {
 			this.logger.info("Registering output " + ((AndamaThread<E, ?>) readerThread).getName());
 		}
@@ -157,7 +159,8 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public void unregisterInput(
+	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
 			if (this.logger.isInfoEnabled()) {
 				this.logger.info("Unregistering input " + ((AndamaThread<?, E>) writerThread).getName());
@@ -178,7 +181,8 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public void unregisterOutput(
+	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			
 			if (this.logger.isInfoEnabled()) {
@@ -201,7 +205,7 @@ public class AndamaDataStorage<E> {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public CountDownLatch write(@NotNull ("Writing null data is now allowed.") final E data) throws InterruptedException {
+	public CountDownLatch write(@NotNull("Writing null data is now allowed.") final E data) throws InterruptedException {
 		if (this.logger.isTraceEnabled()) {
 			this.logger.trace("Entering write method.");
 		}
