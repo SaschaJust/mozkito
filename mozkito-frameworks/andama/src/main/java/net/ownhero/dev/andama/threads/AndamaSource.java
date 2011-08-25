@@ -65,7 +65,7 @@ public abstract class AndamaSource<T> extends AndamaThread<T, T> {
 		}
 		
 		builder.append(' ');
-		builder.append(':').append(getOutputClassType());
+		builder.append(':').append(getTypeName(getOutputClassType()));
 		builder.append(' ');
 		
 		if (isParallelizable()) {

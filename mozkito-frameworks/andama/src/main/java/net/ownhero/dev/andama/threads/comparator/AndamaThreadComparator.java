@@ -19,7 +19,7 @@ import net.ownhero.dev.andama.threads.AndamaTransformer;
  *
  */
 @SuppressWarnings ("rawtypes")
-public abstract class AndamaThreadComparator implements Comparator<AndamaThread> {
+public class AndamaThreadComparator implements Comparator<AndamaThread> {
 	
 	/*
 	 * (non-Javadoc)
@@ -44,7 +44,7 @@ public abstract class AndamaThreadComparator implements Comparator<AndamaThread>
 		if (AndamaSource.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = source
 			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else {
 				return -1;
 			}
@@ -53,7 +53,7 @@ public abstract class AndamaThreadComparator implements Comparator<AndamaThread>
 			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
 			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else {
 				return -1;
 			}
@@ -64,34 +64,34 @@ public abstract class AndamaThreadComparator implements Comparator<AndamaThread>
 			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
 			} else if (AndamaFilter.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else {
 				return -1;
 			}
 		} else if (AndamaTransformer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = filter
 			if (AndamaTransformer.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else {
-				return -1;
+				return 1;
 			}
 		} else if (AndamaDemultiplexer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = demultiplexer
 			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else {
 				return 1;
 			}
 		} else if (AndamaSink.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = sink
 			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
-				return 0;
+				return arg0.getName().compareTo(arg1.getName());
 			} else {
 				return 1;
 			}

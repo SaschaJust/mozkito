@@ -66,7 +66,7 @@ public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 		}
 		
 		builder.append(' ');
-		builder.append(getInputClassType()).append(':').append(getOutputClassType());
+		builder.append(getTypeName(getInputClassType())).append(':').append(getTypeName(getOutputClassType()));
 		builder.append(' ');
 		
 		if (isParallelizable()) {

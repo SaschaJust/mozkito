@@ -68,7 +68,7 @@ public abstract class AndamaSink<T> extends AndamaThread<T, T> {
 		}
 		
 		builder.append(' ');
-		builder.append(getInputClassType()).append(':');
+		builder.append(getTypeName(getInputClassType())).append(':');
 		builder.append(' ');
 		
 		if (isParallelizable()) {

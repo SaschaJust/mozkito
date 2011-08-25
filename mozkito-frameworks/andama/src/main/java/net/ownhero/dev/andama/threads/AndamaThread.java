@@ -14,6 +14,7 @@ import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
+import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.checks.Check;
@@ -33,22 +34,44 @@ import org.slf4j.LoggerFactory;
  * @param <V>
  */
 // TODO make package protected
-public abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V> {
+public abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V>,
+        Comparable<AndamaThread<?, ?>> {
+	
+	/**
+	 * @param type
+	 * @return
+	 */
+	public static String getTypeName(final Type type) {
+		if (type == null) {
+			return "(none)";
+		} else {
+			String typeName = type.toString();
+			String[] parts = typeName.split(" ");
+			if (parts.length > 1) {
+				typeName = parts[parts.length - 1];
+			}
+			parts = typeName.split("\\.");
+			if (parts.length > 1) {
+				typeName = parts[parts.length - 1];
+			}
+			return typeName;
+		}
+	}
 	
 	private final Logger                                      logger         = LoggerFactory.getLogger(this.getClass());
-	
 	private boolean                                           shutdown;
 	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads   = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
+	
 	private final AndamaGroup                                 threadGroup;
-	
 	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads   = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
-	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads  = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
 	
+	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads  = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
 	private AndamaDataStorage<K>                              inputStorage;
 	private AndamaDataStorage<V>                              outputStorage;
 	private final AndamaSettings                              settings;
 	private boolean                                           parallelizable = false;
 	private K                                                 inputData;
+	
 	private V                                                 outputData;
 	
 	/**
@@ -158,6 +181,16 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			}
 		}
 		return !isShutdown();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final AndamaThread<?, ?> o) {
+		AndamaThreadComparator comparator = new AndamaThreadComparator();
+		return comparator.compare(this, o);
 	}
 	
 	/*
@@ -662,7 +695,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		
 		StringBuilder typeBuilder = new StringBuilder();
 		if (hasInputConnector()) {
-			typeBuilder.append(getInputClassType());
+			typeBuilder.append(getTypeName(getInputClassType()));
 		}
 		
 		if (hasOutputConnector()) {
@@ -670,7 +703,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 				typeBuilder.append(":");
 			}
 			
-			typeBuilder.append(getOutputClassType());
+			typeBuilder.append(getTypeName(getOutputClassType()));
 		}
 		
 		builder.append(typeBuilder);

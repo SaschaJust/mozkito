@@ -12,21 +12,17 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		AndamaGraph graph = new AndamaGraph();
 		AndamaChain chain = new AndamaChain(null) {
 			
 			@Override
 			public void setup() {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void shutdown() {
-				// TODO Auto-generated method stub
-				
 			}
 		};
+		
 		AndamaGroup group = new AndamaGroup("test", chain);
 		LinkedList<AndamaThread<?, ?>> threads = new LinkedList<AndamaThread<?, ?>>();
 		threads.add(new DoubleSink(group, null, false));
@@ -35,11 +31,18 @@ public class Main {
 		threads.add(new IntegerFilter(group, null, false));
 		threads.add(new IntegerDoubleTransformer(group, null, false));
 		threads.add(new DoubleDemultiplexer(group, null, false));
-		graph.addBranch(new AndamaNode(new StringSource(group, null, false)));
-		graph.addBranch(new AndamaNode(new IntegerSource(group, null, false)));
+		threads.add(new StringSource(group, null, false));
+		threads.add(new IntegerSource(group, null, false));
 		
 		AndamaGraphBuilder builder = new AndamaGraphBuilder();
-		builder.buildGraph(graph, threads);
+		AndamaGraph graph = builder.buildGraph(threads);
+		
+		if (graph != null) {
+			builder.displayGraph(graph);
+		} else {
+			System.err.println("Could not build graph.");
+		}
+		
 		for (AndamaGraph andamaGraph : builder.getGraphs()) {
 			builder.displayGraph(andamaGraph);
 			System.err.println();

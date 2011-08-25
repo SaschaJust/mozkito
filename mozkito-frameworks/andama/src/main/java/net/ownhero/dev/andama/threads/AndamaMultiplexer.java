@@ -56,7 +56,7 @@ public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> {
 		}
 		
 		builder.append(' ');
-		builder.append('-').append(getInputClassType()).append('[');
+		builder.append('-').append(getTypeName(getInputClassType())).append('[');
 		builder.append(' ');
 		
 		if (isParallelizable()) {
