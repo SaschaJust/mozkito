@@ -21,7 +21,6 @@ public class CommentSearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -33,7 +32,6 @@ public class CommentSearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
@@ -41,7 +39,9 @@ public class CommentSearchEngine extends SearchEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
+	public void score(final RCSTransaction transaction,
+	                  final Report report,
+	                  final MapScore score) {
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "comment", getStorage().getAnalyzer());
 			Query query = buildQuery(transaction.getMessage(), this.parser);
@@ -54,7 +54,7 @@ public class CommentSearchEngine extends SearchEngine {
 				
 				if (bugId.compareTo(report.getId()) == 0) {
 					score.addFeature(hit.score, "message", truncate(transaction.getMessage()), "comment",
-					        truncate(report.getSummary()), this.getClass());
+					                 truncate(report.getSummary()), this.getClass());
 					break;
 				}
 			}

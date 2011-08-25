@@ -6,6 +6,23 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
+ * 
+ * A strategy determines the way reposuite decides whether a mapping is valid or
+ * not. In a TotalAgreement strategy all engines have to agree on a valid
+ * mapping.
+ * 
+ * Reposuite relies on a strategy to be used when computing the actual mappings.
+ * In this step, reposuite fetches all MapScores from the previous step from the
+ * persistence provider and evaluates the feature vector according to the
+ * selected strategy. E.g. if a TotalConfidence strategy is used, reposuite will
+ * only consider mappings as valid, if and only if the total confidence (the sum
+ * of all individual scores from the engines) yields a positive result. In a
+ * veto strategies, all mappings that have at least one negative value in the
+ * feature vector are dropped. Certain strategies rely on storages. E.g. the SVM
+ * strategy uses a model that has been build beforehand by having a support
+ * vector machine train on already mapped and verified data. If a mapping has
+ * passed the strategy checks it is persisted in the database.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -38,8 +55,8 @@ public abstract class MappingStrategy {
 	 * 
 	 */
 	public void init() {
-		Condition.check(isRegistered(), "The engine has to be registered before it is initialized. Engine: %s", this
-		        .getClass().getSimpleName());
+		Condition.check(isRegistered(), "The engine has to be registered before it is initialized. Engine: %s",
+		                this.getClass().getSimpleName());
 		setInitialized(true);
 	}
 	
@@ -68,8 +85,9 @@ public abstract class MappingStrategy {
 	 * @param mappingArguments
 	 * @param isRequired
 	 */
-	public void register(final MappingSettings settings, final MappingArguments mappingArguments,
-	        final boolean isRequired) {
+	public void register(final MappingSettings settings,
+	                     final MappingArguments mappingArguments,
+	                     final boolean isRequired) {
 		setSettings(settings);
 		setRegistered(true);
 	}

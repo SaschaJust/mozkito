@@ -13,6 +13,26 @@ import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 
 /**
+ * 
+ * Engines analyze two candidates to match certain criteria and score neutral
+ * (0) if they don't match or positive/negative according to the criterion under
+ * suspect.
+ * 
+ * Generating feature vectors for the candidates is a task that is accomplished
+ * by the scoring node. In the scoring step, reposuite uses all enabled engines
+ * to compute a vector consisting of confidence values. Every engine may have
+ * its own configuration options that are required to execute reposuite as soon
+ * as the engine is enabled. If the engine depends on certain storages, further
+ * configuration dependencies might be pulled in. An engine takes a candidate
+ * pair an checks for certain criteria and scores accordingly. Engines can score
+ * in three ways: positive, if they consider a pair a valid mapping, negative if
+ * they consider the pair to be a false positive or 0 if they can't decide on
+ * any of that. A criterion of an engine should be as atomic as possible, that
+ * means an engine shouldn't check for multiple criteria at a time. After all
+ * engines have been execute on one candidate pair, the resulting feature vector
+ * is stored to the database (incl. the information what has been scored by each
+ * engine and what data was considered while computing the score).
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -37,19 +57,32 @@ public abstract class MappingEngine extends Registered {
 	 * @param toSubstring
 	 */
 	
-	public void addFeature(@NotNull final MapScore score, final double confidence,
-	        @NotNull @NotEmpty final String fromFieldName, final Object fromFieldContent, final Object fromSubstring,
-	        @NotNull @NotEmpty final String toFieldName, final Object toFieldContent, final Object toSubstring) {
+	public void addFeature(@NotNull final MapScore score,
+	                       final double confidence,
+	                       @NotNull @NotEmpty final String fromFieldName,
+	                       final Object fromFieldContent,
+	                       final Object fromSubstring,
+	                       @NotNull @NotEmpty final String toFieldName,
+	                       final Object toFieldContent,
+	                       final Object toSubstring) {
 		score.addFeature(confidence, truncate(fromFieldName),
-		        truncate(fromFieldContent != null ? fromFieldContent.toString() : unused),
-		        truncate(fromSubstring != null ? fromSubstring.toString()
-		                : truncate(fromFieldContent != null ? fromFieldContent.toString() : unused)),
-		        truncate(toFieldName), truncate(toFieldContent != null ? toFieldContent.toString() : unused),
-		        truncate(toSubstring != null ? toSubstring.toString()
-		                : truncate(toFieldContent != null ? toFieldContent.toString() : unused)), getClass());
+		                 truncate(fromFieldContent != null
+		                                                  ? fromFieldContent.toString()
+		                                                  : unused),
+		                 truncate(fromSubstring != null
+		                                               ? fromSubstring.toString()
+		                                               : truncate(fromFieldContent != null
+		                                                                                  ? fromFieldContent.toString()
+		                                                                                  : unused)),
+		                 truncate(toFieldName), truncate(toFieldContent != null
+		                                                                       ? toFieldContent.toString()
+		                                                                       : unused),
+		                 truncate(toSubstring != null
+		                                             ? toSubstring.toString()
+		                                             : truncate(toFieldContent != null
+		                                                                              ? toFieldContent.toString()
+		                                                                              : unused)), getClass());
 	}
-	
-	public abstract Expression supported();
 	
 	/**
 	 * @param transaction
@@ -57,7 +90,9 @@ public abstract class MappingEngine extends Registered {
 	 * @param score
 	 */
 	@NoneNull
-	public abstract void score(final MappableEntity from, final MappableEntity to, final MapScore score);
+	public abstract void score(final MappableEntity from,
+	                           final MappableEntity to,
+	                           final MapScore score);
 	
 	/**
 	 * @return
@@ -67,9 +102,10 @@ public abstract class MappingEngine extends Registered {
 		return new HashSet<Class<? extends MappingStorage>>();
 	}
 	
+	public abstract Expression supported();
+	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
