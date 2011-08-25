@@ -34,19 +34,18 @@ public class Main {
 		threads.add(new StringSource(group, null, false));
 		threads.add(new IntegerSource(group, null, false));
 		
-		AndamaGraphBuilder builder = new AndamaGraphBuilder();
-		AndamaGraph graph = builder.buildGraph(threads);
+		net.ownhero.dev.andama.graph.AndamaGraph.buildGraph(group);
 		
-		if (graph != null) {
-			builder.displayGraph(graph);
-		} else {
-			System.err.println("Could not build graph.");
-		}
-		
-		for (AndamaGraph andamaGraph : builder.getGraphs()) {
-			builder.displayGraph(andamaGraph);
-			System.err.println();
-		}
+		// if (graph != null) {
+		// builder.displayGraph(graph);
+		// } else {
+		// System.err.println("Could not build graph.");
+		// }
+		//
+		// for (AndamaGraph andamaGraph : builder.getGraphs()) {
+		// builder.displayGraph(andamaGraph);
+		// System.err.println();
+		// }
 	}
 	
 }
