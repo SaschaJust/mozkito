@@ -1,10 +1,25 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
@@ -65,29 +80,24 @@ public class EssentialChangeEngine extends MappingEngine {
 		        "-1", isRequired));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
-		// TODO implement
-		// score.addFeature(confidence, transactionFieldName,
-		// transactionSubstring, reportFieldName, reportSubstring,
-		// this.getClass());
-	}
-	
 	/**
 	 * @param confidence
 	 *            the confidence to set
 	 */
 	public void setConfidence(final double confidence) {
 		this.confidence = confidence;
+	}
+	
+	@Override
+	public Expression supported() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
