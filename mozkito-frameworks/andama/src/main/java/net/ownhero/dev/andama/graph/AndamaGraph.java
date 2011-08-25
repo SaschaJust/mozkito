@@ -107,6 +107,7 @@ public class AndamaGraph {
 				// attach to all
 				// remove all from openBranches
 			} else {
+				
 				// sink
 				// attach and remove
 			}
