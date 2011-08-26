@@ -2,6 +2,7 @@ package net.ownhero.dev.andama.chain;
 
 import java.util.LinkedList;
 
+import net.ownhero.dev.andama.graph.AndamaGraph;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaThread;
@@ -34,7 +35,9 @@ public class Main {
 		threads.add(new StringSource(group, null, false));
 		threads.add(new IntegerSource(group, null, false));
 		
-		net.ownhero.dev.andama.graph.AndamaGraph.buildGraph(group);
+		AndamaGraph graph = net.ownhero.dev.andama.graph.AndamaGraph.buildGraph(group);
+		graph.connectThreads(0);
+		System.out.println("Done");
 		
 		// if (graph != null) {
 		// builder.displayGraph(graph);
