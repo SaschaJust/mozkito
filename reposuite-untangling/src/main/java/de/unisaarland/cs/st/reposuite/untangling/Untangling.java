@@ -501,6 +501,10 @@ public class Untangling {
 			Logger.info("Generated " + blobSetSize + " artificial blobs.");
 		}
 		
+		if (System.getProperty("generateBlobsOnly") != null) {
+			return;
+		}
+
 		File outFile = outArg.getValue();
 		BufferedWriter outWriter;
 		try {
