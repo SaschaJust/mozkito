@@ -6,11 +6,13 @@ package net.ownhero.dev.andama.graph;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import net.ownhero.dev.andama.threads.AndamaDemultiplexer;
 import net.ownhero.dev.andama.threads.AndamaFilter;
@@ -31,6 +33,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.index.RelationshipIndex;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
@@ -58,6 +61,12 @@ public class AndamaGraph {
 		final AndamaGraph andamaGraph = new AndamaGraph(threadGroup);
 		
 		buildGraph(threads, openBranches, andamaGraph);
+		
+		System.err.println("Found " + andamaGraph.alternatives() + " alternatives.");
+		System.err.println("Pruned " + andamaGraph.prune() + " alternatives.");
+		System.err.println("Keeping " + andamaGraph.alternatives() + " alternatives.");
+		
+		andamaGraph.shutdown();
 		
 		return andamaGraph;
 	}
@@ -109,20 +118,6 @@ public class AndamaGraph {
 						// attach to a multiplexer
 						openBranches.add(fromNode);
 					}
-					
-					// check for multiplexer
-					// |- yes? don't attach multiplexer/demultiplexer
-					// |- yes? don't remove multiplexer from openbranches
-					// |- no? remove multiplexer from openbranches
-					
-					// check for demultiplexer
-					// |- yes? don't attach multiplexer/demultiplexer
-					
-					// attach
-					
-					// recursion
-					
-					// detach
 				}
 			} else if (AndamaMultiplexer.class.isAssignableFrom(thread.getClass())) {
 				for (Node fromNode : getCandidates(thread, openBranches, andamaGraph)) {
@@ -232,10 +227,7 @@ public class AndamaGraph {
 	                                              final List<Node> openBranches,
 	                                              final AndamaGraph graph) {
 		final String inputType = graph.getProperty(NodeProperty.INPUTTYPE, thread).toString();
-		for (Node node : openBranches) {
-			System.out.println("Node: " + node);
-			System.out.println("OUTPUTTYPE: " + graph.getProperty(NodeProperty.OUTPUTTYPE, node));
-		}
+		
 		@SuppressWarnings ("unchecked")
 		Collection<Node> collection = CollectionUtils.select(openBranches, new Predicate() {
 			
@@ -257,13 +249,14 @@ public class AndamaGraph {
 	private final AndamaGroup          threadGroup;
 	
 	private final Map<String, Node>    nodes        = new HashMap<String, Node>();
+	private final List<Integer>        colors       = new LinkedList<Integer>();
 	
 	public AndamaGraph(final AndamaGroup threadGroup) {
 		this.threadGroup = threadGroup;
 		
 		File dbFile = new File("/tmp/test.db");
 		if (dbFile.exists()) {
-			dbFile.delete();
+			// delete it
 		}
 		
 		this.graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
@@ -279,7 +272,7 @@ public class AndamaGraph {
 	 * @return
 	 */
 	public int alternatives() {
-		return this.color;
+		return this.colors.size();
 	}
 	
 	/**
@@ -423,23 +416,92 @@ public class AndamaGraph {
 	/**
 	 * @return
 	 */
-	public boolean paint() {
-		String colorName = "color" + this.color;
+	private boolean paint() {
+		AndamaGraph andamaGraph = this;
+		String colorName = "color" + andamaGraph.color;
 		
-		if (this.graph.index().existsForRelationships(this.workingColor)) {
-			IndexHits<Relationship> query = this.graph.index().forRelationships(this.workingColor).query("*");
+		if (andamaGraph.graph.index().existsForRelationships(andamaGraph.workingColor)) {
+			Transaction tx = this.graph.beginTx();
+			
+			RelationshipIndex relationships = andamaGraph.graph.index().forRelationships(andamaGraph.workingColor);
+			IndexHits<Relationship> query = relationships.query(this.relation, "*");
+			
 			while (query.hasNext()) {
 				Relationship rel = query.next();
-				this.graph.index()
-				          .forRelationships(colorName)
-				          .add(rel, this.relation,
-				               rel.getStartNode().getProperty("NODEID") + "_" + rel.getEndNode().getProperty("NODEID"));
+				andamaGraph.graph.index()
+				                 .forRelationships(colorName)
+				                 .add(rel,
+				                      andamaGraph.relation,
+				                      rel.getStartNode().getProperty("NODEID") + "_"
+				                              + rel.getEndNode().getProperty("NODEID"));
 			}
+			query.close();
+			tx.success();
+			tx.finish();
 			
-			this.color++;
+			this.colors.add(this.color);
+			andamaGraph.color++;
+			
+			return true;
 		}
 		
-		return true;
+		return false;
+	}
+	
+	/**
+	 * @return
+	 */
+	private int prune() {
+		Map<String, Set<Relationship>> graphs = new HashMap<String, Set<Relationship>>();
+		
+		for (int c = 0; c < this.color; ++c) {
+			IndexHits<Relationship> query = this.graph.index().forRelationships("color" + c).query(this.relation, "*");
+			HashSet<Relationship> relations = new HashSet<Relationship>();
+			
+			while (query.hasNext()) {
+				relations.add(query.next());
+			}
+			
+			graphs.put("color" + c, relations);
+		}
+		
+		HashSet<Integer> prunedColors = new HashSet<Integer>();
+		
+		int i = 0;
+		while (i < this.color) {
+			while (prunedColors.contains(i)) {
+				++i;
+			}
+			
+			int j = i + 1;
+			
+			while (j < this.color) {
+				
+				while (prunedColors.contains(j)) {
+					++j;
+				}
+				
+				if ((i >= this.color) || (j >= this.color)) {
+					break;
+				} else {
+					if (CollectionUtils.isEqualCollection(graphs.get("color" + i), graphs.get("color" + j))) {
+						prunedColors.add(j);
+					}
+				}
+				++j;
+			}
+			
+			++i;
+		}
+		
+		if (!prunedColors.isEmpty()) {
+			for (Integer col : prunedColors) {
+				unpaint(col);
+			}
+			this.colors.removeAll(prunedColors);
+		}
+		
+		return prunedColors.size();
 	}
 	
 	/**
@@ -454,5 +516,31 @@ public class AndamaGraph {
 	 */
 	public boolean unique() {
 		return this.color == 1; // just painted 1 times
+	}
+	
+	/**
+	 * @param i
+	 */
+	private boolean unpaint(final int i) {
+		String colorName = "color" + i;
+		
+		if (this.graph.index().existsForRelationships(colorName)) {
+			Transaction tx = this.graph.beginTx();
+			
+			RelationshipIndex relationships = this.graph.index().forRelationships(colorName);
+			IndexHits<Relationship> query = relationships.query(this.relation, "*");
+			
+			while (query.hasNext()) {
+				Relationship rel = query.next();
+				relationships.remove(rel);
+			}
+			query.close();
+			tx.success();
+			tx.finish();
+			
+			return true;
+		}
+		
+		return false;
 	}
 }
