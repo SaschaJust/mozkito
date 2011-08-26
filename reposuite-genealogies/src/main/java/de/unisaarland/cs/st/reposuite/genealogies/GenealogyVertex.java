@@ -30,12 +30,12 @@ public class GenealogyVertex {
 	 *            the transaction id
 	 * @return the genealogy vertex
 	 */
-	public static String transaction_id = "transaction_id";
+	public static String              transaction_id = "transaction_id";
 	
 	/** The node. */
-	private final Node node;
+	private final Node                node;
 	
-	private CoreChangeGenealogy changeGenealogy;
+	private final CoreChangeGenealogy changeGenealogy;
 	
 	/**
 	 * Instantiates a new genealogy vertex.
@@ -85,7 +85,7 @@ public class GenealogyVertex {
 	 */
 	public void addJavaChangeOperation(final JavaChangeOperation operation) {
 		GraphDBChangeOperation op = CoreChangeGenealogy.getGraphDBChangeOperationById(node.getGraphDatabase(),
-				operation.getId());
+		        operation.getId());
 		if (op == null) {
 			op = GraphDBChangeOperation.create(node.getGraphDatabase(), operation.getId());
 		}
@@ -162,11 +162,11 @@ public class GenealogyVertex {
 	 */
 	public Collection<GenealogyVertex> getAllDependents() {
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		        GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+		        GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		        GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
-		for(Relationship rel : relationships){
+		for (Relationship rel : relationships) {
 			result.add(changeGenealogy.getVertexForNode(rel.getStartNode()));
 		}
 		return result;
@@ -180,9 +180,9 @@ public class GenealogyVertex {
 	 */
 	public Collection<GenealogyVertex> getAllVerticesDependingOn() {
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		        GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+		        GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		        GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {
 			result.add(changeGenealogy.getVertexForNode(rel.getEndNode()));
@@ -216,7 +216,7 @@ public class GenealogyVertex {
 	protected Collection<Long> getJavaChangeOperationIds() {
 		Set<Long> result = new HashSet<Long>();
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.OUTGOING,
-				RelationshipTypes.CONTAINS);
+		        RelationshipTypes.CONTAINS);
 		for (Relationship rel : relationships) {
 			GraphDBChangeOperation graphDBChangeOperation = new GraphDBChangeOperation(rel.getEndNode());
 			result.add(graphDBChangeOperation.getJavaChangeOperationId());
@@ -235,10 +235,10 @@ public class GenealogyVertex {
 	
 	public RCSTransaction getTransaction() {
 		return this.changeGenealogy.getPersistenceUtil().loadById(node.getProperty(transaction_id).toString(),
-				RCSTransaction.class);
+		        RCSTransaction.class);
 	}
 	
-	public String getTransactionId(){
+	public String getTransactionId() {
 		return node.getProperty(transaction_id).toString();
 	}
 	

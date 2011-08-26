@@ -1,10 +1,31 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import org.joda.time.DateTime;
+
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
@@ -61,29 +82,45 @@ public class CreationOrderEngine extends MappingEngine {
 		        "Score in case the report was created after the transaction.", "-1", isRequired));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction, final Report report, final MapScore score) {
-		if (transaction.getTimestamp().isBefore(report.getCreationTimestamp())) {
-			score.addFeature(getScoreReportCreatedAfterTransaction(), "timestamp", transaction.getTimestamp()
-			        .toString(), "creationTimestamp", report.getCreationTimestamp().toString(), this.getClass());
-		}
-	}
-	
 	/**
 	 * @param scoreReportCreatedAfterTransaction
 	 *            the scoreReportCreatedAfterTransaction to set
 	 */
 	public void setScoreReportCreatedAfterTransaction(final double scoreReportCreatedAfterTransaction) {
 		this.scoreReportCreatedAfterTransaction = scoreReportCreatedAfterTransaction;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
+	@Override
+	public Expression supported() {
+		return new And(new Atom(Index.ONE, FieldKey.CREATION_TIMESTAMP), new Atom(Index.OTHER,
+		        FieldKey.CREATION_TIMESTAMP));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 */
+	@Override
+	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP))
+		        .isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
+			score.addFeature(getScoreReportCreatedAfterTransaction(), FieldKey.CREATION_TIMESTAMP.name(),
+			        ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+			        ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(), FieldKey.CREATION_TIMESTAMP.name(),
+			        ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+			        ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(), this.getClass());
+		}
 	}
 	
 }

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import java.io.BufferedReader;
@@ -22,6 +37,7 @@ import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
@@ -465,7 +481,7 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(1, FieldKey.BODY), new Atom(2, FieldKey.ID));
+		return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
 	}
 	
 	/*
