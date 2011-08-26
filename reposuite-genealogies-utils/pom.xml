@@ -10,7 +10,7 @@
 	<groupId>de.unisaarland.cs.st</groupId>
 	<artifactId>reposuite-genealogies-utils</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-genealogies</name>
+	<name>reposuite-genealogies-utils</name>
 	<properties>
 		<moduleName>genealogies-utils</moduleName>
 	</properties>
