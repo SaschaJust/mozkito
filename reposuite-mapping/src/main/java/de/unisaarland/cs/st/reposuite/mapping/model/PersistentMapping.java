@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
 import java.util.LinkedList;
@@ -30,20 +12,19 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import net.ownhero.dev.ioda.JavaUtils;
 import de.unisaarland.cs.st.reposuite.mapping.elements.MapId;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import net.ownhero.dev.ioda.JavaUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 @Entity
-@IdClass (MapId.class)
-public class RCSBugMapping implements Annotated {
+@IdClass(MapId.class)
+public class PersistentMapping implements Annotated {
 	
 	private static final long     serialVersionUID = -6423537467677757941L;
 	
@@ -54,12 +35,13 @@ public class RCSBugMapping implements Annotated {
 	/**
 	 * @param score
 	 */
-	public RCSBugMapping(final MapScore score) {
+	public PersistentMapping(final MapScore score) {
 		setScore(score);
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -70,10 +52,10 @@ public class RCSBugMapping implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof RCSBugMapping)) {
+		if (!(obj instanceof PersistentMapping)) {
 			return false;
 		}
-		RCSBugMapping other = (RCSBugMapping) obj;
+		PersistentMapping other = (PersistentMapping) obj;
 		if (getScore() == null) {
 			if (other.getScore() != null) {
 				return false;
@@ -88,17 +70,17 @@ public class RCSBugMapping implements Annotated {
 	 * @return the report
 	 */
 	@Transient
-	public Report getReport() {
-		return getScore().getReport();
+	public MappableEntity getElement1() {
+		return getScore().getElement1();
 	}
 	
 	/**
 	 * @return the score
 	 */
 	@Id
-	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
-	@JoinColumns ({ @JoinColumn (nullable = false, name = "reportid", referencedColumnName = "reportid"),
-	        @JoinColumn (nullable = false, name = "transactionid", referencedColumnName = "transactionid") })
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {}, optional = false)
+	@JoinColumns({ @JoinColumn(nullable = false, name = "reportid", referencedColumnName = "reportid"),
+	        @JoinColumn(nullable = false, name = "transactionid", referencedColumnName = "transactionid") })
 	public MapScore getScore() {
 		return this.score;
 	}
@@ -114,8 +96,8 @@ public class RCSBugMapping implements Annotated {
 	 * @return the transaction
 	 */
 	@Transient
-	public RCSTransaction getTransaction() {
-		return getScore().getTransaction();
+	public MappableEntity getElement2() {
+		return getScore().getElement2();
 	}
 	
 	/**
@@ -127,34 +109,36 @@ public class RCSBugMapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getScore() == null)
-		                                               ? 0
-		                                               : getScore().hashCode());
+		result = prime * result + ((getScore() == null) ? 0 : getScore().hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param score the score to set
+	 * @param score
+	 *            the score to set
 	 */
 	public void setScore(final MapScore score) {
 		this.score = score;
 	}
 	
 	/**
-	 * @param strategies the strategies to set
+	 * @param strategies
+	 *            the strategies to set
 	 */
 	public void setStrategies(final List<MappingStrategy> strategies) {
 		this.strategies = strategies;
 	}
 	
 	/**
-	 * @param valid the valid to set
+	 * @param valid
+	 *            the valid to set
 	 */
 	public void setValid(final Boolean valid) {
 		this.valid = valid;
@@ -162,15 +146,16 @@ public class RCSBugMapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RCSBugMapping [report=");
-		builder.append(getReport().getId());
+		builder.append(getElement1());
 		builder.append(", transaction=");
-		builder.append(getTransaction().getId());
+		builder.append(getElement2());
 		builder.append(", score=");
 		builder.append(getScore());
 		builder.append(", strategies=");

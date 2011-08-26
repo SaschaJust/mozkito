@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
 import java.io.BufferedReader;
@@ -33,23 +15,26 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class RegexEngine extends MappingEngine {
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
-	 *
+	 * 
 	 */
 	private class Matcher {
 		
@@ -63,17 +48,14 @@ public class RegexEngine extends MappingEngine {
 		 */
 		public Matcher(final String score, final String pattern, final String options) {
 			setScore(Double.parseDouble(score));
-			setRegex(new Regex(
-			                   pattern,
-			                   !options.isEmpty() && options.equalsIgnoreCase("CASE_INSENSITIVE")
-			                                                                                     ? Pattern.CASE_INSENSITIVE
-			                                                                                     : 0));
+			setRegex(new Regex(pattern,
+			        !options.isEmpty() && options.equalsIgnoreCase("CASE_INSENSITIVE") ? Pattern.CASE_INSENSITIVE : 0));
 		}
 		
 		/**
 		 * @return the regex
 		 */
-		public Regex getRegex(final long id) {
+		public Regex getRegex(final String id) {
 			return new Regex(this.regex.getPattern().replace("##ID##", "" + id));
 		}
 		
@@ -85,14 +67,16 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
-		 * @param regex the regex to set
+		 * @param regex
+		 *            the regex to set
 		 */
 		public void setRegex(final Regex regex) {
 			this.regex = regex;
 		}
 		
 		/**
-		 * @param score the score to set
+		 * @param score
+		 *            the score to set
 		 */
 		public void setScore(final double score) {
 			this.score = score;
@@ -100,6 +84,7 @@ public class RegexEngine extends MappingEngine {
 		
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -134,6 +119,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -175,6 +161,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -305,20 +292,20 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.configPath == null)
-		                                                    ? 0
-		                                                    : this.configPath.hashCode());
+		result = prime * result + ((this.configPath == null) ? 0 : this.configPath.hashCode());
 		return result;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
 	 */
 	@Override
@@ -338,13 +325,10 @@ public class RegexEngine extends MappingEngine {
 		
 		try {
 			CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(getConfigPath().toURL()
-			                                                                                         .openStream())),
-			                                 ' ');
+			        .openStream())), ' ');
 			String[] line = null;
 			while ((line = reader.readNext()) != null) {
-				getMatchers().add(new Matcher(line[0], line[1], line.length > 2
-				                                                               ? line[2]
-				                                                               : ""));
+				getMatchers().add(new Matcher(line[0], line[1], line.length > 2 ? line[2] : ""));
 			}
 			
 			if (Logger.logDebug()) {
@@ -390,6 +374,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init(de.
 	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -397,13 +382,10 @@ public class RegexEngine extends MappingEngine {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
-	                     final boolean isRequired) {
+	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
-		                                      "URI to file containing the regular expressions used to map the IDs.",
-		                                      null, isRequired));
+		        "URI to file containing the regular expressions used to map the IDs.", null, isRequired));
 	}
 	
 	/**
@@ -433,55 +415,17 @@ public class RegexEngine extends MappingEngine {
 		return this.configPath.resolve(arg0);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.rcs.model.RCSTransaction,
-	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report,
-	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
-	 */
-	@Override
-	public void score(final RCSTransaction transaction,
-	                  final Report report,
-	                  final MapScore score) {
-		double value = 0d;
-		String relevantString = "";
-		
-		if (Logger.logDebug()) {
-			Logger.debug(this.getClass().getSimpleName() + " checking " + transaction);
-		}
-		
-		for (Matcher matcher : this.matchers) {
-			Regex regex = matcher.getRegex(report.getId());
-			
-			if (value < matcher.getScore()) {
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Using regex '" + regex.getPattern() + "'.");
-				}
-				if (regex.find(transaction.getMessage()) != null) {
-					
-					value += matcher.getScore();
-					relevantString = regex.getGroup("match");
-				}
-			}
-		}
-		
-		if (!relevantString.isEmpty()) {
-			score.addFeature(value, "message", relevantString, "id", report.getId() + "", this.getClass());
-		}
-	}
-	
 	/**
-	 * @param uri the configPath to set
+	 * @param uri
+	 *            the configPath to set
 	 */
 	private void setConfigPath(final URI uri) {
 		this.configPath = uri;
 	}
 	
 	/**
-	 * @param matchers the matchers to set
+	 * @param matchers
+	 *            the matchers to set
 	 */
 	private void setMatchers(final Collection<Matcher> matchers) {
 		this.matchers = matchers;
@@ -511,6 +455,58 @@ public class RegexEngine extends MappingEngine {
 	 */
 	public URL toURL() throws MalformedURLException {
 		return this.configPath.toURL();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
+	@Override
+	public Expression supported() {
+		return new And(new Atom(1, FieldKey.BODY), new Atom(2, FieldKey.ID));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
+	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
+	 */
+	@Override
+	public void score(MappableEntity element1, MappableEntity element2, MapScore score) {
+		double value = 0d;
+		String relevantString = "";
+		
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getSimpleName() + " checking " + element1);
+		}
+		
+		for (Matcher matcher : this.matchers) {
+			Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
+			
+			if (value < matcher.getScore()) {
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Using regex '" + regex.getPattern() + "'.");
+				}
+				if (regex.find(element1.get(FieldKey.BODY).toString()) != null) {
+					
+					value += matcher.getScore();
+					relevantString = regex.getGroup("match");
+				}
+			}
+		}
+		
+		if (!relevantString.isEmpty()) {
+			score.addFeature(value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
+			        FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID).toString(),
+			        this.getClass());
+		}
 	}
 	
 }
