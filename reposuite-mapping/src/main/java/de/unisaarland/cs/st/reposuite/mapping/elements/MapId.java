@@ -17,66 +17,35 @@ package de.unisaarland.cs.st.reposuite.mapping.elements;
 
 public class MapId {
 	
-	private String transaction;
-	private long   report;
+	private String fromId;
+	private String toId;
 	
 	/**
-	 * 
+	 * @return
 	 */
-	public MapId() {
+	public String getFromId() {
+		return fromId;
 	}
 	
 	/**
-	 * @param transaction
-	 * @param report
+	 * @param fromId
 	 */
-	public MapId(final String transactionId, final long reportId) {
-		setTransaction(transactionId);
-		setReport(reportId);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof MapId)) {
-			return false;
-		}
-		MapId other = (MapId) obj;
-		if (getReport() != other.getReport()) {
-			return false;
-		}
-		if (getTransaction() == null) {
-			if (other.getTransaction() != null) {
-				return false;
-			}
-		} else if (!getTransaction().equals(other.getTransaction())) {
-			return false;
-		}
-		return true;
+	public void setFromId(String fromId) {
+		this.fromId = fromId;
 	}
 	
 	/**
-	 * @return the report
+	 * @return
 	 */
-	public long getReport() {
-		return this.report;
+	public String getToId() {
+		return toId;
 	}
 	
 	/**
-	 * @return the transaction
+	 * @param toId
 	 */
-	public String getTransaction() {
-		return this.transaction;
+	public void setToId(String toId) {
+		this.toId = toId;
 	}
 	
 	/*
@@ -88,24 +57,29 @@ public class MapId {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (getReport() ^ (getReport() >>> 32));
-		result = prime * result + ((getTransaction() == null) ? 0 : getTransaction().hashCode());
+		result = prime * result + ((fromId == null) ? 0 : fromId.hashCode());
+		result = prime * result + ((toId == null) ? 0 : toId.hashCode());
 		return result;
 	}
 	
-	/**
-	 * @param report
-	 *            the report to set
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public void setReport(final long reportId) {
-		this.report = reportId;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		MapId other = (MapId) obj;
+		if (fromId == null) {
+			if (other.fromId != null) return false;
+		} else if (!fromId.equals(other.fromId)) return false;
+		if (toId == null) {
+			if (other.toId != null) return false;
+		} else if (!toId.equals(other.toId)) return false;
+		return true;
 	}
 	
-	/**
-	 * @param transaction
-	 *            the transaction to set
-	 */
-	public void setTransaction(final String transactionId) {
-		this.transaction = transactionId;
-	}
 }
