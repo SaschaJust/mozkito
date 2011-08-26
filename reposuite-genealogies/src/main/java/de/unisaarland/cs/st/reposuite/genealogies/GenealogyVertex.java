@@ -92,6 +92,41 @@ public class GenealogyVertex {
 		this.addChangeOperation(op);
 	}
 	
+	public boolean containsFix() {
+		//FIXME this should be replaced by bug mappings logic
+		String tMessage = this.getTransaction().getMessage();
+		boolean result = false;
+		
+		result |= tMessage.toLowerCase().contains("fix");
+		result |= tMessage.toLowerCase().contains("issue");
+		result |= tMessage.toLowerCase().contains("resolved");
+		
+		return result;
+	}
+	
+	public boolean containsFixInducingChange(){
+		//FIXME this should be replaced by some better logic
+		boolean result = false;
+		Transaction tx = node.getGraphDatabase().beginTx();
+		Object fixIndObj = node.getProperty("fixInducing");
+		if (fixIndObj == null) {
+			//compute the property and save it
+			for (GenealogyVertex dependent : this.getDependents(GenealogyEdgeType.DefinitionOnDefinition,
+					GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall)) {
+				if (dependent.containsFix()) {
+					result = true;
+					break;
+				}
+			}
+			node.setProperty("fixInducing", result);
+		} else {
+			result = (Boolean) fixIndObj;
+		}
+		tx.success();
+		tx.finish();
+		return result;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -164,7 +199,7 @@ public class GenealogyVertex {
 	 *            consider only edges of these types
 	 * @return the dependants
 	 */
-	public Collection<GenealogyVertex> getDependants(final GenealogyEdgeType... types) {
+	public Collection<GenealogyVertex> getDependents(final GenealogyEdgeType... types) {
 		Iterable<Relationship> relationships = this.node.getRelationships(Direction.INCOMING, types);
 		List<GenealogyVertex> result = new LinkedList<GenealogyVertex>();
 		for (Relationship rel : relationships) {

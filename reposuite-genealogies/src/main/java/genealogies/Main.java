@@ -18,6 +18,9 @@
  */
 package genealogies;
 
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import de.unisaarland.cs.st.reposuite.genealogies.Genealogies;
+
 
 
 /**
@@ -26,12 +29,16 @@ package genealogies;
  */
 public class Main {
 	
+	static {
+		KanuniAgent.initialize();
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		
-		
+		Genealogies genealogies = new Genealogies();
+		genealogies.run();
 	}
 	
 }

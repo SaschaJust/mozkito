@@ -9,12 +9,10 @@ import de.unisaarland.cs.st.reposuite.genealogies.transaction.TransactionChangeG
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
 import de.unisaarland.cs.st.reposuite.settings.EnumArgument;
-import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 
 public class Genealogies {
@@ -23,15 +21,12 @@ public class Genealogies {
 	private final EnumArgument        granularityArg;
 	private final DatabaseArguments   databaseArgs;
 	private PersistenceUtil           persistenceUtil;
-	private final RepositoryArguments repositoryArg;
-	private final Repository          repository;
 	
 	public Genealogies() {
 		
 		RepositorySettings settings = new RepositorySettings();
 		settings.setLoggerArg(false);
 		databaseArgs = settings.setDatabaseArgs(true, "ppa");
-		repositoryArg = settings.setRepositoryArg(true);
 		
 		graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
 				"Directory in which to store the GraphDB (if exists, load graphDB from this dir)", null, true, true);
@@ -42,7 +37,6 @@ public class Genealogies {
 		
 		settings.parseArguments();
 		databaseArgs.getValue();
-		repository = repositoryArg.getValue();
 		persistenceUtil = null;
 		try {
 			persistenceUtil = PersistenceManager.getUtil();
@@ -56,12 +50,12 @@ public class Genealogies {
 		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
 		List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
 		
-		GenealogyAnalyzer genealogyAnalyzer = new GenealogyAnalyzer(repository);
-
+		GenealogyAnalyzer genealogyAnalyzer = new GenealogyAnalyzer();
+		
 		switch (ChangeGenealogyGranularity.valueOf(granularityArg.getValue())) {
 			case TRANSACTION:
 				TransactionChangeGenealogy genealogy = new TransactionChangeGenealogy(graphDBArg.getValue(),
-				        persistenceUtil, genealogyAnalyzer);
+						persistenceUtil, genealogyAnalyzer);
 				genealogy.addTransactions(transactions);
 				break;
 			default:

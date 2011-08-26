@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.reposuite.genealogies.TestEnvironment.TestEnvironmen
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
 
-public class GenealogyAnalyzerTest {
+public class GenealogyAnalyzerLongTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
@@ -23,7 +23,7 @@ public class GenealogyAnalyzerTest {
 	
 	@Before
 	public void setup(){
-		analyzer = new GenealogyAnalyzer(TestEnvironment.getRepository());
+		analyzer = new GenealogyAnalyzer();
 	}
 	
 	@Test

@@ -26,7 +26,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 
-public class TransactionChangeGenealogyTest {
+public class TransactionChangeGenealogyLongTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
@@ -39,7 +39,7 @@ public class TransactionChangeGenealogyTest {
 		File graphDBFile = FileUtils.createRandomDir("reposuite", "genealogies-test", FileShutdownAction.DELETE);
 		
 		PersistenceUtil persistenceUtil = TestEnvironment.getPersistenceUtil();
-		GenealogyAnalyzer genealogyAnalyzer = new GenealogyAnalyzer(TestEnvironment.getRepository());
+		GenealogyAnalyzer genealogyAnalyzer = new GenealogyAnalyzer();
 		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
 		List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
 		TransactionChangeGenealogy genealogy = new TransactionChangeGenealogy(graphDBFile, persistenceUtil,
