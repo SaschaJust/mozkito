@@ -40,6 +40,10 @@ public class PPAPersistenceUtil {
 			final RCSTransaction transaction) {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
+		if (Logger.logDebug()) {
+			Logger.debug(persistenceUtil.getToolInformation());
+		}
+
 		for (RCSRevision revision : transaction.getRevisions()) {
 			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
@@ -75,9 +79,9 @@ public class PPAPersistenceUtil {
 		CriteriaBuilder cb = criteria.getBuilder();
 		Root<? extends JavaElement> root = criteria.getRoot();
 		Predicate predicate = cb.and(cb.equal(root.get("fullQualifiedName"), e.getFullQualifiedName()),
-		        cb.equal(root.get("elementType"), e.getElementType()));
+				cb.equal(root.get("elementType"), e.getElementType()));
 		criteria.getQuery().where(predicate);
-
+		
 		List<? extends JavaElement> elements = persistenceUtil.load(criteria);
 		if (elements.isEmpty()) {
 			return null;
