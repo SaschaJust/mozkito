@@ -26,6 +26,7 @@ import javax.persistence.Basic;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
 
@@ -55,18 +56,19 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	private MappableEntity     element2;
 	
-	private String             id1;
+	private String             fromId;
 	private String             class1;
 	
-	private String             id2;
+	private String             toId;
 	private String             class2;
 	
-	public String getId1() {
-		return id1;
+	@Id
+	public String getFromId() {
+		return fromId;
 	}
 	
-	public void setId1(String id1) {
-		this.id1 = id1;
+	public void setFromId(String id1) {
+		this.fromId = id1;
 	}
 	
 	public String getClass1() {
@@ -77,12 +79,13 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 		this.class1 = class1;
 	}
 	
-	public String getId2() {
-		return id2;
+	@Id
+	public String getToId() {
+		return toId;
 	}
 	
-	public void setId2(String id2) {
-		this.id2 = id2;
+	public void setToId(String id2) {
+		this.toId = id2;
 	}
 	
 	public String getClass2() {
@@ -100,7 +103,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 		} else {
 			try {
 				Class<?> clazz = Class.forName(getClass1());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getId1(), clazz);
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -115,7 +118,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	public void setElement1(MappableEntity element1) {
 		this.element1 = element1;
 		setClass1(element1.getClass().getCanonicalName());
-		setId1(fetchId(element1));
+		setFromId(fetchId(element1));
 	}
 	
 	@Transient
@@ -125,7 +128,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 		} else {
 			try {
 				Class<?> clazz = Class.forName(getClass2());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getId2(), clazz);
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -140,7 +143,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	public void setElement2(MappableEntity element2) {
 		this.element2 = element2;
 		setClass2(element2.getClass().getCanonicalName());
-		setId2(fetchId(element2));
+		setToId(fetchId(element2));
 	}
 	
 	private String fetchId(Object o) {
