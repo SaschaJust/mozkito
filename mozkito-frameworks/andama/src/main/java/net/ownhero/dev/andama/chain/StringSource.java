@@ -9,7 +9,7 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class StringSource extends AndamaSource<String> {
 	
@@ -69,7 +69,7 @@ public class StringSource extends AndamaSource<String> {
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#process(java.lang.Object)
 	 */
 	@Override
-	public String process(final String data) {
+	public String process() {
 		// TODO Auto-generated method stub
 		return null;
 	}

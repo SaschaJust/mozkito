@@ -1,30 +1,31 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class FileArgument.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class InputFileArgument extends AndamaArgument<File> {
+public class InputFileArgument extends AndamaArgument {
 	
 	// FIXME write test cases
 	/**
@@ -61,26 +62,34 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 */
 	@Override
 	public File getValue() {
-		if (this.actualValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		
-		File file = new File(this.actualValue.trim());
+		File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
-			throw new Shutdown("The file `" + this.actualValue + "` specified for argument `" + getName()
-			        + "` is a directory. Expected file. Abort.");
+			if (Logger.logError()) {
+				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` is a directory. Expected file. Abort.");
+			}
+			throw new Shutdown();
 		}
 		if (!file.exists() && this.isRequired()) {
-			throw new Shutdown("The file `" + this.actualValue + "` specified for argument `" + getName()
-			        + "` does not exists but is required!");
+			if (Logger.logError()) {
+				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` does not exists but is required!");
+			}
+			throw new Shutdown();
 		}
 		
 		if (!file.exists() && !this.isRequired()) {
-			throw new Shutdown("The file `" + this.actualValue + "` specified for argument `" + getName()
-			        + "` does not exists and is not required! Ignoring file argument!");
+			if (Logger.logWarn()) {
+				Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` does not exists and is not required! Ignoring file argument!");
+			}
+			throw new Shutdown();
 		}
-		
 		return file;
 	}
 }

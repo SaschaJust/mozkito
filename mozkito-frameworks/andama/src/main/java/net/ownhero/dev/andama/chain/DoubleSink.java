@@ -9,7 +9,7 @@ import net.ownhero.dev.andama.threads.AndamaSink;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class DoubleSink extends AndamaSink<Double> {
 	
@@ -63,15 +63,10 @@ public class DoubleSink extends AndamaSink<Double> {
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#process(java.lang.Object)
-	 */
 	@Override
-	public Double process(final Double data) {
+	public void process(final Double data) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 	
 }

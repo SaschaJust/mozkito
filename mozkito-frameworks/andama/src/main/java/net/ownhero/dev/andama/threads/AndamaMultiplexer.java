@@ -7,9 +7,9 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
-public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> {
+public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> implements InputOutputConnectable<K, K> {
 	
 	/**
 	 * @param threadGroup

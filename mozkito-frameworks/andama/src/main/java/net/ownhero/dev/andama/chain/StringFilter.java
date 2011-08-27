@@ -9,7 +9,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class StringFilter extends AndamaFilter<String> {
 	

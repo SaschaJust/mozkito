@@ -1,42 +1,37 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
 import java.io.File;
-import java.io.IOException;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class DirectoryArgument extends AndamaArgument<File> {
-	
-	final Logger    logger = LoggerFactory.getLogger(DirectoryArgument.class);
+public class DirectoryArgument extends AndamaArgument {
 	
 	private boolean create = false;
 	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory
 	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.AndamaArgument
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
 	 * @param settings
 	 * @param name
@@ -58,26 +53,35 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	 */
 	@Override
 	public File getValue() {
-		if (this.actualValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		
-		File file = new File(this.actualValue.trim());
+		File file = new File(this.stringValue.trim());
 		
 		if (!file.exists()) {
 			if (!this.create) {
-				throw new Shutdown(new IOException("The file `" + this.actualValue + "` specified for argument `"
-				        + getName() + "` does not exist."));
+				if (Logger.logError()) {
+					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+					        + "` does not exist.");
+				}
+				throw new Shutdown();
 			} else {
 				if (!file.mkdirs()) {
-					throw new Shutdown(new IOException("The file `" + this.actualValue + "` specified for argument `"
-					        + getName() + "` does not exist and cannot be created."));
+					if (Logger.logError()) {
+						Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+						        + "` does not exist and cannot be created.");
+					}
+					throw new Shutdown();
 				}
 			}
 		}
 		if (!file.isDirectory()) {
-			throw new Shutdown(new IOException("The directory `" + this.actualValue + "` specified for argument `"
-			        + getName() + "` is not a directory. Please remove file or choose different argument value."));
+			if (Logger.logError()) {
+				Logger.error("The directory `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` is not a directory. Please remove file or choose different argument value.");
+			}
+			throw new Shutdown();
 		}
 		return file;
 	}

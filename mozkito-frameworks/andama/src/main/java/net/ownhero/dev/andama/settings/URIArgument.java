@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -27,12 +27,12 @@ import net.ownhero.dev.regex.Regex;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class URIArgument extends AndamaArgument<URI> {
+public class URIArgument extends AndamaArgument {
 	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory
 	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.AndamaArgument
+	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
 	 * @param settings
 	 * @param name
@@ -55,7 +55,7 @@ public class URIArgument extends AndamaArgument<URI> {
 	 */
 	@Override
 	public URI getValue() {
-		if (this.actualValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
 		
@@ -101,13 +101,13 @@ public class URIArgument extends AndamaArgument<URI> {
 		Regex uriRegex = new Regex(
 		                           "^(({scheme}[^:/?#]+):)?(//({authority}[^/?#]*))?({path}[^?#]*)(\\?({query}[^#]*))?(#({fragment}.*))?");
 		try {
-			if (uriRegex.find(this.actualValue) == null) {
+			if (uriRegex.find(this.stringValue) == null) {
 				err = "URI does not match regex: " + uriRegex.getPattern();
 			} else {
 				if (uriRegex.getGroup("scheme") == null) {
 					
 					if (Logger.logWarn()) {
-						Logger.warn("Scheme missing when parsing URI:" + this.actualValue + " Guessing scheme: file.");
+						Logger.warn("Scheme missing when parsing URI:" + this.stringValue + " Guessing scheme: file.");
 					}
 					
 					if (uriRegex.getGroup("authority") == null) {
@@ -128,26 +128,25 @@ public class URIArgument extends AndamaArgument<URI> {
 								        + file.getAbsolutePath();
 							}
 						} else {
-							err = "`path` part of the URI is not set: " + this.actualValue;
+							err = "`path` part of the URI is not set: " + this.stringValue;
 						}
 					} else {
-						err = "`authority` part of the URI is set, but scheme is missing: " + this.actualValue;
+						err = "`authority` part of the URI is set, but scheme is missing: " + this.stringValue;
 					}
 				} else {
-					uri = new URI(this.actualValue);
+					uri = new URI(this.stringValue);
 				}
 			}
 			
 			if (err != null) {
-				throw new UnrecoverableError("When parsing URI string `" + this.actualValue + "` for argument `"
+				throw new UnrecoverableError("When parsing URI string `" + this.stringValue + "` for argument `"
 				        + getName() + "`, the following error occurred: " + err);
 			} else {
 				return uri;
 			}
-			
 		} catch (URISyntaxException e) {
-			throw new UnrecoverableError("When parsing URI string `" + this.actualValue + "` for argument `"
-			        + getName() + "`, the following error occurred: " + e.getMessage(), e);
+			throw new UnrecoverableError("When parsing URI string `" + this.stringValue + "` for argument `"
+			        + getName() + "`, the following error occurred: " + e.getMessage());
 		}
 	}
 }

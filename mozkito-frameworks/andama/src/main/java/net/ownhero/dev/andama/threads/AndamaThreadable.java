@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.threads;
 
@@ -148,18 +148,16 @@ public interface AndamaThreadable<K, V> {
 	public boolean isOutputConnected(AndamaThreadable<V, ?> thread);
 	
 	/**
-	 * @return true if {@link AndamaThreadable#shutdown()} has already
-	 *         been called on this object; false otherwise. The shutdown method
-	 *         can also be called internally, after an error occured.
+	 * @return true if {@link AndamaThreadable#shutdown()} has already been
+	 *         called on this object; false otherwise. The shutdown method can
+	 *         also be called internally, after an error occured.
 	 */
 	public boolean isShutdown();
 	
-	public V process(K data);
-	
 	/**
 	 * Sets the input storage of the object. In case
-	 * {@link AndamaThreadable#hasInputConnector()} returns false, this
-	 * method won't do anything.
+	 * {@link AndamaThreadable#hasInputConnector()} returns false, this method
+	 * won't do anything.
 	 * 
 	 * @param storage
 	 *            may not be null
@@ -168,8 +166,8 @@ public interface AndamaThreadable<K, V> {
 	
 	/**
 	 * Sets the output storage of the object. In case
-	 * {@link AndamaThreadable#hasOutputConnector()} returns false, this
-	 * method won't do anything.
+	 * {@link AndamaThreadable#hasOutputConnector()} returns false, this method
+	 * won't do anything.
 	 * 
 	 * @param storage
 	 *            may not be null

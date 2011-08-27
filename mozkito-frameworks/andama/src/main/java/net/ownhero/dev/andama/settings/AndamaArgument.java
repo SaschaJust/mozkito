@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -19,14 +19,14 @@ package net.ownhero.dev.andama.settings;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>> {
+public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 	
-	private final String defaultValue;
+	private String       defaultValue;
 	private final String description;
-	private boolean      required;
+	private boolean      isRequired;
 	private final String name;
-	protected String     actualValue;
-	private boolean      set;
+	protected String     stringValue;
+	private boolean      wasSet;
 	
 	/**
 	 * @param settings
@@ -44,25 +44,16 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	        final String defaultValue, final boolean isRequired) {
 		this.name = name;
 		this.description = description;
-		this.required = isRequired;
-		
+		this.isRequired = isRequired;
 		if (defaultValue != null) {
-			this.actualValue = defaultValue;
+			this.stringValue = defaultValue;
 			this.defaultValue = defaultValue;
-		} else {
-			this.actualValue = null;
-			this.defaultValue = null;
 		}
-		
 		settings.addArgument(this);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
-	public final int compareTo(final AndamaArgument<T> arg0) {
+	public int compareTo(final AndamaArgument arg0) {
 		return this.name.compareTo(arg0.name);
 	}
 	
@@ -71,7 +62,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public final boolean equals(final Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -81,9 +72,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		
-		AndamaArgument<?> other = (AndamaArgument<?>) obj;
-		
+		AndamaArgument other = (AndamaArgument) obj;
 		if (this.name == null) {
 			if (other.name != null) {
 				return false;
@@ -91,21 +80,17 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		} else if (!this.name.equals(other.name)) {
 			return false;
 		}
-		
 		return true;
 	}
 	
-	/**
-	 * @return
-	 */
-	public final String getDefaultValue() {
+	public String getDefaultValue() {
 		return this.defaultValue;
 	}
 	
 	/**
 	 * @return The description of the argument (as printed in help string).
 	 */
-	public final String getDescription() {
+	public String getDescription() {
 		return this.description;
 	}
 	
@@ -119,41 +104,31 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	/**
 	 * @return The name of the argument (as printed in help string).
 	 */
-	public final String getName() {
+	public String getName() {
 		return this.name;
 	}
 	
-	/**
-	 * @return
-	 */
-	public abstract T getValue();
+	public abstract Object getValue();
 	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.name == null)
-		                                              ? 0
-		                                              : this.name.hashCode());
+		result = (prime * result) + ((this.name == null)
+		                                                ? 0
+		                                                : this.name.hashCode());
 		return result;
 	}
 	
 	/**
 	 * @return <code>true</code> if the argument is set to be required
 	 */
-	public final boolean isRequired() {
-		return this.required;
-	}
-	
-	/**
-	 * @return
-	 */
-	public final boolean isSet() {
-		return this.set;
+	public boolean isRequired() {
+		return this.isRequired;
 	}
 	
 	/**
@@ -161,8 +136,8 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * 
 	 * @param required
 	 */
-	public final void setRequired(final boolean required) {
-		this.required = required;
+	public void setRequired(final boolean required) {
+		this.isRequired = required;
 	}
 	
 	/**
@@ -170,9 +145,9 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * 
 	 * @param value
 	 */
-	protected void setValue(final String value) {
-		this.actualValue = value;
-		this.set = true;
+	protected void setStringValue(final String value) {
+		this.stringValue = value;
+		this.wasSet = true;
 	}
 	
 	/*
@@ -181,8 +156,12 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 */
 	@Override
 	public String toString() {
-		return getHandle() + " [required=" + this.required + ", description=" + this.description + ", name="
-		        + this.name + ", default=" + this.defaultValue + ", value=" + this.actualValue + "]";
+		return "RepoSuiteArgument [isRequired=" + this.isRequired + ", description=" + this.description + ", name="
+		        + this.name + ", defaultValue=" + this.defaultValue + ", stringValue=" + this.stringValue + "]";
+	}
+	
+	public boolean wasSet() {
+		return this.wasSet;
 	}
 	
 }

@@ -106,7 +106,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
 		this.settings = settings;
-		AndamaArgument<?> setting = null; // settings.getSetting("cache.size");
+		AndamaArgument setting = null; // settings.getSetting("cache.size");
 		
 		if (hasInputConnector()) {
 			if (setting != null) {
@@ -199,7 +199,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final AndamaThread<?, ?> o) {
+	public final int compareTo(final AndamaThread<?, ?> o) {
 		AndamaThreadComparator comparator = new AndamaThreadComparator();
 		return comparator.compare(this, o);
 	}
@@ -310,7 +310,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	}
 	
 	@Override
-	public synchronized void finish() {
+	public final synchronized void finish() {
 		
 		if (this.logger.isInfoEnabled()) {
 			this.logger.info("All done. Disconnecting from data storages.");
@@ -350,7 +350,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @param thread
 	 * @return the type of the input chunks of the given thread
 	 */
-	public Type getInputClassType() {
+	public final Type getInputClassType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		return type.getActualTypeArguments()[0];
 	}
@@ -358,7 +358,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	/**
 	 * @return the inputData
 	 */
-	public K getInputData() {
+	public final K getInputData() {
 		return this.inputData;
 	}
 	
@@ -377,7 +377,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getInputThreads()
 	 */
 	@Override
-	public Collection<AndamaThreadable<?, K>> getInputThreads() {
+	public final Collection<AndamaThreadable<?, K>> getInputThreads() {
 		LinkedList<AndamaThreadable<?, K>> list = new LinkedList<AndamaThreadable<?, K>>();
 		
 		if (isInputConnected()) {
@@ -391,7 +391,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	public Class<K> getInputType() {
+	public final Class<K> getInputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		if (hasInputConnector()) {
 			return (Class<K>) type.getActualTypeArguments()[0];
@@ -404,7 +404,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @param thread
 	 * @return the type of the output chunks of the given thread
 	 */
-	public Type getOutputClassType() {
+	public final Type getOutputClassType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		return (type.getActualTypeArguments().length > 1
 		                                                ? type.getActualTypeArguments()[1]
@@ -414,7 +414,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	/**
 	 * @return the outputData
 	 */
-	public V getOutputData() {
+	public final V getOutputData() {
 		return this.outputData;
 	}
 	
@@ -433,7 +433,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getOutputThreads()
 	 */
 	@Override
-	public Collection<AndamaThreadable<V, ?>> getOutputThreads() {
+	public final Collection<AndamaThreadable<V, ?>> getOutputThreads() {
 		LinkedList<AndamaThreadable<V, ?>> list = new LinkedList<AndamaThreadable<V, ?>>();
 		
 		if (isOutputConnected()) {
@@ -447,7 +447,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	public Class<V> getOutputType() {
+	public final Class<V> getOutputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		if (hasOutputConnector()) {
 			return (Class<V>) type.getActualTypeArguments()[type.getActualTypeArguments().length - 1];
@@ -524,7 +524,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	/**
 	 * @return the parallelizable
 	 */
-	public boolean isParallelizable() {
+	public final boolean isParallelizable() {
 		return this.parallelizable;
 	}
 	
@@ -586,6 +586,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public final void run() {
 		try {
@@ -597,16 +598,34 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 				return;
 			}
 			
-			while (!isShutdown() && ((this.inputData = readInputData()) != null)) {
-				// TODO log
-				beforeProcess();
-				// TODO log
-				this.outputData = process(getInputData());
-				// TODO log
-				writeOutputData(getOutputData());
-				// TODO log
-				afterProcess();
-				// TODO log
+			if (hasInputConnector()) {
+				while (!isShutdown() && ((this.inputData = readInputData()) != null)) {
+					// TODO log
+					beforeProcess();
+					// TODO log
+					if (hasOutputConnector()) {
+						this.outputData = ((InputOutputConnectable<K, V>) this).process(getInputData());
+					} else {
+						((OnlyInputConnectable<K>) this).process(getInputData());
+					}
+					
+					// TODO log
+					writeOutputData(getOutputData());
+					// TODO log
+					afterProcess();
+					// TODO log
+				}
+			} else {
+				
+				while ((this.outputData = ((OnlyOutputConnectable<V>) this).process()) != null) {
+					// TODO log
+					beforeProcess();
+					
+					// TODO log
+					writeOutputData(getOutputData());
+					// TODO log
+					afterProcess();
+				}
 			}
 			
 			// TODO log

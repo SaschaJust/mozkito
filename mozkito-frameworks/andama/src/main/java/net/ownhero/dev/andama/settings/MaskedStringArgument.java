@@ -21,10 +21,6 @@ public class MaskedStringArgument extends StringArgument {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgument#toString()
-	 */
 	@Override
 	public String toString() {
 		return "RepoSuiteArgument [isRequired=" + isRequired() + ", description=" + getDescription() + ", name="

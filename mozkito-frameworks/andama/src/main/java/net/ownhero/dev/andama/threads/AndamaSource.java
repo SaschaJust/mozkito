@@ -6,15 +6,15 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
- * {@link AndamaSource}s are the source elements of a tool chain. In
- * general, these are I/O handlers that read data from some source and provide
- * it to the tool chain. All instances of {@link AndamaSource}s must
- * have an output connector but must not have an input connector.
+ * {@link AndamaSource}s are the source elements of a tool chain. In general,
+ * these are I/O handlers that read data from some source and provide it to the
+ * tool chain. All instances of {@link AndamaSource}s must have an output
+ * connector but must not have an input connector.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaSource<T> extends AndamaThread<T, T> {
+public abstract class AndamaSource<T> extends AndamaThread<T, T> implements OnlyOutputConnectable<T> {
 	
 	/**
 	 * @see AndamaThread

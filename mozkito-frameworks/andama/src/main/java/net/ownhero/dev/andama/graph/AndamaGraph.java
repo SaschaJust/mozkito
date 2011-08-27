@@ -454,7 +454,7 @@ public class AndamaGraph {
 		tx.success();
 		tx.finish();
 		
-		Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", new String[0], FileUtils.tmpDir,
+		Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", null, FileUtils.tmpDir,
 		                                                               new ByteArrayInputStream(builder.toString()
 		                                                                                               .getBytes()),
 		                                                               null);

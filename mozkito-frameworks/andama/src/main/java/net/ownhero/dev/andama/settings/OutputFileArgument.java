@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -26,7 +26,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class OutputFileArgument extends AndamaArgument<File> {
+public class OutputFileArgument extends AndamaArgument {
 	
 	// FIXME write test cases
 	private boolean overwrite   = false;
@@ -51,9 +51,6 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 *            Set to <code>true</code> if you want the RepoSuite tool to
 	 *            attempt overwriting the file located at given path if
 	 *            possible.
-	 * @param mustExist
-	 *            Set to true if you want to ensure that the file at given
-	 *            location must already exist.
 	 */
 	public OutputFileArgument(final AndamaSettings settings, final String name, final String description,
 	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
@@ -69,22 +66,29 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	public File getValue() {
 		// FIME seprate input and output files. Fix the mustExist and overwrite
 		// conbinations!
-		if (this.actualValue == null) {
+		if (this.stringValue == null) {
 			return null;
 		}
-		File file = new File(this.actualValue.trim());
+		File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
-			throw new Shutdown("The file `" + this.actualValue + "` specified for argument `" + getName()
-			        + "` is a directory. Expected file. Abort.");
+			if (Logger.logError()) {
+				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+				        + "` is a directory. Expected file. Abort.");
+			}
+			throw new Shutdown();
 		}
 		if (file.exists() && (!this.overwrite) && (!this.selfWritten)) {
 			if (this.isRequired()) {
-				throw new Shutdown("The file `" + this.actualValue + "` specified for argument `" + getName()
-				        + "` exists already. Please remove file or choose different argument value.");
+				if (Logger.logError()) {
+					
+					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
+					        + "` exists already. Please remove file or choose different argument value.");
+				}
+				throw new Shutdown();
 			} else {
 				if (Logger.logWarn()) {
-					Logger.warn("The file `" + this.actualValue + "` specified for argument `" + getName()
+					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
 					        + "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
 				return null;
@@ -99,15 +103,24 @@ public class OutputFileArgument extends AndamaArgument<File> {
 			}
 			
 			if (!file.delete()) {
-				throw new Shutdown("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
+				if (Logger.logError()) {
+					Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
+				}
+				throw new Shutdown();
 			}
-			
 			try {
 				if (!file.createNewFile()) {
-					throw new Shutdown("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
+					if (Logger.logError()) {
+						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
+					}
+					throw new Shutdown();
 				}
 			} catch (IOException e) {
-				throw new Shutdown(e.getMessage(), e);
+				if (Logger.logError()) {
+					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
+					Logger.error(e.getMessage());
+				}
+				
 			}
 		} else if (!this.selfWritten) {
 			// file does not exist so far
