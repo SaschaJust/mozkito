@@ -1,41 +1,47 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.settings;
 
 import java.net.URI;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.EnumArgument;
+import net.ownhero.dev.andama.settings.MaskedStringArgument;
+import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.settings.URIArgument;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.reposuite.rcs.RepositoryType;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class RepositoryArguments extends RepoSuiteArgumentSet {
+public class RepositoryArguments extends AndamaArgumentSet {
 	
-	private final StringArgument    endRevision;
-	private final StringArgument    passArg;
-	private final URIArgument       repoDirArg;
-	private final EnumArgument      repoTypeArg;
-	private final StringArgument    startRevision;
-	private final StringArgument    userArg;
-	private final RepoSuiteSettings settings;
+	private final StringArgument endRevision;
+	private final StringArgument passArg;
+	private final URIArgument    repoDirArg;
+	private final EnumArgument   repoTypeArg;
+	private final StringArgument startRevision;
+	private final StringArgument userArg;
+	private final AndamaSettings settings;
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the
@@ -48,19 +54,39 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 	public RepositoryArguments(final RepositorySettings settings, final boolean isRequired) {
 		super();
 		this.repoDirArg = new URIArgument(settings, "repository.uri", "URI where the rcs repository is located", null,
-		        isRequired);
+		                                  isRequired);
 		this.repoTypeArg = new EnumArgument(settings, "repository.type", "Type of the repository. Possible values: "
 		        + JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
-		        JavaUtils.enumToArray(RepositoryType.SUBVERSION));
+		                                    JavaUtils.enumToArray(RepositoryType.SUBVERSION));
 		this.userArg = new MaskedStringArgument(settings, "repository.user", "Username to access repository", null,
-		        false);
+		                                        false);
 		this.passArg = new MaskedStringArgument(settings, "repository.password", "Password to access repository", null,
-		        false);
+		                                        false);
 		this.startRevision = new StringArgument(settings, "repository.transaction.start", "Revision to start with",
-		        null, false);
+		                                        null, false);
 		this.endRevision = new StringArgument(settings, "repository.transaction.stop", "Revision to stop at", "HEAD",
-		        false);
+		                                      false);
 		this.settings = settings;
+	}
+	
+	public StringArgument getPassArg() {
+		return this.passArg;
+	}
+	
+	public URIArgument getRepoDirArg() {
+		return this.repoDirArg;
+	}
+	
+	public EnumArgument getRepoTypeArg() {
+		return this.repoTypeArg;
+	}
+	
+	public StringArgument getStartRevision() {
+		return this.startRevision;
+	}
+	
+	public StringArgument getUserArg() {
+		return this.userArg;
 	}
 	
 	/*
@@ -110,24 +136,4 @@ public class RepositoryArguments extends RepoSuiteArgumentSet {
 			throw new RuntimeException();
 		}
 	}
-
-	public StringArgument getUserArg() {
-	    return userArg;
-    }
-
-	public StringArgument getPassArg() {
-	    return passArg;
-    }
-
-	public URIArgument getRepoDirArg() {
-	    return repoDirArg;
-    }
-
-	public StringArgument getStartRevision() {
-	    return startRevision;
-    }
-
-	public EnumArgument getRepoTypeArg() {
-	    return repoTypeArg;
-    }
 }
