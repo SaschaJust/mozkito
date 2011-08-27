@@ -7,7 +7,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	

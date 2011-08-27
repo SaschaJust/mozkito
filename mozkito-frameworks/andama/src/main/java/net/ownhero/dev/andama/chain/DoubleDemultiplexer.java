@@ -9,7 +9,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	
@@ -21,7 +21,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	public DoubleDemultiplexer(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/*
@@ -30,7 +29,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	 */
 	@Override
 	public void afterExecution() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -40,7 +38,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	 */
 	@Override
 	public void afterProcess() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -50,7 +47,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	 */
 	@Override
 	public void beforeExecution() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -60,7 +56,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	 */
 	@Override
 	public void beforeProcess() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -71,7 +66,6 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 	 */
 	@Override
 	public Double process(final Double data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
