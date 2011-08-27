@@ -24,7 +24,7 @@ public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	 * @see net.ownhero.dev.andama.AndamaGeneralThread#hasInputConnector()
 	 */
 	@Override
-	public boolean hasInputConnector() {
+	public final boolean hasInputConnector() {
 		return true;
 	}
 	
@@ -33,7 +33,7 @@ public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	 * @see net.ownhero.dev.andama.AndamaGeneralThread#hasOutputConnector()
 	 */
 	@Override
-	public boolean hasOutputConnector() {
+	public final boolean hasOutputConnector() {
 		return true;
 	}
 	

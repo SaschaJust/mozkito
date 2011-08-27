@@ -33,7 +33,7 @@ public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
 	 */
 	@Override
-	public boolean hasInputConnector() {
+	public final boolean hasInputConnector() {
 		return true;
 	}
 	
@@ -44,7 +44,7 @@ public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 	 * ()
 	 */
 	@Override
-	public boolean hasOutputConnector() {
+	public final boolean hasOutputConnector() {
 		return true;
 	}
 	
