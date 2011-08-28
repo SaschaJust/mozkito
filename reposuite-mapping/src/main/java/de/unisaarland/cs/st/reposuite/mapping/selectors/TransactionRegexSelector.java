@@ -18,6 +18,7 @@ package de.unisaarland.cs.st.reposuite.mapping.selectors;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -36,7 +37,6 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

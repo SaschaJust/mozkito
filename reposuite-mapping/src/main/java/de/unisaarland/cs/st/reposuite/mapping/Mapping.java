@@ -20,6 +20,7 @@ package de.unisaarland.cs.st.reposuite.mapping;
 
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
+import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.Bugs;
@@ -96,6 +97,7 @@ public class Mapping extends AndamaChain {
 			PersistenceUtil persistenceUtil;
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
+				
 				new MappingReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				new MappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new MappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);

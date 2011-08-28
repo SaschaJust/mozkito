@@ -41,7 +41,6 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 	private final Repository repository;
 	
 	/**
-	 * @see RepoSuiteSourceThread
 	 * @param threadGroup
 	 * @param settings
 	 * @param repository
@@ -54,28 +53,13 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
 	 */
 	@Override
 	public void beforeExecution() {
+		super.beforeExecution();
+		
 		if (Logger.logInfo()) {
-			Logger.info("Starting " + getHandle());
 			Logger.info("Requesting logs from " + this.repository);
 		}
 		
@@ -92,14 +76,6 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
 	 */
 	@Override
@@ -107,7 +83,9 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 		if (Logger.logTrace()) {
 			Logger.trace("filling queue [" + outputSize() + "]");
 		}
+		
 		LogEntry entry = this.logIterator.next();
+		
 		if (Logger.logTrace()) {
 			Logger.trace("with entry: " + entry);
 		}

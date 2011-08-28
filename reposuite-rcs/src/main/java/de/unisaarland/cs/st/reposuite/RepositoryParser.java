@@ -64,23 +64,6 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
 	 */
 	@Override
@@ -88,13 +71,14 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 		this.fileManager = new RCSFileManager();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
+	 * .Object)
+	 */
 	@Override
-	public void beforeProcess() {
-	}
-	
-	@Override
-	public RCSTransaction process(final LogEntry data) throws net.ownhero.dev.andama.exceptions.UnrecoverableError,
-	                                                  Shutdown {
+	public RCSTransaction process(final LogEntry data) throws UnrecoverableError, Shutdown {
 		if (Logger.logDebug()) {
 			Logger.debug("Parsing " + data);
 		}

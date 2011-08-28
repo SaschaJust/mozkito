@@ -40,7 +40,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 public class RepositoryAnalyzer extends AndamaFilter<LogEntry> {
 	
 	private final List<LogEntry> entries = new LinkedList<LogEntry>();
-	
 	private boolean              analyze;
 	private final Repository     repository;
 	
@@ -69,15 +68,6 @@ public class RepositoryAnalyzer extends AndamaFilter<LogEntry> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
 	 */
 	@Override
@@ -85,14 +75,6 @@ public class RepositoryAnalyzer extends AndamaFilter<LogEntry> {
 		this.analyze = (this.getSettings().getSetting("repository.analyze") != null)
 		        && (this.getSettings().getSetting("repository.analyze").getValue() != null)
 		        && (Boolean) this.getSettings().getSetting("repository.analyze").getValue();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
 	}
 	
 	/*

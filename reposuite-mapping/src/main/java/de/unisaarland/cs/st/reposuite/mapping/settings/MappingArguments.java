@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.settings;
 
@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
@@ -30,14 +32,12 @@ import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
-import de.unisaarland.cs.st.reposuite.settings.ListArgument;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingArguments extends RepoSuiteArgumentSet {
+public class MappingArguments extends AndamaArgumentSet {
 	
 	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
 	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
@@ -53,7 +53,10 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		try {
 			Package package1 = MappingEngine.class.getPackage();
 			Collection<Class<? extends MappingEngine>> engineClasses = ClassFinder.getClassesExtendingClass(package1,
-			        MappingEngine.class, Modifier.ABSTRACT | Modifier.INTERFACE | Modifier.PRIVATE);
+			                                                                                                MappingEngine.class,
+			                                                                                                Modifier.ABSTRACT
+			                                                                                                        | Modifier.INTERFACE
+			                                                                                                        | Modifier.PRIVATE);
 			
 			addArgument(new ListArgument(settings, "mapping.engines", "A list of mapping engines that shall be used: "
 			        + buildEngineList(engineClasses), "[all]", false));
@@ -86,14 +89,16 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 				}
 			}
 			
-			Package package2 = MappingStrategy.class.getPackage();
-			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(
-			        package2, MappingStrategy.class, Modifier.ABSTRACT | Modifier.INTERFACE | Modifier.PRIVATE);
+			Collection<Class<? extends MappingStrategy>> strategyClasses = ClassFinder.getClassesExtendingClass(MappingStrategy.class.getPackage(),
+			                                                                                                    MappingStrategy.class,
+			                                                                                                    Modifier.ABSTRACT
+			                                                                                                            | Modifier.INTERFACE
+			                                                                                                            | Modifier.PRIVATE);
 			addArgument(new ListArgument(
-			        settings,
-			        "mapping.strategies",
-			        "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
-			                + buildStrategyList(strategyClasses), null, true));
+			                             settings,
+			                             "mapping.strategies",
+			                             "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
+			                                     + buildStrategyList(strategyClasses), null, true));
 			
 			String strategies = System.getProperty("mapping.strategies");
 			Set<String> strategyNames = new HashSet<String>();
@@ -120,13 +125,16 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 			}
 			
 			MappingFilter.class.getPackage();
-			Collection<Class<? extends MappingFilter>> filterClasses = ClassFinder.getClassesExtendingClass(package2,
-			        MappingFilter.class, Modifier.ABSTRACT | Modifier.INTERFACE | Modifier.PRIVATE);
+			Collection<Class<? extends MappingFilter>> filterClasses = ClassFinder.getClassesExtendingClass(MappingFilter.class.getPackage(),
+			                                                                                                MappingFilter.class,
+			                                                                                                Modifier.ABSTRACT
+			                                                                                                        | Modifier.INTERFACE
+			                                                                                                        | Modifier.PRIVATE);
 			addArgument(new ListArgument(
-			        settings,
-			        "mapping.filters",
-			        "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
-			                + buildFilterList(filterClasses), null, true));
+			                             settings,
+			                             "mapping.filters",
+			                             "A list of mapping strategies that shall be used (Strategies are stackable, however it doesn't make much sense for a lot of combinations). Available: "
+			                                     + buildFilterList(filterClasses), null, true));
 			
 			String filters = System.getProperty("mapping.filters");
 			Set<String> filterNames = new HashSet<String>();
@@ -177,7 +185,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		for (Class<? extends MappingEngine> klass : engines) {
 			try {
 				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
-				        .append(klass.newInstance().getDescription());
+				       .append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
@@ -199,7 +207,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		for (Class<? extends MappingFilter> klass : filters) {
 			try {
 				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
-				        .append(klass.newInstance().getDescription());
+				       .append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
@@ -221,7 +229,7 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 		for (Class<? extends MappingStrategy> klass : strategies) {
 			try {
 				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
-				        .append(klass.newInstance().getDescription());
+				       .append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
@@ -235,7 +243,6 @@ public class MappingArguments extends RepoSuiteArgumentSet {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */

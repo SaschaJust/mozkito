@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.andama.settings.DoubleArgument;
+
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
@@ -26,7 +28,6 @@ import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

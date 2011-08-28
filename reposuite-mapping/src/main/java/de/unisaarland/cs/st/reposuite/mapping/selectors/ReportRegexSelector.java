@@ -1,23 +1,24 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.selectors;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
@@ -32,7 +33,6 @@ import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -44,7 +44,6 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector#
 	 * getDescription()
 	 */
@@ -62,7 +61,6 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.register.Registered#init()
 	 */
 	@Override
@@ -73,13 +71,13 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector#parse
 	 * (java.lang.Object)
 	 */
 	@Override
-	public <T extends MappableEntity> List<T> parse(MappableEntity element, Class<T> targetType) {
+	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
+	                                                final Class<T> targetType) {
 		List<T> list = new LinkedList<T>();
 		try {
 			List<String> ids = new LinkedList<String>();
@@ -113,7 +111,6 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#register(de
 	 * .unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -121,10 +118,12 @@ public class ReportRegexSelector extends MappingSelector {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		        "Pattern of report ids to scan for.", "\\p{XDigit}{7,}", isRequired));
+		                                         "Pattern of report ids to scan for.", "\\p{XDigit}{7,}", isRequired));
 	}
 	
 	/**
@@ -137,13 +136,13 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector#supports
 	 * (java.lang.Class, java.lang.Class)
 	 */
 	@Override
-	public boolean supports(Class<?> from, Class<?> to) {
+	public boolean supports(final Class<?> from,
+	                        final Class<?> to) {
 		return from.equals(Report.class) && to.equals(RCSTransaction.class);
 	}
 	

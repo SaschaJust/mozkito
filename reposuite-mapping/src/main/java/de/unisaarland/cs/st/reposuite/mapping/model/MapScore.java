@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
  * 
  */
 @Entity
-@IdClass(MapId.class)
+@IdClass (MapId.class)
 public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	private static final long  serialVersionUID = -8606759070008468513L;
@@ -61,103 +61,6 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	private String             toId;
 	private String             class2;
-	
-	@Id
-	public String getFromId() {
-		return fromId;
-	}
-	
-	public void setFromId(String id1) {
-		this.fromId = id1;
-	}
-	
-	public String getClass1() {
-		return class1;
-	}
-	
-	public void setClass1(String class1) {
-		this.class1 = class1;
-	}
-	
-	@Id
-	public String getToId() {
-		return toId;
-	}
-	
-	public void setToId(String id2) {
-		this.toId = id2;
-	}
-	
-	public String getClass2() {
-		return class2;
-	}
-	
-	public void setClass2(String class2) {
-		this.class2 = class2;
-	}
-	
-	@Transient
-	public MappableEntity getElement1() {
-		if (element1 != null) {
-			return element1;
-		} else {
-			try {
-				Class<?> clazz = Class.forName(getClass1());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UninitializedDatabaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-	
-	public void setElement1(MappableEntity element1) {
-		this.element1 = element1;
-		setClass1(element1.getClass().getCanonicalName());
-		setFromId(fetchId(element1));
-	}
-	
-	@Transient
-	public MappableEntity getElement2() {
-		if (element2 != null) {
-			return element2;
-		} else {
-			try {
-				Class<?> clazz = Class.forName(getClass2());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UninitializedDatabaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-	
-	public void setElement2(MappableEntity element2) {
-		this.element2 = element2;
-		setClass2(element2.getClass().getCanonicalName());
-		setToId(fetchId(element2));
-	}
-	
-	private String fetchId(Object o) {
-		try {
-			Method method = o.getClass().getMethod("getId", new Class<?>[0]);
-			return (String) method.invoke(o, new Object[0]);
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalArgumentException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		}
-		return null;
-	}
 	
 	/**
 	 * @param transaction
@@ -175,32 +78,117 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @param mappingEngine
 	 */
 	@Transient
-	public void addFeature(final double confidence, @NotNull @NotEmpty final String transactionFieldName,
-	        @NotNull @NotEmpty final String transactionFieldContent,
-	        @NotNull @NotEmpty final String transactionSubstring, @NotNull @NotEmpty final String reportFieldName,
-	        @NotNull @NotEmpty final String reportFieldContent, @NotNull @NotEmpty final String reportSubstring,
-	        @NotNull final Class<? extends MappingEngine> mappingEngine) {
-		this.totalConfidence += confidence;
-		this.features.add(new MappingEngineFeature(confidence, transactionFieldName, transactionSubstring,
-		        reportFieldName, reportSubstring, mappingEngine));
+	public void addFeature(final double confidence,
+	                       @NotNull @NotEmpty final String transactionFieldName,
+	                       @NotNull @NotEmpty final String transactionFieldContent,
+	                       @NotNull @NotEmpty final String transactionSubstring,
+	                       @NotNull @NotEmpty final String reportFieldName,
+	                       @NotNull @NotEmpty final String reportFieldContent,
+	                       @NotNull @NotEmpty final String reportSubstring,
+	                       @NotNull final Class<? extends MappingEngine> mappingEngine) {
+		setTotalConfidence(getTotalConfidence() + confidence);
+		getFeatures().add(new MappingEngineFeature(confidence, transactionFieldName, transactionSubstring,
+		                                           reportFieldName, reportSubstring, mappingEngine));
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
 	public int compareTo(final MapScore arg0) {
-		return Double.compare(this.totalConfidence, arg0.totalConfidence);
+		return Double.compare(getTotalConfidence(), arg0.getTotalConfidence());
+	}
+	
+	/**
+	 * @param o
+	 * @return
+	 */
+	private String fetchId(final Object o) {
+		try {
+			Method method = o.getClass().getMethod("getId", new Class<?>[0]);
+			return (String) method.invoke(o, new Object[0]);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		} catch (IllegalArgumentException e) {
+		} catch (IllegalAccessException e) {
+		} catch (InvocationTargetException e) {
+		}
+		return null;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getClass1() {
+		return this.class1;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getClass2() {
+		return this.class2;
+	}
+	
+	/**
+	 * @return
+	 */
+	@Transient
+	public MappableEntity getElement1() {
+		if (this.element1 != null) {
+			return this.element1;
+		} else {
+			try {
+				Class<?> clazz = Class.forName(getClass1());
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UninitializedDatabaseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	@Transient
+	public MappableEntity getElement2() {
+		if (this.element2 != null) {
+			return this.element2;
+		} else {
+			try {
+				Class<?> clazz = Class.forName(getClass2());
+				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UninitializedDatabaseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 	
 	/**
 	 * @return the features
 	 */
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection (fetch = FetchType.EAGER)
 	public List<MappingEngineFeature> getFeatures() {
 		return this.features;
+	}
+	
+	/**
+	 * @return
+	 */
+	@Id
+	public String getFromId() {
+		return this.fromId;
 	}
 	
 	/**
@@ -219,6 +207,14 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	}
 	
 	/**
+	 * @return
+	 */
+	@Id
+	public String getToId() {
+		return this.toId;
+	}
+	
+	/**
 	 * @return the totalConfidence
 	 */
 	@Basic
@@ -227,11 +223,57 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	}
 	
 	/**
+	 * @param class1
+	 */
+	public void setClass1(final String class1) {
+		this.class1 = class1;
+	}
+	
+	/**
+	 * @param class2
+	 */
+	public void setClass2(final String class2) {
+		this.class2 = class2;
+	}
+	
+	/**
+	 * @param element1
+	 */
+	public void setElement1(final MappableEntity element1) {
+		this.element1 = element1;
+		setClass1(element1.getClass().getCanonicalName());
+		setFromId(fetchId(element1));
+	}
+	
+	/**
+	 * @param element2
+	 */
+	public void setElement2(final MappableEntity element2) {
+		this.element2 = element2;
+		setClass2(element2.getClass().getCanonicalName());
+		setToId(fetchId(element2));
+	}
+	
+	/**
 	 * @param features
 	 *            the features to set
 	 */
 	public void setFeatures(final List<MappingEngineFeature> features) {
 		this.features = features;
+	}
+	
+	/**
+	 * @param id1
+	 */
+	public void setFromId(final String id1) {
+		this.fromId = id1;
+	}
+	
+	/**
+	 * @param id2
+	 */
+	public void setToId(final String id2) {
+		this.toId = id2;
 	}
 	
 	/**
@@ -244,7 +286,6 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

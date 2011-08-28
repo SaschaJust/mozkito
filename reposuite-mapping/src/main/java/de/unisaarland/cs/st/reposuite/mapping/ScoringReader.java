@@ -1,40 +1,43 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import java.util.Iterator;
 import java.util.List;
 
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaSource;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringReader extends RepoSuiteSourceThread<RCSTransaction> {
+public class ScoringReader extends AndamaSource<RCSTransaction> {
 	
-	private final PersistenceUtil persistenceUtil;
+	private final PersistenceUtil    persistenceUtil;
+	private Iterator<RCSTransaction> iterator;
 	
 	/**
 	 * @param threadGroup
@@ -42,47 +45,38 @@ public class ScoringReader extends RepoSuiteSourceThread<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public ScoringReader(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
-		super(threadGroup, ScoringReader.class.getSimpleName(), settings);
+		super(threadGroup, settings, false);
 		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#run()
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
 	 */
 	@Override
-	public void run() {
-		try {
+	public void beforeExecution() {
+		super.beforeExecution();
+		
+		Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
+		List<RCSTransaction> list = this.persistenceUtil.load(criteria);
+		this.iterator = list.iterator();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
+	 */
+	@Override
+	public RCSTransaction process() throws UnrecoverableError, Shutdown {
+		if (this.iterator.hasNext()) {
+			RCSTransaction transaction = this.iterator.next();
 			
-			if (!checkConnections() || !checkNotShutdown()) {
-				return;
-			}
-			
-			if (Logger.logInfo()) {
-				Logger.info("Starting " + getHandle());
-			}
-			
-			Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-			List<RCSTransaction> list = this.persistenceUtil.load(criteria);
-			
-			for (RCSTransaction transaction : list) {
-				if (Logger.logDebug()) {
-					Logger.debug("Providing " + transaction.getId() + ".");
-				}
-				
-				write(transaction);
-			}
-			
-			finish();
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			shutdown();
+			return transaction;
 		}
+		
+		return null;
 	}
 	
 }

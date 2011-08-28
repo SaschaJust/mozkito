@@ -19,6 +19,9 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.LongArgument;
+import net.ownhero.dev.andama.settings.StringArgument;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
@@ -31,8 +34,6 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.mapping.storages.LuceneStorage;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
-import de.unisaarland.cs.st.reposuite.settings.LongArgument;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

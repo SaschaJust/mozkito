@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -40,7 +41,6 @@ import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.settings.URIArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -67,7 +67,7 @@ public class DatabaseArguments extends AndamaArgumentSet {
 	 */
 	@Override
 	public Boolean getValue() {
-		Map<String, AndamaArgument> arguments = getArguments();
+		Map<String, AndamaArgument<?>> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
 		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),

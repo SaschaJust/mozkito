@@ -1,24 +1,29 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.ppa;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
@@ -26,26 +31,33 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSourceThread;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 
 /**
  * The Class ChangeOperationReader.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOperation> implements ChangeOperationVisitor {
+public class ChangeOperationReader extends AndamaSource<JavaChangeOperation> implements ChangeOperationVisitor {
 	
 	/** The repository. */
-	private final Repository           repository;
+	private final Repository            repository;
 	
 	/** The transactions. */
-	private final List<RCSTransaction> transactions;
+	private final List<RCSTransaction>  transactions;
 	
-	private final String               startWith;
+	private final String                startWith;
 	
-	private boolean                    usePPA;
+	private boolean                     usePPA;
+	
+	private boolean                     consider;
+	
+	private int                         counter;
+	
+	private int                         size;
+	
+	private Iterator<RCSTransaction>    iterator;
+	
+	private Set<ChangeOperationVisitor> visitors;
 	
 	/**
 	 * Instantiates a new change operation reader.
@@ -63,10 +75,10 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	 *            first transaction
 	 * @param ppa
 	 */
-	public ChangeOperationReader(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final Repository repository, final List<RCSTransaction> transactions, final String startWith,
 	        final Boolean usePPA) {
-		super(threadGroup, ChangeOperationReader.class.getSimpleName(), settings);
+		super(threadGroup, settings, false);
 		if (usePPA == null) {
 			this.usePPA = true;
 		} else {
@@ -75,6 +87,26 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 		this.repository = repository;
 		this.transactions = transactions;
 		this.startWith = startWith;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
+	 */
+	@Override
+	public void beforeExecution() {
+		super.beforeExecution();
+		
+		this.visitors = new HashSet<ChangeOperationVisitor>();
+		this.visitors.add(this);
+		this.size = this.transactions.size();
+		this.iterator = this.transactions.iterator();
+		this.counter = 0;
+		
+		this.consider = true;
+		if (this.startWith != null) {
+			this.consider = false;
+		}
 	}
 	
 	/*
@@ -89,47 +121,39 @@ public class ChangeOperationReader extends RepoSuiteSourceThread<JavaChangeOpera
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
+	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
 	 */
 	@Override
-	public void run() {
-		Set<ChangeOperationVisitor> visitors = new HashSet<ChangeOperationVisitor>();
-		visitors.add(this);
-		int size = this.transactions.size();
-		int counter = 0;
-		
-		boolean consider = true;
-		if (this.startWith != null) {
-			consider = false;
-		}
-		
-		for (RCSTransaction transaction : this.transactions) {
+	public JavaChangeOperation process() throws UnrecoverableError, Shutdown {
+		if (this.iterator.hasNext()) {
+			RCSTransaction transaction = this.iterator.next();
 			
-			if (!consider) {
+			if (!this.consider) {
 				if (transaction.getId().equals(this.startWith)) {
-					consider = true;
-					size = size - counter;
-					counter = 0;
+					this.consider = true;
+					this.size = this.size - this.counter;
+					this.counter = 0;
 				} else {
-					++counter;
-					continue;
+					++this.counter;
+					return skip(transaction);
 				}
 			}
 			
 			if (Logger.logInfo()) {
-				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
-				        + "/" + size + ")");
+				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` ("
+				        + (++this.counter) + "/" + this.size + ")");
 			}
 			if (this.usePPA) {
-				PPAUtils.generateChangeOperations(this.repository, transaction, visitors);
+				PPAUtils.generateChangeOperations(this.repository, transaction, this.visitors);
 			} else {
-				PPAUtils.generateChangeOperationsNOPPA(this.repository, transaction, visitors);
+				PPAUtils.generateChangeOperationsNOPPA(this.repository, transaction, this.visitors);
 			}
+			
+			// FIXME ????
+			return skip(transaction);
 		}
-		if (Logger.logInfo()) {
-			Logger.info("All done. Finishing.");
-		}
-		this.finish();
+		
+		return null;
 	}
 	
 	/*

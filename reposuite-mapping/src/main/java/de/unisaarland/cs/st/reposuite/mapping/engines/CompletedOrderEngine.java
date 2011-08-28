@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
@@ -28,7 +29,6 @@ import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

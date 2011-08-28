@@ -1,37 +1,40 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaSink;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
+public class ScoringPersister extends AndamaSink<MapScore> {
 	
 	private final PersistenceUtil persistenceUtil;
+	private int                   i;
 	
 	/**
 	 * @param threadGroup
@@ -39,52 +42,53 @@ public class ScoringPersister extends RepoSuiteSinkThread<MapScore> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringPersister(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
+	public ScoringPersister(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
-		super(threadGroup, ScoringPersister.class.getSimpleName(), settings);
+		super(threadGroup, settings, false);
 		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#run()
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#afterExecution()
 	 */
 	@Override
-	public void run() {
-		try {
-			if (!checkConnections() || !checkNotShutdown()) {
-				return;
-			}
-			
-			if (Logger.logInfo()) {
-				Logger.info("Starting " + getHandle());
-			}
-			
-			MapScore score;
-			this.persistenceUtil.beginTransaction();
-			int i = 0;
-			
-			while (!isShutdown() && ((score = read()) != null)) {
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + score);
-				}
-				
-				if (++i % 50 == 0) {
-					this.persistenceUtil.commitTransaction();
-					this.persistenceUtil.beginTransaction();
-				}
-				
-				this.persistenceUtil.save(score);
-			}
-			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.shutdown();
-			finish();
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			shutdown();
+	public void afterExecution() {
+		super.afterExecution();
+		
+		this.persistenceUtil.commitTransaction();
+		this.persistenceUtil.shutdown();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
+	 */
+	@Override
+	public void beforeExecution() {
+		super.beforeExecution();
+		
+		this.persistenceUtil.beginTransaction();
+		this.i = 0;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
+	 * .Object)
+	 */
+	@Override
+	public void process(final MapScore score) throws UnrecoverableError, Shutdown {
+		if (Logger.logDebug()) {
+			Logger.debug("Storing " + score);
 		}
+		
+		if ((++this.i % 50) == 0) {
+			this.persistenceUtil.commitTransaction();
+			this.persistenceUtil.beginTransaction();
+		}
+		
+		this.persistenceUtil.save(score);
 	}
 }

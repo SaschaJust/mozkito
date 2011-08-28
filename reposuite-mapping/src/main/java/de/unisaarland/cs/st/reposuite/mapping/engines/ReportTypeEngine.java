@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.andama.settings.DoubleArgument;
+import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -27,8 +29,6 @@ import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Or;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.settings.DoubleArgument;
-import de.unisaarland.cs.st.reposuite.settings.EnumArgument;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

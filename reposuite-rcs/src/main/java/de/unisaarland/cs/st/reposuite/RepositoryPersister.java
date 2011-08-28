@@ -68,28 +68,12 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
 	 */
 	@Override
 	public void beforeExecution() {
 		this.persistenceUtil.beginTransaction();
 		this.i = 0;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
 	}
 	
 	/*
@@ -102,7 +86,6 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	public void process(final RCSTransaction data) throws UnrecoverableError, Shutdown {
 		if (Logger.logDebug()) {
 			Logger.debug("Storing " + data);
-			System.err.println(data.toTerm());
 		}
 		
 		if ((++this.i % 100) == 0) {
