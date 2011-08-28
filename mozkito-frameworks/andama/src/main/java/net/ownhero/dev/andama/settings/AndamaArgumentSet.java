@@ -24,13 +24,13 @@ import java.util.Map;
  */
 public abstract class AndamaArgumentSet {
 	
-	private final HashMap<String, AndamaArgument> arguments;
+	private final HashMap<String, AndamaArgument<?>> arguments;
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 */
 	public AndamaArgumentSet() {
-		this.arguments = new HashMap<String, AndamaArgument>();
+		this.arguments = new HashMap<String, AndamaArgument<?>>();
 	}
 	
 	/**
@@ -42,11 +42,13 @@ public abstract class AndamaArgumentSet {
 	 * @return <code>true</code> if the argument could be added.
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean addArgument(final AndamaArgument argument) {
+	public boolean addArgument(final AndamaArgument<?> argument) {
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
+		
 		this.arguments.put(argument.getName(), argument);
+		
 		return true;
 	}
 	
@@ -55,7 +57,7 @@ public abstract class AndamaArgumentSet {
 	 * 
 	 * @return
 	 */
-	public Map<String, AndamaArgument> getArguments() {
+	public Map<String, AndamaArgument<?>> getArguments() {
 		return this.arguments;
 	}
 	

@@ -21,7 +21,7 @@ import java.util.HashSet;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class ListArgument extends AndamaArgument {
+public class ListArgument extends AndamaArgument<HashSet<String>> {
 	
 	private final String delimiter;
 	

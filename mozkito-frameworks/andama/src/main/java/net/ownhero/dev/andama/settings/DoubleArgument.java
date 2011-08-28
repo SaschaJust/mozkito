@@ -22,7 +22,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class DoubleArgument extends AndamaArgument {
+public class DoubleArgument extends AndamaArgument<Double> {
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
@@ -48,6 +48,7 @@ public class DoubleArgument extends AndamaArgument {
 		if (this.stringValue == null) {
 			return null;
 		}
+		
 		try {
 			return new Double(this.stringValue);
 		} catch (NumberFormatException e) {
@@ -55,6 +56,7 @@ public class DoubleArgument extends AndamaArgument {
 				Logger.error("Value given for argument `" + getName()
 				        + "` could not be interpreted as a Double value. Abort!");
 			}
+			
 			throw new Shutdown();
 		}
 	}

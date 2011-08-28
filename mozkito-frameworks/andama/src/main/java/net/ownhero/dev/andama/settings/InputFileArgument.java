@@ -25,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class InputFileArgument extends AndamaArgument {
+public class InputFileArgument extends AndamaArgument<File> {
 	
 	// FIXME write test cases
 	/**
@@ -75,6 +75,7 @@ public class InputFileArgument extends AndamaArgument {
 			}
 			throw new Shutdown();
 		}
+		
 		if (!file.exists() && this.isRequired()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
@@ -90,6 +91,7 @@ public class InputFileArgument extends AndamaArgument {
 			}
 			throw new Shutdown();
 		}
+		
 		return file;
 	}
 }

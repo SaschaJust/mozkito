@@ -18,6 +18,7 @@ package net.ownhero.dev.andama.graph;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaDemultiplexer;
 import net.ownhero.dev.andama.threads.AndamaFilter;
 import net.ownhero.dev.andama.threads.AndamaGroup;
@@ -65,6 +67,8 @@ public class AndamaGraph {
 		INPUTTYPE, OUTPUTTYPE, NODETYPE, NODENAME, NODEID;
 	}
 	
+	private static final String andamaFileEnding = ".agl";
+	
 	/**
 	 * @param threadGroup
 	 * @return
@@ -95,11 +99,22 @@ public class AndamaGraph {
 			}
 			
 			andamaGraph.process();
+			andamaGraph.shutdown();
 		} else {
 			andamaGraph.reconnect();
+			
+			andamaGraph.shutdown();
+			if (andamaGraph.initialized) {
+				try {
+					FileUtils.deleteDirectory(andamaGraph.dbFile);
+				} catch (IOException e) {
+					if (andamaGraph.logger.isWarnEnabled()) {
+						andamaGraph.logger.warn("Could not delete temporary graph database: "
+						        + andamaGraph.dbFile.getAbsolutePath());
+					}
+				}
+			}
 		}
-		
-		andamaGraph.shutdown();
 		
 		return andamaGraph;
 	}
@@ -274,38 +289,111 @@ public class AndamaGraph {
 		return collection;
 	}
 	
-	private final Logger               logger       = LoggerFactory.getLogger(AndamaGraph.class);
+	private final Logger        logger       = LoggerFactory.getLogger(AndamaGraph.class);
 	
-	private int                        color        = 0;
+	private int                 color        = 0;
 	
-	private static final String        workingColor = "workingcolor";
+	private static final String workingColor = "workingcolor";
 	
-	private boolean                    initialized  = false;
+	/**
+	 * @param threadGroup
+	 * @return
+	 */
+	private static File provideResource(final AndamaGroup threadGroup) {
+		String cache = null;
+		
+		/*
+		 * try to determine name from common string prefix of thread names e.g.
+		 * RepositoryReader RepositoryAnalyzer RepositoryParser
+		 * RepositoryPersister result in "Repository" -> repository.agl
+		 */
+		for (AndamaThreadable<?, ?> thread : threadGroup.getThreads()) {
+			if (cache == null) {
+				cache = thread.getHandle();
+			} else if (cache.length() == 0) {
+				break;
+			} else {
+				String tmp = thread.getHandle();
+				int i = cache.length();
+				
+				while ((i >= 0) && !tmp.startsWith(cache.substring(0, i))) {
+					--i;
+				}
+				
+				if (i >= 0) {
+					cache = cache.substring(0, i);
+				}
+			}
+		}
+		
+		/*
+		 * remove trailing uppercase characters to avoid situations like this:
+		 * AndamaGraph AndamaGroup AndamaGadget resulting in AndamaG, but should
+		 * result in Andama -> andama.agl
+		 */
+		while ((cache.length() > 0) && (Character.isUpperCase(cache.charAt(cache.length() - 1)))) {
+			cache.substring(0, cache.length() - 1);
+		}
+		
+		if (cache.length() <= 1) {
+			// Try to determine from masterthread name
+			cache = Thread.currentThread().getName().toLowerCase();
+		} else {
+			cache = cache.toLowerCase();
+		}
+		
+		String fileName = cache + andamaFileEnding;
+		
+		URL resource = threadGroup.getThreads().iterator().next().getClass()
+		                          .getResource(FileUtils.fileSeparator + fileName + ".zip");
+		
+		if (resource != null) {
+			FileUtils.unzip(new File(resource.getPath()), FileUtils.tmpDir);
+			return new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
+		} else {
+			return new File(fileName);
+		}
+		
+	}
 	
-	private final GraphDatabaseService graph;
-	private static final String        relation     = "connection_id";
+	private boolean                 initialized = false;
+	private GraphDatabaseService    graph;
 	
-	private final AndamaGroup          threadGroup;
+	private static final String     relation    = "connection_id";
 	
-	private final Map<String, Node>    nodes        = new HashMap<String, Node>();
-	private final List<Integer>        colors       = new LinkedList<Integer>();
+	private final AndamaGroup       threadGroup;
+	private final Map<String, Node> nodes       = new HashMap<String, Node>();
 	
+	private final List<Integer>     colors      = new LinkedList<Integer>();
+	
+	private final File              dbFile;
+	
+	/**
+	 * @param threadGroup
+	 */
 	public AndamaGraph(final AndamaGroup threadGroup) {
 		this.threadGroup = threadGroup;
 		
-		File dbFile = new File("/tmp/test.db");
-		if (dbFile.exists()) {
+		this.dbFile = provideResource(threadGroup);
+		
+		System.err.println("Using db file: " + this.dbFile);
+		
+		if (this.dbFile.exists()) {
 			this.initialized = true;
 		}
 		
-		// TODO check if graph building succeeded
-		this.graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
-		
-		for (AndamaThread<?, ?> thread : threadGroup.getThreads()) {
-			Node node = createNode(thread);
-			this.nodes.put(node.getProperty(NodeProperty.NODENAME.name()).toString(), node);
+		try {
+			this.graph = new EmbeddedGraphDatabase(this.dbFile.getAbsolutePath());
+		} catch (Error e) {
+			throw new UnrecoverableError("Gathering graph layout failed. Source: " + this.dbFile.getAbsolutePath(), e);
 		}
 		
+		if (!this.initialized) {
+			for (AndamaThread<?, ?> thread : threadGroup.getThreads()) {
+				Node node = createNode(thread);
+				this.nodes.put(node.getProperty(NodeProperty.NODENAME.name()).toString(), node);
+			}
+		}
 	}
 	
 	/**
@@ -493,8 +581,19 @@ public class AndamaGraph {
 	 * @return
 	 */
 	private String getNodeTag(final Node node) {
-		String inputType = (String) getProperty(NodeProperty.INPUTTYPE, node);
-		String outputType = (String) getProperty(NodeProperty.OUTPUTTYPE, node);;
+		String inputType = null;
+		String outputType = null;
+		
+		if (getProperty(NodeProperty.INPUTTYPE, node) != null) {
+			String[] inputSplit = ((String) getProperty(NodeProperty.INPUTTYPE, node)).split("\\.");
+			inputType = inputSplit[inputSplit.length - 1];
+		}
+		
+		if (getProperty(NodeProperty.OUTPUTTYPE, node) != null) {
+			String[] outputSplit = ((String) getProperty(NodeProperty.OUTPUTTYPE, node)).split("\\.");
+			outputType = outputSplit[outputSplit.length - 1];
+		}
+		
 		String nodeName = (String) getProperty(NodeProperty.NODENAME, node);;
 		String nodeType = (String) getProperty(NodeProperty.NODETYPE, node);;
 		

@@ -19,7 +19,7 @@ package net.ownhero.dev.andama.settings;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class BooleanArgument extends AndamaArgument {
+public class BooleanArgument extends AndamaArgument<Boolean> {
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
