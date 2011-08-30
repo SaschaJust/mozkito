@@ -1,0 +1,2 @@
+[ Integer: ] --> [ Integer:Integer ] --> [ Integer:Double ] --> [ >Double- ] --> [ :Double ]
+[ String: ] --> [ String:String] --> [ String:Double ] --> [ >Double- ]
