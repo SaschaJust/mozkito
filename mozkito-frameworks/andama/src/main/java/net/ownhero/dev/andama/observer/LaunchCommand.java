@@ -3,7 +3,6 @@
  */
 package net.ownhero.dev.andama.observer;
 
-
 /**
  * @author just
  * 
@@ -24,6 +23,28 @@ public class LaunchCommand extends Command {
 	}
 	
 	class ModuleArgument extends Argument {
+		
+		@Override
+		public boolean isRequired() {
+			return true;
+		}
+		
+		@Override
+		public String defaultValue() {
+			return null;
+		}
+		
+		@Override
+		public String helpString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public String value() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	

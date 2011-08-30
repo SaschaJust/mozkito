@@ -40,18 +40,18 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaSettings {
 	
-	public static final boolean         debug           = (System.getProperty("debug") != null);
-	public static final String          reportThis      = "Please file a bug report with this error message here: "
-	                                                            + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
+	public static final boolean            debug           = (System.getProperty("debug") != null);
+	public static final String             reportThis      = "Please file a bug report with this error message here: "
+	                                                               + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
 	
-	private Map<String, AndamaArgument> arguments       = new HashMap<String, AndamaArgument>();
-	private final Map<String, String>   toolInformation = new HashMap<String, String>();
-	private Properties                  commandlineProps;
+	private Map<String, AndamaArgument<?>> arguments       = new HashMap<String, AndamaArgument<?>>();
+	private final Map<String, String>      toolInformation = new HashMap<String, String>();
+	private Properties                     commandlineProps;
 	
-	private final BooleanArgument       noDefaultValueArg;
-	private final BooleanArgument       helpArg;
-	private final BooleanArgument       disableCrashArg;
-	private final URIArgument           settingsArg;
+	private final BooleanArgument          noDefaultValueArg;
+	private final BooleanArgument          helpArg;
+	private final BooleanArgument          disableCrashArg;
+	private final URIArgument              settingsArg;
 	
 	public AndamaSettings() {
 		this.noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false",
@@ -81,11 +81,13 @@ public class AndamaSettings {
 	 * @return <code>true</code> if the argument could be added.
 	 *         <code>False</code> otherwise.
 	 */
-	protected boolean addArgument(@NotNull final AndamaArgument argument) {
+	protected boolean addArgument(@NotNull final AndamaArgument<?> argument) {
 		if (this.arguments.containsKey(argument.getName())) {
 			return false;
 		}
+		
 		this.arguments.put(argument.getName(), argument);
+		
 		return true;
 	}
 	
@@ -98,14 +100,18 @@ public class AndamaSettings {
 	 */
 	protected boolean addArgumentSet(final AndamaArgumentSet argSet) {
 		
-		HashMap<String, AndamaArgument> tmpArguments = new HashMap<String, AndamaArgument>(this.arguments);
-		for (AndamaArgument argument : argSet.getArguments().values()) {
+		HashMap<String, AndamaArgument<?>> tmpArguments = new HashMap<String, AndamaArgument<?>>(this.arguments);
+		
+		for (AndamaArgument<?> argument : argSet.getArguments().values()) {
 			if (tmpArguments.containsKey(argument.getName())) {
 				return false;
 			}
+			
 			tmpArguments.put(argument.getName(), argument);
 		}
+		
 		this.arguments = tmpArguments;
+		
 		return true;
 	}
 	
@@ -123,7 +129,7 @@ public class AndamaSettings {
 	 * 
 	 * @return
 	 */
-	public Collection<AndamaArgument> getArguments() {
+	public Collection<AndamaArgument<?>> getArguments() {
 		return this.arguments.values();
 	}
 	
@@ -138,24 +144,28 @@ public class AndamaSettings {
 		ss.append("Available JavaVM arguments:");
 		ss.append(System.getProperty("line.separator"));
 		
-		TreeSet<AndamaArgument> args = new TreeSet<AndamaArgument>();
+		TreeSet<AndamaArgument<?>> args = new TreeSet<AndamaArgument<?>>();
 		args.addAll(this.arguments.values());
 		
-		for (AndamaArgument arg : args) {
+		for (AndamaArgument<?> arg : args) {
 			ss.append("\t");
 			ss.append("-D");
 			ss.append(arg.getName());
 			ss.append(": ");
 			ss.append(arg.getDescription());
+			
 			if ((arg.getDefaultValue() != null) && (arg.getDefaultValue().trim().length() > 0)) {
 				ss.append("| DEFAULT=");
 				ss.append(arg.getDefaultValue().trim());
 			}
+			
 			if (arg.isRequired()) {
 				ss.append(" (required!)");
 			}
+			
 			ss.append(System.getProperty("line.separator"));
 		}
+		
 		return ss.toString();
 	}
 	
@@ -163,7 +173,7 @@ public class AndamaSettings {
 	 * @param name
 	 * @return
 	 */
-	public AndamaArgument getSetting(final String name) {
+	public AndamaArgument<?> getSetting(final String name) {
 		return this.arguments.get(name);
 	}
 	
@@ -184,6 +194,9 @@ public class AndamaSettings {
 		return builder.toString();
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isCrashEmailDisabled() {
 		return this.disableCrashArg.getValue();
 	}
@@ -310,8 +323,8 @@ public class AndamaSettings {
 		String passwordMask = "******** (masked)";
 		int maxNameLength = 0;
 		int maxValueLength = passwordMask.length();
-		TreeSet<AndamaArgument> set = new TreeSet<AndamaArgument>(this.arguments.values());
-		for (AndamaArgument arg : set) {
+		TreeSet<AndamaArgument<?>> set = new TreeSet<AndamaArgument<?>>(this.arguments.values());
+		for (AndamaArgument<?> arg : set) {
 			if (arg.getValue() != null) {
 				if (arg.getName().length() > maxNameLength) {
 					maxNameLength = arg.getName().length();
@@ -323,7 +336,7 @@ public class AndamaSettings {
 			}
 		}
 		
-		for (AndamaArgument arg : set) {
+		for (AndamaArgument<?> arg : set) {
 			if (arg.getValue() != null) {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
@@ -346,9 +359,9 @@ public class AndamaSettings {
 	 *         required argument with no value set first found.
 	 */
 	private boolean validateSettings() {
-		Set<AndamaArgument> defaultValueArgs = new HashSet<AndamaArgument>();
+		Set<AndamaArgument<?>> defaultValueArgs = new HashSet<AndamaArgument<?>>();
 		
-		for (AndamaArgument arg : this.arguments.values()) {
+		for (AndamaArgument<?> arg : this.arguments.values()) {
 			if (!arg.wasSet()) {
 				if (this.noDefaultValueArg.getValue()) {
 					arg.setStringValue(null);
@@ -368,7 +381,7 @@ public class AndamaSettings {
 			StringBuilder sb = new StringBuilder();
 			sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
 			sb.append(FileUtils.lineSeparator);
-			for (AndamaArgument arg : defaultValueArgs) {
+			for (AndamaArgument<?> arg : defaultValueArgs) {
 				sb.append(arg.getName());
 				sb.append(": ");
 				sb.append(arg.getDefaultValue());

@@ -22,7 +22,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class LongArgument extends AndamaArgument {
+public class LongArgument extends AndamaArgument<Long> {
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArguments
@@ -48,6 +48,7 @@ public class LongArgument extends AndamaArgument {
 		if (this.stringValue == null) {
 			return null;
 		}
+		
 		try {
 			return new Long(this.stringValue);
 		} catch (NumberFormatException e) {
@@ -55,6 +56,7 @@ public class LongArgument extends AndamaArgument {
 				Logger.error("Value given for argument `" + getName()
 				        + "` could not be interpreted as a Long value. Abort!");
 			}
+			
 			throw new Shutdown();
 		}
 	}

@@ -19,7 +19,7 @@ package net.ownhero.dev.andama.settings;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaArgument implements Comparable<AndamaArgument> {
+public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>> {
 	
 	private String       defaultValue;
 	private final String description;
@@ -45,15 +45,21 @@ public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
+		
 		if (defaultValue != null) {
 			this.stringValue = defaultValue;
 			this.defaultValue = defaultValue;
 		}
+		
 		settings.addArgument(this);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
-	public int compareTo(final AndamaArgument arg0) {
+	public int compareTo(final AndamaArgument<T> arg0) {
 		return this.name.compareTo(arg0.name);
 	}
 	
@@ -66,13 +72,16 @@ public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 		if (this == obj) {
 			return true;
 		}
+		
 		if (obj == null) {
 			return false;
 		}
+		
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AndamaArgument other = (AndamaArgument) obj;
+		
+		AndamaArgument<?> other = (AndamaArgument<?>) obj;
 		if (this.name == null) {
 			if (other.name != null) {
 				return false;
@@ -83,6 +92,9 @@ public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 		return true;
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getDefaultValue() {
 		return this.defaultValue;
 	}
@@ -108,7 +120,7 @@ public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 		return this.name;
 	}
 	
-	public abstract Object getValue();
+	public abstract T getValue();
 	
 	/*
 	 * (non-Javadoc)
@@ -160,6 +172,9 @@ public abstract class AndamaArgument implements Comparable<AndamaArgument> {
 		        + this.name + ", defaultValue=" + this.defaultValue + ", stringValue=" + this.stringValue + "]";
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean wasSet() {
 		return this.wasSet;
 	}

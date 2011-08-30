@@ -24,7 +24,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class EnumArgument extends AndamaArgument {
+public class EnumArgument extends AndamaArgument<String> {
 	
 	private final HashSet<String> possibleValues;
 	
@@ -69,16 +69,20 @@ public class EnumArgument extends AndamaArgument {
 			ss.append(System.getProperty("line.separator"));
 			ss.append("Please choose one of the following possible values:");
 			ss.append(System.getProperty("line.separator"));
+			
 			for (String s : this.possibleValues) {
 				ss.append("\t");
 				ss.append(s);
 				ss.append(System.getProperty("line.separator"));
 			}
+			
 			if (Logger.logError()) {
 				Logger.error(ss.toString());
 			}
+			
 			throw new Shutdown();
 		}
+		
 		super.setStringValue(value);
 	}
 }

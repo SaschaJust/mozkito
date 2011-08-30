@@ -27,7 +27,7 @@ import net.ownhero.dev.regex.Regex;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class URIArgument extends AndamaArgument {
+public class URIArgument extends AndamaArgument<URI> {
 	
 	/**
 	 * This is similar to FileArgument but requires the file to be a directory

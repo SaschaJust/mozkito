@@ -19,7 +19,7 @@ package net.ownhero.dev.andama.settings;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class StringArgument extends AndamaArgument {
+public class StringArgument extends AndamaArgument<String> {
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument

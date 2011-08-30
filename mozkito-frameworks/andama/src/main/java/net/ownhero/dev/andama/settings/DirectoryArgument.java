@@ -24,7 +24,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class DirectoryArgument extends AndamaArgument {
+public class DirectoryArgument extends AndamaArgument<File> {
 	
 	private boolean create = false;
 	

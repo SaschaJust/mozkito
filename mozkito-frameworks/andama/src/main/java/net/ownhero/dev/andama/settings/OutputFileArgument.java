@@ -26,7 +26,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class OutputFileArgument extends AndamaArgument {
+public class OutputFileArgument extends AndamaArgument<File> {
 	
 	// FIXME write test cases
 	private boolean overwrite   = false;
