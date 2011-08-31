@@ -457,6 +457,8 @@ public class Untangling {
 			HashSet<String> atomicTransactions = atomicChangesArg.getValue();
 			for (String transactionId : atomicTransactions) {
 				RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+				//FIXME this is required due to some unknown problem which causes NullpointerExceptions becaus Fetch.LAZY returns null.
+				t.getAuthor();
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				transactions.add(new AtomicTransaction(t, ops));
 			}
@@ -464,6 +466,8 @@ public class Untangling {
 			Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
 			List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
 			for (RCSTransaction t : atomicTransactions) {
+				//FIXME this is required due to some unknown problem which causes NullpointerExceptions becaus Fetch.LAZY returns null.
+				t.getAuthor();
 				List<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
 				for (JavaChangeOperation op : ops) {
@@ -504,7 +508,7 @@ public class Untangling {
 		if (System.getProperty("generateBlobsOnly") != null) {
 			return;
 		}
-
+		
 		File outFile = outArg.getValue();
 		BufferedWriter outWriter;
 		try {
