@@ -32,9 +32,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.checks.Check;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * {@link AndamaThread}s are the edges of a {@link AndamaChain} graph,
@@ -73,7 +71,6 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	private AndamaDataStorage<K>                              inputStorage;
 	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads   = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
 	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads   = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
-	private final Logger                                      logger         = LoggerFactory.getLogger(this.getClass());
 	private V                                                 outputData;
 	private AndamaDataStorage<V>                              outputStorage;
 	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads  = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
@@ -86,6 +83,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	
 	private final boolean                                     waitForLatch   = false;
 	private boolean                                           skip;
+	private boolean                                           stage          = false;
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
@@ -181,30 +179,34 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	public final boolean checkConnections() {
 		boolean retval = true;
 		if (!isInputConnected()) {
-			if (this.logger.isErrorEnabled()) {
-				this.logger.error(getHandle() + " is not input connected (required to run this task).");
+			
+			if (Logger.logError()) {
+				Logger.error(getHandle() + " is not input connected (required to run this task).");
 			}
 			retval = false;
 		}
 		
 		if (!isOutputConnected()) {
-			if (this.logger.isErrorEnabled()) {
-				this.logger.error(getHandle() + " is not out connected (required to run this task).");
+			
+			if (Logger.logError()) {
+				Logger.error(getHandle() + " is not out connected (required to run this task).");
 			}
 			retval = false;
 		}
 		
 		if (retval && this.knownThreads.isEmpty()) {
-			if (this.logger.isErrorEnabled()) {
-				this.logger.error(getHandle()
+			
+			if (Logger.logError()) {
+				Logger.error(getHandle()
 				        + " has known connections, but knownThreads is empty. This should never happen.");
 			}
 			retval = false;
 		}
 		
 		if (!retval) {
-			if (this.logger.isErrorEnabled()) {
-				this.logger.error("Shutting all threads down.");
+			
+			if (Logger.logError()) {
+				Logger.error("Shutting all threads down.");
 				this.threadGroup.shutdown();
 			}
 		}
@@ -220,8 +222,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	public final boolean checkNotShutdown() {
 		if (isShutdown()) {
 			
-			if (this.logger.isWarnEnabled()) {
-				this.logger.warn("Thread already shut down. Won't run again.");
+			if (Logger.logWarn()) {
+				Logger.warn("Thread already shut down. Won't run again.");
 			}
 		}
 		return !isShutdown();
@@ -260,8 +262,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			this.knownThreads.add(thread);
 			this.setInputStorage(thread.getOutputStorage());
 			
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("[" + getHandle() + "] Linking input connector to [" + thread.getHandle() + "]");
+			if (Logger.logInfo()) {
+				Logger.info("[" + getHandle() + "] Linking input connector to [" + thread.getHandle() + "]");
 			}
 			
 			if (thread.hasOutputConnector() && !thread.isOutputConnected(this)) {
@@ -286,8 +288,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			this.knownThreads.add(thread);
 			this.setOutputStorage(thread.getInputStorage());
 			
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("[" + getHandle() + "] Linking output connector to [" + thread.getHandle() + "]");
+			if (Logger.logInfo()) {
+				Logger.info("[" + getHandle() + "] Linking output connector to [" + thread.getHandle() + "]");
 			}
 			
 			if (thread.hasInputConnector() && !thread.isInputConnected(this)) {
@@ -333,9 +335,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 				this.inputStorage.unregisterInput(thread);
 				this.knownThreads.remove(thread);
 				
-				if (this.logger.isInfoEnabled()) {
-					this.logger.info("[" + getHandle() + "] Unlinking input connector from [" + thread.getHandle()
-					        + "]");
+				if (Logger.logInfo()) {
+					Logger.info("[" + getHandle() + "] Unlinking input connector from [" + thread.getHandle() + "]");
 				}
 				
 				if (thread.hasOutputConnector() && thread.isOutputConnected()) {
@@ -359,9 +360,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 				this.outputStorage.unregisterOutput(thread);
 				this.knownThreads.remove(thread);
 				
-				if (this.logger.isInfoEnabled()) {
-					this.logger.info("[" + getHandle() + "] Unlinking output connector from [" + thread.getHandle()
-					        + "]");
+				if (Logger.logInfo()) {
+					Logger.info("[" + getHandle() + "] Unlinking output connector from [" + thread.getHandle() + "]");
 				}
 				
 				if (thread.hasInputConnector() && thread.isInputConnected()) {
@@ -383,15 +383,16 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	@Override
 	public final synchronized void finish() {
 		
-		if (this.logger.isInfoEnabled()) {
-			this.logger.info("All done. Disconnecting from data storages.");
+		if (Logger.logInfo()) {
+			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
 		AndamaThreadable<V, ?> outputThread = null;
 		
 		while ((outputThread = this.outputThreads.poll()) != null) {
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
 			}
 			outputThread.disconnectInput(this);
 		}
@@ -399,8 +400,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		AndamaThreadable<?, K> inputThread = null;
 		
 		while ((inputThread = this.inputThreads.poll()) != null) {
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
 			}
 			inputThread.disconnectOutput(this);
 		}
@@ -743,18 +745,18 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	public final void run() {
 		try {
 			
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Starting [beforeExecution] hook.");
+			if (Logger.logDebug()) {
+				Logger.debug("Starting [beforeExecution] hook.");
 			}
 			
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("Launching " + getHandle() + ".");
+			if (Logger.logInfo()) {
+				Logger.info("Launching " + getHandle() + ".");
 			}
 			
 			beforeExecution();
 			
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Finished [beforeExecution] hook.");
+			if (Logger.logDebug()) {
+				Logger.debug("Finished [beforeExecution] hook.");
 			}
 			
 			if (!checkConnections() || !checkNotShutdown()) {
@@ -763,107 +765,119 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			
 			if (hasInputConnector()) {
 				while (!isShutdown() && ((this.inputDataTuple = readLatch()) != null)) {
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Starting [beforeProcess] hook.");
-					}
-					
-					beforeProcess();
-					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Finished [beforeProcess] hook.");
-					}
-					
-					K data = getInputData();
-					
-					if (this.logger.isInfoEnabled()) {
-						this.logger.info("Processing: " + data);
-					}
-					
-					if (hasOutputConnector()) {
-						this.outputData = ((InputOutputConnectable<K, V>) this).process(data);
-						
-						if (!this.skip) {
-							if (this.logger.isDebugEnabled()) {
-								this.logger.debug("Handing over: " + this.outputData);
-							}
-							
-							writeOutputData(getOutputData());
-						} else {
-							this.skip = false;
+					do {
+						this.stage = false;
+						if (Logger.logDebug()) {
+							Logger.debug("Starting [beforeProcess] hook.");
 						}
-					} else {
-						((OnlyInputConnectable<K>) this).process(data);
-					}
-					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Starting [afterProcess] hook.");
-					}
-					
-					afterProcess();
-					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Finished [afterProcess] hook.");
-					}
-					
-					// decrease latch for waiting threads
-					this.inputDataTuple.getSecond().countDown();
+						
+						beforeProcess();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Finished [beforeProcess] hook.");
+						}
+						
+						K data = getInputData();
+						
+						if (Logger.logInfo()) {
+							Logger.info("Processing: " + data);
+						}
+						
+						if (hasOutputConnector()) {
+							this.outputData = ((InputOutputConnectable<K, V>) this).process(data);
+							
+							if (this.outputData == null) {
+								shutdown();
+							} else {
+								if (!this.skip) {
+									if (Logger.logDebug()) {
+										Logger.debug("Handing over: " + this.outputData);
+									}
+									
+									writeOutputData(getOutputData());
+								} else {
+									this.skip = false;
+								}
+							}
+						} else {
+							((OnlyInputConnectable<K>) this).process(data);
+						}
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Starting [afterProcess] hook.");
+						}
+						
+						afterProcess();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Finished [afterProcess] hook.");
+						}
+						
+						// decrease latch for waiting threads
+						this.inputDataTuple.getSecond().countDown();
+					} while (!this.stage);
 				}
 			} else {
 				do {
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Starting [beforeProcess] hook.");
+					if (Logger.logDebug()) {
+						Logger.debug("Starting [beforeProcess] hook.");
 					}
 					
 					beforeProcess();
 					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Finished [beforeProcess] hook.");
+					if (Logger.logDebug()) {
+						Logger.debug("Finished [beforeProcess] hook.");
 					}
 					
-					if (this.logger.isInfoEnabled()) {
-						this.logger.info("Preparing data.");
+					if (Logger.logInfo()) {
+						Logger.info("Preparing data.");
 					}
 					
 					this.outputData = ((OnlyOutputConnectable<V>) this).process();
 					
-					if (!this.skip) {
-						if (this.logger.isDebugEnabled()) {
-							this.logger.debug("Handing over: " + this.outputData);
-						} else {
-							this.skip = false;
+					if (this.outputData == null) {
+						shutdown();
+					} else {
+						if (!this.skip) {
+							if (Logger.logDebug()) {
+								Logger.debug("Handing over: " + this.outputData);
+							} else {
+								this.skip = false;
+							}
+							
+							writeOutputData(getOutputData());
 						}
-						
-						writeOutputData(getOutputData());
 					}
 					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Starting [afterProcess] hook.");
+					if (Logger.logDebug()) {
+						Logger.debug("Starting [afterProcess] hook.");
 					}
 					
 					afterProcess();
 					
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Finished [afterProcess] hook.");
+					if (Logger.logDebug()) {
+						Logger.debug("Finished [afterProcess] hook.");
 					}
 				} while (this.outputData != null);
 			}
 			
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Starting [afterExecution] hook.");
+			if (Logger.logDebug()) {
+				Logger.debug("Starting [afterExecution] hook.");
 			}
 			
 			afterExecution();
 			
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Finished [afterExecution] hook.");
-				this.logger.debug("Cleaning up and terminating: " + getHandle());
+			if (Logger.logDebug()) {
+				Logger.debug("Finished [afterExecution] hook.");
+				Logger.debug("Cleaning up and terminating: " + getHandle());
 			}
 			
 			finish();
 		} catch (Exception e) {
-			if (this.logger.isErrorEnabled()) {
-				this.logger.error("Caught exception: " + e.getMessage());
-				this.logger.error("Shutting down.");
+			
+			if (Logger.logError()) {
+				Logger.error("Caught exception: " + e.getMessage());
+				Logger.error("Shutting down.");
 			}
 			shutdown();
 		}
@@ -949,8 +963,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	@Override
 	public final synchronized void shutdown() {
 		if (!isShutdown()) {
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("[" + this.getClass().getSimpleName() + "] Received shutdown request. Terminating.");
+			
+			if (Logger.logInfo()) {
+				Logger.info("[" + this.getClass().getSimpleName() + "] Received shutdown request. Terminating.");
 			}
 			
 			setShutdown(true);
@@ -958,8 +973,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			AndamaThreadable<V, ?> outputThread = null;
 			
 			while ((outputThread = this.outputThreads.poll()) != null) {
-				if (this.logger.isDebugEnabled()) {
-					this.logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
 				}
 				outputThread.disconnectInput(this);
 			}
@@ -967,8 +983,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			AndamaThreadable<?, K> inputThread = null;
 			
 			while ((inputThread = this.inputThreads.poll()) != null) {
-				if (this.logger.isDebugEnabled()) {
-					this.logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
+				if (Logger.logDebug()) {
+					Logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
 				}
 				inputThread.disconnectOutput(this);
 			}
@@ -988,12 +1004,21 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @return
 	 */
 	public final V skip(final Object data) {
-		if (this.logger.isInfoEnabled()) {
-			this.logger.info("Skipping: " + data);
+		if (Logger.logInfo()) {
+			Logger.info("Skipping: " + data);
 		}
 		
 		this.skip = true;
 		return null;
+	}
+	
+	/**
+	 * @param data
+	 * @return
+	 */
+	public final V stage(final V data) {
+		this.stage = true;
+		return data;
 	}
 	
 	/*
@@ -1056,8 +1081,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
 		                hasOutputConnector());
 		
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("writing data: " + data);
+		if (Logger.logTrace()) {
+			Logger.trace("writing data: " + data);
 		}
 		
 		return this.outputStorage.write(data);
@@ -1071,8 +1096,8 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		CountDownLatch latch = write(data);
 		
 		if (this.isWaitForLatch()) {
-			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Waiting for latch to be resolved.");
+			if (Logger.logDebug()) {
+				Logger.debug("Waiting for latch to be resolved.");
 			}
 			
 			latch.await();

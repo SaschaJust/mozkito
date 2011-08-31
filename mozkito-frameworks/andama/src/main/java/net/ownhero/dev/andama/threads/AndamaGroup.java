@@ -9,22 +9,18 @@ import java.util.LinkedList;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaCrashHandler;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
- * The {@link AndamaGroup} is an extension of the {@link ThreadGroup}
- * and takes care on the internal management of {@link AndamaThread}s. The
- * primary reasons for this class are the internal managed thread list and the
- * uncaught exception handling.
+ * The {@link AndamaGroup} is an extension of the {@link ThreadGroup} and takes
+ * care on the internal management of {@link AndamaThread}s. The primary reasons
+ * for this class are the internal managed thread list and the uncaught
+ * exception handling.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class AndamaGroup extends ThreadGroup {
-	
-	final Logger                                 logger  = LoggerFactory.getLogger(this.getClass());
 	
 	private final Collection<AndamaThread<?, ?>> threads = new LinkedList<AndamaThread<?, ?>>();
 	private final AndamaSettings                 settings;
@@ -102,10 +98,11 @@ public class AndamaGroup extends ThreadGroup {
 	public void uncaughtException(final Thread t,
 	                              final Throwable e) {
 		super.uncaughtException(t, e);
-		if (this.logger.isErrorEnabled()) {
-			this.logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
+		
+		if (Logger.logError()) {
+			Logger.error("Thread " + t.getName() + " terminated with uncaught exception " + e.getClass().getName()
 			        + ". Message: " + e.getMessage(), e);
-			this.logger.error("Shutting down.");
+			Logger.error("Shutting down.");
 		}
 		shutdown();
 	}

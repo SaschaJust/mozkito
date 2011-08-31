@@ -59,14 +59,4 @@ public class DoubleDemultiplexer extends AndamaDemultiplexer<Double> {
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#process(java.lang.Object)
-	 */
-	@Override
-	public Double process(final Double data) {
-		return null;
-	}
-	
 }

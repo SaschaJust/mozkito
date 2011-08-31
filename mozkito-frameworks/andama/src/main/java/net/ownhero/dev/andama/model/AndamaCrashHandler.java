@@ -23,17 +23,13 @@ import javax.mail.internet.MimeMessage;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.utils.AndamaUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class AndamaCrashHandler extends ThreadGroup {
-	
-	final Logger                                        logger    = LoggerFactory.getLogger(AndamaCrashHandler.class);
 	
 	private static final Properties                     mailProps = new Properties() {
 		                                                              
@@ -282,12 +278,12 @@ public class AndamaCrashHandler extends ThreadGroup {
 				transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
 				transport.close();
 			} catch (MessagingException e) {
-				if (this.logger.isErrorEnabled()) {
-					this.logger.error(e.getMessage());
+				if (Logger.logWarn()) {
+					Logger.warn(e.getMessage(), e);
 				}
 			} catch (UnsupportedEncodingException e) {
-				if (this.logger.isErrorEnabled()) {
-					this.logger.error(e.getMessage(), e);
+				if (Logger.logWarn()) {
+					Logger.warn(e.getMessage(), e);
 				}
 			}
 		}
@@ -306,28 +302,30 @@ public class AndamaCrashHandler extends ThreadGroup {
 			AndamaCrashHandler.executed = true;
 			
 			if ((arg1 == null) || (arg1 instanceof Shutdown)) {
-				if (this.logger.isInfoEnabled()) {
-					this.logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
+				
+				if (Logger.logInfo()) {
+					Logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
 					        + arg1.getMessage());
 				}
 			} else {
-				if (this.logger.isErrorEnabled()) {
-					this.logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
-					this.logger.error(arg1.getMessage());
+				
+				if (Logger.logError()) {
+					Logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
+					Logger.error(arg1.getMessage());
 				}
 				
 				String crashReport = getCrashReport(arg1);
 				
-				if (this.logger.isErrorEnabled()) {
-					this.logger.error(crashReport);
+				if (Logger.logError()) {
+					Logger.error(crashReport);
 				}
 				
 				System.out.println(crashReport);
 				sendReport(crashReport);
 			}
 			
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("Initiating shutdown.");
+			if (Logger.logInfo()) {
+				Logger.info("Initiating shutdown.");
 			}
 			
 			if (this.application != null) {

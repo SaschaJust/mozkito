@@ -14,9 +14,7 @@ import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link AndamaDataStorage} elements are the node of a.
@@ -28,7 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AndamaDataStorage<E> {
 	
-	Logger                                              logger  = LoggerFactory.getLogger(this.getClass());
 	/** The queue. */
 	private final Queue<Tuple<E, CountDownLatch>>       queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
 	
@@ -77,8 +74,9 @@ public class AndamaDataStorage<E> {
 	 *             the interrupted exception
 	 */
 	public Tuple<E, CountDownLatch> read() throws InterruptedException {
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("Entering read method.");
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Entering read method.");
 		}
 		
 		synchronized (this.queue) {
@@ -96,8 +94,9 @@ public class AndamaDataStorage<E> {
 					this.queue.notifyAll();
 					return poll;
 				} else {
-					if (this.logger.isWarnEnabled()) {
-						this.logger.warn("No more incoming data. Returning (null).");
+					
+					if (Logger.logWarn()) {
+						Logger.warn("No more incoming data. Returning (null).");
 					}
 					this.queue.notifyAll();
 					return null;
@@ -112,10 +111,10 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void registerInput(
-	        @NotNull("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
-		if (this.logger.isInfoEnabled()) {
-			this.logger.info("Registering input " + ((AndamaThread<?, E>) writerThread).getName());
+	public void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+		
+		if (Logger.logInfo()) {
+			Logger.info("Registering input " + ((AndamaThread<?, E>) writerThread).getName());
 		}
 		
 		this.writers.add(writerThread);
@@ -130,10 +129,10 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void registerOutput(
-	        @NotNull("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
-		if (this.logger.isInfoEnabled()) {
-			this.logger.info("Registering output " + ((AndamaThread<E, ?>) readerThread).getName());
+	public void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+		
+		if (Logger.logInfo()) {
+			Logger.info("Registering output " + ((AndamaThread<E, ?>) readerThread).getName());
 		}
 		
 		this.readers.add(readerThread);
@@ -159,11 +158,11 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void unregisterInput(
-	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("Unregistering input " + ((AndamaThread<?, E>) writerThread).getName());
+			
+			if (Logger.logInfo()) {
+				Logger.info("Unregistering input " + ((AndamaThread<?, E>) writerThread).getName());
 			}
 			
 			this.writers.remove(writerThread);
@@ -181,12 +180,11 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void unregisterOutput(
-	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			
-			if (this.logger.isInfoEnabled()) {
-				this.logger.info("Unregistering output " + ((AndamaThread<E, ?>) readerThread).getName());
+			if (Logger.logInfo()) {
+				Logger.info("Unregistering output " + ((AndamaThread<E, ?>) readerThread).getName());
 			}
 			
 			this.readers.remove(readerThread);
@@ -205,9 +203,10 @@ public class AndamaDataStorage<E> {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public CountDownLatch write(@NotNull("Writing null data is now allowed.") final E data) throws InterruptedException {
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("Entering write method.");
+	public CountDownLatch write(@NotNull ("Writing null data is now allowed.") final E data) throws InterruptedException {
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Entering write method.");
 		}
 		
 		synchronized (this.queue) {
@@ -219,8 +218,9 @@ public class AndamaDataStorage<E> {
 			if (!this.readers.isEmpty()) {
 				this.queue.add(new Tuple<E, CountDownLatch>(data, countDownLatch));
 			} else {
-				if (this.logger.isWarnEnabled()) {
-					this.logger.warn("No more readers attached. Void sinking data and returning.");
+				
+				if (Logger.logWarn()) {
+					Logger.warn("No more readers attached. Void sinking data and returning.");
 				}
 			}
 			this.queue.notifyAll();

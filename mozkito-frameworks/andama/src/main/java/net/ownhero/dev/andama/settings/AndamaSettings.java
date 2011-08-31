@@ -42,7 +42,7 @@ public class AndamaSettings {
 	
 	public static final boolean            debug           = (System.getProperty("debug") != null);
 	public static final String             reportThis      = "Please file a bug report with this error message here: "
-	                                                               + "https://hg.st.cs.uni-saarland.de/projects/reposuite/issues/new";
+	                                                               + "https://dev.own-hero.net";
 	
 	private Map<String, AndamaArgument<?>> arguments       = new HashMap<String, AndamaArgument<?>>();
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
@@ -217,19 +217,19 @@ public class AndamaSettings {
 		// save given arguments to load if necessary
 		this.commandlineProps = (Properties) System.getProperties().clone();
 		
-		if (System.getProperty("repoSuiteSettings") != null) {
-			this.settingsArg.setStringValue(System.getProperty("repoSuiteSettings"));
+		if (System.getProperty("andamaSettings") != null) {
+			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
 			boolean parseSettingFile = true;
 			File settingFile = new File(this.settingsArg.getValue());
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
-					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
+					Logger.warn("Specified andama setting file `" + settingFile.getAbsolutePath()
 					        + "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
-					Logger.warn("Specified repoSuite setting file `" + settingFile.getAbsolutePath()
+					Logger.warn("Specified andama setting file `" + settingFile.getAbsolutePath()
 					        + "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;

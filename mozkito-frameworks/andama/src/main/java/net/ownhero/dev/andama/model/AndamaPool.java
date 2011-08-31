@@ -7,9 +7,7 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.graph.AndamaGraph;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaThread;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The thread pool manages all threads of the tool chain. Since all
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class AndamaPool {
-	
-	Logger                    logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final AndamaGroup threads;
 	
@@ -61,8 +57,8 @@ public class AndamaPool {
 				thread.join();
 			} catch (InterruptedException e) {
 				
-				if (this.logger.isErrorEnabled()) {
-					this.logger.error(e.getMessage(), e);
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
 				}
 				throw new Shutdown();
 			}
@@ -80,8 +76,9 @@ public class AndamaPool {
 	 * shuts down all threads
 	 */
 	public void shutdown() {
-		if (this.logger.isErrorEnabled()) {
-			this.logger.error("Terminating " + this.threads.activeCount() + " threads.");
+		
+		if (Logger.logError()) {
+			Logger.error("Terminating " + this.threads.activeCount() + " threads.");
 		}
 		
 		this.threads.shutdown();
