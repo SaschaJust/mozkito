@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -48,19 +49,26 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 @IdClass (MapId.class)
 public class MapScore implements Annotated, Comparable<MapScore> {
 	
-	private static final long  serialVersionUID = -8606759070008468513L;
+	private static final long          serialVersionUID = -8606759070008468513L;
 	
-	List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
-	double                     totalConfidence  = 0.0d;
-	private MappableEntity     element1;
+	private List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
+	private double                     totalConfidence  = 0.0d;
 	
-	private MappableEntity     element2;
+	private MappableEntity             element1;
+	private MappableEntity             element2;
 	
-	private String             fromId;
-	private String             class1;
+	private String                     fromId;
+	private String                     class1;
 	
-	private String             toId;
-	private String             class2;
+	private String                     toId;
+	private String                     class2;
+	
+	/**
+	 * used by persistence provider only
+	 */
+	public MapScore() {
+		
+	}
 	
 	/**
 	 * @param transaction
@@ -143,13 +151,10 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 				Class<?> clazz = Class.forName(getClass1());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new UnrecoverableError(e);
 			} catch (UninitializedDatabaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new UnrecoverableError(e);
 			}
-			return null;
 		}
 	}
 	
@@ -165,13 +170,10 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 				Class<?> clazz = Class.forName(getClass2());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new UnrecoverableError(e);
 			} catch (UninitializedDatabaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new UnrecoverableError(e);
 			}
-			return null;
 		}
 	}
 	
@@ -199,7 +201,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	public Set<Class<? extends MappingEngine>> getScoringEngines() {
 		HashSet<Class<? extends MappingEngine>> engines = new HashSet<Class<? extends MappingEngine>>();
 		
-		for (MappingEngineFeature feature : this.features) {
+		for (MappingEngineFeature feature : getFeatures()) {
 			engines.add(feature.getEngine());
 		}
 		
@@ -241,8 +243,10 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	public void setElement1(final MappableEntity element1) {
 		this.element1 = element1;
-		setClass1(element1.getClass().getCanonicalName());
-		setFromId(fetchId(element1));
+		if (element1 != null) {
+			setClass1(element1.getClass().getCanonicalName());
+			setFromId(fetchId(element1));
+		}
 	}
 	
 	/**
@@ -250,8 +254,11 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	public void setElement2(final MappableEntity element2) {
 		this.element2 = element2;
-		setClass2(element2.getClass().getCanonicalName());
-		setToId(fetchId(element2));
+		
+		if (element2 != null) {
+			setClass2(element2.getClass().getCanonicalName());
+			setToId(fetchId(element2));
+		}
 	}
 	
 	/**

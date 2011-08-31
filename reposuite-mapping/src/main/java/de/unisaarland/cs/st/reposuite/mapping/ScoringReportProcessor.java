@@ -29,18 +29,16 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringProcessor extends AndamaTransformer<RCSTransaction, MapScore> {
+public class ScoringReportProcessor extends AndamaTransformer<Report, MapScore> {
 	
 	private final PersistenceUtil persistenceUtil;
 	private final MapScore        zeroScore = new MapScore(null, null);
@@ -51,8 +49,8 @@ public class ScoringProcessor extends AndamaTransformer<RCSTransaction, MapScore
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder,
-	        final PersistenceUtil persistenceUtil) {
+	public ScoringReportProcessor(final AndamaGroup threadGroup, final MappingSettings settings,
+	        final MappingFinder finder, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		this.persistenceUtil = persistenceUtil;
 		this.mappingFinder = finder;
@@ -65,8 +63,8 @@ public class ScoringProcessor extends AndamaTransformer<RCSTransaction, MapScore
 	 * .Object)
 	 */
 	@Override
-	public MapScore process(final RCSTransaction transaction) throws UnrecoverableError, Shutdown {
-		MappableTransaction mapTransaction = new MappableTransaction(transaction);
+	public MapScore process(final Report data) throws UnrecoverableError, Shutdown {
+		MappableReport mapTransaction = new MappableReport(data);
 		Set<MappableReport> candidates = this.mappingFinder.getCandidates(mapTransaction, MappableReport.class);
 		
 		if (!candidates.isEmpty()) {
@@ -83,19 +81,19 @@ public class ScoringProcessor extends AndamaTransformer<RCSTransaction, MapScore
 			
 			for (Report report : this.persistenceUtil.load(criteria)) {
 				if (Logger.logDebug()) {
-					Logger.debug("Processing mapping for " + transaction.getId() + " to " + report.getId() + ".");
+					Logger.debug("Processing mapping for " + report.getId() + " to " + report.getId() + ".");
 				}
 				
 				MapScore score = this.mappingFinder.score(mapTransaction, new MappableReport(report));
 				if (score.compareTo(this.zeroScore) > 0) {
 					if (Logger.logInfo()) {
-						Logger.info("Providing for store operation: " + transaction.getId() + " -> " + report.getId()
+						Logger.info("Providing for store operation: " + report.getId() + " -> " + report.getId()
 						        + " (score: " + score + ").");
 					}
 					return (score);
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + transaction.getId() + " -> " + report.getId()
+						Logger.debug("Discarding " + report.getId() + " -> " + report.getId()
 						        + " due to non-positive score (" + score + ").");
 					}
 					return skip(score);

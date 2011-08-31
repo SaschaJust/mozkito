@@ -28,8 +28,8 @@ import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.infozilla.Filters.InfozillaFilter;
-import de.unisaarland.cs.st.reposuite.infozilla.Filters.InfozillaFilterChain;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilter;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.InfozillaFilterChain;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

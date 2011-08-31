@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringReader extends AndamaSource<RCSTransaction> {
+public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
 	
 	private final PersistenceUtil    persistenceUtil;
 	private Iterator<RCSTransaction> iterator;
@@ -45,7 +45,7 @@ public class ScoringReader extends AndamaSource<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringReader(final AndamaGroup threadGroup, final MappingSettings settings,
+	public ScoringTransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		this.persistenceUtil = persistenceUtil;

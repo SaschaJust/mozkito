@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
@@ -33,34 +33,33 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 public class MappingEngineFeature implements Annotated {
 	
 	private static final long                                  serialVersionUID = 4097360257338824107L;
-	double                                                     confidence;
-	String                                                     transactionFieldName;
-	String                                                     reportFieldName;
-	String                                                     reportSubstring;
-	String                                                     transactionSubstring;
-	String                                                     fqClassName;
+	private double                                             confidence;
+	private String                                             fromFieldName;
+	private String                                             toFieldName;
+	private String                                             toSubstring;
+	private String                                             fromSubstring;
+	private String                                             fqClassName;
 	private static Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
-	 * 
+	 * used by persistence provider only
 	 */
 	public MappingEngineFeature() {
 	}
 	
 	/**
 	 * @param confidence
-	 * @param transactionFieldName
-	 * @param transactionSubstring
+	 * @param fromFieldName
+	 * @param fromSubstring
 	 * @param mappingEngine
 	 */
-	public MappingEngineFeature(final double confidence, final String transactionFieldName,
-	        final String transactionSubstring, final String reportFieldName, final String reportSubstring,
-	        final Class<? extends MappingEngine> mappingEngine) {
+	public MappingEngineFeature(final double confidence, final String fromFieldName, final String fromSubstring,
+	        final String toFieldName, final String toSubstring, final Class<? extends MappingEngine> mappingEngine) {
 		setConfidence(confidence);
-		setTransactionFieldName(transactionFieldName);
-		setTransactionSubstring(transactionSubstring);
-		setReportFieldName(reportFieldName);
-		setReportSubstring(reportSubstring);
+		setFromFieldName(fromFieldName);
+		setFromSubstring(fromSubstring);
+		setToFieldName(toFieldName);
+		setToSubstring(toSubstring);
 		setFqClassName(mappingEngine.getCanonicalName());
 		
 		if (!cache.containsKey(getFqClassName())) {
@@ -84,8 +83,8 @@ public class MappingEngineFeature implements Annotated {
 			if (cache.containsKey(this.fqClassName)) {
 				return cache.get(this.fqClassName);
 			} else {
-				@SuppressWarnings("unchecked") Class<MappingEngine> engineClass = (Class<MappingEngine>) Class
-				        .forName(this.fqClassName);
+				@SuppressWarnings ("unchecked")
+				Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
 				cache.put(this.fqClassName, engineClass);
 				return engineClass;
 			}
@@ -114,28 +113,28 @@ public class MappingEngineFeature implements Annotated {
 	 * @return the reportFieldName
 	 */
 	public String getReportFieldName() {
-		return this.reportFieldName;
+		return this.toFieldName;
 	}
 	
 	/**
 	 * @return the reportSubstring
 	 */
 	public String getReportSubstring() {
-		return this.reportSubstring;
+		return this.toSubstring;
 	}
 	
 	/**
 	 * @return the transactionFieldName
 	 */
 	public String getTransactionFieldName() {
-		return this.transactionFieldName;
+		return this.fromFieldName;
 	}
 	
 	/**
 	 * @return the transactionSubstring
 	 */
 	public String getTransactionSubstring() {
-		return this.transactionSubstring;
+		return this.fromSubstring;
 	}
 	
 	/**
@@ -155,40 +154,39 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @param reportFieldName
-	 *            the reportFieldName to set
-	 */
-	public void setReportFieldName(final String reportFieldName) {
-		this.reportFieldName = reportFieldName;
-	}
-	
-	/**
-	 * @param reportSubstring
-	 *            the reportSubstring to set
-	 */
-	public void setReportSubstring(final String reportSubstring) {
-		this.reportSubstring = reportSubstring;
-	}
-	
-	/**
 	 * @param transactionFieldName
 	 *            the transactionFieldName to set
 	 */
-	public void setTransactionFieldName(final String transactionFieldName) {
-		this.transactionFieldName = transactionFieldName;
+	public void setFromFieldName(final String transactionFieldName) {
+		this.fromFieldName = transactionFieldName;
 	}
 	
 	/**
 	 * @param transactionSubstring
 	 *            the transactionSubstring to set
 	 */
-	public void setTransactionSubstring(final String transactionSubstring) {
-		this.transactionSubstring = transactionSubstring;
+	public void setFromSubstring(final String transactionSubstring) {
+		this.fromSubstring = transactionSubstring;
+	}
+	
+	/**
+	 * @param reportFieldName
+	 *            the reportFieldName to set
+	 */
+	public void setToFieldName(final String reportFieldName) {
+		this.toFieldName = reportFieldName;
+	}
+	
+	/**
+	 * @param reportSubstring
+	 *            the reportSubstring to set
+	 */
+	public void setToSubstring(final String reportSubstring) {
+		this.toSubstring = reportSubstring;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -196,10 +194,14 @@ public class MappingEngineFeature implements Annotated {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngineFeature [confidence=");
 		builder.append(this.confidence);
-		builder.append(", transactionFieldName=");
-		builder.append(this.transactionFieldName);
-		builder.append(", transactionSubstring=");
-		builder.append(this.transactionSubstring);
+		builder.append(", fromFieldName=");
+		builder.append(this.fromFieldName);
+		builder.append(", toFieldName=");
+		builder.append(this.toFieldName);
+		builder.append(", toSubstring=");
+		builder.append(this.toSubstring);
+		builder.append(", fromSubstring=");
+		builder.append(this.fromSubstring);
 		builder.append(", fqClassName=");
 		builder.append(this.fqClassName);
 		builder.append("]");

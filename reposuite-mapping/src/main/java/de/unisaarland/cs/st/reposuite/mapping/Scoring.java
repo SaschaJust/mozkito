@@ -101,8 +101,12 @@ public class Scoring extends AndamaChain {
 			try {
 				persistenceUtil = PersistenceManager.getUtil();
 				finder.loadData(persistenceUtil);
-				new ScoringReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringTransactionProcessor(this.threadPool.getThreadGroup(), getSettings(), finder,
+				                                persistenceUtil);
+				new ScoringTransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringReportProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringCandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				

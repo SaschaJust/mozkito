@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
@@ -21,14 +21,12 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
-import de.unisaarland.cs.st.reposuite.mapping.elements.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
@@ -37,8 +35,11 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 @Entity
-@IdClass(MapId.class)
 public class PersistentMapping implements Annotated {
 	
 	private static final long     serialVersionUID = -6423537467677757941L;
@@ -46,6 +47,12 @@ public class PersistentMapping implements Annotated {
 	private MapScore              score;
 	private List<MappingStrategy> strategies       = new LinkedList<MappingStrategy>();
 	private Boolean               valid            = null;
+	
+	/**
+	 * used by persistence provider only
+	 */
+	public PersistentMapping() {
+	}
 	
 	/**
 	 * @param score
@@ -56,7 +63,6 @@ public class PersistentMapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -82,7 +88,7 @@ public class PersistentMapping implements Annotated {
 	}
 	
 	/**
-	 * @return the report
+	 * @return
 	 */
 	@Transient
 	public MappableEntity getElement1() {
@@ -90,12 +96,20 @@ public class PersistentMapping implements Annotated {
 	}
 	
 	/**
+	 * @return
+	 */
+	@Transient
+	public MappableEntity getElement2() {
+		return getScore().getElement2();
+	}
+	
+	/**
 	 * @return the score
 	 */
 	@Id
-	@ManyToOne(fetch = FetchType.LAZY, cascade = {}, optional = false)
-	@JoinColumns({ @JoinColumn(nullable = false, name = "reportid", referencedColumnName = "reportid"),
-	        @JoinColumn(nullable = false, name = "transactionid", referencedColumnName = "transactionid") })
+	@ManyToOne (fetch = FetchType.LAZY, cascade = {}, optional = false)
+	@JoinColumns ({ @JoinColumn (nullable = false, name = "fromId", referencedColumnName = "fromId"),
+	        @JoinColumn (nullable = false, name = "toId", referencedColumnName = "toId") })
 	public MapScore getScore() {
 		return this.score;
 	}
@@ -108,14 +122,6 @@ public class PersistentMapping implements Annotated {
 	}
 	
 	/**
-	 * @return the transaction
-	 */
-	@Transient
-	public MappableEntity getElement2() {
-		return getScore().getElement2();
-	}
-	
-	/**
 	 * @return the valid
 	 */
 	public Boolean getValid() {
@@ -124,14 +130,15 @@ public class PersistentMapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getScore() == null) ? 0 : getScore().hashCode());
+		result = (prime * result) + ((getScore() == null)
+		                                                 ? 0
+		                                                 : getScore().hashCode());
 		return result;
 	}
 	
@@ -161,15 +168,14 @@ public class PersistentMapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RCSBugMapping [report=");
+		builder.append("PersistentMapping [from=");
 		builder.append(getElement1());
-		builder.append(", transaction=");
+		builder.append(", to=");
 		builder.append(getElement2());
 		builder.append(", score=");
 		builder.append(getScore());

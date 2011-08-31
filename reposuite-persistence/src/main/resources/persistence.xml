@@ -113,7 +113,11 @@
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement</class>
 		<class>de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.MapScore</class>
-		<class>de.unisaarland.cs.st.reposuite.mapping.model.RCSBugMapping</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.Class2Bugs</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.File2Bugs</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.Method2Bugs</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>

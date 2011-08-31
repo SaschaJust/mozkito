@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
-import de.unisaarland.cs.st.reposuite.infozilla.Filters.FilterTextRemover;
+import de.unisaarland.cs.st.reposuite.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackEntry;
 import de.unisaarland.cs.st.reposuite.infozilla.model.stacktrace.TalkbackTrace;
 import de.unisaarland.cs.st.reposuite.infozilla.settings.InfozillaArguments;

@@ -29,7 +29,7 @@
  * 
  */
 
-package de.unisaarland.cs.st.reposuite.infozilla.Filters;
+package de.unisaarland.cs.st.reposuite.infozilla.filters;
 
 import java.util.List;
 
