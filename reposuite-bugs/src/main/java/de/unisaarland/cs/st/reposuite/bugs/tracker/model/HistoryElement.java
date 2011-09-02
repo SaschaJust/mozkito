@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -123,8 +123,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 						
 						if (object != null) {
 							type = object.getFirst() != null
-							? object.getClass().getClass()
-							: object.getSecond().getClass();
+							                                ? object.getClass().getClass()
+							                                : object.getSecond().getClass();
 						} else {
 							if (Logger.logWarn()) {
 								Logger.warn("HistoryElement tries to delete field that hasn't been set. Ignoring.");
@@ -141,9 +141,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			if (type == String.class) {
 				Map<String, StringTuple> stringValues = getChangedStringValues();
 				StringTuple tuple = stringValues.put(lowerFieldName, new StringTuple((String) values.get(fieldName)
-				                                                                     .getFirst(),
+				                                                                                    .getFirst(),
 				                                                                     (String) values.get(fieldName)
-				                                                                     .getSecond()));
+				                                                                                    .getSecond()));
 				if (tuple != null) {
 					ret = (Tuple<T, T>) new Tuple<String, String>(tuple.getOldValue(), tuple.getNewValue());
 				}
@@ -151,31 +151,31 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			} else if (type == Person.class) {
 				Map<String, PersonTuple> personValues = getChangedPersonValues();
 				PersonTuple container = personValues.put(lowerFieldName, new PersonTuple((Person) values.get(fieldName)
-				                                                                         .getFirst(),
+				                                                                                        .getFirst(),
 				                                                                         (Person) values.get(fieldName)
-				                                                                         .getSecond()));
+				                                                                                        .getSecond()));
 				if (container != null) {
 					ret = (Tuple<T, T>) new Tuple<Person, Person>(
-							container.getOldValue().getPersons().isEmpty()
-							? null
-							: container.getOldValue()
-							.getPersons()
-							.iterator()
-							.next(),
-							container.getNewValue().getPersons().isEmpty()
-							? null
-							: container.getNewValue()
-							.getPersons()
-							.iterator()
-							.next());
+					                                              container.getOldValue().getPersons().isEmpty()
+					                                                                                            ? null
+					                                                                                            : container.getOldValue()
+					                                                                                                       .getPersons()
+					                                                                                                       .iterator()
+					                                                                                                       .next(),
+					                                              container.getNewValue().getPersons().isEmpty()
+					                                                                                            ? null
+					                                                                                            : container.getNewValue()
+					                                                                                                       .getPersons()
+					                                                                                                       .iterator()
+					                                                                                                       .next());
 				}
 				setChangedPersonValues(personValues);
 			} else if (type.isEnum()) {
 				Map<String, EnumTuple> enumValues = getChangedEnumValues();
 				EnumTuple tuple = enumValues.put(lowerFieldName, new EnumTuple((Enum<?>) values.get(fieldName)
-				                                                               .getFirst(),
+				                                                                               .getFirst(),
 				                                                               (Enum<?>) values.get(fieldName)
-				                                                               .getSecond()));
+				                                                                               .getSecond()));
 				if (tuple != null) {
 					ret = (Tuple<T, T>) new Tuple<Enum<?>, Enum<?>>(tuple.getOldValue(), tuple.getNewValue());
 				}
@@ -183,16 +183,16 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			} else if (type == DateTime.class) {
 				Map<String, DateTimeTuple> dateValues = getChangedDateValues();
 				DateTimeTuple tuple = dateValues.put(lowerFieldName, new DateTimeTuple((DateTime) values.get(fieldName)
-				                                                                       .getFirst(),
+				                                                                                        .getFirst(),
 				                                                                       (DateTime) values.get(fieldName)
-				                                                                       .getSecond()));
+				                                                                                        .getSecond()));
 				if (tuple != null) {
 					ret = (Tuple<T, T>) new Tuple<DateTime, DateTime>(tuple.getOldValue(), tuple.getNewValue());
 				}
 				setChangedDateValues(dateValues);
 			} else {
 				throw new UnrecoverableError(values.get(fieldName).getClass().getCanonicalName()
-				                             + " is not supported for " + HistoryElement.class.getSimpleName() + ".");
+				        + " is not supported for " + HistoryElement.class.getSimpleName() + ".");
 			}
 		}
 		return ret;
@@ -288,8 +288,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public boolean contains(@NotNull @MinSize (min = 2) final String fieldName) {
 		String lowerFieldName = fieldName.toLowerCase();
 		return getChangedDateValues().containsKey(lowerFieldName) || getChangedEnumValues().containsKey(lowerFieldName)
-		|| getChangedPersonValues().containsKey(lowerFieldName)
-		|| getChangedStringValues().containsKey(lowerFieldName);
+		        || getChangedPersonValues().containsKey(lowerFieldName)
+		        || getChangedStringValues().containsKey(lowerFieldName);
 	}
 	
 	/*
@@ -308,14 +308,14 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			return false;
 		}
 		HistoryElement other = (HistoryElement) obj;
-		if (bugId != other.bugId) {
+		if (this.bugId != other.bugId) {
 			return false;
 		}
-		if (timestamp == null) {
+		if (this.timestamp == null) {
 			if (other.timestamp != null) {
 				return false;
 			}
-		} else if (!timestamp.equals(other.timestamp)) {
+		} else if (!this.timestamp.equals(other.timestamp)) {
 			return false;
 		}
 		return true;
@@ -330,29 +330,29 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		
 		if (getChangedStringValues().containsKey(lowerFieldName)) {
 			return new Tuple<String, String>(getChangedStringValues().get(lowerFieldName).getOldValue(),
-					getChangedStringValues().get(lowerFieldName).getNewValue());
+			                                 getChangedStringValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
 			return new Tuple<Person, Person>(
-					getChangedPersonValues().get(lowerFieldName).getOldValue().isEmpty()
-					? null
-					: getChangedPersonValues().get(lowerFieldName)
-					.getOldValue()
-					.getPersons()
-					.iterator()
-					.next(),
-					getChangedPersonValues().get(lowerFieldName).getNewValue().isEmpty()
-					? null
-					: getChangedPersonValues().get(lowerFieldName)
-					.getNewValue()
-					.getPersons()
-					.iterator()
-					.next());
+			                                 getChangedPersonValues().get(lowerFieldName).getOldValue().isEmpty()
+			                                                                                                     ? null
+			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
+			                                                                                                                               .getOldValue()
+			                                                                                                                               .getPersons()
+			                                                                                                                               .iterator()
+			                                                                                                                               .next(),
+			                                 getChangedPersonValues().get(lowerFieldName).getNewValue().isEmpty()
+			                                                                                                     ? null
+			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
+			                                                                                                                               .getNewValue()
+			                                                                                                                               .getPersons()
+			                                                                                                                               .iterator()
+			                                                                                                                               .next());
 		} else if (getChangedEnumValues().containsKey(lowerFieldName)) {
 			return new Tuple<Enum<?>, Enum<?>>(getChangedEnumValues().get(lowerFieldName).getOldValue(),
-					getChangedEnumValues().get(lowerFieldName).getNewValue());
+			                                   getChangedEnumValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedDateValues().containsKey(lowerFieldName)) {
 			return new Tuple<DateTime, DateTime>(getChangedDateValues().get(lowerFieldName).getOldValue(),
-					getChangedDateValues().get(lowerFieldName).getNewValue());
+			                                     getChangedDateValues().get(lowerFieldName).getNewValue());
 		}
 		return null;
 	}
@@ -371,7 +371,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @return the bugId
 	 */
 	public long getBugId() {
-		return bugId;
+		return this.bugId;
 	}
 	
 	/**
@@ -381,7 +381,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, DateTimeTuple> getChangedDateValues() {
-		return changedDateValues;
+		return this.changedDateValues;
 	}
 	
 	/**
@@ -391,7 +391,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, EnumTuple> getChangedEnumValues() {
-		return changedEnumValues;
+		return this.changedEnumValues;
 	}
 	
 	/**
@@ -400,7 +400,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@ElementCollection
 	public Map<String, PersonTuple> getChangedPersonValues() {
-		return changedPersonValues;
+		return this.changedPersonValues;
 	}
 	
 	/**
@@ -410,7 +410,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	// @ManyToMany (cascade = CascadeType.ALL)
 	@ElementCollection
 	public Map<String, StringTuple> getChangedStringValues() {
-		return changedStringValues;
+		return this.changedStringValues;
 	}
 	
 	/**
@@ -456,7 +456,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -474,7 +474,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	/*
@@ -483,7 +483,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement#getText()
 	 */
 	@Override
+	@Transient
 	public String getText() {
+		// FIXME
 		return null;
 	}
 	
@@ -493,7 +495,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/*
@@ -504,10 +506,10 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (bugId ^ (bugId >>> 32));
-		result = prime * result + ((timestamp == null)
-				? 0
-				: timestamp.hashCode());
+		result = (prime * result) + (int) (this.bugId ^ (this.bugId >>> 32));
+		result = (prime * result) + ((this.timestamp == null)
+		                                                     ? 0
+		                                                     : this.timestamp.hashCode());
 		return result;
 	}
 	
@@ -517,7 +519,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Transient
 	public boolean isEmpty() {
 		return getChangedDateValues().isEmpty() && getChangedEnumValues().isEmpty()
-		&& getChangedPersonValues().isEmpty() && getChangedStringValues().isEmpty();
+		        && getChangedPersonValues().isEmpty() && getChangedStringValues().isEmpty();
 	}
 	
 	/**
@@ -614,7 +616,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	public int size() {
 		return getChangedDateValues().size() + getChangedEnumValues().size() + getChangedPersonValues().size()
-		+ getChangedStringValues().size();
+		        + getChangedStringValues().size();
 	}
 	
 	/*
