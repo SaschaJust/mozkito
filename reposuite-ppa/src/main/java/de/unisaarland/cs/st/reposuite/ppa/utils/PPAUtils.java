@@ -237,6 +237,9 @@ public class PPAUtils {
 		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 		operationCriteria.eq("changedElementLocation", bestHit);
 		List<JavaChangeOperation> result = persistenceUtil.load(operationCriteria, 1);
+		if (result.isEmpty()) {
+			return null;
+		}
 		return result.get(0);
 		
 	}
@@ -256,7 +259,7 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil,
-	        final JavaChangeOperation op) {
+			final JavaChangeOperation op) {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
