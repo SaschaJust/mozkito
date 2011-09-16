@@ -4,7 +4,7 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama</artifactId>
 	<name>andama</name>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<description>Toolchain to process data in a flow model.</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
@@ -222,6 +222,16 @@
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
 			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>moreregex</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		    <groupId>dom4j</groupId>
+		    <artifactId>dom4j</artifactId>
+		    <version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
