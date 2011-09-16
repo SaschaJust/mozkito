@@ -10,7 +10,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -114,7 +113,7 @@ public class AndamaDataStorage<E> {
 	public void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		
 		if (Logger.logInfo()) {
-			Logger.info("Registering input " + ((AndamaThread<?, E>) writerThread).getName());
+			Logger.info("Registering input " + ((AndamaThreadable<?, E>) writerThread).getName());
 		}
 		
 		this.writers.add(writerThread);
@@ -132,7 +131,7 @@ public class AndamaDataStorage<E> {
 	public void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		
 		if (Logger.logInfo()) {
-			Logger.info("Registering output " + ((AndamaThread<E, ?>) readerThread).getName());
+			Logger.info("Registering output " + ((AndamaThreadable<E, ?>) readerThread).getName());
 		}
 		
 		this.readers.add(readerThread);
@@ -162,7 +161,7 @@ public class AndamaDataStorage<E> {
 		if (this.writers.contains(writerThread)) {
 			
 			if (Logger.logInfo()) {
-				Logger.info("Unregistering input " + ((AndamaThread<?, E>) writerThread).getName());
+				Logger.info("Unregistering input " + ((AndamaThreadable<?, E>) writerThread).getName());
 			}
 			
 			this.writers.remove(writerThread);
@@ -184,7 +183,7 @@ public class AndamaDataStorage<E> {
 		if (this.readers.contains(readerThread)) {
 			
 			if (Logger.logInfo()) {
-				Logger.info("Unregistering output " + ((AndamaThread<E, ?>) readerThread).getName());
+				Logger.info("Unregistering output " + ((AndamaThreadable<E, ?>) readerThread).getName());
 			}
 			
 			this.readers.remove(readerThread);

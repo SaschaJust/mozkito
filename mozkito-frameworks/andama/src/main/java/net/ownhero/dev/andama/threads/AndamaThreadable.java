@@ -30,23 +30,48 @@ import net.ownhero.dev.andama.storages.AndamaDataStorage;
  */
 public interface AndamaThreadable<K, V> {
 	
-	public void afterExecution();
-	
-	public void afterProcess();
-	
-	public void beforeExecution();
-	
-	public void beforeProcess();
+	/**
+	 * Adds a new {@link InputHook} to the {@link AndamaThreadable} object.
+	 * Default hooks should be replaced, if present.
+	 * 
+	 * @param hook
+	 *            the {@link InputHook} to be added.
+	 */
+	public void addInputHook(InputHook<K, V> hook);
 	
 	/**
-	 * @return true if there are no glitches found in the connector setup.
+	 * Adds a new {@link OutputHook} to the {@link AndamaThreadable} object.
+	 * Default hooks should be replaced, if present.
+	 * 
+	 * @param hook
+	 *            the {@link OutputHook} to be added.
 	 */
-	public boolean checkConnections();
+	public void addOutputHook(OutputHook<K, V> hook);
 	
 	/**
-	 * @return true if the thread hasn't been shutdown.
+	 * Adds a new {@link PostExecutionHook} to the {@link AndamaThreadable}
+	 * object. Default hooks should be replaced, if present.
+	 * 
+	 * @param hook
+	 *            the {@link PostExecutionHook} to be added.
 	 */
-	public boolean checkNotShutdown();
+	public void addPostExecutionHook(PostExecutionHook<K, V> hook);
+	
+	public void addPostInputHook(PostInputHook<K, V> hook);
+	
+	public void addPostOutputHook(PostOutputHook<K, V> hook);
+	
+	public void addPostProcessHook(PostProcessHook<K, V> hook);
+	
+	public void addPreExecutionHook(PreExecutionHook<K, V> hook);
+	
+	public void addPreInputHook(PreInputHook<K, V> hook);
+	
+	public void addPreOutputHook(PreOutputHook<K, V> hook);
+	
+	public void addPreProcessHook(PreProcessHook<K, V> hook);
+	
+	public void addProcessHook(ProcessHook<K, V> hook);
 	
 	/**
 	 * @param thread
@@ -96,6 +121,13 @@ public interface AndamaThreadable<K, V> {
 	public Collection<AndamaThreadable<?, K>> getInputThreads();
 	
 	/**
+	 * @return
+	 */
+	public Class<K> getInputType();
+	
+	public String getName();
+	
+	/**
 	 * @return the output storage of the instance. Can be null.
 	 */
 	public AndamaDataStorage<V> getOutputStorage();
@@ -104,6 +136,11 @@ public interface AndamaThreadable<K, V> {
 	 * @return
 	 */
 	public Collection<AndamaThreadable<V, ?>> getOutputThreads();
+	
+	/**
+	 * @return
+	 */
+	public Class<V> getOutputType();
 	
 	/**
 	 * @return true if the object has an input connector-false otherwise
@@ -148,13 +185,6 @@ public interface AndamaThreadable<K, V> {
 	public boolean isOutputConnected(AndamaThreadable<V, ?> thread);
 	
 	/**
-	 * @return true if {@link AndamaThreadable#shutdown()} has already been
-	 *         called on this object; false otherwise. The shutdown method can
-	 *         also be called internally, after an error occured.
-	 */
-	public boolean isShutdown();
-	
-	/**
 	 * Sets the input storage of the object. In case
 	 * {@link AndamaThreadable#hasInputConnector()} returns false, this method
 	 * won't do anything.
@@ -178,4 +208,9 @@ public interface AndamaThreadable<K, V> {
 	 * shuts down the current thread
 	 */
 	public void shutdown();
+	
+	/**
+	 * @return
+	 */
+	public boolean skipData();
 }

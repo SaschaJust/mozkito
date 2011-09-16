@@ -61,8 +61,8 @@ public class AndamaSettings {
 		                                           "If set to `true` no crash emails will be send!", null, false);
 		this.settingsArg = new URIArgument(
 		                                   this,
-		                                   "repoSuiteSettings",
-		                                   "Setting file that contains the JavaVM arguments for the current repo suite task.",
+		                                   "andamaSettings",
+		                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
 		                                   null, false);
 		
 	}

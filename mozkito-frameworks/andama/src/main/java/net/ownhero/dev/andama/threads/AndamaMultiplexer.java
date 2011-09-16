@@ -3,15 +3,13 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> implements InputOutputConnectable<K, K> {
+public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> {
 	
 	/**
 	 * @param threadGroup
@@ -38,17 +36,6 @@ public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> implements
 	@Override
 	public final boolean hasOutputConnector() {
 		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public K process(final K data) throws UnrecoverableError, Shutdown {
-		return data;
 	}
 	
 	/*

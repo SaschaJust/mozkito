@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.threads.AndamaThread;
+import net.ownhero.dev.andama.threads.AndamaThreadable;
 
 /**
  * @author just
@@ -21,41 +21,42 @@ public class Observer {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	public Date getRunningTime(long chainID) {
-		return null;
-	}
-	
-	public Thread.State getState(long chaindID) {
-		return null;
-	}
-	
-	public Collection<AndamaThread<?, ?>> getThreads(long chainID) {
-		return new LinkedList<AndamaThread<?, ?>>();
-	}
-	
-	public double getProgress(long chainID) {
+	public double getProgress(final long chainID) {
 		return 0d;
 	}
 	
-	private void registerChain(AndamaChain chain) {
-		
-	}
-	
-	private void unregisterChain(AndamaChain chain) {
-		
-	}
-	
-	private void spawnChain(Class<? extends AndamaChain> clazz, Properties settings) {
-		
-	}
-	
-	private Properties loadSettings(File file) {
+	public Date getRunningTime(final long chainID) {
 		return null;
+	}
+	
+	public Thread.State getState(final long chaindID) {
+		return null;
+	}
+	
+	public Collection<AndamaThreadable<?, ?>> getThreads(final long chainID) {
+		return new LinkedList<AndamaThreadable<?, ?>>();
+	}
+	
+	private Properties loadSettings(final File file) {
+		return null;
+	}
+	
+	private void registerChain(final AndamaChain chain) {
+		
+	}
+	
+	private void spawnChain(final Class<? extends AndamaChain> clazz,
+	                        final Properties settings) {
+		
+	}
+	
+	private void unregisterChain(final AndamaChain chain) {
+		
 	}
 	
 }

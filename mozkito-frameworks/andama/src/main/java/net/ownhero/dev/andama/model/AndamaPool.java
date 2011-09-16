@@ -6,7 +6,6 @@ package net.ownhero.dev.andama.model;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.graph.AndamaGraph;
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.kisa.Logger;
 
 /**

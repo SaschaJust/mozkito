@@ -14,7 +14,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaSource<T> extends AndamaThread<T, T> implements OnlyOutputConnectable<T> {
+public abstract class AndamaSource<T> extends AndamaThread<T, T> {
 	
 	/**
 	 * @see AndamaThread

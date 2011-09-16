@@ -11,15 +11,15 @@ import net.ownhero.dev.andama.threads.AndamaFilter;
 import net.ownhero.dev.andama.threads.AndamaMultiplexer;
 import net.ownhero.dev.andama.threads.AndamaSink;
 import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.AndamaThread;
+import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 @SuppressWarnings ("rawtypes")
-public class AndamaThreadComparator implements Comparator<AndamaThread> {
+public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 	
 	/*
 	 * (non-Javadoc)
@@ -27,8 +27,8 @@ public class AndamaThreadComparator implements Comparator<AndamaThread> {
 	 * Source < Multiplexer < Filter < Transformer < Demultiplexer < Sink
 	 */
 	@Override
-	public int compare(final AndamaThread arg0,
-	                   final AndamaThread arg1) {
+	public int compare(final AndamaThreadable arg0,
+	                   final AndamaThreadable arg1) {
 		if ((arg0 == null)) {
 			if ((arg1 == null)) {
 				return 0;

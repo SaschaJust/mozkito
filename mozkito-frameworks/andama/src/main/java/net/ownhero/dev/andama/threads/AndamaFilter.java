@@ -17,7 +17,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaFilter<T> extends AndamaThread<T, T> implements InputOutputConnectable<T, T> {
+public abstract class AndamaFilter<T> extends AndamaThread<T, T> {
 	
 	/**
 	 * @param threadGroup

@@ -18,7 +18,9 @@ package net.ownhero.dev.andama.threads;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -27,9 +29,11 @@ import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.checks.Check;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -43,15 +47,13 @@ import net.ownhero.dev.kisa.Logger;
  * @param <K>
  * @param <V>
  */
-// TODO make package protected
-public abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V>,
-        Comparable<AndamaThread<?, ?>> {
+abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V>, Comparable<AndamaThread<?, ?>> {
 	
 	/**
 	 * @param type
 	 * @return
 	 */
-	public static String getTypeName(final Type type) {
+	static String getTypeName(final Type type) {
 		if (type == null) {
 			return "(none)";
 		} else {
@@ -69,21 +71,38 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	}
 	
 	private AndamaDataStorage<K>                              inputStorage;
-	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads   = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
-	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads   = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
+	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads       = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
+	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads       = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
 	private V                                                 outputData;
 	private AndamaDataStorage<V>                              outputStorage;
-	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads  = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
-	private boolean                                           parallelizable = false;
+	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads      = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
+	private boolean                                           parallelizable     = false;
 	private final AndamaSettings                              settings;
 	private boolean                                           shutdown;
 	private final AndamaGroup                                 threadGroup;
 	private Tuple<K, CountDownLatch>                          inputDataTuple;
-	private CountDownLatch                                    outputLatch    = null;
+	private CountDownLatch                                    outputLatch        = null;
 	
-	private final boolean                                     waitForLatch   = false;
-	private boolean                                           skip;
-	private boolean                                           stage          = false;
+	private final boolean                                     waitForLatch       = false;
+	private final Set<CountDownLatch>                         processLatches     = new HashSet<CountDownLatch>();
+	
+	// hooks
+	private final Set<PreExecutionHook<K, V>>                 preExecutionHooks  = new HashSet<PreExecutionHook<K, V>>();
+	
+	private final Set<PreInputHook<K, V>>                     preInputHooks      = new HashSet<PreInputHook<K, V>>();
+	private final Set<InputHook<K, V>>                        inputHooks         = new HashSet<InputHook<K, V>>();
+	private final Set<PostInputHook<K, V>>                    postInputHooks     = new HashSet<PostInputHook<K, V>>();
+	
+	private final Set<PreProcessHook<K, V>>                   preProcessHooks    = new HashSet<PreProcessHook<K, V>>();
+	private final Set<ProcessHook<K, V>>                      processHooks       = new HashSet<ProcessHook<K, V>>();
+	private final Set<PostProcessHook<K, V>>                  postProcessHooks   = new HashSet<PostProcessHook<K, V>>();
+	
+	private final Set<PreOutputHook<K, V>>                    preOutputHooks     = new HashSet<PreOutputHook<K, V>>();
+	private final Set<OutputHook<K, V>>                       outputHooks        = new HashSet<OutputHook<K, V>>();
+	private final Set<PostOutputHook<K, V>>                   postOutputHooks    = new HashSet<PostOutputHook<K, V>>();
+	
+	private final Set<PostExecutionHook<K, V>>                postExecutionHooks = new HashSet<PostExecutionHook<K, V>>();
+	private boolean                                           skipData           = false;
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
@@ -97,19 +116,20 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
 	 */
-	// @NoneNull
-	public AndamaThread(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
+	public AndamaThread(@NotNull final AndamaGroup threadGroup, @NotNull final AndamaSettings settings,
+	        final boolean parallelizable) {
 		super(threadGroup, "default");
 		setName(this.getClass().getSimpleName());
 		this.parallelizable = parallelizable;
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
 		this.settings = settings;
-		AndamaArgument setting = null; // settings.getSetting("cache.size");
+		@SuppressWarnings ("unchecked")
+		AndamaArgument<Long> setting = (AndamaArgument<Long>) settings.getSetting("cache.size");
 		
 		if (hasInputConnector()) {
 			if (setting != null) {
-				this.inputStorage = new AndamaDataStorage<K>(((Long) setting.getValue()).intValue());
+				this.inputStorage = new AndamaDataStorage<K>(setting.getValue().intValue());
 			} else {
 				this.inputStorage = new AndamaDataStorage<K>();
 			}
@@ -117,7 +137,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		
 		if (hasOutputConnector()) {
 			if (setting != null) {
-				this.outputStorage = new AndamaDataStorage<V>(((Long) setting.getValue()).intValue());
+				this.outputStorage = new AndamaDataStorage<V>(setting.getValue().intValue());
 			} else {
 				this.outputStorage = new AndamaDataStorage<V>();
 			}
@@ -134,49 +154,142 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		                        "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
 		                        hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
-		// Condition.notNull(settings, "`settings` must not be null.");
-		Condition.notNull(threadGroup, "`threadGroup` must not be null.");
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
+		Condition.notNull(this.settings, "`settings` must not be null.");
+		Condition.notNull(this.threadGroup, "`threadGroup` must not be null.");
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#checkConnections()
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addInputHook(net.ownhero
+	 * .dev.andama.threads.InputHook)
 	 */
 	@Override
-	public final boolean checkConnections() {
+	public final void addInputHook(final InputHook<K, V> hook) {
+		getInputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addOutputHook(net.ownhero
+	 * .dev.andama.threads.OutputHook)
+	 */
+	@Override
+	public final void addOutputHook(final OutputHook<K, V> hook) {
+		getOutputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostExecutionHook(
+	 * net.ownhero.dev.andama.threads.PostExecutionHook)
+	 */
+	@Override
+	public final void addPostExecutionHook(final PostExecutionHook<K, V> hook) {
+		getPostExecutionHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostInputHook(net.
+	 * ownhero.dev.andama.threads.PostInputHook)
+	 */
+	@Override
+	public final void addPostInputHook(final PostInputHook<K, V> hook) {
+		getPostInputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostOutputHook(net
+	 * .ownhero.dev.andama.threads.PostOutputHook)
+	 */
+	@Override
+	public final void addPostOutputHook(final PostOutputHook<K, V> hook) {
+		getPostOutputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostProcessHook(net
+	 * .ownhero.dev.andama.threads.PostProcessHook)
+	 */
+	@Override
+	public final void addPostProcessHook(final PostProcessHook<K, V> hook) {
+		getPostProcessHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreExecutionHook(net
+	 * .ownhero.dev.andama.threads.PreExecutionHook)
+	 */
+	@Override
+	public final void addPreExecutionHook(final PreExecutionHook<K, V> hook) {
+		getPreExecutionHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreInputHook(net.ownhero
+	 * .dev.andama.threads.PreInputHook)
+	 */
+	@Override
+	public final void addPreInputHook(final PreInputHook<K, V> hook) {
+		getPreInputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreOutputHook(net.
+	 * ownhero.dev.andama.threads.PreOutputHook)
+	 */
+	@Override
+	public final void addPreOutputHook(final PreOutputHook<K, V> hook) {
+		getPreOutputHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreProcessHook(net
+	 * .ownhero.dev.andama.threads.PreProcessHook)
+	 */
+	@Override
+	public final void addPreProcessHook(final PreProcessHook<K, V> hook) {
+		getPreProcessHooks().add(hook);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#addProcessHook(net.ownhero
+	 * .dev.andama.threads.ProcessHook)
+	 */
+	@Override
+	public final void addProcessHook(final ProcessHook<K, V> hook) {
+		getProcessHooks().add(hook);
+	}
+	
+	/**
+	 * @param latch
+	 */
+	final void addProcessLatch(final CountDownLatch latch) {
+		this.processLatches.add(latch);
+	}
+	
+	/**
+	 * @return true if there are no glitches found in the connector setup.
+	 */
+	private final boolean checkConnections() {
 		boolean retval = true;
 		if (!isInputConnected()) {
 			
@@ -213,13 +326,10 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		return retval;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#checkNotShutdown()
+	/**
+	 * @return true if the thread hasn't been shutdown.
 	 */
-	@Override
-	public final boolean checkNotShutdown() {
+	private final boolean checkNotShutdown() {
 		if (isShutdown()) {
 			
 			if (Logger.logWarn()) {
@@ -380,6 +490,10 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		super.finalize();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#finish()
+	 */
 	@Override
 	public final synchronized void finish() {
 		
@@ -453,6 +567,20 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		return this.inputDataTuple.getFirst();
 	}
 	
+	// /**
+	// * @return the inputDataTuple
+	// */
+	// private Tuple<K, CountDownLatch> getInputDataTuple() {
+	// return this.inputDataTuple;
+	// }
+	
+	/**
+	 * @return the inputHooks
+	 */
+	protected final Set<InputHook<K, V>> getInputHooks() {
+		return this.inputHooks;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -481,6 +609,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	/**
 	 * @return
 	 */
+	@Override
 	@SuppressWarnings ("unchecked")
 	public final Class<K> getInputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
@@ -490,6 +619,13 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			return null;
 		}
 	}
+	
+	// /**
+	// * @return the knownThreads
+	// */
+	// private LinkedBlockingDeque<AndamaThreadable<?, ?>> getKnownThreads() {
+	// return this.knownThreads;
+	// }
 	
 	/**
 	 * @param thread
@@ -510,11 +646,18 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	}
 	
 	/**
-	 * @return the outputLatch
+	 * @return the outputHooks
 	 */
-	private CountDownLatch getOutputLatch() {
-		return this.outputLatch;
+	protected final Set<OutputHook<K, V>> getOutputHooks() {
+		return this.outputHooks;
 	}
+	
+	// /**
+	// * @return the outputLatch
+	// */
+	// private CountDownLatch getOutputLatch() {
+	// return this.outputLatch;
+	// }
 	
 	/*
 	 * (non-Javadoc)
@@ -544,6 +687,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	/**
 	 * @return
 	 */
+	@Override
 	@SuppressWarnings ("unchecked")
 	public final Class<V> getOutputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
@@ -553,6 +697,76 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			return null;
 		}
 		
+	}
+	
+	/**
+	 * @return the postExecutionHooks
+	 */
+	protected final Set<PostExecutionHook<K, V>> getPostExecutionHooks() {
+		return this.postExecutionHooks;
+	}
+	
+	/**
+	 * @return the postInputHooks
+	 */
+	protected final Set<PostInputHook<K, V>> getPostInputHooks() {
+		return this.postInputHooks;
+	}
+	
+	/**
+	 * @return the postOutputHooks
+	 */
+	protected final Set<PostOutputHook<K, V>> getPostOutputHooks() {
+		return this.postOutputHooks;
+	}
+	
+	/**
+	 * @return the postProcessHooks
+	 */
+	protected final Set<PostProcessHook<K, V>> getPostProcessHooks() {
+		return this.postProcessHooks;
+	}
+	
+	/**
+	 * @return the preExecutionHooks
+	 */
+	protected final Set<PreExecutionHook<K, V>> getPreExecutionHooks() {
+		return this.preExecutionHooks;
+	}
+	
+	/**
+	 * @return the preInputHooks
+	 */
+	protected final Set<PreInputHook<K, V>> getPreInputHooks() {
+		return this.preInputHooks;
+	}
+	
+	/**
+	 * @return the preOutputHooks
+	 */
+	protected final Set<PreOutputHook<K, V>> getPreOutputHooks() {
+		return this.preOutputHooks;
+	}
+	
+	/**
+	 * @return the preProcessHooks
+	 */
+	protected final Set<PreProcessHook<K, V>> getPreProcessHooks() {
+		return this.preProcessHooks;
+	}
+	
+	/**
+	 * @return the processHooks
+	 */
+	protected final Set<ProcessHook<K, V>> getProcessHooks() {
+		return this.processHooks;
+	}
+	
+	/**
+	 * @return the processLatches
+	 */
+	protected final Set<CountDownLatch> getProcessLatches() {
+		return this.processLatches;
 	}
 	
 	/**
@@ -680,13 +894,20 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		return this.parallelizable;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isShutdown()
+	/**
+	 * @return true if {@link AndamaThreadable#shutdown()} has already been
+	 *         called on this object; false otherwise. The shutdown method can
+	 *         also be called internally, after an error occurred.
 	 */
-	@Override
-	public final boolean isShutdown() {
+	boolean isShutdown() {
 		return this.shutdown;
+	}
+	
+	/**
+	 * @return the skipData
+	 */
+	protected final boolean isSkipData() {
+		return this.skipData;
 	}
 	
 	/**
@@ -712,18 +933,10 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	}
 	
 	/**
-	 * @return the next chunk from the inputStorage. Will be null if there isn't
-	 *         any input left and no writers are attached to the storage
-	 *         anymore.
-	 * @throws InterruptedException
+	 * @return
 	 */
-	private final K read() throws InterruptedException {
-		Tuple<K, CountDownLatch> data = this.inputStorage.read();
-		if (data == null) {
-			return null;
-		} else {
-			return data.getFirst();
-		}
+	private final boolean processingCompleted() {
+		return AndamaHook.allCompleted(getProcessHooks());
 	}
 	
 	/**
@@ -736,140 +949,375 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		return this.inputStorage.read();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
+	/**
+	 * @throws InterruptedException
+	 * 
 	 */
-	@SuppressWarnings ("unchecked")
+	final void readNext() throws InterruptedException {
+		this.inputDataTuple = readLatch();
+	}
+	
 	@Override
 	public final void run() {
+		CollectionCondition.maxSize(this.inputHooks, 1, "There must not be more than 1 input hooks, but got: %s",
+		                            this.inputHooks.size());
+		// @formatter:off
+		
+		/*
+		 *
+         *                   +----------------------------------------------------------------------------------------------------------------------------------+
+         *                   |                                                                                                                                  |
+         *                   |                                no                                                                                                |
+         *                   |                   +------------------------------------------------------------------------------------------------+             +--------------------------------------------------------------------------------------------------------------------+
+         *                   v                   |                                                                                                v                                                                                                                                  |
+         * +---------+     +----------+  yes   +------------+  yes   +----------+     +-------+     +-----------+     +-----------------+  no   +------------+     +---------+     +-------------+     +-------+  no    +-----------------+  no   +-----------+     +--------+     +------------+
+         * | PREEXEC | --> |          | -----> | completed? | -----> | PREINPUT | --> | INPUT | --> | POSTINPUT | --> | i_data == null? | ----> | PREPROCESS | --> | PROCESS | --> | POSTPROCESS | --> | skip? | -----> | p_data == null? | ----> | PREOUTPUT | --> | OUTPUT | --> | POSTOUTPUT |
+         * +---------+     |          |        +------------+        +----------+     +-------+     +-----------+     +-----------------+       +------------+     +---------+     +-------------+     +-------+        +-----------------+       +-----------+     +--------+     +------------+
+         *                 |          |                                                                                 |                 no      ^                                                      |                |
+         *                 | reading? | --------------------------------------------------------------------------------+-------------------------+                                                      |                | yes
+         *                 |          |                                                                                 |                                                                                |                v
+         *                 |          |                                                                                 |                                                                                |       yes    +-----------------+
+         *                 |          |                                                                                 +--------------------------------------------------------------------------------+------------> |  POSTEXECUTION  |
+         *                 +----------+                                                                                                                                                                  |              +-----------------+
+         *                   ^          yes                                                                                                                                                              |
+         *                   +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+         *
+		 */
+		
+		// @formatter:on
+		
 		try {
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Starting [beforeExecution] hook.");
-			}
-			
 			if (Logger.logInfo()) {
-				Logger.info("Launching " + getHandle() + ".");
+				Logger.info("Booting " + getHandle() + ".");
 			}
 			
-			beforeExecution();
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Finished [beforeExecution] hook.");
-			}
-			
-			if (!checkConnections() || !checkNotShutdown()) {
+			if (!checkNotShutdown()) {
+				if (Logger.logError()) {
+					Logger.error("Node status is 'shutdown'. Aborting...");
+				}
+				
 				return;
 			}
 			
-			if (hasInputConnector()) {
-				while (!isShutdown() && ((this.inputDataTuple = readLatch()) != null)) {
+			if (!checkConnections()) {
+				if (Logger.logError()) {
+					Logger.error("Connection check failed. Aborting...");
+				}
+				
+				return;
+			}
+			
+			// add default input hooks if none have been specified
+			if (isInputConnected() && getInputHooks().isEmpty()) {
+				
+				if (Logger.logInfo()) {
+					Logger.info("Adding default input hook to " + getHandle() + ".");
+				}
+				getInputHooks().add(new DefaultInputHook<K, V>(this));
+			}
+			
+			// add default output hooks if none have been specified
+			if (isOutputConnected() && getOutputHooks().isEmpty()) {
+				if (Logger.logInfo()) {
+					Logger.info("Adding default output hook to " + getHandle() + ".");
+				}
+				getOutputHooks().add(new DefaultOutputHook<K, V>(this));
+			}
+			
+			// PREEXECUTION HOOKS
+			if (!getPreExecutionHooks().isEmpty()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Starting [preExecution] hook(s): "
+					        + JavaUtils.collectionToString(getPreExecutionHooks()));
+				}
+				
+				for (PreExecutionHook<K, V> hook : getPreExecutionHooks()) {
 					do {
-						this.stage = false;
 						if (Logger.logDebug()) {
-							Logger.debug("Starting [beforeProcess] hook.");
+							Logger.debug("Executing hook: " + hook.getHandle());
 						}
 						
-						beforeProcess();
+						hook.execute();
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Finished [beforeProcess] hook.");
+							Logger.debug("Done with hook: " + hook.getHandle());
 						}
-						
-						K data = getInputData();
-						
-						if (Logger.logInfo()) {
-							Logger.info("Processing: " + data);
+					} while (!hook.completed());
+				}
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Finished [preExecution] hook processing.");
+				}
+			}
+			
+			do {
+				// we require to have the processing completed before we fetch
+				// new data
+				if (isInputConnected() && processingCompleted()) {
+					if (!getPreInputHooks().isEmpty()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Starting [preInput] hook(s): "
+							        + JavaUtils.collectionToString(getPreProcessHooks()));
 						}
-						
-						if (hasOutputConnector()) {
-							this.outputData = ((InputOutputConnectable<K, V>) this).process(data);
-							
-							if (this.outputData == null) {
-								shutdown();
-							} else {
-								if (!this.skip) {
-									if (Logger.logDebug()) {
-										Logger.debug("Handing over: " + this.outputData);
-									}
-									
-									writeOutputData(getOutputData());
-								} else {
-									this.skip = false;
+						for (PreInputHook<K, V> hook : getPreInputHooks()) {
+							int i = 0;
+							while (!hook.completed()) {
+								++i;
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook (" + i + "x round): " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
 								}
 							}
-						} else {
-							((OnlyInputConnectable<K>) this).process(data);
+						}
+						if (Logger.logDebug()) {
+							Logger.debug("Finished [preInput] hook processing.");
+						}
+					}
+					
+					if (!getInputHooks().isEmpty()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Starting [input] hook(s): "
+							        + JavaUtils.collectionToString(getPreProcessHooks()));
+						}
+						
+						for (InputHook<K, V> hook : getInputHooks()) {
+							int i = 0;
+							while (!hook.completed()) {
+								++i;
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook (" + i + "x round): " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
+								}
+							}
 						}
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Starting [afterProcess] hook.");
+							Logger.debug("Finished [input] hook processing.");
+						}
+					}
+					
+					if (!getPostInputHooks().isEmpty()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Starting [postInput] hook(s): "
+							        + JavaUtils.collectionToString(getPreProcessHooks()));
 						}
 						
-						afterProcess();
+						for (PostInputHook<K, V> hook : getPostInputHooks()) {
+							int i = 0;
+							while (!hook.completed()) {
+								++i;
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook (" + i + "x round): " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
+								}
+							}
+						}
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Finished [afterProcess] hook.");
+							Logger.debug("Finished [postInput] hook processing.");
 						}
-						
-						// decrease latch for waiting threads
-						this.inputDataTuple.getSecond().countDown();
-					} while (!this.stage);
+					}
+					
+					// return if we did not fetch any new data from input
+					if (getInputData() == null) {
+						return;
+					}
 				}
-			} else {
-				do {
+				
+				// PREPROCESS HOOKS
+				if (!getPreProcessHooks().isEmpty()) {
 					if (Logger.logDebug()) {
-						Logger.debug("Starting [beforeProcess] hook.");
+						Logger.debug("Starting [preProcess] hook(s): "
+						        + JavaUtils.collectionToString(getPreProcessHooks()));
 					}
 					
-					beforeProcess();
+					for (PreProcessHook<K, V> hook : getPreProcessHooks()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Executing hook: " + hook.getHandle());
+						}
+						
+						hook.execute();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Done with hook: " + hook.getHandle());
+						}
+					}
 					
 					if (Logger.logDebug()) {
-						Logger.debug("Finished [beforeProcess] hook.");
+						Logger.debug("Finished [preProcess] hook processing.");
+					}
+				}
+				
+				// PROCESS HOOKS
+				if (!getProcessHooks().isEmpty()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Starting [process] hook(s): " + JavaUtils.collectionToString(getProcessHooks()));
 					}
 					
-					if (Logger.logInfo()) {
-						Logger.info("Preparing data.");
+					for (ProcessHook<K, V> hook : getProcessHooks()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Executing hook: " + hook.getHandle());
+						}
+						
+						hook.execute();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Done with hook: " + hook.getHandle());
+						}
 					}
 					
-					this.outputData = ((OnlyOutputConnectable<V>) this).process();
+					if (Logger.logDebug()) {
+						Logger.debug("Finished [process] hook processing.");
+					}
+				}
+				
+				// POSTPROCESS HOOKS
+				if (!getPostProcessHooks().isEmpty()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Starting [postProcess] hook(s): "
+						        + JavaUtils.collectionToString(getPostProcessHooks()));
+					}
 					
-					if (this.outputData == null) {
-						shutdown();
-					} else {
-						if (!this.skip) {
+					for (PostProcessHook<K, V> hook : getPostProcessHooks()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Executing hook: " + hook.getHandle());
+						}
+						
+						hook.execute();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Done with hook: " + hook.getHandle());
+						}
+					}
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Finished [postProcess] hook processing.");
+					}
+				}
+				
+				if (!skipData()) {
+					if (getOutputData() != null) {
+						// PREOUTPUT HOOKS
+						if (!getPreOutputHooks().isEmpty()) {
 							if (Logger.logDebug()) {
-								Logger.debug("Handing over: " + this.outputData);
-							} else {
-								this.skip = false;
+								Logger.debug("Starting [preOutput] hook(s): "
+								        + JavaUtils.collectionToString(getPreOutputHooks()));
 							}
 							
-							writeOutputData(getOutputData());
+							for (PreOutputHook<K, V> hook : getPreOutputHooks()) {
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook: " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook: " + hook.getHandle());
+								}
+							}
+							
+							if (Logger.logDebug()) {
+								Logger.debug("Finished [preOutput] hook processing.");
+							}
 						}
+						
+						// OUTPUT HOOKS
+						if (!getOutputHooks().isEmpty()) {
+							if (Logger.logDebug()) {
+								Logger.debug("Starting [output] hook(s): "
+								        + JavaUtils.collectionToString(getOutputHooks()));
+							}
+							
+							for (OutputHook<K, V> hook : getOutputHooks()) {
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook: " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook: " + hook.getHandle());
+								}
+							}
+							
+							if (Logger.logDebug()) {
+								Logger.debug("Finished [output] hook processing.");
+							}
+						}
+						
+						// POSTOUTPUT HOOKS
+						if (!getPostOutputHooks().isEmpty()) {
+							if (Logger.logDebug()) {
+								Logger.debug("Starting [postOutput] hook(s): "
+								        + JavaUtils.collectionToString(getPostOutputHooks()));
+							}
+							
+							for (PostOutputHook<K, V> hook : getPostOutputHooks()) {
+								if (Logger.logDebug()) {
+									Logger.debug("Executing hook: " + hook.getHandle());
+								}
+								
+								hook.execute();
+								
+								if (Logger.logDebug()) {
+									Logger.debug("Done with hook: " + hook.getHandle());
+								}
+							}
+							
+							if (Logger.logDebug()) {
+								Logger.debug("Finished [postProcess] hook processing.");
+							}
+						}
+						
+						setOutputData(null);
 					}
+				} else {
+					setSkipData(false);
+				}
+			} while (!processingCompleted() || (getInputData() == null));
+			// repeat until we got no more input data and are not processing
+			// further data
+			
+			// POSTEXECUTION HOOKS
+			if (!getPostExecutionHooks().isEmpty()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Starting [postExecution] hook(s): "
+					        + JavaUtils.collectionToString(getPostExecutionHooks()));
+				}
+				
+				for (PostExecutionHook<K, V> hook : getPostExecutionHooks()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Executing hook: " + hook.getHandle());
+					}
+					
+					hook.execute();
 					
 					if (Logger.logDebug()) {
-						Logger.debug("Starting [afterProcess] hook.");
+						Logger.debug("Done with hook: " + hook.getHandle());
 					}
-					
-					afterProcess();
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Finished [afterProcess] hook.");
-					}
-				} while (this.outputData != null);
-			}
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Starting [afterExecution] hook.");
-			}
-			
-			afterExecution();
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Finished [afterExecution] hook.");
-				Logger.debug("Cleaning up and terminating: " + getHandle());
+				}
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Finished [postExecution] hook processing.");
+				}
 			}
 			
 			finish();
@@ -914,14 +1362,6 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		this.outputData = outputData;
 	}
 	
-	/**
-	 * @param outputLatch
-	 *            the outputLatch to set
-	 */
-	private void setOutputLatch(final CountDownLatch outputLatch) {
-		this.outputLatch = outputLatch;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -944,6 +1384,14 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 */
 	private void setShutdown(final boolean shutdown) {
 		this.shutdown = shutdown;
+	}
+	
+	/**
+	 * @param skipData
+	 *            the skipData to set
+	 */
+	protected final void setSkipData(final boolean skipData) {
+		this.skipData = skipData;
 	}
 	
 	/*
@@ -970,9 +1418,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 			
 			setShutdown(true);
 			
-			AndamaThreadable<V, ?> outputThread = null;
+			AndamaThread<V, ?> outputThread = null;
 			
-			while ((outputThread = this.outputThreads.poll()) != null) {
+			while ((outputThread = (AndamaThread<V, ?>) this.outputThreads.poll()) != null) {
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
@@ -980,18 +1428,18 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 				outputThread.disconnectInput(this);
 			}
 			
-			AndamaThreadable<?, K> inputThread = null;
+			AndamaThread<?, K> inputThread = null;
 			
-			while ((inputThread = this.inputThreads.poll()) != null) {
+			while ((inputThread = (AndamaThread<?, K>) this.inputThreads.poll()) != null) {
 				if (Logger.logDebug()) {
 					Logger.debug("Disconnecting from input thread: " + inputThread.getHandle());
 				}
 				inputThread.disconnectOutput(this);
 			}
 			
-			AndamaThreadable<?, ?> thread = null;
+			AndamaThread<?, ?> thread = null;
 			
-			while ((thread = this.knownThreads.poll()) != null) {
+			while ((thread = (AndamaThread<?, ?>) this.knownThreads.poll()) != null) {
 				if (!thread.isShutdown()) {
 					thread.shutdown();
 				}
@@ -999,26 +1447,9 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 		}
 	}
 	
-	/**
-	 * @param data
-	 * @return
-	 */
-	public final V skip(final Object data) {
-		if (Logger.logInfo()) {
-			Logger.info("Skipping: " + data);
-		}
-		
-		this.skip = true;
-		return null;
-	}
-	
-	/**
-	 * @param data
-	 * @return
-	 */
-	public final V stage(final V data) {
-		this.stage = true;
-		return data;
+	@Override
+	public boolean skipData() {
+		return this.skipData = true;
 	}
 	
 	/*
@@ -1075,7 +1506,7 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private final CountDownLatch write(final V data) throws InterruptedException {
+	final CountDownLatch write(final V data) throws InterruptedException {
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
@@ -1092,15 +1523,15 @@ public abstract class AndamaThread<K, V> extends Thread implements AndamaThreada
 	 * @param data
 	 * @throws InterruptedException
 	 */
-	private void writeOutputData(final V data) throws InterruptedException {
-		CountDownLatch latch = write(data);
+	final void writeOutputData(final V data) throws InterruptedException {
+		this.outputLatch = write(data);
 		
 		if (this.isWaitForLatch()) {
 			if (Logger.logDebug()) {
 				Logger.debug("Waiting for latch to be resolved.");
 			}
 			
-			latch.await();
+			this.outputLatch.await();
 		}
 	}
 	

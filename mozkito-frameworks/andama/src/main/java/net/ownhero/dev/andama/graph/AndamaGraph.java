@@ -36,7 +36,6 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaMultiplexer;
 import net.ownhero.dev.andama.threads.AndamaSink;
 import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.AndamaThread;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
@@ -76,9 +75,10 @@ public class AndamaGraph {
 		
 		LinkedList<Node> openBranches = new LinkedList<Node>();
 		
-		PriorityQueue<AndamaThread<?, ?>> threads = new PriorityQueue<AndamaThread<?, ?>>(threadGroup.getThreads()
-		                                                                                             .size(),
-		                                                                                  new AndamaThreadComparator());
+		PriorityQueue<AndamaThreadable<?, ?>> threads = new PriorityQueue<AndamaThreadable<?, ?>>(
+		                                                                                          threadGroup.getThreads()
+		                                                                                                     .size(),
+		                                                                                          new AndamaThreadComparator());
 		threads.addAll(threadGroup.getThreads());
 		final AndamaGraph andamaGraph = new AndamaGraph(threadGroup);
 		
@@ -124,16 +124,16 @@ public class AndamaGraph {
 	 * @param openBranches
 	 * @param andamaGraph
 	 */
-	private static void buildGraph(final PriorityQueue<AndamaThread<?, ?>> threads,
+	private static void buildGraph(final PriorityQueue<AndamaThreadable<?, ?>> threads,
 	                               final LinkedList<Node> openBranches,
 	                               final AndamaGraph andamaGraph) {
 		
-		for (AndamaThread<?, ?> thread : threads) {
+		for (AndamaThreadable<?, ?> thread : threads) {
 			
 			if (AndamaSource.class.isAssignableFrom(thread.getClass())) {
 				Node newNode = andamaGraph.getNode(thread);
 				openBranches.add(newNode);
-				PriorityQueue<AndamaThread<?, ?>> threadsNew = new PriorityQueue<AndamaThread<?, ?>>(threads);
+				PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(threads);
 				threadsNew.remove(thread);
 				
 				buildGraph(threadsNew, openBranches, andamaGraph);
@@ -153,7 +153,8 @@ public class AndamaGraph {
 						openBranches.remove(fromNode);
 					}
 					
-					PriorityQueue<AndamaThread<?, ?>> threadsNew = new PriorityQueue<AndamaThread<?, ?>>(threads);
+					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                             threads);
 					threadsNew.remove(thread);
 					
 					buildGraph(threadsNew, openBranches, andamaGraph);
@@ -179,7 +180,8 @@ public class AndamaGraph {
 						andamaGraph.connectNode(fromNode, newNode);
 						openBranches.remove(fromNode);
 						openBranches.add(newNode);
-						PriorityQueue<AndamaThread<?, ?>> threadsNew = new PriorityQueue<AndamaThread<?, ?>>(threads);
+						PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+						                                                                                             threads);
 						threadsNew.remove(thread);
 						buildGraph(threadsNew, openBranches, andamaGraph);
 						
@@ -207,7 +209,8 @@ public class AndamaGraph {
 						openBranches.remove(fromNode);
 					}
 					openBranches.add(newNode);
-					PriorityQueue<AndamaThread<?, ?>> threadsNew = new PriorityQueue<AndamaThread<?, ?>>(threads);
+					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                             threads);
 					threadsNew.remove(thread);
 					
 					buildGraph(threadsNew, openBranches, andamaGraph);
@@ -226,7 +229,8 @@ public class AndamaGraph {
 					andamaGraph.connectNode(fromNode, newNode);
 					openBranches.remove(fromNode);
 					
-					PriorityQueue<AndamaThread<?, ?>> threadsNew = new PriorityQueue<AndamaThread<?, ?>>(threads);
+					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                             threads);
 					threadsNew.remove(thread);
 					buildGraph(threadsNew, openBranches, andamaGraph);
 					checkCompleted(threadsNew, openBranches, andamaGraph);
@@ -238,7 +242,7 @@ public class AndamaGraph {
 		}
 	}
 	
-	private static void checkCompleted(final Collection<AndamaThread<?, ?>> threads,
+	private static void checkCompleted(final Collection<AndamaThreadable<?, ?>> threads,
 	                                   final LinkedList<Node> openBranches,
 	                                   final AndamaGraph andamaGraph) {
 		// did we build a complete graph, i.e. no open branches left or only
@@ -272,7 +276,7 @@ public class AndamaGraph {
 	 * @param graph
 	 * @return
 	 */
-	private static Collection<Node> getCandidates(final AndamaThread<?, ?> thread,
+	private static Collection<Node> getCandidates(final AndamaThreadable<?, ?> thread,
 	                                              final List<Node> openBranches,
 	                                              final AndamaGraph graph) {
 		final String inputType = graph.getProperty(NodeProperty.INPUTTYPE, thread).toString();
@@ -341,9 +345,8 @@ public class AndamaGraph {
 		}
 		
 		String fileName = cache + andamaFileEnding;
-		
-		URL resource = threadGroup.getThreads().iterator().next().getClass()
-		                          .getResource(FileUtils.fileSeparator + fileName + ".zip");
+		AndamaThreadable<?, ?> threadable = threadGroup.getThreads().iterator().next();
+		URL resource = threadable.getClass().getResource(FileUtils.fileSeparator + fileName + ".zip");
 		
 		if (resource != null) {
 			FileUtils.unzip(new File(resource.getPath()), FileUtils.tmpDir);
@@ -389,7 +392,7 @@ public class AndamaGraph {
 		}
 		
 		if (!this.initialized) {
-			for (AndamaThread<?, ?> thread : threadGroup.getThreads()) {
+			for (AndamaThreadable<?, ?> thread : threadGroup.getThreads()) {
 				Node node = createNode(thread);
 				this.nodes.put(node.getProperty(NodeProperty.NODENAME.name()).toString(), node);
 			}
@@ -453,7 +456,7 @@ public class AndamaGraph {
 			AndamaThreadable<?, V> fromThread = null;
 			AndamaThreadable<V, ?> toThread = null;
 			
-			for (AndamaThread<?, ?> thread : this.threadGroup.getThreads()) {
+			for (AndamaThreadable<?, ?> thread : this.threadGroup.getThreads()) {
 				if (thread.getHandle().equals(fromName)) {
 					fromThread = (AndamaThreadable<?, V>) thread;
 				} else if (thread.getHandle().equals(toName)) {
@@ -473,7 +476,7 @@ public class AndamaGraph {
 	 * @param thread
 	 * @return
 	 */
-	private Node createNode(final AndamaThread<?, ?> thread) {
+	private Node createNode(final AndamaThreadable<?, ?> thread) {
 		Transaction tx = this.graph.beginTx();
 		Node node = this.graph.createNode();
 		
@@ -573,7 +576,7 @@ public class AndamaGraph {
 	 * @param thread
 	 * @return
 	 */
-	private Node getNode(final AndamaThread<?, ?> thread) {
+	private Node getNode(final AndamaThreadable<?, ?> thread) {
 		return this.nodes.get(getProperty(NodeProperty.NODENAME, thread));
 	}
 	
@@ -627,7 +630,7 @@ public class AndamaGraph {
 	 * @return
 	 */
 	private Object getProperty(final NodeProperty property,
-	                           final AndamaThread<?, ?> thread) {
+	                           final AndamaThreadable<?, ?> thread) {
 		switch (property) {
 			case INPUTTYPE:
 				return thread.hasInputConnector()

@@ -27,7 +27,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> implements InputOutputConnectable<K, V> {
+public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 	
 	/**
 	 * @param threadGroup

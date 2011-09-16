@@ -6,25 +6,17 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
- * {@link AndamaSink}s are the end points of a tool chain. In general, they
- * provide a connection to a database back-end (e.g. {@link RepositoryPersister}
- * ). There can also be void sinks in case you don't want to store anything,
- * e.g. if you just want to do some analysis. {@link RepositoryVoidSink} is an
- * example for this. All instances of {@link AndamaSink} must have an input
- * connector, but must not have an output connector.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaSink<T> extends AndamaThread<T, T> {
+public abstract class AndamaDecomposer<K, V> extends AndamaThread<K, V> {
 	
 	/**
-	 * @see AndamaThread
 	 * @param threadGroup
-	 * @param name
 	 * @param settings
+	 * @param parallelizable
 	 */
-	public AndamaSink(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
+	public AndamaDecomposer(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	
@@ -46,7 +38,7 @@ public abstract class AndamaSink<T> extends AndamaThread<T, T> {
 	 */
 	@Override
 	public final boolean hasOutputConnector() {
-		return false;
+		return true;
 	}
 	
 	/*
@@ -67,7 +59,7 @@ public abstract class AndamaSink<T> extends AndamaThread<T, T> {
 		}
 		
 		builder.append(' ');
-		builder.append(getTypeName(getInputClassType())).append(':');
+		builder.append(getTypeName(getInputClassType())).append('~').append(getTypeName(getOutputClassType()));
 		builder.append(' ');
 		
 		if (isParallelizable()) {
@@ -76,4 +68,5 @@ public abstract class AndamaSink<T> extends AndamaThread<T, T> {
 		
 		return builder.toString();
 	}
+	
 }
