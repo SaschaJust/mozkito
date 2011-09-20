@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.surefire</groupId>
