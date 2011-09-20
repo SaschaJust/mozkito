@@ -289,7 +289,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	/**
 	 * @return true if there are no glitches found in the connector setup.
 	 */
-	private final boolean checkConnections() {
+	@Override
+	public final boolean checkConnections() {
 		boolean retval = true;
 		if (!isInputConnected()) {
 			
@@ -564,15 +565,10 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return the inputData
 	 */
 	public final K getInputData() {
-		return this.inputDataTuple.getFirst();
+		return this.inputDataTuple != null
+		                                  ? this.inputDataTuple.getFirst()
+		                                  : null;
 	}
-	
-	// /**
-	// * @return the inputDataTuple
-	// */
-	// private Tuple<K, CountDownLatch> getInputDataTuple() {
-	// return this.inputDataTuple;
-	// }
 	
 	/**
 	 * @return the inputHooks
@@ -620,13 +616,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		}
 	}
 	
-	// /**
-	// * @return the knownThreads
-	// */
-	// private LinkedBlockingDeque<AndamaThreadable<?, ?>> getKnownThreads() {
-	// return this.knownThreads;
-	// }
-	
 	/**
 	 * @param thread
 	 * @return the type of the output chunks of the given thread
@@ -651,13 +640,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	protected final Set<OutputHook<K, V>> getOutputHooks() {
 		return this.outputHooks;
 	}
-	
-	// /**
-	// * @return the outputLatch
-	// */
-	// private CountDownLatch getOutputLatch() {
-	// return this.outputLatch;
-	// }
 	
 	/*
 	 * (non-Javadoc)
@@ -999,16 +981,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 				return;
 			}
 			
-			if (!checkConnections()) {
-				if (Logger.logError()) {
-					Logger.error("Connection check failed. Aborting...");
-				}
-				
-				return;
-			}
-			
 			// add default input hooks if none have been specified
-			if (isInputConnected() && getInputHooks().isEmpty()) {
+			if (hasInputConnector() && getInputHooks().isEmpty()) {
 				
 				if (Logger.logInfo()) {
 					Logger.info("Adding default input hook to " + getHandle() + ".");
@@ -1017,7 +991,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			}
 			
 			// add default output hooks if none have been specified
-			if (isOutputConnected() && getOutputHooks().isEmpty()) {
+			if (hasOutputConnector() && getOutputHooks().isEmpty()) {
 				if (Logger.logInfo()) {
 					Logger.info("Adding default output hook to " + getHandle() + ".");
 				}
@@ -1053,15 +1027,15 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			do {
 				// we require to have the processing completed before we fetch
 				// new data
-				if (isInputConnected() && processingCompleted()) {
+				if (hasInputConnector() && isInputConnected() && processingCompleted()) {
 					if (!getPreInputHooks().isEmpty()) {
 						if (Logger.logDebug()) {
 							Logger.debug("Starting [preInput] hook(s): "
-							        + JavaUtils.collectionToString(getPreProcessHooks()));
+							        + JavaUtils.collectionToString(getPreInputHooks()));
 						}
 						for (PreInputHook<K, V> hook : getPreInputHooks()) {
 							int i = 0;
-							while (!hook.completed()) {
+							do {
 								++i;
 								
 								if (Logger.logDebug()) {
@@ -1073,7 +1047,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 								if (Logger.logDebug()) {
 									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
 								}
-							}
+							} while (!hook.completed());
 						}
 						if (Logger.logDebug()) {
 							Logger.debug("Finished [preInput] hook processing.");
@@ -1082,13 +1056,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 					
 					if (!getInputHooks().isEmpty()) {
 						if (Logger.logDebug()) {
-							Logger.debug("Starting [input] hook(s): "
-							        + JavaUtils.collectionToString(getPreProcessHooks()));
+							Logger.debug("Starting [input] hook(s): " + JavaUtils.collectionToString(getInputHooks()));
 						}
 						
 						for (InputHook<K, V> hook : getInputHooks()) {
 							int i = 0;
-							while (!hook.completed()) {
+							do {
 								++i;
 								
 								if (Logger.logDebug()) {
@@ -1100,7 +1073,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 								if (Logger.logDebug()) {
 									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
 								}
-							}
+							} while (!hook.completed());
 						}
 						
 						if (Logger.logDebug()) {
@@ -1111,12 +1084,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 					if (!getPostInputHooks().isEmpty()) {
 						if (Logger.logDebug()) {
 							Logger.debug("Starting [postInput] hook(s): "
-							        + JavaUtils.collectionToString(getPreProcessHooks()));
+							        + JavaUtils.collectionToString(getPostInputHooks()));
 						}
 						
 						for (PostInputHook<K, V> hook : getPostInputHooks()) {
 							int i = 0;
-							while (!hook.completed()) {
+							do {
 								++i;
 								
 								if (Logger.logDebug()) {
@@ -1128,7 +1101,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 								if (Logger.logDebug()) {
 									Logger.debug("Done with hook (" + i + "x round): " + hook.getHandle());
 								}
-							}
+							} while (!hook.completed());
 						}
 						
 						if (Logger.logDebug()) {
@@ -1292,7 +1265,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 				} else {
 					setSkipData(false);
 				}
-			} while (!processingCompleted() || (getInputData() == null));
+			} while (!processingCompleted() || (getInputData() != null));
 			// repeat until we got no more input data and are not processing
 			// further data
 			
@@ -1324,7 +1297,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		} catch (Exception e) {
 			
 			if (Logger.logError()) {
-				Logger.error("Caught exception: " + e.getMessage());
+				Logger.error("Caught exception: " + e.getClass().getSimpleName());
+				Logger.error(e.getMessage(), e);
 				Logger.error("Shutting down.");
 			}
 			shutdown();
@@ -1447,6 +1421,10 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#skipData()
+	 */
 	@Override
 	public boolean skipData() {
 		return this.skipData = true;

@@ -28,7 +28,6 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class OutputFileArgument extends AndamaArgument<File> {
 	
-	// FIXME write test cases
 	private boolean overwrite   = false;
 	private boolean selfWritten = false;
 	

@@ -9,6 +9,9 @@ package net.ownhero.dev.andama.threads;
  */
 public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	
+	/**
+	 * @param thread
+	 */
 	public ProcessHook(final AndamaThread<K, V> thread) {
 		super(thread);
 	}

@@ -27,7 +27,6 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class InputFileArgument extends AndamaArgument<File> {
 	
-	// FIXME write test cases
 	/**
 	 * Constructor for FileArgument. Besides the obvious and general
 	 * RepoSuiteArgument parameters, FileArguments can be configures using two

@@ -4,8 +4,9 @@
 package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.graph.AndamaGraph;
+import net.ownhero.dev.andama.threads.AndamaGraph;
 import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -48,8 +49,21 @@ public class AndamaPool {
 		connectThreads();
 		
 		for (Thread thread : this.threads.getThreads()) {
+			if (!((AndamaThreadable<?, ?>) thread).checkConnections()) {
+				for (Thread thread2 : this.threads.getThreads()) {
+					((AndamaThreadable<?, ?>) thread2).shutdown();
+				}
+				shutdown();
+				return;
+			}
+		}
+		
+		for (Thread thread : this.threads.getThreads()) {
 			thread.start();
 		}
+		
+		AndamaWatcher watcher = new AndamaWatcher(getThreadGroup());
+		watcher.start();
 		
 		for (Thread thread : this.threads.getThreads()) {
 			try {
@@ -61,6 +75,12 @@ public class AndamaPool {
 				}
 				throw new Shutdown();
 			}
+		}
+		
+		watcher.terminate();
+		try {
+			watcher.join(60000);
+		} catch (InterruptedException e) {
 		}
 	}
 	

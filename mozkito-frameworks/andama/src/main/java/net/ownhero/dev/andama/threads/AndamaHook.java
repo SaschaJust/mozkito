@@ -38,11 +38,18 @@ public abstract class AndamaHook<K, V> implements Hook<K, V> {
 	public AndamaHook(final AndamaThread<K, V> thread) {
 		this.thread = thread;
 		
-		// FIXME actually we have to step up the ladder to find a class which
-		// has AndamaHook as a superclass
+		Class<?> clazz = this.getClass();
+		
+		while ((clazz.getSuperclass() != null) && (clazz.getSuperclass() != AndamaHook.class)) {
+			clazz = clazz.getSuperclass();
+		}
+		
+		if (clazz.getSuperclass() != AndamaHook.class) {
+			// TODO ERROR
+		}
+		
 		@SuppressWarnings ("unchecked")
-		Class<? extends AndamaHook<K, V>> superclass = (Class<? extends AndamaHook<K, V>>) this.getClass()
-		                                                                                       .getSuperclass();
+		Class<? extends AndamaHook<K, V>> superclass = (Class<? extends AndamaHook<K, V>>) clazz;
 		
 		try {
 			Method method = AndamaThread.class.getDeclaredMethod("add" + superclass.getSimpleName(), superclass);

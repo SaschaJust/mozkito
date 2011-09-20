@@ -23,12 +23,14 @@ public class TextSource extends AndamaSource<String> {
 		super(threadGroup, settings, parallelizable);
 		// TODO process File
 		// FILE (txt, zip, gz, bz2, 7z, tar)
+		addHooks();
 	}
 	
 	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
 	        final InputStream stream) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process stream
+		addHooks();
 	}
 	
 	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
@@ -36,6 +38,7 @@ public class TextSource extends AndamaSource<String> {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URI
 		// HTTP, HTTPS, FTP, FTPS, FILE
+		addHooks();
 	}
 	
 	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
@@ -43,8 +46,19 @@ public class TextSource extends AndamaSource<String> {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URL
 		// HTTP, HTTPS, FTP, FTPS, FILE
+		addHooks();
+	}
+	
+	private void addHooks() {
 		
-		org.dom4j.DocumentFactory.getInstance().createDocument();
+	}
+	
+	/**
+	 * @param url
+	 * @return
+	 */
+	private boolean checkAvailability(final URL url) {
+		return true;
 	}
 	
 }

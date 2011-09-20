@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.graph;
+package net.ownhero.dev.andama.threads;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,14 +30,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.threads.AndamaDemultiplexer;
-import net.ownhero.dev.andama.threads.AndamaFilter;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaMultiplexer;
-import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.AndamaThreadable;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.graph.RelationType;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
@@ -88,6 +81,7 @@ public class AndamaGraph {
 				Logger.warn("Toolchain layout has not been created yet. Building graph... (This might take a while)");
 			}
 			
+			prepareGraph(threads, openBranches, andamaGraph);
 			buildGraph(threads, openBranches, andamaGraph);
 			
 			andamaGraph.unpaint(AndamaGraph.workingColor);
@@ -128,10 +122,10 @@ public class AndamaGraph {
 	                               final LinkedList<Node> openBranches,
 	                               final AndamaGraph andamaGraph) {
 		
-		for (AndamaThreadable<?, ?> thread : threads) {
-			
+		for (AndamaThreadable<?, ?> thread : getPossibleThreads(openBranches, threads, andamaGraph)) {
 			if (AndamaSource.class.isAssignableFrom(thread.getClass())) {
 				Node newNode = andamaGraph.getNode(thread);
+				
 				openBranches.add(newNode);
 				PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(threads);
 				threadsNew.remove(thread);
@@ -193,7 +187,7 @@ public class AndamaGraph {
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(thread.getClass())) {
 				Node newNode = andamaGraph.getNode(thread);
 				Collection<Node> candidates = getCandidates(thread, openBranches, andamaGraph);
-				if (!CollectionUtils.exists(candidates, new Predicate() {
+				if ((candidates.size() > 1) && !CollectionUtils.exists(candidates, new Predicate() {
 					
 					@Override
 					public boolean evaluate(final Object object) {
@@ -227,7 +221,13 @@ public class AndamaGraph {
 				
 				for (Node fromNode : candidates) {
 					andamaGraph.connectNode(fromNode, newNode);
-					openBranches.remove(fromNode);
+					
+					if (!fromNode.getProperty(NodeProperty.NODETYPE.name())
+					             .equals(AndamaMultiplexer.class.getCanonicalName())) {
+						// only remove fromNode from openBranches if we don't
+						// attach to a multiplexer
+						openBranches.remove(fromNode);
+					}
 					
 					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
 					                                                                                             threads);
@@ -236,12 +236,22 @@ public class AndamaGraph {
 					checkCompleted(threadsNew, openBranches, andamaGraph);
 					
 					andamaGraph.disconnectNode(newNode);
-					openBranches.add(fromNode);
+					if (!fromNode.getProperty(NodeProperty.NODETYPE.name())
+					             .equals(AndamaMultiplexer.class.getCanonicalName())) {
+						// only remove fromNode from openBranches if we don't
+						// attach to a multiplexer
+						openBranches.add(fromNode);
+					}
 				}
 			}
 		}
 	}
 	
+	/**
+	 * @param threads
+	 * @param openBranches
+	 * @param andamaGraph
+	 */
 	private static void checkCompleted(final Collection<AndamaThreadable<?, ?>> threads,
 	                                   final LinkedList<Node> openBranches,
 	                                   final AndamaGraph andamaGraph) {
@@ -249,16 +259,24 @@ public class AndamaGraph {
 		// branches that end on attached multiplexer
 		if (threads.isEmpty()) {
 			if (openBranches.isEmpty()) {
+				// this will be only the case if there weren't any multiplexer
+				// invoked
 				andamaGraph.paint();
 			} else if (!CollectionUtils.exists(openBranches, new Predicate() {
 				
+				// check if open branches do no contain anything else than
+				// multiplexer
 				@Override
 				public boolean evaluate(final Object object) {
-					return !(AndamaSink.class.isAssignableFrom(object.getClass()));
+					return !(AndamaMultiplexer.class.getCanonicalName().equals(andamaGraph.getProperty(NodeProperty.NODETYPE,
+					                                                                                   (Node) object)));
 				}
 			})) {
 				if (!CollectionUtils.exists(openBranches, new Predicate() {
 					
+					// all multiplexer in the open branches list have to be
+					// output connected.
+					// otherwise the graph wouldn't be continuous.
 					@Override
 					public boolean evaluate(final Object object) {
 						return !((Node) object).hasRelationship(Direction.OUTGOING);
@@ -291,6 +309,55 @@ public class AndamaGraph {
 		});
 		
 		return collection;
+	}
+	
+	/**
+	 * @param openBranches
+	 * @param threads
+	 * @param graph
+	 * @return
+	 */
+	@SuppressWarnings ("unchecked")
+	private static Collection<AndamaThreadable<?, ?>> getPossibleThreads(final List<Node> openBranches,
+	                                                                     final Collection<AndamaThreadable<?, ?>> threads,
+	                                                                     final AndamaGraph graph) {
+		HashSet<Object> set = new HashSet<Object>();
+		LinkedList<AndamaThreadable<?, ?>> list = new LinkedList<AndamaThreadable<?, ?>>();
+		
+		for (Node node : openBranches) {
+			set.add(graph.getProperty(NodeProperty.OUTPUTTYPE, node));
+		}
+		
+		for (final Object o : set) {
+			list.addAll(CollectionUtils.select(threads, new Predicate() {
+				
+				@Override
+				public boolean evaluate(final Object object) {
+					return graph.getProperty(NodeProperty.INPUTTYPE, (AndamaThreadable<?, ?>) object).equals(o);
+				}
+			}));
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * @param threads
+	 * @param openBranches
+	 * @param andamaGraph
+	 */
+	private static void prepareGraph(final PriorityQueue<AndamaThreadable<?, ?>> threads,
+	                                 final LinkedList<Node> openBranches,
+	                                 final AndamaGraph andamaGraph) {
+		AndamaThreadable<?, ?> thread = null;
+		
+		while (((thread = threads.poll()) != null) && AndamaSource.class.isAssignableFrom(thread.getClass())) {
+			Node newNode = andamaGraph.getNode(thread);
+			openBranches.add(newNode);
+		}
+		
+		// re-add thread the didn't pass the test
+		threads.add(thread);
 	}
 	
 	private int                 color        = 0;
@@ -348,6 +415,8 @@ public class AndamaGraph {
 		AndamaThreadable<?, ?> threadable = threadGroup.getThreads().iterator().next();
 		URL resource = threadable.getClass().getResource(FileUtils.fileSeparator + fileName + ".zip");
 		
+		// BUG #13 https://dev.own-hero.net/issues/13 and
+		// https://dev.own-hero.net/issues/12
 		if (resource != null) {
 			FileUtils.unzip(new File(resource.getPath()), FileUtils.tmpDir);
 			return new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
@@ -641,7 +710,17 @@ public class AndamaGraph {
 				                                  ? thread.getOutputType().getCanonicalName()
 				                                  : null;
 			case NODETYPE:
-				return thread.getClass().getSuperclass().getCanonicalName();
+				Class<?> clazz = thread.getClass();
+				
+				while ((clazz.getSuperclass() != null) && (clazz.getSuperclass() != AndamaThread.class)) {
+					clazz = clazz.getSuperclass();
+				}
+				
+				if (clazz.getSuperclass() != AndamaThread.class) {
+					// TODO ERROR
+				}
+				
+				return clazz.getCanonicalName();
 			case NODENAME:
 				return thread.getHandle();
 			case NODEID:
@@ -677,6 +756,10 @@ public class AndamaGraph {
 		AndamaGraph andamaGraph = this;
 		String colorName = "color" + andamaGraph.color;
 		
+		if (Logger.logInfo()) {
+			Logger.info("Saving alternative: " + andamaGraph.color);
+		}
+		
 		if (andamaGraph.graph.index().existsForRelationships(AndamaGraph.workingColor)) {
 			Transaction tx = this.graph.beginTx();
 			
@@ -702,6 +785,8 @@ public class AndamaGraph {
 			tx.finish();
 			
 			this.colors.add(this.color);
+			display(andamaGraph.color, false);
+			
 			andamaGraph.color++;
 			
 			return true;

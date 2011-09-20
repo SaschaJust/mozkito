@@ -73,6 +73,8 @@ public interface AndamaThreadable<K, V> {
 	
 	public void addProcessHook(ProcessHook<K, V> hook);
 	
+	public abstract boolean checkConnections();
+	
 	/**
 	 * @param thread
 	 *            may not be null
