@@ -72,9 +72,9 @@ public class BackrefEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
+		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, "mapping.score.BackRef",
-		        "Score for backreference in transaction and report.", "0.5", isRequired));
+		        "Score for backreference in transaction and report.", "0.5", isRequired && isEnabled()));
 	}
 	
 	/**

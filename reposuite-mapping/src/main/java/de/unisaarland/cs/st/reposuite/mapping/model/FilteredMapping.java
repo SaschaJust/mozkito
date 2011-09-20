@@ -15,9 +15,11 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -49,15 +51,16 @@ public class FilteredMapping implements Annotated {
 	/**
 	 * @param score
 	 */
-	public FilteredMapping(final PersistentMapping mapping, final List<Class<? extends MappingFilter>> filterClasses) {
-		for (Class<? extends MappingFilter> filterClass : filterClasses) {
-			getFilters().add(filterClass.getCanonicalName());
+	public FilteredMapping(final PersistentMapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
+		for (MappingFilter filter : triggeringFilters) {
+			getFilters().add(filter.getClass().getCanonicalName());
 		}
 	}
 	
 	/**
 	 * @return the filters
 	 */
+	@ElementCollection
 	public List<String> getFilters() {
 		return this.filters;
 	}

@@ -18,26 +18,23 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import java.util.Iterator;
-import java.util.List;
-
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
+public class ScoringFilterPersister extends AndamaSink<FilteredMapping> {
 	
-	private Iterator<RCSTransaction> iterator;
+	private Integer i = 0;
 	
 	/**
 	 * @param threadGroup
@@ -45,33 +42,43 @@ public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringTransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
+	public ScoringFilterPersister(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<FilteredMapping, FilteredMapping>(this) {
 			
 			@Override
 			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
-				ScoringTransactionReader.this.iterator = list.iterator();
+				persistenceUtil.beginTransaction();
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<FilteredMapping, FilteredMapping>(this) {
 			
 			@Override
 			public void process() {
-				if (ScoringTransactionReader.this.iterator.hasNext()) {
-					RCSTransaction report = ScoringTransactionReader.this.iterator.next();
-					
-					if (Logger.logInfo()) {
-						Logger.info("Providing " + report);
-					}
-					
-					provideOutputData(report);
+				FilteredMapping score = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + score);
 				}
+				
+				if ((++ScoringFilterPersister.this.i % 50) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.save(score);
+			}
+		};
+		
+		new PostExecutionHook<FilteredMapping, FilteredMapping>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
 			}
 		};
 	}

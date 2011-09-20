@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.finder;
 
@@ -48,8 +48,8 @@ public class MappingFinder {
 	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
 	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
-	private final Map<Class<?>, MappingSplitter>                         splitters  = new HashMap<Class<?>, MappingSplitter>();
-	private final Map<Class<?>, MappingFilter>                           filters    = new HashMap<Class<?>, MappingFilter>();
+	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
+	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
 	
 	/**
 	 * @param engine
@@ -124,8 +124,14 @@ public class MappingFinder {
 	 * @return
 	 */
 	public FilteredMapping filter(final PersistentMapping mapping) {
-		// TODO
-		return null;
+		Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
+		
+		for (MappingFilter filter : this.filters.values()) {
+			filter.filter(mapping, triggeringFilters);
+		}
+		
+		FilteredMapping filteredMapping = new FilteredMapping(mapping, triggeringFilters);
+		return filteredMapping;
 	}
 	
 	/**
@@ -135,7 +141,8 @@ public class MappingFinder {
 	 * @param toClazz
 	 * @return
 	 */
-	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz, final Class<V> toClazz) {
+	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz,
+	                                                   final Class<V> toClazz) {
 		List<MappingSelector> list = new LinkedList<MappingSelector>();
 		
 		for (Class<? extends MappingSelector> klass : this.selectors.keySet()) {
@@ -161,12 +168,13 @@ public class MappingFinder {
 	 * @param targetClass
 	 * @return
 	 */
-	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source, final Class<T> targetClass) {
+	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
+	                                                       final Class<T> targetClass) {
 		Set<T> candidates = new HashSet<T>();
 		
 		try {
 			List<MappingSelector> selectors = findSelectors(source.getBaseType(),
-			        ((MappableEntity) targetClass.newInstance()).getBaseType());
+			                                                ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
 			for (MappingSelector selector : selectors) {
 				candidates.addAll(selector.parse(source, targetClass));
@@ -196,6 +204,7 @@ public class MappingFinder {
 		for (String key : this.strategies.keySet()) {
 			MappingStrategy strategy = this.strategies.get(key);
 			mapping = strategy.map(mapping);
+			mapping.addStrategy(strategy);
 		}
 		
 		if ((mapping.getValid() != null) && (mapping.getValid() == true)) {
@@ -210,7 +219,8 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public MapScore score(final MappableEntity element1, final MappableEntity element2) {
+	public MapScore score(final MappableEntity element1,
+	                      final MappableEntity element2) {
 		MapScore score = new MapScore(element1, element2);
 		
 		if (Logger.logDebug()) {
@@ -236,8 +246,15 @@ public class MappingFinder {
 	/**
 	 * @return
 	 */
-	public List<Annotated> split() {
-		return new LinkedList<Annotated>();
+	public List<Annotated> split(final FilteredMapping data) {
+		LinkedList<Annotated> list = new LinkedList<Annotated>();
+		
+		for (Class<? extends MappingSplitter> key : this.splitters.keySet()) {
+			MappingSplitter splitter = this.splitters.get(key);
+			
+			list.addAll(splitter.process());
+		}
+		return list;
 	}
 	
 }

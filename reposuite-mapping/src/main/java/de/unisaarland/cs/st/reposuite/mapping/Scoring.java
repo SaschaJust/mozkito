@@ -102,12 +102,20 @@ public class Scoring extends AndamaChain {
 				persistenceUtil = PersistenceManager.getUtil();
 				finder.loadData(persistenceUtil);
 				new ScoringReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new ScoringTransactionProcessor(this.threadPool.getThreadGroup(), getSettings(), finder,
-				                                persistenceUtil);
+				new ScoringTransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new ScoringTransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new ScoringReportProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
+				new ScoringMappingFilter(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new ScoringCandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
+				new ScoringFilterMux(this.threadPool.getThreadGroup(), getSettings());
+				new ScoringMappingMux(this.threadPool.getThreadGroup(), getSettings());
+				new ScoringMapScoreMux(this.threadPool.getThreadGroup(), getSettings());
+				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
+				new ScoringMappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringSplitter(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+				new ScoringFilterPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringMappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			} catch (UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {

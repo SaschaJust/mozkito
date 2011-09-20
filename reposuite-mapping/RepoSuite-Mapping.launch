@@ -6,7 +6,10 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mapping.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-mapping"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Ddebug -Ddatabase.host=quentin.cs.uni-saarland.de -Ddatabase.name=reposuite_test -Dheadless -Dlog.console.level=INFO -Dlog.file=.log -Dlog.file.level=DEBUG -Dmapping.engines=BackrefEngine -Dmapping.filters=ByPassFilter -Dmapping.strategies=MajorityStrategy"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Ddebug -Ddatabase.host=10.20.30.1 -Ddatabase.user=methos -Ddatabase.password=9xchange -Ddatabase.name=reposuite_mapping -Dheadless -Dlog.console.level=INFO -Dlog.file=.log -Dlog.file.level=DEBUG -Dmapping.engines=BackrefEngine -Dmapping.filters=ByPassFilter -Dmapping.strategies=MajorityStrategy"/>
 </launchConfiguration>

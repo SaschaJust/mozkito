@@ -18,6 +18,7 @@ package de.unisaarland.cs.st.reposuite.mapping.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -35,18 +36,14 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-/**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
- */
 @Entity
 public class PersistentMapping implements Annotated {
 	
-	private static final long     serialVersionUID = -6423537467677757941L;
+	private static final long serialVersionUID = -6423537467677757941L;
 	
-	private MapScore              score;
-	private List<MappingStrategy> strategies       = new LinkedList<MappingStrategy>();
-	private Boolean               valid            = null;
+	private MapScore          score;
+	private List<String>      strategies       = new LinkedList<String>();
+	private Boolean           valid            = null;
 	
 	/**
 	 * used by persistence provider only
@@ -59,6 +56,14 @@ public class PersistentMapping implements Annotated {
 	 */
 	public PersistentMapping(final MapScore score) {
 		setScore(score);
+	}
+	
+	/**
+	 * @param strategy
+	 */
+	@Transient
+	public void addStrategy(final MappingStrategy strategy) {
+		getStrategies().add(strategy.getName());
 	}
 	
 	/*
@@ -117,7 +122,8 @@ public class PersistentMapping implements Annotated {
 	/**
 	 * @return the strategies
 	 */
-	public List<MappingStrategy> getStrategies() {
+	@ElementCollection
+	public List<String> getStrategies() {
 		return this.strategies;
 	}
 	
@@ -154,7 +160,7 @@ public class PersistentMapping implements Annotated {
 	 * @param strategies
 	 *            the strategies to set
 	 */
-	public void setStrategies(final List<MappingStrategy> strategies) {
+	public void setStrategies(final List<String> strategies) {
 		this.strategies = strategies;
 	}
 	

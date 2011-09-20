@@ -18,10 +18,11 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
@@ -31,64 +32,54 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingPersister extends AndamaSink<PersistentMapping> {
+public class ScoringMappingPersister extends AndamaSink<PersistentMapping> {
 	
-	private final PersistenceUtil persistenceUtil;
-	private int                   i;
+	private Integer i = 0;
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
+	 * @param persistenceUtil
 	 */
-	public MappingPersister(final AndamaGroup threadGroup, final MappingSettings settings,
+	public ScoringMappingPersister(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		super.afterExecution();
 		
-		this.persistenceUtil.commitTransaction();
-		this.persistenceUtil.shutdown();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		super.beforeExecution();
+		new PreExecutionHook<PersistentMapping, PersistentMapping>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
 		
-		this.persistenceUtil.beginTransaction();
-		this.i = 0;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final PersistentMapping mapping) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Storing " + mapping);
-		}
+		new ProcessHook<PersistentMapping, PersistentMapping>(this) {
+			
+			@Override
+			public void process() {
+				PersistentMapping score = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + score);
+				}
+				
+				if ((++ScoringMappingPersister.this.i % 50) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.save(score);
+			}
+		};
 		
-		if ((++this.i % 50) == 0) {
-			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.beginTransaction();
-		}
-		
-		this.persistenceUtil.save(mapping);
+		new PostExecutionHook<PersistentMapping, PersistentMapping>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
+			}
+		};
 	}
-	
 }

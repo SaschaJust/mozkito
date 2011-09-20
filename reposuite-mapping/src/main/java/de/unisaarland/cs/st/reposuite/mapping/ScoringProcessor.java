@@ -18,60 +18,56 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import java.util.Iterator;
-import java.util.List;
-
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.mapping.elements.Candidate;
+import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
+import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
-import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
-	
-	private Iterator<RCSTransaction> iterator;
+public class ScoringProcessor extends AndamaTransformer<Candidate, MapScore> {
 	
 	/**
 	 * @param threadGroup
-	 * @param name
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringTransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public ScoringProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);
+		final MapScore zeroScore = new MapScore(null, null);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
-			
-			@Override
-			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
-				ScoringTransactionReader.this.iterator = list.iterator();
-			}
-		};
-		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Candidate, MapScore>(this) {
 			
 			@Override
 			public void process() {
-				if (ScoringTransactionReader.this.iterator.hasNext()) {
-					RCSTransaction report = ScoringTransactionReader.this.iterator.next();
-					
-					if (Logger.logInfo()) {
-						Logger.info("Providing " + report);
-					}
-					
-					provideOutputData(report);
+				Candidate candidate = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Processing mapping for " + candidate.getFrom() + " to " + candidate.getTo() + ".");
 				}
+				
+				MapScore score = finder.score(candidate.getFrom(), candidate.getTo());
+				
+				if (score.compareTo(zeroScore) > 0) {
+					if (Logger.logInfo()) {
+						Logger.info("Providing for store operation: " + candidate.getFrom() + " -> "
+						        + candidate.getTo() + " (score: " + score + ").");
+					}
+					provideOutputData(score);
+				} else {
+					if (Logger.logDebug()) {
+						Logger.debug("Discarding " + candidate.getFrom() + " -> " + candidate.getTo()
+						        + " due to non-positive score (" + score + ").");
+					}
+					skipOutputData(score);
+				}
+				
 			}
 		};
 	}

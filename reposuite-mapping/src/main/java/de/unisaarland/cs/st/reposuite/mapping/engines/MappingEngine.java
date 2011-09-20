@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -71,7 +71,6 @@ public abstract class MappingEngine extends Registered {
 	 * @param toFieldContent
 	 * @param toSubstring
 	 */
-	
 	public void addFeature(@NotNull final MapScore score,
 	                       final double confidence,
 	                       @NotNull @NotEmpty final String fromFieldName,
@@ -97,6 +96,16 @@ public abstract class MappingEngine extends Registered {
 		                                             : truncate(toFieldContent != null
 		                                                                              ? toFieldContent.toString()
 		                                                                              : unused)), getClass());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#isEnabled()
+	 */
+	@Override
+	public boolean isEnabled() {
+		return isEnabled("mapping.engines", this.getClass().getSimpleName());
 	}
 	
 	/**

@@ -13,15 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-/**
- * 
- */
+
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
@@ -32,39 +29,33 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingProcessor extends AndamaTransformer<MapScore, PersistentMapping> {
-	
-	private final MappingFinder mappingFinder;
+public class ScoringMappingProcessor extends AndamaTransformer<MapScore, PersistentMapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
 	 */
-	public MappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder) {
+	public ScoringMappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		this.mappingFinder = finder;
+		new ProcessHook<MapScore, PersistentMapping>(this) {
+			
+			@Override
+			public void process() {
+				PersistentMapping mapping = finder.map(getInputData());
+				if (mapping != null) {
+					if (Logger.logInfo()) {
+						Logger.info("Providing for store operation: " + mapping);
+					}
+					setOutputData(mapping);
+				} else {
+					if (Logger.logDebug()) {
+						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
+					}
+					skipOutputData(mapping);
+				}
+			}
+		};
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public PersistentMapping process(final MapScore data) throws UnrecoverableError, Shutdown {
-		PersistentMapping mapping = this.mappingFinder.map(data);
-		if (mapping != null) {
-			if (Logger.logInfo()) {
-				Logger.info("Providing for store operation: " + mapping);
-			}
-			return (mapping);
-		} else {
-			if (Logger.logDebug()) {
-				Logger.debug("Discarding " + mapping + " due to non-positive score (" + data + ").");
-			}
-			return skip(data);
-		}
-	}
 }

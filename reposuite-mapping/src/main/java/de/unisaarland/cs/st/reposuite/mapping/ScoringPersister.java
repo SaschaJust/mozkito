@@ -18,10 +18,11 @@
  */
 package de.unisaarland.cs.st.reposuite.mapping;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
@@ -33,8 +34,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
  */
 public class ScoringPersister extends AndamaSink<MapScore> {
 	
-	private final PersistenceUtil persistenceUtil;
-	private int                   i;
+	private Integer i = 0;
 	
 	/**
 	 * @param threadGroup
@@ -45,50 +45,42 @@ public class ScoringPersister extends AndamaSink<MapScore> {
 	public ScoringPersister(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
+		
+		new PreExecutionHook<MapScore, MapScore>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
+		
+		new ProcessHook<MapScore, MapScore>(this) {
+			
+			@Override
+			public void process() {
+				MapScore score = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + score);
+				}
+				
+				if ((++ScoringPersister.this.i % 50) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.save(score);
+			}
+		};
+		
+		new PostExecutionHook<MapScore, MapScore>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
+			}
+		};
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		super.afterExecution();
-		
-		this.persistenceUtil.commitTransaction();
-		this.persistenceUtil.shutdown();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		super.beforeExecution();
-		
-		this.persistenceUtil.beginTransaction();
-		this.i = 0;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final MapScore score) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Storing " + score);
-		}
-		
-		if ((++this.i % 50) == 0) {
-			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.beginTransaction();
-		}
-		
-		this.persistenceUtil.save(score);
-	}
 }

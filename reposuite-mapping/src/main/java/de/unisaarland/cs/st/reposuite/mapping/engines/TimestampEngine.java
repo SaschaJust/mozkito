@@ -145,12 +145,12 @@ public class TimestampEngine extends MappingEngine {
 	public void register(final MappingSettings settings,
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
+		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new ListArgument(
 		                                       settings,
 		                                       "mapping.window.ReportResolvedAfterTransaction",
 		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired));
+		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired && isEnabled()));
 	}
 	
 	/*

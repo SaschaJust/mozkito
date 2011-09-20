@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.register;
 
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -44,8 +45,9 @@ public abstract class Registered {
 	 * @param superTag
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private static String findRegisteredSuper(final Class<? extends Registered> clazz, final String[] superTag) {
+	@SuppressWarnings ("unchecked")
+	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
+	                                          final String[] superTag) {
 		if (clazz.getSuperclass() == Registered.class) {
 			System.err.println("Settings superTag from " + superTag[0] + " to "
 			        + clazz.getSimpleName().replace("Mapping", ""));
@@ -122,7 +124,7 @@ public abstract class Registered {
 	 * @param key
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final <T extends MappingStorage> T getStorage(final Class<T> key) {
 		return (T) this.storages.get(key);
 	}
@@ -134,6 +136,25 @@ public abstract class Registered {
 		Condition.check(isRegistered(), "The " + this.getClass().getSuperclass().getSimpleName()
 		        + " has to be registered before it is initialized: %s", this.getClass().getSimpleName());
 		setInitialized(true);
+	}
+	
+	/**
+	 * @return true, if the {@link Registered} object is enabled
+	 */
+	public abstract boolean isEnabled();
+	
+	/**
+	 * @param listSetting
+	 * @return
+	 */
+	public final boolean isEnabled(final String listSetting,
+	                               final String registered) {
+		if (getSettings() != null) {
+			ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
+			return setting.getValue().contains(registered);
+		} else {
+			return true;
+		}
 	}
 	
 	/**
@@ -172,7 +193,9 @@ public abstract class Registered {
 	 * @param isRequired
 	 */
 	@NoneNull
-	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
 		setSettings(settings);
 		setRegistered(true);
 	}
@@ -217,7 +240,6 @@ public abstract class Registered {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

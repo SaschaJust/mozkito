@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -48,7 +48,8 @@ public abstract class SearchEngine extends MappingEngine {
 	 * @param queryParser
 	 * @return
 	 */
-	protected Query buildQuery(String queryString, final QueryParser queryParser) {
+	protected Query buildQuery(String queryString,
+	                           final QueryParser queryParser) {
 		Query query = null;
 		queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ");
 		
@@ -81,7 +82,6 @@ public abstract class SearchEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#provideStorage
 	 * (de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage)
@@ -110,7 +110,6 @@ public abstract class SearchEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#register
 	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -118,17 +117,20 @@ public abstract class SearchEngine extends MappingEngine {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
+		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new LongArgument(settings, "mapping.config.minTokens",
-		        "minimum number of tokens required for a search.", "3", isRequired));
+		                                       "minimum number of tokens required for a search.", "3", isRequired
+		                                               && isEnabled()));
 		arguments.addArgument(new StringArgument(settings, "mapping.config.language",
-		        "minimum number of tokens required for a search.", "en:English", isRequired));
+		                                         "minimum number of tokens required for a search.", "en:English",
+		                                         isRequired && isEnabled()));
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#
 	 * storageDependency()
 	 */

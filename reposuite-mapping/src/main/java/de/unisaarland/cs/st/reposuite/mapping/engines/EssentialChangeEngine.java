@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -39,7 +39,6 @@ public class EssentialChangeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -51,7 +50,6 @@ public class EssentialChangeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#init()
 	 */
 	@Override
@@ -59,12 +57,11 @@ public class EssentialChangeEngine extends MappingEngine {
 		super.init();
 		// TODO set the values of your registered config options
 		setConfidence((Double) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".confidence")
-		        .getValue());
+		                                    .getValue());
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#register
 	 * (de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
@@ -72,12 +69,22 @@ public class EssentialChangeEngine extends MappingEngine {
 	 * boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
+		super.register(settings, arguments, isRequired && isEnabled());
 		// TODO register further config options if you need some
 		arguments.addArgument(new DoubleArgument(settings, "mapping.engine." + getHandle().toLowerCase()
 		        + ".confidence", "Confidence that is used if the changes done in the transaction arent essential.",
-		        "-1", isRequired));
+		                                         "-1", isRequired && isEnabled()));
+	}
+	
+	@Override
+	public void score(final MappableEntity from,
+	                  final MappableEntity to,
+	                  final MapScore score) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
@@ -92,12 +99,6 @@ public class EssentialChangeEngine extends MappingEngine {
 	public Expression supported() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public void score(MappableEntity from, MappableEntity to, MapScore score) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }
