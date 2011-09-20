@@ -18,10 +18,11 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -36,8 +37,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
  */
 public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	
-	private final PersistenceUtil persistenceUtil;
-	private int                   i;
+	Integer i = 0;
 	
 	/**
 	 * @see RepoSuiteSinkThread
@@ -48,51 +48,41 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	public RepositoryPersister(final AndamaGroup threadGroup, final RepositorySettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		this.persistenceUtil.commitTransaction();
 		
-		if (Logger.logInfo()) {
-			Logger.info("RepositoryPersister done. Terminating... ");
-		}
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
 		
-		this.persistenceUtil.shutdown();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		this.persistenceUtil.beginTransaction();
-		this.i = 0;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final RCSTransaction data) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Storing " + data);
-		}
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+			
+			@Override
+			public void process() {
+				RCSTransaction data = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + data);
+				}
+				
+				if (((RepositoryPersister.this.i = RepositoryPersister.this.i + 1) % 100) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.save(data);
+			}
+		};
 		
-		if ((++this.i % 100) == 0) {
-			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.beginTransaction();
-		}
-		
-		this.persistenceUtil.save(data);
+		new PostExecutionHook<RCSTransaction, RCSTransaction>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
+			}
+		};
 	}
 }

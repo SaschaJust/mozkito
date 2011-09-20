@@ -22,6 +22,8 @@ import java.util.LinkedList;
 
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -34,9 +36,6 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
  */
 public class GraphReader extends AndamaSource<RCSTransaction> {
 	
-	private final PersistenceUtil            persistenceUtil;
-	private final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
-	
 	/**
 	 * @param threadGroup
 	 * @param name
@@ -45,66 +44,30 @@ public class GraphReader extends AndamaSource<RCSTransaction> {
 	public GraphReader(final AndamaGroup threadGroup, final RepositorySettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-		this.list.addAll(this.persistenceUtil.load(criteria));
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
+		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
 		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
-	 */
-	@Override
-	public RCSTransaction process() {
-		try {
-			RCSTransaction transaction = this.list.poll();
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
-			if (Logger.logDebug()) {
-				Logger.debug("Providing " + transaction + ".");
+			@Override
+			public void preExecution() {
+				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				list.addAll(persistenceUtil.load(criteria));
 			}
+		};
+		
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
-			return transaction;
-			
-		} catch (Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			@Override
+			public void process() {
+				RCSTransaction transaction = list.poll();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Providing " + transaction + ".");
+				}
+				
+				provideOutputData(transaction);
 			}
-			shutdown();
-			return null;
-		}
+		};
 	}
 	
 }

@@ -18,11 +18,8 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 
@@ -43,53 +40,4 @@ public class RepositoryVoidSink extends AndamaSink<RCSTransaction> {
 	public RepositoryVoidSink(final AndamaGroup threadGroup, final RepositorySettings settings) {
 		super(threadGroup, settings, false);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#afterProcess()
-	 */
-	@Override
-	public void afterProcess() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#beforeProcess()
-	 */
-	@Override
-	public void beforeProcess() {
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final RCSTransaction data) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Taking " + data + " from input connector and forgetting it.");
-		}
-	}
-	
 }

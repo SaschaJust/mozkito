@@ -208,7 +208,6 @@ public class RCS extends AndamaChain {
 		// }
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
-		new RepositoryAnalyzer(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
 		
 		if (this.persistenceUtil != null) {

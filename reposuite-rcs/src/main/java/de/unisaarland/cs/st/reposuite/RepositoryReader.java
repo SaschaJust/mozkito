@@ -18,10 +18,10 @@
  */
 package de.unisaarland.cs.st.reposuite;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
@@ -37,8 +37,7 @@ import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
  */
 public class RepositoryReader extends AndamaSource<LogEntry> {
 	
-	private LogIterator      logIterator;
-	private final Repository repository;
+	private LogIterator logIterator;
 	
 	/**
 	 * @param threadGroup
@@ -48,48 +47,44 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 	public RepositoryReader(final AndamaGroup threadGroup, final RepositorySettings settings,
 	        final Repository repository) {
 		super(threadGroup, settings, false);
-		this.repository = repository;
+		
+		new PreExecutionHook<LogEntry, LogEntry>(this) {
+			
+			@Override
+			public void preExecution() {
+				if (Logger.logInfo()) {
+					Logger.info("Requesting logs from " + repository);
+				}
+				
+				repository.getTransactionCount();
+				long cacheSize = (Long) getSettings().getSetting("cache.size").getValue();
+				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
+				                                                                 repository.getEndRevision(),
+				                                                                 (int) cacheSize);
+				
+				if (Logger.logInfo()) {
+					Logger.info("Created iterator.");
+				}
+			}
+		};
+		
+		new ProcessHook<LogEntry, LogEntry>(this) {
+			
+			@Override
+			public void process() {
+				if (Logger.logTrace()) {
+					Logger.trace("filling queue [" + outputSize() + "]");
+				}
+				
+				LogEntry entry = RepositoryReader.this.logIterator.next();
+				
+				if (Logger.logTrace()) {
+					Logger.trace("with entry: " + entry);
+				}
+				
+				provideOutputData(entry);
+			}
+		};
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		super.beforeExecution();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Requesting logs from " + this.repository);
-		}
-		
-		this.repository.getTransactionCount();
-		long cacheSize = (Long) this.getSettings().getSetting("cache.size").getValue();
-		this.logIterator = (LogIterator) this.repository.log(this.repository.getFirstRevisionId(),
-		                                                     this.repository.getEndRevision(), (int) cacheSize);
-		
-		if (Logger.logInfo()) {
-			Logger.info("Created iterator.");
-		}
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
-	 */
-	@Override
-	public LogEntry process() throws UnrecoverableError, Shutdown {
-		if (Logger.logTrace()) {
-			Logger.trace("filling queue [" + outputSize() + "]");
-		}
-		
-		LogEntry entry = this.logIterator.next();
-		
-		if (Logger.logTrace()) {
-			Logger.trace("with entry: " + entry);
-		}
-		
-		return entry;
-	}
 }
