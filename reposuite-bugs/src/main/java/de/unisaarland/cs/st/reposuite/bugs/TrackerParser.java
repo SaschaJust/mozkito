@@ -18,10 +18,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
@@ -34,31 +33,27 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
  */
 public class TrackerParser extends AndamaTransformer<XmlReport, Report> {
 	
-	private final Tracker tracker;
-	
 	/**
 	 * @param threadGroup
 	 * @param tracker
 	 */
 	public TrackerParser(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
-		this.tracker = tracker;
-	}
-	
-	/**
-	 * @param xmlReport
-	 * @return
-	 * @throws UnrecoverableError
-	 * @throws Shutdown
-	 */
-	@Override
-	public Report process(final XmlReport xmlReport) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Parsing " + xmlReport + ".");
-		}
 		
-		Report report = this.tracker.parse(xmlReport);
-		
-		return (report);
+		new ProcessHook<XmlReport, Report>(this) {
+			
+			@Override
+			public void process() {
+				XmlReport xmlReport = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Parsing " + xmlReport + ".");
+				}
+				
+				Report report = tracker.parse(xmlReport);
+				
+				provideOutputData(report);
+			}
+		};
 	}
 }

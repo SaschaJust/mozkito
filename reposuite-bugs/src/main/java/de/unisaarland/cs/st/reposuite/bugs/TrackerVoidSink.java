@@ -18,11 +18,8 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
 
@@ -34,19 +31,6 @@ public class TrackerVoidSink extends AndamaSink<Report> {
 	
 	public TrackerVoidSink(final AndamaGroup threadGroup, final TrackerSettings settings) {
 		super(threadGroup, settings, false);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final Report report) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Void sinking " + report + ".");
-		}
 	}
 	
 }

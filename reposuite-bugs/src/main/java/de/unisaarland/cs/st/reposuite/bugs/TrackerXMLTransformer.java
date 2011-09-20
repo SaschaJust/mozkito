@@ -18,10 +18,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
@@ -34,25 +33,23 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
  */
 public class TrackerXMLTransformer extends AndamaTransformer<RawReport, XmlReport> {
 	
-	private final Tracker tracker;
-	
 	public TrackerXMLTransformer(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
-		this.tracker = tracker;
+		
+		new ProcessHook<RawReport, XmlReport>(this) {
+			
+			@Override
+			public void process() {
+				RawReport rawReport = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Converting " + rawReport + " to XML.");
+				}
+				
+				provideOutputData(tracker.createDocument(rawReport));
+				
+			}
+		};
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public XmlReport process(final RawReport rawReport) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Converting " + rawReport + " to XML.");
-		}
-		
-		return this.tracker.createDocument(rawReport);
-	}
 }

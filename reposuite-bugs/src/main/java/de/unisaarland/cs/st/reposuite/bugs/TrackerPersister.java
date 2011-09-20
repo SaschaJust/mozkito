@@ -18,10 +18,11 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
@@ -34,8 +35,7 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
  */
 public class TrackerPersister extends AndamaSink<Report> {
 	
-	private final PersistenceUtil persistenceUtil;
-	private int                   i;
+	private Integer i = 0;
 	
 	/**
 	 * @param threadGroup
@@ -44,44 +44,41 @@ public class TrackerPersister extends AndamaSink<Report> {
 	public TrackerPersister(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-	}
-	
-	/**
-	 * 
-	 */
-	@Override
-	public void afterExecution() {
-		this.persistenceUtil.commitTransaction();
-	}
-	
-	/**
-	 * 
-	 */
-	@Override
-	public void beforeExecution() {
-		super.beforeExecution();
 		
-		this.persistenceUtil.beginTransaction();
-		this.i = 0;
-	}
-	
-	/**
-	 * @param bugReport
-	 * @throws UnrecoverableError
-	 * @throws Shutdown
-	 */
-	@Override
-	public void process(final Report bugReport) throws UnrecoverableError, Shutdown {
-		if (Logger.logDebug()) {
-			Logger.debug("Storing " + bugReport);
-		}
+		new PreExecutionHook<Report, Report>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
 		
-		if ((++this.i % 15) == 0) {
-			this.persistenceUtil.commitTransaction();
-			this.persistenceUtil.beginTransaction();
-		}
+		new ProcessHook<Report, Report>(this) {
+			
+			@Override
+			public void process() {
+				Report bugReport = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + bugReport);
+				}
+				
+				if ((++TrackerPersister.this.i % 15) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.saveOrUpdate(bugReport);
+			}
+		};
 		
-		this.persistenceUtil.saveOrUpdate(bugReport);
+		new PostExecutionHook<Report, Report>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
+			}
+		};
 	}
 }

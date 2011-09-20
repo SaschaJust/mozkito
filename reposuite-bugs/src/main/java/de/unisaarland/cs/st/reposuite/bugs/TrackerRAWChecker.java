@@ -18,10 +18,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaFilter;
 import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
@@ -33,32 +32,27 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
  */
 public class TrackerRAWChecker extends AndamaFilter<RawReport> {
 	
-	private final Tracker tracker;
-	
 	public TrackerRAWChecker(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
-		this.tracker = tracker;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public RawReport process(final RawReport rawReport) throws UnrecoverableError, Shutdown {
-		if (this.tracker.checkRAW(rawReport)) {
-			if (Logger.logDebug()) {
-				Logger.debug("RAW report " + rawReport + " passed analysis.");
+		
+		new ProcessHook<RawReport, RawReport>(this) {
+			
+			@Override
+			public void process() {
+				RawReport rawReport = getInputData();
+				
+				if (tracker.checkRAW(rawReport)) {
+					if (Logger.logDebug()) {
+						Logger.debug("RAW report " + rawReport + " passed analysis.");
+					}
+					provideOutputData(rawReport);
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping report " + rawReport + " due to errors in raw string.");
+					}
+					skipOutputData(rawReport);
+				}
 			}
-			return (rawReport);
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Skipping report " + rawReport + " due to errors in raw string.");
-			}
-			return skip(rawReport);
-		}
+		};
 	}
-	
 }

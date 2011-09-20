@@ -308,14 +308,14 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			return false;
 		}
 		HistoryElement other = (HistoryElement) obj;
-		if (this.bugId != other.bugId) {
+		if (getBugId() != other.getBugId()) {
 			return false;
 		}
-		if (this.timestamp == null) {
-			if (other.timestamp != null) {
+		if (getTimestamp() == null) {
+			if (other.getTimestamp() != null) {
 				return false;
 			}
-		} else if (!this.timestamp.equals(other.timestamp)) {
+		} else if (!getTimestamp().equals(other.getTimestamp())) {
 			return false;
 		}
 		return true;
@@ -506,10 +506,10 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + (int) (this.bugId ^ (this.bugId >>> 32));
-		result = (prime * result) + ((this.timestamp == null)
+		result = (prime * result) + (int) (getBugId() ^ (getBugId() >>> 32));
+		result = (prime * result) + ((getTimestamp() == null)
 		                                                     ? 0
-		                                                     : this.timestamp.hashCode());
+		                                                     : getTimestamp().hashCode());
 		return result;
 	}
 	

@@ -18,10 +18,9 @@
  */
 package de.unisaarland.cs.st.reposuite.bugs;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaFilter;
 import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.XmlReport;
@@ -33,32 +32,28 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
  */
 public class TrackerXMLChecker extends AndamaFilter<XmlReport> {
 	
-	private final Tracker tracker;
-	
 	public TrackerXMLChecker(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
-		this.tracker = tracker;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.InputOutputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public XmlReport process(final XmlReport xmlReport) throws UnrecoverableError, Shutdown {
-		if (this.tracker.checkXML(xmlReport)) {
-			if (Logger.logDebug()) {
-				Logger.debug("Report " + xmlReport + " passed XML check.");
+		
+		new ProcessHook<XmlReport, XmlReport>(this) {
+			
+			@Override
+			public void process() {
+				XmlReport xmlReport = getInputData();
+				
+				if (tracker.checkXML(xmlReport)) {
+					if (Logger.logDebug()) {
+						Logger.debug("Report " + xmlReport + " passed XML check.");
+					}
+					provideOutputData(xmlReport);
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping report " + xmlReport + " due to errors in XML document.");
+					}
+					skipOutputData(xmlReport);
+				}
 			}
-			return (xmlReport);
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Skipping report " + xmlReport + " due to errors in XML document.");
-			}
-			return skip(xmlReport);
-		}
+		};
 	}
 	
 }

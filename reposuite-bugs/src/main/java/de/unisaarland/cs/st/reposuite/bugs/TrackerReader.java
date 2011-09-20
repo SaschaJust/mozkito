@@ -20,10 +20,10 @@ package de.unisaarland.cs.st.reposuite.bugs;
 
 import java.net.URI;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker;
@@ -35,50 +35,45 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.settings.TrackerSettings;
  */
 public class TrackerReader extends AndamaSource<RawReport> {
 	
-	private final Tracker tracker;
-	
 	/**
 	 * @param threadGroup
 	 * @param tracker
 	 */
 	public TrackerReader(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
-		this.tracker = tracker;
+		
+		new ProcessHook<RawReport, RawReport>(this) {
+			
+			@Override
+			public void process() {
+				Long bugId = tracker.getNextId();
+				
+				try {
+					if (bugId != null) {
+						if (Logger.logDebug()) {
+							Logger.debug("Fetching " + bugId + ".");
+						}
+						URI newURI = tracker.getLinkFromId(bugId);
+						RawReport source = tracker.fetchSource(newURI);
+						if (source == null) {
+							
+							if (Logger.logWarn()) {
+								Logger.warn("Skipping: " + bugId + ". Fetch returned null.");
+							}
+							skipOutputData(source);
+						} else {
+							
+							if (Logger.logDebug()) {
+								Logger.debug("Providing " + bugId + ".");
+							}
+							provideOutputData(source);
+						}
+					}
+				} catch (Exception e) {
+					throw new UnrecoverableError(e);
+				}
+			}
+		};
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
-	 */
-	@Override
-	public RawReport process() throws UnrecoverableError, Shutdown {
-		Long bugId = this.tracker.getNextId();
-		
-		try {
-			if (bugId != null) {
-				if (Logger.logDebug()) {
-					Logger.debug("Fetching " + bugId + ".");
-				}
-				URI newURI = this.tracker.getLinkFromId(bugId);
-				RawReport source = this.tracker.fetchSource(newURI);
-				if (source == null) {
-					
-					if (Logger.logWarn()) {
-						Logger.warn("Skipping: " + bugId + ". Fetch returned null.");
-					}
-					return skip(source);
-				} else {
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Providing " + bugId + ".");
-					}
-					return (source);
-				}
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			throw new UnrecoverableError(e);
-		}
-	}
 }
