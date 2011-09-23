@@ -327,7 +327,7 @@ public class RegexEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setConfigPath((URI) getSettings().getSetting("mapping.config.regexFile").getValue());
+		setConfigPath((URI) getSettings().getSetting(getOptionName("file")).getValue());
 		setMatchers(new LinkedList<RegexEngine.Matcher>());
 		
 		if (!getConfigPath().getScheme().equalsIgnoreCase("file")) {
@@ -404,7 +404,7 @@ public class RegexEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired && isEnabled());
-		arguments.addArgument(new URIArgument(settings, "mapping.config.regexFile",
+		arguments.addArgument(new URIArgument(settings, getOptionName("file"),
 		                                      "URI to file containing the regular expressions used to map the IDs.",
 		                                      null, isRequired && isEnabled()));
 	}
@@ -513,9 +513,10 @@ public class RegexEngine extends MappingEngine {
 		return this.configPath.toASCIIString();
 	}
 	
-	/**
-	 * @return
-	 * @see java.net.URI#toString()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#toString()
 	 */
 	@Override
 	public String toString() {

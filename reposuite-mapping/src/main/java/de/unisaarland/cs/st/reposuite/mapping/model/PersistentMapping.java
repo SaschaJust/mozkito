@@ -63,7 +63,7 @@ public class PersistentMapping implements Annotated {
 	 */
 	@Transient
 	public void addStrategy(final MappingStrategy strategy) {
-		getStrategies().add(strategy.getName());
+		getStrategies().add(strategy.getHandle());
 	}
 	
 	/*

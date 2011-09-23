@@ -36,7 +36,7 @@ public class ReportFieldFilter extends MappingFilter {
 	public Set<? extends MappingFilter> filter(final PersistentMapping mapping,
 	                                           final Set<? extends MappingFilter> triggeringFilters) {
 		// TODO Auto-generated method stub
-		return null;
+		return triggeringFilters;
 	}
 	
 	/*
@@ -47,8 +47,7 @@ public class ReportFieldFilter extends MappingFilter {
 	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Requires certain field values on reports to be mapped";
 	}
 	
 }

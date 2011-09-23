@@ -74,9 +74,8 @@ public class ReportTypeEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		
-		setConfidence((Double) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".confidence")
-		                                    .getValue());
-		setType((Type) getSettings().getSetting("mapping.engine." + getHandle().toLowerCase() + ".type").getValue());
+		setConfidence((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
+		setType((Type) getSettings().getSetting(getOptionName("type")).getValue());
 	}
 	
 	/*
@@ -92,10 +91,10 @@ public class ReportTypeEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired && isEnabled());
-		arguments.addArgument(new DoubleArgument(settings, "mapping.engine." + getHandle().toLowerCase()
-		        + ".confidence", "Confidence that is used if the report isn't of the specified type.", "-1", isRequired
-		        && isEnabled()));
-		arguments.addArgument(new EnumArgument(settings, "mapping.engine." + getHandle().toLowerCase() + ".type",
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
+		                                         "Confidence that is used if the report isn't of the specified type.",
+		                                         "-1", isRequired && isEnabled()));
+		arguments.addArgument(new EnumArgument(settings, getOptionName("type"),
 		                                       "Type the report has to match, e.g. BUG.", null, isRequired
 		                                               && isEnabled(), JavaUtils.enumToArray(Type.BUG)));
 	}

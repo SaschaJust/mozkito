@@ -69,7 +69,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreReportResolvedBeforeTransaction((Double) getSettings().getSetting("mapping.score.ReportResolvedBeforeTransaction")
+		setScoreReportResolvedBeforeTransaction((Double) getSettings().getSetting(getOptionName("confidence"))
 		                                                              .getValue());
 	}
 	
@@ -86,9 +86,10 @@ public class CompletedOrderEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired && isEnabled());
-		arguments.addArgument(new DoubleArgument(settings, "mapping.score.ReportResolvedBeforeTransaction",
-		                                         "Score in case the report was resolved before the transaction.", "-1",
-		                                         isRequired && isEnabled()));
+		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
+		                                         "Score in case the report was resolved before the transaction.",
+		                                         this.scoreReportResolvedBeforeTransaction + "", isRequired
+		                                                 && isEnabled()));
 	}
 	
 	/*

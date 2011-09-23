@@ -31,10 +31,12 @@ import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
 import de.unisaarland.cs.st.reposuite.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.reposuite.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
+import de.unisaarland.cs.st.reposuite.mapping.training.MappingTrainer;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 
@@ -50,25 +52,15 @@ public class MappingFinder {
 	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
 	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
 	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
+	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
 	
 	/**
 	 * @param engine
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
-		for (Class<? extends MappingStorage> key : engine.storageDependency()) {
-			if (!this.storages.keySet().contains(key)) {
-				try {
-					MappingStorage storage = key.newInstance();
-					this.storages.put(key, storage);
-				} catch (InstantiationException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				} catch (IllegalAccessException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
-			}
-			engine.provideStorage(this.storages.get(key));
-		}
+		
+		provideStorages(engine);
 	}
 	
 	/**
@@ -76,6 +68,8 @@ public class MappingFinder {
 	 */
 	public void addFilter(final MappingFilter filter) {
 		this.filters.put(filter.getClass(), filter);
+		
+		provideStorages(filter);
 	}
 	
 	/**
@@ -83,19 +77,7 @@ public class MappingFinder {
 	 */
 	public void addSelector(final MappingSelector selector) {
 		this.selectors.put(selector.getClass(), selector);
-		for (Class<? extends MappingStorage> key : selector.storageDependency()) {
-			if (!this.storages.keySet().contains(key)) {
-				try {
-					MappingStorage storage = key.newInstance();
-					this.storages.put(key, storage);
-				} catch (InstantiationException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				} catch (IllegalAccessException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
-				}
-			}
-			selector.provideStorage(this.storages.get(key));
-		}
+		provideStorages(selector);
 	}
 	
 	/**
@@ -103,6 +85,7 @@ public class MappingFinder {
 	 */
 	public void addSplitter(final MappingSplitter splitter) {
 		this.splitters.put(splitter.getClass(), splitter);
+		provideStorages(splitter);
 	}
 	
 	/**
@@ -110,6 +93,7 @@ public class MappingFinder {
 	 */
 	public void addStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
+		provideStorages(storage);
 	}
 	
 	/**
@@ -117,6 +101,15 @@ public class MappingFinder {
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
 		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
+		provideStorages(strategy);
+	}
+	
+	/**
+	 * @param trainer
+	 */
+	public void addTrainer(final MappingTrainer trainer) {
+		this.trainers.put(trainer.getClass(), trainer);
+		provideStorages(trainer);
 	}
 	
 	/**
@@ -211,6 +204,26 @@ public class MappingFinder {
 			return mapping;
 		} else {
 			return null;
+		}
+	}
+	
+	/**
+	 * @param registered
+	 */
+	private void provideStorages(final Registered registered) {
+		for (Class<? extends MappingStorage> key : registered.storageDependency()) {
+			if (!this.storages.keySet().contains(key)) {
+				try {
+					MappingStorage storage = key.newInstance();
+					this.storages.put(key, storage);
+				} catch (InstantiationException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				} catch (IllegalAccessException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				}
+			}
+			
+			registered.provideStorage(this.storages.get(key));
 		}
 	}
 	

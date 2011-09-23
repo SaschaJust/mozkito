@@ -47,8 +47,7 @@ public class TransactionFieldFilter extends MappingFilter {
 	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Requires certain field values on transactions to be mapped";
 	}
 	
 }

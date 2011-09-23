@@ -74,8 +74,7 @@ public class TimestampEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		@SuppressWarnings ("unchecked")
-		List<String> list = new LinkedList<String>(
-		                                           (Set<String>) getSettings().getSetting("mapping.window.ReportResolvedAfterTransaction")
+		List<String> list = new LinkedList<String>((Set<String>) getSettings().getSetting(getOptionName("confidence"))
 		                                                                      .getValue());
 		CollectionCheck.minSize(list,
 		                        1,
@@ -148,7 +147,7 @@ public class TimestampEngine extends MappingEngine {
 		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new ListArgument(
 		                                       settings,
-		                                       "mapping.window.ReportResolvedAfterTransaction",
+		                                       getOptionName("confidence"),
 		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
 		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired && isEnabled()));
 	}

@@ -19,7 +19,10 @@ import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Expression;
+import de.unisaarland.cs.st.reposuite.mapping.requirements.Index;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
@@ -56,7 +59,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreAuthorEquality((Double) getSettings().getSetting("mapping.score.AuthorEquality").getValue());
+		setScoreAuthorEquality((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
 	}
 	
 	/*
@@ -73,8 +76,8 @@ public class AuthorEqualityEngine extends MappingEngine {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
-		                                         "Score for equal authors in transaction and report comments.", "0.2",
-		                                         isRequired && isEnabled()));
+		                                         "Score for equal authors in transaction and report comments.",
+		                                         this.scoreAuthorEquality + "", isRequired && isEnabled()));
 	}
 	
 	/*
@@ -107,10 +110,14 @@ public class AuthorEqualityEngine extends MappingEngine {
 		this.scoreAuthorEquality = scoreAuthorEquality;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
 	@Override
 	public Expression supported() {
-		// TODO Auto-generated method stub
-		return null;
+		return new And(new Atom(Index.FROM, FieldKey.AUTHOR), new Atom(Index.TO, FieldKey.AUTHOR));
 	}
 	
 }

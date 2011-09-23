@@ -63,7 +63,7 @@ public abstract class SearchEngine extends MappingEngine {
 			Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
 			
-			if (terms.size() < (Long) getSettings().getSetting("mapping.config.minTokens").getValue()) {
+			if (terms.size() < (Long) getSettings().getSetting(getOptionName("minTokens")).getValue()) {
 				return null;
 			}
 		} catch (ParseException e) {
@@ -92,7 +92,7 @@ public abstract class SearchEngine extends MappingEngine {
 		this.storage = getStorage(LuceneStorage.class);
 		
 		if (storage != null) {
-			String value = (String) getSettings().getSetting("mapping.config.language").getValue();
+			String value = (String) getSettings().getSetting(getOptionName("language")).getValue();
 			String[] split = value.split(":");
 			try {
 				if (this.storage.getAnalyzer() == null) {
@@ -121,10 +121,10 @@ public abstract class SearchEngine extends MappingEngine {
 	                     final MappingArguments arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired && isEnabled());
-		arguments.addArgument(new LongArgument(settings, "mapping.config.minTokens",
+		arguments.addArgument(new LongArgument(settings, getOptionName("minTokens"),
 		                                       "minimum number of tokens required for a search.", "3", isRequired
 		                                               && isEnabled()));
-		arguments.addArgument(new StringArgument(settings, "mapping.config.language",
+		arguments.addArgument(new StringArgument(settings, getOptionName("language"),
 		                                         "minimum number of tokens required for a search.", "en:English",
 		                                         isRequired && isEnabled()));
 	}

@@ -36,7 +36,7 @@ public class AuthorCorrelationFilter extends MappingFilter {
 	public Set<? extends MappingFilter> filter(final PersistentMapping mapping,
 	                                           final Set<? extends MappingFilter> triggeringFilters) {
 		// TODO Auto-generated method stub
-		return null;
+		return triggeringFilters;
 	}
 	
 	/*

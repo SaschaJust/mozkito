@@ -40,5 +40,8 @@ public abstract class MappingTrainer extends Registered {
 		return isEnabled("mapping.trainers", this.getClass().getSimpleName());
 	}
 	
+	/**
+	 * 
+	 */
 	public abstract void train();
 }

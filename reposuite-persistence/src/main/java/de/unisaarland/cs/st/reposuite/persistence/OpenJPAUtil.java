@@ -227,7 +227,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * ()
 	 */
 	@Override
-	public boolean activeTransaction() {
+	public synchronized boolean activeTransaction() {
 		return this.entityManager.getTransaction().isActive();
 	}
 	
@@ -238,8 +238,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * ()
 	 */
 	@Override
-	public void beginTransaction() {
-		this.entityManager.getTransaction().begin();
+	public synchronized void beginTransaction() {
+		if (!this.entityManager.getTransaction().isActive()) {
+			this.entityManager.getTransaction().begin();
+		}
 	}
 	
 	/*
@@ -249,7 +251,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * ()
 	 */
 	@Override
-	public void commitTransaction() {
+	public synchronized void commitTransaction() {
 		if (this.entityManager.getTransaction().isActive()) {
 			this.entityManager.getTransaction().commit();
 		}
@@ -300,7 +302,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public void delete(final Annotated object) {
+	public synchronized void delete(final Annotated object) {
 		this.entityManager.remove(object);
 	}
 	
@@ -384,7 +386,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * .unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public void exmerge(final Annotated object) {
+	public synchronized void exmerge(final Annotated object) {
 		this.entityManager.detach(object);
 		this.entityManager.merge(object);
 	}
@@ -394,7 +396,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#flush()
 	 */
 	@Override
-	public void flush() {
+	public synchronized void flush() {
 		this.entityManager.flush();
 	}
 	
@@ -446,7 +448,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * ()
 	 */
 	@Override
-	public void globalShutdown() {
+	public synchronized void globalShutdown() {
 		for (Thread t : provider.keySet()) {
 			provider.get(t).shutdown();
 		}
@@ -518,7 +520,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * ()
 	 */
 	@Override
-	public void rollbackTransaction() {
+	public synchronized void rollbackTransaction() {
 		if (this.entityManager.getTransaction().isActive()) {
 			this.entityManager.getTransaction().rollback();
 		}
@@ -530,7 +532,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public void save(final Annotated object) {
+	public synchronized void save(final Annotated object) {
 		this.entityManager.persist(object);
 	}
 	
@@ -541,7 +543,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * (de.unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public void saveOrUpdate(final Annotated object) {
+	public synchronized void saveOrUpdate(final Annotated object) {
 		if (this.entityManager.contains(object)) {
 			update(object);
 		} else {
@@ -568,7 +570,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public void update(final Annotated object) {
+	public synchronized void update(final Annotated object) {
 		this.entityManager.merge(object);
 	}
 	
