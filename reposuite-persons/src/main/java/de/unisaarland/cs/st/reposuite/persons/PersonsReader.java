@@ -21,11 +21,11 @@ package de.unisaarland.cs.st.reposuite.persons;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
@@ -37,7 +37,6 @@ import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
  */
 public class PersonsReader extends AndamaSource<PersonContainer> {
 	
-	private final PersistenceUtil         persistenceUtil;
 	private ListIterator<PersonContainer> iterator;
 	
 	/**
@@ -49,37 +48,30 @@ public class PersonsReader extends AndamaSource<PersonContainer> {
 	public PersonsReader(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		Criteria<PersonContainer> criteria = this.persistenceUtil.createCriteria(PersonContainer.class);
-		List<PersonContainer> containerList = this.persistenceUtil.load(criteria);
 		
-		if (Logger.logDebug()) {
-			Logger.debug("Analyzing " + containerList.size() + " person containers.");
-		}
-		this.iterator = containerList.listIterator();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
-	 */
-	@Override
-	public PersonContainer process() throws UnrecoverableError, Shutdown {
-		PersonContainer personContainer;
+		new PreExecutionHook<PersonContainer, PersonContainer>(this) {
+			
+			@Override
+			public void preExecution() {
+				Criteria<PersonContainer> criteria = persistenceUtil.createCriteria(PersonContainer.class);
+				List<PersonContainer> containerList = persistenceUtil.load(criteria);
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Analyzing " + containerList.size() + " person containers.");
+				}
+				iterator = containerList.listIterator();
+			}
+		};
 		
-		if (this.iterator.hasNext()) {
-			personContainer = this.iterator.next();
-			return personContainer;
-		}
-		return null;
+		new ProcessHook<PersonContainer, PersonContainer>(this) {
+			
+			@Override
+			public void process() {
+				if (iterator.hasNext()) {
+					provideOutputData(iterator.next());
+				}
+			}
+		};
 	}
 	
 }

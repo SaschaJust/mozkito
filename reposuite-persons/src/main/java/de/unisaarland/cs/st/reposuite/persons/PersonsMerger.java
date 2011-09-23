@@ -18,11 +18,12 @@
  */
 package de.unisaarland.cs.st.reposuite.persons;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.reposuite.persons.processing.MergingProcessor;
@@ -33,9 +34,6 @@ import de.unisaarland.cs.st.reposuite.persons.processing.MergingProcessor;
  */
 public class PersonsMerger extends AndamaSink<PersonContainer> {
 	
-	PersistenceUtil                persistenceUtil = null;
-	private final MergingProcessor processor;
-	
 	/**
 	 * @param threadGroup
 	 * @param settings
@@ -45,38 +43,30 @@ public class PersonsMerger extends AndamaSink<PersonContainer> {
 	public PersonsMerger(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final PersistenceUtil persistenceUtil, final MergingProcessor processor) {
 		super(threadGroup, settings, false);
-		this.persistenceUtil = persistenceUtil;
-		this.processor = processor;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		this.processor.consolidate();
 		
-		this.persistenceUtil.commitTransaction();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		this.persistenceUtil.beginTransaction();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final PersonContainer data) throws UnrecoverableError, Shutdown {
-		this.processor.process(data);
+		new PostExecutionHook<PersonContainer, PersonContainer>(this) {
+			
+			@Override
+			public void postExecution() {
+				processor.consolidate();
+				persistenceUtil.commitTransaction();
+			}
+		};
+		
+		new PreExecutionHook<PersonContainer, PersonContainer>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
+		
+		new ProcessHook<PersonContainer, PersonContainer>(this) {
+			
+			@Override
+			public void process() {
+				processor.process(getInputData());
+			}
+		};
 	}
 }
