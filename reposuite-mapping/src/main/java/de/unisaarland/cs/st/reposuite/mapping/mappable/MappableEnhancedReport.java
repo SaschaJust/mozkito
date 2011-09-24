@@ -20,29 +20,29 @@ import java.util.Iterator;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.infozilla.model.EnhancedReport;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappableReport extends MappableEntity {
+public class MappableEnhancedReport extends MappableEntity {
 	
 	/**
      * 
      */
 	private static final long serialVersionUID = 1097712059403322470L;
-	private Report            report;
+	private EnhancedReport    report;
 	
 	/**
 	 * @param report
 	 */
-	public MappableReport(final Report report) {
+	public MappableEnhancedReport(final EnhancedReport report) {
 		this.setReport(report);
 	}
 	
@@ -137,11 +137,10 @@ public class MappableReport extends MappableEntity {
 				
 				return person;
 			default:
-				if (Logger.logWarn()) {
-					Logger.warn("Field " + key.name() + " is not indexable on " + getHandle() + ".");
-				}
-				return get(key);
+				break;
 		}
+		
+		return get(key);
 	}
 	
 	/*
@@ -158,15 +157,8 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @return
 	 */
-	public String getBody() {
-		return this.report.getDescription();
-	}
-	
-	/**
-	 * @return
-	 */
 	public Report getReport() {
-		return this.report;
+		return this.report.getOriginalReport();
 	}
 	
 	/*
@@ -192,7 +184,7 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @param report
 	 */
-	public void setReport(final Report report) {
+	public void setReport(final EnhancedReport report) {
 		this.report = report;
 	}
 	

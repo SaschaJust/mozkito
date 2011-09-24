@@ -21,6 +21,7 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
@@ -62,23 +63,40 @@ public abstract class MappingEngine extends Registered {
 	private final boolean      initialized     = false;
 	
 	/**
+	 * Using this method, one can add features to a given {@link MapScore}. The
+	 * given score will be manipulated using the values given.
+	 * 
 	 * @param score
+	 *            the {@link MapScore} a new feature shall be added
 	 * @param confidence
+	 *            a confidence value representing the impact of the feature
 	 * @param fromFieldName
+	 *            the name of the field (see {@link FieldKey}) of the "from"
+	 *            entity that caused this feature
 	 * @param fromFieldContent
+	 *            the content of the field (see {@link FieldKey}) of the "from"
+	 *            entity that caused this feature
 	 * @param fromSubstring
+	 *            the particular substring of the field (see {@link FieldKey})
+	 *            of the "from" entity that caused this feature
 	 * @param toFieldName
+	 *            the name of the field (see {@link FieldKey}) of the "to"
+	 *            entity that caused this feature
 	 * @param toFieldContent
+	 *            the content of the field (see {@link FieldKey}) of the "to"
+	 *            entity that caused this feature
 	 * @param toSubstring
+	 *            the particular substring of the field (see {@link FieldKey})
+	 *            of the "to" entity that caused this feature
 	 */
-	public void addFeature(@NotNull final MapScore score,
-	                       final double confidence,
-	                       @NotNull @NotEmpty final String fromFieldName,
-	                       final Object fromFieldContent,
-	                       final Object fromSubstring,
-	                       @NotNull @NotEmpty final String toFieldName,
-	                       final Object toFieldContent,
-	                       final Object toSubstring) {
+	public final void addFeature(@NotNull final MapScore score,
+	                             final double confidence,
+	                             @NotNull @NotEmpty final String fromFieldName,
+	                             final Object fromFieldContent,
+	                             final Object fromSubstring,
+	                             @NotNull @NotEmpty final String toFieldName,
+	                             final Object toFieldContent,
+	                             final Object toSubstring) {
 		score.addFeature(confidence, truncate(fromFieldName),
 		                 truncate(fromFieldContent != null
 		                                                  ? fromFieldContent.toString()

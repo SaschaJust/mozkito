@@ -44,7 +44,9 @@ public class MappableTransaction extends MappableEntity {
 	 * @param transaction
 	 */
 	public MappableTransaction(final RCSTransaction transaction) {
-		this.setTransaction(transaction);
+		super();
+		
+		setTransaction(transaction);
 	}
 	
 	/*
@@ -56,10 +58,28 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	public Object get(@NotNull final FieldKey key) {
 		switch (key) {
+			case AUTHOR:
+				return getTransaction().getAuthor();
+			case BODY:
+				return getTransaction().getMessage();
+			case CLOSED_TIMESTAMP:
+				return getTransaction().getTimestamp();
+			case CLOSER:
+				return getTransaction().getAuthor();
+			case CREATION_TIMESTAMP:
+				return getTransaction().getTimestamp();
+			case FILE:
+				// this should probably be a collection of mappings-files (own
+				// class for mappings)
+				return getTransaction().getChangedFiles();
+			case PATH:
+				return getTransaction().getChangedFiles();
+			case RESOLUTION_TIMESTAMP:
+				return getTransaction().getTimestamp();
+			case SUMMARY:
+				return getTransaction().getMessage();
 			case ID:
 				return getId();
-			case BODY:
-				return getBody();
 			default:
 				return null;
 		}
@@ -76,6 +96,8 @@ public class MappableTransaction extends MappableEntity {
 	                  @NotNegative final int index) {
 		switch (key) {
 			case FILE:
+				return getFile(index);
+			case PATH:
 				return getFile(index);
 			default:
 				if (Logger.logWarn()) {
@@ -97,18 +119,12 @@ public class MappableTransaction extends MappableEntity {
 	}
 	
 	/**
-	 * @return
-	 */
-	public String getBody() {
-		return this.transaction.getMessage();
-	}
-	
-	/**
 	 * @param index
 	 * @return
 	 */
 	public RCSFile getFile(@NotNegative final int index) {
 		Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
+		
 		if (changedFiles.size() > index) {
 			return (RCSFile) CollectionUtils.get(changedFiles, index);
 		} else {
@@ -123,10 +139,14 @@ public class MappableTransaction extends MappableEntity {
 		return getTransaction().getId();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getText()
+	 */
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+		return getTransaction().getMessage();
 	}
 	
 	/**
@@ -143,14 +163,29 @@ public class MappableTransaction extends MappableEntity {
 		this.transaction = transaction;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#supported
+	 * ()
+	 */
 	@SuppressWarnings ("serial")
 	@Override
 	public Set<FieldKey> supported() {
-		// TODO complete this
+		
 		return new HashSet<FieldKey>() {
 			
 			{
+				add(FieldKey.AUTHOR);
+				add(FieldKey.BODY);
+				add(FieldKey.CLOSED_TIMESTAMP);
+				add(FieldKey.CLOSER);
+				add(FieldKey.CREATION_TIMESTAMP);
+				add(FieldKey.FILE);
 				add(FieldKey.ID);
+				add(FieldKey.PATH);
+				add(FieldKey.RESOLUTION_TIMESTAMP);
+				add(FieldKey.SUMMARY);
 			}
 		};
 	}
