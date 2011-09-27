@@ -127,8 +127,8 @@ public abstract class MappingEngine extends Registered {
 	}
 	
 	/**
-	 * @param transaction
-	 * @param report
+	 * @param from
+	 * @param to
 	 * @param score
 	 */
 	@NoneNull
@@ -136,14 +136,20 @@ public abstract class MappingEngine extends Registered {
 	                           final MappableEntity to,
 	                           final MapScore score);
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#storageDependency
+	 * ()
 	 */
 	@Override
 	public Set<Class<? extends MappingStorage>> storageDependency() {
 		return new HashSet<Class<? extends MappingStorage>>();
 	}
 	
+	/**
+	 * @return
+	 */
 	public abstract Expression supported();
 	
 	/*

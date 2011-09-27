@@ -49,8 +49,6 @@ public abstract class Registered {
 	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
 	                                          final String[] superTag) {
 		if (clazz.getSuperclass() == Registered.class) {
-			System.err.println("Settings superTag from " + superTag[0] + " to "
-			        + clazz.getSimpleName().replace("Mapping", ""));
 			superTag[0] = clazz.getSimpleName().replace("Mapping", "");
 			return superTag[0].toLowerCase();
 		} else if (clazz == Registered.class) {
@@ -60,12 +58,8 @@ public abstract class Registered {
 			Class<? extends Registered> c = clazz;
 			if (Registered.class.isAssignableFrom(c.getSuperclass()) && (c.getSuperclass() != Registered.class)) {
 				c = (Class<? extends Registered>) c.getSuperclass();
-				System.err.println("processing class: " + clazz);
 				String string = findRegisteredSuper(c, superTag);
-				System.err.println("receiving registeredSuper string: " + string);
-				System.err.println("receiving superTag: " + superTag[0]);
 				String retval = string + "." + clazz.getSimpleName().replace(superTag[0], "").toLowerCase();
-				System.err.println("Settings superTag from " + superTag[0] + " to " + clazz.getSimpleName());
 				superTag[0] = clazz.getSimpleName();
 				return retval;
 			}
