@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
@@ -38,6 +39,7 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
@@ -351,34 +353,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 		query.executeUpdate();
 	}
 	
-	// @Override
-	// public RCSFile fetchRCSFile(final Long id) {
-	// CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-	// CriteriaQuery<RCSFile> criteria = builder.createQuery(RCSFile.class);
-	// Root<RCSFile> file = criteria.from(RCSFile.class);
-	// criteria.where(builder.equal(file.get("generatedId"), id));
-	// TypedQuery<RCSFile> query = entityManager.createQuery(criteria);
-	//
-	// return query.getResultList().get(0);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#
-	// * fetchRCSTransaction(java.lang.String)
-	// */
-	// @Override
-	// public RCSTransaction fetchRCSTransaction(final String id) {
-	// CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-	// CriteriaQuery<RCSTransaction> criteria =
-	// builder.createQuery(RCSTransaction.class);
-	// Root<RCSTransaction> transaction = criteria.from(RCSTransaction.class);
-	// criteria.where(builder.equal(transaction.get("id"), id));
-	// TypedQuery<RCSTransaction> query = entityManager.createQuery(criteria);
-	//
-	// return query.getResultList().get(0);
-	// }
-	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -420,8 +394,11 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 		}
 		
+		Regex regex = new Regex(".*password.*", Pattern.CASE_INSENSITIVE);
 		for (String key : properties.keySet()) {
-			if (((String) properties.get(key)).contains("Password")) {
+			// FIXME this should actually check for case-insensitive matches of
+			// "password" and "username"
+			if (regex.matches(key)) {
 				properties.put(key, ((String) properties.get(key)).replaceAll(".", "*"));
 			}
 			
@@ -468,6 +445,11 @@ public class OpenJPAUtil implements PersistenceUtil {
 		return query.getResultList();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil#load(de.
+	 * unisaarland.cs.st.reposuite.persistence.Criteria, int)
+	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria,
 	                        final int sizeLimit) {
