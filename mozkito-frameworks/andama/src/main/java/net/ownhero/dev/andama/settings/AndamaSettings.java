@@ -52,7 +52,11 @@ public class AndamaSettings {
 	private final BooleanArgument          helpArg;
 	private final BooleanArgument          disableCrashArg;
 	private final URIArgument              settingsArg;
+	private final MailArguments            mailArguments;
 	
+	/**
+	 * 
+	 */
 	public AndamaSettings() {
 		this.noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false",
 		                                             false);
@@ -65,6 +69,7 @@ public class AndamaSettings {
 		                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
 		                                   null, false);
 		
+		this.mailArguments = new MailArguments(this, true);
 	}
 	
 	/**
@@ -167,6 +172,13 @@ public class AndamaSettings {
 		}
 		
 		return ss.toString();
+	}
+	
+	/**
+	 * @return the mailArguments
+	 */
+	public MailArguments getMailArguments() {
+		return this.mailArguments;
 	}
 	
 	/**

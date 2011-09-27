@@ -31,27 +31,11 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaCrashHandler extends ThreadGroup {
 	
-	private static final Properties                     mailProps = new Properties() {
-		                                                              
-		                                                              private static final long serialVersionUID = -4075576523389682827L;
-		                                                              
-		                                                              {
-			                                                              put("mail.smtp.host",
-			                                                                  "mail.st.cs.uni-saarland.de");
-			                                                              put("mail.transport.protocol", "smtp");
-			                                                              put("mail.to",
-			                                                                  "project_reposuite@st.cs.uni-saarland.de");
-			                                                              put("mail.subject", "RepoSuite Crash Report");
-			                                                              put("mail.sender.name", "RepoSuite Client");
-			                                                              put("mail.sender.address",
-			                                                                  "reposuite-crasher@st.cs.uni-saarland.de");
-			                                                              put("mail.sender.host",
-			                                                                  "hg.st.cs.uni-saarland.de");
-		                                                              }
-	                                                              };
+	private static Map<AndamaChain, AndamaCrashHandler> handlers = new HashMap<AndamaChain, AndamaCrashHandler>();
 	
-	private static Map<AndamaChain, AndamaCrashHandler> handlers  = new HashMap<AndamaChain, AndamaCrashHandler>();
-	
+	/**
+	 * @param toolchain
+	 */
 	public static void init(final AndamaChain toolchain) {
 		if (!handlers.containsKey(toolchain)) {
 			handlers.put(toolchain, new AndamaCrashHandler(toolchain));
@@ -96,7 +80,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	private String getCrashReport(final Throwable e) {
 		StringBuilder body = new StringBuilder();
 		
-		body.append("RepoSuite crashed. An automated, anonymous crash report will be send to help us fix the problem.");
+		body.append("Application crashed. An automated, anonymous crash report will be send to help us fix the problem.");
 		body.append(AndamaUtils.lineSeparator);
 		body.append("This report does NOT contain any usernames or passwords.");
 		body.append(AndamaUtils.lineSeparator);
@@ -158,24 +142,24 @@ public class AndamaCrashHandler extends ThreadGroup {
 		}
 		
 		try {
-			body.append(">>> RepoSuite Setup >>>");
+			body.append(">>> Application Setup >>>");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-			body.append(getRepoSuiteSettings());
+			body.append(getSettings());
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-			body.append("<<< RepoSuite Setup <<<");
+			body.append("<<< Application Setup <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
 		} catch (Throwable t) {
 			
 		}
 		try {
-			body.append(">>> RepoSuite ToolInfo >>>");
+			body.append(">>> Application ToolInfo >>>");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
 			body.append(getToolInformation());
-			body.append("<<< RepoSuite ToolInfo <<<");
+			body.append("<<< Application ToolInfo <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
 		} catch (Throwable t) {
@@ -198,14 +182,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * @return the reposuite settings of the monitored application, if any
+	 * @return
 	 */
-	protected String getRepoSuiteSettings() {
-		return (this.application != null)
-		                                 ? this.application.getSettings().toString()
-		                                 : "";
-	}
-	
 	private String getRuntimeInformation() {
 		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
 		StringBuilder builder = new StringBuilder();
@@ -216,6 +194,15 @@ public class AndamaCrashHandler extends ThreadGroup {
 		builder.append(AndamaUtils.lineSeparator);
 		return builder.toString();
 		
+	}
+	
+	/**
+	 * @return the reposuite settings of the monitored application, if any
+	 */
+	protected String getSettings() {
+		return (this.application != null)
+		                                 ? this.application.getSettings().toString()
+		                                 : "";
 	}
 	
 	/**
@@ -263,18 +250,23 @@ public class AndamaCrashHandler extends ThreadGroup {
 	private void sendReport(final String report) {
 		if (this.application.getSettings().isCrashEmailDisabled()) {
 			try {
-				Session session = Session.getDefaultInstance(AndamaCrashHandler.mailProps, null);
+				Properties mailProps = this.application.getSettings().getMailArguments().getValue();
+				
+				Session session = Session.getDefaultInstance(mailProps, null);
 				Transport transport = session.getTransport();
 				MimeMessage message = new MimeMessage(session);
-				message.setSubject(AndamaCrashHandler.mailProps.getProperty("mail.subject"));
-				message.addRecipient(Message.RecipientType.TO,
-				                     new InternetAddress(AndamaCrashHandler.mailProps.getProperty("mail.to")));
-				message.setFrom(new InternetAddress(AndamaCrashHandler.mailProps.getProperty("mail.sender.address"),
-				                                    AndamaCrashHandler.mailProps.getProperty("mail.sender.name")));
-				message.setSender(new InternetAddress(AndamaCrashHandler.mailProps.getProperty("mail.sender.address"),
-				                                      AndamaCrashHandler.mailProps.getProperty("mail.sender.name")));
+				message.setSubject(mailProps.getProperty("mail.subject"));
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailProps.getProperty("mail.to")));
+				message.setFrom(new InternetAddress(mailProps.getProperty("mail.sender.address"),
+				                                    mailProps.getProperty("mail.sender.name")));
+				message.setSender(new InternetAddress(mailProps.getProperty("mail.sender.address"),
+				                                      mailProps.getProperty("mail.sender.name")));
 				message.setContent(report, "text/plain");
-				transport.connect();
+				if (mailProps.contains("mail.username") && mailProps.contains("mail.password")) {
+					transport.connect(mailProps.getProperty("mail.username"), mailProps.getProperty("mail.password"));
+				} else {
+					transport.connect();
+				}
 				transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
 				transport.close();
 			} catch (MessagingException e) {
