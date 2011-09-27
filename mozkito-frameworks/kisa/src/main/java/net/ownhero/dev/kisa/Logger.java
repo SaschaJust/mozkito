@@ -56,14 +56,14 @@ public class Logger {
 		@Override
 		public void close() throws IOException {
 			super.close();
-			latch.countDown();
+			this.latch.countDown();
 		}
 		
 		/**
 		 * @return
 		 */
 		public CountDownLatch latch() {
-			return latch;
+			return this.latch;
 		}
 	}
 	
@@ -116,7 +116,7 @@ public class Logger {
 		consoleAppender.setLayout(layout);
 		LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 		// set levels and minLevel
-		LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO"));
+		LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
 		consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
 		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
 			maxLevel = consoleLevel;
@@ -285,10 +285,10 @@ public class Logger {
 	                          final Throwable t,
 	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
@@ -408,10 +408,10 @@ public class Logger {
 	                          final Throwable t,
 	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
@@ -566,10 +566,10 @@ public class Logger {
 	                         final Throwable t,
 	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
@@ -689,7 +689,7 @@ public class Logger {
 		
 		CompareCondition.greater(throwable.getStackTrace().length,
 		                         offset,
-		"The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
+		                         "The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
 		
 		Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
 		String methodName = throwable.getStackTrace()[offset].getMethodName();
@@ -795,10 +795,10 @@ public class Logger {
 	                          final Throwable t,
 	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logTrace(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
@@ -918,10 +918,10 @@ public class Logger {
 	                         final Throwable t,
 	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
