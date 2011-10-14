@@ -26,6 +26,9 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
+ * This engine scores if the 'to' entity contains a reference to the 'from'
+ * entity in the body text.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -41,7 +44,7 @@ public class BackrefEngine extends MappingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores if the report contains a comment including a reference to the transaction id.";
+		return "Scores if the 'to' entity contains a reference to the 'from' entity in the body text.";
 	}
 	
 	/**

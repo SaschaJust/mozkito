@@ -29,10 +29,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Document;
@@ -98,18 +99,6 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 		return result;
 	}
 	
-	/** The document. */
-	private final Document             document;
-	
-	/** The operations element. */
-	private final Element              operationsElement;
-	
-	/** The out stream. */
-	private final OutputStream         outStream;
-	
-	/** The transaction elements. */
-	private final Map<String, Element> transactionElements = new HashMap<String, Element>();
-	
 	/**
 	 * Instantiates a new pPAXML sink.
 	 * 
@@ -125,56 +114,50 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	public PPAXMLTransformer(final AndamaGroup threadGroup, final AndamaSettings settings, final OutputStream outStream)
 	        throws ParserConfigurationException {
 		super(threadGroup, settings, false);
-		this.operationsElement = new Element(ROOT_ELEMENT_NAME);
-		this.document = new org.jdom.Document(this.operationsElement);
-		this.outStream = outStream;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#afterExecution()
-	 */
-	@Override
-	public void afterExecution() {
-		super.afterExecution();
+		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
+		final Document document = new org.jdom.Document(operationsElement);
+		final Map<String, Element> transactionElements = new HashMap<String, Element>();
 		
-		try {
-			// Use a Transformer for output
-			XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-			outputter.output(this.document, this.outStream);
-			this.outStream.close();
-		} catch (FileNotFoundException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.OnlyInputConnectable#process(java.lang
-	 * .Object)
-	 */
-	@Override
-	public void process(final JavaChangeOperation currentOperation) throws net.ownhero.dev.andama.exceptions.UnrecoverableError,
-	                                                               Shutdown {
-		String transactionId = currentOperation.getRevision().getTransaction().getId();
+		new PostExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			
+			@Override
+			public void postExecution() {
+				try {
+					// Use a Transformer for output
+					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+					outputter.output(document, outStream);
+					outStream.close();
+				} catch (FileNotFoundException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				} catch (IOException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				}
+			}
+		};
 		
-		if (Logger.logDebug()) {
-			Logger.debug("Storing " + currentOperation);
-		}
-		
-		if (!this.transactionElements.containsKey(transactionId)) {
-			Element transactionElement = new Element("transaction");
-			transactionElement.setAttribute("id", transactionId);
-			this.operationsElement.addContent(transactionElement);
-			this.transactionElements.put(transactionId, transactionElement);
-		}
-		Element transactionElement = this.transactionElements.get(transactionId);
-		
-		Element operationElement = currentOperation.getXMLRepresentation();
-		transactionElement.addContent(operationElement);
+		new ProcessHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			
+			@Override
+			public void process() {
+				JavaChangeOperation currentOperation = getInputData();
+				String transactionId = currentOperation.getRevision().getTransaction().getId();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + currentOperation);
+				}
+				
+				if (!transactionElements.containsKey(transactionId)) {
+					Element transactionElement = new Element("transaction");
+					transactionElement.setAttribute("id", transactionId);
+					operationsElement.addContent(transactionElement);
+					transactionElements.put(transactionId, transactionElement);
+				}
+				Element transactionElement = transactionElements.get(transactionId);
+				
+				Element operationElement = currentOperation.getXMLRepresentation();
+				transactionElement.addContent(operationElement);
+			}
+		};
 	}
 	
 }

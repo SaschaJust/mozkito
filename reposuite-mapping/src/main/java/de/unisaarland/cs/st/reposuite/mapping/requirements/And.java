@@ -18,21 +18,24 @@ package de.unisaarland.cs.st.reposuite.mapping.requirements;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 
 /**
- * @author just
+ * The and expression evaluates to true if and only if both inner expressions
+ * evaluate to true. Evaluates to false otherwise.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class And extends Expression {
+public final class And extends Expression {
 	
-	private final Expression e1;
-	private final Expression e2;
+	private final Expression expression1;
+	private final Expression expression2;
 	
 	/**
-	 * @param e1
-	 * @param e2
+	 * @param expression1
+	 * @param expression2
 	 */
-	public And(final Expression e1, final Expression e2) {
-		this.e1 = e1;
-		this.e2 = e2;
+	public And(final Expression expression1, final Expression expression2) {
+		this.expression1 = expression1;
+		this.expression2 = expression2;
 	}
 	
 	/*
@@ -46,20 +49,21 @@ public class And extends Expression {
 	public boolean check(final Class<? extends MappableEntity> target1,
 	                     final Class<? extends MappableEntity> target2,
 	                     final Index oneEquals) {
-		return getE1().check(target1, target2, oneEquals) && getE2().check(target1, target2, oneEquals);
+		return getExpression1().check(target1, target2, oneEquals)
+		        && getExpression2().check(target1, target2, oneEquals);
 	}
 	
 	/**
-	 * @return
+	 * @return the first expression
 	 */
-	public Expression getE1() {
-		return this.e1;
+	public Expression getExpression1() {
+		return this.expression1;
 	}
 	
 	/**
-	 * @return
+	 * @return the second expression
 	 */
-	public Expression getE2() {
-		return this.e2;
+	public Expression getExpression2() {
+		return this.expression2;
 	}
 }

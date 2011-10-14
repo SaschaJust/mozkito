@@ -128,8 +128,12 @@ public abstract class MappingEngine extends Registered {
 	
 	/**
 	 * @param from
+	 *            the 'from' entity
 	 * @param to
+	 *            the 'to' entity
 	 * @param score
+	 *            the actual {@link MapScore} that will be manipulated by this
+	 *            method
 	 */
 	@NoneNull
 	public abstract void score(final MappableEntity from,
@@ -148,7 +152,8 @@ public abstract class MappingEngine extends Registered {
 	}
 	
 	/**
-	 * @return
+	 * @return an instance of {@link Expression} that represents the support of
+	 *         this engine
 	 */
 	public abstract Expression supported();
 	

@@ -24,7 +24,20 @@ import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 
-public class Atom extends Expression {
+/**
+ * The atom expression evaluates to true if the given criteria are met.
+ * Evaluates to false otherwise.
+ * 
+ * If a type is given, the {@link Atom#check(Class, Class, Index)} method checks
+ * if the instance corresponding to the given index matches the given
+ * type/class. If a/multiple {@link FieldKey}(s) is/are given, the check method
+ * is looking up if the instance corresponding to the given index supports this
+ * type of field (determined by {@link FieldKey}).
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
+public final class Atom extends Expression {
 	
 	private final Index         idx;
 	private Class<?>            type;
@@ -32,7 +45,9 @@ public class Atom extends Expression {
 	
 	/**
 	 * @param idx
+	 *            the index the atom refers to
 	 * @param type
+	 *            the type that the corresponding entity is required to match
 	 */
 	public Atom(final Index idx, final Class<?> type) {
 		this.idx = idx;
@@ -41,7 +56,9 @@ public class Atom extends Expression {
 	
 	/**
 	 * @param idx
+	 *            the index the atom refers to
 	 * @param key
+	 *            the {@link FieldKey} the entity has to support
 	 */
 	public Atom(final Index idx, final FieldKey key) {
 		this.idx = idx;
@@ -50,7 +67,9 @@ public class Atom extends Expression {
 	
 	/**
 	 * @param idx
+	 *            the index the atom refers to
 	 * @param keys
+	 *            the {@link FieldKey}s the entity has to support
 	 */
 	public Atom(final Index idx, final FieldKey... keys) {
 		this.idx = idx;
@@ -140,21 +159,22 @@ public class Atom extends Expression {
 	}
 	
 	/**
-	 * @return
+	 * @return the index the atom refers to
 	 */
 	public Index getIdx() {
 		return this.idx;
 	}
 	
 	/**
-	 * @return
+	 * @return the {@link FieldKey}s the atom refers to, if any. Returns an
+	 *         empty set if none were specified.
 	 */
 	public Set<FieldKey> getKeys() {
 		return this.keys;
 	}
 	
 	/**
-	 * @return
+	 * @return the type the atom refers to. Returns <code>null</code> otherwise.
 	 */
 	public Class<?> getType() {
 		return this.type;

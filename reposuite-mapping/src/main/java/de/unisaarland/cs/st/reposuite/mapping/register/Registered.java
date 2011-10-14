@@ -29,11 +29,21 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 
+/**
+ * Classes extending {@link Registered} can dynamically register config options
+ * to the tool chain. Additionally there is support to automatically generate
+ * config option names following the standard naming convention.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public abstract class Registered {
 	
 	/**
 	 * @param clazz
-	 * @return
+	 *            the base class extending {@link Registered}
+	 * @return the lowercase part of the name specifies the category of the
+	 *         registered class, e.g. "engine" for MappingEngine.
 	 */
 	private static final String findRegisteredSuper(final Class<? extends Registered> clazz) {
 		String[] superTag = new String[] { "" };
@@ -82,7 +92,7 @@ public abstract class Registered {
 	}
 	
 	/**
-	 * @return
+	 * @return a string describing the task of the registered class
 	 */
 	public abstract String getDescription();
 	

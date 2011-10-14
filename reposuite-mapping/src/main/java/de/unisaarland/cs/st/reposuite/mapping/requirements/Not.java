@@ -17,12 +17,20 @@ package de.unisaarland.cs.st.reposuite.mapping.requirements;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 
+/**
+ * The not expression evaluates to true if the innerexpression evaluates to
+ * false. Evaluates to true otherwise.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public class Not extends Expression {
 	
 	private final Expression expression;
 	
 	/**
 	 * @param expression
+	 *            the inner expression used in the evaluation
 	 */
 	public Not(final Expression expression) {
 		this.expression = expression;
@@ -43,7 +51,7 @@ public class Not extends Expression {
 	}
 	
 	/**
-	 * @return
+	 * @return the inner expression
 	 */
 	public Expression getExpression() {
 		return this.expression;

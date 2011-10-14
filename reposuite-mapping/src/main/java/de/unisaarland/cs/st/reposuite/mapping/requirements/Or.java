@@ -17,19 +17,26 @@ package de.unisaarland.cs.st.reposuite.mapping.requirements;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 
+/**
+ * The or expression evaluates to true if one or more of the inner expressions
+ * evaluate to true. Evaluates to false otherwise.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public class Or extends Expression {
 	
-	private final Expression e1;
+	private final Expression expression1;
 	
-	private final Expression e2;
+	private final Expression expression2;
 	
 	/**
-	 * @param e1
-	 * @param e2
+	 * @param expression1
+	 * @param expression2
 	 */
-	public Or(final Expression e1, final Expression e2) {
-		this.e1 = e1;
-		this.e2 = e2;
+	public Or(final Expression expression1, final Expression expression2) {
+		this.expression1 = expression1;
+		this.expression2 = expression2;
 	}
 	
 	/*
@@ -43,20 +50,21 @@ public class Or extends Expression {
 	public boolean check(final Class<? extends MappableEntity> target1,
 	                     final Class<? extends MappableEntity> target2,
 	                     final Index oneEquals) {
-		return getE1().check(target1, target2, oneEquals) || getE2().check(target1, target2, oneEquals);
+		return getExpression1().check(target1, target2, oneEquals)
+		        || getExpression2().check(target1, target2, oneEquals);
 	}
 	
 	/**
-	 * @return
+	 * @return the 'from' expression
 	 */
-	public Expression getE1() {
-		return this.e1;
+	public Expression getExpression1() {
+		return this.expression1;
 	}
 	
 	/**
-	 * @return
+	 * @return the 'to' expression
 	 */
-	public Expression getE2() {
-		return this.e2;
+	public Expression getExpression2() {
+		return this.expression2;
 	}
 }

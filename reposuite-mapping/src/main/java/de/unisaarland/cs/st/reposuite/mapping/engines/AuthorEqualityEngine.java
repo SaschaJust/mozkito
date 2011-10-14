@@ -27,6 +27,9 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 
 /**
+ * This engine scores according to the equality of the authors of both entities.
+ * If the confidence value isn't set explicitly, the default value is used.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -42,11 +45,12 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores according to the equality of committer and person who closes the bug (at some time in the history).";
+		return "Scores according to the equality of both entities (at some time in the history).";
 	}
 	
 	/**
-	 * @return the scoreAuthorEquality
+	 * @return the scoreAuthorEquality (which is the confidence value for this
+	 *         engine; defaults to the initial value of scoreAuthorEquality)
 	 */
 	private double getScoreAuthorEquality() {
 		return this.scoreAuthorEquality;

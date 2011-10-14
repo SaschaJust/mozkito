@@ -23,12 +23,20 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 
-public class Any extends Expression {
+/**
+ * The any expression evaluates to true if any of the inner expressions evaluate
+ * to true. Evaluates to false otherwise.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
+public final class Any extends Expression {
 	
 	private final Set<Expression> expressions = new HashSet<Expression>();
 	
 	/**
 	 * @param expressions
+	 *            a collection of inner expressions
 	 */
 	public Any(final Collection<Expression> expressions) {
 		this.expressions.addAll(this.expressions);
@@ -36,6 +44,7 @@ public class Any extends Expression {
 	
 	/**
 	 * @param expressions
+	 *            sa collection of inner expressions
 	 */
 	public Any(final Expression... expressions) {
 		CollectionUtils.addAll(this.expressions, expressions);
@@ -57,6 +66,14 @@ public class Any extends Expression {
 				return true;
 			}
 		}
+		
 		return false;
+	}
+	
+	/**
+	 * @return the expressions
+	 */
+	public final Set<Expression> getExpressions() {
+		return this.expressions;
 	}
 }

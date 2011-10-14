@@ -24,6 +24,8 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.internal.visitors.ChangeOperationVisitor;
@@ -87,26 +89,58 @@ public class ChangeOperationReader extends AndamaSource<JavaChangeOperation> imp
 		this.repository = repository;
 		this.transactions = transactions;
 		this.startWith = startWith;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThread#beforeExecution()
-	 */
-	@Override
-	public void beforeExecution() {
-		super.beforeExecution();
 		
-		this.visitors = new HashSet<ChangeOperationVisitor>();
-		this.visitors.add(this);
-		this.size = this.transactions.size();
-		this.iterator = this.transactions.iterator();
-		this.counter = 0;
+		new PreExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			@Override
+			public void preExecution() {
+				ChangeOperationReader.this.visitors = new HashSet<ChangeOperationVisitor>();
+				ChangeOperationReader.this.visitors.add(ChangeOperationReader.this);
+				ChangeOperationReader.this.size = transactions.size();
+				ChangeOperationReader.this.iterator = transactions.iterator();
+				ChangeOperationReader.this.counter = 0;
+				
+				ChangeOperationReader.this.consider = true;
+				if (startWith != null) {
+					ChangeOperationReader.this.consider = false;
+				}
+			}
+		};
 		
-		this.consider = true;
-		if (this.startWith != null) {
-			this.consider = false;
-		}
+		new ProcessHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			@Override
+			public void process() {
+			    // TODO Auto-generated method stub
+			    
+			
+			if (ChangeOperationReader.this.iterator.hasNext()) {
+				RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
+				
+				if (!ChangeOperationReader.this.consider) {
+					if (transaction.getId().equals(startWith)) {
+						ChangeOperationReader.this.consider = true;
+						ChangeOperationReader.this.size = ChangeOperationReader.this.size - ChangeOperationReader.this.counter;
+						ChangeOperationReader.this.counter = 0;
+					} else {
+						++ChangeOperationReader.this.counter;
+						return skipOutputData(transaction);
+					}
+				}
+				
+				if (Logger.logInfo()) {
+					Logger.info("Computing change operations for transaction `" + transaction.getId() + "` ("
+					        + (++ChangeOperationReader.this.counter) + "/" + ChangeOperationReader.this.size + ")");
+				}
+				if (usePPA) {
+					PPAUtils.generateChangeOperations(repository, transaction, ChangeOperationReader.this.visitors);
+				} else {
+					PPAUtils.generateChangeOperationsNOPPA(repository, transaction, ChangeOperationReader.this.visitors);
+				}
+				
+				// FIXME ????
+				skipOutputData(transaction);
+			}
+			
+		};
 	}
 	
 	/*
@@ -117,43 +151,6 @@ public class ChangeOperationReader extends AndamaSource<JavaChangeOperation> imp
 	 */
 	@Override
 	public void endVisit() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.OnlyOutputConnectable#process()
-	 */
-	@Override
-	public JavaChangeOperation process() throws UnrecoverableError, Shutdown {
-		if (this.iterator.hasNext()) {
-			RCSTransaction transaction = this.iterator.next();
-			
-			if (!this.consider) {
-				if (transaction.getId().equals(this.startWith)) {
-					this.consider = true;
-					this.size = this.size - this.counter;
-					this.counter = 0;
-				} else {
-					++this.counter;
-					return skip(transaction);
-				}
-			}
-			
-			if (Logger.logInfo()) {
-				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` ("
-				        + (++this.counter) + "/" + this.size + ")");
-			}
-			if (this.usePPA) {
-				PPAUtils.generateChangeOperations(this.repository, transaction, this.visitors);
-			} else {
-				PPAUtils.generateChangeOperationsNOPPA(this.repository, transaction, this.visitors);
-			}
-			
-			// FIXME ????
-			return skip(transaction);
-		}
-		
-		return null;
 	}
 	
 	/*
