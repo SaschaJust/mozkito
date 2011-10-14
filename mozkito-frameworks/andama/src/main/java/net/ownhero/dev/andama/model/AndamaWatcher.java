@@ -84,7 +84,7 @@ public class AndamaWatcher extends Thread {
 				}
 			}
 			try {
-				Thread.sleep(15000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 			}
 		}

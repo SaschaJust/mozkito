@@ -16,6 +16,7 @@
 package net.ownhero.dev.andama.threads;
 
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
@@ -72,6 +73,14 @@ public interface AndamaThreadable<K, V> {
 	public void addPreProcessHook(PreProcessHook<K, V> hook);
 	
 	public void addProcessHook(ProcessHook<K, V> hook);
+	
+	/**
+	 * Adds a latch to notify threads that depend on this one to be finished.
+	 * 
+	 * @param latch
+	 *            the {@link CountDownLatch}
+	 */
+	public void addWaitForLatch(final CountDownLatch latch);
 	
 	public abstract boolean checkConnections();
 	
@@ -215,4 +224,12 @@ public interface AndamaThreadable<K, V> {
 	 * @return
 	 */
 	public boolean skipData();
+	
+	/**
+	 * Requires the given thread to be finished before this one is executed.
+	 * 
+	 * @param thread
+	 *            the dependency
+	 */
+	public void waitFor(AndamaThread<?, ?> thread);
 }

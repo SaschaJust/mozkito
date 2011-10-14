@@ -18,8 +18,10 @@ package net.ownhero.dev.andama.threads;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -103,6 +105,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	private final Set<PostExecutionHook<K, V>>                postExecutionHooks = new HashSet<PostExecutionHook<K, V>>();
 	private boolean                                           skipData           = false;
+	
+	private final Map<AndamaThread<?, ?>, CountDownLatch>     dependencies       = new HashMap<AndamaThread<?, ?>, CountDownLatch>();
+	private final Set<CountDownLatch>                         awaitingLatches    = new HashSet<CountDownLatch>();
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
@@ -284,6 +289,11 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	final void addProcessLatch(final CountDownLatch latch) {
 		this.processLatches.add(latch);
+	}
+	
+	@Override
+	public void addWaitForLatch(final CountDownLatch latch) {
+		this.awaitingLatches.add(latch);
 	}
 	
 	/**
@@ -944,7 +954,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		CollectionCondition.maxSize(this.inputHooks, 1, "There must not be more than 1 input hooks, but got: %s",
 		                            this.inputHooks.size());
 		// @formatter:off
-		
 		/*
 		 *
          *                   +----------------------------------------------------------------------------------------------------------------------------------+
@@ -996,6 +1005,26 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 					Logger.info("Adding default output hook to " + getHandle() + ".");
 				}
 				getOutputHooks().add(new DefaultOutputHook<K, V>(this));
+			}
+			
+			// add dependency latches
+			if (!this.dependencies.isEmpty()) {
+				for (AndamaThread<?, ?> key : this.dependencies.keySet()) {
+					if (this.dependencies.get(key) == null) {
+						CountDownLatch value = new CountDownLatch(1);
+						this.dependencies.put(key, value);
+						key.addWaitForLatch(value);
+					}
+				}
+			}
+			
+			// wait for dependency threads
+			if (!this.dependencies.isEmpty()) {
+				for (AndamaThread<?, ?> key : this.dependencies.keySet()) {
+					if (!key.isShutdown()) {
+						this.dependencies.get(key).await();
+					}
+				}
 			}
 			
 			// PREEXECUTION HOOKS
@@ -1294,6 +1323,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			}
 			
 			finish();
+			
+			for (CountDownLatch latch : this.awaitingLatches) {
+				if (latch.getCount() > 0) {
+					latch.countDown();
+				}
+			}
 		} catch (Exception e) {
 			
 			if (Logger.logError()) {
@@ -1302,6 +1337,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 				Logger.error("Shutting down.");
 			}
 			shutdown();
+		} finally {
+			for (CountDownLatch latch : this.awaitingLatches) {
+				if (latch.getCount() > 0) {
+					latch.countDown();
+				}
+			}
 		}
 	}
 	
@@ -1473,6 +1514,17 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		
 		builder.append(typeBuilder);
 		return builder.toString();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev
+	 * .andama.threads.AndamaThread)
+	 */
+	@Override
+	public void waitFor(final AndamaThread<?, ?> thread) {
+		this.dependencies.put(thread, null);
 	}
 	
 	/**
