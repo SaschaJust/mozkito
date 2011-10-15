@@ -59,8 +59,7 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 				repository.getTransactionCount();
 				long cacheSize = (Long) getSettings().getSetting("cache.size").getValue();
 				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
-				                                                                 repository.getEndRevision(),
-				                                                                 (int) cacheSize);
+				        repository.getEndRevision(), (int) cacheSize);
 				
 				if (Logger.logInfo()) {
 					Logger.info("Created iterator.");
@@ -72,17 +71,23 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			
 			@Override
 			public void process() {
-				if (Logger.logTrace()) {
-					Logger.trace("filling queue [" + outputSize() + "]");
+				unsetCompleted();
+				
+				if (logIterator.hasNext()) {
+					if (Logger.logTrace()) {
+						Logger.trace("filling queue [" + outputSize() + "]");
+					}
+					
+					LogEntry entry = RepositoryReader.this.logIterator.next();
+					
+					if (Logger.logTrace()) {
+						Logger.trace("with entry: " + entry);
+					}
+					
+					provideOutputData(entry);
+				} else {
+					setCompleted();
 				}
-				
-				LogEntry entry = RepositoryReader.this.logIterator.next();
-				
-				if (Logger.logTrace()) {
-					Logger.trace("with entry: " + entry);
-				}
-				
-				provideOutputData(entry);
 			}
 		};
 	}

@@ -1,0 +1,75 @@
+2011-09-23 21:50:52,244 (       0) [main][net.ownhero.dev.kisa.Logger] WARN  Did not create directory `reposuiteFileUtilsTestDir` in parent directory `/var/folders/6r/_558qg1s5kdfqc8zxjnsnmdh0000gp/T`. Reason: directory exists already. Returning existing directory.
+2011-09-23 21:50:52,250 (       6) [main][net.ownhero.dev.kisa.Logger] ERROR Could not create directory `reposuiteFileUtilsTestDir` in parent directory `/var/folders/6r/_558qg1s5kdfqc8zxjnsnmdh0000gp/T`. Reason: path exists already as files.
+2011-09-23 21:50:52,268 (      24) [main][net.ownhero.dev.kisa.Logger] ERROR `/zkklbbfIIo` is not a directory.
+net.ownhero.dev.ioda.exceptions.FilePermissionException: `/zkklbbfIIo` is not a directory.
+	at net.ownhero.dev.ioda.FileUtils.ensureFilePermissions(FileUtils.java:419)
+	at net.ownhero.dev.ioda.FileUtils.createDir(FileUtils.java:259)
+	at de.unisaarland.cs.st.reposuite.utils.FileUtilsTest.parentDirNoDir(FileUtilsTest.java:72)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:31)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.apache.maven.surefire.junit4.JUnit4TestSet.execute(JUnit4TestSet.java:53)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:119)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:101)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.ProviderFactory$ClassLoaderProxy.invoke(ProviderFactory.java:103)
+	at $Proxy0.invoke(Unknown Source)
+	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:150)
+	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcess(SurefireStarter.java:91)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:69)
+2011-09-23 21:50:52,349 (     105) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,350 (     106) [main][net.ownhero.dev.kisa.Logger] WARN  Too many closing ')' parenthesis.
+2011-09-23 21:50:52,350 (     106) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,357 (     113) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(), name=, index=1]]
+2011-09-23 21:50:52,357 (     113) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?!), name=, index=1]]
+2011-09-23 21:50:52,358 (     114) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?<!), name=, index=1]]
+2011-09-23 21:50:52,359 (     115) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?=), name=, index=1]]
+2011-09-23 21:50:52,359 (     115) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?<=), name=, index=1]]
+2011-09-23 21:50:52,360 (     116) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=({test}), name=, index=1]]
+2011-09-23 21:50:52,360 (     116) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?!{test}), name=, index=1]]
+2011-09-23 21:50:52,361 (     117) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?<!{test}), name=, index=1]]
+2011-09-23 21:50:52,361 (     117) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?={test}), name=, index=1]]
+2011-09-23 21:50:52,362 (     118) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=(?<={test}), name=, index=1]]
+2011-09-23 21:50:52,366 (     122) [main][net.ownhero.dev.kisa.Logger] WARN  Capturing negative lookahead groups is not supported. Affected groups: [[RegexGroup [match=(?!bleh(blub), name=, index=1], RegexGroup [match=!, name=, index=2]]]
+2011-09-23 21:50:52,366 (     122) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,367 (     123) [main][net.ownhero.dev.kisa.Logger] WARN  Empty matching groups: [RegexGroup [match=({test}), name=, index=1]]
+2011-09-23 21:50:52,413 (     169) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,414 (     170) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,414 (     170) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,415 (     171) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,416 (     172) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,416 (     172) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,417 (     173) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,420 (     176) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,420 (     176) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,421 (     177) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,422 (     178) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,422 (     178) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,423 (     179) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,424 (     180) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,424 (     180) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,425 (     181) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,426 (     182) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,426 (     182) [main][net.ownhero.dev.kisa.Logger] WARN  Too many opening '(' parenthesis.
+2011-09-23 21:50:52,497 (     253) [main][net.ownhero.dev.kisa.Logger] WARN  Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.
+2011-09-23 21:50:52,498 (     254) [main][net.ownhero.dev.kisa.Logger] WARN  Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.
+2011-09-23 21:50:52,498 (     254) [main][net.ownhero.dev.kisa.Logger] WARN  Username provided and username specified in URI are not equal. Using username explicitely provided by method argument.
