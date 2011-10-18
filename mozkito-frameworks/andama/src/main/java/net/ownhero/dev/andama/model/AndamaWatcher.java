@@ -28,22 +28,21 @@ public class AndamaWatcher extends Thread {
 	/**
 	 * @param thread
 	 */
-	private void checkThread(final Thread thread) {
-		AndamaThreadable<?, ?> aThread = (AndamaThreadable<?, ?>) thread;
+	private void checkThread(final AndamaThreadable<?, ?> aThread) {
 		
-		for (StackTraceElement ste : thread.getStackTrace()) {
+		for (StackTraceElement ste : aThread.getStackTrace()) {
 			if (ste.getClassName().contains(AndamaGroup.class.getPackage().getName())) {
 				if (ste.getMethodName().startsWith("read")) {
 					if (aThread.isInputConnected()) {
 						for (AndamaThreadable<?, ?> a2Thread : aThread.getInputThreads()) {
 							if ((((Thread) a2Thread).getState().equals(State.WAITING) || ((Thread) a2Thread).getState()
 							                                                                                .equals(State.BLOCKED))
-							        && !((Thread) a2Thread).isInterrupted()) {
-								checkThread((Thread) a2Thread);
+							        && !(((Thread) a2Thread).isInterrupted())) {
+								checkThread(a2Thread);
 							}
 						}
 					} else {
-						killThread(thread);
+						killThread(((Thread) aThread));
 					}
 				}
 			}
@@ -73,11 +72,12 @@ public class AndamaWatcher extends Thread {
 	@Override
 	public void run() {
 		while (!this.terminate) {
-			for (Thread thread : this.group.getThreads()) {
+			for (AndamaThreadable<?, ?> thread1 : this.group.getThreads()) {
+				Thread thread = (Thread) thread1;
 				switch (thread.getState()) {
 					case WAITING:
 					case BLOCKED:
-						checkThread(thread);
+						checkThread(thread1);
 						break;
 					default:
 						break;

@@ -22,9 +22,9 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaGroup extends ThreadGroup {
 	
-	private final Collection<AndamaThread<?, ?>> threads = new LinkedList<AndamaThread<?, ?>>();
-	private final AndamaSettings                 settings;
-	private final AndamaChain                    toolchain;
+	private final Collection<AndamaThreadable<?, ?>> threads = new LinkedList<AndamaThreadable<?, ?>>();
+	private final AndamaSettings                     settings;
+	private final AndamaChain                        toolchain;
 	
 	/**
 	 * The only valid constructor of {@link AndamaGroup}
@@ -62,7 +62,7 @@ public class AndamaGroup extends ThreadGroup {
 	 * 
 	 * @return the threads under surveillance.
 	 */
-	public final Collection<AndamaThread<?, ?>> getThreads() {
+	public final Collection<AndamaThreadable<?, ?>> getThreads() {
 		return this.threads;
 	}
 	
@@ -84,7 +84,7 @@ public class AndamaGroup extends ThreadGroup {
 	 * Shuts down all managed threads.
 	 */
 	public void shutdown() {
-		for (AndamaThread<?, ?> thread : this.getThreads()) {
+		for (AndamaThreadable<?, ?> thread : this.getThreads()) {
 			thread.shutdown();
 		}
 	}

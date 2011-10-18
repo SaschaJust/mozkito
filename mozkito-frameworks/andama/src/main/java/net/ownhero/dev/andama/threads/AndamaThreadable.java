@@ -29,7 +29,7 @@ import net.ownhero.dev.andama.storages.AndamaDataStorage;
  * @param <K>
  * @param <V>
  */
-public interface AndamaThreadable<K, V> {
+public interface AndamaThreadable<K, V> extends Runnable {
 	
 	/**
 	 * Adds a new {@link InputHook} to the {@link AndamaThreadable} object.
@@ -58,20 +58,44 @@ public interface AndamaThreadable<K, V> {
 	 */
 	public void addPostExecutionHook(PostExecutionHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPostInputHook(PostInputHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPostOutputHook(PostOutputHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPostProcessHook(PostProcessHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPreExecutionHook(PreExecutionHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPreInputHook(PreInputHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPreOutputHook(PreOutputHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addPreProcessHook(PreProcessHook<K, V> hook);
 	
+	/**
+	 * @param hook
+	 */
 	public void addProcessHook(ProcessHook<K, V> hook);
 	
 	/**
@@ -136,6 +160,9 @@ public interface AndamaThreadable<K, V> {
 	 */
 	public Class<K> getInputType();
 	
+	/**
+	 * @return
+	 */
 	public String getName();
 	
 	/**
@@ -152,6 +179,12 @@ public interface AndamaThreadable<K, V> {
 	 * @return
 	 */
 	public Class<V> getOutputType();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#getStackTrace()
+	 */
+	public abstract StackTraceElement[] getStackTrace();
 	
 	/**
 	 * @return true if the object has an input connector-false otherwise
@@ -194,6 +227,9 @@ public interface AndamaThreadable<K, V> {
 	 *         output connectors in this object.
 	 */
 	public boolean isOutputConnected(AndamaThreadable<V, ?> thread);
+	
+	@Override
+	public abstract void run();
 	
 	/**
 	 * Sets the input storage of the object. In case

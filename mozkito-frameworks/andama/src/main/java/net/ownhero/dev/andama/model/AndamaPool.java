@@ -48,26 +48,26 @@ public class AndamaPool {
 	public void execute() {
 		connectThreads();
 		
-		for (Thread thread : this.threads.getThreads()) {
-			if (!((AndamaThreadable<?, ?>) thread).checkConnections()) {
-				for (Thread thread2 : this.threads.getThreads()) {
-					((AndamaThreadable<?, ?>) thread2).shutdown();
+		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
+			if (!thread.checkConnections()) {
+				for (AndamaThreadable<?, ?> thread2 : this.threads.getThreads()) {
+					thread2.shutdown();
 				}
 				shutdown();
 				return;
 			}
 		}
 		
-		for (Thread thread : this.threads.getThreads()) {
-			thread.start();
+		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
+			((Thread) thread).start();
 		}
 		
 		AndamaWatcher watcher = new AndamaWatcher(getThreadGroup());
 		watcher.start();
 		
-		for (Thread thread : this.threads.getThreads()) {
+		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			try {
-				thread.join();
+				((Thread) thread).join();
 			} catch (InterruptedException e) {
 				
 				if (Logger.logError()) {
