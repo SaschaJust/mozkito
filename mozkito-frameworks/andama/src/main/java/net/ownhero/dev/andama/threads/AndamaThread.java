@@ -1215,7 +1215,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 					}
 				}
 				
-				if (!skipData()) {
+				if (!isSkipData()) {
 					if (getOutputData() != null) {
 						// PREOUTPUT HOOKS
 						if (!getPreOutputHooks().isEmpty()) {

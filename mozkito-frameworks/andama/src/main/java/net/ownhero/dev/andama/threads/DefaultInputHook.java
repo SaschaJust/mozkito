@@ -29,7 +29,7 @@ public class DefaultInputHook<K, V> extends InputHook<K, V> {
 			getThread().readNext();
 			
 			if (Logger.logDebug()) {
-				Logger.debug("Read input data: " + getThread().getInputData());
+				Logger.debug("Reading input data: " + getThread().getInputData());
 			}
 			
 			setCompleted();
