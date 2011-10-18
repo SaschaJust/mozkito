@@ -73,6 +73,8 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			@Override
 			public void process() {
 				if (RepositoryReader.this.logIterator.hasNext()) {
+					unsetCompleted();
+					
 					if (Logger.logTrace()) {
 						Logger.trace("filling queue [" + outputSize() + "]");
 					}
