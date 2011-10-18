@@ -4,6 +4,7 @@
 package net.ownhero.dev.andama.threads;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -26,6 +27,11 @@ public class DefaultInputHook<K, V> extends InputHook<K, V> {
 	public void input() {
 		try {
 			getThread().readNext();
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Read input data: " + getThread().getInputData());
+			}
+			
 			setCompleted();
 		} catch (InterruptedException e) {
 			throw new UnrecoverableError(e);
