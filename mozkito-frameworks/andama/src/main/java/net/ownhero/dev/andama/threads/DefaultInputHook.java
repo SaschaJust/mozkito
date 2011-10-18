@@ -26,6 +26,7 @@ public class DefaultInputHook<K, V> extends InputHook<K, V> {
 	public void input() {
 		try {
 			getThread().readNext();
+			setCompleted();
 		} catch (InterruptedException e) {
 			throw new UnrecoverableError(e);
 		}

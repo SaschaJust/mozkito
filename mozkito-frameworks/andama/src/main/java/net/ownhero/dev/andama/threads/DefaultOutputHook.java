@@ -26,6 +26,7 @@ public class DefaultOutputHook<K, V> extends OutputHook<K, V> {
 	public void output() {
 		try {
 			getThread().write(getThread().getOutputData());
+			setCompleted();
 		} catch (InterruptedException e) {
 			throw new UnrecoverableError(e);
 		}
