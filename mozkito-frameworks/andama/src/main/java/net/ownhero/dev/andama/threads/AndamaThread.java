@@ -1290,8 +1290,17 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 						}
 						
 						setOutputData(null);
+					} else {
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Output data is null.");
+						}
 					}
 				} else {
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Skipping data on request.");
+					}
 					setSkipData(false);
 				}
 			} while (!processingCompleted() || (getInputData() != null));
