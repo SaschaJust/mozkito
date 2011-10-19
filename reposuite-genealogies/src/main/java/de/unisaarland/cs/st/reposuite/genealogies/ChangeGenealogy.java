@@ -34,10 +34,12 @@ public interface ChangeGenealogy {
 	
 	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v);
 	
+	public GenealogyVertex getRoot();
+	
 	public RCSTransaction getTransactionForVertex(final GenealogyVertex v);
 	
 	public GenealogyVertexIterator vertexSet();
 	
 	public int vertexSize();
-	
+
 }

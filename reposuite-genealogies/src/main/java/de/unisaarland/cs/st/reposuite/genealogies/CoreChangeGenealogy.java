@@ -81,6 +81,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		return genealogy;
 	}
 	
+	private GenealogyVertex                       root        = null;
+	
 	//	static {
 	//		Runtime.getRuntime().addShutdownHook(new Thread() {
 	//
@@ -375,6 +377,18 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
+	public GenealogyVertex getRoot(){
+		if (root == null) {
+			for(GenealogyVertex v : vertexSet()){
+				if((root == null) || (v.getTransaction().compareTo(root.getTransaction()) < 0)){
+					root = v;
+				}
+			}
+		}
+		return root;
+	}
+	
+	@Override
 	public RCSTransaction getTransactionForVertex(final GenealogyVertex v) {
 		Condition
 		.check(persistenceUtil != null,
@@ -470,4 +484,5 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		indexHits.close();
 		return result;
 	}
+	
 }

@@ -160,6 +160,11 @@ public class TransactionChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
+	public GenealogyVertex getRoot() {
+		return this.genealogy.getRoot();
+	}
+	
+	@Override
 	public RCSTransaction getTransactionForVertex(GenealogyVertex v) {
 		return this.genealogy.getTransactionForVertex(v);
 	}

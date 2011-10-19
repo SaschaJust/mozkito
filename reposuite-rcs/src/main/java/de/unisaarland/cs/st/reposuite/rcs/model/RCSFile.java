@@ -53,8 +53,8 @@ public class RCSFile implements Annotated, Serializable {
 	private static final long   serialVersionUID = 7232712367403624199L;
 	private long                generatedId;
 	
-	private Map<String, String> changedNames     = new HashMap<String, String>();
-	
+	private Map<String, String> changedNames = new HashMap<String, String>();
+
 	/**
 	 * used by PersistenceUtil to create a {@link RCSFile} instance
 	 */
