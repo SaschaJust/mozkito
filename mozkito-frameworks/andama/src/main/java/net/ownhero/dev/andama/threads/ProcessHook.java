@@ -18,6 +18,7 @@ public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see net.ownhero.dev.andama.threads.Hook#execute()
 	 */
 	@Override
@@ -35,17 +36,23 @@ public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	 * @param data
 	 */
 	public final void provideOutputData(final V data) {
-		getThread().setOutputData(data);
+		provideOutputData(data, true);
+	}
+	
+	/**
+	 * @param data
+	 */
+	public final void providePartialOutputData(final V data) {
+		provideOutputData(data, false);
 	}
 	
 	/**
 	 * @param data
 	 * @param fetchNext
 	 */
-	public final void provideOutputData(final V data,
-	                                    final boolean fetchNext) {
+	public final void provideOutputData(final V data, final boolean fetchNext) {
 		if (fetchNext) {
-			provideOutputData(data);
+			getThread().setOutputData(data);
 			setCompleted();
 		} else {
 			getThread().setOutputData(data);
