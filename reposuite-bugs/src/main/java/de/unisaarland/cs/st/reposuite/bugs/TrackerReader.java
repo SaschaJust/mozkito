@@ -50,24 +50,31 @@ public class TrackerReader extends AndamaSource<RawReport> {
 				
 				try {
 					if (bugId != null) {
+						
 						if (Logger.logDebug()) {
 							Logger.debug("Fetching " + bugId + ".");
 						}
+						
 						URI newURI = tracker.getLinkFromId(bugId);
 						RawReport source = tracker.fetchSource(newURI);
+						
 						if (source == null) {
 							
 							if (Logger.logWarn()) {
-								Logger.warn("Skipping: " + bugId + ". Fetch returned null.");
+								Logger.warn("Skipping " + bugId + ". Fetch returned null.");
 							}
+							
 							skipOutputData(source);
 						} else {
 							
 							if (Logger.logDebug()) {
 								Logger.debug("Providing " + bugId + ".");
 							}
-							provideOutputData(source);
+							
+							providePartialOutputData(source);
 						}
+					} else {
+						setCompleted();
 					}
 				} catch (Exception e) {
 					throw new UnrecoverableError(e);
