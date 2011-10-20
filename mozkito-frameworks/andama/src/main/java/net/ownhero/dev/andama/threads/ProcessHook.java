@@ -3,6 +3,8 @@
  */
 package net.ownhero.dev.andama.threads;
 
+import net.ownhero.dev.kisa.Logger;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -36,6 +38,11 @@ public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	 * @param data
 	 */
 	public final void provideOutputData(final V data) {
+		if (AndamaSource.class.isAssignableFrom(getThread().getClass())) {
+			if (Logger.logWarn()) {
+				Logger.warn("You are calling `provideOutputData` within a ProcessHook of an AndamaSource node. This will cause the node to provide no more data. You might wanna use `providePartialOutputData` or `provideOutputData(data, false)` instead.");
+			}
+		}
 		provideOutputData(data, true);
 	}
 	

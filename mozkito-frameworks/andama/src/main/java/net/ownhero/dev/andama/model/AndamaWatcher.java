@@ -36,12 +36,14 @@ public class AndamaWatcher extends Thread {
 					if (aThread.isInputConnected()) {
 						for (AndamaThreadable<?, ?> a2Thread : aThread.getInputThreads()) {
 							if ((((Thread) a2Thread).getState().equals(State.WAITING) || ((Thread) a2Thread).getState()
-							                                                                                .equals(State.BLOCKED))
-							        && !(((Thread) a2Thread).isInterrupted())) {
+							        .equals(State.BLOCKED)) && !(((Thread) a2Thread).isInterrupted())) {
 								checkThread(a2Thread);
 							}
 						}
 					} else {
+						if (Logger.logWarn()) {
+							Logger.warn("Killing thread " + aThread.getName());
+						}
 						killThread(((Thread) aThread));
 					}
 				}
@@ -67,6 +69,7 @@ public class AndamaWatcher extends Thread {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
