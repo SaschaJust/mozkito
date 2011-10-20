@@ -116,7 +116,8 @@ public class Logger {
 		// FIXME what if we do not use log4j?
 		
 		LogLevel maxLevel = null;
-		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t][%C] %-5p %m%n");
+		//		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t][%C] %-5p %m%n");
+		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
 		
 		// CONSOLE APPENDER
 		WriterAppender consoleAppender = new WriterAppender(layout, System.err);
