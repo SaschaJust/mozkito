@@ -51,6 +51,7 @@ public class Logger {
 		
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.io.ByteArrayOutputStream#close()
 		 */
 		@Override
@@ -93,6 +94,7 @@ public class Logger {
 		
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -106,6 +108,11 @@ public class Logger {
 	private static boolean  debug    = false;
 	
 	static {
+		readConfiguration();
+		
+	}
+	
+	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
 		LogLevel maxLevel = null;
@@ -172,7 +179,6 @@ public class Logger {
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
 			Logger.debug = true;
 		}
-		
 	}
 	
 	/**
@@ -226,8 +232,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void debug(final String message,
-	                         final int offset) {
+	public static void debug(final String message, final int offset) {
 		debug(message, null, null, offset);
 	}
 	
@@ -241,8 +246,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void debug(final String fmt,
-	                         final Object obj) {
+	public static void debug(final String fmt, final Object obj) {
 		debug(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -258,9 +262,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void debug(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
+	public static void debug(final String fmt, final Object obj1, final Object obj2) {
 		debug(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -280,15 +282,13 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void debug(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
+	private static void debug(final String message, final Object[] arguments, final Throwable t,
+	        @GreaterInt(ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		        || (arguments == null),
+		        "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
@@ -320,8 +320,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void debug(final String message,
-	                         final Throwable t) {
+	public static void debug(final String message, final Throwable t) {
 		debug(message, null, t, 3);
 	}
 	
@@ -349,8 +348,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void error(final String message,
-	                         final int offset) {
+	public static void error(final String message, final int offset) {
 		error(message, null, null, offset);
 	}
 	
@@ -364,8 +362,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void error(final String fmt,
-	                         final Object obj) {
+	public static void error(final String fmt, final Object obj) {
 		error(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -381,9 +378,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void error(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
+	public static void error(final String fmt, final Object obj1, final Object obj2) {
 		error(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -403,15 +398,13 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void error(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
+	private static void error(final String message, final Object[] arguments, final Throwable t,
+	        @GreaterInt(ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		        || (arguments == null),
+		        "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
@@ -462,8 +455,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void error(final String message,
-	                         final Throwable t) {
+	public static void error(final String message, final Throwable t) {
 		error(message, null, t, 3);
 	}
 	
@@ -507,8 +499,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void info(final String message,
-	                        final int offset) {
+	public static void info(final String message, final int offset) {
 		info(message, null, null, offset);
 	}
 	
@@ -522,8 +513,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void info(final String fmt,
-	                        final Object obj) {
+	public static void info(final String fmt, final Object obj) {
 		info(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -539,9 +529,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void info(final String fmt,
-	                        final Object obj1,
-	                        final Object obj2) {
+	public static void info(final String fmt, final Object obj1, final Object obj2) {
 		info(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -561,15 +549,13 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void info(final String message,
-	                         final Object[] arguments,
-	                         final Throwable t,
-	                         @GreaterInt (ref = 2) final int offset) {
+	private static void info(final String message, final Object[] arguments, final Throwable t,
+	        @GreaterInt(ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		        || (arguments == null),
+		        "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
@@ -620,8 +606,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void info(final String message,
-	                        final Throwable t) {
+	public static void info(final String message, final Throwable t) {
 		info(message, null, t, 3);
 	}
 	
@@ -683,13 +668,15 @@ public class Logger {
 	 *         instance and the exact calling location (class, method, line
 	 *         number). Both entries are guaranteed to not be null
 	 */
-	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
+	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt(ref = 1) final int offset) {
 		Throwable throwable = new Throwable();
 		throwable.fillInStackTrace();
 		
-		CompareCondition.greater(throwable.getStackTrace().length,
-		                         offset,
-		"The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
+		CompareCondition
+		        .greater(
+		                throwable.getStackTrace().length,
+		                offset,
+		                "The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
 		
 		Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
 		String methodName = throwable.getStackTrace()[offset].getMethodName();
@@ -736,8 +723,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void trace(final String message,
-	                         final int offset) {
+	public static void trace(final String message, final int offset) {
 		trace(message, null, null, offset);
 	}
 	
@@ -751,8 +737,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void trace(final String fmt,
-	                         final Object obj) {
+	public static void trace(final String fmt, final Object obj) {
 		trace(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -768,9 +753,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void trace(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
+	public static void trace(final String fmt, final Object obj1, final Object obj2) {
 		trace(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -790,15 +773,13 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void trace(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
+	private static void trace(final String message, final Object[] arguments, final Throwable t,
+	        @GreaterInt(ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		        || (arguments == null),
+		        "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logTrace(), "Calling the debug method requires debug to be enabled.");
 		
 		Tuple<org.slf4j.Logger, String> ret = tags(offset);
@@ -830,8 +811,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void trace(final String message,
-	                         final Throwable t) {
+	public static void trace(final String message, final Throwable t) {
 		trace(message, null, t, 3);
 	}
 	
@@ -859,8 +839,7 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void warn(final String message,
-	                        final int offset) {
+	public static void warn(final String message, final int offset) {
 		warn(message, null, null, offset);
 	}
 	
@@ -874,8 +853,7 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void warn(final String fmt,
-	                        final Object obj) {
+	public static void warn(final String fmt, final Object obj) {
 		warn(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -891,9 +869,7 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void warn(final String fmt,
-	                        final Object obj1,
-	                        final Object obj2) {
+	public static void warn(final String fmt, final Object obj1, final Object obj2) {
 		warn(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -913,15 +889,13 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void warn(final String message,
-	                         final Object[] arguments,
-	                         final Throwable t,
-	                         @GreaterInt (ref = 2) final int offset) {
+	private static void warn(final String message, final Object[] arguments, final Throwable t,
+	        @GreaterInt(ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                || (arguments == null),
-		"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		        || (arguments == null),
+		        "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		                || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
@@ -972,8 +946,7 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void warn(final String message,
-	                        final Throwable t) {
+	public static void warn(final String message, final Throwable t) {
 		warn(message, null, t, 3);
 	}
 	
