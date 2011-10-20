@@ -72,8 +72,6 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			@Override
 			public void process() {
 				if (RepositoryReader.this.logIterator.hasNext()) {
-					unsetCompleted();
-					
 					if (Logger.logTrace()) {
 						Logger.trace("filling queue [" + outputSize() + "]");
 					}
@@ -92,6 +90,12 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 					
 					provideOutputData(null, true);
 					setCompleted();
+					
+					if (Logger.logDebug()) {
+						Logger.debug("No more input data. this.input: " + getInputData() + ", this.output: "
+						        + getOutputData() + ", this.status: " + completed());
+					}
+					
 				}
 			}
 		};

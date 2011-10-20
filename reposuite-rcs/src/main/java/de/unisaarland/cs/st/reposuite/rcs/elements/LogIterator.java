@@ -24,8 +24,8 @@ import java.util.List;
 import net.ownhero.dev.kanuni.annotations.compare.NotEqualsInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.reposuite.rcs.Repository;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -44,7 +44,7 @@ public class LogIterator implements Iterator<LogEntry> {
 	private boolean          seenEnd      = false;
 	
 	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision,
-	                   @NotEqualsInt (ref = 0) final int cacheSize) {
+	        @NotEqualsInt(ref = 0) final int cacheSize) {
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
 		} else if (startRevision.equals("HEAD")) {
@@ -75,11 +75,11 @@ public class LogIterator implements Iterator<LogEntry> {
 		}
 		
 		Condition
-		.notNull(this.currentEntries,
-		"The current entries should never be null at this point. This would imply that there is nothing to do.");
+		        .notNull(this.currentEntries,
+		                "The current entries should never be null at this point. This would imply that there is nothing to do.");
 		Condition
-		.check(!this.currentEntries.isEmpty(),
-		"The current entries should never be empty at this point. This would imply that there is nothing to do.");
+		        .check(!this.currentEntries.isEmpty(),
+		                "The current entries should never be empty at this point. This would imply that there is nothing to do.");
 	}
 	
 	public boolean done() {
@@ -88,7 +88,7 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	@Override
 	public boolean hasNext() {
-		return ((this.currentEntries.size() > 0) && !this.done);
+		return ((this.currentEntries.size() > 0) || !this.done);
 	}
 	
 	@Override
@@ -99,7 +99,8 @@ public class LogIterator implements Iterator<LogEntry> {
 			LogEntry entry = this.currentEntries.get(this.currentIndex);
 			this.currentIndex++;
 			
-			if (entry.getRevision().equals(this.endRevision) || entry.getRevision().equals(this.repository.getEndRevision())) {
+			if (entry.getRevision().equals(this.endRevision)
+			        || entry.getRevision().equals(this.repository.getEndRevision())) {
 				this.done = true;
 			} else {
 				
@@ -132,8 +133,10 @@ public class LogIterator implements Iterator<LogEntry> {
 			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
 		}
 		
-		String nextStart = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize / 2);
-		String nextEnd = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(), this.cacheSize - 1);
+		String nextStart = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
+		        this.cacheSize / 2);
+		String nextEnd = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
+		        this.cacheSize - 1);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("LogIterator: nextStart=" + nextStart);
