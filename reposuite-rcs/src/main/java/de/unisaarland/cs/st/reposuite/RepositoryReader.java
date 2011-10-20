@@ -82,7 +82,12 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 						Logger.trace("with entry: " + entry);
 					}
 					
-					providePartialOutputData(entry);
+					if (entry == null) {
+						provideOutputData(null, true);
+						setCompleted();
+					} else {
+						providePartialOutputData(entry);
+					}
 				} else {
 					if (Logger.logDebug()) {
 						Logger.debug("No more input data.");
