@@ -43,7 +43,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table (name = "rcsbranch")
+@Table(name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long serialVersionUID = 5419737140470855522L;
@@ -102,6 +102,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -222,7 +223,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -232,7 +233,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -243,9 +244,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the generatedId
 	 */
 	@Id
-	@Index (name = "idx_branchid")
-	@Column (name = "id", nullable = false)
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@Index(name = "idx_branchid")
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -273,7 +274,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the name
 	 */
 	@Basic
-	@Index (name = "idx_name")
+	@Index(name = "idx_name")
 	public String getName() {
 		return this.name;
 	}
@@ -283,7 +284,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -292,18 +293,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getBegin() == null)
-		                                                    ? 0
-		                                                    : this.getBegin().hashCode());
-		result = prime * result + ((this.getEnd() == null)
-		                                                  ? 0
-		                                                  : this.getEnd().hashCode());
-		result = prime * result + ((this.getName() == null)
-		                                                   ? 0
-		                                                   : this.getName().hashCode());
-		result = prime * result + ((this.getParent() == null)
-		                                                     ? 0
-		                                                     : this.getParent().hashCode());
+		result = prime * result + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
+		result = prime * result + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
+		result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = prime * result + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
 		return result;
 	}
 	
@@ -397,14 +390,13 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("RCSBranch [id=");
-		sb.append(this.getGeneratedId());
-		sb.append(", name=");
+		sb.append("RCSBranch [name=");
 		sb.append(this.getName());
 		sb.append(", parent=");
 		if (this.getParent() != null) {
