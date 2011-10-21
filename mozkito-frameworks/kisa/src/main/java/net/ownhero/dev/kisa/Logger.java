@@ -115,6 +115,8 @@ public class Logger {
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
+		org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
+		
 		LogLevel maxLevel = null;
 		//		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t][%C] %-5p %m%n");
 		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
