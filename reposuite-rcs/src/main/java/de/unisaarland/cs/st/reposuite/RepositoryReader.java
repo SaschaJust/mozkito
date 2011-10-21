@@ -72,27 +72,29 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			@Override
 			public void process() {
 				if (RepositoryReader.this.logIterator.hasNext()) {
-					if (Logger.logTrace()) {
-						Logger.trace("filling queue [" + outputSize() + "]");
+					if (Logger.logDebug()) {
+						Logger.debug("filling queue [" + outputSize() + "]");
 					}
 					
 					LogEntry entry = RepositoryReader.this.logIterator.next();
 					
-					if (Logger.logTrace()) {
-						Logger.trace("with entry: " + entry);
+					if (Logger.logDebug()) {
+						Logger.debug("with entry: " + entry);
 					}
 					
 					if (entry == null) {
+						if (Logger.logDebug()) {
+							Logger.debug("No more input data (through hasNext() returned true). this.input: "
+							        + getInputData() + ", this.output: " + getOutputData() + ", this.status: "
+							        + completed());
+						}
+						
 						provideOutputData(null, true);
 						setCompleted();
 					} else {
 						providePartialOutputData(entry);
 					}
 				} else {
-					if (Logger.logDebug()) {
-						Logger.debug("No more input data.");
-					}
-					
 					provideOutputData(null, true);
 					setCompleted();
 					
