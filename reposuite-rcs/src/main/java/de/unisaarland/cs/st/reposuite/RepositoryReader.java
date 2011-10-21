@@ -83,14 +83,14 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 					}
 					
 					if (entry == null) {
+						provideOutputData(null, true);
+						setCompleted();
+						
 						if (Logger.logDebug()) {
 							Logger.debug("No more input data (through hasNext() returned true). this.input: "
 							        + getInputData() + ", this.output: " + getOutputData() + ", this.status: "
 							        + completed());
 						}
-						
-						provideOutputData(null, true);
-						setCompleted();
 					} else {
 						providePartialOutputData(entry);
 					}

@@ -88,12 +88,25 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	@Override
 	public boolean hasNext() {
-		return ((this.currentEntries.size() > 0) || !this.done);
+		if (this.done) {
+			if (Logger.logDebug()) {
+				Logger.debug("LogIterator: hasNext false due to done flag.");
+			}
+			return false;
+		} else {
+			if (Logger.logDebug()) {
+				Logger.debug("LogIterator: hasN" + this.endRevision);
+			}
+			return this.currentEntries.size() > 0;
+		}
 	}
 	
 	@Override
 	public LogEntry next() {
 		if (this.done) {
+			if (Logger.logDebug()) {
+				Logger.debug("LogIterator done flag is set.");
+			}
 			return null;
 		} else {
 			LogEntry entry = this.currentEntries.get(this.currentIndex);
@@ -106,8 +119,10 @@ public class LogIterator implements Iterator<LogEntry> {
 				
 				if (this.currentIndex >= this.currentEntries.size()) {
 					if ((this.nextEntries != null) && this.nextEntries.isEmpty()) {
+						if (Logger.logDebug()) {
+							Logger.debug("LogIterator no more entries to be cached.");
+						}
 						this.done = true;
-						return null;
 					} else {
 						this.currentEntries = this.nextEntries;
 						this.nextEntries = null;
