@@ -1399,8 +1399,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 				Logger.error(e.getMessage(), e);
 				Logger.error("Shutting down.");
 			}
-			shutdown();
 		} finally {
+			shutdown();
 			for (CountDownLatch latch : this.awaitingLatches) {
 				if (latch.getCount() > 0) {
 					latch.countDown();
