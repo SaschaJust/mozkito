@@ -5,13 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
@@ -30,6 +35,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class Logger {
+	
+	private static Set<Appender>         appenders      = new HashSet<Appender>();
+	private static Map<String, Appender> classAppenders = new HashMap<String, Appender>();
 	
 	public static class LoggerOutputStream extends ByteArrayOutputStream {
 		
@@ -115,7 +123,15 @@ public class Logger {
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
-		org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
+		for (Appender appender : appenders) {
+			org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
+		}
+		appenders.clear();
+		
+		for (String clazz : classAppenders.keySet()) {
+			LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
+		}
+		classAppenders.clear();
 		
 		LogLevel maxLevel = null;
 		//		Layout layout = new EnhancedPatternLayout("%d (%8r) [%t][%C] %-5p %m%n");
@@ -134,6 +150,8 @@ public class Logger {
 		
 		consoleAppender.addFilter(consoleLevelRangeFilter);
 		consoleAppender.activateOptions();
+		
+		appenders.add(consoleAppender);
 		org.apache.log4j.Logger.getRootLogger().addAppender(consoleAppender);
 		
 		// FILE APPENDER
@@ -151,6 +169,8 @@ public class Logger {
 		fileAppender.setFile(logFileName);
 		fileAppender.addFilter(fileLevelRangeFilter);
 		fileAppender.activateOptions();
+		
+		appenders.add(fileAppender);
 		org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
 		
 		for (Entry<Object, Object> prop : System.getProperties().entrySet()) {
@@ -167,6 +187,8 @@ public class Logger {
 					classFileAppender.setFile(values[1]);
 					classFileAppender.setLayout(layout);
 					classFileAppender.activateOptions();
+					
+					classAppenders.put(className, classFileAppender);
 					classLogger.addAppender(classFileAppender);
 				}
 				// set maxLevel
