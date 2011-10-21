@@ -62,8 +62,8 @@ public class AndamaPool {
 			((Thread) thread).start();
 		}
 		
-		AndamaWatcher watcher = new AndamaWatcher(getThreadGroup());
-		watcher.start();
+		//		AndamaWatcher watcher = new AndamaWatcher(getThreadGroup());
+		//		watcher.start();
 		
 		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			try {
@@ -77,11 +77,11 @@ public class AndamaPool {
 			}
 		}
 		
-		watcher.terminate();
-		try {
-			watcher.join(60000);
-		} catch (InterruptedException e) {
-		}
+		//		watcher.terminate();
+		//		try {
+		//			watcher.join(60000);
+		//		} catch (InterruptedException e) {
+		//		}
 	}
 	
 	/**

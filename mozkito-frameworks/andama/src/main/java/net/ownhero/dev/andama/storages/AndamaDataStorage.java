@@ -163,13 +163,15 @@ public class AndamaDataStorage<E> {
 	public void unregisterInput(
 	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
+			this.writers.remove(writerThread);
 			
 			if (Logger.logInfo()) {
-				Logger.info("Unregistering input " + ((AndamaThreadable<?, E>) writerThread).getName()
-				        + ". Remaining input threads: " + JavaUtils.collectionToString(writers));
+				Logger.info("Unregistering input "
+				        + ((AndamaThreadable<?, E>) writerThread).getName()
+				        + (writers.isEmpty() ? "No remaining input threads." : ". Remaining input threads: "
+				                + JavaUtils.collectionToString(writers)));
 			}
 			
-			this.writers.remove(writerThread);
 			synchronized (this.queue) {
 				this.queue.notifyAll();
 			}
@@ -187,13 +189,15 @@ public class AndamaDataStorage<E> {
 	public void unregisterOutput(
 	        @NotNull("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
+			this.readers.remove(readerThread);
 			
 			if (Logger.logInfo()) {
-				Logger.info("Unregistering output " + ((AndamaThreadable<E, ?>) readerThread).getName()
-				        + ". Remaining output threads: " + JavaUtils.collectionToString(readers));
+				Logger.info("Unregistering output "
+				        + ((AndamaThreadable<E, ?>) readerThread).getName()
+				        + (readers.isEmpty() ? "No remaining output threads." : ". Remaining output threads: "
+				                + JavaUtils.collectionToString(readers)));
 			}
 			
-			this.readers.remove(readerThread);
 			synchronized (this.queue) {
 				this.queue.notifyAll();
 			}
