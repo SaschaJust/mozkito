@@ -289,7 +289,8 @@ public class JiraXMLParser {
 							timestamp = DateTimeUtils.parseDate(dateString, dateTimeHistoryFormatRegex);
 						}
 						
-						Element actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
+						Element actionBody = getElement(actionContainer, namespace, "div", "class",
+						                                "changehistory action-body");
 						Element table = actionBody.getChild("table", namespace);
 						if (table == null) {
 							if (Logger.logError()) {
