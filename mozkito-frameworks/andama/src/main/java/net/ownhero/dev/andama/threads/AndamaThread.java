@@ -129,8 +129,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		threadGroup.addThread(this);
 		this.threadGroup = threadGroup;
 		this.settings = settings;
-		@SuppressWarnings("unchecked") AndamaArgument<Long> setting = (AndamaArgument<Long>) settings
-		        .getSetting("cache.size");
+		@SuppressWarnings ("unchecked")
+		AndamaArgument<Long> setting = (AndamaArgument<Long>) settings.getSetting("cache.size");
 		
 		if (hasInputConnector()) {
 			if (setting != null) {
@@ -150,16 +150,14 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		
 		setShutdown(false);
 		
-		CompareCondition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
-		                hasInputConnector(), this.inputStorage != null);
-		CompareCondition
-		        .equals(hasInputConnector(),
-		                this.inputStorage != null,
-		                "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-		                hasOutputConnector(), this.outputStorage != null);
+		CompareCondition.equals(hasInputConnector(),
+		                        this.inputStorage != null,
+		                        "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
+		                        hasInputConnector(), this.inputStorage != null);
+		CompareCondition.equals(hasInputConnector(),
+		                        this.inputStorage != null,
+		                        "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
+		                        hasOutputConnector(), this.outputStorage != null);
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(this.settings, "`settings` must not be null.");
 		Condition.notNull(this.threadGroup, "`threadGroup` must not be null.");
@@ -167,7 +165,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addInputHook(net.ownhero
 	 * .dev.andama.threads.InputHook)
@@ -179,7 +176,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addOutputHook(net.ownhero
 	 * .dev.andama.threads.OutputHook)
@@ -191,7 +187,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostExecutionHook(
 	 * net.ownhero.dev.andama.threads.PostExecutionHook)
@@ -203,7 +198,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostInputHook(net.
 	 * ownhero.dev.andama.threads.PostInputHook)
@@ -215,7 +209,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostOutputHook(net
 	 * .ownhero.dev.andama.threads.PostOutputHook)
@@ -227,7 +220,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostProcessHook(net
 	 * .ownhero.dev.andama.threads.PostProcessHook)
@@ -239,7 +231,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreExecutionHook(net
 	 * .ownhero.dev.andama.threads.PreExecutionHook)
@@ -251,7 +242,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreInputHook(net.ownhero
 	 * .dev.andama.threads.PreInputHook)
@@ -263,7 +253,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreOutputHook(net.
 	 * ownhero.dev.andama.threads.PreOutputHook)
@@ -275,7 +264,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreProcessHook(net
 	 * .ownhero.dev.andama.threads.PreProcessHook)
@@ -287,7 +275,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#addProcessHook(net.ownhero
 	 * .dev.andama.threads.ProcessHook)
@@ -365,7 +352,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#clone()
 	 */
 	@Override
@@ -375,7 +361,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -386,7 +371,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectInput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -414,7 +398,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectOutput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -441,10 +424,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#countStackFrames()
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings ("deprecation")
 	@Override
 	final public int countStackFrames() {
 		return super.countStackFrames();
@@ -452,10 +434,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#destroy()
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings ("deprecation")
 	@Override
 	final public void destroy() {
 		super.destroy();
@@ -463,7 +444,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectInput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -489,7 +469,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectOutput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -515,7 +494,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#finalize()
 	 */
 	@Override
@@ -525,7 +503,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#finish()
 	 */
 	@Override
@@ -560,7 +537,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#getContextClassLoader()
 	 */
 	@Override
@@ -570,7 +546,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getHandle()
 	 */
 	@Override
@@ -580,7 +555,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#getId()
 	 */
 	@Override
@@ -601,7 +575,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return the inputData
 	 */
 	public final K getInputData() {
-		return this.inputDataTuple != null ? this.inputDataTuple.getFirst() : null;
+		return this.inputDataTuple != null
+		                                  ? this.inputDataTuple.getFirst()
+		                                  : null;
 	}
 	
 	/**
@@ -613,7 +589,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getInputStorage()
 	 */
@@ -624,7 +599,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getInputThreads()
 	 */
 	@Override
@@ -642,7 +616,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final Class<K> getInputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		if (hasInputConnector()) {
@@ -658,8 +632,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	public final Type getOutputClassType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
-		return (type.getActualTypeArguments().length > 1 ? type.getActualTypeArguments()[1] : type
-		        .getActualTypeArguments()[0]);
+		return (type.getActualTypeArguments().length > 1
+		                                                ? type.getActualTypeArguments()[1]
+		                                                : type.getActualTypeArguments()[0]);
 	}
 	
 	/**
@@ -678,7 +653,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getOutputStorage()
 	 */
@@ -689,7 +663,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getOutputThreads()
 	 */
 	@Override
@@ -707,7 +680,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final Class<V> getOutputType() {
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 		if (hasOutputConnector()) {
@@ -797,7 +770,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#getStackTrace()
 	 */
 	@Override
@@ -807,7 +779,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#getState()
 	 */
 	@Override
@@ -817,7 +788,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#getUncaughtExceptionHandler()
 	 */
 	@Override
@@ -827,7 +797,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -844,7 +813,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	protected final int inputSize() {
 		Check.notNull(this.inputStorage,
-		        "When requesting the inputSize, there has to be already an inputStorage attached");
+		              "When requesting the inputSize, there has to be already an inputStorage attached");
 		Check.check(hasInputConnector(), "When requesting the inputSize, there has to exist an inputConnector");
 		
 		return this.inputStorage.size();
@@ -852,7 +821,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#interrupt()
 	 */
 	@Override
@@ -862,7 +830,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected()
 	 */
@@ -873,7 +840,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -885,7 +851,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#isInterrupted()
 	 */
 	@Override
@@ -895,7 +860,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected()
 	 */
@@ -906,7 +870,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
@@ -955,7 +918,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	protected final int outputSize() {
 		Check.notNull(this.outputStorage,
-		        "When requesting the inputSize, there has to be already an outputStorage attached");
+		              "When requesting the inputSize, there has to be already an outputStorage attached");
 		Check.check(hasOutputConnector(), "When requesting the outputSize, there has to exist an outputConnector");
 		
 		return this.outputStorage.size();
@@ -989,7 +952,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	@Override
 	public final void run() {
 		CollectionCondition.maxSize(this.inputHooks, 1, "There must not be more than 1 input hooks, but got: %s",
-		        this.inputHooks.size());
+		                            this.inputHooks.size());
 		// @formatter:off
 		/*
 		 * 
@@ -1400,7 +1363,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 				Logger.error("Shutting down.");
 			}
 		} finally {
-			shutdown();
+			finish();
 			for (CountDownLatch latch : this.awaitingLatches) {
 				if (latch.getCount() > 0) {
 					latch.countDown();
@@ -1411,7 +1374,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#setContextClassLoader(java.lang.ClassLoader)
 	 */
 	@Override
@@ -1421,7 +1383,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setInputStorage
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
@@ -1444,7 +1405,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setOutputStorage
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
@@ -1477,7 +1437,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#setUncaughtExceptionHandler(java.lang.Thread.
 	 * UncaughtExceptionHandler)
 	 */
@@ -1488,7 +1447,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#shutdown()
 	 */
 	@Override
@@ -1532,7 +1490,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#skipData()
 	 */
 	@Override
@@ -1542,7 +1499,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#start()
 	 */
 	@Override
@@ -1552,7 +1508,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -1589,7 +1544,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev
 	 * .andama.threads.AndamaThread)
@@ -1612,7 +1566,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		Condition.notNull(data, "[write] `data` should not be null.");
 		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
-		        hasOutputConnector());
+		                hasOutputConnector());
 		
 		if (Logger.logTrace()) {
 			Logger.trace("writing data: " + data);
