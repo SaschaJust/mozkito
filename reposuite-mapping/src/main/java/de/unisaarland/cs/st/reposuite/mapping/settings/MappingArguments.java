@@ -74,7 +74,7 @@ public class MappingArguments extends AndamaArgumentSet {
 		for (Class<? extends Registered> registered : registereds) {
 			try {
 				builder.append('\t').append("  ").append(registered.getSimpleName()).append(": ")
-				       .append(registered.newInstance().getDescription());
+				        .append(registered.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
@@ -89,6 +89,7 @@ public class MappingArguments extends AndamaArgumentSet {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
@@ -106,16 +107,21 @@ public class MappingArguments extends AndamaArgumentSet {
 				} else {
 					// look up finder.addXXX method
 					boolean found = false;
-					for (Method method : methods) {
-						if (method.getName().startsWith("add")) {
-							if ((method.getParameterTypes().length == 1)
-							        && (method.getParameterTypes()[0] == registered.getClass().getSuperclass())) {
-								found = true;
-								methodMap.put(registered.getClass(), method);
-								method.invoke(finder, registered);
-								break;
+					Class<?> registeredSubClass = registered.getClass();
+					
+					while (!found && registeredSubClass != Object.class) {
+						for (Method method : methods) {
+							if (method.getName().startsWith("add")) {
+								if ((method.getParameterTypes().length == 1)
+								        && (method.getParameterTypes()[0] == registeredSubClass)) {
+									found = true;
+									methodMap.put(registered.getClass(), method);
+									method.invoke(finder, registered);
+									break;
+								}
 							}
 						}
+						registeredSubClass = registeredSubClass.getSuperclass();
 					}
 					if (!found) {
 						
@@ -142,15 +148,12 @@ public class MappingArguments extends AndamaArgumentSet {
 	 * @param superClass
 	 * @param isRequired
 	 */
-	private void handleRegistered(final MappingSettings settings,
-	                              final String argumentName,
-	                              final Class<? extends Registered> superClass,
-	                              final boolean isRequired) {
+	private void handleRegistered(final MappingSettings settings, final String argumentName,
+	        final Class<? extends Registered> superClass, final boolean isRequired) {
 		Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
 		try {
 			registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(), superClass,
-			                                                              Modifier.ABSTRACT | Modifier.INTERFACE
-			                                                                      | Modifier.PRIVATE));
+			        Modifier.ABSTRACT | Modifier.INTERFACE | Modifier.PRIVATE));
 		} catch (Exception e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
