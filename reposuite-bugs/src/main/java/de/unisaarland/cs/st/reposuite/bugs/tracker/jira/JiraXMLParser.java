@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
@@ -61,19 +61,20 @@ public class JiraXMLParser {
 	// protected static DateTimeFormatter dateTimeHistoryFormat =
 	// DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
 	protected static final Regex dateTimeFormatRegex        = new Regex(
-	                                                                "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
+	                                                                    "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	                                                                "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
+	                                                                    "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
-	protected static List<AttachmentEntry> extractAttachments(final Element root, final JiraTracker tracker) {
+	protected static List<AttachmentEntry> extractAttachments(final Element root,
+	                                                          final JiraTracker tracker) {
 		
 		List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
 		Element element = root.getChild("attachments", root.getNamespace());
 		if (element != null) {
-			@SuppressWarnings("unchecked") List<Element> attachElems = element.getChildren("attachment",
-			        element.getNamespace());
+			@SuppressWarnings ("unchecked")
+			List<Element> attachElems = element.getChildren("attachment", element.getNamespace());
 			for (Element attachElem : attachElems) {
 				String attachId = attachElem.getAttributeValue("id");
 				AttachmentEntry attachment = new AttachmentEntry(attachId);
@@ -91,8 +92,7 @@ public class JiraXMLParser {
 					attachment.setAuthor(new Person(attachAuthor, null, null));
 				}
 				String attachDate = attachElem.getAttributeValue("created");
-				attachment
-				        .setTimestamp(DateTimeUtils.parseDate(attachDate, new Regex(dateTimeFormatRegex.getPattern())));
+				attachment.setTimestamp(DateTimeUtils.parseDate(attachDate, new Regex(dateTimeFormatRegex.getPattern())));
 				
 				String uri = tracker.getUri().toString();
 				if (!uri.endsWith("/")) {
@@ -115,9 +115,13 @@ public class JiraXMLParser {
 		return result;
 	}
 	
-	protected static Element getElement(final Element root, final Namespace namespace, final String tag,
-	        final String attribute, final String value) {
-		@SuppressWarnings("unchecked") List<Element> children = root.getChildren(tag, namespace);
+	protected static Element getElement(final Element root,
+	                                    final Namespace namespace,
+	                                    final String tag,
+	                                    final String attribute,
+	                                    final String value) {
+		@SuppressWarnings ("unchecked")
+		List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
 				return child;
@@ -189,7 +193,8 @@ public class JiraXMLParser {
 		}
 	}
 	
-	private static void handleComments(final List<Element> comments, final Report report) {
+	private static void handleComments(final List<Element> comments,
+	                                   final Report report) {
 		for (Element comment : comments) {
 			Person author = new Person(comment.getAttributeValue("author"), null, null);
 			DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"), dateTimeFormatRegex);
@@ -210,12 +215,17 @@ public class JiraXMLParser {
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static void handleHistory(final URI historyUri, final Report report) throws UnsupportedProtocolException,
-	        JDOMException, IOException, SecurityException, NoSuchFieldException {
+	public static void handleHistory(final URI historyUri,
+	                                 final Report report) throws UnsupportedProtocolException,
+	                                                     JDOMException,
+	                                                     IOException,
+	                                                     SecurityException,
+	                                                     NoSuchFieldException {
+		RawContent rawContent = null;
 		try {
-			RawContent rawContent = IOUtils.fetch(historyUri);
+			rawContent = IOUtils.fetch(historyUri);
 			BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 			Document document = saxBuilder.build(reader);
@@ -279,7 +289,8 @@ public class JiraXMLParser {
 							timestamp = DateTimeUtils.parseDate(dateString, dateTimeHistoryFormatRegex);
 						}
 						
-						Element actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
+						Element actionBody = getElement(actionContainer, namespace, "div", "class",
+						                                "changehistory action-body");
 						Element table = actionBody.getChild("table", namespace);
 						if (table == null) {
 							if (Logger.logError()) {
@@ -310,7 +321,7 @@ public class JiraXMLParser {
 								return;
 							}
 							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText()
-							        .trim();
+							                                                                              .trim();
 							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
 							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
 							
@@ -332,6 +343,10 @@ public class JiraXMLParser {
 		} catch (NoSuchElementException e) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing jira history. HTML structure unknown: " + e.getMessage(), e);
+				if ((rawContent != null) && Logger.logError()) {
+					Logger.error("RAW REPORT DATA:");
+					Logger.error(rawContent.getContent());
+				}
 			}
 			return;
 		} catch (FetchException e) {
@@ -347,9 +362,10 @@ public class JiraXMLParser {
 	 * @param elements
 	 * @param report
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@NoneNull
-	private static void handleIssueLinks(final List<Element> elements, final Report report) {
+	private static void handleIssueLinks(final List<Element> elements,
+	                                     final Report report) {
 		for (Element issueLinkType : elements) {
 			if (issueLinkType.getName().equals("issuelinktype")) {
 				List<Element> links = issueLinkType.getChildren();
@@ -377,9 +393,11 @@ public class JiraXMLParser {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static void handleRoot(final Report report, final Element root, final JiraTracker tracker) {
+	public static void handleRoot(final Report report,
+	                              final Element root,
+	                              final JiraTracker tracker) {
 		CompareCondition.equals(root.getName(), "item", "The root element has to be 'item'.");
 		
 		List<Element> children = root.getChildren();
