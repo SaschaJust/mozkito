@@ -11,6 +11,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -166,8 +167,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public boolean addEdge(@NotEmpty final GenealogyVertex dependantVertex,
-			@NotEmpty final GenealogyVertex targetVertex, final GenealogyEdgeType edgeType) {
+	public boolean addEdge(@NotNull final GenealogyVertex dependantVertex, @NotNull final GenealogyVertex targetVertex,
+			final GenealogyEdgeType edgeType) {
 		
 		if ((!this.containsVertex(dependantVertex)) || (!this.containsVertex(targetVertex))) {
 			return false;

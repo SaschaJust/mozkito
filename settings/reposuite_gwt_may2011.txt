@@ -10,8 +10,8 @@ tracker.type=GOOGLE
 tracker.stop=6386
 headless
 
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/2/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/2/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/gwt
 package.distance = 2
 vote.changecouplings.minconfidence = 0.1
