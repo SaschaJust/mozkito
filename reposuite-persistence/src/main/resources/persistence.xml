@@ -119,6 +119,10 @@
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.Method2Bugs</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping</class>
 		<class>de.unisaarland.cs.st.reposuite.mapping.model.MappingEngineFeature</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction</class>
+		<class>de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
