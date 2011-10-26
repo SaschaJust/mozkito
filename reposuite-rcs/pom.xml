@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</parent>
 	<groupId>de.unisaarland.cs.st</groupId>
 	<modelVersion>4.0.0</modelVersion>
@@ -14,12 +14,12 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-utils</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-persistence</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>

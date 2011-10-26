@@ -5,7 +5,7 @@
 	<artifactId>reposuite</artifactId>
 	<name>reposuite</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>pom</packaging>
 	<url>http://www.st.cs.uni-saarland.de/reposuite</url>
 	<inceptionYear>2010</inceptionYear>
@@ -165,18 +165,24 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
+		<snapshotRepository>
+			<releases>
+				<enabled>false</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<id>st.cs.uni-saarland.de</id>
+			<name>st.cs.uni-saarland.de</name>
+			<url>https://nexus.own-hero.net/content/repositories/st.cs.uni-saarland.de</url>
+			<layout>default</layout>
+		</snapshotRepository>
 		<repository>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>st.cs.uni-saarland.de</id>
-			<name>st.cs.uni-saarland.de</name>
-			<url>https://nexus.own-hero.net/content/repositories/st.cs.uni-saarland.de</url>
+			<id>own-hero.net-external</id>
+			<name>own-hero.net external</name>
+			<url>https://nexus.own-hero.net/content/repositories/external/</url>
 			<layout>default</layout>
 		</repository>
 	</distributionManagement>

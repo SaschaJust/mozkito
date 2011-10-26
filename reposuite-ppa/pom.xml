@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>reposuite-ppa</artifactId>
@@ -13,12 +13,12 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-rcs</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-utils</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
@@ -129,6 +129,6 @@
 		<version>1.2</version> <executions> <execution> <id>cp-ppa-to-plugin</id> 
 		<phase>install</phase> <goals> <goal>exec</goal> </goals> <inherited>false</inherited> 
 		</execution> </executions> <configuration> <executable>cp</executable> <arguments> 
-		<argument>target/reposuite-ppa-0.1-SNAPSHOT.jar</argument> <argument>../ppa/reposuite-ppa-plugin/</argument> 
+		<argument>target/reposuite-ppa-0.1.jar</argument> <argument>../ppa/reposuite-ppa-plugin/</argument> 
 		</arguments> </configuration> </plugin> </plugins> </build> -->
 </project>
