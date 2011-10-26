@@ -19,11 +19,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.infozilla.model.EnhancedReport;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 

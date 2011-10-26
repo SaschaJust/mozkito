@@ -22,11 +22,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
 import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -23,7 +24,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -50,9 +50,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 *         <code>null</code> otherwise.
 	 */
 	protected static GraphDBChangeOperation getGraphDBChangeOperationById(final GraphDatabaseService graph,
-			final long id) {
+	                                                                      final long id) {
 		Node hit = graph.index().forNodes(GraphDBChangeOperation.keyName).get(GraphDBChangeOperation.keyName, id)
-				.getSingle();
+		                .getSingle();
 		if (hit == null) {
 			return null;
 		}
@@ -81,31 +81,31 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		return genealogy;
 	}
 	
-	private GenealogyVertex                       root        = null;
+	private GenealogyVertex                  root           = null;
 	
-	//	static {
-	//		Runtime.getRuntime().addShutdownHook(new Thread() {
+	// static {
+	// Runtime.getRuntime().addShutdownHook(new Thread() {
 	//
-	//			@Override
-	//			public void run() {
-	//				for (CoreChangeGenealogy genealogy : genealogies.keySet()) {
-	//					if (genealogies.get(genealogy).exists()) {
-	//						genealogy.close();
-	//					}
-	//				}
-	//			}
-	//		});
-	//	}
+	// @Override
+	// public void run() {
+	// for (CoreChangeGenealogy genealogy : genealogies.keySet()) {
+	// if (genealogies.get(genealogy).exists()) {
+	// genealogy.close();
+	// }
+	// }
+	// }
+	// });
+	// }
 	
-	private Map<Node, GenealogyVertex> nodes2Vertices = new HashMap<Node, GenealogyVertex>();
+	private final Map<Node, GenealogyVertex> nodes2Vertices = new HashMap<Node, GenealogyVertex>();
 	
 	/** The graph. */
-	private final GraphDatabaseService graph;
+	private final GraphDatabaseService       graph;
 	
 	/** The persistence util. */
-	private PersistenceUtil            persistenceUtil;
+	private PersistenceUtil                  persistenceUtil;
 	
-	private File                       dbFile;
+	private final File                       dbFile;
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -115,7 +115,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @param dbFile
 	 */
 	@NoneNull
-	protected CoreChangeGenealogy(final GraphDatabaseService graph, File dbFile) {
+	protected CoreChangeGenealogy(final GraphDatabaseService graph, final File dbFile) {
 		this.graph = graph;
 		this.dbFile = dbFile;
 	}
@@ -135,16 +135,16 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @return true, if successful
 	 */
 	public boolean addEdge(@NotEmpty final Collection<JavaChangeOperation> dependant,
-			@NotEmpty final Collection<JavaChangeOperation> target, final GenealogyEdgeType edgeType) {
+	                       @NotEmpty final Collection<JavaChangeOperation> target,
+	                       final GenealogyEdgeType edgeType) {
 		
 		String transactionId1 = null;
 		for (JavaChangeOperation op : dependant) {
 			if (transactionId1 == null) {
 				transactionId1 = op.getRevision().getTransaction().getId();
 			} else {
-				Condition
-				.check(transactionId1.equals(op.getRevision().getTransaction().getId()),
-						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+				Condition.check(transactionId1.equals(op.getRevision().getTransaction().getId()),
+				                "It is prohibited to add collections of change operations as vertices stemming from different transactions.");
 			}
 		}
 		String transactionId2 = null;
@@ -152,15 +152,14 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 			if (transactionId2 == null) {
 				transactionId2 = op.getRevision().getTransaction().getId();
 			} else {
-				Condition
-				.check(transactionId2.equals(op.getRevision().getTransaction().getId()),
-						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+				Condition.check(transactionId2.equals(op.getRevision().getTransaction().getId()),
+				                "It is prohibited to add collections of change operations as vertices stemming from different transactions.");
 			}
 		}
 		Condition.check(transactionId1 != null,
-				"Something went wrong. Could not get a valid transaction id from first operation set.");
+		                "Something went wrong. Could not get a valid transaction id from first operation set.");
 		Condition.check(transactionId2 != null,
-				"Something went wrong. Could not get a valid transaction id from second operation set.");
+		                "Something went wrong. Could not get a valid transaction id from second operation set.");
 		
 		GenealogyVertex dependantVertex = this.addVertex(dependant);
 		GenealogyVertex targetVertex = this.addVertex(target);
@@ -169,8 +168,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public boolean addEdge(@NotNull final GenealogyVertex dependantVertex, @NotNull final GenealogyVertex targetVertex,
-			final GenealogyEdgeType edgeType) {
+	public boolean addEdge(@NotNull final GenealogyVertex dependantVertex,
+	                       @NotNull final GenealogyVertex targetVertex,
+	                       final GenealogyEdgeType edgeType) {
 		
 		if ((!this.containsVertex(dependantVertex)) || (!this.containsVertex(targetVertex))) {
 			return false;
@@ -198,9 +198,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 			if (transactionId == null) {
 				transactionId = op.getRevision().getTransaction().getId();
 			} else {
-				Condition
-				.check(transactionId.equals(op.getRevision().getTransaction().getId()),
-						"It is prohibited to add collections of change operations as vertices stemming from different transactions.");
+				Condition.check(transactionId.equals(op.getRevision().getTransaction().getId()),
+				                "It is prohibited to add collections of change operations as vertices stemming from different transactions.");
 			}
 			operationIds.add(op.getId());
 		}
@@ -222,27 +221,28 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @return the genealogy vertex
 	 */
 	@NoneNull
-	protected GenealogyVertex addVertex(final String transaction_id, final Collection<Long> operation_ids) {
+	protected GenealogyVertex addVertex(final String transaction_id,
+	                                    final Collection<Long> operation_ids) {
 		GenealogyVertex existingVertex = getVertex(transaction_id, operation_ids);
 		if (existingVertex != null) {
 			return existingVertex;
 		}
 		Transaction tx = this.graph.beginTx();
 		
-		Node node = graph.createNode();
+		Node node = this.graph.createNode();
 		node.setProperty(GenealogyVertex.transaction_id, transaction_id);
-		Index<Node> index = graph.index().forNodes(GenealogyVertex.transaction_id);
+		Index<Node> index = this.graph.index().forNodes(GenealogyVertex.transaction_id);
 		index.add(node, GenealogyVertex.transaction_id, node.getProperty(GenealogyVertex.transaction_id));
 		
 		GenealogyVertex vertex = this.getVertexForNode(node);
 		
-		//generate the vertices referencing the java change operations
+		// generate the vertices referencing the java change operations
 		for (Long oId : operation_ids) {
 			
-			//check if change operation vertex exists already
+			// check if change operation vertex exists already
 			GraphDBChangeOperation genOpVertex = getGraphDBChangeOperationById(oId);
 			if (genOpVertex == null) {
-				genOpVertex = GraphDBChangeOperation.create(graph, oId);
+				genOpVertex = GraphDBChangeOperation.create(this.graph, oId);
 			}
 			vertex.addChangeOperation(genOpVertex);
 		}
@@ -262,25 +262,26 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public boolean containsEdge(GenealogyVertex from, GenealogyVertex to) {
+	public boolean containsEdge(final GenealogyVertex from,
+	                            final GenealogyVertex to) {
 		Collection<GenealogyVertex> allDependents = from.getAllVerticesDependingOn();
 		return allDependents.contains(to);
 	}
 	
 	@Override
 	public boolean containsVertex(final GenealogyVertex vertex) {
-		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
-				.get(GenealogyVertex.transaction_id, vertex.getTransactionId());
+		IndexHits<Node> hits = this.graph.index().forNodes(GenealogyVertex.transaction_id)
+		                                 .get(GenealogyVertex.transaction_id, vertex.getTransactionId());
 		boolean result = hits.hasNext();
 		hits.close();
 		return result;
 	}
 	
 	@Override
-	public int edgeSize(){
+	public int edgeSize() {
 		int result = 0;
 		GenealogyVertexIterator vertexIter = vertexSet();
-		for(GenealogyVertex v : vertexIter){
+		for (GenealogyVertex v : vertexIter) {
 			result += v.getAllDependents().size();
 		}
 		vertexIter.close();
@@ -288,7 +289,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(GenealogyVertex from, GenealogyVertex to) {
+	public Collection<GenealogyEdgeType> getEdges(final GenealogyVertex from,
+	                                              final GenealogyVertex to) {
 		Collection<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
 		if (this.containsEdge(from, to)) {
 			for (JavaChangeOperation fromOp : getJavaChangeOperationsForVertex(from)) {
@@ -304,7 +306,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	public Set<String> getExistingEdgeTypes() {
 		Set<String> result = new HashSet<String>();
 		List<GenealogyEdgeType> values = Arrays.asList(GenealogyEdgeType.values());
-		Iterable<RelationshipType> relationshipTypes = graph.getRelationshipTypes();
+		Iterable<RelationshipType> relationshipTypes = this.graph.getRelationshipTypes();
 		for (RelationshipType type : relationshipTypes) {
 			if (values.contains(type)) {
 				result.add(type.getClass().getName());
@@ -330,7 +332,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @return the graph db change operation by id
 	 */
 	private GraphDBChangeOperation getGraphDBChangeOperationById(final Long oId) {
-		return getGraphDBChangeOperationById(graph, oId);
+		return getGraphDBChangeOperationById(this.graph, oId);
 	}
 	
 	@Override
@@ -339,7 +341,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public GraphDatabaseService getGraphDBService(){
+	public GraphDatabaseService getGraphDBService() {
 		return this.graph;
 	}
 	
@@ -350,10 +352,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 */
 	@Override
 	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v) {
-		Condition
-		.check(persistenceUtil != null,
-				"Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
-		if(persistenceUtil == null){
+		Condition.check(this.persistenceUtil != null,
+		                "Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
 			}
@@ -362,7 +363,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		Collection<Long> javaOperationIds = v.getJavaChangeOperationIds();
 		for (Long id : javaOperationIds) {
-			result.add(persistenceUtil.loadById(id, JavaChangeOperation.class));
+			result.add(this.persistenceUtil.loadById(id, JavaChangeOperation.class));
 		}
 		return result;
 	}
@@ -377,35 +378,34 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	}
 	
 	@Override
-	public GenealogyVertex getRoot(){
-		if (root == null) {
-			for(GenealogyVertex v : vertexSet()){
-				if((root == null) || (v.getTransaction().compareTo(root.getTransaction()) < 0)){
-					root = v;
+	public GenealogyVertex getRoot() {
+		if (this.root == null) {
+			for (GenealogyVertex v : vertexSet()) {
+				if ((this.root == null) || (v.getTransaction().compareTo(this.root.getTransaction()) < 0)) {
+					this.root = v;
 				}
 			}
 		}
-		return root;
+		return this.root;
 	}
 	
 	@Override
 	public RCSTransaction getTransactionForVertex(final GenealogyVertex v) {
-		Condition
-		.check(persistenceUtil != null,
-				"Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
-		if (persistenceUtil == null) {
+		Condition.check(this.persistenceUtil != null,
+		                "Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Cannot perform method operation 'getJavaChangeOperationsForVertex' if persistenceUtil not set. Use method setPersistenceUtil().");
 			}
 			return null;
 		}
-		Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("id",
-				v.getTransactionId());
-		List<RCSTransaction> load = persistenceUtil.load(criteria);
+		Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class)
+		                                                        .eq("id", v.getTransactionId());
+		List<RCSTransaction> load = this.persistenceUtil.load(criteria);
 		if (load.isEmpty()) {
 			throw new UnrecoverableError(
-					"Could not find RCSTransaction for GenealogyNode! This means the GenealogyGraph is corrupt! (transaction_di = "
-							+ v.getTransactionId() + ")");
+			                             "Could not find RCSTransaction for GenealogyNode! This means the GenealogyGraph is corrupt! (transaction_di = "
+			                                     + v.getTransactionId() + ")");
 		}
 		return load.get(0);
 	}
@@ -422,10 +422,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 * @return the vertex if found. Returns <code>Null</code> otherwise.
 	 */
 	@NoneNull
-	public GenealogyVertex getVertex(final String transactionId, final Collection<Long> javaChangeOperationIds) {
-		Transaction tx = graph.beginTx();
-		IndexHits<Node> hits = graph.index().forNodes(GenealogyVertex.transaction_id)
-				.get(GenealogyVertex.transaction_id, transactionId);
+	public GenealogyVertex getVertex(final String transactionId,
+	                                 final Collection<Long> javaChangeOperationIds) {
+		Transaction tx = this.graph.beginTx();
+		IndexHits<Node> hits = this.graph.index().forNodes(GenealogyVertex.transaction_id)
+		                                 .get(GenealogyVertex.transaction_id, transactionId);
 		for (Node hit : hits) {
 			GenealogyVertex vertex = this.getVertexForNode(hit);
 			if (vertex.getJavaChangeOperationIds().containsAll(javaChangeOperationIds)) {
@@ -441,11 +442,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 		return null;
 	}
 	
-	protected GenealogyVertex getVertexForNode(Node node) {
-		if (!nodes2Vertices.containsKey(node)) {
-			nodes2Vertices.put(node, new GenealogyVertex(this, node));
+	protected GenealogyVertex getVertexForNode(final Node node) {
+		if (!this.nodes2Vertices.containsKey(node)) {
+			this.nodes2Vertices.put(node, new GenealogyVertex(this, node));
 		}
-		return nodes2Vertices.get(node);
+		return this.nodes2Vertices.get(node);
 	}
 	
 	/**
@@ -465,8 +466,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 */
 	@Override
 	public GenealogyVertexIterator vertexSet() {
-		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
-				.query(GenealogyVertex.transaction_id, "*");
+		IndexHits<Node> indexHits = this.graph.index().forNodes(GenealogyVertex.transaction_id)
+		                                      .query(GenealogyVertex.transaction_id, "*");
 		return new DefaultGenealogyVertexIterator(indexHits, this);
 	}
 	
@@ -478,8 +479,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy {
 	 */
 	@Override
 	public int vertexSize() {
-		IndexHits<Node> indexHits = graph.index().forNodes(GenealogyVertex.transaction_id)
-				.query(GenealogyVertex.transaction_id, "*");
+		IndexHits<Node> indexHits = this.graph.index().forNodes(GenealogyVertex.transaction_id)
+		                                      .query(GenealogyVertex.transaction_id, "*");
 		int result = indexHits.size();
 		indexHits.close();
 		return result;

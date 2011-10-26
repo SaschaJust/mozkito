@@ -15,13 +15,14 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;

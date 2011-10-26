@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
 import net.ownhero.dev.andama.settings.BooleanArgument;
@@ -31,7 +32,6 @@ import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementFactory;

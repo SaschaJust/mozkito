@@ -18,6 +18,8 @@ package de.unisaarland.cs.st.reposuite.mapping.storages;
 import java.util.HashMap;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -30,7 +32,6 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 

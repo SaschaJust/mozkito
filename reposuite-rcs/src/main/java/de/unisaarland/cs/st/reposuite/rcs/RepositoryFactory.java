@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -29,7 +30,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 

@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
@@ -33,7 +34,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.reposuite.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.reposuite.callgraph.visitor.CallGraphPPAVisitor;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;

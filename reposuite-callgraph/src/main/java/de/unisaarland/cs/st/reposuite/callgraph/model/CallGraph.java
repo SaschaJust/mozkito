@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import edu.uci.ics.jung.graph.AbstractGraph;

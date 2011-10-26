@@ -34,6 +34,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.Root;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
@@ -49,9 +51,7 @@ import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
-import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
@@ -24,14 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 
 /**
  * The Class ArtificialBlobGenerator.
@@ -68,15 +67,16 @@ public class ArtificialBlobGenerator {
 	 * @return the set of generated artificial blobs
 	 */
 	public static Set<ArtificialBlob> generateAll(@NotNull final Collection<AtomicTransaction> transactions,
-			@NotNegative final int packageDistance,
-			@GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
-			@GreaterOrEqualInt(ref = -1) final int maxBlobSize, final Long timeWindowSize) {
+	                                              @NotNegative final int packageDistance,
+	                                              @GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
+	                                              @GreaterOrEqualInt (ref = -1) final int maxBlobSize,
+	                                              final Long timeWindowSize) {
 		
 		// check the more complicated preconditions
 		if (maxBlobSize > -1) {
 			if (maxBlobSize < minBlobSize) {
 				throw new UnrecoverableError(
-						"The 'maxBlobSize' argument must either be -1 (for unlimited size) or greater or equals than minBlobSize. All other settings make no sense.");
+				                             "The 'maxBlobSize' argument must either be -1 (for unlimited size) or greater or equals than minBlobSize. All other settings make no sense.");
 			}
 		}
 		
@@ -124,14 +124,14 @@ public class ArtificialBlobGenerator {
 	 */
 	@SuppressWarnings ("unchecked")
 	protected static <T> Set<Set<T>> getAllCombinations(final Collection<T> elements,
-			final CombineOperator<T> operator,
-			final int maxBlobSize) {
+	                                                    final CombineOperator<T> operator,
+	                                                    final int maxBlobSize) {
 		List<T> elementList = new ArrayList<T>(elements.size());
 		elementList.addAll(elements);
 		
 		Map<Set<T>, Collection<T>> combinations = new HashMap<Set<T>, Collection<T>>();
 		
-		for(int i = 0; i < elementList.size(); ++i){
+		for (int i = 0; i < elementList.size(); ++i) {
 			for (int j = 0; j < elementList.size(); ++j) {
 				if (i == j) {
 					continue;
@@ -151,8 +151,7 @@ public class ArtificialBlobGenerator {
 		Set<Set<T>> newAdded = new HashSet<Set<T>>();
 		newAdded.addAll(combinations.keySet());
 		
-		
-		while (!newAdded.isEmpty()){
+		while (!newAdded.isEmpty()) {
 			Set<Set<T>> newNewAdded = new HashSet<Set<T>>();
 			for (Set<T> t : newAdded) {
 				if (!combinations.containsKey(t)) {
@@ -197,7 +196,7 @@ public class ArtificialBlobGenerator {
 	 * @return the longest common path
 	 */
 	public static String getLongestCommonPath(final String x,
-			final String y) {
+	                                          final String y) {
 		int M = x.length();
 		int N = y.length();
 		
@@ -251,7 +250,7 @@ public class ArtificialBlobGenerator {
 			newAdded.clear();
 			for (Set<String> l : pathsToCombine) {
 				for (Set<String> t : tmp) {
-					if(CollectionUtils.containsAny(l, t) && (!t.containsAll(l))){
+					if (CollectionUtils.containsAny(l, t) && (!t.containsAll(l))) {
 						Set<String> newL = new HashSet<String>();
 						newL.addAll(t);
 						newL.addAll(l);

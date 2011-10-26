@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
 import net.ownhero.dev.kisa.Logger;
@@ -33,7 +34,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.History;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;

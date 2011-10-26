@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;

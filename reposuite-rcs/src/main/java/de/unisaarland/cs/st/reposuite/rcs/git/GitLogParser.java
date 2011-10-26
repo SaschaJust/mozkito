@@ -19,18 +19,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 import de.unisaarland.cs.st.reposuite.rcs.elements.LogEntry;
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class GitLogParser.

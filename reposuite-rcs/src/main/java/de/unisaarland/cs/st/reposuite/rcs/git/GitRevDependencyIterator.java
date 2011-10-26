@@ -26,6 +26,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.CommandExecutor;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.regex.Regex;
@@ -33,14 +38,9 @@ import net.ownhero.dev.regex.RegexGroup;
 
 import org.apache.commons.io.LineIterator;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.reposuite.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSBranch;
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.Tuple;
 
 public class GitRevDependencyIterator implements RevDependencyIterator {
 	

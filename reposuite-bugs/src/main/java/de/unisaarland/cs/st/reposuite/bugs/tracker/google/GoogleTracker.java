@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
@@ -64,7 +65,6 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**

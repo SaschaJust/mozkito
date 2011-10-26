@@ -26,12 +26,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
-import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;

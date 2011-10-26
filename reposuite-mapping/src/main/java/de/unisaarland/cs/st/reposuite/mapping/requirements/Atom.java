@@ -18,9 +18,10 @@ package de.unisaarland.cs.st.reposuite.mapping.requirements;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 import org.apache.commons.collections.CollectionUtils;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
 

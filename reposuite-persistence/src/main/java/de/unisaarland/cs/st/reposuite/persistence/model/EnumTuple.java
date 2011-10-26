@@ -19,8 +19,8 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 @Embeddable

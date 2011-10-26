@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
@@ -35,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.MethodChangeCoupling;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 

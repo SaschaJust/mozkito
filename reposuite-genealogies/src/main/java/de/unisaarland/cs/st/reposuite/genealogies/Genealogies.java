@@ -2,11 +2,11 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.genealogies.transaction.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;

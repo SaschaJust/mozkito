@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -25,7 +26,6 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import de.unisaarland.cs.st.reposuite.clustering.MultilevelClustering;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.untangling.Untangling;
 import de.unisaarland.cs.st.reposuite.untangling.blob.AtomicTransaction;
 
@@ -70,7 +70,6 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.untangling.ConfidenceAggregation#aggregate
 	 * (java.util.List)
@@ -78,19 +77,19 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	@Override
 	@NoneNull
 	public double aggregate(final List<Double> values) {
-		Condition.check(trained, "You must train a model before using it,");
-		if (!attributes.isEmpty()) {
-			Condition.check((values.size() + 1) == attributes.size(),
-					"The given set of values differ from the trained attribute's dimension");
+		Condition.check(this.trained, "You must train a model before using it,");
+		if (!this.attributes.isEmpty()) {
+			Condition.check((values.size() + 1) == this.attributes.size(),
+			                "The given set of values differ from the trained attribute's dimension");
 		}
 		
 		Instance instance = new DenseInstance(values.size() + 1);
 		for (int j = 0; j < values.size(); ++j) {
-			instance.setValue(trainingInstances.attribute(j), values.get(j));
+			instance.setValue(this.trainingInstances.attribute(j), values.get(j));
 		}
-		instance.setDataset(trainingInstances);
+		instance.setDataset(this.trainingInstances);
 		try {
-			return model.distributionForInstance(instance)[0];
+			return this.model.distributionForInstance(instance)[0];
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -104,7 +103,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Type: " + LinearRegressionAggregation.class.getSimpleName());
 		sb.append(FileUtils.lineSeparator);
-		sb.append(model.toString());
+		sb.append(this.model.toString());
 		return sb.toString();
 	}
 	
@@ -116,14 +115,13 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	@NoneNull
 	public boolean train(final Collection<AtomicTransaction> transactionSet) {
 		
-		if (trained) {
+		if (this.trained) {
 			return true;
 		}
 		
-		Condition
-		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION, untangling);
+		Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION, this.untangling);
 		List<List<Double>> trainValues = new LinkedList<List<Double>>();
 		for (List<Double> value : samples.get(SampleType.POSITIVE)) {
 			List<Double> valueCopy = new ArrayList<Double>(value);
@@ -136,37 +134,36 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			trainValues.add(valueCopy);
 		}
 		
-		List<String> scoreVisitorNames = untangling.getScoreVisitorNames();
-		attributes = new ArrayList<Attribute>(scoreVisitorNames.size());
+		List<String> scoreVisitorNames = this.untangling.getScoreVisitorNames();
+		this.attributes = new ArrayList<Attribute>(scoreVisitorNames.size());
 		
 		// Declare attributes
 		for (String scoreVisitorName : scoreVisitorNames) {
-			attributes.add(new Attribute(scoreVisitorName));
+			this.attributes.add(new Attribute(scoreVisitorName));
 		}
-		attributes.add(new Attribute("confidence"));
+		this.attributes.add(new Attribute("confidence"));
 		
-		//create an empty training set
-		trainingInstances = new Instances("TrainingSet", attributes, trainValues.size());
-		trainingInstances.setClassIndex(attributes.size() - 1);
+		// create an empty training set
+		this.trainingInstances = new Instances("TrainingSet", this.attributes, trainValues.size());
+		this.trainingInstances.setClassIndex(this.attributes.size() - 1);
 		
-		//set the training values within the weka training set
+		// set the training values within the weka training set
 		for (int i = 0; i < trainValues.size(); ++i) {
 			List<Double> instanceValues = trainValues.get(i);
 			
-			Condition.check(
-					instanceValues.size() == attributes.size(),
-					"InstanceValues and attributes must have equal dimensions: dum(instanceValues)="
-							+ instanceValues.size() + ", dim(attributes)=" + attributes.size());
+			Condition.check(instanceValues.size() == this.attributes.size(),
+			                "InstanceValues and attributes must have equal dimensions: dum(instanceValues)="
+			                        + instanceValues.size() + ", dim(attributes)=" + this.attributes.size());
 			
 			Instance instance = new DenseInstance(instanceValues.size());
 			for (int j = 0; j < instanceValues.size(); ++j) {
-				instance.setValue(attributes.get(j), instanceValues.get(j));
+				instance.setValue(this.attributes.get(j), instanceValues.get(j));
 			}
 			// add the instance
-			trainingInstances.add(instance);
+			this.trainingInstances.add(instance);
 		}
 		try {
-			model.buildClassifier(trainingInstances);
+			this.model.buildClassifier(this.trainingInstances);
 		} catch (Exception e) {
 			throw new UnrecoverableError(e.getMessage());
 		}
@@ -174,18 +171,18 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		try {
 			File instancesFile = new File("linearRegressionModel_Instances.arff");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(instancesFile));
-			writer.write(trainingInstances.toString());
+			writer.write(this.trainingInstances.toString());
 			writer.close();
 		} catch (IOException e) {
 			throw new UnrecoverableError(e.getMessage());
 		}
 		
-		//serialize model for later use
+		// serialize model for later use
 		File serialFile = new File("linearRegressionModel.ser");
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
 			
-			Object[] toWrite = new Object[] { model, trainingInstances };
+			Object[] toWrite = new Object[] { this.model, this.trainingInstances };
 			out.writeObject(toWrite);
 			out.close();
 			if (Logger.logInfo()) {
@@ -201,8 +198,8 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			}
 		}
 		
-		trained = true;
-		return trained;
+		this.trained = true;
+		return this.trained;
 	}
 	
 }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.DoubleArgument;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.LongArgument;
@@ -31,7 +32,6 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.changecouplings.model.SerialFileChangeCoupling;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;

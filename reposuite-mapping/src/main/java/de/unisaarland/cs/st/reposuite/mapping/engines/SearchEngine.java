@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 
@@ -29,7 +30,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.mapping.storages.LuceneStorage;

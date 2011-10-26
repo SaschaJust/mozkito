@@ -4,10 +4,11 @@
 
 package de.unisaarland.cs.st.reposuite.mapping.model;
 
-import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
+
+import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.reposuite.mapping.model.Class2Bugs.class)

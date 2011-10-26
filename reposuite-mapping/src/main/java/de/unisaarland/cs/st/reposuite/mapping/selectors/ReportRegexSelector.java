@@ -18,12 +18,12 @@ package de.unisaarland.cs.st.reposuite.mapping.selectors;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;

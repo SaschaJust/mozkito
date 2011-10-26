@@ -26,9 +26,9 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.Shutdown;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
