@@ -50,7 +50,7 @@ public class IOUtils {
 	 * @param uri
 	 * @return
 	 * @throws UnsupportedProtocolException
-	 * @throws FetchException 
+	 * @throws FetchException
 	 */
 	public static byte[] binaryfetch(final URI uri) throws UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
@@ -72,9 +72,8 @@ public class IOUtils {
 	 * @throws UnsupportedProtocolException
 	 * @throws FetchException
 	 */
-	public static byte[] binaryfetch(final URI uri,
-	                                 final String username,
-	                                 final String password) throws UnsupportedProtocolException, FetchException {
+	public static byte[] binaryfetch(final URI uri, final String username, final String password)
+	        throws UnsupportedProtocolException, FetchException {
 		try {
 			if (uri.getScheme().equals("http")) {
 				return binaryfetchHttp(uri, username, password);
@@ -123,13 +122,12 @@ public class IOUtils {
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	private static byte[] binaryfetchHttp(final URI uri,
-	                                      final String username,
-	                                      final String password) throws ClientProtocolException, IOException {
+	private static byte[] binaryfetchHttp(final URI uri, final String username, final String password)
+	        throws ClientProtocolException, IOException {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-		                             new UsernamePasswordCredentials(username, password));
+		credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT), new UsernamePasswordCredentials(
+		        username, password));
 		httpClient.setCredentialsProvider(credsProvider);
 		
 		HttpGet request = new HttpGet(uri);
@@ -141,15 +139,14 @@ public class IOUtils {
 	/**
 	 * @param uri
 	 * @return
-	 * @throws FetchException 
+	 * @throws FetchException
 	 */
 	private static byte[] binaryfetchHttps(final URI uri) throws FetchException {
 		return binaryfetchHttp(uri);
 	}
 	
-	private static byte[] binaryfetchHttps(final URI uri,
-	                                       final String username,
-	                                       final String password) throws ClientProtocolException, IOException {
+	private static byte[] binaryfetchHttps(final URI uri, final String username, final String password)
+	        throws ClientProtocolException, IOException {
 		return binaryfetchHttp(uri, username, password);
 	}
 	
@@ -179,9 +176,8 @@ public class IOUtils {
 	 * @throws FetchException
 	 * @throws UnsupportedProtocolException
 	 */
-	public static RawContent fetch(@NotNull final URI uri,
-	                               final String username,
-	                               final String password) throws FetchException, UnsupportedProtocolException {
+	public static RawContent fetch(@NotNull final URI uri, final String username, final String password)
+	        throws FetchException, UnsupportedProtocolException {
 		if (uri.getScheme().equals("http")) {
 			return fetchHttp(uri, username, password);
 		} else if (uri.getScheme().equals("https")) {
@@ -217,7 +213,7 @@ public class IOUtils {
 			reader.close();
 			
 			return new RawContent(uri, md.digest(builder.toString().getBytes()), new DateTime(file.lastModified()),
-			                      "xhtml", builder.toString());
+			        "xhtml", builder.toString());
 			
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
@@ -251,7 +247,7 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			                      contentType.getValue(), content.toString());
+			        contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
@@ -265,9 +261,8 @@ public class IOUtils {
 	 * @return
 	 * @throws FetchException
 	 */
-	public static RawContent fetchHttp(final URI uri,
-	                                   final String username,
-	                                   final String password) throws FetchException {
+	public static RawContent fetchHttp(final URI uri, final String username, final String password)
+	        throws FetchException {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -277,7 +272,7 @@ public class IOUtils {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-			                             new UsernamePasswordCredentials(username, password));
+			        new UsernamePasswordCredentials(username, password));
 			httpClient.setCredentialsProvider(credsProvider);
 			
 			HttpGet request = new HttpGet(uri);
@@ -294,7 +289,7 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			                      contentType.getValue(), content.toString());
+			        contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
@@ -317,9 +312,8 @@ public class IOUtils {
 	 * @return
 	 * @throws FetchException
 	 */
-	public static RawContent fetchHttps(final URI uri,
-	                                    final String username,
-	                                    final String password) throws FetchException {
+	public static RawContent fetchHttps(final URI uri, final String username, final String password)
+	        throws FetchException {
 		return fetchHttp(uri, username, password);
 	}
 	
@@ -396,23 +390,19 @@ public class IOUtils {
 	 * @throws StoringException
 	 * @throws FilePermissionException
 	 */
-	public static void store(@NotNull final Storable object,
-	                         @NotNull final File directory,
-	                         final String fileName,
-	                         final boolean overwrite) throws StoringException, FilePermissionException {
+	public static void store(@NotNull final Storable object, @NotNull final File directory, final String fileName,
+	        final boolean overwrite) throws StoringException, FilePermissionException {
 		FileUtils.ensureFilePermissions(directory, FileUtils.ACCESSIBLE_DIR | FileUtils.WRITABLE);
 		
 		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
 		File file = new File(path);
 		
-		FileUtils.ensureFilePermissions(file, FileUtils.WRITABLE);
+		FileUtils.ensureFilePermissions(file, FileUtils.WRITABLE_FILE);
 		
 		if (!overwrite) {
 			if (file.exists()) {
 				throw new StoringException("File `" + path + "` already exists.");
 			}
-		} else {
-			FileUtils.ensureFilePermissions(file, FileUtils.OVERWRITABLE_FILE);
 		}
 		
 		FileOutputStream fout;
