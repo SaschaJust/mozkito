@@ -169,7 +169,7 @@ public abstract class Tracker {
 			} else {
 				
 				source = new RawReport(reverseURI(uri), IOUtils.fetch(uri));
-				writeContentToFile(source, cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+				writeContentToFile(source, filename);
 			}
 		} else {
 			
