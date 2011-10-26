@@ -57,14 +57,14 @@ import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType type             = TrackerType.valueOf(this.getClass()
-	                                                                       .getSimpleName()
-	                                                                       .substring(0,
-	                                                                                  this.getClass().getSimpleName()
-	                                                                                      .length()
-	                                                                                          - Tracker.class.getSimpleName()
-	                                                                                                         .length())
-	                                                                       .toUpperCase());
+	protected final TrackerType type             = TrackerType.valueOf(this
+	                                                     .getClass()
+	                                                     .getSimpleName()
+	                                                     .substring(
+	                                                             0,
+	                                                             this.getClass().getSimpleName().length()
+	                                                                     - Tracker.class.getSimpleName().length())
+	                                                     .toUpperCase());
 	protected DateTime          lastUpdate;
 	protected String            baseURL;
 	protected String            pattern;
@@ -151,7 +151,31 @@ public abstract class Tracker {
 	 * @throws FetchException
 	 */
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
-		return new RawReport(reverseURI(uri), IOUtils.fetch(uri));
+		RawReport source = null;
+		
+		if (cacheDir != null) {
+			
+			String filename = uri.toString();
+			int index = filename.lastIndexOf('/');
+			filename = filename.substring(index + 1);
+			
+			File cacheFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			if (cacheFile.exists()) {
+				if (Logger.logInfo()) {
+					Logger.info("Fetching report `" + uri.toString() + "` from cache directory ... ");
+				}
+				source = new RawReport(reverseURI(uri), fetchSource(cacheFile.toURI()));
+				
+			} else {
+				
+				source = new RawReport(reverseURI(uri), IOUtils.fetch(uri));
+				writeContentToFile(source, cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			}
+		} else {
+			
+			source = new RawReport(reverseURI(uri), IOUtils.fetch(uri));
+		}
+		return source;
 	}
 	
 	/**
@@ -266,8 +290,8 @@ public abstract class Tracker {
 		try {
 			criteria = PersistenceManager.getUtil().createCriteria(Report.class);
 			criteria.eq("id", id);
-			@SuppressWarnings ("unchecked")
-			List<Report> list = (List<Report>) PersistenceManager.getUtil().load(criteria);
+			@SuppressWarnings("unchecked") List<Report> list = (List<Report>) PersistenceManager.getUtil().load(
+			        criteria);
 			
 			if (list.size() > 0) {
 				Report bugReport = list.get(0);
@@ -296,9 +320,7 @@ public abstract class Tracker {
 		String uriString = uri.toString();
 		
 		String tmpURI = uriString.substring(this.fetchURI.toString().length() + split[0].length(), uriString.length());
-		String bugid = tmpURI.substring(0, split.length > 1
-		                                                   ? tmpURI.indexOf(split[1])
-		                                                   : tmpURI.length());
+		String bugid = tmpURI.substring(0, split.length > 1 ? tmpURI.indexOf(split[1]) : tmpURI.length());
 		
 		try {
 			return new Long(bugid);
@@ -334,21 +356,16 @@ public abstract class Tracker {
 	 * @throws InvalidParameterException
 	 */
 	
-	public void setup(@NotNull final URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
-	                  final String username,
-	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
+	public void setup(@NotNull final URI fetchURI, final URI overviewURI, final String pattern, final String username,
+	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	        throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
-		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
-		                username, password);
+		        "Either username and password are set or none at all. username = `%s`, password = `%s`", username,
+		        password);
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		                "`startAt` must be null or > 0, but is: %s", startAt);
+		        "`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-		                "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
+		        "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
@@ -360,9 +377,10 @@ public abstract class Tracker {
 			this.stopAt = stopAt;
 			this.initialized = true;
 			if (cacheDirPath != null) {
+				// FIXME use new IOUtils function
 				this.cacheDir = new File(cacheDirPath);
 				try {
-					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.ACCESSIBLE_DIR);
+					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.WRITABLE_DIR);
 				} catch (FilePermissionException e) {
 					throw new InvalidParameterException("The cache directory is not valid. " + e.getMessage(), e);
 				}
@@ -383,8 +401,7 @@ public abstract class Tracker {
 	 * @return
 	 */
 	@NoneNull
-	public boolean writeContentToFile(final RawContent content,
-	                                  @NotEmpty final String fileName) {
+	public boolean writeContentToFile(final RawContent content, @NotEmpty final String fileName) {
 		Condition.check(isInitialized(), "The tracker has to be initialized before using this method.");
 		
 		try {
