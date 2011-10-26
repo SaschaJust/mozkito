@@ -16,5 +16,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="rcs.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="reposuite-rcs"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.level=debug -Drepository.type=GIT -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Dheadless -Ddatabase.name=reposuite_core_test -Ddatabase.host=quentin.cs.uni-saarland.de -Drepository.uri=file:///Users/just/jruby_git_repo_03_07_2010/git_repo_03_07_2010 -Ddatabse.type=PostgreSQL"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Dlog.console.level=DEBUG -Drepository.type=GIT -Ddatabase.user=miner -Ddatabase.password=miner -Ddatabase.driver=org.postgresql.Driver -Dheadless -Ddatabase.name=reposuite_core_test -Ddatabase.host=quentin.cs.uni-saarland.de -Drepository.uri=file:///Users/just/git_repo_03_07_2010 -Ddatabse.type=PostgreSQL"/>
 </launchConfiguration>

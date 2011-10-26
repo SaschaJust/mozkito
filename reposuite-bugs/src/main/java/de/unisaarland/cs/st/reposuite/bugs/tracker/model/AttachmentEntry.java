@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -63,10 +63,17 @@ public class AttachmentEntry implements Annotated {
 	private String            link;
 	
 	/**
+	 * should be used by persistence util only
+	 */
+	public AttachmentEntry() {
+		
+	}
+	
+	/**
 	 * @param attachId
 	 */
 	public AttachmentEntry(final String attachId) {
-		id = attachId;
+		this.id = attachId;
 	}
 	
 	/**
@@ -81,7 +88,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
-		return deltaTS;
+		return this.deltaTS;
 	}
 	
 	/**
@@ -90,14 +97,14 @@ public class AttachmentEntry implements Annotated {
 	@Basic
 	@Column (columnDefinition = "TEXT")
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 	
 	/**
 	 * @return the filename
 	 */
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 	
 	/**
@@ -105,7 +112,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Id
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -115,8 +122,8 @@ public class AttachmentEntry implements Annotated {
 	@Temporal (TemporalType.TIMESTAMP)
 	public Date getJavaTimestamp() {
 		return getTimestamp() != null
-		? getTimestamp().toDate()
-		: null;
+		                             ? getTimestamp().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -124,7 +131,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getLink() {
-		return link;
+		return this.link;
 	}
 	
 	/**
@@ -132,7 +139,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public String getMime() {
-		return mime;
+		return this.mime;
 	}
 	
 	/**
@@ -140,7 +147,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	/**
@@ -148,7 +155,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Basic
 	public long getSize() {
-		return size;
+		return this.size;
 	}
 	
 	/**
@@ -156,7 +163,7 @@ public class AttachmentEntry implements Annotated {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/**
@@ -208,7 +215,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param link the link to set
+	 * @param link
+	 *            the link to set
 	 */
 	public void setLink(final String link) {
 		this.link = link;

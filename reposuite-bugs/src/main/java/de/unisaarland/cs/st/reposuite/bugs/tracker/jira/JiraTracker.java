@@ -72,19 +72,20 @@ public class JiraTracker extends Tracker {
 		String suffix = xmlUrl.substring(index, xmlUrl.length());
 		String historyUrl = xmlUrl.replace("si/jira.issueviews:issue-xml/", "browse/");
 		return historyUrl.replace(suffix,
-		                          "?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+		        "?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
 	}
 	
 	private File         overalXML;
 	
 	private static Regex doesNotExistRegex = new Regex(
-	                                                   "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	                                               "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
 	
 	private static Regex errorRegex        = new Regex(
-	                                                   "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	                                               "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#checkRAW(java.lang
 	 * .String)
@@ -132,8 +133,7 @@ public class JiraTracker extends Tracker {
 			return false;
 		}
 		
-		@SuppressWarnings ("rawtypes")
-		List children = rootElement.getChildren("channel", rootElement.getNamespace());
+		@SuppressWarnings("rawtypes") List children = rootElement.getChildren("channel", rootElement.getNamespace());
 		
 		if (children == null) {
 			if (Logger.logError()) {
@@ -149,8 +149,8 @@ public class JiraTracker extends Tracker {
 			return false;
 		}
 		
-		@SuppressWarnings ("unchecked")
-		List<Element> items = rootElement.getChildren("channel", rootElement.getNamespace());
+		@SuppressWarnings("unchecked") List<Element> items = rootElement.getChildren("channel",
+		        rootElement.getNamespace());
 		if (items.get(0).getChildren("item", rootElement.getNamespace()).size() != 1) {
 			if (Logger.logError()) {
 				Logger.error("No `item` children.");
@@ -162,6 +162,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#createDocument(de
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
@@ -194,6 +195,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#fetchSource(java.
 	 * net.URI)
@@ -207,29 +209,10 @@ public class JiraTracker extends Tracker {
 		if (overalXML == null) {
 			// fetch source from net
 			
-			String filename = uri.toString();
-			int index = filename.lastIndexOf(FileUtils.fileSeparator);
-			filename = filename.substring(index + 1);
-			
-			// check cacheDir if exists already
-			if (cacheDir != null) {
-				File cacheFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
-				if (cacheFile.exists()) {
-					if (Logger.logInfo()) {
-						Logger.info("Fetching report `" + uri.toString() + "` from cache directory ... ");
-					}
-					RawReport source = super.fetchSource(cacheFile.toURI());
-					return source;
-				}
-			}
 			if (Logger.logInfo()) {
 				Logger.info("Fetching report `" + uri.toString() + "` from net ... ");
 			}
 			RawReport source = super.fetchSource(uri);
-			// write to disk
-			if (cacheDir != null) {
-				writeContentToFile(source, cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
-			}
 			
 			if (Logger.logInfo()) {
 				Logger.info("done");
@@ -266,7 +249,7 @@ public class JiraTracker extends Tracker {
 				}
 				
 				return new RawReport(idToFetch, new RawContent(uri, md.digest(sw.getBuffer().toString().getBytes()),
-				                                               new DateTime(), "xhtml", sw.getBuffer().toString()));
+				        new DateTime(), "xhtml", sw.getBuffer().toString()));
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -304,6 +287,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#parse(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
@@ -358,6 +342,7 @@ public class JiraTracker extends Tracker {
 	 * that will be replaced by a bug id while fetching bug reports. If the
 	 * string contains no such place holder, the uri will be considered to point
 	 * to an overall XML file
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#setup(java.net.URI,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
@@ -365,20 +350,16 @@ public class JiraTracker extends Tracker {
 	 */
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.bugs.tracker.Tracker#setup(java.net.URI,
 	 * java.net.URI, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public void setup(final URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
-	                  final String username,
-	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
+	public void setup(final URI fetchURI, final URI overviewURI, final String pattern, final String username,
+	        final String password, final Long startAt, final Long stopAt, final String cacheDirPath)
+	        throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");

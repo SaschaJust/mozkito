@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.register;
 
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -28,11 +29,21 @@ import de.unisaarland.cs.st.reposuite.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.reposuite.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.reposuite.mapping.storages.MappingStorage;
 
+/**
+ * Classes extending {@link Registered} can dynamically register config options
+ * to the tool chain. Additionally there is support to automatically generate
+ * config option names following the standard naming convention.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public abstract class Registered {
 	
 	/**
 	 * @param clazz
-	 * @return
+	 *            the base class extending {@link Registered}
+	 * @return the lowercase part of the name specifies the category of the
+	 *         registered class, e.g. "engine" for MappingEngine.
 	 */
 	private static final String findRegisteredSuper(final Class<? extends Registered> clazz) {
 		String[] superTag = new String[] { "" };
@@ -44,11 +55,10 @@ public abstract class Registered {
 	 * @param superTag
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private static String findRegisteredSuper(final Class<? extends Registered> clazz, final String[] superTag) {
+	@SuppressWarnings ("unchecked")
+	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
+	                                          final String[] superTag) {
 		if (clazz.getSuperclass() == Registered.class) {
-			System.err.println("Settings superTag from " + superTag[0] + " to "
-			        + clazz.getSimpleName().replace("Mapping", ""));
 			superTag[0] = clazz.getSimpleName().replace("Mapping", "");
 			return superTag[0].toLowerCase();
 		} else if (clazz == Registered.class) {
@@ -58,12 +68,8 @@ public abstract class Registered {
 			Class<? extends Registered> c = clazz;
 			if (Registered.class.isAssignableFrom(c.getSuperclass()) && (c.getSuperclass() != Registered.class)) {
 				c = (Class<? extends Registered>) c.getSuperclass();
-				System.err.println("processing class: " + clazz);
 				String string = findRegisteredSuper(c, superTag);
-				System.err.println("receiving registeredSuper string: " + string);
-				System.err.println("receiving superTag: " + superTag[0]);
 				String retval = string + "." + clazz.getSimpleName().replace(superTag[0], "").toLowerCase();
-				System.err.println("Settings superTag from " + superTag[0] + " to " + clazz.getSimpleName());
 				superTag[0] = clazz.getSimpleName();
 				return retval;
 			}
@@ -86,7 +92,7 @@ public abstract class Registered {
 	}
 	
 	/**
-	 * @return
+	 * @return a string describing the task of the registered class
 	 */
 	public abstract String getDescription();
 	
@@ -122,7 +128,7 @@ public abstract class Registered {
 	 * @param key
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final <T extends MappingStorage> T getStorage(final Class<T> key) {
 		return (T) this.storages.get(key);
 	}
@@ -134,6 +140,25 @@ public abstract class Registered {
 		Condition.check(isRegistered(), "The " + this.getClass().getSuperclass().getSimpleName()
 		        + " has to be registered before it is initialized: %s", this.getClass().getSimpleName());
 		setInitialized(true);
+	}
+	
+	/**
+	 * @return true, if the {@link Registered} object is enabled
+	 */
+	public abstract boolean isEnabled();
+	
+	/**
+	 * @param listSetting
+	 * @return
+	 */
+	public final boolean isEnabled(final String listSetting,
+	                               final String registered) {
+		if (getSettings() != null) {
+			ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
+			return setting.getValue().contains(registered);
+		} else {
+			return true;
+		}
 	}
 	
 	/**
@@ -172,7 +197,9 @@ public abstract class Registered {
 	 * @param isRequired
 	 */
 	@NoneNull
-	public void register(final MappingSettings settings, final MappingArguments arguments, final boolean isRequired) {
+	public void register(final MappingSettings settings,
+	                     final MappingArguments arguments,
+	                     final boolean isRequired) {
 		setSettings(settings);
 		setRegistered(true);
 	}
@@ -217,7 +244,6 @@ public abstract class Registered {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

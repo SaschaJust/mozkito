@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 
 import javax.xml.stream.XMLStreamException;
 
+import net.ownhero.dev.andama.settings.BooleanArgument;
+import net.ownhero.dev.andama.settings.DirectoryArgument;
+import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -15,15 +18,12 @@ import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
 
 import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
-import de.unisaarland.cs.st.reposuite.settings.BooleanArgument;
-import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
-import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
-
 
 public class GenealogyUtils {
 	
-	public static void exportToGraphML(ChangeGenealogy genealogy, File outFile) {
+	public static void exportToGraphML(final ChangeGenealogy genealogy,
+	                                   final File outFile) {
 		try {
 			FileOutputStream out = new FileOutputStream(outFile);
 			Graph g = new Neo4jGraph(genealogy.getGraphDBService());
@@ -39,7 +39,7 @@ public class GenealogyUtils {
 		}
 	}
 	
-	public static String getGenealogyStats(ChangeGenealogy genealogy) {
+	public static String getGenealogyStats(final ChangeGenealogy genealogy) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("#Vertices: ");
@@ -63,15 +63,17 @@ public class GenealogyUtils {
 		
 		RepositorySettings settings = new RepositorySettings();
 		
-		
 		DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
-				"Directory in which to load the GraphDB from.", null, true, true);
+		                                                     "Directory in which to load the GraphDB from.", null,
+		                                                     true, true);
 		
 		BooleanArgument statsArg = new BooleanArgument(settings, "stats",
-				"Print vertex/edge statistic for ChangeGenealogy", "false", false);
+		                                               "Print vertex/edge statistic for ChangeGenealogy", "false",
+		                                               false);
 		
 		OutputFileArgument graphmlArg = new OutputFileArgument(settings, "graphml.out",
-				"Export the graph as GraphML file into this file.", null, false, false);
+		                                                       "Export the graph as GraphML file into this file.",
+		                                                       null, false, false);
 		
 		settings.parseArguments();
 		

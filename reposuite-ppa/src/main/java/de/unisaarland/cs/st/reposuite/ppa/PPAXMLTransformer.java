@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.ppa;
 
@@ -29,6 +29,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Document;
@@ -40,9 +45,6 @@ import org.jdom.output.XMLOutputter;
 
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteSinkThread;
-import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
 
 /**
  * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file
@@ -50,7 +52,7 @@ import de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteThreadGroup;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> {
+public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
@@ -97,18 +99,6 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 		return result;
 	}
 	
-	/** The document. */
-	private final Document             document;
-	
-	/** The operations element. */
-	private final Element              operationsElement;
-	
-	/** The out stream. */
-	private final OutputStream         outStream;
-	
-	/** The transaction elements. */
-	private final Map<String, Element> transactionElements = new HashMap<String, Element>();
-	
 	/**
 	 * Instantiates a new pPAXML sink.
 	 * 
@@ -121,76 +111,53 @@ public class PPAXMLTransformer extends RepoSuiteSinkThread<JavaChangeOperation> 
 	 * @throws ParserConfigurationException
 	 *             the parser configuration exception
 	 */
-	public PPAXMLTransformer(final RepoSuiteThreadGroup threadGroup, final RepoSuiteSettings settings,
-	        final OutputStream outStream) throws ParserConfigurationException {
-		super(threadGroup, PPAXMLTransformer.class.getSimpleName(), settings);
-		this.operationsElement = new Element(ROOT_ELEMENT_NAME);
-		this.document = new org.jdom.Document(this.operationsElement);
-		this.outStream = outStream;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		if (!this.checkConnections()) {
-			return;
-		}
+	public PPAXMLTransformer(final AndamaGroup threadGroup, final AndamaSettings settings, final OutputStream outStream)
+	        throws ParserConfigurationException {
+		super(threadGroup, settings, false);
+		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
+		final Document document = new org.jdom.Document(operationsElement);
+		final Map<String, Element> transactionElements = new HashMap<String, Element>();
 		
-		if (!this.checkNotShutdown()) {
-			return;
-		}
+		new PostExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			
+			@Override
+			public void postExecution() {
+				try {
+					// Use a Transformer for output
+					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+					outputter.output(document, outStream);
+					outStream.close();
+				} catch (FileNotFoundException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				} catch (IOException e) {
+					throw new UnrecoverableError(e.getMessage(), e);
+				}
+			}
+		};
 		
-		if (Logger.logInfo()) {
-			Logger.info("Starting " + this.getHandle());
-		}
-		
-		JavaChangeOperation currentOperation;
-		
-		try {
-			while (!this.isShutdown() && ((currentOperation = this.read()) != null)) {
+		new ProcessHook<JavaChangeOperation, JavaChangeOperation>(this) {
+			
+			@Override
+			public void process() {
+				JavaChangeOperation currentOperation = getInputData();
 				String transactionId = currentOperation.getRevision().getTransaction().getId();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);
 				}
 				
-				if (!this.transactionElements.containsKey(transactionId)) {
+				if (!transactionElements.containsKey(transactionId)) {
 					Element transactionElement = new Element("transaction");
 					transactionElement.setAttribute("id", transactionId);
-					this.operationsElement.addContent(transactionElement);
-					this.transactionElements.put(transactionId, transactionElement);
+					operationsElement.addContent(transactionElement);
+					transactionElements.put(transactionId, transactionElement);
 				}
-				Element transactionElement = this.transactionElements.get(transactionId);
+				Element transactionElement = transactionElements.get(transactionId);
 				
 				Element operationElement = currentOperation.getXMLRepresentation();
 				transactionElement.addContent(operationElement);
 			}
-			
-			try {
-				// Use a Transformer for output
-				XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-				outputter.output(this.document, this.outStream);
-				this.outStream.close();
-			} catch (FileNotFoundException e) {
-				throw new UnrecoverableError(e.getMessage(), e);
-			} catch (IOException e) {
-				throw new UnrecoverableError(e.getMessage(), e);
-			}
-			
-			if (Logger.logInfo()) {
-				Logger.info("PPAXMLSink done. Terminating... ");
-			}
-			this.finish();
-		} catch (InterruptedException e) {
-			
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			this.shutdown();
-		}
+		};
 	}
 	
 }

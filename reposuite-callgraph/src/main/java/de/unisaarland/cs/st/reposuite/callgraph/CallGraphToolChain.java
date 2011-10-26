@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.callgraph;
 
@@ -21,6 +21,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.ownhero.dev.andama.settings.DirectoryArgument;
+import net.ownhero.dev.andama.settings.ListArgument;
+import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,12 +38,8 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.settings.DirectoryArgument;
-import de.unisaarland.cs.st.reposuite.settings.ListArgument;
-import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
-import de.unisaarland.cs.st.reposuite.settings.StringArgument;
 
 public class CallGraphToolChain {
 	
@@ -56,72 +56,81 @@ public class CallGraphToolChain {
 	public CallGraphToolChain() {
 		RepositorySettings settings = new RepositorySettings();
 		
-		repoSettings = settings.setRepositoryArg(true);
-		transactionArg = new StringArgument(settings, "transaction.id",
-		                                    "The transaction id to create the call graph for.", null, false);
-		dirArg = new DirectoryArgument(settings, "source.directory", "(Only used when " + transactionArg.getName()
-		                               + " not set) Use files from from.directory to build the call graph on.", null, false, false);
-		packageFilterArg = new ListArgument(
+		this.repoSettings = settings.setRepositoryArg(true);
+		this.transactionArg = new StringArgument(settings, "transaction.id",
+		                                         "The transaction id to create the call graph for.", null, false);
+		this.dirArg = new DirectoryArgument(
 		                                    settings,
-		                                    "package.filter",
-		                                    "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-		                                    "", false);
-		
-		cacheDirArg = new DirectoryArgument(
-		                                    settings,
-		                                    "cache.dir",
-		                                    "Directory containing call graphs using the name converntion <transaction_id>.cg",
+		                                    "source.directory",
+		                                    "(Only used when "
+		                                            + this.transactionArg.getName()
+		                                            + " not set) Use files from from.directory to build the call graph on.",
 		                                    null, false, false);
+		this.packageFilterArg = new ListArgument(
+		                                         settings,
+		                                         "package.filter",
+		                                         "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
+		                                         "", false);
 		
-		outArg = new OutputFileArgument(settings, "output", "File to store the serialized CallGraph in.", null, true,
-		                                true);
+		this.cacheDirArg = new DirectoryArgument(
+		                                         settings,
+		                                         "cache.dir",
+		                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
+		                                         null, false, false);
+		
+		this.outArg = new OutputFileArgument(settings, "output", "File to store the serialized CallGraph in.", null,
+		                                     true, true);
 		settings.parseArguments();
 		
-		transactionId = transactionArg.getValue();
+		this.transactionId = this.transactionArg.getValue();
 		
-		if (transactionId != null) {
-			repository = repoSettings.getValue();
-			sourceDir = repository.checkoutPath("/", transactionId);
-			if (sourceDir == null) {
-				throw new UnrecoverableError("Could not checkout transaction " + transactionId + " from repository "
-				        + repository.getUri().toString() + ". See errors above.");
+		if (this.transactionId != null) {
+			this.repository = this.repoSettings.getValue();
+			this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
+			if (this.sourceDir == null) {
+				throw new UnrecoverableError("Could not checkout transaction " + this.transactionId
+				        + " from repository " + this.repository.getUri().toString() + ". See errors above.");
 			}
 		} else {
-			sourceDir = dirArg.getValue();
+			this.sourceDir = this.dirArg.getValue();
 		}
 	}
 	
 	public void run() {
 		String[] fileExtensions = { "java" };
-		Collection<File> files = FileUtils.listFiles(sourceDir, fileExtensions, true);
-		HashSet<String> packageFilter = packageFilterArg.getValue();
+		Collection<File> files = FileUtils.listFiles(this.sourceDir, fileExtensions, true);
+		HashSet<String> packageFilter = this.packageFilterArg.getValue();
 		JavaElementLocationSet elemCache = new JavaElementLocationSet();
 		
 		Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		
-		File cacheDir = cacheDirArg.getValue();
-		
+		File cacheDir = this.cacheDirArg.getValue();
 		
 		// generate the call graph
 		CallGraph callGraph = null;
-		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead()) && (transactionId != null)) {
-			File serialFile = new File(cacheDir.getAbsolutePath()+FileUtils.fileSeparator+transactionId+".cg");
+		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead())
+		        && (this.transactionId != null)) {
+			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
+			        + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 			}
 		}
-		if(callGraph == null){
+		if (callGraph == null) {
 			callGraph = new CallGraph();
 			for (Entry<File, CompilationUnit> cuEntry : compilationUnits.entrySet()) {
 				String relativePath = cuEntry.getKey().getAbsolutePath();
-				if (!relativePath.startsWith(sourceDir.getAbsolutePath())) {
+				if (!relativePath.startsWith(this.sourceDir.getAbsolutePath())) {
 					throw new UnrecoverableError("CU file must start with sourceDir path!");
 				}
-				relativePath = relativePath.substring(sourceDir.getAbsolutePath().length());
-				PPATypeVisitor typeVisitor = new PPATypeVisitor(cuEntry.getValue(), relativePath,
+				relativePath = relativePath.substring(this.sourceDir.getAbsolutePath().length());
+				PPATypeVisitor typeVisitor = new PPATypeVisitor(
+				                                                cuEntry.getValue(),
+				                                                relativePath,
 				                                                packageFilter.toArray(new String[packageFilter.size()]),
 				                                                elemCache);
-				CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath, elemCache);
+				CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath,
+				                                                                  elemCache);
 				typeVisitor.registerVisitor(callGraphPPAVisitor);
 				cuEntry.getValue().accept(typeVisitor);
 			}
@@ -140,7 +149,7 @@ public class CallGraphToolChain {
 			Logger.info(sb.toString());
 			
 		}
-		File outFile = outArg.getValue();
+		File outFile = this.outArg.getValue();
 		callGraph.serialize(outFile);
 	}
 }

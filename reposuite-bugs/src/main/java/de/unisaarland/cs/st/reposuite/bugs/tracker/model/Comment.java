@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -119,7 +119,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Report getBugReport() {
-		return bugReport;
+		return this.bugReport;
 	}
 	
 	/**
@@ -128,7 +128,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		return generatedId;
+		return this.generatedId;
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@Basic
 	public int getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	private Date getJavaTimestamp() {
-		return timestamp.toDate();
+		return this.timestamp.toDate();
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Basic
 	@Column (columnDefinition = "TEXT")
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	/**
@@ -164,10 +164,16 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	protected PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.bugs.tracker.model.TextElement#getText()
+	 */
 	@Override
+	@Transient
 	public String getText() {
 		return getMessage();
 	}
@@ -178,7 +184,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@Override
 	@Transient
 	public DateTime getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 	
 	/**
@@ -216,8 +222,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date timestamp) {
 		this.timestamp = timestamp == null
-		? null
-		: new DateTime(timestamp);
+		                                  ? null
+		                                  : new DateTime(timestamp);
 	}
 	
 	/**
@@ -259,8 +265,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		builder.append(getAuthor());
 		builder.append(", message=");
 		builder.append(getMessage().length() > 10
-		               ? getMessage().substring(0, 10)
-		               : getMessage());
+		                                         ? getMessage().substring(0, 10)
+		                                         : getMessage());
 		builder.append(", bugReport=");
 		builder.append(getBugReport().getId());
 		builder.append("]");

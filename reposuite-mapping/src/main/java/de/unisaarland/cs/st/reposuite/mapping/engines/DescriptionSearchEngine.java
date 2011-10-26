@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -42,20 +42,19 @@ public class DescriptionSearchEngine extends SearchEngine {
 	
 	private QueryParser parser;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.register.Registered#getDescription
+	 * ()
+	 */
 	@Override
 	public String getDescription() {
 		return "Scores based on document similarity/relevance based on commit message and report description.";
 	}
 	
-	@Override
-	public Expression supported() {
-		return new And(new And(new Atom(Index.TO, MappableReport.class), new Atom(Index.TO, FieldKey.ID)), new Atom(
-		        Index.FROM, FieldKey.BODY));
-	}
-	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
@@ -63,9 +62,11 @@ public class DescriptionSearchEngine extends SearchEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+	public void score(final MappableEntity from,
+	                  final MappableEntity to,
+	                  final MapScore score) {
 		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
-		        to.getBaseType());
+		                        to.getBaseType());
 		
 		try {
 			String fromBody = from.get(FieldKey.BODY).toString();
@@ -82,14 +83,25 @@ public class DescriptionSearchEngine extends SearchEngine {
 				
 				if (bugId.compareTo(toId) == 0) {
 					score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody), truncate(query.toString()),
-					        FieldKey.BODY.name(), truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
-					        this.getClass());
+					                 FieldKey.BODY.name(), truncate(hitDoc.get("comment")),
+					                 truncate(hitDoc.get("comment")), this.getClass());
 					break;
 				}
 			}
 		} catch (Exception e) {
 			throw new UnrecoverableError(e);
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
+	 */
+	@Override
+	public Expression supported() {
+		return new And(new And(new Atom(Index.TO, MappableReport.class), new Atom(Index.TO, FieldKey.ID)),
+		               new Atom(Index.FROM, FieldKey.BODY));
 	}
 	
 }

@@ -89,6 +89,11 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>andama</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.maven.surefire</groupId>
 			<artifactId>surefire-junit4</artifactId>
 			<version>2.8.1</version>
@@ -438,5 +443,29 @@
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 			</properties>
 		</profile>
+		<profile>
+			<id>metaclass</id>
+			<activation>
+				<property>
+					<name>metaclass</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId> 
+						<configuration> 
+							<source>1.6</source> 
+							<target>1.6</target> 
+							<compilerArgument>-Aopenjpa.metamodel=true</compilerArgument> 
+							<includes>
+								<include>**/model/*.java</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			</profile>
 	</profiles>
 </project>

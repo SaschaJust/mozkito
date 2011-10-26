@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.bugs.tracker.jira;
 
@@ -223,8 +223,9 @@ public class JiraXMLParser {
 	                                                     IOException,
 	                                                     SecurityException,
 	                                                     NoSuchFieldException {
+		RawContent rawContent = null;
 		try {
-			RawContent rawContent = IOUtils.fetch(historyUri);
+			rawContent = IOUtils.fetch(historyUri);
 			BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 			Document document = saxBuilder.build(reader);
@@ -233,7 +234,8 @@ public class JiraXMLParser {
 			Element rootElement = document.getRootElement();
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
-					Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
+					Logger.error("Error while parsing bugzilla report history (id: " + report.getId()
+					        + "). Root element expectedto have `<html>` tag as root element. Got <"
 					        + rootElement.getName() + ">.");
 				}
 				return;
@@ -242,7 +244,8 @@ public class JiraXMLParser {
 			Element body = rootElement.getChild("body", namespace);
 			if (body == null) {
 				if (Logger.logError()) {
-					Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
+					Logger.error("Error while parsing bugzilla report history (id: " + report.getId()
+					        + "). No <body> tag found.");
 				}
 				return;
 			}
@@ -270,7 +273,8 @@ public class JiraXMLParser {
 						List<Element> as = actionDetails.getChildren("a", namespace);
 						if ((as != null) && (as.size() < 2)) {
 							if (Logger.logError()) {
-								Logger.error("Error while parsing jira history. HTML structure unknown: could not find second a tag in actionDetails");
+								Logger.error("Error while parsing jira history (id: " + report.getId()
+								        + "). HTML structure unknown: could not find second a tag in actionDetails");
 							}
 							return;
 						}
@@ -285,11 +289,13 @@ public class JiraXMLParser {
 							timestamp = DateTimeUtils.parseDate(dateString, dateTimeHistoryFormatRegex);
 						}
 						
-						Element actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
+						Element actionBody = getElement(actionContainer, namespace, "div", "class",
+						                                "changehistory action-body");
 						Element table = actionBody.getChild("table", namespace);
 						if (table == null) {
 							if (Logger.logError()) {
-								Logger.error("Error while parsing jira history. HTML structure unknown: could not find table in actionBody");
+								Logger.error("Error while parsing jira history (id: " + report.getId()
+								        + "). HTML structure unknown: could not find table in actionBody");
 							}
 							return;
 						}
@@ -297,7 +303,8 @@ public class JiraXMLParser {
 						Element tbody = table.getChild("tbody", namespace);
 						if (tbody == null) {
 							if (Logger.logError()) {
-								Logger.error("Error while parsing jira history. HTML structure unknown: could not find tbody in actionBody");
+								Logger.error("Error while parsing jira history (id: " + report.getId()
+								        + "). HTML structure unknown: could not find tbody in actionBody");
 							}
 							return;
 						}
@@ -308,7 +315,8 @@ public class JiraXMLParser {
 						for (Element tr : trs) {
 							if (tr == null) {
 								if (Logger.logError()) {
-									Logger.error("Error while parsing jira history. HTML structure unknown: could not find tr in actionBody");
+									Logger.error("Error while parsing jira history (id: " + report.getId()
+									        + "). HTML structure unknown: could not find tr in actionBody");
 								}
 								return;
 							}
@@ -335,6 +343,10 @@ public class JiraXMLParser {
 		} catch (NoSuchElementException e) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing jira history. HTML structure unknown: " + e.getMessage(), e);
+				if ((rawContent != null) && Logger.logError()) {
+					Logger.error("RAW REPORT DATA:");
+					Logger.error(rawContent.getContent());
+				}
 			}
 			return;
 		} catch (FetchException e) {
