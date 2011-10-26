@@ -59,15 +59,12 @@ public class AndamaSettings {
 	 */
 	public AndamaSettings() {
 		this.noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false",
-		                                             false);
+		        false);
 		this.helpArg = new BooleanArgument(this, "help", "Shows this help menu.", "false", false);
 		this.disableCrashArg = new BooleanArgument(this, "disableCrashEmail",
-		                                           "If set to `true` no crash emails will be send!", null, false);
-		this.settingsArg = new URIArgument(
-		                                   this,
-		                                   "andamaSettings",
-		                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
-		                                   null, false);
+		        "If set to `true` no crash emails will be send!", null, false);
+		this.settingsArg = new URIArgument(this, "andamaSettings",
+		        "Setting file that contains the JavaVM arguments for the current toolchain.", null, false);
 		
 		this.mailArguments = new MailArguments(this, true);
 	}
@@ -84,7 +81,7 @@ public class AndamaSettings {
 	 *            String that will be set as default value. If none to be set
 	 *            pass <code>null</code>.
 	 * @return <code>true</code> if the argument could be added.
-	 *         <code>False</code> otherwise.
+	 *         <code>false</code> otherwise.
 	 */
 	protected boolean addArgument(@NotNull final AndamaArgument<?> argument) {
 		if (this.arguments.containsKey(argument.getName())) {
@@ -124,8 +121,7 @@ public class AndamaSettings {
 	 * @param tool
 	 * @param information
 	 */
-	public void addToolInformation(final String tool,
-	                               final String information) {
+	public void addToolInformation(final String tool, final String information) {
 		this.toolInformation.put(tool, information);
 	}
 	
@@ -221,11 +217,6 @@ public class AndamaSettings {
 	 */
 	public void parseArguments() {
 		
-		if (this.helpArg.getValue()) {
-			System.err.println(getHelpString());
-			throw new Shutdown();
-		}
-		
 		// save given arguments to load if necessary
 		this.commandlineProps = (Properties) System.getProperties().clone();
 		
@@ -280,6 +271,11 @@ public class AndamaSettings {
 			}
 		}
 		
+		if (this.helpArg.getValue()) {
+			System.err.println(getHelpString());
+			throw new Shutdown();
+		}
+		
 		if (!validateSettings()) {
 			System.err.println(getHelpString());
 			throw new Shutdown();
@@ -296,8 +292,7 @@ public class AndamaSettings {
 	 * @throws NoSuchFieldException
 	 *             If no argument with the specified name is registered.
 	 */
-	protected void setField(final String argument,
-	                        final String value) throws NoSuchFieldException {
+	protected void setField(final String argument, final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
 			        + "The argument is not part of the current argument set.");
@@ -319,6 +314,7 @@ public class AndamaSettings {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -353,10 +349,8 @@ public class AndamaSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-				                                arg.getName(), arg instanceof MaskedStringArgument
-				                                                                                  ? passwordMask
-				                                                                                  : arg.getValue(),
-				                                arg.toString()));
+				        arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
+				        arg.toString()));
 				
 			}
 		}
