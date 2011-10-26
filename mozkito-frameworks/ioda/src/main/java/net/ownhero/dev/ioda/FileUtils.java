@@ -92,7 +92,8 @@ public class FileUtils {
 	public static final String                        fileSeparator     = System.getProperty("file.separator");
 	public static final String                        lineSeparator     = System.getProperty("line.separator");
 	public static final String                        pathSeparator     = System.getProperty("path.separator");
-	public static final File                          tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
+	public static final File                          tmpDir            = org.apache.commons.io.FileUtils
+	                                                                            .getTempDirectory();
 	
 	private static int                                MAX_PERM          = 0;
 	
@@ -111,8 +112,7 @@ public class FileUtils {
 	
 	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
 	
-	public static void addToFileManager(final File file,
-	                                    final FileShutdownAction shutdownAction) {
+	public static void addToFileManager(final File file, final FileShutdownAction shutdownAction) {
 		if (!fileManager.containsKey(shutdownAction)) {
 			fileManager.put(shutdownAction, new HashSet<File>());
 		}
@@ -124,8 +124,7 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean bunzip2(final File bzip2File,
-	                              final File directory) {
+	public static boolean bunzip2(final File bzip2File, final File directory) {
 		try {
 			ensureFilePermissions(bzip2File, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -221,9 +220,8 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	@NoneNull
-	public static void copyFileToDirectory(final File srcFile,
-	                                       final File destDir,
-	                                       final FileShutdownAction shutdownAction) throws IOException {
+	public static void copyFileToDirectory(final File srcFile, final File destDir,
+	        final FileShutdownAction shutdownAction) throws IOException {
 		
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 		
@@ -251,9 +249,7 @@ public class FileUtils {
 	 * @return the file handle corresponding to the requested new directory if
 	 *         existed or created. <code>null</code> otherwise.
 	 */
-	public static File createDir(final File parentDir,
-	                             final String name,
-	                             final FileShutdownAction shutdownAction) {
+	public static File createDir(final File parentDir, final String name, final FileShutdownAction shutdownAction) {
 		
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
@@ -299,6 +295,17 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @param directory
+	 * @param shutdownAction
+	 * @return
+	 */
+	public static File createDir(final File directory, FileShutdownAction shutdownAction) {
+		String dirName = directory.getAbsolutePath();
+		int index = dirName.lastIndexOf(FileUtils.fileSeparator);
+		return createDir(new File(dirName.substring(0, index)), dirName.substring(index), shutdownAction);
+	}
+	
+	/**
 	 * Creates the random dir.
 	 * 
 	 * @param parentDir
@@ -309,10 +316,8 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(final File parentDir,
-	                                   final String prefix,
-	                                   final String suffix,
-	                                   final FileShutdownAction shutdownAction) {
+	public static File createRandomDir(final File parentDir, final String prefix, final String suffix,
+	        final FileShutdownAction shutdownAction) {
 		
 		try {
 			File file = File.createTempFile(prefix, suffix, parentDir);
@@ -348,9 +353,8 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final String prefix,
-	                                   
-	                                   final String suffix,
-	                                   final FileShutdownAction shutdownAction) {
+	
+	final String suffix, final FileShutdownAction shutdownAction) {
 		return createRandomDir(tmpDir, prefix, suffix, shutdownAction);
 		
 	}
@@ -392,8 +396,7 @@ public class FileUtils {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void dump(final byte[] data,
-	                        final File file) throws IOException {
+	public static void dump(final byte[] data, final File file) throws IOException {
 		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
 		stream.write(data);
 		stream.flush();
@@ -410,10 +413,9 @@ public class FileUtils {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public static void ensureFilePermissions(@NotNull final File file,
-	                                         int permissions) throws FilePermissionException {
+	public static void ensureFilePermissions(@NotNull final File file, int permissions) throws FilePermissionException {
 		CompareCondition.less(permissions, getMAX_PERM(),
-		                      "Filepermission alias must be less then the maximum known alias bitmask.");
+		        "Filepermission alias must be less then the maximum known alias bitmask.");
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
@@ -499,9 +501,8 @@ public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Iterator<File> getFileIterator(final File directory,
-	                                             final String[] extensions,
-	                                             final boolean recursive) throws IOException {
+	public static Iterator<File> getFileIterator(final File directory, final String[] extensions,
+	        final boolean recursive) throws IOException {
 		return org.apache.commons.io.FileUtils.iterateFiles(directory, extensions, recursive);
 	}
 	
@@ -576,8 +577,7 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir,
-			                      final String name) {
+			public boolean accept(final File dir, final String name) {
 				return false;
 			}
 		}, new IOFileFilter() {
@@ -588,8 +588,7 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir,
-			                      final String name) {
+			public boolean accept(final File dir, final String name) {
 				return true;
 			}
 			
@@ -601,8 +600,7 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean gunzip(final File gzipFile,
-	                             final File directory) {
+	public static boolean gunzip(final File gzipFile, final File directory) {
 		try {
 			ensureFilePermissions(gzipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -656,9 +654,7 @@ public class FileUtils {
 	 * @return the collection
 	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
-	public static Collection<File> listFiles(final File directory,
-	                                         final String[] extensions,
-	                                         final boolean recursive) {
+	public static Collection<File> listFiles(final File directory, final String[] extensions, final boolean recursive) {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
@@ -704,8 +700,7 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean unlzma(final File lzmaFile,
-	                             final File directory) {
+	public static boolean unlzma(final File lzmaFile, final File directory) {
 		try {
 			ensureFilePermissions(lzmaFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -752,8 +747,7 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean untar(final File tarFile,
-	                            final File directory) {
+	public static boolean untar(final File tarFile, final File directory) {
 		try {
 			ensureFilePermissions(tarFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
@@ -808,8 +802,7 @@ public class FileUtils {
 	 * @return true on success, false otherwise
 	 */
 	@NoneNull
-	public static boolean unzip(final File zipFile,
-	                            final File directory) {
+	public static boolean unzip(final File zipFile, final File directory) {
 		try {
 			ensureFilePermissions(zipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
