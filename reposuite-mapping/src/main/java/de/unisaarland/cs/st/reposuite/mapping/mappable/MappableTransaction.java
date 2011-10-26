@@ -19,6 +19,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -32,6 +38,8 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
+@DiscriminatorValue ("MAPPABLETRANSACTION")
 public class MappableTransaction extends MappableEntity {
 	
 	/**
@@ -129,6 +137,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @param index
 	 * @return
 	 */
+	@Transient
 	public RCSFile getFile(@NotNegative final int index) {
 		Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
 		
@@ -142,6 +151,7 @@ public class MappableTransaction extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@Transient
 	public String getId() {
 		return getTransaction().getId();
 	}
@@ -159,6 +169,7 @@ public class MappableTransaction extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}

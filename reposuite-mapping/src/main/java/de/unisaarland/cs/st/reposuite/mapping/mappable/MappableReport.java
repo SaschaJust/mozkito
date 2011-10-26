@@ -19,6 +19,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -31,6 +37,8 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
+@DiscriminatorValue ("MAPPABLEREPORT")
 public class MappableReport extends MappableEntity {
 	
 	/**
@@ -161,6 +169,7 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@Transient
 	public String getBody() {
 		return this.report.getDescription();
 	}
@@ -168,6 +177,7 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public Report getReport() {
 		return this.report;
 	}
