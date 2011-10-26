@@ -41,6 +41,13 @@ public class MappableTransaction extends MappableEntity {
 	private RCSTransaction    transaction;
 	
 	/**
+	 * 
+	 */
+	public MappableTransaction() {
+		super();
+	}
+	
+	/**
 	 * @param transaction
 	 */
 	public MappableTransaction(final RCSTransaction transaction) {

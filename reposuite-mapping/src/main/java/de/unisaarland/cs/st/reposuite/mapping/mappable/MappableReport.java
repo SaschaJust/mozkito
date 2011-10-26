@@ -39,6 +39,9 @@ public class MappableReport extends MappableEntity {
 	private static final long serialVersionUID = 1097712059403322470L;
 	private Report            report;
 	
+	public MappableReport() {
+	}
+	
 	/**
 	 * @param report
 	 */
