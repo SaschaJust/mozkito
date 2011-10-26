@@ -44,19 +44,20 @@ public class Scoring extends AndamaChain {
 		super(new MappingSettings());
 		this.threadPool = new AndamaPool(Bugs.class.getSimpleName(), this);
 		MappingSettings settings = getSettings();
-		this.databaseArguments = settings.setDatabaseArgs(false, "mapping");
+		this.databaseArguments = settings.setDatabaseArgs(true, "mapping");
 		this.logSettings = settings.setLoggerArg(true);
 		this.mappingArguments = settings.setMappingArgs(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
+		        false);
 		new LongArgument(settings, "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		        "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		
 		settings.parseArguments();
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#getSettings()
 	 */
@@ -67,6 +68,7 @@ public class Scoring extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -81,6 +83,7 @@ public class Scoring extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
 	 */
 	@Override
@@ -114,9 +117,9 @@ public class Scoring extends AndamaChain {
 				new ScoringMappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				ScoringSplitter splitter = new ScoringSplitter(this.threadPool.getThreadGroup(), getSettings(), finder,
-				                                               persistenceUtil);
+				        persistenceUtil);
 				ScoringFilterPersister persister = new ScoringFilterPersister(this.threadPool.getThreadGroup(),
-				                                                              getSettings(), persistenceUtil);
+				        getSettings(), persistenceUtil);
 				new ScoringMappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				
 				splitter.waitFor(persister);
@@ -137,6 +140,7 @@ public class Scoring extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#shutdown()
 	 */
