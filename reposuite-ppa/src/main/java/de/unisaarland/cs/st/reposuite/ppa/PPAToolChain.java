@@ -18,12 +18,10 @@ package de.unisaarland.cs.st.reposuite.ppa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
 import net.ownhero.dev.andama.settings.BooleanArgument;
@@ -34,12 +32,10 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.reposuite.rcs.Repository;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositoryArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
@@ -71,9 +67,6 @@ public class PPAToolChain extends AndamaChain {
 	/** The persistence middleware util. */
 	private PersistenceUtil           persistenceUtil;
 	
-	/** The shutdown. */
-	private boolean                   shutdown;
-	
 	/** The start with. */
 	private final StringArgument      startWithArg;
 	
@@ -82,32 +75,29 @@ public class PPAToolChain extends AndamaChain {
 	 */
 	public PPAToolChain() {
 		super(new RepositorySettings());
+		
 		this.threadPool = new AndamaPool(PPAToolChain.class.getSimpleName(), this);
 		RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
 		settings.setLoggerArg(true);
-		this.testCaseTransactionArg = new ListArgument(
-		                                               settings,
-		                                               "testCaseTransactions",
-		                                               "List of transactions that will be passed for test case purposes. "
-		                                                       + "If this option is set, this module will start in test case mode. "
-		                                                       + "If will generate change operations to specified transactions, only;"
-		                                                       + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                                                       + "or to specified XML file.", null, false);
+		this.testCaseTransactionArg = new ListArgument(settings, "testCaseTransactions",
+		        "List of transactions that will be passed for test case purposes. "
+		                + "If this option is set, this module will start in test case mode. "
+		                + "If will generate change operations to specified transactions, only;"
+		                + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                + "or to specified XML file.", null, false);
 		
 		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
-		                                  "false", false);
+		        "false", false);
 		
-		this.asXML = new OutputFileArgument(
-		                                    settings,
-		                                    "output.xml",
-		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                                    null, false, true);
+		this.asXML = new OutputFileArgument(settings, "output.xml",
+		        "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+		        null, false, true);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
-		                                       "Use this transaction ID as the first one.", null, false);
+		        "Use this transaction ID as the first one.", null, false);
 		
 		settings.parseArguments();
 		
@@ -115,33 +105,34 @@ public class PPAToolChain extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
-		if (!this.shutdown) {
-			setup();
-			if (!this.shutdown) {
-				this.threadPool.execute();
-			}
-		}
+		setup();
+		this.threadPool.execute();
+		
 		if (Logger.logInfo()) {
-			Logger.info("Done. Terminating ...");
+			Logger.info("Terminating.");
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#setup()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public void setup() {
 		if (!this.databaseSettings.getValue()) {
 			if (Logger.logError()) {
 				Logger.error("Could not connect to database!");
 			}
+			
+			throw new Shutdown();
 		}
+		
 		try {
 			this.persistenceUtil = PersistenceManager.getUtil();
 		} catch (UninitializedDatabaseException e1) {
@@ -150,16 +141,6 @@ public class PPAToolChain extends AndamaChain {
 		
 		File xmlFile = this.asXML.getValue();
 		Repository repository = this.repoSettings.getValue();
-		
-		// get the transactions to be processed
-		List<RCSTransaction> transactions = new LinkedList<RCSTransaction>();
-		@SuppressWarnings ("rawtypes")
-		Criteria criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-		HashSet<String> transactionLimit = this.testCaseTransactionArg.getValue();
-		if (transactionLimit != null) {
-			criteria.in("id", transactionLimit);
-		}
-		transactions.addAll(this.persistenceUtil.load(criteria));
 		
 		JavaElementFactory.init(this.persistenceUtil);
 		
@@ -175,7 +156,7 @@ public class PPAToolChain extends AndamaChain {
 			} else {
 				try {
 					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
-					                      new FileOutputStream(xmlFile));
+					        new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
@@ -200,25 +181,23 @@ public class PPAToolChain extends AndamaChain {
 			}
 			
 		} else {
-			new ChangeOperationPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+			new PPAPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		}
 		
 		// generate the change operation reader
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), repository, transactions,
-		                          this.startWithArg.getValue(), this.ppaArg.getValue());
+		new PPASource(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, this.startWithArg.getValue(),
+		        testCaseTransactionArg.getValue());
+		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue());
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteToolchain#shutdown()
+	 * 
+	 * @see
+	 * de.unisaarland.cs.st.reposuite.toolchain.RepoSuiteToolchain#shutdown()
 	 */
 	@Override
 	public void shutdown() {
-		
-		if (Logger.logInfo()) {
-			Logger.info("Toolchain shutdown.");
-		}
 		this.threadPool.shutdown();
-		this.shutdown = true;
 	}
 }
