@@ -2,44 +2,38 @@ package de.unisaarland.cs.st.reposuite.genealogies;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Set;
-
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import java.util.Iterator;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
-
-public interface ChangeGenealogy {
+public abstract class ChangeGenealogy<T> {
 	
-	public boolean addEdge(@NotEmpty final GenealogyVertex dependantVertex,
-			@NotEmpty final GenealogyVertex targetVertex, final GenealogyEdgeType edgeType);
+	private CoreChangeGenealogy core;
 	
-	public void close();
+	public void close() {
+		core.close();
+	}
 	
-	public boolean containsEdge(final GenealogyVertex from, final GenealogyVertex to);
+	public abstract boolean containsEdge(final T from, final T to);
 	
-	public boolean containsVertex(final GenealogyVertex vertex);
+	public abstract boolean containsVertex(final T vertex);
 	
-	int edgeSize();
+	public final int edgeSize() {
+		return this.core.edgeSize();
+	}
 	
-	public Collection<GenealogyEdgeType> getEdges(final GenealogyVertex from, final GenealogyVertex to);
+	public abstract Collection<GenealogyEdgeType> getEdges(final T from, final T to);
 	
-	Set<String> getExistingEdgeTypes();
+	public final File getGraphDBDir() {
+		return this.core.getGraphDBDir();
+	}
 	
-	public File getGraphDBDir();
+	public final GraphDatabaseService getGraphDBService() {
+		return this.core.getGraphDBService();
+	}
 	
-	GraphDatabaseService getGraphDBService();
+	public abstract Iterator<T> vertexSet();
 	
-	public Collection<JavaChangeOperation> getJavaChangeOperationsForVertex(final GenealogyVertex v);
+	public abstract int vertexSize();
 	
-	public GenealogyVertex getRoot();
-	
-	public RCSTransaction getTransactionForVertex(final GenealogyVertex v);
-	
-	public GenealogyVertexIterator vertexSet();
-	
-	public int vertexSize();
-
 }

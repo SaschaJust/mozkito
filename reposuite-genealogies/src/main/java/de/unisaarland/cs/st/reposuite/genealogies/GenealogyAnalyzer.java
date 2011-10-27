@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.reposuite.rcs.elements.ChangeType;
 
 public class GenealogyAnalyzer {
 	
-	public static GenealogyEdgeType getEdgeTypeForDependency(final JavaChangeOperation depending,
+	public static GenealogyEdgeType getEdgeTypesForDependency(final JavaChangeOperation depending,
 			final JavaChangeOperation parent) {
 		
 		String callType = JavaMethodCall.class.getCanonicalName();
