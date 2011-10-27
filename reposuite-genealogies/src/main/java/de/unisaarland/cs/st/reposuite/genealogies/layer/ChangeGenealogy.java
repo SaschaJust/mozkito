@@ -1,10 +1,13 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.layer;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+
+import de.unisaarland.cs.st.reposuite.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
 
 public abstract class ChangeGenealogy<T> {
 	

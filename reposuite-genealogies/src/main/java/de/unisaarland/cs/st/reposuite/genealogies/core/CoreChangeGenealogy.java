@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.core;
 
 import java.io.File;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-class CoreChangeGenealogy {
+public class CoreChangeGenealogy {
 	
 	private static final String        NODE_ID = "javachangeooeration_id";
 	

@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.core;
 
 import java.io.File;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+
 
 
 /**

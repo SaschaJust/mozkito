@@ -1,10 +1,11 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.utils;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaElement;

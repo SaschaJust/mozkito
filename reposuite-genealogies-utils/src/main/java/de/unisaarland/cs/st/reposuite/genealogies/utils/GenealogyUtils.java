@@ -16,8 +16,8 @@ import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
 
-import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
-import de.unisaarland.cs.st.reposuite.genealogies.CoreChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.layer.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 
 public class GenealogyUtils {

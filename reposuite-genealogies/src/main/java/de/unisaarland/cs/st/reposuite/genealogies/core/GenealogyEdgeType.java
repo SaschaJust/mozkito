@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.core;
 
 import org.neo4j.graphdb.RelationshipType;
 

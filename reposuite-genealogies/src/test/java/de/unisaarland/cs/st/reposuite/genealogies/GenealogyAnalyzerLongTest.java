@@ -9,6 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.reposuite.genealogies.TestEnvironment.TestEnvironmentOperation;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.reposuite.genealogies.utils.GenealogyAnalyzer;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 
 

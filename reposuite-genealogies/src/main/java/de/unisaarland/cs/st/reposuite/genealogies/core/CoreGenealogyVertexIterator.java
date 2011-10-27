@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.genealogies;
+package de.unisaarland.cs.st.reposuite.genealogies.core;
 
 import java.util.Collection;
 import java.util.Iterator;

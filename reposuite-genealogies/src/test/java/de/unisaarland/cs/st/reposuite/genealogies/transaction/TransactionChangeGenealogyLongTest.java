@@ -16,10 +16,10 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.reposuite.genealogies.GenealogyAnalyzer;
-import de.unisaarland.cs.st.reposuite.genealogies.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.genealogies.GenealogyVertex;
 import de.unisaarland.cs.st.reposuite.genealogies.TestEnvironment;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.reposuite.genealogies.utils.GenealogyAnalyzer;
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;

@@ -17,6 +17,8 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.reposuite.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
