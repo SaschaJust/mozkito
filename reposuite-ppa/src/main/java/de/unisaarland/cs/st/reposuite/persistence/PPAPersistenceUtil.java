@@ -16,6 +16,7 @@
 package de.unisaarland.cs.st.reposuite.persistence;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,14 +37,14 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  */
 public class PPAPersistenceUtil {
 	
-	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
+	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
 			final RCSTransaction transaction) {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
 			Logger.debug(persistenceUtil.getToolInformation());
 		}
-
+		
 		for (RCSRevision revision : transaction.getRevisions()) {
 			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
@@ -52,7 +53,7 @@ public class PPAPersistenceUtil {
 		return result;
 	}
 	
-	public static List<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
+	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
 			final String transactionId) {
 		List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		

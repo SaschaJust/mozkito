@@ -56,9 +56,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	@NoneNull
-	public static String composeFullQualifiedName(final String objectName,
-	                                              final String methodName,
-	                                              final List<String> signature) {
+	public static String composeFullQualifiedName(final String objectName, final String methodName,
+			final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		String localParentName = objectName;
 		while (localParentName.endsWith(".")) {
@@ -230,6 +229,16 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	@Transient
 	public String getCalledClassNameShort() {
 		return this.calledClassName;
+	}
+	
+	/**
+	 * Gets the called method name.
+	 *
+	 * @return the called method name
+	 */
+	@Transient
+	public String getCalledMethodName(){
+		return extractMethodName(this.getFullQualifiedName());
 	}
 	
 	/**

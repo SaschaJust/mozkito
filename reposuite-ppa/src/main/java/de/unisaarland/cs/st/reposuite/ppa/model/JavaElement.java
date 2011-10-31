@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom.Element;
 
@@ -53,6 +54,16 @@ public abstract class JavaElement implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960043672858454394L;
 	
+	public static String extractMethodName(String fullQualifiedName) {
+		Condition.check(fullQualifiedName.contains("."), "Full qualified method name must contain a '.' character");
+		Condition.check(fullQualifiedName.contains("("), "Full qualified method name must contain a '(' character");
+		Condition.check(fullQualifiedName.indexOf(".") < fullQualifiedName.indexOf("("),
+				"Full qualified method name must contain a '.' before '(' character");
+		String result = fullQualifiedName.substring(0,fullQualifiedName.indexOf("("));
+		result = result.substring(result.lastIndexOf("."));
+		return result;
+	}
+	
 	private long              generatedId;
 	
 	private String            fullQualifiedName;
@@ -65,7 +76,7 @@ public abstract class JavaElement implements Annotated {
 	protected JavaElement() {
 		
 	}
-	
+
 	/**
 	 * Instantiates a new java element.
 	 * 
