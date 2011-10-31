@@ -16,14 +16,15 @@ import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
 
+import de.unisaarland.cs.st.reposuite.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.reposuite.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.reposuite.genealogies.layer.ChangeGenealogy;
+import de.unisaarland.cs.st.reposuite.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 
 public class GenealogyUtils {
 	
-	public static void exportToGraphML(final ChangeGenealogy genealogy,
-	                                   final File outFile) {
+	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
+			final File outFile) {
 		try {
 			FileOutputStream out = new FileOutputStream(outFile);
 			Graph g = new Neo4jGraph(genealogy.getGraphDBService());
@@ -39,7 +40,7 @@ public class GenealogyUtils {
 		}
 	}
 	
-	public static String getGenealogyStats(final ChangeGenealogy genealogy) {
+	public static String getGenealogyStats(final CoreChangeGenealogy genealogy) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("#Vertices: ");
@@ -51,8 +52,8 @@ public class GenealogyUtils {
 		sb.append(FileUtils.lineSeparator);
 		sb.append("Edge types used: ");
 		
-		for (String t : genealogy.getExistingEdgeTypes()) {
-			sb.append(t);
+		for (GenealogyEdgeType t : genealogy.getExistingEdgeTypes()) {
+			sb.append(t.toString());
 			sb.append(" ");
 		}
 		sb.append(FileUtils.lineSeparator);
@@ -64,20 +65,20 @@ public class GenealogyUtils {
 		RepositorySettings settings = new RepositorySettings();
 		
 		DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
-		                                                     "Directory in which to load the GraphDB from.", null,
-		                                                     true, true);
+				"Directory in which to load the GraphDB from.", null,
+				true, true);
 		
 		BooleanArgument statsArg = new BooleanArgument(settings, "stats",
-		                                               "Print vertex/edge statistic for ChangeGenealogy", "false",
-		                                               false);
+				"Print vertex/edge statistic for ChangeGenealogy", "false",
+				false);
 		
 		OutputFileArgument graphmlArg = new OutputFileArgument(settings, "graphml.out",
-		                                                       "Export the graph as GraphML file into this file.",
-		                                                       null, false, false);
+				"Export the graph as GraphML file into this file.",
+				null, false, false);
 		
 		settings.parseArguments();
 		
-		ChangeGenealogy genealogy = CoreChangeGenealogy.readFromDB(graphDBArg.getValue());
+		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue());
 		
 		if (statsArg.getValue()) {
 			System.out.println(getGenealogyStats(genealogy));

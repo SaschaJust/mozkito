@@ -1,27 +1,34 @@
 package de.unisaarland.cs.st.reposuite.genealogies;
 
-import java.util.List;
+import java.io.File;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.model.AndamaPool;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.reposuite.genealogies.utils.GenealogyAnalyzer;
-import de.unisaarland.cs.st.reposuite.persistence.Criteria;
+import de.unisaarland.cs.st.reposuite.genealogies.core.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.reposuite.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.reposuite.ppa.PPAToolChain;
 import de.unisaarland.cs.st.reposuite.settings.DatabaseArguments;
 import de.unisaarland.cs.st.reposuite.settings.RepositorySettings;
 
-public class Genealogies {
+public class GenealogyToolChain extends AndamaChain {
 	
 	private final DirectoryArgument   graphDBArg;
 	private final DatabaseArguments   databaseArgs;
 	private PersistenceUtil           persistenceUtil;
+	private AndamaPool              threadPool;
 	
-	public Genealogies() {
+	public GenealogyToolChain() {
+		super(new RepositorySettings());
 		
-		RepositorySettings settings = new RepositorySettings();
+		this.threadPool = new AndamaPool(PPAToolChain.class.getSimpleName(), this);
+		RepositorySettings settings = (RepositorySettings) getSettings();
 		settings.setLoggerArg(false);
 		databaseArgs = settings.setDatabaseArgs(true, "ppa");
 		
@@ -30,35 +37,47 @@ public class Genealogies {
 		
 		
 		settings.parseArguments();
-		databaseArgs.getValue();
-		persistenceUtil = null;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1.getMessage(), e1);
+	}
+	
+	@Override
+	public void run() {
+		
+		setup();
+		this.threadPool.execute();
+		
+		if (Logger.logInfo()) {
+			Logger.info("Terminating.");
 		}
 	}
 	
-	public void run() {
+	@Override
+	public void setup() {
+		if (!this.databaseArgs.getValue()) {
+			if (Logger.logError()) {
+				Logger.error("Could not connect to database!");
+			}
+			
+			throw new Shutdown();
+		}
 		
-		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
-		List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
+		File graphDBDir = graphDBArg.getValue();
+		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBDir);
 		
-		GenealogyAnalyzer genealogyAnalyzer = new GenealogyAnalyzer();
+		try {
+			this.persistenceUtil = PersistenceManager.getUtil();
+		} catch (UninitializedDatabaseException e1) {
+			throw new UnrecoverableError(e1);
+		}
 		
-		//		switch (ChangeGenealogyGranularity.valueOf(granularityArg.getValue())) {
-		//			case TRANSACTION:
-		//				TransactionChangeGenealogy genealogy = new TransactionChangeGenealogy(graphDBArg.getValue(),
-		//						persistenceUtil, genealogyAnalyzer);
-		//				genealogy.addTransactions(transactions);
-		//				break;
-		//			default:
-		//				if (Logger.logError()) {
-		//					Logger.error("Granularity level " + granularityArg.getValue()
-		//							+ " not yet implemented or not supported!");
-		//				}
-		//				break;
-		//		}
+		new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+		new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+		
+	}
+	
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
 		
 	}
 }

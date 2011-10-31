@@ -1,3 +1,0 @@
-2011-10-26 22:29:03,232 (       0) [main] INFO  OpenJPA dynamically loaded the class enhancer. Any classes that were not enhanced at build time will be enhanced when they are loaded by the JVM.
-2011-10-26 22:29:03,251 (      19) [main] INFO  Starting OpenJPA 2.1.1
-2011-10-26 22:29:03,334 (     102) [main] INFO  Using dictionary class "org.apache.openjpa.jdbc.sql.PostgresDictionary".

@@ -19,7 +19,7 @@
 package genealogies;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-import de.unisaarland.cs.st.reposuite.genealogies.Genealogies;
+import de.unisaarland.cs.st.reposuite.genealogies.GenealogyToolChain;
 
 
 
@@ -37,7 +37,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		Genealogies genealogies = new Genealogies();
+		GenealogyToolChain genealogies = new GenealogyToolChain();
 		genealogies.run();
 	}
 	
