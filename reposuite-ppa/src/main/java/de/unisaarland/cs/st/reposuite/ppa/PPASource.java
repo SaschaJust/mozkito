@@ -26,7 +26,7 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public PPASource(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil,
-	        final String startWith, final HashSet<String> transactionLimit) {
+			final String startWith, final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
@@ -39,6 +39,9 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 					criteria.in("id", transactionLimit);
 				}
 				List<RCSTransaction> list = persistenceUtil.load(criteria);
+				if (Logger.logDebug()) {
+					Logger.debug("Loaded " + list.size() + " transactions as tool chain input.");
+				}
 				iterator = list.iterator();
 				
 				if (startWith != null) {
