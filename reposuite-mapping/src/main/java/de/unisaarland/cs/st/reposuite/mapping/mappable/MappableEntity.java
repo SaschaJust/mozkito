@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -39,6 +41,7 @@ import de.unisaarland.cs.st.reposuite.persistence.Annotated;
  * 
  */
 @Entity
+@Access (AccessType.PROPERTY)
 @Inheritance (strategy = InheritanceType.JOINED)
 @DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue ("MAPPABLEENTITY")
