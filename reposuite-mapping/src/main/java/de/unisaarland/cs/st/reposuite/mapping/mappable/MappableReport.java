@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,6 +33,7 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
@@ -38,8 +41,9 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * 
  */
 @Entity
+@Access (AccessType.PROPERTY)
 @DiscriminatorValue ("MAPPABLEREPORT")
-public class MappableReport extends MappableEntity {
+public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
      * 

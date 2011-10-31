@@ -25,6 +25,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -128,6 +129,7 @@ public abstract class MappableEntity implements Annotated {
 	 * @return
 	 */
 	@Id
+	@GeneratedValue
 	public long getGeneratedId() {
 		return this.generatedId;
 	}
