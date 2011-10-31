@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
@@ -14,12 +14,7 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-bugs</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-utils</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>

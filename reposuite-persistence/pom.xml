@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>reposuite</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>de.unisaarland.cs.st</groupId>
 	<modelVersion>4.0.0</modelVersion>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>reposuite-utils</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

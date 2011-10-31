@@ -5,7 +5,7 @@
 	<artifactId>reposuite</artifactId>
 	<name>reposuite</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://www.st.cs.uni-saarland.de/reposuite</url>
 	<inceptionYear>2010</inceptionYear>
