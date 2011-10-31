@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -139,7 +140,7 @@ public class ArtificialBlob {
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
 		for (AtomicTransaction t : blobTransactions) {
-			result.add(t.getOperations());
+			result.add(new ArrayList<JavaChangeOperation>(t.getOperations()));
 		}
 		return result;
 	}

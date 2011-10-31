@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.untangling.blob;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
@@ -35,7 +35,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	private final RCSTransaction            transaction;
 	
 	/** The operations. */
-	private final List<JavaChangeOperation> operations;
+	private final Collection<JavaChangeOperation> operations;
 	
 	/**
 	 * Instantiates a new blob transaction.
@@ -45,7 +45,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @param operations
 	 *            the operations
 	 */
-	public AtomicTransaction(final RCSTransaction transaction, final List<JavaChangeOperation> operations){
+	public AtomicTransaction(final RCSTransaction transaction, final Collection<JavaChangeOperation> operations) {
 		this.transaction = transaction;
 		this.operations = operations;
 	}
@@ -103,7 +103,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * 
 	 * @return the operations
 	 */
-	public List<JavaChangeOperation> getOperations() {
+	public Collection<JavaChangeOperation> getOperations() {
 		return operations;
 	}
 	
