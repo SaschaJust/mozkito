@@ -23,6 +23,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
@@ -46,9 +47,18 @@ public abstract class MappableEntity implements Annotated {
 	private static final long serialVersionUID = 2350328785752088197L;
 	private long              generatedId;
 	
+	/**
+	 * @param key
+	 * @return
+	 */
 	@Transient
 	public abstract Object get(FieldKey key);
 	
+	/**
+	 * @param key
+	 * @param index
+	 * @return
+	 */
 	@Transient
 	public abstract Object get(FieldKey key,
 	                           int index);
@@ -60,9 +70,11 @@ public abstract class MappableEntity implements Annotated {
 	@Transient
 	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
 		Map<FieldKey, Object> ret = new HashMap<FieldKey, Object>();
+		
 		for (FieldKey key : keys) {
 			ret.put(key, get(key));
 		}
+		
 		return ret;
 	}
 	
@@ -103,9 +115,16 @@ public abstract class MappableEntity implements Annotated {
 		return builder.toString();
 	}
 	
+	/**
+	 * @return
+	 */
 	@Transient
 	public abstract Class<?> getBaseType();
 	
+	/**
+	 * @return
+	 */
+	@Id
 	public long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -144,6 +163,9 @@ public abstract class MappableEntity implements Annotated {
 		this.generatedId = generatedId;
 	}
 	
+	/**
+	 * @return
+	 */
 	@Transient
 	public abstract Set<FieldKey> supported();
 }
