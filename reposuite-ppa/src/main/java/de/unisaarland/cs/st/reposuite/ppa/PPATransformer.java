@@ -65,10 +65,13 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 				while (iterator.hasNext()) {
 					
 					JavaChangeOperation operation = iterator.next();
-					providePartialOutputData(operation);
+					if (iterator.hasNext()) {
+						providePartialOutputData(operation);
+					} else {
+						provideOutputData(operation);
+					}
 				}
 				
-				setCompleted();
 			}
 			
 		};
