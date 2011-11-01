@@ -42,7 +42,7 @@ public class GraphReader extends AndamaSource<RCSTransaction> {
 	 * @param settings
 	 */
 	public GraphReader(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final PersistenceUtil persistenceUtil) {
+			final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
 		
@@ -64,8 +64,12 @@ public class GraphReader extends AndamaSource<RCSTransaction> {
 				if (Logger.logDebug()) {
 					Logger.debug("Providing " + transaction + ".");
 				}
-				
-				provideOutputData(transaction);
+				if (transaction != null) {
+					providePartialOutputData(transaction);
+				} else {
+					provideOutputData(null, true);
+					setCompleted();
+				}
 			}
 		};
 	}
