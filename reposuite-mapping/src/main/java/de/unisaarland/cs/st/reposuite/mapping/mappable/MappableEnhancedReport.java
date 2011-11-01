@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
@@ -31,18 +34,25 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
+@DiscriminatorValue ("MAPPABLEENHANCEDREPORT")
 public class MappableEnhancedReport extends MappableEntity {
 	
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1097712059403322470L;
 	private EnhancedReport    report;
+	
+	/**
+	 * 
+	 */
+	public MappableEnhancedReport() {
+		super();
+	}
 	
 	/**
 	 * @param report
 	 */
 	public MappableEnhancedReport(final EnhancedReport report) {
+		super();
 		this.setReport(report);
 	}
 	
