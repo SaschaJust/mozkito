@@ -13,6 +13,9 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.maven.surefire.shade.org.codehaus.plexus.util.StringUtils;
+
 import de.unisaarland.cs.st.reposuite.persistence.Criteria;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
@@ -29,13 +32,26 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 			final String startWith, final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
+		if (Logger.logDebug()) {
+			Logger.debug("transactionLimit: "
+					+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
+		}
+		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
 				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
-				if (transactionLimit != null) {
+				if (Logger.logDebug()) {
+					Logger.debug(criteria.toString());
+				}
+
+				if ((transactionLimit != null) && (!transactionLimit.isEmpty())) {
+					if (Logger.logDebug()) {
+						Logger.debug("Added transaction input criteria limit: "
+								+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
+					}
 					criteria.in("id", transactionLimit);
 				}
 				List<RCSTransaction> list = persistenceUtil.load(criteria);

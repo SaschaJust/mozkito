@@ -83,21 +83,21 @@ public class PPAToolChain extends AndamaChain {
 		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
 		settings.setLoggerArg(true);
 		this.testCaseTransactionArg = new ListArgument(settings, "testCaseTransactions",
-		        "List of transactions that will be passed for test case purposes. "
-		                + "If this option is set, this module will start in test case mode. "
-		                + "If will generate change operations to specified transactions, only;"
-		                + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                + "or to specified XML file.", null, false);
+				"List of transactions that will be passed for test case purposes. "
+						+ "If this option is set, this module will start in test case mode. "
+						+ "If will generate change operations to specified transactions, only;"
+						+ "outputting result as XML either to sdtout (if option -DasXML not set) "
+						+ "or to specified XML file.", null, false);
 		
 		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
-		        "false", false);
+				"false", false);
 		
 		this.asXML = new OutputFileArgument(settings, "output.xml",
-		        "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		        null, false, true);
+				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
+				null, false, true);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
-		        "Use this transaction ID as the first one.", null, false);
+				"Use this transaction ID as the first one.", null, false);
 		
 		settings.parseArguments();
 		
@@ -110,11 +110,17 @@ public class PPAToolChain extends AndamaChain {
 	 */
 	@Override
 	public void run() {
+		if (Logger.logDebug()) {
+			Logger.debug("Setting up ...");
+		}
 		setup();
+		if (Logger.logDebug()) {
+			Logger.debug("Ececuting ...");
+		}
 		this.threadPool.execute();
 		
 		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
+			Logger.info("Terminating ...");
 		}
 	}
 	
@@ -156,17 +162,17 @@ public class PPAToolChain extends AndamaChain {
 			} else {
 				try {
 					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
-					        new FileOutputStream(xmlFile));
+							new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						        + "Writing to sstdout!");
+								+ "Writing to sstdout!");
 					}
 					stdout = true;
 				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-						        + "Writing to sstdout!");
+								+ "Writing to sstdout!");
 					}
 					stdout = true;
 				}
@@ -186,8 +192,13 @@ public class PPAToolChain extends AndamaChain {
 		
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, this.startWithArg.getValue(),
-		        testCaseTransactionArg.getValue());
+				testCaseTransactionArg.getValue());
 		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue());
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Setup done.");
+		}
+		
 	}
 	
 	/*
