@@ -15,16 +15,16 @@ public class Application implements IApplication {
 	 */
 	public Object start(IApplicationContext context) throws Exception {
 		String baseDir = System.getProperty("user.home") + FileUtils.fileSeparator + ".m2" + FileUtils.fileSeparator
-		+ "repository" + FileUtils.fileSeparator + "de" + FileUtils.fileSeparator + "unisaarland"
+		+ "moskito" + FileUtils.fileSeparator + "de" + FileUtils.fileSeparator + "unisaarland"
 		+ FileUtils.fileSeparator + "cs" + FileUtils.fileSeparator + "st" + FileUtils.fileSeparator
-		+ "reposuite";
+		+ "moskito";
 		
-		String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
-		+ "reposuite-utils-0.1-SNAPSHOT.jar";
-		String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
-		        + "reposuite-rcs-0.1-SNAPSHOT.jar";
-		String ppaStr = baseDir + "-callgraph" + FileUtils.fileSeparator + "0.1-SNAPSHOT" + FileUtils.fileSeparator
-		+ "reposuite-callgraph-0.1-SNAPSHOT.jar";
+		String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.2-SNAPSHOT" + FileUtils.fileSeparator
+		+ "moskito-utils-0.2-SNAPSHOT.jar";
+		String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.2-SNAPSHOT" + FileUtils.fileSeparator
+		        + "moskito-rcs-0.2-SNAPSHOT.jar";
+		String ppaStr = baseDir + "-callgraph" + FileUtils.fileSeparator + "0.2-SNAPSHOT" + FileUtils.fileSeparator
+		+ "moskito-callgraph-0.2-SNAPSHOT.jar";
 		
 		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppaStr);
 		
