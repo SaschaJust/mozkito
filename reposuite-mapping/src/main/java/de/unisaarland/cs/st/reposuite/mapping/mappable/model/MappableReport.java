@@ -19,12 +19,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
@@ -32,6 +38,8 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@Entity
+@DiscriminatorValue("MAPPABLEREPORT")
 public class MappableReport extends MappableEntity {
 	
 	/**
@@ -39,6 +47,14 @@ public class MappableReport extends MappableEntity {
      */
 	private static final long serialVersionUID = 1097712059403322470L;
 	private Report            report;
+	
+	/**
+	 * 
+	 */
+	@Deprecated
+	public MappableReport() {
+		super();
+	}
 	
 	/**
 	 * @param report
@@ -49,6 +65,7 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
@@ -98,13 +115,13 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
 	 */
 	@Override
-	public Object get(final FieldKey key,
-	                  final int index) {
+	public Object get(final FieldKey key, final int index) {
 		switch (key) {
 			case COMMENT:
 				if (getReport().getComments().size() > index) {
@@ -147,6 +164,7 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getBaseType
 	 * ()
@@ -159,6 +177,7 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@Transient
 	public String getBody() {
 		return this.report.getDescription();
 	}
@@ -166,12 +185,14 @@ public class MappableReport extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@OneToOne(fetch = FetchType.LAZY)
 	public Report getReport() {
 		return this.report;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getText()
 	 */
@@ -199,11 +220,12 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#supported
 	 * ()
 	 */
-	@SuppressWarnings ("serial")
+	@SuppressWarnings("serial")
 	@Override
 	public Set<FieldKey> supported() {
 		// TODO complete this
