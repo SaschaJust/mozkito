@@ -37,7 +37,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.reposuite.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.reposuite.mapping.elements.MapId;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.PersistenceManager;
 

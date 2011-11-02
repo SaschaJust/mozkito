@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +35,7 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**

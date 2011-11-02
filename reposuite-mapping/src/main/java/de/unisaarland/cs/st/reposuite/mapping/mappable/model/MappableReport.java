@@ -13,46 +13,37 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.infozilla.model.EnhancedReport;
+import de.unisaarland.cs.st.reposuite.exceptions.UnrecoverableError;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@Entity
-@DiscriminatorValue ("MAPPABLEENHANCEDREPORT")
-public class MappableEnhancedReport extends MappableEntity {
-	
-	private static final long serialVersionUID = 1097712059403322470L;
-	private EnhancedReport    report;
+public class MappableReport extends MappableEntity {
 	
 	/**
-	 * 
-	 */
-	public MappableEnhancedReport() {
-		super();
-	}
+     * 
+     */
+	private static final long serialVersionUID = 1097712059403322470L;
+	private Report            report;
 	
 	/**
 	 * @param report
 	 */
-	public MappableEnhancedReport(final EnhancedReport report) {
-		super();
+	public MappableReport(final Report report) {
 		this.setReport(report);
 	}
 	
@@ -147,10 +138,11 @@ public class MappableEnhancedReport extends MappableEntity {
 				
 				return person;
 			default:
-				break;
+				if (Logger.logWarn()) {
+					Logger.warn("Field " + key.name() + " is not indexable on " + getHandle() + ".");
+				}
+				return get(key);
 		}
-		
-		return get(key);
 	}
 	
 	/*
@@ -167,8 +159,15 @@ public class MappableEnhancedReport extends MappableEntity {
 	/**
 	 * @return
 	 */
+	public String getBody() {
+		return this.report.getDescription();
+	}
+	
+	/**
+	 * @return
+	 */
 	public Report getReport() {
-		return this.report.getOriginalReport();
+		return this.report;
 	}
 	
 	/*
@@ -194,7 +193,7 @@ public class MappableEnhancedReport extends MappableEntity {
 	/**
 	 * @param report
 	 */
-	public void setReport(final EnhancedReport report) {
+	public void setReport(final Report report) {
 		this.report = report;
 	}
 	

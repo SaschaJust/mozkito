@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.requirements;
 
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 
 /**
  * The not expression evaluates to true if the innerexpression evaluates to

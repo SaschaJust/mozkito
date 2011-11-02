@@ -14,9 +14,9 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.reposuite.mapping.elements.Candidate;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**

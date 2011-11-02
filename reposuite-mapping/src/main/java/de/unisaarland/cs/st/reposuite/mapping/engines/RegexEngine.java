@@ -33,7 +33,7 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;

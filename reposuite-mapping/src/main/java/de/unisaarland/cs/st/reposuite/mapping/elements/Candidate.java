@@ -17,7 +17,7 @@ package de.unisaarland.cs.st.reposuite.mapping.elements;
 
 import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 
 /**
  * This class represents a potential mapping pair and thus encapsulates to

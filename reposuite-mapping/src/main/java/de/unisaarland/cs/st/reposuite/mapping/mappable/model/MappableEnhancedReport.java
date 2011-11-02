@@ -13,27 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.reposuite.persistence.Annotated;
+import de.unisaarland.cs.st.reposuite.infozilla.model.EnhancedReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
@@ -41,23 +36,24 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * 
  */
 @Entity
-@Access (AccessType.PROPERTY)
-@DiscriminatorValue ("MAPPABLEREPORT")
-public class MappableReport extends MappableEntity implements Annotated {
+@DiscriminatorValue ("MAPPABLEENHANCEDREPORT")
+public class MappableEnhancedReport extends MappableEntity {
+	
+	private static final long serialVersionUID = 1097712059403322470L;
+	private EnhancedReport    report;
 	
 	/**
-     * 
-     */
-	private static final long serialVersionUID = 1097712059403322470L;
-	private Report            report;
-	
-	public MappableReport() {
+	 * 
+	 */
+	public MappableEnhancedReport() {
+		super();
 	}
 	
 	/**
 	 * @param report
 	 */
-	public MappableReport(final Report report) {
+	public MappableEnhancedReport(final EnhancedReport report) {
+		super();
 		this.setReport(report);
 	}
 	
@@ -152,11 +148,10 @@ public class MappableReport extends MappableEntity implements Annotated {
 				
 				return person;
 			default:
-				if (Logger.logWarn()) {
-					Logger.warn("Field " + key.name() + " is not indexable on " + getHandle() + ".");
-				}
-				return get(key);
+				break;
 		}
+		
+		return get(key);
 	}
 	
 	/*
@@ -173,17 +168,8 @@ public class MappableReport extends MappableEntity implements Annotated {
 	/**
 	 * @return
 	 */
-	@Transient
-	public String getBody() {
-		return this.report.getDescription();
-	}
-	
-	/**
-	 * @return
-	 */
-	@OneToOne (fetch = FetchType.LAZY)
 	public Report getReport() {
-		return this.report;
+		return this.report.getOriginalReport();
 	}
 	
 	/*
@@ -209,7 +195,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	/**
 	 * @param report
 	 */
-	public void setReport(final Report report) {
+	public void setReport(final EnhancedReport report) {
 		this.report = report;
 	}
 	

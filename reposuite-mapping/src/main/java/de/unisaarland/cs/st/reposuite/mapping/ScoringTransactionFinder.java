@@ -15,9 +15,9 @@ import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.elements.Candidate;
 import de.unisaarland.cs.st.reposuite.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableTransaction;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

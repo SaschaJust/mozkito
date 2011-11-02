@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 
 /**
  * The atom expression evaluates to true if the given criteria are met.
