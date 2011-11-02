@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse
-Bundle-SymbolicName: de.unisaarland.cs.st.reposuite.callgraph.eclipse; singleton:=true
+Bundle-SymbolicName: de.unisaarland.cs.st.moskito.callgraph.eclipse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.unisaarland.cs.st.reposuite.callgraph.eclipse.Activator
+Bundle-Activator: de.unisaarland.cs.st.moskito.callgraph.eclipse.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.6.1",
  org.eclipse.jdt.core;bundle-version="3.6.2",
@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.core.runtime,
  ca.mcgill.cs.swevo.ppa.ui;bundle-version="1.2.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: lib/reposuite-callgraph-0.1-SNAPSHOT-jar-with-dependencies.jar,
+Bundle-ClassPath: lib/moskito-callgraph-0.2-SNAPSHOT-jar-with-dependencies.jar,
  .

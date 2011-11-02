@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.reposuite.ppa.eclipse.product" uid="de.unisaarland.cs.st.reposuite.ppa.eclipse.product" id="de.unisaarland.cs.st.reposuite.ppa.eclipse.product" application="de.unisaarland.cs.st.reposuite.ppa.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="de.unisaarland.cs.st.moskito.ppa.eclipse.product" uid="de.unisaarland.cs.st.moskito.ppa.eclipse.product" id="de.unisaarland.cs.st.moskito.ppa.eclipse.moskito_ppa_eclipse" application="de.unisaarland.cs.st.moskito.ppa.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -24,7 +24,7 @@
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.unisaarland.cs.st.reposuite.ppa.eclipse"/>
+      <plugin id="de.unisaarland.cs.st.moskito.ppa.eclipse"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>

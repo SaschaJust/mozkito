@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.callgraph.eclipse.product" id="de.unisaarland.cs.st.reposuite.callgraph.eclipse.product" application="de.unisaarland.cs.st.reposuite.callgraph.eclipse.application" useFeatures="false" includeLaunchers="true">
+<product name="de.unisaarland.cs.st.moskito.callgraph.eclipse.product" uid="de.unisaarland.cs.st.moskito.callgraph.eclipse.product" id="de.unisaarland.cs.st.moskito.callgraph.eclipse.moskito_callgraph_eclipse" application="de.unisaarland.cs.st.moskito.callgraph.eclipse.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,7 +16,7 @@
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.unisaarland.cs.st.reposuite.callgraph.eclipse"/>
+      <plugin id="de.unisaarland.cs.st.moskito.callgraph.eclipse"/>
       <plugin id="javax.servlet"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.ant.core"/>
@@ -30,10 +30,8 @@
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
-      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
@@ -75,7 +73,6 @@
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
       <plugin id="org.eclipse.team.ui"/>
       <plugin id="org.eclipse.text"/>

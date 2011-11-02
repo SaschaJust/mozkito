@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.datadependency.eclipse;
+package de.unisaarland.cs.st.moskito.datadependency.eclipse;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,6 +6,9 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.InputFileArgument;
+import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,11 +17,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import de.unisaarland.cs.st.reposuite.ppa.utils.PPAUtils;
-import de.unisaarland.cs.st.reposuite.ppa.visitors.DataDependencyVisitor;
-import de.unisaarland.cs.st.reposuite.settings.InputFileArgument;
-import de.unisaarland.cs.st.reposuite.settings.OutputFileArgument;
-import de.unisaarland.cs.st.reposuite.settings.RepoSuiteSettings;
+import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 
 /**
  * This class controls all aspects of the application's execution.
@@ -32,12 +31,12 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		RepoSuiteSettings settings = new RepoSuiteSettings();
+		AndamaSettings settings = new AndamaSettings();
 		
 		InputFileArgument inArg = new InputFileArgument(settings, "in", "The file to be analyzed (full qualified path",
-		                                                null, true);
+				null, true);
 		OutputFileArgument outArg = new OutputFileArgument(settings, "out", "The file to write the output to", null,
-		                                                   true, true);
+				true, true);
 		
 		settings.parseArguments();
 		
@@ -53,7 +52,7 @@ public class Application implements IApplication {
 			writer.append(FileUtils.lineSeparator);
 		}
 		
-		dependencies = visitor.getFieldAccessesPerLine();
+		dependencies = visitor.getVariableAccessesPerLine();
 		
 		for (Integer vId : dependencies.keySet()) {
 			writer.append(StringUtils.join(dependencies.get(vId), ","));
