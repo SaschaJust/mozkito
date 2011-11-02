@@ -31,53 +31,59 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 		
 		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
 			
+			private Iterator<JavaChangeOperation> iterator;
+			
 			@Override
 			public void process() {
-				RCSTransaction transaction = getInputData();
 				
-				if (Logger.logInfo()) {
-					Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
+				if((iterator == null) || (!iterator.hasNext())){
+					
+					RCSTransaction transaction = getInputData();
+					
+					if (Logger.logInfo()) {
+						Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
+					}
+					
+					if (usePPA) {
+						PPAUtils.generateChangeOperations(repository, transaction, new HashSet<ChangeOperationVisitor>() {
+							
+							private static final long serialVersionUID = -6294280837922825955L;
+							
+							{
+								add(visitor);
+							}
+						});
+					} else {
+						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
+								new HashSet<ChangeOperationVisitor>() {
+							
+							private static final long serialVersionUID = -3888102603870272730L;
+							
+							{
+								add(visitor);
+							}
+						});
+					}
+					
+					iterator = visitor.getIterator();
 				}
 				
-				if (usePPA) {
-					PPAUtils.generateChangeOperations(repository, transaction, new HashSet<ChangeOperationVisitor>() {
-						
-						private static final long serialVersionUID = -6294280837922825955L;
-						
-						{
-							add(visitor);
-						}
-					});
-				} else {
-					PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
-							new HashSet<ChangeOperationVisitor>() {
-						
-						private static final long serialVersionUID = -3888102603870272730L;
-						
-						{
-							add(visitor);
-						}
-					});
-				}
-				
-				Iterator<JavaChangeOperation> iterator = visitor.getIterator();
-				
-				
-				while (iterator.hasNext()) {
+				if (iterator.hasNext()) {
 					
 					JavaChangeOperation operation = iterator.next();
 					
 					if (Logger.logDebug()) {
 						Logger.debug("providing JavaChangeOperation: " + operation.toString());
 					}
-
+					
 					if (iterator.hasNext()) {
 						providePartialOutputData(operation);
 					} else {
 						provideOutputData(operation);
 					}
+				} else {
+					skipData();
 				}
-				
 			}
 			
 		};
