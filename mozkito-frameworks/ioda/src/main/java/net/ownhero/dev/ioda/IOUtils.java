@@ -4,6 +4,7 @@
 package net.ownhero.dev.ioda;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,10 +15,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.util.LinkedList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
@@ -52,7 +57,7 @@ public class IOUtils {
 	 * @throws UnsupportedProtocolException
 	 * @throws FetchException
 	 */
-	public static byte[] binaryfetch(final URI uri) throws UnsupportedProtocolException, FetchException {
+	public static byte[] binaryfetch(final URI uri) throws IOException, UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
 			return binaryfetchHttp(uri);
 		} else if (uri.getScheme().equals("https")) {
@@ -72,8 +77,9 @@ public class IOUtils {
 	 * @throws UnsupportedProtocolException
 	 * @throws FetchException
 	 */
-	public static byte[] binaryfetch(final URI uri, final String username, final String password)
-	        throws UnsupportedProtocolException, FetchException {
+	public static byte[] binaryfetch(final URI uri,
+	                                 final String username,
+	                                 final String password) throws UnsupportedProtocolException, FetchException {
 		try {
 			if (uri.getScheme().equals("http")) {
 				return binaryfetchHttp(uri, username, password);
@@ -92,9 +98,20 @@ public class IOUtils {
 		}
 	}
 	
-	private static byte[] binaryfetchFile(final URI uri) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * @param uri
+	 * @return
+	 * @throws IOException
+	 */
+	private static byte[] binaryfetchFile(final URI uri) throws IOException {
+		FileInputStream inputStream = null;
+		
+		inputStream = new FileInputStream(uri.getPath());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		copyInputStream(inputStream, outputStream);
+		inputStream.close();
+		outputStream.close();
+		return outputStream.toByteArray();
 	}
 	
 	/**
@@ -122,12 +139,13 @@ public class IOUtils {
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	private static byte[] binaryfetchHttp(final URI uri, final String username, final String password)
-	        throws ClientProtocolException, IOException {
+	private static byte[] binaryfetchHttp(final URI uri,
+	                                      final String username,
+	                                      final String password) throws ClientProtocolException, IOException {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT), new UsernamePasswordCredentials(
-		        username, password));
+		credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
+		                             new UsernamePasswordCredentials(username, password));
 		httpClient.setCredentialsProvider(credsProvider);
 		
 		HttpGet request = new HttpGet(uri);
@@ -145,8 +163,9 @@ public class IOUtils {
 		return binaryfetchHttp(uri);
 	}
 	
-	private static byte[] binaryfetchHttps(final URI uri, final String username, final String password)
-	        throws ClientProtocolException, IOException {
+	private static byte[] binaryfetchHttps(final URI uri,
+	                                       final String username,
+	                                       final String password) throws ClientProtocolException, IOException {
 		return binaryfetchHttp(uri, username, password);
 	}
 	
@@ -176,8 +195,9 @@ public class IOUtils {
 	 * @throws FetchException
 	 * @throws UnsupportedProtocolException
 	 */
-	public static RawContent fetch(@NotNull final URI uri, final String username, final String password)
-	        throws FetchException, UnsupportedProtocolException {
+	public static RawContent fetch(@NotNull final URI uri,
+	                               final String username,
+	                               final String password) throws FetchException, UnsupportedProtocolException {
 		if (uri.getScheme().equals("http")) {
 			return fetchHttp(uri, username, password);
 		} else if (uri.getScheme().equals("https")) {
@@ -213,7 +233,7 @@ public class IOUtils {
 			reader.close();
 			
 			return new RawContent(uri, md.digest(builder.toString().getBytes()), new DateTime(file.lastModified()),
-			        "xhtml", builder.toString());
+			                      "xhtml", builder.toString());
 			
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
@@ -247,7 +267,7 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			        contentType.getValue(), content.toString());
+			                      contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
@@ -261,8 +281,9 @@ public class IOUtils {
 	 * @return
 	 * @throws FetchException
 	 */
-	public static RawContent fetchHttp(final URI uri, final String username, final String password)
-	        throws FetchException {
+	public static RawContent fetchHttp(final URI uri,
+	                                   final String username,
+	                                   final String password) throws FetchException {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -272,7 +293,7 @@ public class IOUtils {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-			        new UsernamePasswordCredentials(username, password));
+			                             new UsernamePasswordCredentials(username, password));
 			httpClient.setCredentialsProvider(credsProvider);
 			
 			HttpGet request = new HttpGet(uri);
@@ -289,7 +310,7 @@ public class IOUtils {
 			Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			        contentType.getValue(), content.toString());
+			                      contentType.getValue(), content.toString());
 		} catch (Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
@@ -312,8 +333,9 @@ public class IOUtils {
 	 * @return
 	 * @throws FetchException
 	 */
-	public static RawContent fetchHttps(final URI uri, final String username, final String password)
-	        throws FetchException {
+	public static RawContent fetchHttps(final URI uri,
+	                                    final String username,
+	                                    final String password) throws FetchException {
 		return fetchHttp(uri, username, password);
 	}
 	
@@ -357,6 +379,12 @@ public class IOUtils {
 		return object;
 	}
 	
+	/**
+	 * @param entity
+	 * @return
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	private static byte[] readbinaryData(final HttpEntity entity) throws IllegalStateException, IOException {
 		InputStream stream = entity.getContent();
 		
@@ -390,8 +418,10 @@ public class IOUtils {
 	 * @throws StoringException
 	 * @throws FilePermissionException
 	 */
-	public static void store(@NotNull final Storable object, @NotNull final File directory, final String fileName,
-	        final boolean overwrite) throws StoringException, FilePermissionException {
+	public static void store(@NotNull final Storable object,
+	                         @NotNull final File directory,
+	                         final String fileName,
+	                         final boolean overwrite) throws StoringException, FilePermissionException {
 		FileUtils.ensureFilePermissions(directory, FileUtils.ACCESSIBLE_DIR | FileUtils.WRITABLE);
 		
 		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
@@ -427,5 +457,89 @@ public class IOUtils {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
+	public static final void copyInputStream(InputStream in,
+	                                         OutputStream out) throws IOException {
+		byte[] buffer = new byte[1024];
+		int len;
+		
+		while ((len = in.read(buffer)) >= 0)
+			out.write(buffer, 0, len);
+		
+		in.close();
+		out.close();
+	}
+	
+	/**
+	 * @param uri
+	 * @return
+	 * @throws IOException
+	 */
+	public static File getTemporaryCopyOfFile(URI uri) throws IOException {
+		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		try {
+			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
+		} catch (FilePermissionException e1) {
+			throw new IOException(e1);
+		}
+		
+		byte[] data = new byte[0];
+		OutputStream outputStream = null;
+		
+		try {
+			outputStream = new FileOutputStream(file);
+			
+			if (uri.getScheme().equals("http")) {
+				data = binaryfetchHttp(uri);
+			} else if (uri.getScheme().equals("https")) {
+				data = binaryfetchHttps(uri);
+			} else if (uri.getScheme().equals("file")) {
+				if (uri.getPath().contains(".jar!" + FileUtils.fileSeparator) && !new File(uri).exists()) {
+					String jarFilePath = uri.getPath().substring(0,
+					                                             uri.getPath()
+					                                                .indexOf(".jar!" + FileUtils.fileSeparator) + 4);
+					File plainJarFile = new File(jarFilePath);
+					
+					if (plainJarFile.exists()) {
+						ZipFile jarFile = new ZipFile(plainJarFile);
+						String entryName = uri.getPath().substring(jarFilePath.length());
+						ZipEntry entry = jarFile.getEntry(entryName);
+						copyInputStream(jarFile.getInputStream(entry), outputStream);
+						outputStream.close();
+						return file;
+					} else {
+						throw new IOException("JAR file for resource does not exist: " + jarFilePath);
+					}
+				} else {
+					data = binaryfetchFile(uri);
+				}
+			} else {
+				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
+			}
+			
+			outputStream.write(data);
+			outputStream.close();
+		} catch (FetchException e) {
+			throw new IOException(e);
+		} catch (UnsupportedProtocolException e) {
+			throw new IOException(e);
+		} finally {
+			try {
+				if (outputStream != null) {
+					outputStream.flush();
+					outputStream.close();
+				}
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+		}
+		
+		return null;
 	}
 }
