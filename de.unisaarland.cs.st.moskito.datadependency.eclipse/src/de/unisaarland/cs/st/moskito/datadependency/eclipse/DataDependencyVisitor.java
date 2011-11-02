@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.datadependency.eclipse;
+package de.unisaarland.cs.st.moskito.datadependency.eclipse;
 
 import java.util.HashMap;
 import java.util.HashSet;

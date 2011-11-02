@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.reposuite.ppa.eclipse;
+package de.unisaarland.cs.st.moskito.ppa.eclipse;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="de.unisaarland.cs.st.reposuite.ppa.eclipse.Application">
+               class="de.unisaarland.cs.st.moskito.ppa.eclipse.Application">
          </run>
       </application>
    </extension>
@@ -15,11 +15,23 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="de.unisaarland.cs.st.reposuite.ppa.eclipse.application"
-            name="de.unisaarland.cs.st.reposuite.ppa.eclipse.product">
+            application="de.unisaarland.cs.st.moskito.ppa.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
          <property
                name="appName"
-               value="de.unisaarland.cs.st.reposuite.ppa.eclipse.product">
+               value="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="moskito_ppa_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.moskito.ppa.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
          </property>
       </product>
    </extension>
