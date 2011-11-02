@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Basic;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -58,6 +59,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	private static final long serialVersionUID = 2350328785752088197L;
 	private long              generatedId;
+	private int               test;
 	
 	/**
 	 * @param key
@@ -88,6 +90,15 @@ public abstract class MappableEntity implements Annotated {
 		}
 		
 		return ret;
+	}
+	
+	@Basic
+	public int getTest() {
+		return this.test;
+	}
+	
+	public void setTest(int test) {
+		this.test = test;
 	}
 	
 	/**
