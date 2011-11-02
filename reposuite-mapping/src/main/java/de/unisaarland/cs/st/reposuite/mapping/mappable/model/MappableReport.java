@@ -34,25 +34,26 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
+import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
+ * Class that wraps {@link Report} to be mapped.
+ * 
+ * @see MappableEntity
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @Entity
-@Access(AccessType.PROPERTY)
-@DiscriminatorValue("MAPPABLEREPORT")
-public class MappableReport extends MappableEntity {
+@Access (AccessType.PROPERTY)
+@DiscriminatorValue ("MAPPABLEREPORT")
+public class MappableReport extends MappableEntity implements Annotated {
 	
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1097712059403322470L;
 	private Report            report;
 	
 	/**
-	 * 
+	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
 	public MappableReport() {
@@ -64,12 +65,11 @@ public class MappableReport extends MappableEntity {
 	 */
 	public MappableReport(final Report report) {
 		super();
-		this.setReport(report);
+		setReport(report);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
@@ -114,18 +114,18 @@ public class MappableReport extends MappableEntity {
 				break;
 		}
 		
-		throw new UnrecoverableError(this.getClass().getSimpleName() + " does not support field key: " + key.name());
+		throw new UnrecoverableError(getClass().getSimpleName() + " does not support field key: " + key.name());
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
 	 */
 	@Override
-	public Object get(final FieldKey key, final int index) {
+	public Object get(final FieldKey key,
+	                  final int index) {
 		switch (key) {
 			case COMMENT:
 				if (getReport().getComments().size() > index) {
@@ -168,7 +168,6 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getBaseType
 	 * ()
@@ -187,16 +186,15 @@ public class MappableReport extends MappableEntity {
 	}
 	
 	/**
-	 * @return
+	 * @return the report
 	 */
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne (fetch = FetchType.LAZY)
 	public Report getReport() {
 		return this.report;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getText()
 	 */
@@ -224,12 +222,11 @@ public class MappableReport extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#supported
 	 * ()
 	 */
-	@SuppressWarnings("serial")
+	@SuppressWarnings ("serial")
 	@Override
 	public Set<FieldKey> supported() {
 		// TODO complete this

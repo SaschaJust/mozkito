@@ -74,7 +74,7 @@ public class MappingArguments extends AndamaArgumentSet {
 		for (Class<? extends Registered> registered : registereds) {
 			try {
 				builder.append('\t').append("  ").append(registered.getSimpleName()).append(": ")
-				        .append(registered.newInstance().getDescription());
+				       .append(registered.newInstance().getDescription());
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
@@ -89,7 +89,6 @@ public class MappingArguments extends AndamaArgumentSet {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
@@ -148,12 +147,15 @@ public class MappingArguments extends AndamaArgumentSet {
 	 * @param superClass
 	 * @param isRequired
 	 */
-	private void handleRegistered(final MappingSettings settings, final String argumentName,
-	        final Class<? extends Registered> superClass, final boolean isRequired) {
+	private void handleRegistered(final MappingSettings settings,
+	                              final String argumentName,
+	                              final Class<? extends Registered> superClass,
+	                              final boolean isRequired) {
 		Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
 		try {
 			registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(), superClass,
-			        Modifier.ABSTRACT | Modifier.INTERFACE | Modifier.PRIVATE));
+			                                                              Modifier.ABSTRACT | Modifier.INTERFACE
+			                                                                      | Modifier.PRIVATE));
 		} catch (Exception e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}

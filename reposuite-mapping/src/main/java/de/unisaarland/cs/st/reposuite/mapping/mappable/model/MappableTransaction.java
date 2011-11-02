@@ -36,6 +36,9 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
 import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
+ * Class that wraps {@link RCSTransaction} to be mapped.
+ * 
+ * @see MappableEntity
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -50,8 +53,9 @@ public class MappableTransaction extends MappableEntity {
 	private RCSTransaction    transaction;
 	
 	/**
-	 * 
+	 * @deprecated used only by persistence utility
 	 */
+	@Deprecated
 	public MappableTransaction() {
 		super();
 	}
