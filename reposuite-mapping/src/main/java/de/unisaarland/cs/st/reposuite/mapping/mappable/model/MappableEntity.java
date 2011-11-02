@@ -93,6 +93,7 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	@Basic
+	@Access (AccessType.PROPERTY)
 	public int getTest() {
 		return this.test;
 	}
@@ -149,6 +150,7 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Id
 	@GeneratedValue
+	@Access (AccessType.PROPERTY)
 	public long getGeneratedId() {
 		return this.generatedId;
 	}
