@@ -39,14 +39,14 @@ import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @Entity
-@Access (AccessType.PROPERTY)
-@Inheritance (strategy = InheritanceType.JOINED)
-@DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue ("MAPPABLEENTITY")
+@Access(AccessType.PROPERTY)
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("MAPPABLEENTITY")
 public abstract class MappableEntity implements Annotated {
 	
 	private static final long serialVersionUID = 2350328785752088197L;
@@ -65,8 +65,7 @@ public abstract class MappableEntity implements Annotated {
 	 * @return
 	 */
 	@Transient
-	public abstract Object get(FieldKey key,
-	                           int index);
+	public abstract Object get(FieldKey key, int index);
 	
 	/**
 	 * @param keys
@@ -150,9 +149,7 @@ public abstract class MappableEntity implements Annotated {
 	@Transient
 	public int getSize(final FieldKey key) {
 		Object o = get(key);
-		return o != null
-		                ? CollectionUtils.size(o)
-		                : -1;
+		return o != null ? CollectionUtils.size(o) : -1;
 	}
 	
 	/**

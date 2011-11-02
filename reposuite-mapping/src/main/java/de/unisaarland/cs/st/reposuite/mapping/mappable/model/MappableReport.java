@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,6 +41,7 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
  * 
  */
 @Entity
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("MAPPABLEREPORT")
 public class MappableReport extends MappableEntity {
 	
@@ -60,6 +63,7 @@ public class MappableReport extends MappableEntity {
 	 * @param report
 	 */
 	public MappableReport(final Report report) {
+		super();
 		this.setReport(report);
 	}
 	
@@ -179,7 +183,7 @@ public class MappableReport extends MappableEntity {
 	 */
 	@Transient
 	public String getBody() {
-		return this.report.getDescription();
+		return getReport().getDescription();
 	}
 	
 	/**
