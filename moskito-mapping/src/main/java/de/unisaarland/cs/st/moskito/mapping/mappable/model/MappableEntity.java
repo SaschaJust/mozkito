@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.mappable.model;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Basic;
@@ -26,6 +30,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
+
+import net.ownhero.dev.ioda.FileUtils;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -52,6 +61,37 @@ public abstract class MappableEntity implements Annotated {
 	private long              generatedId;
 	private int               test;
 	
+	/**
+	 * @param key
+	 * @return
+	 */
+	@Transient
+	public abstract Object get(FieldKey key);
+	
+	/**
+	 * @param key
+	 * @param index
+	 * @return
+	 */
+	@Transient
+	public abstract Object get(FieldKey key,
+	                           int index);
+	
+	/**
+	 * @param keys
+	 * @return
+	 */
+	@Transient
+	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
+		Map<FieldKey, Object> ret = new HashMap<FieldKey, Object>();
+		
+		for (FieldKey key : keys) {
+			ret.put(key, get(key));
+		}
+		
+		return ret;
+	}
+	
 	@Basic
 	@Access (AccessType.PROPERTY)
 	public int getTest() {
@@ -61,6 +101,49 @@ public abstract class MappableEntity implements Annotated {
 	public void setTest(int test) {
 		this.test = test;
 	}
+	
+	/**
+	 * @param keys
+	 * @return
+	 */
+	@Transient
+	public Object getAny(final FieldKey... keys) {
+		Object ret = null;
+		
+		for (FieldKey key : keys) {
+			ret = get(key);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @param keys
+	 * @return
+	 */
+	@Transient
+	public String getAsOneString(final FieldKey... keys) {
+		StringBuilder builder = new StringBuilder();
+		Object o = null;
+		
+		for (FieldKey key : keys) {
+			if ((o = get(key)) != null) {
+				builder.append(o.toString());
+				builder.append(FileUtils.lineSeparator);
+			}
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * @return
+	 */
+	@Transient
+	public abstract Class<?> getBaseType();
 	
 	/**
 	 * @return
@@ -73,6 +156,32 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * @return
+	 */
+	@Transient
+	public String getHandle() {
+		return this.getClass().getSimpleName();
+	}
+	
+	/**
+	 * @param key
+	 * @return
+	 */
+	@Transient
+	public int getSize(final FieldKey key) {
+		Object o = get(key);
+		return o != null
+		                ? CollectionUtils.size(o)
+		                : -1;
+	}
+	
+	/**
+	 * @return A composition of all text fields
+	 */
+	@Transient
+	public abstract String getText();
+	
+	/**
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
@@ -80,4 +189,9 @@ public abstract class MappableEntity implements Annotated {
 		this.generatedId = generatedId;
 	}
 	
+	/**
+	 * @return
+	 */
+	@Transient
+	public abstract Set<FieldKey> supported();
 }
