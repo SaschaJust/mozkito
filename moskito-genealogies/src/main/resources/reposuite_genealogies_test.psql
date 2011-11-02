@@ -507,19 +507,19 @@ INSERT INTO javaclassdefinition VALUES (361, false, NULL, NULL);
 -- Data for Name: javaelement; Type: TABLE DATA; Schema: public; Owner: miner
 --
 
-INSERT INTO javaelement VALUES (351, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B', 'JavaClassDefinition');
-INSERT INTO javaelement VALUES (352, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODDEFINITION');
-INSERT INTO javaelement VALUES (353, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(int)', 'JAVAMETHODDEFINITION');
-INSERT INTO javaelement VALUES (354, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A', 'JavaClassDefinition');
-INSERT INTO javaelement VALUES (355, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODCALL');
-INSERT INTO javaelement VALUES (356, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.<init>()', 'JAVAMETHODCALL');
-INSERT INTO javaelement VALUES (357, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.C.C()', 'JAVAMETHODDEFINITION');
-INSERT INTO javaelement VALUES (358, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.C', 'JavaClassDefinition');
-INSERT INTO javaelement VALUES (359, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODDEFINITION');
-INSERT INTO javaelement VALUES (360, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODCALL');
-INSERT INTO javaelement VALUES (361, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.D', 'JavaClassDefinition');
-INSERT INTO javaelement VALUES (362, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.reposuite.genealogies.test.evironment.D.D()', 'JAVAMETHODDEFINITION');
-INSERT INTO javaelement VALUES (363, 'de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodCall', 'java.Object.foo(float)', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (351, 'de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.B', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (352, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (353, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.A.foo(int)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (354, 'de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.A', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (355, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (356, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.<init>()', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (357, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.C.C()', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (358, 'de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.C', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (359, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (360, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall', 'src.de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)', 'JAVAMETHODCALL');
+INSERT INTO javaelement VALUES (361, 'de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.D', 'JavaClassDefinition');
+INSERT INTO javaelement VALUES (362, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition', 'de.unisaarland.cs.st.moskito.genealogies.test.evironment.D.D()', 'JAVAMETHODDEFINITION');
+INSERT INTO javaelement VALUES (363, 'de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall', 'java.Object.foo(float)', 'JAVAMETHODCALL');
 
 
 --

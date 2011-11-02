@@ -21,7 +21,7 @@ package bugs;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.bugs.Bugs;
+import de.unisaarland.cs.st.moskito.bugs.Bugs;
 
 /**
  * @author just

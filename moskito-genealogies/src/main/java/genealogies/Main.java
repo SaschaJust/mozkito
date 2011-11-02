@@ -19,7 +19,7 @@
 package genealogies;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-import de.unisaarland.cs.st.reposuite.genealogies.GenealogyToolChain;
+import de.unisaarland.cs.st.moskito.genealogies.GenealogyToolChain;
 
 
 

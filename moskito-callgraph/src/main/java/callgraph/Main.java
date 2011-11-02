@@ -19,7 +19,7 @@
 package callgraph;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.callgraph.CallGraphToolChain;
+import de.unisaarland.cs.st.moskito.callgraph.CallGraphToolChain;
 
 /**
  * @author just

@@ -1,7 +1,7 @@
 package genealogies.utils;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-import de.unisaarland.cs.st.reposuite.genealogies.utils.GenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyUtils;
 
 
 public class Main {

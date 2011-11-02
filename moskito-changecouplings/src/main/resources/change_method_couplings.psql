@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION reposuite_method_changecouplings(tid character varyin
 	
 	plpy.execute("DROP TABLE IF EXISTS cc_method_tmp")
 	plpy.execute("CREATE TABLE cc_method_tmp (tid character varying(40), fullqualifiedname text)")
-	plpy.execute("INSERT INTO cc_method_tmp (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.reposuite.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
+	plpy.execute("INSERT INTO cc_method_tmp (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
 	plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
 	plpy.execute("CREATE TABLE "+str(tablename)+" (premise text[], implication text, support integer, confidence float)")
 	

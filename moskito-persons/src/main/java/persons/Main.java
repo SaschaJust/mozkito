@@ -20,7 +20,7 @@ package persons;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.persons.Persons;
+import de.unisaarland.cs.st.moskito.persons.Persons;
 
 /**
  * @author just

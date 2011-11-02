@@ -17,7 +17,7 @@ package mapping;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.mapping.Scoring;
+import de.unisaarland.cs.st.moskito.mapping.Scoring;
 
 /**
  * @author just

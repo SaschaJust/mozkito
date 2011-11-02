@@ -19,7 +19,7 @@
 package ppa;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.ppa.PPAToolChain;
+import de.unisaarland.cs.st.moskito.ppa.PPAToolChain;
 
 /**
  * @author just

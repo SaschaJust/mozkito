@@ -19,7 +19,7 @@
 package changecouplings;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.changecouplings.ChangeCouplings;
+import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

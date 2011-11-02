@@ -1,0 +1,122 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package de.unisaarland.cs.st.moskito.mapping.splitters;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.moskito.mapping.model.File2Bugs;
+import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.persistence.Criteria;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
+
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
+public class Files2BugsSplitter extends MappingSplitter {
+	
+	static {
+		PersistenceManager.registerNativeQuery("postgresql",
+		                                       "files2bugsarray",
+		                                       "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
+		                                               + "FROM (                                                                                "
+		                                               + "SELECT changedfile_id, ARRAY(                                                         "
+		                                               + "	SELECT reportid                                                                     "
+		                                               + "	FROM rcsrevision AS revisions                                                       "
+		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 "
+		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           "
+		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
+		                                               + ") AS bugs                                                                             "
+		                                               + "FROM rcsrevision AS A                                                                 "
+		                                               + "ORDER BY changedfile_id                                                               "
+		                                               + ") innerquery                                                                          "
+		                                               + "WHERE array_length(bugs, 1) > 0                                                       "
+		                                               + "GROUP BY file_id, bugs;                                                               ");
+		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
+		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
+		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#
+	 * getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return "Creates a table that puts files into relation to their bugs.";
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#process
+	 * ()
+	 */
+	@Override
+	public List<Annotated> process() {
+		List<Annotated> ret = new LinkedList<Annotated>();
+		PersistenceUtil util;
+		try {
+			util = PersistenceManager.getUtil();
+			
+			@SuppressWarnings ("unchecked")
+			List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util, "files2bugs"));
+			Criteria<RCSFile> fileCriteria;
+			Criteria<Report> reportCriteria;
+			long fileid = -1, tmp = -1, bugid = -1;
+			RCSFile file = null;
+			Set<Report> reports = new HashSet<Report>();
+			
+			for (Object[] entries : result) {
+				tmp = (Long) entries[0];
+				bugid = (Long) entries[1];
+				
+				if (tmp != fileid) {
+					if (!reports.isEmpty()) {
+						ret.add(new File2Bugs(file, reports));
+						reports.clear();
+					}
+					
+					fileid = tmp;
+					fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
+					file = util.load(fileCriteria).iterator().next();
+				}
+				
+				reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
+				reports.addAll(util.load(reportCriteria));
+			}
+			
+			if (!reports.isEmpty()) {
+				ret.add(new File2Bugs(file, reports));
+				reports.clear();
+			}
+		} catch (UninitializedDatabaseException e) {
+			throw new Shutdown(e);
+		}
+		
+		return ret;
+	}
+	
+}

@@ -18,7 +18,7 @@
  */
 package untangling;
 
-import de.unisaarland.cs.st.reposuite.untangling.Untangling;
+import de.unisaarland.cs.st.moskito.untangling.Untangling;
 
 /**
  * The Class Main.

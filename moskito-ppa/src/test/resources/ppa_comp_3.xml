@@ -5,7 +5,7 @@
       <JavaElementLocation id="0" startline="15" endline="53" position="307" bodystartline="17">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils</fullQualifiedName>
         </JavaClassDefinition>
       </JavaElementLocation>
     </Added>
@@ -13,7 +13,7 @@
       <JavaElementLocation id="0" startline="17" endline="29" position="335" bodystartline="17">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.fileToLines(String)</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)</fullQualifiedName>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Added>
@@ -21,7 +21,7 @@
       <JavaElementLocation id="0" startline="40" endline="52" position="957" bodystartline="40">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.main(String[])</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])</fullQualifiedName>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Added>
@@ -29,7 +29,7 @@
       <JavaElementLocation id="0" startline="31" endline="38" position="694" bodystartline="31">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.reposuite.utils.DiffUtils.getLineNumbers(Chunk)</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)</fullQualifiedName>
         </JavaMethodDefinition>
       </JavaElementLocation>
     </Added>

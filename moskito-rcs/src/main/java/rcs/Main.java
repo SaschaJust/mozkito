@@ -19,8 +19,8 @@
 package rcs;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-import de.unisaarland.cs.st.reposuite.RCS;
-import de.unisaarland.cs.st.reposuite.Graph;
+import de.unisaarland.cs.st.moskito.Graph;
+import de.unisaarland.cs.st.moskito.RCS;
 import net.ownhero.dev.kisa.Logger;
 
 /**
