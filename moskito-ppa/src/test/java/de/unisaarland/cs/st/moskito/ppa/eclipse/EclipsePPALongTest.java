@@ -158,9 +158,7 @@ public class EclipsePPALongTest {
 			String originalContent = FileUtils.readFileToString(original);
 			String toCompareContent = FileUtils.readFileToString(tocompare);
 			result = ExamXML.compareXMLString(originalContent, toCompareContent);
-			if (Logger.logDebug()) {
-				Logger.debug("XML files differ: " + result);
-			}
+			System.err.println("XML diff: " + result);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -222,5 +220,11 @@ public class EclipsePPALongTest {
 		File tmpFile = new File("/tmp/ppa4.xml");
 		assertTrue(compareXML(compXML4, tmpFile));
 		tmpFile.delete();
+	}
+	
+	@Test
+	public void testTMP() {
+		compareXML(new File("/Users/kim/Projects/moskito/moskito-ppa/src/test/resources/ppa_comp.xml"), new File(
+		        "/Users/kim/Downloads/ppa.xml"));
 	}
 }
