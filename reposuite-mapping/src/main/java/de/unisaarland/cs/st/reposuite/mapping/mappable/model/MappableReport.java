@@ -75,6 +75,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
 	 */
 	@Override
+	@Transient
 	public Object get(final FieldKey key) {
 		switch (key) {
 			case AUTHOR:
@@ -124,6 +125,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
 	 */
 	@Override
+	@Transient
 	public Object get(final FieldKey key,
 	                  final int index) {
 		switch (key) {
@@ -173,6 +175,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * ()
 	 */
 	@Override
+	@Transient
 	public Class<?> getBaseType() {
 		return Report.class;
 	}
@@ -199,6 +202,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getText()
 	 */
 	@Override
+	@Transient
 	public String getText() {
 		StringBuilder builder = new StringBuilder();
 		
@@ -228,6 +232,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@SuppressWarnings ("serial")
 	@Override
+	@Transient
 	public Set<FieldKey> supported() {
 		// TODO complete this
 		return new HashSet<FieldKey>() {
