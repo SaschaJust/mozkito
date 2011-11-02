@@ -15,10 +15,12 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
+import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -71,8 +73,7 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse
+	 * @see de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse
 	 * (java.lang.Object)
 	 */
 	@Override
@@ -86,21 +87,36 @@ public class ReportRegexSelector extends MappingSelector {
 			
 			util = PersistenceManager.getUtil();
 			
-			Criteria<T> criteria = util.createCriteria(targetType);
-			
-			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
-				Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
-				List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
+			try {
 				
-				if (findAll != null) {
-					for (List<RegexGroup> match : findAll) {
-						
-						ids.add(match.get(0).getMatch());
+				Criteria<?> criteria = util.createCriteria(targetType.newInstance().getBaseType());
+				
+				for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
+					Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
+					List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
+					
+					if (findAll != null) {
+						for (List<RegexGroup> match : findAll) {
+							
+							ids.add(match.get(0).getMatch());
+						}
 					}
 				}
+				
+				criteria.in("id", ids);
+				List<?> load = util.load(criteria);
+				
+				for (Object instance : load) {
+					try {
+						Constructor<T> constructor = targetType.getConstructor(instance.getClass());
+						list.add(constructor.newInstance(instance));
+					} catch (Exception e) {
+						throw new UnrecoverableError(e);
+					}
+				}
+			} catch (Exception e) {
+				throw new UnrecoverableError(e);
 			}
-			criteria.in("id", ids);
-			list = util.load(criteria);
 			
 		} catch (UninitializedDatabaseException e) {
 			throw new Shutdown(e.getMessage(), e);
@@ -111,11 +127,9 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.register.Registered#register(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#register(de
 	 * .unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments,
-	 * boolean)
+	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
 	public void register(final MappingSettings settings,
