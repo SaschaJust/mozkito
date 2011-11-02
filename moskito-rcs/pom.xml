@@ -2,23 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>de.unisaarland.cs.st</groupId>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reposuite-rcs</artifactId>
+	<artifactId>moskito-rcs</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-rcs</name>
+	<name>moskito-rcs</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-utils</artifactId>
+			<artifactId>moskito-utils</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-persistence</artifactId>
+			<artifactId>moskito-persistence</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>

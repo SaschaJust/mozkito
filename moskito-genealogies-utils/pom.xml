@@ -3,21 +3,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>reposuite-genealogies-utils</artifactId>
+	<artifactId>moskito-genealogies-utils</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-genealogies-utils</name>
+	<name>moskito-genealogies-utils</name>
 	<properties>
 		<moduleName>genealogies-utils</moduleName>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-genealogies</artifactId>
+			<artifactId>moskito-genealogies</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>

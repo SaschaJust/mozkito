@@ -3,27 +3,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reposuite-bugs</artifactId>
+	<artifactId>moskito-bugs</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-bugs</name>
+	<name>moskito-bugs</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-persistence</artifactId>
+			<artifactId>moskito-persistence</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-rcs</artifactId>
+			<artifactId>moskito-rcs</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-utils</artifactId>
+			<artifactId>moskito-utils</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>

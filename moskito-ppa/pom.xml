@@ -2,22 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reposuite-ppa</artifactId>
+	<artifactId>moskito-ppa</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-ppa</name>
+	<name>moskito-ppa</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-rcs</artifactId>
+			<artifactId>moskito-rcs</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-utils</artifactId>
+			<artifactId>moskito-utils</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -129,6 +129,6 @@
 		<version>1.2</version> <executions> <execution> <id>cp-ppa-to-plugin</id> 
 		<phase>install</phase> <goals> <goal>exec</goal> </goals> <inherited>false</inherited> 
 		</execution> </executions> <configuration> <executable>cp</executable> <arguments> 
-		<argument>target/reposuite-ppa-0.1-SNAPSHOT.jar</argument> <argument>../ppa/reposuite-ppa-plugin/</argument> 
+		<argument>target/moskito-ppa-0.1-SNAPSHOT.jar</argument> <argument>../ppa/moskito-ppa-plugin/</argument> 
 		</arguments> </configuration> </plugin> </plugins> </build> -->
 </project>

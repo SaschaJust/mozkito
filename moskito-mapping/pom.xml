@@ -19,28 +19,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>reposuite-mapping</artifactId>
+	<artifactId>moskito-mapping</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-mapping</name>
+	<name>moskito-mapping</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-rcs</artifactId>
+			<artifactId>moskito-rcs</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-infozilla</artifactId>
+			<artifactId>moskito-infozilla</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-bugs</artifactId>
+			<artifactId>moskito-bugs</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>

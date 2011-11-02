@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>reposuite</artifactId>
-	<name>reposuite</name>
+	<artifactId>moskito</artifactId>
+	<name>moskito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<url>http://www.st.cs.uni-saarland.de/reposuite</url>
+	<url>http://www.st.cs.uni-saarland.de/moskito</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
 		<developer>
@@ -36,29 +36,29 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/reposuite</connection>
-		<developerConnection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/reposuite</developerConnection>
-		<url>https://hg.st.cs.uni-saarland.de/hg/reposuite</url>
+		<connection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/moskito</connection>
+		<developerConnection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/moskito</developerConnection>
+		<url>https://hg.st.cs.uni-saarland.de/hg/moskito</url>
 	</scm>
 	<organization>
 		<name>Software Engineering Group at Saarland University</name>
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>reposuite-utils</module>
-		<module>reposuite-persistence</module>
-		<module>reposuite-rcs</module>
-		<module>reposuite-bugs</module>
-		<module>reposuite-persons</module>
-		<module>reposuite-mapping</module>
-		<module>reposuite-infozilla</module>
-		<module>reposuite-fixindchanges</module>
-		<module>reposuite-genealogies</module>
-		<module>reposuite-genealogies-utils</module>
-		<module>reposuite-untangling</module>
-		<module>reposuite-changecouplings</module>
-		<module>reposuite-ppa</module>
-		<module>reposuite-callgraph</module>
+		<module>moskito-utils</module>
+		<module>moskito-persistence</module>
+		<module>moskito-rcs</module>
+		<module>moskito-bugs</module>
+		<module>moskito-persons</module>
+		<module>moskito-mapping</module>
+		<module>moskito-infozilla</module>
+		<module>moskito-fixindchanges</module>
+		<module>moskito-genealogies</module>
+		<module>moskito-genealogies-utils</module>
+		<module>moskito-untangling</module>
+		<module>moskito-changecouplings</module>
+		<module>moskito-ppa</module>
+		<module>moskito-callgraph</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
@@ -211,7 +211,7 @@
 						<haltOnFailure>false</haltOnFailure>
 						<regexes>
 							<regex>
-								<pattern>de.unisaarland.cs.st.reposuite.*</pattern>
+								<pattern>de.unisaarland.cs.st.moskito.*</pattern>
 								<branchRate>90</branchRate>
 								<lineRate>90</lineRate>
 							</regex>
@@ -272,7 +272,7 @@
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
 					<workspace>${basedir}</workspace>
-					<workspaceCodeStylesURL>file://${basedir}/settings/reposuite-style.xml</workspaceCodeStylesURL>
+					<workspaceCodeStylesURL>file://${basedir}/settings/moskito-style.xml</workspaceCodeStylesURL>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -330,7 +330,7 @@
 	</reporting>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<moduleName>reposuite</moduleName>
+		<moduleName>moskito</moduleName>
 	</properties>
 	<profiles>
 		<profile>

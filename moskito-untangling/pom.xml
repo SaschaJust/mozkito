@@ -3,30 +3,30 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>reposuite</artifactId>
+		<artifactId>moskito</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reposuite-untangling</artifactId>
+	<artifactId>moskito-untangling</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-untangling</name>
+	<name>moskito-untangling</name>
 	<properties>
 		<moduleName>untangling</moduleName>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-ppa</artifactId>
+			<artifactId>moskito-ppa</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-callgraph</artifactId>
+			<artifactId>moskito-callgraph</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>reposuite-changecouplings</artifactId>
+			<artifactId>moskito-changecouplings</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
