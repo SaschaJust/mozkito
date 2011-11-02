@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -134,7 +134,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public boolean addComment(@NotNull final Comment comment) {
 		Condition.notNull(getComments(),
-		"The container holding the comments must be initialized before adding a comment to the report.");
+		                  "The container holding the comments must be initialized before adding a comment to the report.");
 		
 		SortedSet<Comment> comments = getComments();
 		boolean ret = comments.add(comment);
@@ -263,8 +263,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
-		? getCreationTimestamp().toDate()
-		: null;
+		                                     ? getCreationTimestamp().toDate()
+		                                     : null;
 	}
 	
 	/**
@@ -356,8 +356,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return getLastFetch() != null
-		? getLastFetch().toDate()
-		: null;
+		                             ? getLastFetch().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -368,8 +368,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
-		? getLastUpdateTimestamp().toDate()
-		: null;
+		                                       ? getLastUpdateTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -420,8 +420,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
-		? getResolutionTimestamp().toDate()
-		: null;
+		                                       ? getResolutionTimestamp().toDate()
+		                                       : null;
 	}
 	
 	/**
@@ -520,7 +520,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @param attachmentEntries the attachmentEntries to set
+	 * @param attachmentEntries
+	 *            the attachmentEntries to set
 	 */
 	public void setAttachmentEntries(final List<AttachmentEntry> attachmentEntries) {
 		this.attachmentEntries = attachmentEntries;
@@ -532,10 +533,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setCategory(final String category) {
 		this.category = category;
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Setting category " + category);
-		}
 	}
 	
 	/**
@@ -559,8 +556,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		setCreationTimestamp(creationTimestamp != null
-		                     ? new DateTime(creationTimestamp)
-		: null);
+		                                              ? new DateTime(creationTimestamp)
+		                                              : null);
 	}
 	
 	/**
@@ -592,7 +589,7 @@ public class Report implements Annotated, Comparable<Report> {
 		
 		for (Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
-					&& ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
+			        && ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
 				try {
 					method.invoke(this, fieldValue);
 				} catch (IllegalArgumentException e) {
@@ -654,8 +651,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		setLastFetch(lastFetch != null
-		             ? new DateTime(lastFetch)
-		: null);
+		                              ? new DateTime(lastFetch)
+		                              : null);
 	}
 	
 	/**
@@ -664,8 +661,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
 		setLastUpdateTimestamp(date != null
-		                       ? new DateTime(date)
-		: null);
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
 	
 	/**
@@ -712,8 +709,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
 		setResolutionTimestamp(date != null
-		                       ? new DateTime(date)
-		: null);
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
 	
 	/**
@@ -844,28 +841,28 @@ public class Report implements Annotated, Comparable<Report> {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		+ getId()
-		+ ", assignedTo="
-		+ getAssignedTo()
-		+ ", category="
-		+ getCategory()
-		+ ", comments="
-		+ (getComments() != null
-				? getComments().size()
-				: 0)
-				+ ", description="
-				+ getDescription().substring(0,
-				                             getDescription().length() > 10
-				                             ? 10
-				                             : Math.max(getDescription().length() - 1, 0))
-				                             + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
-				                             + ", submitter=" + getSubmitter() + ", subject="
-				                             + getSubject().substring(0, getSubject().length() > 10
-				                                                      ? 10
-				                                                      : Math.max(getSubject().length() - 1, 0))
-				                                                      + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
-				                                                      + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
-				                                                      + "]";
+		        + getId()
+		        + ", assignedTo="
+		        + getAssignedTo()
+		        + ", category="
+		        + getCategory()
+		        + ", comments="
+		        + (getComments() != null
+		                                ? getComments().size()
+		                                : 0)
+		        + ", description="
+		        + getDescription().substring(0,
+		                                     getDescription().length() > 10
+		                                                                   ? 10
+		                                                                   : Math.max(getDescription().length() - 1, 0))
+		        + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
+		        + ", submitter=" + getSubmitter() + ", subject="
+		        + getSubject().substring(0, getSubject().length() > 10
+		                                                              ? 10
+		                                                              : Math.max(getSubject().length() - 1, 0))
+		        + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
+		        + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
+		        + "]";
 	}
 	
 }

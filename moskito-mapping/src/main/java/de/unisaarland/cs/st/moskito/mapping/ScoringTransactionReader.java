@@ -70,7 +70,7 @@ public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
 						Logger.info("Providing " + report);
 					}
 					
-					provideOutputData(report);
+					providePartialOutputData(report);
 				}
 			}
 		};
