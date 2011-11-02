@@ -1107,7 +1107,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			do {
 				// we require to have the processing completed before we fetch
 				// new data
-				// FIXME OH FUCK
 				if (hasInputConnector() && processingCompleted()) {
 					if (!getPreInputHooks().isEmpty()) {
 						if (Logger.logDebug()) {
