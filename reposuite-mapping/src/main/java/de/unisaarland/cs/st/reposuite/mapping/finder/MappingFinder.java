@@ -27,7 +27,7 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.reposuite.mapping.filters.MappingFilter;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.model.PersistentMapping;

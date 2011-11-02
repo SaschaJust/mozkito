@@ -18,7 +18,7 @@ package de.unisaarland.cs.st.reposuite.mapping.selectors;
 import java.util.List;
 
 import de.unisaarland.cs.st.reposuite.mapping.elements.Candidate;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.register.Registered;
 
 /**

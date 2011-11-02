@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Basic;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -35,10 +36,18 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 
 /**
- * @author just
+ * Superclass that is used to wrap around classes that shall be mapped. Since
+ * inheritance based annotations do not work on interfaces we can't simply use
+ * {@link Annotated} here.
+ * 
+ * Access to the internal data is used through access with {@link FieldKey}s.
+ * The corresponding data is mangled to fit the proper format.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @Entity
@@ -50,6 +59,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	private static final long serialVersionUID = 2350328785752088197L;
 	private long              generatedId;
+	private int               test;
 	
 	/**
 	 * @param key
@@ -80,6 +90,16 @@ public abstract class MappableEntity implements Annotated {
 		}
 		
 		return ret;
+	}
+	
+	@Basic
+	@Access (AccessType.PROPERTY)
+	public int getTest() {
+		return this.test;
+	}
+	
+	public void setTest(int test) {
+		this.test = test;
 	}
 	
 	/**
@@ -130,6 +150,7 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Id
 	@GeneratedValue
+	@Access (AccessType.PROPERTY)
 	public long getGeneratedId() {
 		return this.generatedId;
 	}

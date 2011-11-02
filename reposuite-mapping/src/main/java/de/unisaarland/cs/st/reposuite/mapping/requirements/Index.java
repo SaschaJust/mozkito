@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.requirements;
 
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 
 /**
  * This enum represents the index that is used in {@link Expression}s to

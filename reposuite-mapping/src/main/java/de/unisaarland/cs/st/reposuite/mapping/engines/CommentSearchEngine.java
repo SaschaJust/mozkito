@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -26,8 +26,8 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
@@ -60,13 +60,12 @@ public class CommentSearchEngine extends SearchEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new And(new Atom(Index.TO, MappableReport.class), new Atom(Index.TO, FieldKey.ID)), new Atom(
-		        Index.FROM, FieldKey.BODY));
+		return new And(new And(new Atom(Index.TO, MappableReport.class), new Atom(Index.TO, FieldKey.ID)),
+		               new Atom(Index.FROM, FieldKey.BODY));
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
@@ -74,9 +73,11 @@ public class CommentSearchEngine extends SearchEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(MappableEntity from, MappableEntity to, MapScore score) {
+	public void score(MappableEntity from,
+	                  MappableEntity to,
+	                  MapScore score) {
 		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
-		        to.getBaseType());
+		                        to.getBaseType());
 		try {
 			String fromBody = from.get(FieldKey.BODY).toString();
 			String toId = to.get(FieldKey.ID).toString();
@@ -92,8 +93,8 @@ public class CommentSearchEngine extends SearchEngine {
 				
 				if (bugId.compareTo(toId) == 0) {
 					score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody), truncate(query.toString()),
-					        FieldKey.COMMENT.name(), truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
-					        this.getClass());
+					                 FieldKey.COMMENT.name(), truncate(hitDoc.get("comment")),
+					                 truncate(hitDoc.get("comment")), this.getClass());
 					break;
 				}
 			}

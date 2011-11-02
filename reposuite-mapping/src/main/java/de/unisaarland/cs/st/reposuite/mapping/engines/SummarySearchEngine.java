@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.mapping.engines;
 
@@ -24,7 +24,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;
@@ -41,7 +41,6 @@ public class SummarySearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#getDescription
 	 * ()
@@ -53,19 +52,17 @@ public class SummarySearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new And(new Atom(Index.TO, FieldKey.SUMMARY), new Atom(Index.TO, FieldKey.ID)), new Atom(
-		        Index.FROM, FieldKey.BODY));
+		return new And(new And(new Atom(Index.TO, FieldKey.SUMMARY), new Atom(Index.TO, FieldKey.ID)),
+		               new Atom(Index.FROM, FieldKey.BODY));
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.unisaarland.cs.st.reposuite.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
@@ -73,7 +70,9 @@ public class SummarySearchEngine extends SearchEngine {
 	 * de.unisaarland.cs.st.reposuite.mapping.model.MapScore)
 	 */
 	@Override
-	public void score(MappableEntity element1, MappableEntity element2, MapScore score) {
+	public void score(MappableEntity element1,
+	                  MappableEntity element2,
+	                  MapScore score) {
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
 			Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
@@ -87,9 +86,9 @@ public class SummarySearchEngine extends SearchEngine {
 				
 				if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) {
 					score.addFeature(hit.score, "message", truncate(element1.get(FieldKey.BODY).toString()),
-					        truncate(element1.get(FieldKey.BODY).toString()), "summary",
-					        truncate(element2.get(FieldKey.SUMMARY).toString()), truncate(element2
-					                .get(FieldKey.SUMMARY).toString()), this.getClass());
+					                 truncate(element1.get(FieldKey.BODY).toString()), "summary",
+					                 truncate(element2.get(FieldKey.SUMMARY).toString()),
+					                 truncate(element2.get(FieldKey.SUMMARY).toString()), this.getClass());
 					break;
 				}
 			}

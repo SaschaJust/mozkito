@@ -20,7 +20,7 @@ import net.ownhero.dev.andama.settings.DoubleArgument;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.model.MapScore;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.And;
 import de.unisaarland.cs.st.reposuite.mapping.requirements.Atom;

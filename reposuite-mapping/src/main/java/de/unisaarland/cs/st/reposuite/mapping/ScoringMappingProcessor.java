@@ -36,7 +36,8 @@ public class ScoringMappingProcessor extends AndamaTransformer<MapScore, Persist
 	 * @param name
 	 * @param settings
 	 */
-	public ScoringMappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder) {
+	public ScoringMappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings,
+	        final MappingFinder finder) {
 		super(threadGroup, settings, false);
 		new ProcessHook<MapScore, PersistentMapping>(this) {
 			

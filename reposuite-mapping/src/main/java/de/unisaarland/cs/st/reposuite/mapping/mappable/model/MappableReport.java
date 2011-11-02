@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,10 +33,14 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
+ * Class that wraps {@link Report} to be mapped.
+ * 
+ * @see MappableEntity
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
@@ -45,20 +49,23 @@ import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 @DiscriminatorValue ("MAPPABLEREPORT")
 public class MappableReport extends MappableEntity implements Annotated {
 	
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1097712059403322470L;
 	private Report            report;
 	
+	/**
+	 * @deprecated used only by persistence utility
+	 */
+	@Deprecated
 	public MappableReport() {
+		super();
 	}
 	
 	/**
 	 * @param report
 	 */
 	public MappableReport(final Report report) {
-		this.setReport(report);
+		super();
+		setReport(report);
 	}
 	
 	/*
@@ -68,6 +75,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
 	 */
 	@Override
+	@Transient
 	public Object get(final FieldKey key) {
 		switch (key) {
 			case AUTHOR:
@@ -107,7 +115,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 				break;
 		}
 		
-		throw new UnrecoverableError(this.getClass().getSimpleName() + " does not support field key: " + key.name());
+		throw new UnrecoverableError(getClass().getSimpleName() + " does not support field key: " + key.name());
 	}
 	
 	/*
@@ -117,6 +125,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
 	 */
 	@Override
+	@Transient
 	public Object get(final FieldKey key,
 	                  final int index) {
 		switch (key) {
@@ -166,6 +175,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * ()
 	 */
 	@Override
+	@Transient
 	public Class<?> getBaseType() {
 		return Report.class;
 	}
@@ -175,11 +185,11 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@Transient
 	public String getBody() {
-		return this.report.getDescription();
+		return getReport().getDescription();
 	}
 	
 	/**
-	 * @return
+	 * @return the report
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
 	public Report getReport() {
@@ -192,6 +202,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity#getText()
 	 */
 	@Override
+	@Transient
 	public String getText() {
 		StringBuilder builder = new StringBuilder();
 		
@@ -221,6 +232,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@SuppressWarnings ("serial")
 	@Override
+	@Transient
 	public Set<FieldKey> supported() {
 		// TODO complete this
 		return new HashSet<FieldKey>() {

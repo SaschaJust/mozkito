@@ -28,7 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.reposuite.persistence.Annotated;
 

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import de.unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 
 /**
  * The all expression evaluates to true if and only if all checks on the inner

@@ -17,6 +17,7 @@ package de.unisaarland.cs.st.reposuite.mapping.mappable;
 
 import java.util.Collection;
 
+import de.unisaarland.cs.st.reposuite.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 public enum FieldKey {
@@ -69,7 +70,11 @@ public enum FieldKey {
 	 */
 	PATH,
 	/**
-	 * 
+	 * the comment(s)/reply(replies) to an encapsulated entity. If requested
+	 * without index, represents a {@link Collection} of corresponding data, a
+	 * single data object otherwise. Represents an empty {@link Collection}/
+	 * <code>null</code> if there weren't any comments/replies at all,
+	 * respectively. (<code>Collection<Comment>/Comment</code>)
 	 */
 	COMMENT,
 	/**
@@ -77,7 +82,7 @@ public enum FieldKey {
 	 */
 	FILE,
 	/**
-	 * 
+	 *  
 	 */
 	TYPE,
 	/**

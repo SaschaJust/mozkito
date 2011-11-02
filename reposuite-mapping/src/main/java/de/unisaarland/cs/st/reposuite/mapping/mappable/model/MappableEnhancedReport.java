@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.reposuite.mapping.mappable;
+package de.unisaarland.cs.st.reposuite.mapping.mappable.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +28,7 @@ import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.reposuite.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.reposuite.infozilla.model.EnhancedReport;
+import de.unisaarland.cs.st.reposuite.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.reposuite.persistence.model.Person;
 
 /**
