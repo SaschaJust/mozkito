@@ -39,7 +39,7 @@ import com.a7soft.examxml.ExamXML;
 
 public class EclipsePPALongTest {
 	
-	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Ddatabase.host=quentin.cs.uni-saarland.de -Ddatabase.name=reposuite_ppa_test -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
+	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=reposuite_ppa_test -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
 	
 	private static File    eclipseBinDir;
 	
@@ -125,10 +125,6 @@ public class EclipsePPALongTest {
 			eclipseBinDirPath.append("MacOS");
 			eclipseBinDirPath.append(FileUtils.fileSeparator);
 		} else {
-			eclipseBinDirPath.append("bin");
-			eclipseBinDirPath.append(FileUtils.fileSeparator);
-			eclipseBinDirPath.append("linux");
-			eclipseBinDirPath.append(FileUtils.fileSeparator);
 			eclipseBinDirPath.append("eclipse");
 			eclipseBinDirPath.append(FileUtils.fileSeparator);
 		}
@@ -210,7 +206,7 @@ public class EclipsePPALongTest {
 		String VMARGS = BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
 		runEclipse(VMARGS.split(" "));
-		File tmpFile = new File("/tmp/pp3.xml");
+		File tmpFile = new File("/tmp/ppa3.xml");
 		assertTrue(compareXML(compXML3, tmpFile));
 		tmpFile.delete();
 	}
@@ -220,7 +216,7 @@ public class EclipsePPALongTest {
 		String VMARGS = BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
 		runEclipse(VMARGS.split(" "));
-		File tmpFile = new File("/tmp/pp4.xml");
+		File tmpFile = new File("/tmp/ppa4.xml");
 		assertTrue(compareXML(compXML4, tmpFile));
 		tmpFile.delete();
 	}
