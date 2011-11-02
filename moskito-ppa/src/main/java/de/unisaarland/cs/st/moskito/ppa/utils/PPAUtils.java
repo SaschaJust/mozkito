@@ -67,12 +67,12 @@ import de.unisaarland.cs.st.moskito.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation.LineCover;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation_;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition_;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation.LineCover;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPAMethodCallVisitor;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -323,6 +323,10 @@ public class PPAUtils {
 		
 		for (RCSRevision rev : transaction.getRevisions()) {
 			
+			if (Logger.logDebug()) {
+				Logger.debug("PPA parsing revision: " + rev.toString());
+			}
+
 			String changedPath = rev.getChangedFile().getPath(transaction);
 			if (changedPath == null) {
 				continue;

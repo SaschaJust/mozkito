@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChangeOperation> {
 	
 	public PPATransformer(AndamaGroup threadGroup, AndamaSettings settings, final Repository repository,
-	        final Boolean usePPA) {
+			final Boolean usePPA) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
@@ -50,21 +50,27 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 					});
 				} else {
 					PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
-					        new HashSet<ChangeOperationVisitor>() {
-						        
-						        private static final long serialVersionUID = -3888102603870272730L;
-						        
-						        {
-							        add(visitor);
-						        }
-					        });
+							new HashSet<ChangeOperationVisitor>() {
+						
+						private static final long serialVersionUID = -3888102603870272730L;
+						
+						{
+							add(visitor);
+						}
+					});
 				}
 				
 				Iterator<JavaChangeOperation> iterator = visitor.getIterator();
 				
+				
 				while (iterator.hasNext()) {
 					
 					JavaChangeOperation operation = iterator.next();
+					
+					if (Logger.logDebug()) {
+						Logger.debug("providing JavaChangeOperation: " + operation.toString());
+					}
+
 					if (iterator.hasNext()) {
 						providePartialOutputData(operation);
 					} else {
