@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.core.runtime,
  ca.mcgill.cs.swevo.ppa.ui;bundle-version="1.2.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: lib/reposuite-ppa-0.1-SNAPSHOT-jar-with-dependencies.jar,
+Bundle-ClassPath: lib/reposuite-ppa-0.2-SNAPSHOT-jar-with-dependencies.jar,
  .
