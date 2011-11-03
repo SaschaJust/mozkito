@@ -104,6 +104,7 @@ public class IOUtils {
 	 * @throws IOException
 	 */
 	private static byte[] binaryfetchFile(final URI uri) throws IOException {
+		// TODO implement for directory
 		FileInputStream inputStream = null;
 		
 		inputStream = new FileInputStream(uri.getPath());
