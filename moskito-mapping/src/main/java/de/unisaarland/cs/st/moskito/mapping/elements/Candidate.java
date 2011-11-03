@@ -62,4 +62,13 @@ public class Candidate {
 	public final MappableEntity getTo() {
 		return this.to;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Candidate [from=" + from + ", to=" + to + "]";
+	}
 }
