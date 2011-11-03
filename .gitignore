@@ -17,3 +17,6 @@ reposuite-callgraph-0.1-SNAPSHOT-jar-with-dependencies.jar
 Application.class
 Activator.class
 moskito-ppa-0.2-SNAPSHOT-jar-with-dependencies.jar
+.gradle
+moskito-utils/build
+de.unisaarland.cs.st.moskito.callgraph.eclipse/lib
