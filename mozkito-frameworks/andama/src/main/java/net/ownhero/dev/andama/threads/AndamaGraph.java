@@ -263,6 +263,7 @@ public class AndamaGraph {
 			if (openBranches.isEmpty()) {
 				// this will be only the case if there weren't any multiplexer
 				// invoked
+				// TODO offer alternative to the user at this point
 				andamaGraph.paint();
 			} else if (!CollectionUtils.exists(openBranches, new Predicate() {
 				
