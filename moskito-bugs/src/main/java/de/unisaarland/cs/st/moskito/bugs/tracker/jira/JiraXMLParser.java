@@ -61,13 +61,13 @@ public class JiraXMLParser {
 	// protected static DateTimeFormatter dateTimeHistoryFormat =
 	// DateTimeFormat.forPattern("dd/MMM/yy hh:mm a");
 	protected static final Regex dateTimeFormatRegex        = new Regex(
-	                                                                    "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
+			"({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})");
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
-	                                                                    "(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
+			"(({dd}[0-3]\\d)/({MMM}[A-Z][a-z]{2})/({yy}\\d{2})\\s+({hh}[0-1]?\\d):({mm}[0-5]\\d)\\s({a}[AaPp][Mm]))");
 	protected static Namespace   namespace                  = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static List<AttachmentEntry> extractAttachments(final Element root,
-	                                                          final JiraTracker tracker) {
+			final JiraTracker tracker) {
 		
 		List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
@@ -101,7 +101,7 @@ public class JiraXMLParser {
 				if (attachment.getFilename() != null) {
 					try {
 						attachment.setLink(new URL(uri + "secure/attachment/" + attachId + "/"
-						        + attachment.getFilename()));
+								+ attachment.getFilename()));
 					} catch (MalformedURLException e) {
 						if (Logger.logWarn()) {
 							Logger.warn("Failed to set Link to attachment. Continue ...");
@@ -116,10 +116,10 @@ public class JiraXMLParser {
 	}
 	
 	protected static Element getElement(final Element root,
-	                                    final Namespace namespace,
-	                                    final String tag,
-	                                    final String attribute,
-	                                    final String value) {
+			final Namespace namespace,
+			final String tag,
+			final String attribute,
+			final String value) {
 		@SuppressWarnings ("unchecked")
 		List<Element> children = root.getChildren(tag, namespace);
 		for (Element child : children) {
@@ -128,7 +128,7 @@ public class JiraXMLParser {
 			}
 		}
 		throw new NoSuchElementException("Could not find <" + tag + "> tag with attribute `" + attribute + "` set to `"
-		        + value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
+				+ value + "` in namespace `" + namespace + "` for parent `" + root.toString() + "`");
 	}
 	
 	protected static Priority getPriority(final String prioString) {
@@ -194,7 +194,7 @@ public class JiraXMLParser {
 	}
 	
 	private static void handleComments(final List<Element> comments,
-	                                   final Report report) {
+			final Report report) {
 		for (Element comment : comments) {
 			Person author = new Person(comment.getAttributeValue("author"), null, null);
 			DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"), dateTimeFormatRegex);
@@ -218,11 +218,11 @@ public class JiraXMLParser {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static void handleHistory(final URI historyUri,
-	                                 final Report report) throws UnsupportedProtocolException,
-	                                                     JDOMException,
-	                                                     IOException,
-	                                                     SecurityException,
-	                                                     NoSuchFieldException {
+			final Report report) throws UnsupportedProtocolException,
+			JDOMException,
+			IOException,
+			SecurityException,
+			NoSuchFieldException {
 		RawContent rawContent = null;
 		try {
 			rawContent = IOUtils.fetch(historyUri);
@@ -235,8 +235,8 @@ public class JiraXMLParser {
 			if (!rootElement.getName().equals("html")) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history (id: " + report.getId()
-					        + "). Root element expectedto have `<html>` tag as root element. Got <"
-					        + rootElement.getName() + ">.");
+							+ "). Root element expectedto have `<html>` tag as root element. Got <"
+							+ rootElement.getName() + ">.");
 				}
 				return;
 			}
@@ -245,7 +245,7 @@ public class JiraXMLParser {
 			if (body == null) {
 				if (Logger.logError()) {
 					Logger.error("Error while parsing bugzilla report history (id: " + report.getId()
-					        + "). No <body> tag found.");
+							+ "). No <body> tag found.");
 				}
 				return;
 			}
@@ -274,7 +274,7 @@ public class JiraXMLParser {
 						if ((as != null) && (as.size() < 2)) {
 							if (Logger.logError()) {
 								Logger.error("Error while parsing jira history (id: " + report.getId()
-								        + "). HTML structure unknown: could not find second a tag in actionDetails");
+										+ "). HTML structure unknown: could not find second a tag in actionDetails");
 							}
 							return;
 						}
@@ -289,13 +289,20 @@ public class JiraXMLParser {
 							timestamp = DateTimeUtils.parseDate(dateString, dateTimeHistoryFormatRegex);
 						}
 						
-						Element actionBody = getElement(actionContainer, namespace, "div", "class",
-						                                "changehistory action-body");
+						Element actionBody = null;
+						try {
+							actionBody = getElement(actionContainer, namespace, "div", "class",
+									"changehistory action-body");
+						} catch (NoSuchElementException e) {
+							actionBody = getElement(actionContainer, namespace, "div", "class", "action-body");
+						}
+						
+						
 						Element table = actionBody.getChild("table", namespace);
 						if (table == null) {
 							if (Logger.logError()) {
 								Logger.error("Error while parsing jira history (id: " + report.getId()
-								        + "). HTML structure unknown: could not find table in actionBody");
+										+ "). HTML structure unknown: could not find table in actionBody");
 							}
 							return;
 						}
@@ -304,7 +311,7 @@ public class JiraXMLParser {
 						if (tbody == null) {
 							if (Logger.logError()) {
 								Logger.error("Error while parsing jira history (id: " + report.getId()
-								        + "). HTML structure unknown: could not find tbody in actionBody");
+										+ "). HTML structure unknown: could not find tbody in actionBody");
 							}
 							return;
 						}
@@ -316,12 +323,12 @@ public class JiraXMLParser {
 							if (tr == null) {
 								if (Logger.logError()) {
 									Logger.error("Error while parsing jira history (id: " + report.getId()
-									        + "). HTML structure unknown: could not find tr in actionBody");
+											+ "). HTML structure unknown: could not find tr in actionBody");
 								}
 								return;
 							}
 							String fieldString = getElement(tr, namespace, "td", "class", "activity-name").getText()
-							                                                                              .trim();
+									.trim();
 							oldValue = getElement(tr, namespace, "td", "class", "activity-old-val").getText().trim();
 							newValue = getElement(tr, namespace, "td", "class", "activity-new-val").getText().trim();
 							
@@ -365,7 +372,7 @@ public class JiraXMLParser {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	private static void handleIssueLinks(final List<Element> elements,
-	                                     final Report report) {
+			final Report report) {
 		for (Element issueLinkType : elements) {
 			if (issueLinkType.getName().equals("issuelinktype")) {
 				List<Element> links = issueLinkType.getChildren();
@@ -379,7 +386,7 @@ public class JiraXMLParser {
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
-										        + ". Cannot determine report id. Abort!");
+												+ ". Cannot determine report id. Abort!");
 									}
 									return;
 								}
@@ -396,8 +403,8 @@ public class JiraXMLParser {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static void handleRoot(final Report report,
-	                              final Element root,
-	                              final JiraTracker tracker) {
+			final Element root,
+			final JiraTracker tracker) {
 		CompareCondition.equals(root.getName(), "item", "The root element has to be 'item'.");
 		
 		List<Element> children = root.getChildren();
@@ -411,7 +418,7 @@ public class JiraXMLParser {
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
-						        + ". Cannot determine report id. Abort!");
+								+ ". Cannot determine report id. Abort!");
 					}
 					return;
 				}

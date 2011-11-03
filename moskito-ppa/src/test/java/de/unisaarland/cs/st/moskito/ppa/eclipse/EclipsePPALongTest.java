@@ -158,7 +158,6 @@ public class EclipsePPALongTest {
 			String originalContent = FileUtils.readFileToString(original);
 			String toCompareContent = FileUtils.readFileToString(tocompare);
 			result = ExamXML.compareXMLString(originalContent, toCompareContent);
-			System.err.println("XML diff: " + result);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
