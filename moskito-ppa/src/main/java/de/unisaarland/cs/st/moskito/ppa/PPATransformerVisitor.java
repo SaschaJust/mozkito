@@ -18,13 +18,6 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	private final LinkedList<JavaChangeOperation> list = new LinkedList<JavaChangeOperation>();
 	
-	/**
-	 * @return
-	 */
-	public Iterator<JavaChangeOperation> getIterator() {
-		return list.iterator();
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -34,6 +27,13 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 */
 	@Override
 	public void endVisit() {
+	}
+	
+	/**
+	 * @return
+	 */
+	public Iterator<JavaChangeOperation> getIterator() {
+		return list.iterator();
 	}
 	
 	/*
