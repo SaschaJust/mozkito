@@ -119,10 +119,10 @@
 		<class>de.unisaarland.cs.st.moskito.mapping.model.Method2Bugs</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.mappable.MappableReport</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.mappable.MappableTransaction</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.mappable.MappableEnhancedReport</class>
+		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity</class>
+		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport</class>
+		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction</class>
+		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
