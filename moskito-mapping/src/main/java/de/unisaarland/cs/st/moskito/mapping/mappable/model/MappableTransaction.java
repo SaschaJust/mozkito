@@ -132,6 +132,7 @@ public class MappableTransaction extends MappableEntity {
 	 * ()
 	 */
 	@Override
+	@Transient
 	public Class<?> getBaseType() {
 		return RCSTransaction.class;
 	}
@@ -165,6 +166,7 @@ public class MappableTransaction extends MappableEntity {
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#getText()
 	 */
 	@Override
+	@Transient
 	public String getText() {
 		return getTransaction().getMessage();
 	}
