@@ -71,8 +71,7 @@ public class MappableTransaction extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#get(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
 	 */
 	@Override
@@ -107,8 +106,7 @@ public class MappableTransaction extends MappableEntity {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#get(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#get(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
 	 */
 	@Override
@@ -189,8 +187,7 @@ public class MappableTransaction extends MappableEntity {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#supported
-	 * ()
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity#supported ()
 	 */
 	@SuppressWarnings ("serial")
 	@Override

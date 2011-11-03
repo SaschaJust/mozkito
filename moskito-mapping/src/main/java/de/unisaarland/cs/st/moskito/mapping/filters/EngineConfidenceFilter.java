@@ -27,8 +27,7 @@ public class EngineConfidenceFilter extends MappingFilter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
 	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping,
 	 * java.util.Set)
 	 */

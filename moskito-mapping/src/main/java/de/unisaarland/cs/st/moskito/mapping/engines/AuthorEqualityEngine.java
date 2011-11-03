@@ -68,11 +68,9 @@ public class AuthorEqualityEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
 	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments,
-	 * boolean)
+	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
 	public void register(final MappingSettings settings,
@@ -86,8 +84,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)

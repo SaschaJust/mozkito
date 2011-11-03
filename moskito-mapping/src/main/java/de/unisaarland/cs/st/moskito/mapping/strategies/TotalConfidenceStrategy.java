@@ -35,8 +35,7 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy#map
+	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy#map
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override

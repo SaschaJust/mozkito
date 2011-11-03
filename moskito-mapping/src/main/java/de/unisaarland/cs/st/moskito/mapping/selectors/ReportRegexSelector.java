@@ -42,7 +42,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class ReportRegexSelector extends MappingSelector {
 	
-	private String pattern = "\\p{XDigit}{7,}";
+	private String pattern = "(\\p{XDigit}{7,})";
 	
 	/*
 	 * (non-Javadoc)

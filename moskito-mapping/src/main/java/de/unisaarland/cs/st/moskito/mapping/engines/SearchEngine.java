@@ -110,11 +110,9 @@ public abstract class SearchEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
 	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments,
-	 * boolean)
+	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
 	public void register(final MappingSettings settings,

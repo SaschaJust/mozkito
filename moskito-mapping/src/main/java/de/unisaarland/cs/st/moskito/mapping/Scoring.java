@@ -137,8 +137,7 @@ public class Scoring extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
+	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
 	 */
 	@Override
 	public void shutdown() {

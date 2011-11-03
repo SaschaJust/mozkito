@@ -339,8 +339,7 @@ public class SVMTrainer extends MappingTrainer {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer#train()
+	 * @see de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer#train()
 	 */
 	@Override
 	public void train() {

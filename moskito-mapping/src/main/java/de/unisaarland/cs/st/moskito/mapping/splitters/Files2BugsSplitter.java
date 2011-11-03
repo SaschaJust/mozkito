@@ -71,8 +71,7 @@ public class Files2BugsSplitter extends MappingSplitter {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#process
-	 * ()
+	 * de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#process ()
 	 */
 	@Override
 	public List<Annotated> process() {

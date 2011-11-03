@@ -80,11 +80,9 @@ public class ReportTypeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
 	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments,
-	 * boolean)
+	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
 	public void register(final MappingSettings settings,
@@ -101,8 +99,7 @@ public class ReportTypeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
