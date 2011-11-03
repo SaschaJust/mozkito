@@ -165,7 +165,7 @@ public class EclipsePPALongTest {
 		if (Logger.logDebug()) {
 			Logger.debug(result);
 		}
-		return result.trim().equals("");
+		return (result == null) || result.trim().equals("");
 	}
 	
 	private static Tuple<Integer, List<String>> runEclipse(final String[] args) {
@@ -220,11 +220,5 @@ public class EclipsePPALongTest {
 		File tmpFile = new File("/tmp/ppa4.xml");
 		assertTrue(compareXML(compXML4, tmpFile));
 		tmpFile.delete();
-	}
-	
-	@Test
-	public void testTMP() {
-		compareXML(new File("/Users/kim/Projects/moskito/moskito-ppa/src/test/resources/ppa_comp.xml"), new File(
-		        "/Users/kim/Downloads/ppa.xml"));
 	}
 }
