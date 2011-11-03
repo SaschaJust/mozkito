@@ -70,7 +70,9 @@ public class ScoringReportReader extends AndamaSource<Report> {
 						Logger.info("Providing " + report);
 					}
 					
-					provideOutputData(report);
+					providePartialOutputData(report);
+				} else {
+					provideOutputData(null, true);
 				}
 			}
 		};
