@@ -95,10 +95,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	public static RCSTransaction createTransaction(final String id,
-	                                               final String message,
-	                                               final DateTime timestamp,
-	                                               final Person author,
-	                                               final String originalId) {
+			final String message,
+			final DateTime timestamp,
+			final Person author,
+			final String originalId) {
 		return new RCSTransaction(id, message, timestamp, author, originalId);
 	}
 	
@@ -119,7 +119,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private Set<RCSTransaction>     parents   = new HashSet<RCSTransaction>();
 	private RCSBranch               branch    = RCSBranch.MASTER;
 	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
-	private DateTime                timestamp;
+	private DateTime                javaTimestamp;
 	private Set<String>             tags      = new HashSet<String>();
 	private String                  originalId;
 	private boolean                 atomic    = false;
@@ -147,7 +147,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@NoneNull
 	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
-	        final String originalId) {
+			final String originalId) {
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
@@ -315,7 +315,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
 			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
 			int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
@@ -336,13 +336,13 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			}
 		} else {
 			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
+					|| (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			} else {
 				int r = getBranch().getEnd().getChild(getBranch())
-				                   .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+						.compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 				if (r != 0) {
 					return r;
 				} else {
@@ -369,8 +369,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the branch
 	 */
 	@ManyToOne (fetch = FetchType.LAZY,
-	            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-	            optional = false)
+			cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+			optional = false)
 	@JoinColumn (nullable = false)
 	public RCSBranch getBranch() {
 		return this.branch;
@@ -398,8 +398,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	public RCSTransaction getChild(final RCSBranch branch) {
 		if ((branch.getEnd() != null) && (branch.getEnd().equals(this))) {
 			return getChildren().isEmpty()
-			                              ? null
-			                              : getChildren().iterator().next();
+					? null
+							: getChildren().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
 				
@@ -443,8 +443,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Index (name = "idx_timestamp")
 	protected Date getJavaTimestamp() {
 		return getTimestamp() != null
-		                             ? getTimestamp().toDate()
-		                             : null;
+				? getTimestamp().toDate()
+						: null;
 	}
 	
 	/**
@@ -476,8 +476,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		
 		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
 			return getParents().isEmpty()
-			                             ? null
-			                             : getParents().iterator().next();
+					? null
+							: getParents().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(getParents(), new Predicate() {
 				
@@ -558,7 +558,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public DateTime getTimestamp() {
-		return this.timestamp;
+		return this.javaTimestamp;
 	}
 	
 	@Column (columnDefinition = "boolean default 'FALSE'")
@@ -611,9 +611,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the new java timestamp
 	 */
 	protected void setJavaTimestamp(final Date date) {
-		this.timestamp = date != null
-		                             ? new DateTime(date)
-		                             : null;
+		this.javaTimestamp = date != null
+				? new DateTime(date)
+		: null;
 	}
 	
 	/**
@@ -673,7 +673,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the timestamp to set
 	 */
 	protected void setTimestamp(final DateTime timestamp) {
-		this.timestamp = timestamp;
+		this.javaTimestamp = timestamp;
 	}
 	
 	/*
