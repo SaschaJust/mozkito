@@ -23,9 +23,7 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
-			<version>1.4</version>
-			<type>pom</type>
+			<version>1.5.M02</version>
 		</dependency>
-
 	</dependencies>
 </project>
