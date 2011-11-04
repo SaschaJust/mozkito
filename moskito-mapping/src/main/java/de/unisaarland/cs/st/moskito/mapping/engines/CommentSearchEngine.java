@@ -66,8 +66,7 @@ public class CommentSearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)

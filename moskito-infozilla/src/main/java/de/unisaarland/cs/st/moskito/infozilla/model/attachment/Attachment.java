@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.model.attachment;
 
@@ -183,6 +183,8 @@ public class Attachment implements Annotated {
 			attachment.setAttachable(createAttachable(attachment));
 		} catch (UnsupportedProtocolException e) {
 			throw new FetchException(e);
+		} catch (IOException e) {
+			throw new FetchException(e);
 		}
 		return null;
 	}
@@ -303,7 +305,7 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @return the md5 
+	 * @return the md5
 	 */
 	public byte[] getMd5() {
 		return this.md5;
@@ -332,70 +334,80 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param attachable the attachable to set
+	 * @param attachable
+	 *            the attachable to set
 	 */
 	public void setAttachable(final Attachable attachable) {
 		this.attachable = attachable;
 	}
 	
 	/**
-	 * @param data the data to set
+	 * @param data
+	 *            the data to set
 	 */
 	public void setData(final byte[] data) {
 		this.data = data;
 	}
 	
 	/**
-	 * @param encoding the encoding to set
+	 * @param encoding
+	 *            the encoding to set
 	 */
 	public void setEncoding(final String encoding) {
 		this.encoding = encoding;
 	}
 	
 	/**
-	 * @param entry the entry to set
+	 * @param entry
+	 *            the entry to set
 	 */
 	public void setEntry(final AttachmentEntry entry) {
 		this.entry = entry;
 	}
 	
 	/**
-	 * @param filename the filename to set
+	 * @param filename
+	 *            the filename to set
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 	
 	/**
-	 * @param generatedId the generatedId to set
+	 * @param generatedId
+	 *            the generatedId to set
 	 */
 	public void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	
 	/**
-	 * @param md5 the md5 to set
+	 * @param md5
+	 *            the md5 to set
 	 */
 	public void setMd5(final byte[] md5) {
 		this.md5 = md5;
 	}
 	
 	/**
-	 * @param mime the mime to set
+	 * @param mime
+	 *            the mime to set
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
 	}
 	
 	/**
-	 * @param sha1 the sha1 to set
+	 * @param sha1
+	 *            the sha1 to set
 	 */
 	public void setSha1(final byte[] sha1) {
 		this.sha1 = sha1;
 	}
 	
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(final AttachmentType type) {
 		this.type = type;

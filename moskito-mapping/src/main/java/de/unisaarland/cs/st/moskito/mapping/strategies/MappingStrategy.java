@@ -43,8 +43,7 @@ public abstract class MappingStrategy extends Registered {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
 	 */
 	@Override
 	public boolean isEnabled() {

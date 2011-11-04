@@ -44,7 +44,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class TransactionRegexSelector extends MappingSelector {
 	
-	private String pattern = "\\d{2,}";
+	private String pattern = "(\\d{2,})";
 	
 	/*
 	 * (non-Javadoc)
@@ -75,8 +75,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse
+	 * @see de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse
 	 * (java.lang.Object)
 	 */
 	@SuppressWarnings ("unchecked")
@@ -121,11 +120,9 @@ public class TransactionRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.register.Registered#register(de
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#register(de
 	 * .unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments,
-	 * boolean)
+	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
 	public void register(final MappingSettings settings,

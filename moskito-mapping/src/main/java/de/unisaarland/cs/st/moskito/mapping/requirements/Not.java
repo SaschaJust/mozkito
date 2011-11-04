@@ -38,8 +38,7 @@ public class Not extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check(
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check(
 	 * java.lang.Class, java.lang.Class,
 	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
