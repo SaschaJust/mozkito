@@ -19,7 +19,7 @@ public abstract class AndamaMultiplexer<K> extends AndamaThread<K, K> {
 	public AndamaMultiplexer(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 		
-		new DefaultProcessHook<K>(this);
+		new ForwardProcessHook<K>(this);
 	}
 	
 	/*

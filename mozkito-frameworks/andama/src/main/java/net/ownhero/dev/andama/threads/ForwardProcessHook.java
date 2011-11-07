@@ -7,12 +7,12 @@ package net.ownhero.dev.andama.threads;
  * @author just
  * 
  */
-public class DefaultProcessHook<K> extends ProcessHook<K, K> {
+public class ForwardProcessHook<K> extends ProcessHook<K, K> {
 	
 	/**
 	 * @param thread
 	 */
-	public DefaultProcessHook(AndamaThread<K, K> thread) {
+	public ForwardProcessHook(AndamaThread<K, K> thread) {
 		super(thread);
 	}
 	
