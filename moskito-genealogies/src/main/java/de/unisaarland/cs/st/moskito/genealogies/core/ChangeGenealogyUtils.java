@@ -9,6 +9,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 
 /**
@@ -31,7 +32,7 @@ public class ChangeGenealogyUtils {
 			}
 		});
 	}
-
+	
 	/** The genealogies. */
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
@@ -50,9 +51,9 @@ public class ChangeGenealogyUtils {
 	 *         within specified directory.
 	 */
 	@NoneNull
-	public static CoreChangeGenealogy readFromDB(final File dbFile) {
+	public static CoreChangeGenealogy readFromDB(final File dbFile, PersistenceUtil persistenceUtil) {
 		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
-		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile);
+		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
 		genealogies.put(genealogy, dbFile);
 		return genealogy;
 	}

@@ -61,7 +61,7 @@ public class GenealogyToolChain extends AndamaChain {
 		}
 		
 		File graphDBDir = graphDBArg.getValue();
-		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBDir);
+		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBDir, persistenceUtil);
 		
 		try {
 			this.persistenceUtil = PersistenceManager.getUtil();
@@ -77,7 +77,6 @@ public class GenealogyToolChain extends AndamaChain {
 	
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub
 		
 	}
 }

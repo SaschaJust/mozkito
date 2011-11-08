@@ -78,7 +78,7 @@ public class GenealogyUtils {
 		
 		settings.parseArguments();
 		
-		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue());
+		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), null);
 		
 		if (statsArg.getValue()) {
 			System.out.println(getGenealogyStats(genealogy));

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Ignore;
@@ -275,6 +276,8 @@ public class TestEnvironment {
 		//done everything is set.
 		persistenceUtil.commitTransaction();
 		
+		Logger.setLogLevel(LogLevel.INFO);
+
 	}
 	
 }

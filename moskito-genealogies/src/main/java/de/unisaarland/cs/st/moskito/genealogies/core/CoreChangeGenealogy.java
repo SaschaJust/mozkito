@@ -23,6 +23,10 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 
 /**
  * The Class ChangeGenealogy.
@@ -49,9 +53,10 @@ public class CoreChangeGenealogy {
 	 * @param dbFile
 	 */
 	@NoneNull
-	public CoreChangeGenealogy(final GraphDatabaseService graph, File dbFile) {
+	public CoreChangeGenealogy(final GraphDatabaseService graph, File dbFile, PersistenceUtil persistenceUtil) {
 		this.graph = graph;
 		this.dbFile = dbFile;
+		this.persistenceUtil = persistenceUtil;
 	}
 	
 	/**
@@ -70,6 +75,166 @@ public class CoreChangeGenealogy {
 	 */
 	public boolean addEdge(@NotEmpty final JavaChangeOperation dependent,
 			@NotEmpty final JavaChangeOperation target, final GenealogyEdgeType edgeType) {
+		
+		ChangeType depChangeType = dependent.getChangeType();
+		JavaElement depElement = dependent.getChangedElementLocation().getElement();
+		JavaElement targetElement = target.getChangedElementLocation().getElement();
+		ChangeType targetChangeType = target.getChangeType();
+		switch (edgeType) {
+			case DefinitionOnDefinition:
+			case DefinitionOnDeletedDefinition:
+				if (depChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge starting from delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (!(depElement instanceof JavaMethodDefinition)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge starting from non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				if (!(targetElement instanceof JavaMethodDefinition)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge pointing to non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				
+				switch (edgeType) {
+					case DefinitionOnDefinition:
+						if (targetChangeType.equals(ChangeType.Deleted)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DefinitionOnDefinition` edge pointing to delete operation. Edge not added.");
+							}
+							return false;
+						}
+						break;
+					case DefinitionOnDeletedDefinition:
+						if (!targetChangeType.equals(ChangeType.Deleted)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DefinitionOnDefinition` edge pointing to non-delete operation. Edge not added.");
+							}
+							return false;
+						}
+						break;
+					default:
+						if (Logger.logError()) {
+							Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
+									+ dependent.toString() + " target=" + target.toString());
+						}
+						return false;
+				}
+				break;
+				
+			case DeletedDefinitionOnDefinition:
+				if (!depChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge starting from non-delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (!(depElement instanceof JavaMethodDefinition)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge starting from non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				if (targetChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge pointing to delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (!(targetElement instanceof JavaMethodDefinition)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				break;
+			case CallOnDefinition:
+				if (depChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `CallOnDefinition` edge starting from delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (targetChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `CallOnDefinition` edge starting from delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (!(depElement instanceof JavaMethodCall)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `CallOnDefinition` edge starting from non JavaMethodCall. Edge not added.");
+					}
+					return false;
+				}
+				if (!(targetElement instanceof JavaMethodDefinition)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `CallOnDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				break;
+			case DeletedCallOnCall:
+			case DeletedCallOnDeletedDefinition:
+				
+				if (!depChangeType.equals(ChangeType.Deleted)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedCallOn[DeletedDefinition|Call]` edge starting from non-delete operation. Edge not added.");
+					}
+					return false;
+				}
+				if (!(depElement instanceof JavaMethodCall)) {
+					if (Logger.logError()) {
+						Logger.error("Cannot add `DeletedCallOn[DeletedDefinition|Call]` edge starting from non JavaMethodDefinition. Edge not added.");
+					}
+					return false;
+				}
+				switch (edgeType) {
+					case DeletedCallOnCall:
+						if (targetChangeType.equals(ChangeType.Deleted)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DeletedCallOnCall` edge pointing to delete operation. Edge not added.");
+							}
+							return false;
+						}
+						if (!(targetElement instanceof JavaMethodCall)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DeletedCallOnCall` edge pointing to non JavaMethodCall. Edge not added.");
+							}
+							return false;
+						}
+						break;
+					case DeletedCallOnDeletedDefinition:
+						if (!targetChangeType.equals(ChangeType.Deleted)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DeletedCallOnDeletedDefinition` edge pointing to non-delete operation. Edge not added.");
+							}
+							return false;
+						}
+						if (!(targetElement instanceof JavaMethodDefinition)) {
+							if (Logger.logError()) {
+								Logger.error("Cannot add `DeletedCallOnDeletedDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
+							}
+							return false;
+						}
+						break;
+					default:
+						return false;
+				}
+				break;
+			default:
+				if (Logger.logError()) {
+					Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
+							+ dependent.toString() + " target=" + target.toString());
+				}
+				return false;
+		}
 		
 		//add both vertices
 		addVertex(dependent);
@@ -191,6 +356,17 @@ public class CoreChangeGenealogy {
 	}
 	
 	/**
+	 * Returns a collection containing nodes that  are connected through an outgoing edge.
+	 * 
+	 * @return all dependents
+	 */
+	public Collection<JavaChangeOperation> getAllParents(JavaChangeOperation operation) {
+		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+	}
+	
+	/**
 	 * Returns a collection containing nodes depending on node <code>node</code>
 	 * via an edge of a type is contained within the specified edge type array.
 	 * (incoming edges)
@@ -225,10 +401,7 @@ public class CoreChangeGenealogy {
 	 * @return the dependents
 	 */
 	private Collection<Node> getDependents(Node node, GenealogyEdgeType... edgeTypes) {
-		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		Set<Node> parents = new HashSet<Node>();
 		for (Relationship rel : relationships) {
 			parents.add(rel.getStartNode());
@@ -262,7 +435,8 @@ public class CoreChangeGenealogy {
 		
 		for (Relationship rel : relationships) {
 			if (rel.getEndNode().equals(toNode)) {
-				return (GenealogyEdgeType) rel.getType();
+				RelationshipType relationshipType = rel.getType();
+				return GenealogyEdgeType.valueOf(relationshipType.toString());
 			}
 		}
 		return null;
@@ -274,11 +448,14 @@ public class CoreChangeGenealogy {
 		Iterable<RelationshipType> relationshipTypes = graph.getRelationshipTypes();
 		for (RelationshipType type : relationshipTypes) {
 			if (values.contains(type)) {
-				result.add((GenealogyEdgeType) type);
+				GenealogyEdgeType edgeType = GenealogyEdgeType.valueOf(type.toString());
+				result.add(edgeType);
 			}
 		}
 		return result;
 	}
+	
+	///////////////
 	
 	/**
 	 * Gets the graph db.
@@ -305,6 +482,45 @@ public class CoreChangeGenealogy {
 		Node node = indexHits.next();
 		indexHits.close();
 		return node;
+	}
+	
+	/**
+	 * Returns a collection containing nodes connected though outgoing edges.
+	 * 
+	 * @param types
+	 *            consider only edges of these types
+	 * @return the dependents
+	 */
+	public Collection<JavaChangeOperation> getParents(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
+		Node node = getNodeForVertex(operation);
+		if (node == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
+			}
+			return new HashSet<JavaChangeOperation>();
+		}
+		Collection<Node> dependentNodes = getParents(node, edgeTypes);
+		Set<JavaChangeOperation> parentOperations = new HashSet<JavaChangeOperation>();
+		for (Node dependentNode : dependentNodes) {
+			parentOperations.add(getVertexForNode(dependentNode));
+		}
+		return parentOperations;
+	}
+	
+	/**
+	 * Returns a collection containing nodes connected though outgoing edges.
+	 * 
+	 * @param types
+	 *            consider only edges of these types
+	 * @return the dependents
+	 */
+	private Collection<Node> getParents(Node node, GenealogyEdgeType... edgeTypes) {
+		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
+		Set<Node> parents = new HashSet<Node>();
+		for (Relationship rel : relationships) {
+			parents.add(rel.getEndNode());
+		}
+		return parents;
 	}
 	
 	/**
