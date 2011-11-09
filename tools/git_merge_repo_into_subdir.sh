@@ -84,7 +84,7 @@ function find_separator() {
 #
 # function exception(MESSAGE [string])
 function exception() {
-	local MESSAGE=$1
+	local MESSAGE=$*
 	
 	echo "ERROR: ${MESSAGE}" >&2
 	exit 1
@@ -178,12 +178,11 @@ function filter_branch() {
 	SED_COMMAND="s${SEPARATOR}$(echo -e '\t')${SEPARATOR}&${SUBDIR_NAME}/${SEPARATOR}"
 	
 	# FIXME this branch syntax does not work. Replace BRANCH~ID..BRANCH with something right
-	git filter-branch --INDEX-filter \
+	git filter-branch --index-filter \
 		'git ls-files -s | \
 		    sed "'"${SED_COMMAND}"'" | \
-		    GIT_INDEX_FILE=$GIT_INDEX_FILE.new git update-INDEX --INDEX-info && \
-		    mv $GIT_INDEX_FILE.new $GIT_INDEX_FILE
-		' "$BRANCH_NAME~$STARTID..$BRANCH_NAME"
+		    GIT_INDEX_FILE=$GIT_INDEX_FILE.new git update-index --index-info && \
+		    mv $GIT_INDEX_FILE.new $GIT_INDEX_FILE' "$STARTID..$BRANCH_NAME"
 	ret=$?
 	
 	return $ret
