@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 export SUBDIR_NAME
 export BRANCH_NAME
 export SOURCE_DIRECTORY
@@ -118,13 +118,13 @@ function fetch_repo() {
 function determine_startid() {
 	local SOURCE_DIRECTORY=$1
 	local INDEX=1
-	local TEMPFILE=$(mktemp)
+	local TEMPFILE=$(mktemp -t "gitmerge")
 	
 	# save the inverted list of all transactions into a temporary file
 	git rev-list --all --topo-order --remotes --branches --reverse >"${TEMPFILE}"
 	
 	# load the id of the first transaction
-	local STARTID=$(head -n"${INDEX}")
+	local STARTID=$(head -n"${INDEX}" "${TEMPFILE}")
 	
 	# get the total number of transactions
 	local TOTAL_REVS=$(cat "${TEMPFILE}" | wc -l)
@@ -133,7 +133,7 @@ function determine_startid() {
 	while [[ $(git show --pretty="format:" --name-only "${STARTID}" | wc -l) -eq 0 ]] && [[ ${INDEX} -le $TOTAL_REVS ]]; do
 		let INDEX=INDEX+1
 		STARTID=$(head -n "${INDEX}" "${TEMPFILE}" | tail -n +"${INDEX}")
-	fi
+	done
 
 	# delete tempfile
 	rm -f "${TEMPFILE}"
@@ -259,7 +259,7 @@ while [ -z "${SOURCE_DIRECTORY}" ]; do
 	
 	if [ -n "${SOURCE_DIRECTORY}" ]; then
 		if [ -d "${SOURCE_DIRECTORY}" ]; then
-			if [ -f "${SOURCE_DIRECTORY}/config" ] && egrep -q 'bare[ \t]=[ \t]true'; then
+			if [ -f "${SOURCE_DIRECTORY}/config" ] && egrep -q 'bare[ \t]=[ \t]true' "${SOURCE_DIRECTORY}/config" ; then
 				echo "Using source directory: ${SOURCE_DIRECTORY}"
 			else
 				echo "ERROR: Could not find bare repository at location: ${SOURCE_DIRECTORY}"
@@ -279,7 +279,7 @@ while [ -z "${WORKING_DIRECTORY}" ]; do
 	
 	if [ -n "${WORKING_DIRECTORY}" ]; then
 		if [ -d "${WORKING_DIRECTORY}" ]; then
-			if [ -d "${WORKING_DIRECTORY}/.git" ] && ! egrep -q 'bare[ \t]=[ \t]true'; then
+			if [ -f "${WORKING_DIRECTORY}/.git/config" ] && ! egrep -q 'bare[ \t]=[ \t]true' "${WORKING_DIRECTORY}/.git/config"; then
 				echo "Using working directory: ${WORKING_DIRECTORY}"
 			else
 				echo "ERROR: Could not find clone at location: ${WORKING_DIRECTORY}"
