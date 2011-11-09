@@ -119,6 +119,9 @@ function determine_startid() {
 	local SOURCE_DIRECTORY=$1
 	local INDEX=1
 	local TEMPFILE=$(mktemp -t "gitmerge")
+	local MYOLDPWD="$PWD"
+	
+	cd "${SOURCE_DIRECTORY}"
 	
 	# save the inverted list of all transactions into a temporary file
 	git rev-list --all --topo-order --remotes --branches --reverse >"${TEMPFILE}"
@@ -137,6 +140,8 @@ function determine_startid() {
 
 	# delete tempfile
 	rm -f "${TEMPFILE}"
+	
+	cd "${MYOLDPWD}"
 		
 	# check if we found a non-empty transaction
 	if [[ $(git show --pretty="format:" --name-only "${STARTID}" | wc -l) -eq 0 ]]; then
