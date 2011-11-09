@@ -53,8 +53,21 @@ public class ChangeGenealogyUtils {
 	@NoneNull
 	public static CoreChangeGenealogy readFromDB(final File dbFile, PersistenceUtil persistenceUtil) {
 		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
+		registerShutdownHook(graph);
 		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
 		genealogies.put(genealogy, dbFile);
 		return genealogy;
+	}
+	
+	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
+		// Registers a shutdown hook for the Neo4j instance so that it
+		// shuts down nicely when the VM exits (even if you "Ctrl-C" the
+		// running example before it's completed)
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				graphDb.shutdown();
+			}
+		});
 	}
 }

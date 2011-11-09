@@ -4,22 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
-import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class CoreChangeGenealogyTest extends TestEnvironment {
 	
@@ -27,86 +20,9 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 	public void testChangeGenealogy() {
 		TestEnvironment.setup();
 		
-		File tmpGraphDBFile = FileUtils
-				.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
-		
-		CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile,
-				super.getPersistenceUtil());
-		assertTrue(changeGenealogy != null);
-		
-		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
-			for (JavaChangeOperation operation : transactionEntry.getValue()) {
-				changeGenealogy.addVertex(operation);
-			}
-		}
-		
+		changeGenealogy.close();
+		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, getPersistenceUtil());
 		assertEquals(41, changeGenealogy.vertexSize());
-		
-		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
-			for (JavaChangeOperation op : transactionEntry.getValue()) {
-				assertTrue(changeGenealogy.hasVertex(op));
-				assertFalse(changeGenealogy.addVertex(op));
-			}
-		}
-		
-		//TODO test adding edges
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
-				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.CallOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.DefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3D),
-				environmentOperations.get(TestEnvironmentOperation.T2F3), GenealogyEdgeType.DeletedCallOnCall));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3A),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T6F2),
-				environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T7F2),
-				environmentOperations.get(TestEnvironmentOperation.T6F2),
-				GenealogyEdgeType.DefinitionOnDeletedDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
-				environmentOperations.get(TestEnvironmentOperation.T7F2), GenealogyEdgeType.DefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T9F1),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition));
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-				environmentOperations.get(TestEnvironmentOperation.T4F3A), GenealogyEdgeType.DeletedCallOnCall));
-		
-		assertTrue(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-				environmentOperations.get(TestEnvironmentOperation.T5F4), GenealogyEdgeType.DeletedCallOnCall));
-		
 		assertEquals(16, changeGenealogy.edgeSize());
 		
 		assertFalse(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T1F1),
