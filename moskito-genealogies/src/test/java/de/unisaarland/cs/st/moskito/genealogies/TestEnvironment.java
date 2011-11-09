@@ -77,6 +77,11 @@ public class TestEnvironment {
 	}
 	
 	public static void setup() {
+		
+		transactionMap.clear();
+		environmentOperations.clear();
+		environmentTransactions.clear();
+
 		// UNZIP git repo
 		URL zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
 		if (zipURL == null) {
