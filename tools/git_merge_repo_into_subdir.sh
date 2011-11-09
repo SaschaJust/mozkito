@@ -177,6 +177,7 @@ function filter_branch() {
 	
 	SED_COMMAND="s${SEPARATOR}$(echo -e '\t')${SEPARATOR}&${SUBDIR_NAME}/${SEPARATOR}"
 	
+	# FIXME this branch syntax does not work. Replace BRANCH~ID..BRANCH with something right
 	git filter-branch --INDEX-filter \
 		'git ls-files -s | \
 		    sed "'"${SED_COMMAND}"'" | \
