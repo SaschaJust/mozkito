@@ -179,7 +179,7 @@ function filter_branch() {
 	
 	git filter-branch --INDEX-filter \
 		'git ls-files -s | \
-		    sed '"${SED_COMMAND}"' | \
+		    sed "'"${SED_COMMAND}"'" | \
 		    GIT_INDEX_FILE=$GIT_INDEX_FILE.new git update-INDEX --INDEX-info && \
 		    mv $GIT_INDEX_FILE.new $GIT_INDEX_FILE
 		' "$BRANCH_NAME~$STARTID..$BRANCH_NAME"
