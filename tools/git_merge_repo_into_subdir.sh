@@ -170,9 +170,11 @@ function filter_branch() {
 		ret=$?
 	done
 	
+	SED_COMMAND="s${SEPARATOR}$(echo -e '\t')${SEPARATOR}&${SUBDIR_NAME}/${SEPARATOR}"
+	
 	git filter-branch --INDEX-filter \
 		'git ls-files -s | \
-		    sed "s'${SEPARATOR}$(echo -e '\t')${SEPARATOR}'&'${SUBDIR_NAME}'/'${SEPARATOR}'" | \
+		    sed '"${SED_COMMAND}"' | \
 		    GIT_INDEX_FILE=$GIT_INDEX_FILE.new git update-INDEX --INDEX-info && \
 		    mv $GIT_INDEX_FILE.new $GIT_INDEX_FILE
 		' "$BRANCH_NAME~$STARTID..$BRANCH_NAME"
