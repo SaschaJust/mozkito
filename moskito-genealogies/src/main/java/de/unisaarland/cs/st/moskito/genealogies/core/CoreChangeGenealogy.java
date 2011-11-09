@@ -20,6 +20,7 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.index.IndexManager;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -45,6 +46,10 @@ public class CoreChangeGenealogy {
 	
 	private File                       dbFile;
 	
+	private IndexManager               indexManager;
+	
+	private Index<Node>                nodeIndex;
+	
 	/**
 	 * Instantiates a new change genealogy.
 	 * 
@@ -57,6 +62,8 @@ public class CoreChangeGenealogy {
 		this.graph = graph;
 		this.dbFile = dbFile;
 		this.persistenceUtil = persistenceUtil;
+		indexManager = graph.index();
+		nodeIndex = indexManager.forNodes(NODE_ID);
 	}
 	
 	/**
@@ -258,6 +265,7 @@ public class CoreChangeGenealogy {
 		tx.success();
 		tx.finish();
 		
+		
 		return true;
 	}
 	
@@ -273,10 +281,10 @@ public class CoreChangeGenealogy {
 	 */
 	@NoneNull
 	public boolean addVertex(@NotEmpty final JavaChangeOperation v) {
-		Transaction tx = this.graph.beginTx();
 		if (this.hasVertex(v)) {
 			return false;
 		}
+		Transaction tx = this.graph.beginTx();
 		Node node = graph.createNode();
 		if (node == null) {
 			tx.failure();
@@ -285,8 +293,7 @@ public class CoreChangeGenealogy {
 		}
 		node.setProperty(NODE_ID, v.getId());
 		
-		Index<Node> index = graph.index().forNodes(NODE_ID);
-		index.add(node, NODE_ID, node.getProperty(NODE_ID));
+		nodeIndex.add(node, NODE_ID, node.getProperty(NODE_ID));
 		
 		tx.success();
 		tx.finish();
@@ -475,7 +482,7 @@ public class CoreChangeGenealogy {
 	}
 	
 	private Node getNodeForVertex(final JavaChangeOperation op){
-		IndexHits<Node> indexHits = graph.index().forNodes(NODE_ID).query(NODE_ID, op.getId());
+		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, op.getId());
 		if(!indexHits.hasNext()){
 			return null;
 		}
@@ -547,7 +554,7 @@ public class CoreChangeGenealogy {
 	 * @return the genealogy vertex iterator
 	 */
 	public IndexHits<Node> nodes() {
-		return graph.index().forNodes(NODE_ID).query(NODE_ID, "*");
+		return nodeIndex.query(NODE_ID, "*");
 	}
 	
 	/**
@@ -556,7 +563,7 @@ public class CoreChangeGenealogy {
 	 *         change genealogy
 	 */
 	public Iterator<JavaChangeOperation> vertexIterator() {
-		IndexHits<Node> indexHits = graph.index().forNodes(NODE_ID).query(NODE_ID, "*");
+		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, "*");
 		
 		Set<Long> operations = new HashSet<Long>();
 		for (Node node : indexHits) {

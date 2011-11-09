@@ -103,7 +103,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogy<Collection<JavaCha
 		Set<GenealogyEdgeType> edges = new HashSet<GenealogyEdgeType>();
 		for (JavaChangeOperation singleFrom : from) {
 			for (JavaChangeOperation singleTo : to) {
-				edges.add(core.getEdge(singleFrom, singleTo));
+				GenealogyEdgeType edge = core.getEdge(singleFrom, singleTo);
+				if (edge != null) {
+					edges.add(edge);
+				}
 			}
 		}
 		return edges;
