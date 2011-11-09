@@ -1,41 +1,88 @@
 #!/bin/bash
-set -x
 
-SOURCE_URL=$2
-TARGET_DIR=$1
-
-if [ ! -d "${TARGET_DIR}" ]; then
-	mkdir -p "${TARGET_DIR}" || exception "Cannot create target directory: ${TARGET_DIR}"
-else
-	exception "Target directory already exists: ${TARGET_DIR}"
-fi
-
-TARGET_DIR=$(make_absolut_path "${TARGET_DIR}")
-
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc makes sure a path is absolute. The absolut path is printed to stdout.
+# @retval 0 on success
+#
+# function make_absolut_path(TARGET_DIR [string, path],
+#                   TO [int, NOT_NEGATIVE])
 function make_absolut_path() {
 	local TARGET_DIR=$1
 	
-	if [ "${TARGET_DIR:1:1}" != "/" ]; then
+	if [ "${TARGET_DIR:0:1}" != "/" ]; then
 		echo "${PWD}/${TARGET_DIR}"
 	else
 		echo "${TARGET_DIR}"
 	fi
 }
 
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc makes sure SOURCE_URL is given in URL format. Relative and absolute
+#       paths are transformed into file:// URLs. Resulting path is printed
+#       to stdout. 
+# @retval 0 on success
+#
+# function make_url(SOURCE_URL [string, URL or path])
 function make_url() {
 	local SOURCE_URL=$1
 	
-	if [ "${TARGET_DIR:1:1}" == "/" ]; then
-		echo "file://${TARGET_DIR}"
-	elif [ "${TARGET_DIR}" =~ :\/\/ ]; then
-		
+	if [ "${SOURCE_URL:0:1}" == "/" ] && [ -d "${SOURCE_URL}" ]; then
+		echo "file://${SOURCE_URL}"
+	elif [[ ! "${SOURCE_URL}" =~ :\/\/ ]] && [ -d "${PWD}/${SOURCE_URL}" ]; then
+		echo "file://${PWD}/${SOURCE_URL}"
+	elif [[ "${SOURCE_URL}" =~ ^[a-z+]+:\/\/ ]]; then
+		echo "${SOURCE_URL}"
+	else
+		return 1
 	fi
 }
 
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc checks if svnadmin is available. Prints information about the installation
+#       to stdout. Prints an error to stderr if the tool hasn't been found.
+# @retval 0 on success
+#
+# function check_svnadmin()
+function check_svnadmin() {
+	TOOL=$(which svnadmin)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'svnadmin' tool. Please install the SVN version control system from: http://subversion.tigris.org/" >&2
+		return 1
+	else
+		echo "Using svnadmin installation: ${TOOL}"
+	fi
+}
+
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc checks if svnsync is available. Prints information about the installation
+#       to stdout. Prints an error to stderr if the tool hasn't been found.
+# @retval 0 on success
+#
+# function check_svnsync()
+function check_svnsync() {
+	TOOL=$(which svnsync)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'svnadmin' tool. Please install the SVN version control system from: http://subversion.tigris.org/"
+		return 1
+	else
+		echo "Using svnsync installation: ${TOOL}"
+	fi
+}
+
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc displays a help string
+# @retval 0 on success
+#
+# function help()
 function help() {
-	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY]
+	echo $(basename $0) [TARGET_DIRECTORY] [SOURCE_REPOSITORY] [ [USERNAME] [PASSWORD] ]
 	echo
 	echo "Mirrors a remote Subversion repository to a local directory."
+	exit 0
 }
 
 
@@ -51,6 +98,32 @@ function exception() {
 	exit 1
 }
 
+# check if there are 2 or 4 arguments present 
+[[ $# -eq 2 ]] || [[ $# -eq 4 ]] || help
+
+check_svnsync || exception "svnsync not available."
+check_svnadmin || exception "svnadmin not available."
+
+SOURCE_URL=$2
+TARGET_DIR=$1
+if [[ -n "$4" ]]; then
+	export SVN_USERNAME=$3
+	export SVN_PASSWORD=$4
+	export SVN_AUTHSTRING=" --source-username=${SVN_USERNAME} --source-password=${SVN_PASSWORD} "
+fi
+
+if [ ! -d "${TARGET_DIR}" ]; then
+	mkdir -p "${TARGET_DIR}" || exception "Cannot create target directory: ${TARGET_DIR}"
+else
+	exception "Target directory already exists: ${TARGET_DIR}"
+fi
+
+TARGET_DIR=$(make_absolut_path "${TARGET_DIR}")
+[[ $? -ne 0 ]] && exception "Target directory invalid."
+
+SOURCE_URL=$(make_url ${SOURCE_URL})
+[[ $? -ne 0 ]] && exception "Source URL invalid."
+
 svnadmin create "${TARGET_DIR}" || exception "Creating an empty, local SVN repository failed." 
 
 cat <<EOF >"${TARGET_DIR}/hooks/pre-revprop-change"
@@ -59,8 +132,8 @@ exit 0
 EOF
 chmod +x "${TARGET_DIR}/hooks/pre-revprop-change"
 
-svnsycn init "file://${TARGET_DIR}" "${SOURCE_URL}" || exception "Initializing the sync repository failed."
-svnsync synchronize "file://${TARGET_DIR}" || exception "Sync failed on ${TARGET_DIR}."
+svnsync init ${SVN_AUTHSTRING} "file://${TARGET_DIR}" "${SOURCE_URL}" || exception "Initializing the sync repository failed."
+svnsync synchronize ${SVN_AUTHSTRING} "file://${TARGET_DIR}" || exception "Sync failed on ${TARGET_DIR}."
 
 rm -f "${TARGET_DIR}/hooks/pre-revprop-change"
 

@@ -36,6 +36,24 @@ function sequence() {
 }
 
 # @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc checks if git is available. Prints information about the installation
+#       to stdout. Prints an error to stderr if the tool hasn't been found.
+# @retval 0 on success
+#
+# function check_git()
+function check_git() {
+	TOOL=$(which git)
+	ret=$?
+	
+	if [ $ret -ne 0 ]; then
+		echo "Couldn't find 'git' tool. Please install the git version control system from: http://git-scm.com"
+		return 1
+	else
+		echo "Using git installation: ${TOOL}"
+	fi
+}
+
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
 # @desc determines a separator to be used in sed to not collide with the DIRNAME
 #       variable. result is printed to stdout.
 # @retval 0 on success
@@ -220,6 +238,22 @@ function delete_tempbranch() {
 	return $ret
 }
 
+
+# @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+# @desc displays a help string
+# @retval 0 on success
+#
+# function help()
+function help() {
+	echo $(basename $0) 
+	echo
+	echo "Merges a remote git repository into a subdirectory of a target git repository."
+	exit 0
+}
+
+
+# check if tools are present
+check_git || help
 
 ## READ required information and perform consistency checks
 
