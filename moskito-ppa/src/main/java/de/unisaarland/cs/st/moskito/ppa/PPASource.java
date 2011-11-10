@@ -46,7 +46,7 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 				if (Logger.logDebug()) {
 					Logger.debug(criteria.toString());
 				}
-
+				
 				if ((transactionLimit != null) && (!transactionLimit.isEmpty())) {
 					if (Logger.logDebug()) {
 						Logger.debug("Added transaction input criteria limit: "
@@ -75,8 +75,8 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 				if (iterator.hasNext()) {
 					RCSTransaction transaction = iterator.next();
 					
-					if (Logger.logInfo()) {
-						Logger.info("Providing " + transaction);
+					if (Logger.logDebug()) {
+						Logger.debug("Providing " + transaction);
 					}
 					
 					providePartialOutputData(transaction);
