@@ -18,6 +18,7 @@ package de.unisaarland.cs.st.moskito.ppa.utils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -281,7 +282,7 @@ public class JavaElementLocations {
 	 * @return the elements
 	 */
 	public Collection<JavaElementLocation> getElements(final String filePath) {
-		Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		Collection<JavaElementLocation> result = new LinkedList<JavaElementLocation>();
 		if (methodDefs.containsKey(filePath)) {
 			result.addAll(methodDefs.get(filePath));
 		}
