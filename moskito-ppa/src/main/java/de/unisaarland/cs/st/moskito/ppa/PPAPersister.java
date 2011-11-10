@@ -3,6 +3,8 @@
  */
 package de.unisaarland.cs.st.moskito.ppa;
 
+import java.util.concurrent.Semaphore;
+
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
@@ -18,6 +20,8 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  */
 public class PPAPersister extends AndamaSink<JavaChangeOperation> {
+	
+	protected static final Semaphore available = new Semaphore(1, true);
 	
 	private Integer i = 0;
 	
@@ -42,12 +46,18 @@ public class PPAPersister extends AndamaSink<JavaChangeOperation> {
 					Logger.debug("Storing " + data);
 				}
 				
-				if ((++i % 50) == 0) {
+				try {
+					available.acquire();
+				} catch (InterruptedException e) {
+					available.release();
+				}
+				if ((++i % 5000) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}
 				
 				persistenceUtil.save(data);
+				available.release();
 			}
 		};
 		

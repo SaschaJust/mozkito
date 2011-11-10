@@ -44,9 +44,14 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 						Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
 					}
 					
+					try {
+						PPAPersister.available.acquire();
+					} catch (InterruptedException e) {
+						PPAPersister.available.release();
+					}
 					if (usePPA) {
+
 						PPAUtils.generateChangeOperations(repository, transaction, new HashSet<ChangeOperationVisitor>() {
-							
 							private static final long serialVersionUID = -6294280837922825955L;
 							
 							{
@@ -64,6 +69,7 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 							}
 						});
 					}
+					PPAPersister.available.release();
 					
 					iterator = visitor.getIterator();
 				}
