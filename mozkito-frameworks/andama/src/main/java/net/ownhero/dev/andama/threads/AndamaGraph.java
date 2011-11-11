@@ -812,6 +812,11 @@ public class AndamaGraph {
 					Logger.debug("Painting with color " + this.color + " " + rel.getStartNode().getProperty("NODEID")
 					        + "_" + rel.getEndNode().getProperty("NODEID"));
 				}
+				
+				if (!this.colorIndexes.containsKey(colorName)) {
+					this.colorIndexes.put(workingColor, this.graph.index().forRelationships(colorName));
+				}
+				
 				this.colorIndexes.get(colorName).add(rel,
 				                                     AndamaGraph.relation,
 				                                     rel.getStartNode().getProperty("NODEID") + "_"
