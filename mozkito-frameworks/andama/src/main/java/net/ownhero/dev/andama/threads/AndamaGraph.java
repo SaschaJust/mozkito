@@ -814,7 +814,7 @@ public class AndamaGraph {
 				}
 				
 				if (!this.colorIndexes.containsKey(colorName)) {
-					this.colorIndexes.put(workingColor, this.graph.index().forRelationships(colorName));
+					this.colorIndexes.put(colorName, this.graph.index().forRelationships(colorName));
 				}
 				
 				this.colorIndexes.get(colorName).add(rel,
