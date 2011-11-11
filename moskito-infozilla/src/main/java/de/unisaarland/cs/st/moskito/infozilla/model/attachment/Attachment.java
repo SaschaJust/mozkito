@@ -183,6 +183,8 @@ public class Attachment implements Annotated {
 			attachment.setAttachable(createAttachable(attachment));
 		} catch (UnsupportedProtocolException e) {
 			throw new FetchException(e);
+		} catch (IOException e) {
+			throw new FetchException(e);
 		}
 		return null;
 	}
