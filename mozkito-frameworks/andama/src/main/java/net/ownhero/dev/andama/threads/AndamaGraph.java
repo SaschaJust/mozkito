@@ -37,6 +37,7 @@ import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -424,8 +425,19 @@ public class AndamaGraph {
 			try {
 				File copyOfFile = IOUtils.getTemporaryCopyOfFile(resource.toURI());
 				FileUtils.unzip(copyOfFile, FileUtils.tmpDir);
-				
-				return new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
+				File file = new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
+				try {
+					FileUtils.ensureFilePermissions(file, FileUtils.ACCESSIBLE_DIR);
+				} catch (FilePermissionException e) {
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Something went wrong when trying to load graph layout from resource: "
+						        + resource.toURI());
+						Logger.warn("Causing rebuild of layout.");
+					}
+					file = new File(fileName);
+				}
+				return file;
 			} catch (IOException e) {
 				return new File(fileName);
 			} catch (URISyntaxException e) {
