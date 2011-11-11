@@ -449,17 +449,20 @@ public class AndamaGraph {
 		
 	}
 	
-	private boolean                 initialized = false;
-	private GraphDatabaseService    graph;
+	private boolean                              initialized  = false;
+	private GraphDatabaseService                 graph;
 	
-	private static final String     relation    = "connection_id";
+	private static final String                  relation     = "connection_id";
 	
-	private final AndamaGroup       threadGroup;
-	private final Map<String, Node> nodes       = new HashMap<String, Node>();
+	private final AndamaGroup                    threadGroup;
+	private final Map<String, Node>              nodes        = new HashMap<String, Node>();
 	
-	private final List<Integer>     colors      = new LinkedList<Integer>();
+	private final List<Integer>                  colors       = new LinkedList<Integer>();
 	
-	private final File              dbFile;
+	private final File                           dbFile;
+	
+	private final RelationshipIndex              workingColorRelationship;
+	private final Map<String, RelationshipIndex> colorIndexes = new HashMap<String, RelationshipIndex>();
 	
 	/**
 	 * @param threadGroup
@@ -489,6 +492,8 @@ public class AndamaGraph {
 				this.nodes.put(node.getProperty(NodeProperty.NODENAME.name()).toString(), node);
 			}
 		}
+		
+		this.workingColorRelationship = this.graph.index().forRelationships(AndamaGraph.workingColor);
 	}
 	
 	/**
@@ -510,9 +515,10 @@ public class AndamaGraph {
 		Relationship relation = null;
 		
 		for (Relationship rel : relationships) {
-			if (rel.getStartNode().equals(from) && rel.getEndNode().equals(to)) {
+			if (rel.getEndNode().equals(to)) {
 				// found relation
 				relation = rel;
+				break;
 			}
 		}
 		
@@ -520,8 +526,8 @@ public class AndamaGraph {
 			relation = from.createRelationshipTo(to, RelationType.KNOWS);
 		}
 		
-		this.graph.index().forRelationships(workingColor)
-		          .add(relation, AndamaGraph.relation, from.getProperty("NODEID") + "_" + to.getProperty("NODEID"));
+		this.workingColorRelationship.add(relation, AndamaGraph.relation,
+		                                  from.getProperty("NODEID") + "_" + to.getProperty("NODEID"));
 		
 		tx.success();
 		tx.finish();
@@ -538,7 +544,12 @@ public class AndamaGraph {
 	@SuppressWarnings ("unchecked")
 	private <V> void connectThreads(final String edgeColor) {
 		Transaction tx = this.graph.beginTx();
-		RelationshipIndex relationships = this.graph.index().forRelationships(edgeColor);
+		if (!this.colorIndexes.containsKey(edgeColor)) {
+			this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+		}
+		
+		RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+		
 		IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
 		
 		while (query.hasNext()) {
@@ -598,7 +609,7 @@ public class AndamaGraph {
 		
 		Iterator<Relationship> iterator = relationships.iterator();
 		while (iterator.hasNext()) {
-			this.graph.index().forRelationships(AndamaGraph.workingColor).remove(iterator.next());
+			this.workingColorRelationship.remove(iterator.next());
 		}
 		
 		tx.success();
@@ -618,11 +629,17 @@ public class AndamaGraph {
 	/**
 	 * @param color
 	 */
-	private void display(final String colorName,
+	private void display(final String edgeColor,
 	                     final boolean stdout) {
 		Transaction tx = this.graph.beginTx();
 		
-		IndexHits<Relationship> query = this.graph.index().forRelationships(colorName).query(AndamaGraph.relation, "*");
+		if (!this.colorIndexes.containsKey(edgeColor)) {
+			this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+		}
+		
+		RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+		
+		IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
 		StringBuilder builder = new StringBuilder();
 		
 		while (query.hasNext()) {
@@ -786,8 +803,7 @@ public class AndamaGraph {
 		if (andamaGraph.graph.index().existsForRelationships(AndamaGraph.workingColor)) {
 			Transaction tx = this.graph.beginTx();
 			
-			RelationshipIndex relationships = andamaGraph.graph.index().forRelationships(AndamaGraph.workingColor);
-			IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
+			IndexHits<Relationship> query = this.workingColorRelationship.query(AndamaGraph.relation, "*");
 			
 			while (query.hasNext()) {
 				Relationship rel = query.next();
@@ -796,12 +812,10 @@ public class AndamaGraph {
 					Logger.debug("Painting with color " + this.color + " " + rel.getStartNode().getProperty("NODEID")
 					        + "_" + rel.getEndNode().getProperty("NODEID"));
 				}
-				andamaGraph.graph.index()
-				                 .forRelationships(colorName)
-				                 .add(rel,
-				                      AndamaGraph.relation,
-				                      rel.getStartNode().getProperty("NODEID") + "_"
-				                              + rel.getEndNode().getProperty("NODEID"));
+				this.colorIndexes.get(colorName).add(rel,
+				                                     AndamaGraph.relation,
+				                                     rel.getStartNode().getProperty("NODEID") + "_"
+				                                             + rel.getEndNode().getProperty("NODEID"));
 			}
 			query.close();
 			tx.success();
@@ -862,8 +876,14 @@ public class AndamaGraph {
 		Transaction tx = this.graph.beginTx();
 		
 		for (int c = 0; c < this.color; ++c) {
-			IndexHits<Relationship> query = this.graph.index().forRelationships("color" + c)
-			                                          .query(AndamaGraph.relation, "*");
+			String edgeColor = "color" + c;
+			if (!this.colorIndexes.containsKey(edgeColor)) {
+				this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+			}
+			
+			RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+			
+			IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
 			HashSet<Relationship> relations = new HashSet<Relationship>();
 			
 			while (query.hasNext()) {
@@ -894,7 +914,15 @@ public class AndamaGraph {
 				} else {
 					if (CollectionUtils.isEqualCollection(graphs.get("color" + i), graphs.get("color" + j))) {
 						prunedColors.add(j);
-						this.graph.index().forRelationships("color" + j).delete();
+						
+						String edgeColor = "color" + j;
+						if (!this.colorIndexes.containsKey(edgeColor)) {
+							this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+						}
+						
+						RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+						
+						relationships.delete();
 					}
 				}
 				++j;
@@ -962,7 +990,7 @@ public class AndamaGraph {
 		if (this.graph.index().existsForRelationships(colorName)) {
 			Transaction tx = this.graph.beginTx();
 			
-			RelationshipIndex relationships = this.graph.index().forRelationships(colorName);
+			RelationshipIndex relationships = this.colorIndexes.get(colorName);
 			relationships.delete();
 			
 			tx.success();
