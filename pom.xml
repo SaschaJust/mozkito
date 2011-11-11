@@ -167,6 +167,11 @@
 			<name>Codehaus Maven 2.x Repository</name>
 			<url>http://repository.codehaus.org</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-external</id>
+			<name>own-hero</name>
+			<url>https://nexus.own-hero.net/content/repositories/external/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
 		<snapshotRepository>
