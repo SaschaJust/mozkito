@@ -42,7 +42,7 @@ public class AndamaSettings {
 	
 	public static final boolean            debug           = (System.getProperty("debug") != null);
 	public static final String             reportThis      = "Please file a bug report with this error message here: "
-	                                                               + "https://dev.own-hero.net";
+			+ "https://dev.own-hero.net";
 	
 	private Map<String, AndamaArgument<?>> arguments       = new HashMap<String, AndamaArgument<?>>();
 	private final Map<String, String>      toolInformation = new HashMap<String, String>();
@@ -59,12 +59,12 @@ public class AndamaSettings {
 	 */
 	public AndamaSettings() {
 		this.noDefaultValueArg = new BooleanArgument(this, "denyDefaultValues", "Ignore default values!", "false",
-		        false);
+				false);
 		this.helpArg = new BooleanArgument(this, "help", "Shows this help menu.", "false", false);
 		this.disableCrashArg = new BooleanArgument(this, "disableCrashEmail",
-		        "If set to `true` no crash emails will be send!", null, false);
+				"If set to `true` no crash emails will be send!", null, false);
 		this.settingsArg = new URIArgument(this, "andamaSettings",
-		        "Setting file that contains the JavaVM arguments for the current toolchain.", null, false);
+				"Setting file that contains the JavaVM arguments for the current toolchain.", null, false);
 		
 		this.mailArguments = new MailArguments(this, true);
 	}
@@ -227,13 +227,13 @@ public class AndamaSettings {
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified andama setting file `" + settingFile.getAbsolutePath()
-					        + "` does not exists. Ignoring ...");
+							+ "` does not exists. Ignoring ...");
 				}
 				parseSettingFile = false;
 			} else if (settingFile.isDirectory()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Specified andama setting file `" + settingFile.getAbsolutePath()
-					        + "` is a directory. Ignoring ...");
+							+ "` is a directory. Ignoring ...");
 				}
 				parseSettingFile = true;
 			}
@@ -262,7 +262,7 @@ public class AndamaSettings {
 				}
 			}
 		}
-		
+		Logger.readConfiguration();
 		for (Entry<Object, Object> entry : this.commandlineProps.entrySet()) {
 			String argName = entry.getKey().toString().trim();
 			String value = entry.getValue().toString().trim();
@@ -295,7 +295,7 @@ public class AndamaSettings {
 	protected void setField(final String argument, final String value) throws NoSuchFieldException {
 		if (!this.arguments.containsKey(argument)) {
 			throw new NoSuchFieldException("Argument could not be set in MinerSettings. "
-			        + "The argument is not part of the current argument set.");
+					+ "The argument is not part of the current argument set.");
 		}
 		this.arguments.get(argument).setStringValue(value);
 	}
@@ -349,8 +349,8 @@ public class AndamaSettings {
 				builder.append(FileUtils.lineSeparator);
 				Formatter formatter = new Formatter();
 				builder.append(formatter.format("%-" + maxNameLength + "s : %-" + maxValueLength + "s (%s)",
-				        arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
-				        arg.toString()));
+						arg.getName(), arg instanceof MaskedStringArgument ? passwordMask : arg.getValue(),
+								arg.toString()));
 				
 			}
 		}
