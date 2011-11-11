@@ -10,6 +10,7 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.utils.OperationCollection;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -17,14 +18,14 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
-public class GenealogyReader extends AndamaSource<Collection<JavaChangeOperation>> {
+public class GenealogyReader extends AndamaSource<OperationCollection> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
 	public GenealogyReader(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<Collection<JavaChangeOperation>, Collection<JavaChangeOperation>>(this) {
+		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -35,7 +36,7 @@ public class GenealogyReader extends AndamaSource<Collection<JavaChangeOperation
 			}
 		};
 		
-		new ProcessHook<Collection<JavaChangeOperation>, Collection<JavaChangeOperation>>(this) {
+		new ProcessHook<OperationCollection, OperationCollection>(this) {
 			
 			@Override
 			public void process() {
@@ -48,7 +49,7 @@ public class GenealogyReader extends AndamaSource<Collection<JavaChangeOperation
 						Logger.info("Providing " + transaction);
 					}
 					
-					providePartialOutputData(changeOperations);
+					providePartialOutputData(new OperationCollection(changeOperations));
 				} else {
 					provideOutputData(null, true);
 					setCompleted();

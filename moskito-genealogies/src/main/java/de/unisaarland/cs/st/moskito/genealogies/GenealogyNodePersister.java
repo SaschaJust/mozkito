@@ -9,6 +9,7 @@ import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.utils.OperationCollection;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
@@ -16,7 +17,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GenealogyNodePersister extends AndamaTransformer<Collection<JavaChangeOperation>, JavaChangeOperation> {
+public class GenealogyNodePersister extends AndamaTransformer<OperationCollection, JavaChangeOperation> {
 	
 	/**
 	 * Instantiates a new genealogy node persister.
@@ -32,7 +33,7 @@ public class GenealogyNodePersister extends AndamaTransformer<Collection<JavaCha
 			final CoreChangeGenealogy coreGenealogy) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<Collection<JavaChangeOperation>, JavaChangeOperation>(this) {
+		new ProcessHook<OperationCollection, JavaChangeOperation>(this) {
 			
 			/*
 			 * (non-Javadoc)
@@ -41,8 +42,9 @@ public class GenealogyNodePersister extends AndamaTransformer<Collection<JavaCha
 			 */
 			@Override
 			public void process() {
-				Collection<JavaChangeOperation> changeOperations = getInputData();
+				OperationCollection operationCollection = getInputData();
 				
+				Collection<JavaChangeOperation> changeOperations = operationCollection.unpack();
 				Iterator<JavaChangeOperation> iterator = changeOperations.iterator();
 				
 				JavaChangeOperationProcessQueue toWrite = new JavaChangeOperationProcessQueue();
