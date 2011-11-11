@@ -171,6 +171,24 @@ public class IOUtils {
 	}
 	
 	/**
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
+	public static final void copyInputStream(final InputStream in,
+	                                         final OutputStream out) throws IOException {
+		byte[] buffer = new byte[1024];
+		int len;
+		
+		while ((len = in.read(buffer)) >= 0) {
+			out.write(buffer, 0, len);
+		}
+		
+		in.close();
+		out.close();
+	}
+	
+	/**
 	 * @param uri
 	 * @return
 	 * @throws UnsupportedProtocolException
@@ -341,6 +359,73 @@ public class IOUtils {
 	}
 	
 	/**
+	 * @param uri
+	 * @return
+	 * @throws IOException
+	 */
+	public static File getTemporaryCopyOfFile(final URI uri) throws IOException {
+		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		try {
+			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
+		} catch (FilePermissionException e1) {
+			throw new IOException(e1);
+		}
+		
+		byte[] data = new byte[0];
+		OutputStream outputStream = null;
+		
+		try {
+			outputStream = new FileOutputStream(file);
+			
+			if (uri.getScheme().equals("http")) {
+				data = binaryfetchHttp(uri);
+			} else if (uri.getScheme().equals("https")) {
+				data = binaryfetchHttps(uri);
+			} else if (uri.getScheme().equals("file")) {
+				if (uri.getPath().contains(".jar!" + FileUtils.fileSeparator) && !new File(uri).exists()) {
+					String jarFilePath = uri.getPath().substring(0,
+					                                             uri.getPath()
+					                                                .indexOf(".jar!" + FileUtils.fileSeparator) + 4);
+					File plainJarFile = new File(jarFilePath);
+					
+					if (plainJarFile.exists()) {
+						ZipFile jarFile = new ZipFile(plainJarFile);
+						String entryName = uri.getPath().substring(jarFilePath.length());
+						ZipEntry entry = jarFile.getEntry(entryName);
+						copyInputStream(jarFile.getInputStream(entry), outputStream);
+						outputStream.close();
+						return file;
+					} else {
+						throw new IOException("JAR file for resource does not exist: " + jarFilePath);
+					}
+				} else {
+					data = binaryfetchFile(uri);
+				}
+			} else {
+				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
+			}
+			
+			outputStream.write(data);
+			outputStream.close();
+		} catch (FetchException e) {
+			throw new IOException(e);
+		} catch (UnsupportedProtocolException e) {
+			throw new IOException(e);
+		} finally {
+			try {
+				if (outputStream != null) {
+					outputStream.flush();
+					outputStream.close();
+				}
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+		}
+		
+		return file;
+	}
+	
+	/**
 	 * @param file
 	 * @return
 	 * @throws LoadingException
@@ -458,89 +543,5 @@ public class IOUtils {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * @param in
-	 * @param out
-	 * @throws IOException
-	 */
-	public static final void copyInputStream(InputStream in,
-	                                         OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		int len;
-		
-		while ((len = in.read(buffer)) >= 0)
-			out.write(buffer, 0, len);
-		
-		in.close();
-		out.close();
-	}
-	
-	/**
-	 * @param uri
-	 * @return
-	 * @throws IOException
-	 */
-	public static File getTemporaryCopyOfFile(URI uri) throws IOException {
-		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-		try {
-			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
-		} catch (FilePermissionException e1) {
-			throw new IOException(e1);
-		}
-		
-		byte[] data = new byte[0];
-		OutputStream outputStream = null;
-		
-		try {
-			outputStream = new FileOutputStream(file);
-			
-			if (uri.getScheme().equals("http")) {
-				data = binaryfetchHttp(uri);
-			} else if (uri.getScheme().equals("https")) {
-				data = binaryfetchHttps(uri);
-			} else if (uri.getScheme().equals("file")) {
-				if (uri.getPath().contains(".jar!" + FileUtils.fileSeparator) && !new File(uri).exists()) {
-					String jarFilePath = uri.getPath().substring(0,
-					                                             uri.getPath()
-					                                                .indexOf(".jar!" + FileUtils.fileSeparator) + 4);
-					File plainJarFile = new File(jarFilePath);
-					
-					if (plainJarFile.exists()) {
-						ZipFile jarFile = new ZipFile(plainJarFile);
-						String entryName = uri.getPath().substring(jarFilePath.length());
-						ZipEntry entry = jarFile.getEntry(entryName);
-						copyInputStream(jarFile.getInputStream(entry), outputStream);
-						outputStream.close();
-						return file;
-					} else {
-						throw new IOException("JAR file for resource does not exist: " + jarFilePath);
-					}
-				} else {
-					data = binaryfetchFile(uri);
-				}
-			} else {
-				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
-			}
-			
-			outputStream.write(data);
-			outputStream.close();
-		} catch (FetchException e) {
-			throw new IOException(e);
-		} catch (UnsupportedProtocolException e) {
-			throw new IOException(e);
-		} finally {
-			try {
-				if (outputStream != null) {
-					outputStream.flush();
-					outputStream.close();
-				}
-			} catch (Exception e) {
-				throw new IOException(e);
-			}
-		}
-		
-		return null;
 	}
 }
