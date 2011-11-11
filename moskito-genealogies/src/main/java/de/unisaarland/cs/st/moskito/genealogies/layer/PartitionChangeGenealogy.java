@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PartitionChangeGenealogy extends ChangeGenealogy<Collection<JavaChangeOperation>, JavaChangeOperation> {
+public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<JavaChangeOperation>, JavaChangeOperation> {
 	
 	
 	/**

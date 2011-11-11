@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
@@ -19,7 +20,7 @@ import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
  *            the type of objects method results will be based on
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public abstract class ChangeGenealogy<T, K> {
+public abstract class ChangeGenealogyLayer<T, K> implements ChangeGenealogy<T, K> {
 	
 	/** The core. */
 	protected CoreChangeGenealogy core;
@@ -30,13 +31,14 @@ public abstract class ChangeGenealogy<T, K> {
 	 * @param core
 	 *            the core
 	 */
-	public ChangeGenealogy(CoreChangeGenealogy core){
+	public ChangeGenealogyLayer(CoreChangeGenealogy core){
 		this.core = core;
 	}
 	
 	/**
 	 * Close.
 	 */
+	@Override
 	public void close() {
 		core.close();
 	}
@@ -50,6 +52,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the to
 	 * @return true, if successful
 	 */
+	@Override
 	public abstract boolean containsEdge(final T from, final T to);
 	
 	/**
@@ -59,6 +62,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the vertex
 	 * @return true, if successful
 	 */
+	@Override
 	public abstract boolean containsVertex(final T vertex);
 	
 	/**
@@ -66,6 +70,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the int
 	 */
+	@Override
 	public final int edgeSize() {
 		return this.core.edgeSize();
 	}
@@ -77,6 +82,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the t
 	 * @return the all dependents
 	 */
+	@Override
 	public final Collection<K> getAllDependents(T t) {
 		return getDependents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
@@ -90,6 +96,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the t
 	 * @return the all parents
 	 */
+	@Override
 	public final Collection<K> getAllParents(T t) {
 		return getParents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
@@ -109,6 +116,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the edge types
 	 * @return the dependents
 	 */
+	@Override
 	public abstract Collection<K> getDependents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
@@ -120,6 +128,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the to
 	 * @return the edges
 	 */
+	@Override
 	public abstract Collection<GenealogyEdgeType> getEdges(final T from, final T to);
 	
 	/**
@@ -127,6 +136,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the existing edge types
 	 */
+	@Override
 	public final Set<GenealogyEdgeType> getExistingEdgeTypes(){
 		return this.core.getExistingEdgeTypes();
 	}
@@ -136,6 +146,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the graph db dir
 	 */
+	@Override
 	public final File getGraphDBDir() {
 		return this.core.getGraphDBDir();
 	}
@@ -145,6 +156,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the graph db service
 	 */
+	@Override
 	public final GraphDatabaseService getGraphDBService() {
 		return this.core.getGraphDBService();
 	}
@@ -158,6 +170,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 *            the edge types
 	 * @return the parents
 	 */
+	@Override
 	public abstract Collection<K> getParents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
@@ -165,6 +178,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the iterator
 	 */
+	@Override
 	public abstract Iterator<K> vertexSet();
 	
 	/**
@@ -172,6 +186,7 @@ public abstract class ChangeGenealogy<T, K> {
 	 * 
 	 * @return the int
 	 */
+	@Override
 	public abstract int vertexSize();
 	
 }

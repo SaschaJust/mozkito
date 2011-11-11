@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.moskito.genealogies.core;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 
+import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
@@ -34,7 +36,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreChangeGenealogy {
+public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation, JavaChangeOperation> {
 	
 	private static final String        NODE_ID = "javachangeooeration_id";
 	
@@ -307,6 +309,7 @@ public class CoreChangeGenealogy {
 	 * be taken care of by a separate ShutdownHook. So make sure to call this
 	 * method only when you are know what you are doing!
 	 */
+	@Override
 	public void close() {
 		this.graph.shutdown();
 	}
@@ -322,11 +325,18 @@ public class CoreChangeGenealogy {
 	 * @return true, if an edge from <code>from</code> to <code>to</code>
 	 *         exists, false otherwise.
 	 */
+	@Override
 	public boolean containsEdge(JavaChangeOperation from, JavaChangeOperation to) {
 		GenealogyEdgeType result = this.getEdge(from, to);
 		return result != null;
 	}
 	
+	@Override
+	public boolean containsVertex(JavaChangeOperation vertex) {
+		return hasVertex(vertex);
+	}
+	
+	@Override
 	public int edgeSize(){
 		int result = 0;
 		IndexHits<Node> nodes = nodes();
@@ -344,6 +354,7 @@ public class CoreChangeGenealogy {
 	 * 
 	 * @return all dependents
 	 */
+	@Override
 	public Collection<JavaChangeOperation> getAllDependents(JavaChangeOperation operation) {
 		return getDependents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
@@ -367,6 +378,7 @@ public class CoreChangeGenealogy {
 	 * 
 	 * @return all dependents
 	 */
+	@Override
 	public Collection<JavaChangeOperation> getAllParents(JavaChangeOperation operation) {
 		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
@@ -382,6 +394,7 @@ public class CoreChangeGenealogy {
 	 *            consider only edges of these types
 	 * @return the dependents
 	 */
+	@Override
 	public Collection<JavaChangeOperation> getDependents(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(operation);
 		if (node == null) {
@@ -449,6 +462,16 @@ public class CoreChangeGenealogy {
 		return null;
 	}
 	
+	///////////////
+	
+	@Override
+	public Collection<GenealogyEdgeType> getEdges(JavaChangeOperation from, JavaChangeOperation to) {
+		Collection<GenealogyEdgeType> result = new ArrayList<GenealogyEdgeType>(1);
+		result.add(getEdge(from, to));
+		return result;
+	}
+	
+	@Override
 	public Set<GenealogyEdgeType> getExistingEdgeTypes() {
 		Set<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
 		List<GenealogyEdgeType> values = Arrays.asList(GenealogyEdgeType.values());
@@ -462,8 +485,6 @@ public class CoreChangeGenealogy {
 		return result;
 	}
 	
-	///////////////
-	
 	/**
 	 * Gets the graph db.
 	 * 
@@ -473,10 +494,12 @@ public class CoreChangeGenealogy {
 		return this.graph;
 	}
 	
+	@Override
 	public File getGraphDBDir() {
 		return this.dbFile;
 	}
 	
+	@Override
 	public GraphDatabaseService getGraphDBService(){
 		return this.graph;
 	}
@@ -498,6 +521,7 @@ public class CoreChangeGenealogy {
 	 *            consider only edges of these types
 	 * @return the dependents
 	 */
+	@Override
 	public Collection<JavaChangeOperation> getParents(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(operation);
 		if (node == null) {
@@ -573,12 +597,18 @@ public class CoreChangeGenealogy {
 		return new CoreGenealogyVertexIterator(operations, persistenceUtil);
 	}
 	
+	@Override
+	public Iterator<JavaChangeOperation> vertexSet() {
+		return vertexIterator();
+	}
+	
 	/**
 	 * Number of vertices. In most scenarios this number is exact. In some
 	 * scenarios this number will be close to accurate.
 	 * 
 	 * @return the #vertices
 	 */
+	@Override
 	public int vertexSize() {
 		IndexHits<Node> indexHits = graph.index().forNodes(NODE_ID).query(NODE_ID, "*");
 		int result = indexHits.size();

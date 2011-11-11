@@ -12,7 +12,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class TransactionChangeGenealogy extends ChangeGenealogy<RCSTransaction, RCSTransaction> {
+public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransaction, RCSTransaction> {
 	
 	public static TransactionChangeGenealogy readFromFile(File graphDBDir, PersistenceUtil persistenceUtil){
 		PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir, persistenceUtil);
