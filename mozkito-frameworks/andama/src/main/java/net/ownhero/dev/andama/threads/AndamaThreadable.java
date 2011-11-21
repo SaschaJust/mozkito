@@ -158,7 +158,7 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	/**
 	 * @return
 	 */
-	public Class<K> getInputType();
+	public Class<?> getInputType();
 	
 	/**
 	 * @return
@@ -178,7 +178,7 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	/**
 	 * @return
 	 */
-	public Class<V> getOutputType();
+	public Class<?> getOutputType();
 	
 	/*
 	 * (non-Javadoc)
