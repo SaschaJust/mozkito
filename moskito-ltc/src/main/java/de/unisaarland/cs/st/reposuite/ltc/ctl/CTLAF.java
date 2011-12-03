@@ -75,8 +75,9 @@ public class CTLAF extends CTLComposedFormula {
 	 * @param trueStates
 	 * @return
 	 * @author Kim Herzig <kim@cs.uni-saarland.de>
+	 * @param <V>
 	 */
-	private Set<State> getParentStates(KripkeStructure kripkeStruct, Set<State> states) {
+	private <V> Set<State> getParentStates(KripkeStructure<V> kripkeStruct, Set<State> states) {
 		Set<State> parents = new HashSet<State>();
 		Set<State> children = states;
 		while (!children.isEmpty()) {
@@ -134,7 +135,7 @@ public class CTLAF extends CTLComposedFormula {
 	 * .KripkeStructure)
 	 */
 	@Override
-	public void modelCheckAllStates(KripkeStructure kripkeStruct) {
+	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}

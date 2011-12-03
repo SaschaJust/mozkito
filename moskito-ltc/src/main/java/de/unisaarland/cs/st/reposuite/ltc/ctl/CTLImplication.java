@@ -152,7 +152,7 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * .KripkeStructure)
 	 */
 	@Override
-	public void modelCheckAllStates(KripkeStructure kripkeStruct) {
+	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}

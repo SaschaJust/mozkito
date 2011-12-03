@@ -109,7 +109,7 @@ public class CTLAX extends CTLComposedFormula {
 	 * .KripkeStructure)
 	 */
 	@Override
-	public void modelCheckAllStates(KripkeStructure kripkeStruct) {
+	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}

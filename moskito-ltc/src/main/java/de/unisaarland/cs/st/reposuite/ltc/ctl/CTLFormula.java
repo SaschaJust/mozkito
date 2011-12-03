@@ -144,7 +144,7 @@ public abstract class CTLFormula {
 	 * @return <code>true</code> if the formula is true in the given structure;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean modelCheck(KripkeStructure kripkeStruct) {
+	public final <V> boolean modelCheck(KripkeStructure<V> kripkeStruct) {
 		this.modelCheckAllStates(kripkeStruct);
 		for (State state : kripkeStruct.getInitialStates()) {
 			assert kripkeStruct.wasFormulaEvaluated(state, this);
@@ -163,7 +163,7 @@ public abstract class CTLFormula {
 	 * @param kripkeStruct
 	 *            Kripke structure to model-check the formula against.
 	 */
-	public abstract void modelCheckAllStates(KripkeStructure kripkeStruct);
+	public abstract <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct);
 	
 	public abstract void putAttomicFormulas(Collection<CTLAtomicFormula> atomicFormulas);
 	

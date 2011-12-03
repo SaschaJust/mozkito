@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
 /**
  * Instances of this class represent labels used by Kripke structures to label

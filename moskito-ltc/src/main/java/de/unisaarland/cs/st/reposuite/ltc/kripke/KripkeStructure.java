@@ -1,20 +1,17 @@
 package de.unisaarland.cs.st.reposuite.ltc.kripke;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.reposuite.genealogies.ChangeGenealogy;
-import de.unisaarland.cs.st.reposuite.genealogies.GenealogyVertex;
+import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.ltc.ctl.CTLFormula;
-import de.unisaarland.cs.st.reposuite.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSFile;
-import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
 
 /**
  * Instances of this class represent Kripke structures. Basically, Kripke
@@ -33,7 +30,7 @@ import de.unisaarland.cs.st.reposuite.rcs.model.RCSTransaction;
  * 
  * @author Andrzej Wasylkowski
  */
-public class KripkeStructure {
+public class KripkeStructure<V> {
 	
 	// Important invariants:
 	// 1. state2successors has the same set of keys as state2labels,
@@ -54,7 +51,7 @@ public class KripkeStructure {
 	 *            Transition that should be the final one.
 	 * @return Kripke structure created from the given object usage model.
 	 */
-	public static KripkeStructure createFrom(ChangeGenealogy tdg) {
+	public static <T> KripkeStructure<T> createFrom(ChangeGenealogy<T> changeGenealogy, LabelGenerator<T> labelGenerator) {
 		// This method creates a Kripke structure from the given OUM by
 		// following the method described in the following paper:
 		// Jonsson, Bengt, Ahmed Hussain Khan, and Joachim Parrow. 1990.
@@ -63,60 +60,47 @@ public class KripkeStructure {
 		// Automatic Verification Methods for Finite State Systems, 179-188.
 		// Lecture Notes in Computer Science 407. Berlin: Springer-Verlag
 		
-		KripkeStructure kripkeStruct = new KripkeStructure();
+		KripkeStructure<T> kripkeStruct = new KripkeStructure<T>();
 		Set<State> finalTransitionStates = new HashSet<State>();
 		
 		// Create states in the Kripke structure.
-		State initialState = kripkeStruct.createNewState(tdg.getRoot());
+		//FIXME this is not nice but should work. :-)
+		State initialState = kripkeStruct.createNewState(null);
+		
 		kripkeStruct.markStateAsInitial(initialState);
 		
-		HashMap<GenealogyVertex, State> vertices2States = new HashMap<GenealogyVertex, State>();
-		for (GenealogyVertex v : tdg.vertexSet()) {
-			if (v == tdg.getRoot()) {
-				vertices2States.put(v, initialState);
-			} else if (v.getAllDependents().size() < 1) {
+		HashMap<T, State> vertices2States = new HashMap<T, State>();
+		Iterator<T> vertexSet = changeGenealogy.vertexSet();
+		while (vertexSet.hasNext()) {
+			T v = vertexSet.next();
+			Collection<T> allParents = changeGenealogy.getAllParents(v);
+			if (allParents.isEmpty()) {
 				continue;
 			} else {
 				vertices2States.put(v, kripkeStruct.createNewState(v));
 			}
 			State state = vertices2States.get(v);
-			if (v.getAllVerticesDependingOn().size() < 1) {
+			Collection<T> allDependents = changeGenealogy.getAllDependents(v);
+			if (allDependents.isEmpty()) {
 				// if there are no outgoing edges, the state is a final state
 				finalTransitionStates.add(state);
-				kripkeStruct.addTransition(state, kripkeStruct.finalState);
+				kripkeStruct.addState(state, kripkeStruct.finalState);
 			}
 			if (!kripkeStruct.getInitialStates().contains(state)) {
 				// add file path as labels
 				
-				for (JavaChangeOperation delta : tdg.getJavaChangeOperationsForVertex(v)) {
-					String changedPath = delta.getChangedElementLocation().getFilePath();
-					RCSTransaction transaction = v.getTransaction();
-					
-					boolean warn = true;
-					
-					//get File for FilePath and transaction!
-					for (RCSFile file : transaction.getChangedFiles()) {
-						if (file.getPath(transaction).equals(changedPath)) {
-							kripkeStruct.addLabelToState(state, Label.getLabel(file));
-							warn = false;
-							break;
-						}
-					}
-					if (warn) {
-						if (Logger.logWarn()) {
-							Logger.warn("Could not determine RCSFile for changed path '" + changedPath
-									+ "' and transaction " + transaction.getId());
-						}
-					}
+				Collection<Label> labels = labelGenerator.getLabels(v);
+				for (Label label : labels) {
+					kripkeStruct.addLabelToState(state, label);
 				}
 			}
 		}
 		
-		for (GenealogyVertex from : vertices2States.keySet()) {
-			for (GenealogyVertex to : from.getAllDependents()) {
+		for (T from : vertices2States.keySet()) {
+			for (T to : changeGenealogy.getAllDependents(from)) {
 				State fromState = vertices2States.get(from);
 				State toState = vertices2States.get(to);
-				kripkeStruct.addTransition(fromState, toState);
+				kripkeStruct.addState(fromState, toState);
 			}
 		}
 		
@@ -147,7 +131,7 @@ public class KripkeStructure {
 	/** Set of formulas that were evaluated on all states in this structure. */
 	private final Set<CTLFormula>             evaluatedFormulas;
 	
-	private HashMap<State, GenealogyVertex>   states2vertices;
+	private HashMap<State, V>                 states2vertices;
 	
 	/**
 	 * Creates a new, empty Kripke structure. This constructor should not be
@@ -161,11 +145,11 @@ public class KripkeStructure {
 		this.trueFormulas = new HashMap<State, Set<CTLFormula>>();
 		this.falseFormulas = new HashMap<State, Set<CTLFormula>>();
 		this.evaluatedFormulas = new HashSet<CTLFormula>();
-		this.states2vertices = new HashMap<State, GenealogyVertex>();
+		this.states2vertices = new HashMap<State, V>();
 		
 		this.finalState = this.createNewState(null);
 		
-		this.addTransition(this.finalState, this.finalState);
+		this.addState(this.finalState, this.finalState);
 	}
 	
 	/**
@@ -189,7 +173,7 @@ public class KripkeStructure {
 	 * @param to
 	 *            Final state of the transition.
 	 */
-	public void addTransition(State from, State to) {
+	public void addState(State from, State to) {
 		assert this.state2successors.containsKey(from);
 		assert this.state2successors.containsKey(to);
 		assert this.state2predecessors.containsKey(from);
@@ -223,7 +207,7 @@ public class KripkeStructure {
 	 * 
 	 * @return The state that was created.
 	 */
-	public State createNewState(GenealogyVertex vertex) {
+	public State createNewState(V vertex) {
 		State state = new State();
 		this.state2successors.put(state, new HashSet<State>());
 		this.state2predecessors.put(state, new HashSet<State>());
@@ -358,7 +342,7 @@ public class KripkeStructure {
 		return Collections.unmodifiableSet(this.state2successors.get(state));
 	}
 	
-	public GenealogyVertex getVertexForState(State state) {
+	public V getVertexForState(State state) {
 		return this.states2vertices.get(state);
 	}
 	
@@ -428,9 +412,9 @@ public class KripkeStructure {
 	// return true;
 	// }
 	
-	public Set<GenealogyVertex> getVerticesFormulaIsTrue(CTLFormula formula) {
+	public Set<V> getVerticesFormulaIsTrue(CTLFormula formula) {
 		Set<State> states = this.getStatesFormulaIsTrue(formula);
-		Set<GenealogyVertex> result = new HashSet<GenealogyVertex>();
+		Set<V> result = new HashSet<V>();
 		for (State state : states) {
 			result.add(this.states2vertices.get(state));
 		}
@@ -480,7 +464,7 @@ public class KripkeStructure {
 	 * @return <code>true</code> if both structures are isomorphic;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isomorphicWith(KripkeStructure other) {
+	public boolean isomorphicWith(KripkeStructure<V> other) {
 		// first check that the numbers of states (total and initial) are equal
 		if (this.state2successors.size() != other.state2successors.size()) {
 			return false;
