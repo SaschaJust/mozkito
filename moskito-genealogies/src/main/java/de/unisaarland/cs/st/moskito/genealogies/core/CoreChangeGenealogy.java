@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation, JavaChangeOperation> {
+public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
 	
 	private static final String        NODE_ID = "javachangeooeration_id";
 	
@@ -385,6 +385,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation,
 				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	@Override
+	public CoreChangeGenealogy getCore() {
+		return this;
+	}
+	
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code>
 	 * via an edge of a type is contained within the specified edge type array.
@@ -410,6 +415,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation,
 		}
 		return parentOperations;
 	}
+	
+	///////////////
 	
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code>
@@ -461,8 +468,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation,
 		}
 		return null;
 	}
-	
-	///////////////
 	
 	@Override
 	public Collection<GenealogyEdgeType> getEdges(JavaChangeOperation from, JavaChangeOperation to) {

@@ -6,16 +6,21 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransaction, RCSTransaction> {
+public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransaction> {
 	
-	public static TransactionChangeGenealogy readFromFile(File graphDBDir, PersistenceUtil persistenceUtil){
-		PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir, persistenceUtil);
+	public static TransactionChangeGenealogy readFromFile(
+			File graphDBDir,
+			PersistenceUtil persistenceUtil,
+			PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
+		PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir, persistenceUtil,
+				partitionGenerator);
 		return new TransactionChangeGenealogy(partitionChangeGenealogy, persistenceUtil);
 	}
 	
@@ -45,11 +50,16 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	@Override
 	public Collection<RCSTransaction> getDependents(RCSTransaction t, GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		Collection<JavaChangeOperation> dependents = partitionChangeGenealogy.getDependents(fromPartition, edgeTypes);
+		Collection<Collection<JavaChangeOperation>> dependents = partitionChangeGenealogy.getDependents(fromPartition,
+				edgeTypes);
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
-		for (JavaChangeOperation parent : dependents) {
-			result.add(parent.getRevision().getTransaction());
+		//FIXME this is pretty inefficient. Actually we need a mechanism that ensures that partition always belong to the same transaction
+		//but this is actually inforced by the partition generator
+		for (Collection<JavaChangeOperation> partition : dependents) {
+			for (JavaChangeOperation parent : partition) {
+				result.add(parent.getRevision().getTransaction());
+			}
 		}
 		return result;
 	}
@@ -64,11 +74,14 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	@Override
 	public Collection<RCSTransaction> getParents(RCSTransaction t, GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		Collection<JavaChangeOperation> parents = partitionChangeGenealogy.getParents(fromPartition, edgeTypes);
+		Collection<Collection<JavaChangeOperation>> parents = partitionChangeGenealogy.getParents(fromPartition,
+				edgeTypes);
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
-		for (JavaChangeOperation parent : parents) {
-			result.add(parent.getRevision().getTransaction());
+		for (Collection<JavaChangeOperation> partition : parents) {
+			for (JavaChangeOperation parent : partition) {
+				result.add(parent.getRevision().getTransaction());
+			}
 		}
 		return result;
 	}
@@ -79,22 +92,26 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public Iterator<RCSTransaction> vertexSet() {
-		Iterator<JavaChangeOperation> vertexIter = partitionChangeGenealogy.vertexSet();
+		Iterator<Collection<JavaChangeOperation>> vertexIter = partitionChangeGenealogy.vertexSet();
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		while (vertexIter.hasNext()) {
-			JavaChangeOperation operation = vertexIter.next();
-			result.add(operation.getRevision().getTransaction());
+			Collection<JavaChangeOperation> operations = vertexIter.next();
+			for (JavaChangeOperation operation : operations) {
+				result.add(operation.getRevision().getTransaction());
+			}
 		}
 		return result.iterator();
 	}
 	
 	@Override
 	public int vertexSize() {
-		Iterator<JavaChangeOperation> vertexIter = partitionChangeGenealogy.vertexSet();
+		Iterator<Collection<JavaChangeOperation>> vertexIter = partitionChangeGenealogy.vertexSet();
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		while (vertexIter.hasNext()) {
-			JavaChangeOperation operation = vertexIter.next();
-			result.add(operation.getRevision().getTransaction());
+			Collection<JavaChangeOperation> operations = vertexIter.next();
+			for (JavaChangeOperation operation : operations) {
+				result.add(operation.getRevision().getTransaction());
+			}
 		}
 		return result.size();
 	}

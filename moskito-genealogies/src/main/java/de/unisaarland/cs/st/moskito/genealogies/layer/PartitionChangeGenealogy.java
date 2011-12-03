@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
+import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -16,8 +18,10 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<JavaChangeOperation>, JavaChangeOperation> {
+public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<JavaChangeOperation>> {
 	
+	
+	private PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator;
 	
 	/**
 	 * Instantiates a new partition change genealogy.
@@ -29,8 +33,14 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @param existingPartitions
 	 *            the existing partitions
 	 */
-	public PartitionChangeGenealogy(File graphDBDir, PersistenceUtil persistenceUtil) {
+	public PartitionChangeGenealogy(File graphDBDir, PersistenceUtil persistenceUtil,
+			PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
 		super(ChangeGenealogyUtils.readFromDB(graphDBDir, persistenceUtil));
+		this.partitionGenerator = partitionGenerator;
+	}
+	
+	public Collection<Collection<JavaChangeOperation>> buildPartitions(Collection<JavaChangeOperation> input) {
+		return this.partitionGenerator.partition(input);
 	}
 	
 	/*
@@ -77,7 +87,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy#
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getDependents(Collection<JavaChangeOperation> t,
+	public Collection<Collection<JavaChangeOperation>> getDependents(Collection<JavaChangeOperation> t,
 			GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (JavaChangeOperation op : t) {
@@ -87,7 +97,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 				}
 			}
 		}
-		return result;
+		return buildPartitions(result);
 	}
 	
 	/*
@@ -120,7 +130,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * 
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getParents(Collection<JavaChangeOperation> t,
+	public Collection<Collection<JavaChangeOperation>> getParents(Collection<JavaChangeOperation> t,
 			GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (JavaChangeOperation op : t) {
@@ -130,7 +140,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 				}
 			}
 		}
-		return result;
+		return buildPartitions(result);
 	}
 	
 	/*
@@ -141,8 +151,14 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * ()
 	 */
 	@Override
-	public Iterator<JavaChangeOperation> vertexSet() {
-		return core.vertexIterator();
+	public Iterator<Collection<JavaChangeOperation>> vertexSet() {
+		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
+		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		while (vertexIterator.hasNext()) {
+			JavaChangeOperation elem = vertexIterator.next();
+			result.add(elem);
+		}
+		return buildPartitions(result).iterator();
 	}
 	
 	/*

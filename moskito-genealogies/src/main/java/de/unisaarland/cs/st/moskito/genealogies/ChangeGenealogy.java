@@ -7,9 +7,10 @@ import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
-public interface ChangeGenealogy<T, K> {
+public interface ChangeGenealogy<T> {
 	
 	/**
 	 * Close.
@@ -50,7 +51,7 @@ public interface ChangeGenealogy<T, K> {
 	 *            the t
 	 * @return the all dependents
 	 */
-	public Collection<K> getAllDependents(T t);
+	public Collection<T> getAllDependents(T t);
 	
 	/**
 	 * Gets the all parents.
@@ -59,7 +60,9 @@ public interface ChangeGenealogy<T, K> {
 	 *            the t
 	 * @return the all parents
 	 */
-	public Collection<K> getAllParents(T t);
+	public Collection<T> getAllParents(T t);
+	
+	public CoreChangeGenealogy getCore();
 	
 	/**
 	 * Gets the dependents.
@@ -70,7 +73,7 @@ public interface ChangeGenealogy<T, K> {
 	 *            the edge types
 	 * @return the dependents
 	 */
-	public Collection<K> getDependents(T t, GenealogyEdgeType... edgeTypes);
+	public Collection<T> getDependents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.
@@ -113,14 +116,14 @@ public interface ChangeGenealogy<T, K> {
 	 *            the edge types
 	 * @return the parents
 	 */
-	public Collection<K> getParents(T t, GenealogyEdgeType... edgeTypes);
+	public Collection<T> getParents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Vertex set.
 	 * 
 	 * @return the iterator
 	 */
-	public Iterator<K> vertexSet();
+	public Iterator<T> vertexSet();
 	
 	/**
 	 * Vertex size.
@@ -128,5 +131,5 @@ public interface ChangeGenealogy<T, K> {
 	 * @return the int
 	 */
 	public int vertexSize();
-	
+
 }

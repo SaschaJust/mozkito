@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionPartitioner;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeGenealogyTest extends TestEnvironment {
@@ -22,7 +23,8 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		TestEnvironment.setup();
 		
 		changeGenealogy.close();
-		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, getPersistenceUtil());
+		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, getPersistenceUtil(),
+		        new TransactionPartitioner());
 		
 		assertEquals(16, tdg.edgeSize());
 		

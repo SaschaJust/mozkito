@@ -17,7 +17,7 @@ public class ChangeGenealogyMetricSet {
 	public <K, T> ChangeGenealogyMetricSet() {
 	}
 	
-	public <T, K> DataFrame<Double> computeVertexMetrics(ChangeGenealogy<T, K> genealogy) {
+	public <T> DataFrame<Double> computeVertexMetrics(ChangeGenealogy<T> genealogy) {
 		
 		if (vertexMetrics.isEmpty()) {
 			return new DataFrame<Double>(new ArrayList<String>());
@@ -32,9 +32,9 @@ public class ChangeGenealogyMetricSet {
 		
 		DataFrame<Double> result = new DataFrame<Double>(metricNames);
 		
-		Iterator<K> vertexIter = genealogy.vertexSet();
+		Iterator<T> vertexIter = genealogy.vertexSet();
 		while (vertexIter.hasNext()) {
-			K vertex = vertexIter.next();
+			T vertex = vertexIter.next();
 			String vertexName = nameMetric.getVertexLabel(vertex);
 			if (result.containsRow(vertexName)) {
 				if (Logger.logError()) {
