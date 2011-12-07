@@ -1,5 +1,10 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
@@ -11,8 +16,20 @@ public abstract class GenealogyMetricThread<T> extends AndamaTransformer<Genealo
 implements
 GenealogyMetric<T> {
 	
+	static private Map<String, GenealogyMetric<?>> registeredMetrics = new HashMap<String, GenealogyMetric<?>>();
+	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
 		super(threadGroup, settings, false);
+		
+		for(String mName : this.getMetricNames()){
+			if(registeredMetrics.containsKey(mName)){
+				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
+						+ mName + "` is already registered by class `"
+						+ registeredMetrics.get(mName).getClass().getCanonicalName() + "`. Class `"
+						+ this.getClass().getCanonicalName() + "` cannot be registered. Please resolve conflict.");
+			}
+			registeredMetrics.put(mName, this);
+		}
 		
 		new ProcessHook<GenealogyNode<T>, GenealogyMetricValue>(this) {
 			
@@ -24,21 +41,20 @@ GenealogyMetric<T> {
 			@Override
 			public void process() {
 				GenealogyNode<T> inputData = getInputData();
-				Double result = handle(inputData);
+				Collection<GenealogyMetricValue> mValues = handle(inputData);
+				for (GenealogyMetricValue mValue : mValues) {
+					providePartialOutputData(mValue);
+				}
+				setCompleted();
 				
-				GenealogyMetricValue metricValue = new GenealogyMetricValue(getMetricName(), inputData.getNodeId(),
-						result);
-				provideOutputData(metricValue);
 			}
 		};
 	}
 	
 	@Override
-	public final String getMetricName() {
-		return this.getClass().getCanonicalName();
-	}
+	public abstract Collection<String> getMetricNames();
 	
 	@Override
-	public abstract Double handle(GenealogyNode<T> item);
+	public abstract Collection<GenealogyMetricValue> handle(GenealogyNode<T> item);
 	
 }
