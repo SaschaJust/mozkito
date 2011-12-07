@@ -519,6 +519,14 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return node;
 	}
 	
+	@Override
+	public String getNodeId(JavaChangeOperation t) {
+		if(this.containsVertex(t)){
+			return String.valueOf(t.getId());
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns a collection containing nodes connected though outgoing edges.
 	 * 
@@ -564,7 +572,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * 
 	 * @return the persistence util. Returns <code>null</code> if none set.
 	 */
-	protected PersistenceUtil getPersistenceUtil() {
+	public PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
 	}
 	

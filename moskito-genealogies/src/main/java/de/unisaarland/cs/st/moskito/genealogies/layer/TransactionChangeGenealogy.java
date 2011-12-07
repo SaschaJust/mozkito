@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -21,17 +22,18 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 			PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
 		PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir, persistenceUtil,
 				partitionGenerator);
-		return new TransactionChangeGenealogy(partitionChangeGenealogy, persistenceUtil);
+		return new TransactionChangeGenealogy(partitionChangeGenealogy);
 	}
 	
-	private PersistenceUtil persistenceUtil;
 	private PartitionChangeGenealogy partitionChangeGenealogy;
 	
-	private TransactionChangeGenealogy(PartitionChangeGenealogy partitionChangeGenealogy,
-			PersistenceUtil persistenceUtil) {
+	public TransactionChangeGenealogy(CoreChangeGenealogy coreGenealogy) {
+		super(coreGenealogy);
+	}
+	
+	private TransactionChangeGenealogy(PartitionChangeGenealogy partitionChangeGenealogy) {
 		super(partitionChangeGenealogy.getCore());
 		this.partitionChangeGenealogy = partitionChangeGenealogy;
-		this.persistenceUtil = persistenceUtil;
 	}
 	
 	@Override
@@ -71,6 +73,15 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 		return partitionChangeGenealogy.getEdges(fromPartition, toPartition);
 	}
 	
+	
+	@Override
+	public String getNodeId(RCSTransaction t) {
+		if(this.containsVertex(t)){
+			return t.getId();
+		}
+		return null;
+	}
+	
 	@Override
 	public Collection<RCSTransaction> getParents(RCSTransaction t, GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
@@ -87,7 +98,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	private Collection<JavaChangeOperation> transactionToPartition(RCSTransaction transaction){
-		return PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction);
+		return PPAPersistenceUtil.getChangeOperation(core.getPersistenceUtil(), transaction);
 	}
 	
 	@Override

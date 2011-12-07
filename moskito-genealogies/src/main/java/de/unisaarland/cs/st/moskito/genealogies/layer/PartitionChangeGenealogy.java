@@ -9,6 +9,7 @@ import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -23,6 +24,13 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	private PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator;
 	
+	public PartitionChangeGenealogy(
+			CoreChangeGenealogy coreGenealogy,
+			PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
+		super(coreGenealogy);
+		this.partitionGenerator = partitionGenerator;
+	}
+	
 	/**
 	 * Instantiates a new partition change genealogy.
 	 * 
@@ -33,7 +41,9 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @param existingPartitions
 	 *            the existing partitions
 	 */
-	public PartitionChangeGenealogy(File graphDBDir, PersistenceUtil persistenceUtil,
+	public PartitionChangeGenealogy(
+			File graphDBDir,
+			PersistenceUtil persistenceUtil,
 			PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
 		super(ChangeGenealogyUtils.readFromDB(graphDBDir, persistenceUtil));
 		this.partitionGenerator = partitionGenerator;
@@ -120,6 +130,22 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 			}
 		}
 		return edges;
+	}
+	
+	@Override
+	public String getNodeId(Collection<JavaChangeOperation> t) {
+		if(this.containsVertex(t) && (!t.isEmpty())){
+			Iterator<JavaChangeOperation> iterator = t.iterator();
+			StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			sb.append(String.valueOf(iterator.next().getId()));
+			while(iterator.hasNext()){
+				sb.append(String.valueOf(iterator.next().getId()));
+			}
+			sb.append("]");
+			return sb.toString();
+		}
+		return null;
 	}
 	
 	/*

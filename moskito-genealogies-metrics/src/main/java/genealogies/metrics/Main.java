@@ -1,7 +1,7 @@
 package genealogies.metrics;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
 
 
 public class Main {
@@ -14,7 +14,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		GenealogyMetrics genealogyMetrics = new GenealogyMetrics();
+		GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain();
 		genealogyMetrics.run();
 	}
 	

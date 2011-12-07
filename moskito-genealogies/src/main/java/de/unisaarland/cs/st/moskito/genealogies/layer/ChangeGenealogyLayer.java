@@ -190,5 +190,4 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	@Override
 	public abstract int vertexSize();
 	
-	
 }

@@ -108,6 +108,16 @@ public interface ChangeGenealogy<T> {
 	public GraphDatabaseService getGraphDBService();
 	
 	/**
+	 * Gets the id of the node represented within this change genealogy
+	 * 
+	 * @param t
+	 *            the t
+	 * @return the node id if node within this genealogy vertex. Returns null
+	 *         otherwise.
+	 */
+	public String getNodeId(T t);
+	
+	/**
 	 * Gets the parents.
 	 * 
 	 * @param t
@@ -131,5 +141,5 @@ public interface ChangeGenealogy<T> {
 	 * @return the int
 	 */
 	public int vertexSize();
-
+	
 }
