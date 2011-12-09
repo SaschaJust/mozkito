@@ -164,33 +164,33 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 				environmentOperations.get(TestEnvironmentOperation.T5F4)));
 		
 		
-		Collection<JavaChangeOperation> dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T1F1));
+		Collection<JavaChangeOperation> dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T1F1));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1D)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T1F1));
 		assertEquals(0, dependents.size());
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T1F2));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T1F2));
 		assertEquals(2, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T2F3)));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F2M)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T1F2));
 		assertEquals(0, dependents.size());
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T2F3));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T2F3));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T4F3D)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T2F3));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T1F2)));
 		assertEquals(1, dependents.size());
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T3F1D));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T3F1D));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T3F1D));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T1F1)));
 		assertEquals(1, dependents.size());
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T3F1A));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T3F1A));
 		assertEquals(5, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F2)));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T4F3A)));
@@ -200,66 +200,66 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T3F1A));
 		assertEquals(0, dependents.size());
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T3F2M));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T3F2M));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T6F2)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T3F2M));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T1F2)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T3F2));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T3F2));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T3F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T4F3D));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T4F3D));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T4F3D));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T2F3)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T4F3A));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T4F3A));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T10F3)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T4F3A));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T4F4));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T4F4));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T4F4));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T5F4));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T5F4));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T10F4)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T5F4));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T6F2));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T6F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T7F2)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T6F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F2M)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T7F2));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T7F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T8F2)));
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T7F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T6F2)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T8F2));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T8F2));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T8F2));
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T7F2)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T9F1));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T9F1));
 		assertEquals(2, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T10F3)));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T10F4)));
@@ -267,14 +267,14 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T10F3));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T10F3));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T10F3));
 		assertEquals(2, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T4F3A)));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T9F1)));
 		
-		dependents = changeGenealogy.getAllDependents(environmentOperations.get(TestEnvironmentOperation.T10F4));
+		dependents = changeGenealogy.getAllDependants(environmentOperations.get(TestEnvironmentOperation.T10F4));
 		assertEquals(0, dependents.size());
 		dependents = changeGenealogy.getAllParents(environmentOperations.get(TestEnvironmentOperation.T10F4));
 		assertEquals(2, dependents.size());
@@ -283,7 +283,7 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 		
 		//selective dependencies
 		
-		dependents = changeGenealogy.getDependents(environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		dependents = changeGenealogy.getDependants(environmentOperations.get(TestEnvironmentOperation.T3F1A),
 				GenealogyEdgeType.CallOnDefinition);
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T3F2)));
@@ -291,12 +291,12 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T5F4)));
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T4F4)));
 		
-		dependents = changeGenealogy.getDependents(environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		dependents = changeGenealogy.getDependants(environmentOperations.get(TestEnvironmentOperation.T3F1A),
 				GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		assertEquals(1, dependents.size());
 		assertTrue(dependents.contains(environmentOperations.get(TestEnvironmentOperation.T9F1)));
 		
-		dependents = changeGenealogy.getDependents(environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		dependents = changeGenealogy.getDependants(environmentOperations.get(TestEnvironmentOperation.T3F1A),
 				GenealogyEdgeType.DefinitionOnDefinition, GenealogyEdgeType.DefinitionOnDeletedDefinition,
 				GenealogyEdgeType.DeletedCallOnCall, GenealogyEdgeType.DeletedCallOnDeletedDefinition);
 		assertEquals(0, dependents.size());

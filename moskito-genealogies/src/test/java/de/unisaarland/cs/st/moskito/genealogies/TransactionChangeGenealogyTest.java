@@ -212,14 +212,14 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(10), environmentTransactions.get(10)));
 		
-		Collection<RCSTransaction> dependents = tdg.getAllDependents(environmentTransactions.get(3));
+		Collection<RCSTransaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
 		assertTrue(dependents.contains(environmentTransactions.get(6)));
 		assertTrue(dependents.contains(environmentTransactions.get(9)));
 		
-		dependents = tdg.getDependents(environmentTransactions.get(3), GenealogyEdgeType.CallOnDefinition);
+		dependents = tdg.getDependants(environmentTransactions.get(3), GenealogyEdgeType.CallOnDefinition);
 		assertEquals(2, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));

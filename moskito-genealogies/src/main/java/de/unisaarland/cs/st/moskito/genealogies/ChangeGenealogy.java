@@ -51,7 +51,7 @@ public interface ChangeGenealogy<T> {
 	 *            the t
 	 * @return the all dependents
 	 */
-	public Collection<T> getAllDependents(T t);
+	public Collection<T> getAllDependants(T t);
 	
 	/**
 	 * Gets the all parents.
@@ -73,7 +73,7 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the dependents
 	 */
-	public Collection<T> getDependents(T t, GenealogyEdgeType... edgeTypes);
+	public Collection<T> getDependants(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.

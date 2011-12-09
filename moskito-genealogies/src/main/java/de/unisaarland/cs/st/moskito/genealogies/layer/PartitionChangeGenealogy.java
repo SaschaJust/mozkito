@@ -97,11 +97,11 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy#
 	 */
 	@Override
-	public Collection<Collection<JavaChangeOperation>> getDependents(Collection<JavaChangeOperation> t,
+	public Collection<Collection<JavaChangeOperation>> getDependants(Collection<JavaChangeOperation> t,
 			GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (JavaChangeOperation op : t) {
-			for (JavaChangeOperation dependent : core.getDependents(op, edgeTypes)) {
+			for (JavaChangeOperation dependent : core.getDependants(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}

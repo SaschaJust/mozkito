@@ -83,8 +83,8 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the all dependents
 	 */
 	@Override
-	public final Collection<T> getAllDependents(T t) {
-		return getDependents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+	public final Collection<T> getAllDependants(T t) {
+		return getDependants(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
@@ -118,7 +118,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the dependents
 	 */
 	@Override
-	public abstract Collection<T> getDependents(T t, GenealogyEdgeType... edgeTypes);
+	public abstract Collection<T> getDependants(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.

@@ -50,9 +50,9 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	@Override
-	public Collection<RCSTransaction> getDependents(RCSTransaction t, GenealogyEdgeType... edgeTypes) {
+	public Collection<RCSTransaction> getDependants(RCSTransaction t, GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		Collection<Collection<JavaChangeOperation>> dependents = partitionChangeGenealogy.getDependents(fromPartition,
+		Collection<Collection<JavaChangeOperation>> dependents = partitionChangeGenealogy.getDependants(fromPartition,
 				edgeTypes);
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		

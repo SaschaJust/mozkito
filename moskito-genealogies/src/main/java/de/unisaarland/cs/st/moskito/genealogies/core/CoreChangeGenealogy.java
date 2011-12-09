@@ -355,8 +355,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getAllDependents(JavaChangeOperation operation) {
-		return getDependents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+	public Collection<JavaChangeOperation> getAllDependants(JavaChangeOperation operation) {
+		return getDependants(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
@@ -400,7 +400,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return the dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getDependents(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
+	public Collection<JavaChangeOperation> getDependants(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
