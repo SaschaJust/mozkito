@@ -1,11 +1,14 @@
-package de.unisaarland.cs.st.moskito.genealogies.layer.universal;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
@@ -20,7 +23,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
  *            the generic type
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class UniversalDependantsMetrics<T> {
+public class UniversalAncestorMetrics<T> {
 	
 	/** The all dependants. */
 	public static String allDependants        = "NumDependants";
@@ -77,7 +80,7 @@ public class UniversalDependantsMetrics<T> {
 	 * @param genealogy
 	 *            the genealogy
 	 */
-	public UniversalDependantsMetrics(ChangeGenealogy<T> genealogy){
+	public UniversalAncestorMetrics(ChangeGenealogy<T> genealogy){
 		this.genealogy = genealogy;
 	}
 	
@@ -119,23 +122,40 @@ public class UniversalDependantsMetrics<T> {
 	 *            the types
 	 * @return the num dependants
 	 */
-	private int getNumDependants(T t, int depth, GenealogyEdgeType... types){
+	@SuppressWarnings("unchecked")
+	private int getNumDependants(T t, int depth, GenealogyEdgeType... types) {
 		
 		int result = 0;
 		List<T> nodes = new LinkedList<T>();
 		List<T> nextNodes = new LinkedList<T>();
+		Set<T> seenNodes = new HashSet<T>();
 		nodes.add(t);
 		
 		
-		for(int i = 0; i < depth; ++i){
-			for(T node : nodes){
-				Collection<T> children = genealogy.getDependants(node,types);
-				result += children.size();
-				nextNodes.addAll(children);
+		if (depth != -1) {
+			for (int i = 0; i < depth; ++i) {
+				for (T node : nodes) {
+					Collection<T> children = genealogy.getDependants(node, types);
+					result += children.size();
+					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
+					seenNodes.addAll(children);
+				}
+				nodes.clear();
+				nodes.addAll(nextNodes);
+				nextNodes.clear();
 			}
-			nodes.clear();
-			nodes.addAll(nextNodes);
-			nextNodes.clear();
+		} else {
+			while (!nodes.isEmpty()) {
+				for (T node : nodes) {
+					Collection<T> children = genealogy.getDependants(node, types);
+					result += children.size();
+					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
+					seenNodes.addAll(children);
+				}
+				nodes.clear();
+				nodes.addAll(nextNodes);
+				nextNodes.clear();
+			}
 		}
 		
 		return result;

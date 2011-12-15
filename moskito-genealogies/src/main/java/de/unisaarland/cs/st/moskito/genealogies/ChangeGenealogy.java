@@ -10,6 +10,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
+/**
+ * The Interface ChangeGenealogy.
+ * 
+ * @param <T>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public interface ChangeGenealogy<T> {
 	
 	/**
@@ -62,6 +69,11 @@ public interface ChangeGenealogy<T> {
 	 */
 	public Collection<T> getAllParents(T t);
 	
+	/**
+	 * Gets the core.
+	 * 
+	 * @return the core
+	 */
 	public CoreChangeGenealogy getCore();
 	
 	/**
@@ -108,7 +120,7 @@ public interface ChangeGenealogy<T> {
 	public GraphDatabaseService getGraphDBService();
 	
 	/**
-	 * Gets the id of the node represented within this change genealogy
+	 * Gets the id of the node represented within this change genealogy.
 	 * 
 	 * @param t
 	 *            the t
@@ -129,6 +141,22 @@ public interface ChangeGenealogy<T> {
 	public Collection<T> getParents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
+	 * In degree.
+	 *
+	 * @param node the node
+	 * @return the int
+	 */
+	public int inDegree(T node);
+	
+	/**
+	 * Out degree.
+	 *
+	 * @param node the node
+	 * @return the int
+	 */
+	public int outDegree(T node);
+	
+	/**
 	 * Vertex set.
 	 * 
 	 * @return the iterator
@@ -141,5 +169,4 @@ public interface ChangeGenealogy<T> {
 	 * @return the int
 	 */
 	public int vertexSize();
-	
 }

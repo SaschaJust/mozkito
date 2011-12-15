@@ -585,6 +585,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return (getNodeForVertex(vertex) != null);
 	}
 	
+	@Override
+	public int inDegree(JavaChangeOperation op) {
+		Node node = getNodeForVertex(op);
+		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, GenealogyEdgeType.values());
+		int numEdges = 0;
+		for (@SuppressWarnings("unused") Relationship r : relationships) {
+			++numEdges;
+		}
+		return numEdges;
+	}
+	
 	/**
 	 * Vertex set.
 	 * 
@@ -592,6 +603,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 */
 	public IndexHits<Node> nodes() {
 		return nodeIndex.query(NODE_ID, "*");
+	}
+	
+	@Override
+	public int outDegree(JavaChangeOperation op) {
+		Node node = getNodeForVertex(op);
+		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, GenealogyEdgeType.values());
+		int numEdges = 0;
+		for (@SuppressWarnings("unused") Relationship r : relationships) {
+			++numEdges;
+		}
+		return numEdges;
 	}
 	
 	/**

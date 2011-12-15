@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics.partition;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 

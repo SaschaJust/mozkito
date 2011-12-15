@@ -5,8 +5,8 @@ import java.util.Collection;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.universal.UniversalParentsMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalSiblingMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
@@ -16,13 +16,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreParentsMetrics extends GenealogyCoreMetric {
+public class CoreSiblingMetrics extends GenealogyCoreMetric {
 	
-	UniversalParentsMetrics<JavaChangeOperation> universalMetric;
+	UniversalSiblingMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreParentsMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
+	public CoreSiblingMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalParentsMetrics<JavaChangeOperation>(genealogy);
+		universalMetric = new UniversalSiblingMetrics<JavaChangeOperation>(genealogy);
 	}
 	
 	

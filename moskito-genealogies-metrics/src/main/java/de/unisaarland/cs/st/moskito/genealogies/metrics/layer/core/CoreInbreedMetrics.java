@@ -6,7 +6,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalAncestorMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalInbreedMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
@@ -16,13 +16,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreDependantsMetrics extends GenealogyCoreMetric {
+public class CoreInbreedMetrics extends GenealogyCoreMetric {
 	
-	UniversalAncestorMetrics<JavaChangeOperation> universalMetric;
+	UniversalInbreedMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreDependantsMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
+	public CoreInbreedMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalAncestorMetrics<JavaChangeOperation>(genealogy);
+		universalMetric = new UniversalInbreedMetrics<JavaChangeOperation>(genealogy);
 	}
 	
 	

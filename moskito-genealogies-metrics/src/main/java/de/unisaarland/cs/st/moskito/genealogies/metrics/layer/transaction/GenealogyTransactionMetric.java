@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics.transaction;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;

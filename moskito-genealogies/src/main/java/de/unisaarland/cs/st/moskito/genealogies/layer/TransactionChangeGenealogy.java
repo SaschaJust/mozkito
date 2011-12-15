@@ -97,6 +97,24 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 		return result;
 	}
 	
+	@Override
+	public int inDegree(RCSTransaction node) {
+		int numEdges = 0;
+		for(RCSTransaction dependant : this.getDependants(node, GenealogyEdgeType.values())){
+			numEdges += this.getEdges(dependant,node).size();
+		}
+		return numEdges;
+	}
+	
+	@Override
+	public int outDegree(RCSTransaction node) {
+		int numEdges = 0;
+		for(RCSTransaction parent : this.getParents(node, GenealogyEdgeType.values())){
+			numEdges += this.getEdges(node, parent).size();
+		}
+		return numEdges;
+	}
+	
 	private Collection<JavaChangeOperation> transactionToPartition(RCSTransaction transaction){
 		return PPAPersistenceUtil.getChangeOperation(core.getPersistenceUtil(), transaction);
 	}

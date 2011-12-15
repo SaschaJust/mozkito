@@ -1,23 +1,23 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics.partition;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.universal.UniversalDependantsMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalSiblingMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class PartitionDependantsMetrics extends GenealogyPartitionMetric {
+public class PartitionSiblingMetrics extends GenealogyPartitionMetric {
 	
-	private UniversalDependantsMetrics<Collection<JavaChangeOperation>> universalMetric;
+	private UniversalSiblingMetrics<Collection<JavaChangeOperation>> universalMetric;
 	
-	public PartitionDependantsMetrics(AndamaGroup threadGroup, AndamaSettings settings,
+	public PartitionSiblingMetrics(AndamaGroup threadGroup, AndamaSettings settings,
 			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalDependantsMetrics<Collection<JavaChangeOperation>>(
+		universalMetric = new UniversalSiblingMetrics<Collection<JavaChangeOperation>>(
 				genealogy);
 	}
 	

@@ -1,30 +1,25 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalAncestorMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-
-/**
- * The Class CoreDependencyMetrics.
- * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
- */
-public class CoreDependantsMetrics extends GenealogyCoreMetric {
+public class PartitionDependantsMetrics extends GenealogyPartitionMetric {
 	
-	UniversalAncestorMetrics<JavaChangeOperation> universalMetric;
+	private UniversalAncestorMetrics<Collection<JavaChangeOperation>> universalMetric;
 	
-	public CoreDependantsMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
+	public PartitionDependantsMetrics(AndamaGroup threadGroup, AndamaSettings settings,
+			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalAncestorMetrics<JavaChangeOperation>(genealogy);
+		universalMetric = new UniversalAncestorMetrics<Collection<JavaChangeOperation>>(
+				genealogy);
 	}
-	
 	
 	@Override
 	public Collection<String> getMetricNames() {
@@ -32,10 +27,9 @@ public class CoreDependantsMetrics extends GenealogyCoreMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<JavaChangeOperation> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyNode<Collection<JavaChangeOperation>> item) {
 		return universalMetric.handle(item.getNode());
 	}
-	
 	
 	
 }

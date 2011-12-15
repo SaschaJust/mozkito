@@ -1,11 +1,16 @@
-package de.unisaarland.cs.st.moskito.genealogies.layer.universal;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
@@ -21,6 +26,8 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class UniversalParentsMetrics<T> {
+	
+	Map<T, Map<Integer, Map<String, Set<T>>>> cache                   = new HashMap<T, Map<Integer, Map<String, Set<T>>>>();
 	
 	/** The all parents. */
 	public static String allParents          = "NumParents";
@@ -60,9 +67,11 @@ public class UniversalParentsMetrics<T> {
 	 */
 	public static String composeMetricName(GenealogyEdgeType eType, int depth) {
 		if (depth > 1) {
-			return "Num" + eType.toString() + "Parents";
+			return "Num" + eType.toString() + "ParentsD" + depth;
+		} else if (depth < 0) {
+			return "NumGlobal" + eType.toString() + "Parents";
 		}
-		return "Num" + eType.toString() + "ParentsD" + depth;
+		return "Num" + eType.toString() + "Parents";
 	}
 	
 	/** The metric names. */
@@ -102,6 +111,7 @@ public class UniversalParentsMetrics<T> {
 		metricNames.add(callParentsD3);
 		for (GenealogyEdgeType eType : GenealogyEdgeType.values()) {
 			metricNames.add(composeMetricName(eType, 1));
+			metricNames.add(composeMetricName(eType, -1));
 			metricNames.add(composeMetricName(eType, 2));
 			metricNames.add(composeMetricName(eType, 3));
 		}
@@ -114,28 +124,46 @@ public class UniversalParentsMetrics<T> {
 	 * @param t
 	 *            the t
 	 * @param depth
-	 *            the depth
+	 *            the maximal depth used to determine parents. If set to -1, all
+	 *            parents will be used.
 	 * @param types
 	 *            the types
 	 * @return the num parents
 	 */
+	@SuppressWarnings("unchecked")
 	private int getNumParents(T t, int depth, GenealogyEdgeType... types) {
 		
 		int result = 0;
 		List<T> nodes = new LinkedList<T>();
 		List<T> nextNodes = new LinkedList<T>();
+		Set<T> seenNodes = new HashSet<T>();
 		nodes.add(t);
 		
 		
-		for(int i = 0; i < depth; ++i){
-			for(T node : nodes){
-				Collection<T> children = genealogy.getParents(node, types);
-				result += children.size();
-				nextNodes.addAll(children);
+		if (depth != -1) {
+			for(int i = 0; i < depth; ++i){
+				for(T node : nodes){
+					Collection<T> parents = genealogy.getParents(node, types);
+					result += parents.size();
+					nextNodes.addAll(CollectionUtils.subtract(parents, seenNodes));
+					seenNodes.addAll(parents);
+				}
+				nodes.clear();
+				nodes.addAll(nextNodes);
+				nextNodes.clear();
 			}
-			nodes.clear();
-			nodes.addAll(nextNodes);
-			nextNodes.clear();
+		} else {
+			while (!nodes.isEmpty()) {
+				for (T node : nodes) {
+					Collection<T> parents = genealogy.getParents(node, types);
+					result += parents.size();
+					nextNodes.addAll(CollectionUtils.subtract(parents, seenNodes));
+					seenNodes.addAll(parents);
+				}
+				nodes.clear();
+				nodes.addAll(nextNodes);
+				nextNodes.clear();
+			}
 		}
 		
 		return result;
@@ -155,6 +183,7 @@ public class UniversalParentsMetrics<T> {
 		int numAllParents = getNumParents(node, 1, GenealogyEdgeType.values());
 		result.add(new GenealogyMetricValue(allParents, genealogy.getNodeId(node), numAllParents));
 		
+		
 		numAllParents = getNumParents(node, 2, GenealogyEdgeType.values());
 		result.add(new GenealogyMetricValue(allParentsD2, genealogy.getNodeId(node), numAllParents));
 		
@@ -165,6 +194,8 @@ public class UniversalParentsMetrics<T> {
 		for (GenealogyEdgeType eType : GenealogyEdgeType.values()) {
 			int numParents = getNumParents(node, 1, eType);
 			result.add(new GenealogyMetricValue(composeMetricName(eType, 1), genealogy.getNodeId(node), numParents));
+			numParents = getNumParents(node, -1, eType);
+			result.add(new GenealogyMetricValue(composeMetricName(eType, -1), genealogy.getNodeId(node), numParents));
 			numParents = getNumParents(node, 2, eType);
 			result.add(new GenealogyMetricValue(composeMetricName(eType, 2), genealogy.getNodeId(node), numParents));
 			numParents = getNumParents(node, 3, eType);

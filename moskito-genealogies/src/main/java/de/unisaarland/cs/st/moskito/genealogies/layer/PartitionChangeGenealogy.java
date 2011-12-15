@@ -169,6 +169,24 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 		return buildPartitions(result);
 	}
 	
+	@Override
+	public int inDegree(Collection<JavaChangeOperation> node) {
+		int numEdges = 0;
+		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, GenealogyEdgeType.values())) {
+			numEdges += this.getEdges(dependant, node).size();
+		}
+		return numEdges;
+	}
+	
+	@Override
+	public int outDegree(Collection<JavaChangeOperation> node) {
+		int numEdges = 0;
+		for (Collection<JavaChangeOperation> parent : this.getParents(node, GenealogyEdgeType.values())) {
+			numEdges += this.getEdges(node, parent).size();
+		}
+		return numEdges;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
