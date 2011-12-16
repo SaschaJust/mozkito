@@ -64,10 +64,6 @@ public class AndamaGraph {
 		INPUTTYPE, NODEID, NODENAME, NODETYPE, OUTPUTTYPE;
 	}
 	
-	/**
-	 * @author just
-	 * 
-	 */
 	private static final class SolutionFound extends Exception {
 		
 		/**
@@ -78,9 +74,7 @@ public class AndamaGraph {
 	}
 	
 	private static final String andamaFileEnding = ".agl";
-	
 	private static final String relation         = "connection_id";
-	
 	private static final String workingMarker    = "workingmarker";
 	
 	/**
@@ -104,6 +98,7 @@ public class AndamaGraph {
 					if (Logger.logInfo()) {
 						Logger.info("Building graph for: " + JavaUtils.collectionToString(threads));
 					}
+					
 					buildGraph(threads, openBranches, andamaGraph);
 				} catch (final SolutionFound sf) {
 					andamaGraph.reconnect();
@@ -120,8 +115,6 @@ public class AndamaGraph {
 		
 		return andamaGraph;
 		
-		// TODO implement array of all available markers
-		// TODO implement getNextMarker() to compute next valid marker
 	}
 	
 	/**
@@ -408,8 +401,6 @@ public class AndamaGraph {
 		final AndamaThreadable<?, ?> threadable = andamaGroup.getThreads().iterator().next();
 		final URL resource = threadable.getClass().getResource(FileUtils.fileSeparator + fileName + ".zip");
 		
-		// BUG #13 https://dev.own-hero.net/issues/13 and
-		// https://dev.own-hero.net/issues/12
 		try {
 			if (resource != null) {
 				try {
@@ -448,13 +439,13 @@ public class AndamaGraph {
 	private final File                           dbFile;
 	
 	private GraphDatabaseService                 graph;
-	private int                                  marker        = 0;
+	// private int marker = 0;
 	
 	private final Map<String, RelationshipIndex> markerIndexes = new HashMap<String, RelationshipIndex>();
 	
 	private final List<Integer>                  markers       = new LinkedList<Integer>();
 	private final Map<String, Node>              nodes         = new HashMap<String, Node>();
-	
+	private final String                         markerPrefix  = "marker";
 	private Integer                              solutionMarker;
 	
 	private final RelationshipIndex              workingMarkerRelationship;
@@ -484,6 +475,11 @@ public class AndamaGraph {
 		
 		// Check for available solutions
 		this.solutionMarker = findSolutionMarker(andamaGroup);
+		
+		String[] markerNames = this.graph.index().relationshipIndexNames();
+		for (String markerName : markerNames) {
+			this.markers.add(Integer.parseInt(markerName.substring(this.markerPrefix.length() - 1)));
+		}
 		
 		this.workingMarkerRelationship = this.graph.index().forRelationships(AndamaGraph.workingMarker);
 	}
@@ -656,6 +652,10 @@ public class AndamaGraph {
 		
 	}
 	
+	/**
+	 * @param andamaGroup
+	 * @return
+	 */
 	private Integer findSolutionMarker(final AndamaGroup andamaGroup) {
 		final Transaction tx = this.graph.beginTx();
 		
@@ -673,6 +673,17 @@ public class AndamaGraph {
 			tx.success();
 			tx.finish();
 		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private Integer getNextMarker() {
+		Integer marker = 0;
+		while (this.markers.contains(marker)) {
+			++marker;
+		}
+		return marker;
 	}
 	
 	/**
@@ -812,10 +823,11 @@ public class AndamaGraph {
 	 */
 	private boolean paint() {
 		final AndamaGraph andamaGraph = this;
-		final String markerName = "marker" + andamaGraph.marker;
+		Integer marker = getNextMarker();
+		final String markerName = "marker" + marker;
 		
 		if (Logger.logInfo()) {
-			Logger.info("Saving solution: " + andamaGraph.marker);
+			Logger.info("Saving solution: " + marker);
 		}
 		
 		if (andamaGraph.graph.index().existsForRelationships(AndamaGraph.workingMarker)) {
@@ -827,7 +839,7 @@ public class AndamaGraph {
 				final Relationship rel = query.next();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Painting with marker " + this.marker + " " + rel.getStartNode().getProperty("NODEID")
+					Logger.debug("Painting with marker " + marker + " " + rel.getStartNode().getProperty("NODEID")
 					        + "_" + rel.getEndNode().getProperty("NODEID"));
 				}
 				
@@ -842,8 +854,8 @@ public class AndamaGraph {
 			}
 			query.close();
 			
-			this.markers.add(this.marker);
-			display(andamaGraph.marker, false);
+			this.markers.add(marker);
+			display(marker, false);
 			
 			// create solution node
 			final Node node = this.graph.createNode();
@@ -854,9 +866,7 @@ public class AndamaGraph {
 			tx.success();
 			tx.finish();
 			
-			this.solutionMarker = this.marker;
-			
-			andamaGraph.marker++;
+			this.solutionMarker = marker;
 			
 			return true;
 		}
