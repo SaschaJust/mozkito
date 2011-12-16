@@ -54,6 +54,8 @@
 		<module>moskito-infozilla</module>
 		<module>moskito-genealogies</module>
 		<module>moskito-genealogies-utils</module>
+		<module>moskito-genealogies-metrics</module>
+		<module>moskito-ltc</module>
 		<module>moskito-untangling</module>
 		<module>moskito-changecouplings</module>
 		<module>moskito-ppa</module>
