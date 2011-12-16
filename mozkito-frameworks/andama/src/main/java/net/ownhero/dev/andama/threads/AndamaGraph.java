@@ -100,6 +100,10 @@ public class AndamaGraph {
 					                                                                                                           .size(),
 					                                                                                                new AndamaThreadComparator());
 					threads.addAll(andamaGroup.getThreads());
+					
+					if (Logger.logInfo()) {
+						Logger.info("Building graph for: " + JavaUtils.collectionToString(threads));
+					}
 					buildGraph(threads, openBranches, andamaGraph);
 				} catch (final SolutionFound sf) {
 					andamaGraph.reconnect();
