@@ -86,7 +86,6 @@ public class AndamaGraph2 {
 				try {
 					FileUtils.ensureFilePermissions(file, FileUtils.ACCESSIBLE_DIR);
 				} catch (FilePermissionException e) {
-					
 					if (Logger.logWarn()) {
 						Logger.warn("Something went wrong when trying to load graph layout from resource: "
 						        + resource.toURI());

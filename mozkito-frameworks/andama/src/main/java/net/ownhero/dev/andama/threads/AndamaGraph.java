@@ -15,11 +15,9 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.threads;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -30,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.graph.RelationType;
@@ -38,17 +35,21 @@ import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.RelationshipIndex;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
@@ -60,161 +61,82 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public class AndamaGraph {
 	
 	private enum NodeProperty {
-		INPUTTYPE, OUTPUTTYPE, NODETYPE, NODENAME, NODEID;
+		INPUTTYPE, NODEID, NODENAME, NODETYPE, OUTPUTTYPE;
 	}
 	
-	private static final class SolutionAccepted extends Exception {
+	/**
+	 * @author just
+	 * 
+	 */
+	private static final class SolutionFound extends Exception {
 		
-		private static final long serialVersionUID = -3899475417770119245L;
-		
-		public SolutionAccepted(final String arg0) {
-			super(arg0);
-		}
+		/**
+         * 
+         */
+		private static final long serialVersionUID = 4021185862022628517L;
 		
 	}
 	
 	private static final String andamaFileEnding = ".agl";
 	
+	private static final String relation         = "connection_id";
+	
+	private static final String workingMarker    = "workingmarker";
+	
 	/**
-	 * @param threadGroup
+	 * @param andamaGroup
 	 * @return
 	 */
-	public static AndamaGraph buildGraph(final AndamaGroup threadGroup) {
+	public static AndamaGraph buildGraph(final AndamaGroup andamaGroup) {
+		final AndamaGraph andamaGraph = new AndamaGraph(andamaGroup);
 		
-		LinkedList<Node> openBranches = new LinkedList<Node>();
-		
-		PriorityQueue<AndamaThreadable<?, ?>> threads = new PriorityQueue<AndamaThreadable<?, ?>>(
-		                                                                                          threadGroup.getThreads()
-		                                                                                                     .size(),
-		                                                                                          new AndamaThreadComparator());
-		threads.addAll(threadGroup.getThreads());
-		final AndamaGraph andamaGraph = new AndamaGraph(threadGroup);
-		
-		if (!andamaGraph.isInitialized()) {
-			
-			if (Logger.logInfo()) {
-				Logger.info("Toolchain layout has not been created yet. Building graph... (This might take a while)");
+		try {
+			if (!andamaGraph.built()) {
+				try {
+					final LinkedList<Node> openBranches = new LinkedList<Node>();
+					
+					final PriorityQueue<AndamaThreadable<?, ?>> threads = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                                andamaGroup.getThreads()
+					                                                                                                           .size(),
+					                                                                                                new AndamaThreadComparator());
+					threads.addAll(andamaGroup.getThreads());
+					buildGraph(threads, openBranches, andamaGraph);
+				} catch (final SolutionFound sf) {
+					andamaGraph.reconnect();
+					return andamaGraph;
+				}
+				
+				throw new UnrecoverableError("Could not create graph.");
+			} else {
+				andamaGraph.reconnect();
 			}
-			
-			prepareGraph(threads, openBranches, andamaGraph);
-			try {
-				buildGraph(threads, openBranches, andamaGraph);
-			} catch (SolutionAccepted e) {
-			}
-			
-			andamaGraph.unpaint(AndamaGraph.workingColor);
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Found " + andamaGraph.alternatives() + " alternatives.");
-				Logger.debug("Pruned " + andamaGraph.prune() + " alternatives.");
-				Logger.debug("Keeping " + andamaGraph.alternatives() + " alternatives.");
-			}
-			
-			andamaGraph.process();
+		} finally {
 			andamaGraph.shutdown();
-		} else {
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Checking if graph representation for current set of nodes is present.");
-			}
-			
-			String[] indexNames = andamaGraph.graph.index().relationshipIndexNames();
-			
-			for (String edgeColor : indexNames) {
-				Transaction tx = andamaGraph.graph.beginTx();
-				if (!andamaGraph.colorIndexes.containsKey(edgeColor)) {
-					andamaGraph.colorIndexes.put(edgeColor, andamaGraph.graph.index().forRelationships(edgeColor));
-				}
-				
-				RelationshipIndex relationships = andamaGraph.colorIndexes.get(edgeColor);
-				
-				IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
-				int size = 0;
-				boolean foundAll = true;
-				
-				while (query.hasNext()) {
-					++size;
-					
-					Relationship relationship = query.next();
-					
-					String fromName = andamaGraph.getProperty(NodeProperty.NODENAME, relationship.getStartNode())
-					                             .toString();
-					String toName = andamaGraph.getProperty(NodeProperty.NODENAME, relationship.getEndNode())
-					                           .toString();
-					boolean found = false;
-					for (AndamaThreadable<?, ?> thread : andamaGraph.threadGroup.getThreads()) {
-						if (thread.getHandle().equals(fromName) || thread.getHandle().equals(toName)) {
-							found = true;
-							break;
-						}
-					}
-					
-					if (!found) {
-						if (Logger.logDebug()) {
-							Logger.debug("Found persistent node that is not in the current set of nodes. ");
-						}
-						foundAll = false;
-						break;
-					}
-				}
-				
-				query.close();
-				tx.success();
-				tx.finish();
-				
-				if ((size == andamaGraph.threadGroup.getThreads().size()) && foundAll) {
-					if (Logger.logInfo()) {
-						Logger.info("Found a persistent layout for the current set of nodes.");
-					}
-					
-					andamaGraph.connectThreads(edgeColor);
-					andamaGraph.display(edgeColor, false);
-					andamaGraph.shutdown();
-				} else {
-					
-					if (Logger.logInfo()) {
-						Logger.info("Did not find a persistent layout for the current set of nodes. Creating one... (This might take a while)");
-					}
-					prepareGraph(threads, openBranches, andamaGraph);
-					try {
-						buildGraph(threads, openBranches, andamaGraph);
-					} catch (SolutionAccepted e) {
-					}
-					
-					andamaGraph.unpaint(AndamaGraph.workingColor);
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Found " + andamaGraph.alternatives() + " alternatives.");
-						Logger.debug("Pruned " + andamaGraph.prune() + " alternatives.");
-						Logger.debug("Keeping " + andamaGraph.alternatives() + " alternatives.");
-					}
-					
-					andamaGraph.process();
-					andamaGraph.shutdown();
-				}
-			}
-			
 		}
 		
 		return andamaGraph;
+		
+		// TODO implement array of all available markers
+		// TODO implement getNextMarker() to compute next valid marker
 	}
 	
 	/**
 	 * @param threads
 	 * @param openBranches
 	 * @param andamaGraph
-	 * @throws SolutionAccepted
+	 * @throws SolutionFound
 	 */
 	private static void buildGraph(final PriorityQueue<AndamaThreadable<?, ?>> threads,
 	                               final LinkedList<Node> openBranches,
-	                               final AndamaGraph andamaGraph) throws SolutionAccepted {
+	                               final AndamaGraph andamaGraph) throws SolutionFound {
 		
-		for (AndamaThreadable<?, ?> thread : getPossibleThreads(openBranches, threads, andamaGraph)) {
+		for (final AndamaThreadable<?, ?> thread : getPossibleThreads(openBranches, threads, andamaGraph)) {
 			if (AndamaSource.class.isAssignableFrom(thread.getClass())) {
-				Node newNode = andamaGraph.getNode(thread);
+				final Node newNode = andamaGraph.getNode(thread);
 				
 				openBranches.add(newNode);
-				PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(threads);
+				final PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+				                                                                                                   threads);
 				threadsNew.remove(thread);
 				
 				buildGraph(threadsNew, openBranches, andamaGraph);
@@ -222,8 +144,8 @@ public class AndamaGraph {
 				openBranches.remove(newNode);
 			} else if (AndamaFilter.class.isAssignableFrom(thread.getClass())
 			        || AndamaTransformer.class.isAssignableFrom(thread.getClass())) {
-				for (Node fromNode : getCandidates(thread, openBranches, andamaGraph)) {
-					Node newNode = andamaGraph.getNode(thread);
+				for (final Node fromNode : getCandidates(thread, openBranches, andamaGraph)) {
+					final Node newNode = andamaGraph.getNode(thread);
 					andamaGraph.connectNode(fromNode, newNode);
 					openBranches.add(newNode);
 					
@@ -234,8 +156,8 @@ public class AndamaGraph {
 						openBranches.remove(fromNode);
 					}
 					
-					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
-					                                                                                             threads);
+					final PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                                   threads);
 					threadsNew.remove(thread);
 					
 					buildGraph(threadsNew, openBranches, andamaGraph);
@@ -251,18 +173,18 @@ public class AndamaGraph {
 					}
 				}
 			} else if (AndamaMultiplexer.class.isAssignableFrom(thread.getClass())) {
-				for (Node fromNode : getCandidates(thread, openBranches, andamaGraph)) {
+				for (final Node fromNode : getCandidates(thread, openBranches, andamaGraph)) {
 					if (!fromNode.getProperty(NodeProperty.NODETYPE.name())
 					             .equals(AndamaMultiplexer.class.getCanonicalName())
 					        && !fromNode.getProperty(NodeProperty.NODETYPE.name())
 					                    .equals(AndamaDemultiplexer.class.getCanonicalName())) {
 						// only attach to non-mux nodes
-						Node newNode = andamaGraph.getNode(thread);
+						final Node newNode = andamaGraph.getNode(thread);
 						andamaGraph.connectNode(fromNode, newNode);
 						openBranches.remove(fromNode);
 						openBranches.add(newNode);
-						PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
-						                                                                                             threads);
+						final PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+						                                                                                                   threads);
 						threadsNew.remove(thread);
 						buildGraph(threadsNew, openBranches, andamaGraph);
 						
@@ -272,8 +194,8 @@ public class AndamaGraph {
 					}
 				}
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(thread.getClass())) {
-				Node newNode = andamaGraph.getNode(thread);
-				Collection<Node> candidates = getCandidates(thread, openBranches, andamaGraph);
+				final Node newNode = andamaGraph.getNode(thread);
+				final Collection<Node> candidates = getCandidates(thread, openBranches, andamaGraph);
 				if ((candidates.size() > 1) && !CollectionUtils.exists(candidates, new Predicate() {
 					
 					@Override
@@ -285,28 +207,28 @@ public class AndamaGraph {
 					}
 				})) {
 					
-					for (Node fromNode : candidates) {
+					for (final Node fromNode : candidates) {
 						andamaGraph.connectNode(fromNode, newNode);
 						openBranches.remove(fromNode);
 					}
 					openBranches.add(newNode);
-					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
-					                                                                                             threads);
+					final PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                                   threads);
 					threadsNew.remove(thread);
 					
 					buildGraph(threadsNew, openBranches, andamaGraph);
 					
-					for (Node fromNode : candidates) {
+					for (final Node fromNode : candidates) {
 						andamaGraph.disconnectNode(newNode);
 						openBranches.add(fromNode);
 					}
 					openBranches.remove(newNode);
 				}
 			} else {
-				Node newNode = andamaGraph.getNode(thread);
-				Collection<Node> candidates = getCandidates(thread, openBranches, andamaGraph);
+				final Node newNode = andamaGraph.getNode(thread);
+				final Collection<Node> candidates = getCandidates(thread, openBranches, andamaGraph);
 				
-				for (Node fromNode : candidates) {
+				for (final Node fromNode : candidates) {
 					andamaGraph.connectNode(fromNode, newNode);
 					
 					if (!fromNode.getProperty(NodeProperty.NODETYPE.name())
@@ -316,8 +238,8 @@ public class AndamaGraph {
 						openBranches.remove(fromNode);
 					}
 					
-					PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
-					                                                                                             threads);
+					final PriorityQueue<AndamaThreadable<?, ?>> threadsNew = new PriorityQueue<AndamaThreadable<?, ?>>(
+					                                                                                                   threads);
 					threadsNew.remove(thread);
 					buildGraph(threadsNew, openBranches, andamaGraph);
 					checkCompleted(threadsNew, openBranches, andamaGraph);
@@ -338,36 +260,19 @@ public class AndamaGraph {
 	 * @param threads
 	 * @param openBranches
 	 * @param andamaGraph
+	 * @throws SolutionFound
 	 */
 	private static void checkCompleted(final Collection<AndamaThreadable<?, ?>> threads,
 	                                   final LinkedList<Node> openBranches,
-	                                   final AndamaGraph andamaGraph) throws SolutionAccepted {
+	                                   final AndamaGraph andamaGraph) throws SolutionFound {
 		// did we build a complete graph, i.e. no open branches left or only
 		// branches that end on attached multiplexer
 		if (threads.isEmpty()) {
 			if (openBranches.isEmpty()) {
 				// this will be only the case if there weren't any multiplexer
 				// invoked
-				// TODO offer alternative to the user at this point
-				String colorName = "color" + andamaGraph.color;
 				andamaGraph.paint();
-				
-				andamaGraph.display(colorName, true);
-				
-				try {
-					boolean done = false;
-					BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-					
-					System.out.println("Graph layout valid? [true|false] ");
-					String answer = reader.readLine().trim();
-					done = Boolean.parseBoolean(answer);
-					
-					if (done) {
-						throw new SolutionAccepted(colorName);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				throw new SolutionFound();
 			} else if (!CollectionUtils.exists(openBranches, new Predicate() {
 				
 				// check if open branches do no contain anything else than
@@ -388,25 +293,8 @@ public class AndamaGraph {
 						return !((Node) object).hasRelationship(Direction.OUTGOING);
 					}
 				})) {
-					String colorName = "color" + andamaGraph.color;
 					andamaGraph.paint();
-					
-					andamaGraph.display(colorName, true);
-					
-					try {
-						boolean done = false;
-						BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-						
-						System.out.println("Graph layout valid? [true|false] ");
-						String answer = reader.readLine().trim();
-						done = Boolean.parseBoolean(answer);
-						
-						if (done) {
-							throw new SolutionAccepted(colorName);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					throw new SolutionFound();
 				}
 			}
 		}
@@ -424,7 +312,7 @@ public class AndamaGraph {
 		final String inputType = graph.getProperty(NodeProperty.INPUTTYPE, thread).toString();
 		
 		@SuppressWarnings ("unchecked")
-		Collection<Node> collection = CollectionUtils.select(openBranches, new Predicate() {
+		final Collection<Node> collection = CollectionUtils.select(openBranches, new Predicate() {
 			
 			@Override
 			public boolean evaluate(final Object object) {
@@ -445,10 +333,10 @@ public class AndamaGraph {
 	private static Collection<AndamaThreadable<?, ?>> getPossibleThreads(final List<Node> openBranches,
 	                                                                     final Collection<AndamaThreadable<?, ?>> threads,
 	                                                                     final AndamaGraph graph) {
-		HashSet<Object> set = new HashSet<Object>();
-		LinkedList<AndamaThreadable<?, ?>> list = new LinkedList<AndamaThreadable<?, ?>>();
+		final HashSet<Object> set = new HashSet<Object>();
+		final LinkedList<AndamaThreadable<?, ?>> list = new LinkedList<AndamaThreadable<?, ?>>();
 		
-		for (Node node : openBranches) {
+		for (final Node node : openBranches) {
 			set.add(graph.getProperty(NodeProperty.OUTPUTTYPE, node));
 		}
 		
@@ -466,172 +354,165 @@ public class AndamaGraph {
 	}
 	
 	/**
-	 * @param threads
-	 * @param openBranches
-	 * @param andamaGraph
-	 */
-	private static void prepareGraph(final PriorityQueue<AndamaThreadable<?, ?>> threads,
-	                                 final LinkedList<Node> openBranches,
-	                                 final AndamaGraph andamaGraph) {
-		AndamaThreadable<?, ?> thread = null;
-		
-		while (((thread = threads.poll()) != null) && AndamaSource.class.isAssignableFrom(thread.getClass())) {
-			Node newNode = andamaGraph.getNode(thread);
-			openBranches.add(newNode);
-		}
-		
-		// re-add thread the didn't pass the test
-		threads.add(thread);
-	}
-	
-	private int                 color        = 0;
-	
-	private static final String workingColor = "workingcolor";
-	
-	/**
-	 * @param threadGroup
+	 * @param andamaGroup
 	 * @return
 	 */
-	private static File provideResource(final AndamaGroup threadGroup) {
-		String cache = null;
+	private static File provideResource(final AndamaGroup andamaGroup) {
+		String cache = andamaGroup.getName();
 		
-		/*
-		 * try to determine name from common string prefix of thread names e.g.
-		 * RepositoryReader RepositoryAnalyzer RepositoryParser
-		 * RepositoryPersister result in "Repository" -> repository.agl
-		 */
-		for (AndamaThreadable<?, ?> thread : threadGroup.getThreads()) {
-			if (cache == null) {
-				cache = thread.getHandle();
-			} else if (cache.length() == 0) {
-				break;
-			} else {
-				String tmp = thread.getHandle();
-				int i = cache.length();
-				
-				while ((i >= 0) && !tmp.startsWith(cache.substring(0, i))) {
-					--i;
-				}
-				
-				if (i >= 0) {
-					cache = cache.substring(0, i);
-				}
-			}
-		}
-		
-		/*
-		 * remove trailing uppercase characters to avoid situations like this:
-		 * AndamaGraph AndamaGroup AndamaGadget resulting in AndamaG, but should
-		 * result in Andama -> andama.agl
-		 */
-		while ((cache.length() > 0) && (Character.isUpperCase(cache.charAt(cache.length() - 1)))) {
-			cache = cache.substring(0, cache.length() - 1);
-		}
-		
-		if (cache.length() <= 1) {
+		if ((cache == null) || (cache.length() <= 1)) {
 			// Try to determine from masterthread name
 			cache = Thread.currentThread().getName().toLowerCase();
+			
+			if ((cache == null) || (cache.length() <= 1)) {
+				/*
+				 * try to determine name from common string prefix of thread
+				 * names e.g. RepositoryReader RepositoryAnalyzer
+				 * RepositoryParser RepositoryPersister result in "Repository"
+				 * -> repository.agl
+				 */
+				for (final AndamaThreadable<?, ?> thread : andamaGroup.getThreads()) {
+					if (cache == null) {
+						cache = thread.getHandle();
+					} else if (cache.length() == 0) {
+						break;
+					} else {
+						final String tmp = thread.getHandle();
+						int i = cache.length();
+						
+						while ((i >= 0) && !tmp.startsWith(cache.substring(0, i))) {
+							--i;
+						}
+						
+						if (i >= 0) {
+							cache = cache.substring(0, i);
+						}
+					}
+				}
+				
+				if ((cache != null) && (cache.length() > 0)) {
+					cache = cache.toLowerCase();
+				} else {
+					cache = "andamaGraphLayout";
+				}
+			}
 		} else {
 			cache = cache.toLowerCase();
 		}
 		
-		String fileName = cache + andamaFileEnding;
-		AndamaThreadable<?, ?> threadable = threadGroup.getThreads().iterator().next();
-		URL resource = threadable.getClass().getResource(FileUtils.fileSeparator + fileName + ".zip");
+		final String fileName = cache + andamaFileEnding;
+		final AndamaThreadable<?, ?> threadable = andamaGroup.getThreads().iterator().next();
+		final URL resource = threadable.getClass().getResource(FileUtils.fileSeparator + fileName + ".zip");
 		
 		// BUG #13 https://dev.own-hero.net/issues/13 and
 		// https://dev.own-hero.net/issues/12
-		if (resource != null) {
-			try {
-				File copyOfFile = IOUtils.getTemporaryCopyOfFile(resource.toURI());
-				FileUtils.unzip(copyOfFile, FileUtils.tmpDir);
-				File file = new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
+		try {
+			if (resource != null) {
 				try {
-					FileUtils.ensureFilePermissions(file, FileUtils.ACCESSIBLE_DIR);
-				} catch (FilePermissionException e) {
-					
-					if (Logger.logWarn()) {
-						Logger.warn("Something went wrong when trying to load graph layout from resource: "
-						        + resource.toURI());
-						Logger.warn("Causing rebuild of layout.");
+					final File copyOfFile = IOUtils.getTemporaryCopyOfFile(resource.toURI());
+					FileUtils.unzip(copyOfFile, FileUtils.tmpDir);
+					File file = new File(FileUtils.tmpDir + FileUtils.fileSeparator + fileName);
+					try {
+						FileUtils.ensureFilePermissions(file, FileUtils.ACCESSIBLE_DIR);
+					} catch (final FilePermissionException e) {
+						
+						if (Logger.logWarn()) {
+							Logger.warn("Something went wrong when trying to load graph layout from resource: "
+							        + resource.toURI());
+							Logger.warn("Causing rebuild of layout.");
+						}
+						file = new File(fileName);
 					}
-					file = new File(fileName);
+					return file;
+				} catch (final IOException e) {
+					return new File(fileName);
+				} catch (final URISyntaxException e) {
+					return new File(fileName);
 				}
-				return file;
-			} catch (IOException e) {
-				return new File(fileName);
-			} catch (URISyntaxException e) {
+			} else {
 				return new File(fileName);
 			}
-		} else {
-			return new File(fileName);
+		} finally {
+			if (Logger.logInfo()) {
+				Logger.info("Using database: " + fileName);
+			}
 		}
-		
 	}
 	
-	private boolean                              initialized  = false;
-	private GraphDatabaseService                 graph;
-	
-	private static final String                  relation     = "connection_id";
-	
-	private final AndamaGroup                    threadGroup;
-	private final Map<String, Node>              nodes        = new HashMap<String, Node>();
-	
-	private final List<Integer>                  colors       = new LinkedList<Integer>();
+	private final AndamaGroup                    andamaGroup;
 	
 	private final File                           dbFile;
 	
-	private final Map<String, RelationshipIndex> colorIndexes = new HashMap<String, RelationshipIndex>();
+	private GraphDatabaseService                 graph;
+	private int                                  marker        = 0;
 	
-	/**
-	 * @param threadGroup
-	 */
-	public AndamaGraph(final AndamaGroup threadGroup) {
-		this.threadGroup = threadGroup;
+	private final Map<String, RelationshipIndex> markerIndexes = new HashMap<String, RelationshipIndex>();
+	
+	private final List<Integer>                  markers       = new LinkedList<Integer>();
+	private final Map<String, Node>              nodes         = new HashMap<String, Node>();
+	
+	private Integer                              solutionMarker;
+	
+	private final RelationshipIndex              workingMarkerRelationship;
+	
+	public AndamaGraph(final AndamaGroup andamaGroup) {
+		this.andamaGroup = andamaGroup;
+		this.dbFile = provideResource(andamaGroup);
 		
-		this.dbFile = provideResource(threadGroup);
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Using db file: " + this.dbFile);
-		}
-		
+		// if database already exists, check if we can access the data
 		if (this.dbFile.exists()) {
-			this.initialized = true;
+			try {
+				FileUtils.ensureFilePermissions(this.dbFile, FileUtils.ACCESSIBLE_DIR);
+			} catch (final FilePermissionException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Cannot access andama graph layout database, at: " + this.dbFile.getAbsolutePath(), e);
+				}
+				throw new UnrecoverableError("Andama graph building aborted.");
+			}
 		}
 		
+		// try to access or create database
 		try {
 			this.graph = new EmbeddedGraphDatabase(this.dbFile.getAbsolutePath());
-		} catch (Error e) {
+		} catch (final Error e) {
 			throw new UnrecoverableError("Gathering graph layout failed. Source: " + this.dbFile.getAbsolutePath(), e);
 		}
 		
-		for (AndamaThreadable<?, ?> thread : threadGroup.getThreads()) {
-			Node node = createNode(thread);
-			this.nodes.put(node.getProperty(NodeProperty.NODENAME.name()).toString(), node);
-		}
+		// Check for available solutions
+		this.solutionMarker = findSolutionMarker(andamaGroup);
 		
-		this.colorIndexes.put(workingColor, this.graph.index().forRelationships(AndamaGraph.workingColor));
+		this.workingMarkerRelationship = this.graph.index().forRelationships(AndamaGraph.workingMarker);
 	}
 	
 	/**
 	 * @return
 	 */
-	public int alternatives() {
-		return this.colors.size();
+	private boolean built() {
+		return this.solutionMarker != null;
 	}
 	
 	/**
-	 * @param from
-	 * @param to
+	 * @param andamaGroup
 	 * @return
 	 */
+	private String composeIdentifier(final AndamaGroup andamaGroup) {
+		return JavaUtils.collectionToString(CollectionUtils.transformedCollection(andamaGroup.getThreads(),
+		                                                                          new Transformer() {
+			                                                                          
+			                                                                          @Override
+			                                                                          public Object transform(final Object input) {
+				                                                                          return ((AndamaThreadable<?, ?>) input).getName();
+			                                                                          }
+		                                                                          }));
+	}
+	
 	private boolean connectNode(final Node from,
 	                            final Node to) {
-		Transaction tx = this.graph.beginTx();
-		Iterable<Relationship> relationships = from.getRelationships(RelationType.KNOWS, Direction.OUTGOING);
+		final Transaction tx = this.graph.beginTx();
+		final Iterable<Relationship> relationships = from.getRelationships(RelationType.KNOWS, Direction.OUTGOING);
 		Relationship relation = null;
 		
-		for (Relationship rel : relationships) {
+		for (final Relationship rel : relationships) {
 			if (rel.getEndNode().equals(to)) {
 				// found relation
 				relation = rel;
@@ -643,40 +524,40 @@ public class AndamaGraph {
 			relation = from.createRelationshipTo(to, RelationType.KNOWS);
 		}
 		
-		this.colorIndexes.get(workingColor).add(relation, AndamaGraph.relation,
-		                                        from.getProperty("NODEID") + "_" + to.getProperty("NODEID"));
+		this.workingMarkerRelationship.add(relation, AndamaGraph.relation,
+		                                   from.getProperty("NODEID") + "_" + to.getProperty("NODEID"));
 		
 		tx.success();
 		tx.finish();
 		return true;
 	}
 	
-	private <V> void connectThreads(final int edgeColor) {
-		connectThreads("color" + edgeColor);
+	private <V> void connectThreads(final int marker) {
+		connectThreads("marker" + marker);
 	}
 	
 	/**
-	 * @param edgeColor
+	 * @param marker
 	 */
 	@SuppressWarnings ("unchecked")
-	private <V> void connectThreads(final String edgeColor) {
-		Transaction tx = this.graph.beginTx();
-		if (!this.colorIndexes.containsKey(edgeColor)) {
-			this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+	private <V> void connectThreads(final String marker) {
+		final Transaction tx = this.graph.beginTx();
+		if (!this.markerIndexes.containsKey(marker)) {
+			this.markerIndexes.put(marker, this.graph.index().forRelationships(marker));
 		}
 		
-		RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+		final RelationshipIndex relationships = this.markerIndexes.get(marker);
 		
-		IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
+		final IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
 		
 		while (query.hasNext()) {
-			Relationship relationship = query.next();
-			String fromName = getProperty(NodeProperty.NODENAME, relationship.getStartNode()).toString();
-			String toName = getProperty(NodeProperty.NODENAME, relationship.getEndNode()).toString();
+			final Relationship relationship = query.next();
+			final String fromName = getProperty(NodeProperty.NODENAME, relationship.getStartNode()).toString();
+			final String toName = getProperty(NodeProperty.NODENAME, relationship.getEndNode()).toString();
 			AndamaThreadable<?, V> fromThread = null;
 			AndamaThreadable<V, ?> toThread = null;
 			
-			for (AndamaThreadable<?, ?> thread : this.threadGroup.getThreads()) {
+			for (final AndamaThreadable<?, ?> thread : this.andamaGroup.getThreads()) {
 				if (thread.getHandle().equals(fromName)) {
 					fromThread = (AndamaThreadable<?, V>) thread;
 				} else if (thread.getHandle().equals(toName)) {
@@ -693,40 +574,17 @@ public class AndamaGraph {
 	}
 	
 	/**
-	 * @param thread
-	 * @return
-	 */
-	private Node createNode(final AndamaThreadable<?, ?> thread) {
-		Transaction tx = this.graph.beginTx();
-		Node node = this.graph.createNode();
-		
-		if (getProperty(NodeProperty.INPUTTYPE, thread) != null) {
-			node.setProperty(NodeProperty.INPUTTYPE.name(), getProperty(NodeProperty.INPUTTYPE, thread));
-		}
-		if (getProperty(NodeProperty.OUTPUTTYPE, thread) != null) {
-			node.setProperty(NodeProperty.OUTPUTTYPE.name(), getProperty(NodeProperty.OUTPUTTYPE, thread));
-		}
-		node.setProperty(NodeProperty.NODETYPE.name(), getProperty(NodeProperty.NODETYPE, thread));
-		node.setProperty(NodeProperty.NODENAME.name(), getProperty(NodeProperty.NODENAME, thread));
-		node.setProperty(NodeProperty.NODEID.name(), getProperty(NodeProperty.NODEID, thread));
-		
-		tx.success();
-		tx.finish();
-		return node;
-	}
-	
-	/**
 	 * @param from
 	 * @param to
 	 * @return
 	 */
 	private boolean disconnectNode(final Node node) {
-		Transaction tx = this.graph.beginTx();
-		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING);
+		final Transaction tx = this.graph.beginTx();
+		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING);
 		
-		Iterator<Relationship> iterator = relationships.iterator();
+		final Iterator<Relationship> iterator = relationships.iterator();
 		while (iterator.hasNext()) {
-			this.colorIndexes.get(workingColor).remove(iterator.next());
+			this.workingMarkerRelationship.remove(iterator.next());
 		}
 		
 		tx.success();
@@ -735,32 +593,32 @@ public class AndamaGraph {
 	}
 	
 	/**
-	 * @param color
+	 * @param marker
 	 * @param stdout
 	 */
-	public void display(final int color,
+	public void display(final int marker,
 	                    final boolean stdout) {
-		display("color" + color, stdout);
+		display("marker" + marker, stdout);
 	}
 	
 	/**
-	 * @param color
+	 * @param marker
 	 */
-	private void display(final String edgeColor,
+	private void display(final String edgeMarker,
 	                     final boolean stdout) {
-		Transaction tx = this.graph.beginTx();
+		final Transaction tx = this.graph.beginTx();
 		
-		if (!this.colorIndexes.containsKey(edgeColor)) {
-			this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
+		if (!this.markerIndexes.containsKey(edgeMarker)) {
+			this.markerIndexes.put(edgeMarker, this.graph.index().forRelationships(edgeMarker));
 		}
 		
-		RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+		final RelationshipIndex relationships = this.markerIndexes.get(edgeMarker);
 		
-		IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
-		StringBuilder builder = new StringBuilder();
+		final IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
+		final StringBuilder builder = new StringBuilder();
 		
 		while (query.hasNext()) {
-			Relationship relationship = query.next();
+			final Relationship relationship = query.next();
 			builder.append(System.getProperty("line.separator"));
 			builder.append(getNodeTag(relationship.getStartNode()));
 			builder.append(" --> ");
@@ -771,19 +629,22 @@ public class AndamaGraph {
 		tx.success();
 		tx.finish();
 		
-		Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", null, FileUtils.tmpDir,
-		                                                               new ByteArrayInputStream(builder.toString()
-		                                                                                               .getBytes()),
-		                                                               null);
+		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy",
+		                                                                     null,
+		                                                                     FileUtils.tmpDir,
+		                                                                     new ByteArrayInputStream(
+		                                                                                              builder.toString()
+		                                                                                                     .getBytes()),
+		                                                                     null);
 		
 		if (stdout) {
-			for (String output : execute.getSecond()) {
+			for (final String output : execute.getSecond()) {
 				System.out.println(output);
 			}
 		} else {
 			
 			if (Logger.logInfo()) {
-				for (String output : execute.getSecond()) {
+				for (final String output : execute.getSecond()) {
 					Logger.info(output);
 				}
 			}
@@ -791,11 +652,23 @@ public class AndamaGraph {
 		
 	}
 	
-	/**
-	 * @return
-	 */
-	private List<Integer> getColors() {
-		return this.colors;
+	private Integer findSolutionMarker(final AndamaGroup andamaGroup) {
+		final Transaction tx = this.graph.beginTx();
+		
+		try {
+			final Index<Node> index = this.graph.index().forNodes("solution");
+			final IndexHits<Node> hits = index.get("name", composeIdentifier(andamaGroup));
+			
+			if (hits.size() > 0) {
+				final Integer marker = (Integer) hits.iterator().next().getProperty("marker");
+				return marker;
+			} else {
+				return null;
+			}
+		} finally {
+			tx.success();
+			tx.finish();
+		}
 	}
 	
 	/**
@@ -803,31 +676,62 @@ public class AndamaGraph {
 	 * @return
 	 */
 	private Node getNode(final AndamaThreadable<?, ?> thread) {
-		return this.nodes.get(getProperty(NodeProperty.NODENAME, thread));
+		if (this.nodes.containsKey(getProperty(NodeProperty.NODENAME, thread))) {
+			return this.nodes.get(getProperty(NodeProperty.NODENAME, thread));
+		} else {
+			final Transaction tx = this.graph.beginTx();
+			
+			final Index<Node> index = this.graph.index().forNodes("graph");
+			final IndexHits<Node> hits = index.get(NodeProperty.NODENAME.name(),
+			                                       getProperty(NodeProperty.NODENAME, thread));
+			
+			Node node = null;
+			
+			if (hits.size() > 0) {
+				node = hits.iterator().next();
+			} else {
+				node = this.graph.createNode();
+				if (getProperty(NodeProperty.INPUTTYPE, thread) != null) {
+					node.setProperty(NodeProperty.INPUTTYPE.name(), getProperty(NodeProperty.INPUTTYPE, thread));
+				}
+				if (getProperty(NodeProperty.OUTPUTTYPE, thread) != null) {
+					node.setProperty(NodeProperty.OUTPUTTYPE.name(), getProperty(NodeProperty.OUTPUTTYPE, thread));
+				}
+				node.setProperty(NodeProperty.NODETYPE.name(), getProperty(NodeProperty.NODETYPE, thread));
+				node.setProperty(NodeProperty.NODENAME.name(), getProperty(NodeProperty.NODENAME, thread));
+				node.setProperty(NodeProperty.NODEID.name(), getProperty(NodeProperty.NODEID, thread));
+			}
+			
+			tx.success();
+			tx.finish();
+			this.nodes.put((String) getProperty(NodeProperty.NODENAME, thread), node);
+			return node;
+		}
 	}
 	
 	/**
 	 * @param node
 	 * @return
 	 */
-	private String getNodeTag(final Node node) {
+	private Object getNodeTag(final Node node) {
+		final Regex regex = new Regex("[a-zA-Z0-9.]+\\.([^ <>]+)");
 		String inputType = null;
 		String outputType = null;
 		
 		if (getProperty(NodeProperty.INPUTTYPE, node) != null) {
-			String[] inputSplit = ((String) getProperty(NodeProperty.INPUTTYPE, node)).split("\\.");
-			inputType = inputSplit[inputSplit.length - 1];
+			inputType = (String) getProperty(NodeProperty.INPUTTYPE, node);
+			inputType = regex.replaceAll(inputType, "$1");
 		}
 		
 		if (getProperty(NodeProperty.OUTPUTTYPE, node) != null) {
-			String[] outputSplit = ((String) getProperty(NodeProperty.OUTPUTTYPE, node)).split("\\.");
-			outputType = outputSplit[outputSplit.length - 1];
+			outputType = (String) getProperty(NodeProperty.OUTPUTTYPE, node);
+			outputType = regex.replaceAll(outputType, "$1");
 		}
 		
-		String nodeName = (String) getProperty(NodeProperty.NODENAME, node);;
-		String nodeType = (String) getProperty(NodeProperty.NODETYPE, node);;
+		final String nodeName = (String) getProperty(NodeProperty.NODENAME, node);;
+		final String nodeType = (String) getProperty(NodeProperty.NODETYPE, node);;
 		
-		StringBuilder tag = new StringBuilder();
+		final StringBuilder tag = new StringBuilder();
 		
 		tag.append("[ ");
 		tag.append(nodeName).append(" ");
@@ -900,53 +804,55 @@ public class AndamaGraph {
 	}
 	
 	/**
-	 * @return the initialized
-	 */
-	public boolean isInitialized() {
-		return this.initialized;
-	}
-	
-	/**
 	 * @return
 	 */
 	private boolean paint() {
-		AndamaGraph andamaGraph = this;
-		String colorName = "color" + andamaGraph.color;
+		final AndamaGraph andamaGraph = this;
+		final String markerName = "marker" + andamaGraph.marker;
 		
 		if (Logger.logInfo()) {
-			Logger.info("Saving alternative: " + andamaGraph.color);
+			Logger.info("Saving solution: " + andamaGraph.marker);
 		}
 		
-		if (andamaGraph.graph.index().existsForRelationships(AndamaGraph.workingColor)) {
-			Transaction tx = this.graph.beginTx();
+		if (andamaGraph.graph.index().existsForRelationships(AndamaGraph.workingMarker)) {
+			final Transaction tx = this.graph.beginTx();
 			
-			IndexHits<Relationship> query = this.colorIndexes.get(workingColor).query(AndamaGraph.relation, "*");
+			final IndexHits<Relationship> query = this.workingMarkerRelationship.query(AndamaGraph.relation, "*");
 			
 			while (query.hasNext()) {
-				Relationship rel = query.next();
+				final Relationship rel = query.next();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Painting with color " + this.color + " " + rel.getStartNode().getProperty("NODEID")
+					Logger.debug("Painting with marker " + this.marker + " " + rel.getStartNode().getProperty("NODEID")
 					        + "_" + rel.getEndNode().getProperty("NODEID"));
 				}
 				
-				if (!this.colorIndexes.containsKey(colorName)) {
-					this.colorIndexes.put(colorName, this.graph.index().forRelationships(colorName));
+				if (!this.markerIndexes.containsKey(markerName)) {
+					this.markerIndexes.put(markerName, this.graph.index().forRelationships(markerName));
 				}
 				
-				this.colorIndexes.get(colorName).add(rel,
-				                                     AndamaGraph.relation,
-				                                     rel.getStartNode().getProperty("NODEID") + "_"
-				                                             + rel.getEndNode().getProperty("NODEID"));
+				this.markerIndexes.get(markerName).add(rel,
+				                                       AndamaGraph.relation,
+				                                       rel.getStartNode().getProperty("NODEID") + "_"
+				                                               + rel.getEndNode().getProperty("NODEID"));
 			}
 			query.close();
+			
+			this.markers.add(this.marker);
+			display(andamaGraph.marker, false);
+			
+			// create solution node
+			final Node node = this.graph.createNode();
+			final String groupIdentifier = composeIdentifier(this.andamaGroup);
+			node.setProperty("name", groupIdentifier);
+			this.graph.index().forNodes("solution").add(node, "name", groupIdentifier);
+			
 			tx.success();
 			tx.finish();
 			
-			this.colors.add(this.color);
-			display(andamaGraph.color, false);
+			this.solutionMarker = this.marker;
 			
-			andamaGraph.color++;
+			andamaGraph.marker++;
 			
 			return true;
 		}
@@ -954,116 +860,22 @@ public class AndamaGraph {
 		return false;
 	}
 	
-	private void process() {
-		if (alternatives() > 1) {
-			System.out.println("Please choose alternatives: ");
-			for (Integer color : getColors()) {
-				System.out.println("Identifier " + color + ": ");
-				display(color, true);
-			}
-			
-			try {
-				boolean done = false;
-				
-				while (!done) {
-					byte read = (byte) System.in.read();
-					String string = new String(new byte[] { read });
-					
-					try {
-						int color = Integer.parseInt(string);
-						done = true;
-						connectThreads(color);
-					} catch (NumberFormatException e) {
-						done = true;
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			
-			if (Logger.logInfo()) {
-				Logger.info("Using graph: ");
-				display(0, false);
-			}
-			connectThreads(0);
-		}
-	}
-	
 	/**
 	 * @return
 	 */
-	private int prune() {
-		Map<String, Set<Relationship>> graphs = new HashMap<String, Set<Relationship>>();
-		Transaction tx = this.graph.beginTx();
-		
-		for (int c = 0; c < this.color; ++c) {
-			String edgeColor = "color" + c;
-			if (!this.colorIndexes.containsKey(edgeColor)) {
-				this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
-			}
+	private boolean reconnect() {
+		if (built()) {
+			final Transaction tx = this.graph.beginTx();
 			
-			RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
+			connectThreads(this.solutionMarker);
+			display(this.solutionMarker, false);
 			
-			IndexHits<Relationship> query = relationships.query(AndamaGraph.relation, "*");
-			HashSet<Relationship> relations = new HashSet<Relationship>();
-			
-			while (query.hasNext()) {
-				relations.add(query.next());
-			}
-			query.close();
-			graphs.put("color" + c, relations);
+			tx.success();
+			tx.finish();
+			return true;
+		} else {
+			return false;
 		}
-		
-		HashSet<Integer> prunedColors = new HashSet<Integer>();
-		
-		int i = 0;
-		while (i < this.color) {
-			while (prunedColors.contains(i)) {
-				++i;
-			}
-			
-			int j = i + 1;
-			
-			while (j < this.color) {
-				
-				while (prunedColors.contains(j)) {
-					++j;
-				}
-				
-				if ((i >= this.color) || (j >= this.color)) {
-					break;
-				} else {
-					if (CollectionUtils.isEqualCollection(graphs.get("color" + i), graphs.get("color" + j))) {
-						prunedColors.add(j);
-						
-						String edgeColor = "color" + j;
-						if (!this.colorIndexes.containsKey(edgeColor)) {
-							this.colorIndexes.put(edgeColor, this.graph.index().forRelationships(edgeColor));
-						}
-						
-						RelationshipIndex relationships = this.colorIndexes.get(edgeColor);
-						
-						relationships.delete();
-					}
-				}
-				++j;
-			}
-			
-			++i;
-		}
-		
-		tx.success();
-		tx.finish();
-		
-		if (!prunedColors.isEmpty()) {
-			for (Integer col : prunedColors) {
-				unpaint(col);
-			}
-			this.colors.removeAll(prunedColors);
-		}
-		
-		return prunedColors.size();
 	}
 	
 	/**
@@ -1073,38 +885,4 @@ public class AndamaGraph {
 		this.graph.shutdown();
 	}
 	
-	/**
-	 * @return
-	 */
-	public boolean unique() {
-		return this.color == 1; // just painted 1 times
-	}
-	
-	private boolean unpaint(final int i) {
-		return unpaint("color" + i);
-	}
-	
-	/**
-	 * @param i
-	 */
-	private boolean unpaint(final String colorName) {
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Unpainting: " + colorName);
-		}
-		
-		if (this.graph.index().existsForRelationships(colorName)) {
-			Transaction tx = this.graph.beginTx();
-			
-			RelationshipIndex relationships = this.colorIndexes.get(colorName);
-			relationships.delete();
-			
-			tx.success();
-			tx.finish();
-			
-			return true;
-		}
-		
-		return false;
-	}
 }
