@@ -27,8 +27,8 @@ public class MaskedStringArgument extends StringArgument {
 	 */
 	@Override
 	public String toString() {
-		return "RepoSuiteArgument [isRequired=" + isRequired() + ", description=" + getDescription() + ", name="
-		        + getName() + ", stringValue=********* (masked)]";
+		return "Argument [required=" + isRequired() + ", description=" + getDescription() + ", name=" + getName()
+		        + ", value=********* (masked)]";
 	}
 	
 }

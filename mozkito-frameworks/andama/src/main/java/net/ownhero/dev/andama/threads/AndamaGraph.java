@@ -47,6 +47,7 @@ import org.apache.commons.collections.Transformer;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.NotFoundException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -83,6 +84,9 @@ public class AndamaGraph {
 	 */
 	public static AndamaGraph buildGraph(final AndamaGroup andamaGroup) {
 		final AndamaGraph andamaGraph = new AndamaGraph(andamaGroup);
+		if (Logger.logInfo()) {
+			Logger.info("Graph building requested for: " + andamaGroup.getName());
+		}
 		
 		try {
 			if (!andamaGraph.built()) {
@@ -99,13 +103,24 @@ public class AndamaGraph {
 						Logger.info("Building graph for: " + JavaUtils.collectionToString(threads));
 					}
 					
+					AndamaThreadable<?, ?> thread = null;
+					
+					while (((thread = threads.poll()) != null)
+					        && AndamaSource.class.isAssignableFrom(thread.getClass())) {
+						Node newNode = andamaGraph.getNode(thread);
+						openBranches.add(newNode);
+					}
+					
+					// re-add thread the didn't pass the test
+					threads.add(thread);
 					buildGraph(threads, openBranches, andamaGraph);
 				} catch (final SolutionFound sf) {
 					andamaGraph.reconnect();
 					return andamaGraph;
 				}
 				
-				throw new UnrecoverableError("Could not create graph.");
+				throw new UnrecoverableError("Could not create graph: "
+				        + JavaUtils.collectionToString(andamaGroup.getThreads()));
 			} else {
 				andamaGraph.reconnect();
 			}
@@ -448,7 +463,7 @@ public class AndamaGraph {
 	private final String                         markerPrefix  = "marker";
 	private Integer                              solutionMarker;
 	
-	private final RelationshipIndex              workingMarkerRelationship;
+	private RelationshipIndex                    workingMarkerRelationship;
 	
 	public AndamaGraph(final AndamaGroup andamaGroup) {
 		this.andamaGroup = andamaGroup;
@@ -476,9 +491,18 @@ public class AndamaGraph {
 		// Check for available solutions
 		this.solutionMarker = findSolutionMarker(andamaGroup);
 		
+		Transaction tx = this.graph.beginTx();
+		// clean up working colors
+		this.workingMarkerRelationship = this.graph.index().forRelationships(AndamaGraph.workingMarker);
+		this.workingMarkerRelationship.delete();
+		tx.success();
+		tx.finish();
+		
 		String[] markerNames = this.graph.index().relationshipIndexNames();
 		for (String markerName : markerNames) {
-			this.markers.add(Integer.parseInt(markerName.substring(this.markerPrefix.length() - 1)));
+			if (markerName.startsWith(this.markerPrefix)) {
+				this.markers.add(Integer.parseInt(markerName.substring(this.markerPrefix.length())));
+			}
 		}
 		
 		this.workingMarkerRelationship = this.graph.index().forRelationships(AndamaGraph.workingMarker);
@@ -560,8 +584,14 @@ public class AndamaGraph {
 			for (final AndamaThreadable<?, ?> thread : this.andamaGroup.getThreads()) {
 				if (thread.getHandle().equals(fromName)) {
 					fromThread = (AndamaThreadable<?, V>) thread;
+					if ((fromThread != null) && (toThread != null)) {
+						break;
+					}
 				} else if (thread.getHandle().equals(toName)) {
 					toThread = (AndamaThreadable<V, ?>) thread;
+					if ((fromThread != null) && (toThread != null)) {
+						break;
+					}
 				}
 			}
 			
@@ -669,6 +699,8 @@ public class AndamaGraph {
 			} else {
 				return null;
 			}
+		} catch (NotFoundException e) {
+			return null;
 		} finally {
 			tx.success();
 			tx.finish();

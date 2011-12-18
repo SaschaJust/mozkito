@@ -168,8 +168,8 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 */
 	@Override
 	public String toString() {
-		return "Argument [isRequired=" + this.isRequired + ", name=" + this.name + ", defaultValue="
-		        + this.defaultValue + ", stringValue=" + this.stringValue + ", description=" + this.description + "]";
+		return "Argument [required=" + this.isRequired + ", name=" + this.name + ", default=" + this.defaultValue
+		        + ", value=" + this.stringValue + ", description=" + this.description + "]";
 	}
 	
 	/**
