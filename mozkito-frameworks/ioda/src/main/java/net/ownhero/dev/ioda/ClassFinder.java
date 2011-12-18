@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -51,9 +52,9 @@ public class ClassFinder {
 	/**
 	 * @param pakkage
 	 * @return
-	 * @throws IOException 
-	 * @throws WrongClassSearchMethodException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException
+	 * @throws WrongClassSearchMethodException
+	 * @throws ClassNotFoundException
 	 */
 	@Deprecated
 	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage) throws ClassNotFoundException,
@@ -65,6 +66,9 @@ public class ClassFinder {
 	/**
 	 * @param pakkage
 	 * @param modifiers
+	 *            an Integer value representing properties the class shall not
+	 *            have (e.g. private, interface, abstract). See {@link Modifier}
+	 *            for details.
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
@@ -110,7 +114,9 @@ public class ClassFinder {
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
-	 * @Deprecated use {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)} instead
+	 * @Deprecated use
+	 *             {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)}
+	 *             instead
 	 */
 	@Deprecated
 	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
@@ -131,6 +137,10 @@ public class ClassFinder {
 	 *            (recursive), not null
 	 * @param superClass
 	 *            the class all returned classes have to be derived from
+	 * @param modifiers
+	 *            an Integer value representing properties the class shall not
+	 *            have (e.g. private, interface, abstract). See {@link Modifier}
+	 *            for details.
 	 * @return a collection of classes matching the above conditions
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
@@ -189,7 +199,7 @@ public class ClassFinder {
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
-	 * @param modifiers 
+	 * @param modifiers
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
@@ -290,7 +300,7 @@ public class ClassFinder {
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
-	 * @param modifiers 
+	 * @param modifiers
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
