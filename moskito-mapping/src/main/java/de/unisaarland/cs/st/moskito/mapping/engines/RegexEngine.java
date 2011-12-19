@@ -404,7 +404,7 @@ public class RegexEngine extends MappingEngine {
 		super.register(settings, arguments, isRequired && isEnabled());
 		arguments.addArgument(new URIArgument(settings, getOptionName("file"),
 		                                      "URI to file containing the regular expressions used to map the IDs.",
-		                                      null, isRequired && isEnabled()));
+		                                      null, isEnabled()));
 	}
 	
 	/**
