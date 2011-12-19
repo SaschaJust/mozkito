@@ -571,14 +571,13 @@ public class Logger {
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
-		for (Appender appender : appenders) {
-			org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
-		}
+		org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
 		appenders.clear();
 		
-		for (String clazz : classAppenders.keySet()) {
-			LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
-		}
+		//		for (String clazz : classAppenders.keySet()) {
+		//			LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
+		//		}
+		LogManager.resetConfiguration();
 		classAppenders.clear();
 		
 		LogLevel maxLevel = null;
