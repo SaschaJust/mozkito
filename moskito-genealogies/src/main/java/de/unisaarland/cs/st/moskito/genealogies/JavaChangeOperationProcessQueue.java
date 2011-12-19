@@ -81,18 +81,23 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 			switch (iteratorMode) {
 				case DD:
 					iterator = modifiedDefinitions.iterator();
+					iteratorMode = IteratorMode.MD;
 					break;
 				case MD:
 					iterator = addedDefinitions.iterator();
+					iteratorMode = IteratorMode.AD;
 					break;
 				case AD:
 					iterator = deletedCalls.iterator();
+					iteratorMode = IteratorMode.DC;
 					break;
 				case DC:
 					iterator = modifiedCalls.iterator();
+					iteratorMode = IteratorMode.MC;
 					break;
 				case MC:
 					iterator = addedCalls.iterator();
+					iteratorMode = IteratorMode.AC;
 					break;
 				case AC:
 					return false;
