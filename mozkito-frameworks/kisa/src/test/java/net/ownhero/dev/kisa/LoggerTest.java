@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ public class LoggerTest {
 	private Properties  orgProperties;
 	private File        stdoutFile;
 	private PrintStream orgStdOut;
+	private PrintStream errStream;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -33,10 +35,12 @@ public class LoggerTest {
 		fileName = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "testFileLog.log";
 		logFile = new File(fileName);
 		stdoutFile = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator")
-		        + "testLog.stdout");
+				+ "testLog.stdout");
 		orgStdOut = System.err;
-		System.setErr(new PrintStream(new FileOutputStream(stdoutFile)));
-		classLogFile = new File(System.getProperty("java.io.tmpdir") + "testClassLog.log");
+		errStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(stdoutFile)));
+		System.setErr(errStream);
+		classLogFile = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator")
+				+ "testClassLog.log");
 	}
 	
 	@After
@@ -77,6 +81,7 @@ public class LoggerTest {
 		assertTrue(logFile.exists());
 		BufferedReader reader = null;
 		
+		
 		// CHECK LOG FILE CONTENT
 		try {
 			reader = new BufferedReader(new FileReader(logFile));
@@ -109,6 +114,8 @@ public class LoggerTest {
 		}
 		assertFalse(line != null);
 		
+		errStream.close();
+
 		// CHECK STDOUT CONTENT
 		
 		try {
