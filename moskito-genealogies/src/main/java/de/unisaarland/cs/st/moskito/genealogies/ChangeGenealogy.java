@@ -141,6 +141,13 @@ public interface ChangeGenealogy<T> {
 	public Collection<T> getParents(T t, GenealogyEdgeType... edgeTypes);
 	
 	/**
+	 * Gets the roots.
+	 * 
+	 * @return the roots
+	 */
+	public Collection<T> getRoots();
+	
+	/**
 	 * In degree.
 	 *
 	 * @param node the node

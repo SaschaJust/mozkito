@@ -170,6 +170,23 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	}
 	
 	@Override
+	public Collection<Collection<JavaChangeOperation>> getRoots() {
+		Collection<Collection<JavaChangeOperation>> roots = new LinkedList<Collection<JavaChangeOperation>>();
+		Collection<JavaChangeOperation> vertices = new HashSet<JavaChangeOperation>();
+		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
+		while(vertexIterator.hasNext()){
+			vertices.add(vertexIterator.next());
+		}
+		Collection<Collection<JavaChangeOperation>> partitions = this.buildPartitions(vertices);
+		for (Collection<JavaChangeOperation> partition : partitions) {
+			if (this.getAllParents(partition).isEmpty()) {
+				roots.add(partition);
+			}
+		}
+		return roots;
+	}
+	
+	@Override
 	public int inDegree(Collection<JavaChangeOperation> node) {
 		int numEdges = 0;
 		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, GenealogyEdgeType.values())) {

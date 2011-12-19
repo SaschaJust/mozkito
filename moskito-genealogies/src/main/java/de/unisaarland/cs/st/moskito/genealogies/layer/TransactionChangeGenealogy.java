@@ -98,6 +98,19 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	@Override
+	public Collection<RCSTransaction> getRoots() {
+		Collection<RCSTransaction> roots = new HashSet<RCSTransaction>();
+		Iterator<RCSTransaction> vertexIter = vertexSet();
+		while (vertexIter.hasNext()) {
+			RCSTransaction t = vertexIter.next();
+			if (getAllParents(t).isEmpty()) {
+				roots.add(t);
+			}
+		}
+		return roots;
+	}
+	
+	@Override
 	public int inDegree(RCSTransaction node) {
 		int numEdges = 0;
 		for(RCSTransaction dependant : this.getDependants(node, GenealogyEdgeType.values())){

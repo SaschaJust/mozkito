@@ -39,6 +39,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
 	
 	private static final String        NODE_ID = "javachangeooeration_id";
+	private static final String        ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
 	private final GraphDatabaseService graph;
@@ -51,6 +52,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	private IndexManager               indexManager;
 	
 	private Index<Node>                nodeIndex;
+	private Index<Node>                rootIndex;
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -66,6 +68,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		this.persistenceUtil = persistenceUtil;
 		indexManager = graph.index();
 		nodeIndex = indexManager.forNodes(NODE_ID);
+		rootIndex = indexManager.forNodes(ROOT_VERTICES);
 	}
 	
 	/**
@@ -264,8 +267,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			tx.finish();
 			return false;
 		}
+		
+		rootIndex.remove(from, ROOT_VERTICES);
+		
 		tx.success();
 		tx.finish();
+		
 		
 		
 		return true;
@@ -284,6 +291,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	@NoneNull
 	public boolean addVertex(@NotEmpty final JavaChangeOperation v) {
 		if (this.hasVertex(v)) {
+			if (Logger.logWarn()) {
+				Logger.warn("JavaChangeOperations with id `" + v.getId() + "` already exists");
+			}
 			return false;
 		}
 		Transaction tx = this.graph.beginTx();
@@ -296,6 +306,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		node.setProperty(NODE_ID, v.getId());
 		
 		nodeIndex.add(node, NODE_ID, node.getProperty(NODE_ID));
+		rootIndex.add(node, ROOT_VERTICES, 1);
 		
 		tx.success();
 		tx.finish();
@@ -574,6 +585,16 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 */
 	public PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
+	}
+	
+	@Override
+	public Collection<JavaChangeOperation> getRoots() {
+		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		IndexHits<Node> indexHits = rootIndex.query(ROOT_VERTICES, 1);
+		while (indexHits.hasNext()) {
+			result.add(this.getVertexForNode(indexHits.next()));
+		}
+		return result;
 	}
 	
 	private JavaChangeOperation getVertexForNode(Node dependentNode) {

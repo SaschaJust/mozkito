@@ -109,10 +109,10 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			//start all partition metrics
 			try {
 				
-				//TODO is the final 1 correct?
 				Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder
 						.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
-								GenealogyPartitionMetric.class, 1);
+				                GenealogyPartitionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
+				                        | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
@@ -138,11 +138,11 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			
 			//start all transaction metrics
 			
-			//TODO is the final 1 correct?
 			try {
 				Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder
 						.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
-								GenealogyTransactionMetric.class, 1);
+				                GenealogyTransactionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
+				                        | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
@@ -165,10 +165,10 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			new GenealogyMetricMux<JavaChangeOperation>(this.threadPool.getThreadGroup(), getSettings());
 			//start all core metrics
 			
-			//TODO is the final 1 correct?
 			try {
 				Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(
-						GenealogyCoreMetric.class.getPackage(), GenealogyCoreMetric.class, 1);
+				        GenealogyCoreMetric.class.getPackage(), GenealogyCoreMetric.class, Modifier.ABSTRACT
+				                | Modifier.INTERFACE | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
