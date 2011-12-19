@@ -262,14 +262,15 @@ public class AndamaSettings {
 				}
 			}
 		}
-		Logger.readConfiguration();
 		for (Entry<Object, Object> entry : this.commandlineProps.entrySet()) {
 			String argName = entry.getKey().toString().trim();
 			String value = entry.getValue().toString().trim();
-			if ((this.arguments.containsKey(argName)) && (!System.getProperties().contains(argName))) {
+			if (this.arguments.containsKey(argName)) {
 				this.arguments.get(argName).setStringValue(value);
 			}
+			System.setProperty(argName, value);
 		}
+		Logger.readConfiguration();
 		
 		if (this.helpArg.getValue()) {
 			System.err.println(getHelpString());
