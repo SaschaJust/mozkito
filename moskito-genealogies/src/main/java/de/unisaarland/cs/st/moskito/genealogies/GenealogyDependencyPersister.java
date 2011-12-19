@@ -25,7 +25,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 	
 	private JavaMethodRegistry registry;
 	private CoreChangeGenealogy genealogy;
-	
+	private int                 counter = 0;
 	/**
 	 * Instantiates a new genealogy dependency persister.
 	 * 
@@ -48,6 +48,13 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			@Override
 			public void process() {
 				JavaChangeOperation operation = getInputData();
+				
+				if ((counter % 100) == 0) {
+					if (Logger.logInfo()) {
+						Logger.info("Computed depedencies for " + counter + " nodes within ChangeGenealogy.");
+					}
+				}
+				++counter;
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Computing dependencies for " + operation);
@@ -121,7 +128,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 							if (previousDefinition != null) {
 								genealogy.addEdge(operation, previousDefinition, GenealogyEdgeType.CallOnDefinition);
 							}
-
+							
 						}
 						break;
 				}

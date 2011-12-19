@@ -19,6 +19,8 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  */
 public class GenealogyNodePersister extends AndamaTransformer<OperationCollection, JavaChangeOperation> {
 	
+	private int counter = 0;
+	
 	/**
 	 * Instantiates a new genealogy node persister.
 	 * 
@@ -49,11 +51,19 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 				
 				JavaChangeOperationProcessQueue toWrite = new JavaChangeOperationProcessQueue();
 				
+				
 				while (iterator.hasNext()) {
 					
+					if ((counter % 100) == 0) {
+						if (Logger.logInfo()) {
+							Logger.info("Added " + counter + " JavaChangeOperations to ChangeGenealogy.");
+						}
+					}
+					++counter;
+					
 					JavaChangeOperation operation = iterator.next();
-					if (Logger.logInfo()) {
-						Logger.info("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
+					if (Logger.logDebug()) {
+						Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
 					}
 					
 					if (!coreGenealogy.addVertex(operation)) {
