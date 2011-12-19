@@ -620,7 +620,7 @@ public class Logger {
 		}
 		
 		for (Entry<Object, Object> prop : System.getProperties().entrySet()) {
-			if (prop.getKey().toString().startsWith(prop.getKey().toString())) {
+			if (prop.getKey().toString().startsWith("log.class.")) {
 				if (!registeredAppenders.contains(prop.getKey().toString())) {
 					String className = prop.getKey().toString().substring(10);
 					String[] values = prop.getValue().toString().split(",");
