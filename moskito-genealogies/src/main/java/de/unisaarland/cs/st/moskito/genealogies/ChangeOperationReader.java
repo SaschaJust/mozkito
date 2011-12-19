@@ -45,8 +45,8 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 					Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(
 							persistenceUtil, transaction);
 					
-					if (Logger.logInfo()) {
-						Logger.info("Providing " + transaction);
+					if (Logger.logDebug()) {
+						Logger.debug("Providing " + transaction);
 					}
 					
 					providePartialOutputData(new OperationCollection(changeOperations));
