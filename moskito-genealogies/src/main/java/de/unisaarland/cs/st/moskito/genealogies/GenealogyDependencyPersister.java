@@ -56,10 +56,6 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 				}
 				++counter;
 				
-				if (Logger.logDebug()) {
-					Logger.debug("Computing dependencies for " + operation);
-				}
-				
 				JavaElementLocation location = operation.getChangedElementLocation();
 				JavaElement element = location.getElement();
 				

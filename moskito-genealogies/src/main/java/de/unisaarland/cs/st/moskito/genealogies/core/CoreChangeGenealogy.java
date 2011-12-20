@@ -249,8 +249,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		
 		//add both vertices
-		addVertex(dependent);
-		addVertex(target);
+		if (!containsVertex(dependent)) {
+			addVertex(dependent);
+		}
+		if (!containsVertex(target)) {
+			addVertex(target);
+		}
 		
 		//we know that they have to exist
 		Node from = this.getNodeForVertex(dependent);

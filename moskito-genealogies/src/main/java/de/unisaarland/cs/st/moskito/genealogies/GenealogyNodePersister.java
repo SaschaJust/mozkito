@@ -37,6 +37,8 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 		
 		new ProcessHook<OperationCollection, JavaChangeOperation>(this) {
 			
+			private JavaChangeOperationProcessQueue toWrite;
+			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -44,51 +46,53 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 			 */
 			@Override
 			public void process() {
-				OperationCollection operationCollection = getInputData();
-				
-				Collection<JavaChangeOperation> changeOperations = operationCollection.unpack();
-				Iterator<JavaChangeOperation> iterator = changeOperations.iterator();
-				
-				JavaChangeOperationProcessQueue toWrite = new JavaChangeOperationProcessQueue();
 				
 				
-				while (iterator.hasNext()) {
+				if(!toWrite.hasNext()){
+					toWrite.clear();
+					OperationCollection operationCollection = getInputData();
 					
-					if ((counter % 100) == 0) {
-						if (Logger.logInfo()) {
-							Logger.info("Added " + counter + " JavaChangeOperations to ChangeGenealogy.");
+					Collection<JavaChangeOperation> changeOperations = operationCollection.unpack();
+					Iterator<JavaChangeOperation> iterator = changeOperations.iterator();
+					
+					toWrite = new JavaChangeOperationProcessQueue();
+					
+					
+					while (iterator.hasNext()) {
+						
+						if ((counter % 100) == 0) {
+							if (Logger.logInfo()) {
+								Logger.info("Added " + counter + " JavaChangeOperations to ChangeGenealogy.");
+							}
+						}
+						++counter;
+						
+						JavaChangeOperation operation = iterator.next();
+						if (Logger.logDebug()) {
+							Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
+						}
+						
+						if (!coreGenealogy.addVertex(operation)) {
+							if (Logger.logError()) {
+								Logger.error("Adding JavaChangeOperations `" + operation.getId()
+										+ "` to ChangeGenealogy FAILED!");
+							}
+						} else {
+							toWrite.add(operation);
+						}
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Storing " + operation);
 						}
 					}
-					++counter;
-					
-					JavaChangeOperation operation = iterator.next();
-					if (Logger.logDebug()) {
-						Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
-					}
-					
-					if (!coreGenealogy.addVertex(operation)) {
-						if (Logger.logError()) {
-							Logger.error("Adding JavaChangeOperations `" + operation.getId()
-									+ "` to ChangeGenealogy FAILED!");
-						}
-					} else {
-						toWrite.add(operation);
-					}
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Storing " + operation);
-					}
-				}
-				
-				while (toWrite.hasNext()) {
+
+				}else{
 					providePartialOutputData(toWrite.next());
+					if (!toWrite.hasNext()) {
+						setCompleted();
+					}
 				}
-				
-				setCompleted();
 			}
-			
 		};
-		
 	}
-	
 }

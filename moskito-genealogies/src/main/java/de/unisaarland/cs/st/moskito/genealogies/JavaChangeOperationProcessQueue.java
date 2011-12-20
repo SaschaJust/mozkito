@@ -68,11 +68,22 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		}
 	}
 	
+	public void clear() {
+		deletedDefinitions.clear();
+		modifiedDefinitions.clear();
+		addedDefinitions.clear();
+		deletedCalls.clear();
+		modifiedCalls.clear();
+		addedCalls.clear();
+		iteratorMode = IteratorMode.DD;
+		iterator = null;
+	}
+	
 	@Override
 	public boolean hasNext() {
 		if (iterator == null) {
 			iterator = deletedDefinitions.iterator();
-			return hasNext();
+			iteratorMode = IteratorMode.DD;
 		}
 		
 		if (iterator.hasNext()) {
