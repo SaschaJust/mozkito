@@ -37,7 +37,7 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 		
 		new ProcessHook<OperationCollection, JavaChangeOperation>(this) {
 			
-			private JavaChangeOperationProcessQueue toWrite;
+			private JavaChangeOperationProcessQueue toWrite = new JavaChangeOperationProcessQueue();
 			
 			/*
 			 * (non-Javadoc)
@@ -54,8 +54,6 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 					
 					Collection<JavaChangeOperation> changeOperations = operationCollection.unpack();
 					Iterator<JavaChangeOperation> iterator = changeOperations.iterator();
-					
-					toWrite = new JavaChangeOperationProcessQueue();
 					
 					
 					while (iterator.hasNext()) {
@@ -85,7 +83,7 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 							Logger.debug("Storing " + operation);
 						}
 					}
-
+					
 				}else{
 					providePartialOutputData(toWrite.next());
 					if (!toWrite.hasNext()) {
