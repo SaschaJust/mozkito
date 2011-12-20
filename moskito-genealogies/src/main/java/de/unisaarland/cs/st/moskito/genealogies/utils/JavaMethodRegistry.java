@@ -325,14 +325,15 @@ public class JavaMethodRegistry {
 			
 			boolean sameMethodName = JavaElement.extractMethodName(signature).equals(
 					JavaElement.extractMethodName(callSignature));
+			if (signatures.get(signature).isEmpty()) {
+				continue;
+			}
 			boolean sameArguments = ((JavaMethodCall) signatures.get(signature).get(0).getChangedElementLocation()
 					.getElement()).getSignature().equals(call.getSignature());
 			
 			if (sameMethodName && sameArguments) {
-				if (candidates != null) {
-					return null;
-				}
 				candidates = signatures.get(signature);
+				break;
 			}
 		}
 		if ((candidates == null) || (candidates.size() < 1)) {
