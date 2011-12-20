@@ -85,7 +85,7 @@ public class JavaMethodRegistry {
 	 * @return <code>true</code> if element could be added; <code>false</code>
 	 *         if element with same signature already exists
 	 */
-	public boolean addDefiniton(JavaChangeOperation def) {
+	public boolean addMethodDefiniton(JavaChangeOperation def) {
 		String fullQualifiedName = def.getChangedElementLocation().getElement().getFullQualifiedName();
 		if (!this.methodDefinitions.containsKey(fullQualifiedName)) {
 			this.methodDefinitions.put(fullQualifiedName, def);
@@ -603,7 +603,7 @@ public class JavaMethodRegistry {
 	 *            invocation to be deleted
 	 * @return The removed method invocation iff found
 	 */
-	public JavaChangeOperation removeInvocation(JavaChangeOperation del) {
+	public JavaChangeOperation removeMethodCall(JavaChangeOperation del) {
 		Condition.check(del.getChangedElementLocation().getElement() instanceof JavaMethodCall,
 				"You try to remove a java method call that is no call.");
 		

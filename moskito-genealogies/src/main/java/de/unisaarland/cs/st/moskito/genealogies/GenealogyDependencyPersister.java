@@ -62,10 +62,8 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 				switch (operation.getChangeType()) {
 					case Deleted:
 						if (element instanceof JavaMethodDefinition) {
-							registry.addDefiniton(operation);
-							
 							//find the previous operation that added the same method definition
-							JavaChangeOperation previousDefinition = registry.findPreviousDefinition(element, false);
+							JavaChangeOperation previousDefinition = registry.removeDefiniton(operation);
 							if (previousDefinition == null) {
 								if (Logger.logWarn()) {
 									Logger.warn("WARNING! Cannot find the JavaChangeOperation that added `"
@@ -78,10 +76,8 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 							}
 						} else if (element instanceof JavaMethodCall) {
 							
-							registry.addCall(operation);
-							
 							//find the previous call that was added by this operation
-							JavaChangeOperation deletedCall = registry.removeInvocation(operation);
+							JavaChangeOperation deletedCall = registry.removeMethodCall(operation);
 							if (deletedCall == null) {
 								if (Logger.logWarn()) {
 									Logger.warn("WARNING! Could not find add operation that added method call `"
@@ -105,7 +101,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 					case Modified:
 					case Added:
 						if (element instanceof JavaMethodDefinition) {
-							registry.addDefiniton(operation);
+							registry.addMethodDefiniton(operation);
 							
 							JavaChangeOperation previousDefinition = registry.findPreviousDefinition(element, true);
 							if (previousDefinition != null) {

@@ -61,8 +61,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 					break;
 			}
 		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Cannot hadle JavaElements that are neither JavaMethodDefinitions nor JavaMethodCalls. Got: "
+			if (Logger.logDebug()) {
+				Logger.debug("Cannot hadle JavaElements that are neither JavaMethodDefinitions nor JavaMethodCalls. Got: "
 						+ element.getClass().getCanonicalName());
 			}
 		}
