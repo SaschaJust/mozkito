@@ -199,6 +199,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	private final AndamaGroup                                 threadGroup;
 	
 	private final boolean                                     waitForLatch       = false;
+	private final Map<Class<?>, K>                            inputCache         = new HashMap<Class<?>, K>();
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
@@ -666,9 +667,35 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return the inputData
 	 */
 	public final K getInputData() {
-		return this.inputDataTuple != null
-		                                  ? this.inputDataTuple.getFirst()
-		                                  : null;
+		K localCache = this.inputDataTuple != null
+		                                          ? this.inputDataTuple.getFirst()
+		                                          : null;
+		Class<?> caller;
+		try {
+			caller = JavaUtils.getCallingClass();
+			
+			if (this.inputCache.containsKey(caller)) {
+				if (this.inputCache.get(caller) == localCache) {
+					if (Logger.logWarn()) {
+						Logger.warn("Multiple request of input data element (" + localCache.toString() + ") within "
+						        + this.toString());
+						Logger.warn("This might not be an issue if you call " + JavaUtils.getThisMethodName()
+						        + " multiple times within one hook.");
+						Logger.warn("Though, make sure your hooks set the completed flag after having processed your input element.");
+						Logger.warn("Otherwise you will read the same input data in the next around again.");
+						Logger.warn("The completed flag can be set by either setting it explicitly with the according setter or");
+						Logger.warn("Calling the provide output data method instead of the provide partial output data.");
+					}
+				}
+			}
+			
+			this.inputCache.put(caller, localCache);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return localCache;
 	}
 	
 	/**
@@ -1042,39 +1069,25 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		CollectionCondition.maxSize(this.inputHooks, 1, "There must not be more than 1 input hooks, but got: %s",
 		                            this.inputHooks.size());
 		// @formatter:off
+		
 		/*
-		 * 
-		 * +----------------------------------------------------------------------
-		 * ------------------------------------------------------------+ | | |
-		 * no | |
-		 * +--------------------------------------------------------------
-		 * ----------------------------------+
-		 * +----------------------------------
-		 * ------------------------------------
-		 * ----------------------------------------------+ v | v | +---------+
-		 * +----------+ yes +------------+ yes +----------+ +-------+
-		 * +-----------+ +-----------------+ no +------------+ +---------+
-		 * +-------------+ +-------+ no +-----------------+ no +-----------+
-		 * +--------+ +------------+ | PREEXEC | --> | | -----> | completed? |
-		 * -----> | PREINPUT | --> | INPUT | --> | POSTINPUT | --> | i_data ==
-		 * null? | ----> | PREPROCESS | --> | PROCESS | --> | POSTPROCESS | -->
-		 * | skip? | -----> | p_data == null? | ----> | PREOUTPUT | --> | OUTPUT
-		 * | --> | POSTOUTPUT | +---------+ | | +------------+ +----------+
-		 * +-------+ +-----------+ +-----------------+ +------------+
-		 * +---------+ +-------------+ +-------+ +-----------------+
-		 * +-----------+ +--------+ +------------+ | | | no ^ | | | reading? |
-		 * --
-		 * --------------------------------------------------------------------
-		 * ----------+-------------------------+ | | yes | | | | v | | | | yes
-		 * +-----------------+ | |
-		 * +----------------------------------------------
-		 * ----------------------------------+------------> | POSTEXECUTION |
-		 * +----------+ | +-----------------+ ^ yes |
-		 * +--------------------------
-		 * --------------------------------------------
-		 * --------------------------
-		 * --------------------------------------------
-		 * -------------------------------+
+		 *                   +----------------------------------------------------------------------------------------------------------------------------------+
+         *                   |                                                                                                                                  |
+         *                   |                                no                                                                                                |
+         *                   |                   +------------------------------------------------------------------------------------------------+             +--------------------------------------------------------------------------------------------------------------------+
+         *                   v                   |                                                                                                v                                                                                                                                  |
+         * +---------+     +----------+  yes   +------------+  yes   +----------+     +-------+     +-----------+     +-----------------+  no   +------------+     +---------+     +-------------+     +-------+  no    +-----------------+  no   +-----------+     +--------+     +------------+
+         * | PREEXEC | --> |          | -----> | completed? | -----> | PREINPUT | --> | INPUT | --> | POSTINPUT | --> | i_data == null? | ----> | PREPROCESS | --> | PROCESS | --> | POSTPROCESS | --> | skip? | -----> | p_data == null? | ----> | PREOUTPUT | --> | OUTPUT | --> | POSTOUTPUT |
+         * +---------+     |          |        +------------+        +----------+     +-------+     +-----------+     +-----------------+       +------------+     +---------+     +-------------+     +-------+        +-----------------+       +-----------+     +--------+     +------------+
+         *                 |          |                                                                                 |                 no      ^                                                      |                |
+         *                 | reading? | --------------------------------------------------------------------------------+-------------------------+                                                      |                | yes
+         *                 |          |                                                                                 |                                                                                |                v
+         *                 |          |                                                                                 |                                                                                |       yes    +-----------------+
+         *                 |          |                                                                                 +--------------------------------------------------------------------------------+------------> |  POSTEXECUTION  |
+         *                 +----------+                                                                                                                                                                  |              +-----------------+
+         *                   ^          yes                                                                                                                                                              |
+         *                   +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+         *
 		 */
 		
 		// @formatter:on
