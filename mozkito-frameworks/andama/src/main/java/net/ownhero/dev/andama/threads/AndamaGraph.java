@@ -691,6 +691,7 @@ public class AndamaGraph {
 		
 		try {
 			final Index<Node> index = this.graph.index().forNodes("solution");
+			// TODO clear database if index size == 0
 			final IndexHits<Node> hits = index.get("name", composeIdentifier(andamaGroup));
 			
 			if (hits.size() > 0) {
