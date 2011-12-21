@@ -48,7 +48,9 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 			public void process() {
 				
 				
-				if(!toWrite.hasNext()){
+				if (toWrite.hasNext()) {
+					providePartialOutputData(toWrite.next());
+				} else {
 					toWrite.clear();
 					OperationCollection operationCollection = getInputData();
 					
@@ -83,11 +85,14 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 							Logger.debug("Storing " + operation);
 						}
 					}
-					
-				}else{
-					providePartialOutputData(toWrite.next());
 					if (!toWrite.hasNext()) {
 						setCompleted();
+					} else {
+						JavaChangeOperation toOffer = toWrite.next();
+						if (Logger.logDebug()) {
+							Logger.debug("Offering node " + toOffer.toString() + " for dependency computation.");
+						}
+						providePartialOutputData(toOffer);
 					}
 				}
 			}

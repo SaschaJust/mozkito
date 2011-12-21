@@ -28,4 +28,12 @@ public class PageRankCache {
 		return digest.digest();
 	}
 	
+	public void putPageRank(String nodeId, double value) {
+		pageRanks.put(hash(nodeId), value);
+	}
+	
+	public void removePageRank(String nodeId) {
+		pageRanks.remove(hash(nodeId));
+	}
+	
 }

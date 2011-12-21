@@ -126,7 +126,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 				}
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Adding dependencies for " + operation);
+					Logger.debug("Added dependencies for " + operation);
 				}
 				
 			}

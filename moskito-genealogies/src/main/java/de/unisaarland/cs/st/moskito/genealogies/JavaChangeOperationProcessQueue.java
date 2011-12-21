@@ -13,7 +13,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
 public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOperation> {
 	
-	private static enum IteratorMode {
+	protected static enum IteratorMode {
 		DD, MD, AD, DC, MC, AC;
 	}
 	

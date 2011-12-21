@@ -8,6 +8,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
@@ -49,6 +50,14 @@ GenealogyMetric<T> {
 				
 			}
 		};
+		
+		new PostExecutionHook<GenealogyNode<T>, GenealogyMetricValue>(this) {
+			
+			@Override
+			public void postExecution() {
+				
+			}
+		};
 	}
 	
 	@Override
@@ -56,5 +65,8 @@ GenealogyMetric<T> {
 	
 	@Override
 	public abstract Collection<GenealogyMetricValue> handle(GenealogyNode<T> item);
+	
+	public void postProcess() {
+	}
 	
 }

@@ -38,7 +38,12 @@ public class GenealogyReader<T> extends AndamaSource<GenealogyNode<T>> {
 						Logger.info("Providing " + t);
 					}
 					
-					GenealogyNode<T> node = new GenealogyNode<T>(t, changeGenealogy.getNodeId(t));
+					GenealogyNode<T> node = null;
+					if (iterator.hasNext()) {
+						node = new GenealogyNode<T>(t, changeGenealogy.getNodeId(t));
+					} else {
+						node = new GenealogyNode<T>(t, changeGenealogy.getNodeId(t), true);
+					}
 					providePartialOutputData(node);
 				} else {
 					provideOutputData(null, true);
