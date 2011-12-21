@@ -268,7 +268,7 @@ public class AndamaSettings {
 			if (this.arguments.containsKey(argName)) {
 				this.arguments.get(argName).setStringValue(value);
 			}
-			System.setProperty(argName, value);
+			System.setProperty(entry.getKey().toString(), entry.getValue().toString());
 		}
 		Logger.readConfiguration();
 		
