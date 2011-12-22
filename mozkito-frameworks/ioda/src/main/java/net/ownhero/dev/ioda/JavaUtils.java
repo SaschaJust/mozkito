@@ -122,6 +122,25 @@ public class JavaUtils {
 		return arrayToString(enumConstants);
 	}
 	
+	public static Class<?> getCallingClass() throws ClassNotFoundException {
+		Throwable throwable = new Throwable();
+		throwable.fillInStackTrace();
+		
+		StackTraceElement[] stackTrace = throwable.getStackTrace();
+		return Class.forName(stackTrace[2].getClassName());
+	}
+	
+	/**
+	 * @return
+	 */
+	public static String getThisMethodName() {
+		Throwable throwable = new Throwable();
+		throwable.fillInStackTrace();
+		
+		StackTraceElement[] stackTrace = throwable.getStackTrace();
+		return stackTrace[2].getMethodName();
+	}
+	
 	/**
 	 * @param map
 	 * @return
