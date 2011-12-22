@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  */
 public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
 	
-	private static final String        NODE_ID = "javachangeooeration_id";
+	public static final String         NODE_ID       = "javachangeooeration_id";
 	private static final String        ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */

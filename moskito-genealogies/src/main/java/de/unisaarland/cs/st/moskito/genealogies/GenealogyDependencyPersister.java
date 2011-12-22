@@ -16,7 +16,6 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 
-
 /**
  * The Class GenealogyDependencyPersister.
  * 
@@ -24,10 +23,12 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  */
 public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperationProcessQueue> {
 	
-	private JavaMethodRegistry registry;
+	private JavaMethodRegistry  registry;
 	private CoreChangeGenealogy genealogy;
-	private int                 counter = 0;
+	private int                 counter        = 0;
 	private int                 depCounter = 0;
+	private int                 packageCounter = 0;
+	
 	/**
 	 * Instantiates a new genealogy dependency persister.
 	 * 
@@ -50,6 +51,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			@Override
 			public void process() {
 				JavaChangeOperationProcessQueue operationQueue = getInputData();
+				++packageCounter;
 				
 				while (operationQueue.hasNext()) {
 					
@@ -121,9 +123,11 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 							} else if (element instanceof JavaMethodCall) {
 								registry.addCall(operation);
 								
-								JavaChangeOperation previousDefinition = registry.findPreviousDefinition(element, false);
+								JavaChangeOperation previousDefinition = registry
+										.findPreviousDefinition(element, false);
 								if (previousDefinition != null) {
-									genealogy.addEdge(operation, previousDefinition, GenealogyEdgeType.CallOnDefinition);
+									genealogy
+									.addEdge(operation, previousDefinition, GenealogyEdgeType.CallOnDefinition);
 									++depCounter;
 								}
 								
@@ -143,14 +147,14 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			@Override
 			public void postExecution() {
 				if (Logger.logInfo()) {
+					Logger.info("Received " + packageCounter + " input data objects.");
 					Logger.info("Added dependencies for " + counter + " JavaChangeOperations.");
 					Logger.info("Added a total of " + depCounter + " dependencies to ChangeGenealogies.");
 				}
 			}
 			
 		};
-
+		
 	}
-	
 	
 }

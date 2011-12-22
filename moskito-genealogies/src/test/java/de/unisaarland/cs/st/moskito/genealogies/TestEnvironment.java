@@ -54,15 +54,15 @@ public class TestEnvironment {
 		T1F1, T1F2, T2F3, T3F1D, T3F1A, T3F2, T4F3D, T4F3A, T4F4, T5F4, T6F2, T7F2, T8F2, T9F1, T10F3, T10F4, T3F2M;
 	}
 	
-	private static PersistenceUtil persistenceUtil = null;
+	private static PersistenceUtil                                   persistenceUtil         = null;
 	
-	public static Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap  = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
+	public static Map<RCSTransaction, Set<JavaChangeOperation>>      transactionMap          = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 	
-	public static Map<Integer, RCSTransaction>                  environmentTransactions = new HashMap<Integer, RCSTransaction>();
+	public static Map<Integer, RCSTransaction>                       environmentTransactions = new HashMap<Integer, RCSTransaction>();
 	
 	public static Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations   = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
 	
-	private static Repository repository;
+	private static Repository                                        repository;
 	
 	protected static CoreChangeGenealogy                             changeGenealogy;
 	
@@ -72,7 +72,7 @@ public class TestEnvironment {
 		return persistenceUtil;
 	}
 	
-	public static Repository getRepository(){
+	public static Repository getRepository() {
 		return TestEnvironment.repository;
 	}
 	
@@ -81,7 +81,7 @@ public class TestEnvironment {
 		transactionMap.clear();
 		environmentOperations.clear();
 		environmentTransactions.clear();
-
+		
 		// UNZIP git repo
 		URL zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
 		if (zipURL == null) {
@@ -293,8 +293,7 @@ public class TestEnvironment {
 		//done everything is set.
 		persistenceUtil.commitTransaction();
 		
-		tmpGraphDBFile = FileUtils
-				.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
+		tmpGraphDBFile = FileUtils.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
 		
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, getPersistenceUtil());
 		assertTrue(changeGenealogy != null);
