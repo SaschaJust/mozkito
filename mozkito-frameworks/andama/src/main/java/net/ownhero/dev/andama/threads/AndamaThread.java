@@ -200,7 +200,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	private final boolean                                     waitForLatch       = false;
 	private final Map<Class<?>, K>                            inputCache         = new HashMap<Class<?>, K>();
-	
+	private boolean                                           warningSameInputdata = false;
+
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
 	 * all extending classes.
@@ -674,7 +675,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		try {
 			caller = JavaUtils.getCallingClass();
 			
-			if (this.inputCache.containsKey(caller)) {
+			if (!this.warningSameInputdata && this.inputCache.containsKey(caller)) {
 				if (this.inputCache.get(caller) == localCache) {
 					if (Logger.logWarn()) {
 						Logger.warn("Multiple request of input data element (" + localCache.toString() + ") within "
@@ -685,7 +686,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 						Logger.warn("Otherwise you will read the same input data in the next around again.");
 						Logger.warn("The completed flag can be set by either setting it explicitly with the according setter or");
 						Logger.warn("Calling the provide output data method instead of the provide partial output data.");
+						Logger.warn("This warning will be suppressed for the remaining execution.");
 					}
+					this.warningSameInputdata = true;
 				}
 			}
 			
