@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -26,6 +27,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 	private JavaMethodRegistry registry;
 	private CoreChangeGenealogy genealogy;
 	private int                 counter = 0;
+	private int                 depCounter = 0;
 	/**
 	 * Instantiates a new genealogy dependency persister.
 	 * 
@@ -52,11 +54,6 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 				while (operationQueue.hasNext()) {
 					
 					JavaChangeOperation operation = operationQueue.next();
-					if ((counter % 100) == 0) {
-						if (Logger.logInfo()) {
-							Logger.info("Computed depedencies for " + counter + " nodes within ChangeGenealogy.");
-						}
-					}
 					++counter;
 					
 					JavaElementLocation location = operation.getChangedElementLocation();
@@ -76,6 +73,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								} else {
 									genealogy.addEdge(operation, previousDefinition,
 											GenealogyEdgeType.DeletedDefinitionOnDefinition);
+									++depCounter;
 								}
 							} else if (element instanceof JavaMethodCall) {
 								
@@ -88,6 +86,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									}
 								} else {
 									genealogy.addEdge(operation, deletedCall, GenealogyEdgeType.DeletedCallOnCall);
+									++depCounter;
 								}
 								
 								//check if the corresponding method definition was added too.
@@ -97,6 +96,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									if (previousDefinitionDeletion != null) {
 										genealogy.addEdge(operation, previousDefinitionDeletion,
 												GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+										++depCounter;
 									}
 								}
 							}
@@ -111,9 +111,11 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									if (previousDefinition.getChangeType().equals(ChangeType.Deleted)) {
 										genealogy.addEdge(operation, previousDefinition,
 												GenealogyEdgeType.DefinitionOnDeletedDefinition);
+										++depCounter;
 									} else {
 										genealogy.addEdge(operation, previousDefinition,
 												GenealogyEdgeType.DefinitionOnDefinition);
+										++depCounter;
 									}
 								}
 							} else if (element instanceof JavaMethodCall) {
@@ -122,6 +124,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								JavaChangeOperation previousDefinition = registry.findPreviousDefinition(element, false);
 								if (previousDefinition != null) {
 									genealogy.addEdge(operation, previousDefinition, GenealogyEdgeType.CallOnDefinition);
+									++depCounter;
 								}
 								
 							}
@@ -133,6 +136,18 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 					}
 				}
 			}
+		};
+		
+		new PostProcessHook<JavaChangeOperationProcessQueue, JavaChangeOperationProcessQueue>(this) {
+			
+			@Override
+			public void postProcess() {
+				if (Logger.logInfo()) {
+					Logger.info("Added dependencies for " + counter + " JavaChangeOperations.");
+					Logger.info("Added a total of " + depCounter + " dependencies to ChangeGenealogies.");
+				}
+			}
+			
 		};
 	}
 	

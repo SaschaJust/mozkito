@@ -6,6 +6,7 @@ import java.util.Iterator;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.PostProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 
@@ -66,18 +67,7 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 				
 				while (iterator.hasNext()) {
 					
-					if ((counter % 100) == 0) {
-						if (Logger.logInfo()) {
-							Logger.info("Added " + counter + " JavaChangeOperations to ChangeGenealogy.");
-						}
-					}
-					++counter;
-					
 					JavaChangeOperation operation = iterator.next();
-					if (Logger.logDebug()) {
-						Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
-					}
-					
 					
 					if (!coreGenealogy.addVertex(operation)) {
 						if (Logger.logError()) {
@@ -86,6 +76,10 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 						}
 					} else {
 						toWrite.add(operation);
+						if (Logger.logDebug()) {
+							Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
+						}
+						++counter;
 					}
 					
 					
@@ -93,5 +87,17 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 				provideOutputData(toWrite);
 			}
 		};
+		
+		new PostProcessHook<OperationCollection, JavaChangeOperationProcessQueue>(this) {
+			
+			@Override
+			public void postProcess() {
+				if (Logger.logInfo()) {
+					Logger.info("Added " + counter + " JavaChangeOperations to ChnageGenealogy");
+				}
+			}
+			
+		};
+
 	}
 }
