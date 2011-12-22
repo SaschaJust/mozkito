@@ -6,7 +6,7 @@ import java.util.Iterator;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
-import net.ownhero.dev.andama.threads.PostProcessHook;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 
@@ -88,16 +88,16 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 			}
 		};
 		
-		new PostProcessHook<OperationCollection, JavaChangeOperationProcessQueue>(this) {
+		new PostExecutionHook<OperationCollection, JavaChangeOperationProcessQueue>(this) {
 			
 			@Override
-			public void postProcess() {
+			public void postExecution() {
 				if (Logger.logInfo()) {
 					Logger.info("Added " + counter + " JavaChangeOperations to ChnageGenealogy");
 				}
 			}
 			
 		};
-
+		
 	}
 }

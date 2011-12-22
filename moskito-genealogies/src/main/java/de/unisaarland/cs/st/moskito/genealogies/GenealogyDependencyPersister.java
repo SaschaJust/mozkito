@@ -3,7 +3,7 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.andama.threads.PostProcessHook;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -138,10 +138,10 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			}
 		};
 		
-		new PostProcessHook<JavaChangeOperationProcessQueue, JavaChangeOperationProcessQueue>(this) {
+		new PostExecutionHook<JavaChangeOperationProcessQueue, JavaChangeOperationProcessQueue>(this) {
 			
 			@Override
-			public void postProcess() {
+			public void postExecution() {
 				if (Logger.logInfo()) {
 					Logger.info("Added dependencies for " + counter + " JavaChangeOperations.");
 					Logger.info("Added a total of " + depCounter + " dependencies to ChangeGenealogies.");
@@ -149,6 +149,8 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			}
 			
 		};
+
 	}
+	
 	
 }
