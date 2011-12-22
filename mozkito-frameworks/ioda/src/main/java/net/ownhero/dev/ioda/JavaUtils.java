@@ -127,7 +127,7 @@ public class JavaUtils {
 		throwable.fillInStackTrace();
 		
 		StackTraceElement[] stackTrace = throwable.getStackTrace();
-		return Class.forName(stackTrace[2].getClassName());
+		return Class.forName(stackTrace[1].getClassName());
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class JavaUtils {
 		throwable.fillInStackTrace();
 		
 		StackTraceElement[] stackTrace = throwable.getStackTrace();
-		return stackTrace[2].getMethodName();
+		return stackTrace[1].getMethodName();
 	}
 	
 	/**
