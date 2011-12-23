@@ -62,12 +62,12 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 			}
 		} else {
 			if (Logger.logDebug()) {
-				Logger.debug("Cannot hadle JavaElements that are neither JavaMethodDefinitions nor JavaMethodCalls. Got: "
+				Logger.debug("Cannot handle JavaElements that are neither JavaMethodDefinitions nor JavaMethodCalls. Got: "
 						+ element.getClass().getCanonicalName());
 			}
 		}
 	}
-
+	
 	
 	@Override
 	public boolean hasNext() {

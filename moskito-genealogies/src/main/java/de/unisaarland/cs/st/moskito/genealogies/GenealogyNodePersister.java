@@ -51,6 +51,7 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 			public void process() {
 				
 				OperationCollection operationCollection = getInputData();
+				int localCounter = 0;
 				
 				Collection<JavaChangeOperation> changeOperations = operationCollection.unpack();
 				
@@ -75,11 +76,15 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 					} else {
 						toWrite.add(operation);
 						if (Logger.logDebug()) {
-							Logger.debug("Adding JavaChangeOperations `" + operation.getId() + "` to ChangeGenealogy.");
+							Logger.debug("Adding JavaChangeOperation `" + operation.getId() + "` to ChangeGenealogy.");
 						}
-						++counter;
+						++localCounter;
 					}
 					
+				}
+				counter += localCounter;
+				if (Logger.logDebug()) {
+					Logger.debug("Send package " + toWrite.toString() + " with " + localCounter + " elements.");
 				}
 				provideOutputData(toWrite);
 				++packageCounter;

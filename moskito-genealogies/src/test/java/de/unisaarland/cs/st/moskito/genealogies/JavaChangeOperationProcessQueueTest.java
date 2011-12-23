@@ -96,6 +96,19 @@ public class JavaChangeOperationProcessQueueTest extends TestEnvironment {
 		assert (modifiedCalls.isEmpty());
 		assert (addedCalls.isEmpty());
 		changeGenealogy.close();
+		
+		queue = new JavaChangeOperationProcessQueue();
+		for (JavaChangeOperation op : addedCalls) {
+			queue.add(op);
+		}
+		counter = 0;
+		while (queue.hasNext()) {
+			JavaChangeOperation next = queue.next();
+			assert (next != null);
+			assert (addedCalls.contains(next));
+			++counter;
+		}
+		assertEquals(addedCalls.size(), counter);
 	}
 	
 }

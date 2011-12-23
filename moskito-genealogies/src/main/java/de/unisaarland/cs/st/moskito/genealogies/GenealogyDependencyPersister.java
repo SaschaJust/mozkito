@@ -52,11 +52,12 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 			public void process() {
 				JavaChangeOperationProcessQueue operationQueue = getInputData();
 				++packageCounter;
+				int localCounter = 0;
 				
 				while (operationQueue.hasNext()) {
 					
 					JavaChangeOperation operation = operationQueue.next();
-					++counter;
+					++localCounter;
 					
 					JavaElementLocation location = operation.getChangedElementLocation();
 					JavaElement element = location.getElement();
@@ -139,6 +140,12 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 						Logger.debug("Added dependencies for " + operation);
 					}
 				}
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Received package " + operationQueue.toString() + " with " + localCounter
+					        + " elements.");
+				}
+				counter += localCounter;
 			}
 		};
 		
