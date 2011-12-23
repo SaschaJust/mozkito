@@ -12,8 +12,6 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalDwReachMetric<T> {
 	
-	//TODO requires intensive testing
-	
 	protected static String    dwReach   = "dwReach";
 	
 	private ChangeGenealogy<T> genealogy;
