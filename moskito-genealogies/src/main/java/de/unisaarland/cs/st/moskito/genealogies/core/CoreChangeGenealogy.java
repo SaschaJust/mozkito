@@ -39,7 +39,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
 	
 	public static final String         NODE_ID       = "javachangeooeration_id";
-	private static final String        ROOT_VERTICES = "root_vertices";
+	public static final String         ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
 	private final GraphDatabaseService graph;
@@ -272,7 +272,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			return false;
 		}
 		
-		rootIndex.remove(from, ROOT_VERTICES);
+		rootIndex.remove(to, ROOT_VERTICES);
 		
 		tx.success();
 		tx.finish();
@@ -360,7 +360,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		nodes.close();
 		return result;
-		
 	}
 	
 	/**
@@ -670,7 +669,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 */
 	@Override
 	public int vertexSize() {
-		IndexHits<Node> indexHits = graph.index().forNodes(NODE_ID).query(NODE_ID, "*");
+		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, "*");
 		int result = indexHits.size();
 		indexHits.close();
 		return result;

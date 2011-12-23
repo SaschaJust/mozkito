@@ -96,6 +96,10 @@ public class DwReachCache {
 		cache.get(hash).clearUpdateHooks();
 	}
 	
+	public boolean contains(byte[] hash){
+		return cache.containsKey(hash);
+	}
+	
 	public int getCurrentDepth(byte[] hash) {
 		if (!cache.containsKey(hash)) {
 			initCache(hash);
@@ -163,11 +167,11 @@ public class DwReachCache {
 	public void newRound() {
 		globallyIncreaseDepth();
 		@SuppressWarnings("unchecked") Collection<byte[]> noNewHooks = CollectionUtils.subtract(cache.keySet(),
-				hooksUpdated);
+		        hooksUpdated);
 		for (byte[] node : noNewHooks) {
 			cache.get(node).getSeen().clear();
 		}
 		hooksUpdated.clear();
 	}
-	
+
 }

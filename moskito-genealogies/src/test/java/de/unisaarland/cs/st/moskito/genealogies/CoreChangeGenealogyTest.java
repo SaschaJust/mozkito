@@ -320,6 +320,30 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 		assertEquals(41, iterCounter);
 		assertEquals(17, hitCounter);
 		
+		//test roots
+		Collection<JavaChangeOperation> roots = changeGenealogy.getRoots();
+		assertTrue(roots.size() >= 7);
+		
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T10F3)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T10F4)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T8F2)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T4F3D)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T4F4)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T3F1D)));
+		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T3F2)));
+		
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T1F1)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T1F2)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T2F3)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T3F1A)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T3F2M)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T4F3A)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T5F4)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T6F2)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T7F2)));
+		assertFalse(roots.contains(environmentOperations.get(TestEnvironmentOperation.T9F1)));
+		
+		
 		changeGenealogy.close();
 	}
 }
