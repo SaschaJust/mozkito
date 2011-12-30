@@ -32,33 +32,33 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		
 	}
 	
-	public void add(JavaChangeOperation operation) {
+	public boolean add(JavaChangeOperation operation) {
 		JavaElement element = operation.getChangedElementLocation().getElement();
 		if (element instanceof JavaMethodDefinition) {
 			switch (operation.getChangeType()) {
 				case Added:
 					addedDefinitions.add(operation);
-					break;
+					return true;
 				case Modified:
 				case Renamed:
 					modifiedDefinitions.add(operation);
-					break;
+					return true;
 				case Deleted:
 					deletedDefinitions.add(operation);
-					break;
+					return true;
 			}
 		} else if (element instanceof JavaMethodCall) {
 			switch (operation.getChangeType()) {
 				case Added:
 					addedCalls.add(operation);
-					break;
+					return true;
 				case Modified:
 				case Renamed:
 					modifiedCalls.add(operation);
-					break;
+					return true;
 				case Deleted:
 					deletedCalls.add(operation);
-					break;
+					return true;
 			}
 		} else {
 			if (Logger.logDebug()) {
@@ -66,6 +66,7 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 						+ element.getClass().getCanonicalName());
 			}
 		}
+		return false;
 	}
 	
 	

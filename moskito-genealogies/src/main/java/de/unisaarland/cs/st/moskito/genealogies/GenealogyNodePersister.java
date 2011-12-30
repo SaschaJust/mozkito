@@ -74,11 +74,13 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 									+ "` to ChangeGenealogy FAILED!");
 						}
 					} else {
-						toWrite.add(operation);
-						if (Logger.logDebug()) {
-							Logger.debug("Adding JavaChangeOperation `" + operation.getId() + "` to ChangeGenealogy.");
+						if (toWrite.add(operation)) {
+							if (Logger.logDebug()) {
+								Logger.debug("Added JavaChangeOperation `" + operation.getId()
+								        + "` to ChangeGenealogy.");
+							}
+							++localCounter;
 						}
-						++localCounter;
 					}
 					
 				}
