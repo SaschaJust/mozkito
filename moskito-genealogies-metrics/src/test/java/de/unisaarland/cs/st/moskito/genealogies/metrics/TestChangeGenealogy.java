@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies;
+package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
+import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
