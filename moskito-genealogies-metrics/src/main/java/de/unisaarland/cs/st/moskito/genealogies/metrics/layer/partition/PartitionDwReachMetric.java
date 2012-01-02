@@ -19,7 +19,7 @@ public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 	
 	private UniversalDwReachMetric<Collection<JavaChangeOperation>> universalMetric;
 	private static int                                              dayDiffSize = 14;
-
+	
 	public PartitionDwReachMetric(AndamaGroup threadGroup, AndamaSettings settings,
 			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
 		super(threadGroup, settings, genealogy);
@@ -30,31 +30,31 @@ public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 					@Override
 					public int compare(Collection<JavaChangeOperation> original, Collection<JavaChangeOperation> t) {
 						
-						DateTime earliestOriginal = null;
+						DateTime latestOriginal = null;
 						for (JavaChangeOperation op : original) {
-							if (earliestOriginal == null) {
-								earliestOriginal = op.getRevision().getTransaction().getTimestamp();
+							if (latestOriginal == null) {
+								latestOriginal = op.getRevision().getTransaction().getTimestamp();
 							}else{
 								DateTime tmp = op.getRevision().getTransaction().getTimestamp();
-								if(tmp.isBefore(earliestOriginal)){
-									earliestOriginal = tmp;
+						        if (tmp.isAfter(latestOriginal)) {
+									latestOriginal = tmp;
 								}
 							}
 						}
 						
-						DateTime latestT = null;
+				        DateTime earliestT = null;
 						for (JavaChangeOperation op : t) {
-							if (latestT == null) {
-								latestT = op.getRevision().getTransaction().getTimestamp();
+					        if (earliestT == null) {
+						        earliestT = op.getRevision().getTransaction().getTimestamp();
 							} else {
 								DateTime tmp = op.getRevision().getTransaction().getTimestamp();
-								if (tmp.isAfter(latestT)) {
-									latestT = tmp;
+						        if (tmp.isBefore(earliestT)) {
+							        earliestT = tmp;
 								}
 							}
 						}
 						
-						Days daysBetween = Days.daysBetween(earliestOriginal, latestT);
+				        Days daysBetween = Days.daysBetween(latestOriginal, earliestT);
 						if (daysBetween.getDays() > dayDiffSize) {
 							return 1;
 						}
