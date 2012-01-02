@@ -36,10 +36,10 @@ public class UniversalDwReachMetric<T> {
 			Set<T> level = new HashSet<T>();
 			
 			for (T node : nodes) {
-				for (T parent : genealogy.getAllParents(node)) {
-					if (!seen.contains(parent)) {
-						level.add(parent);
-						seen.add(parent);
+				for (T dependant : genealogy.getAllDependants(node)) {
+					if (!seen.contains(dependant)) {
+						level.add(dependant);
+						seen.add(dependant);
 					}
 				}
 			}
@@ -68,7 +68,7 @@ public class UniversalDwReachMetric<T> {
 		
 		//		System.out.println("########## " + genealogy.getNodeId(node));
 		//		System.out.println(StringUtils.join(reach.toArray(new Object[reach.size()])));
-
+		
 		double dwReachValue = 0;
 		for (int i = 0; i < reach.size(); ++i) {
 			dwReachValue += (reach.get(i).size() / ((double) i + 1));
