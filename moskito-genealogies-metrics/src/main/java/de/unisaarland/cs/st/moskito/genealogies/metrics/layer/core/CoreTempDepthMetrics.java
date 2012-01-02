@@ -7,7 +7,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalParentAgeMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -18,13 +18,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreParentAgeMetrics extends GenealogyCoreMetric implements DayTimeDiff<JavaChangeOperation> {
+public class CoreTempDepthMetrics extends GenealogyCoreMetric implements DayTimeDiff<JavaChangeOperation> {
 	
-	UniversalParentAgeMetrics<JavaChangeOperation> universalMetric;
+	UniversalTempDepthMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreParentAgeMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
+	public CoreTempDepthMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalParentAgeMetrics<JavaChangeOperation>(genealogy, this);
+		universalMetric = new UniversalTempDepthMetrics<JavaChangeOperation>(genealogy,this);
 	}
 	
 	

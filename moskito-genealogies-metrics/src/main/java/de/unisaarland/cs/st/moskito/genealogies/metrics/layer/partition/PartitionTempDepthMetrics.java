@@ -7,28 +7,25 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalResponseTimeMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-
-public class PartitionResponseTimeMetrics extends GenealogyPartitionMetric implements
-DayTimeDiff<Collection<JavaChangeOperation>> {
+public class PartitionTempDepthMetrics extends GenealogyPartitionMetric implements
+        DayTimeDiff<Collection<JavaChangeOperation>> {
 	
+	private UniversalTempDepthMetrics<Collection<JavaChangeOperation>> universalMetric;
 	
-	private UniversalResponseTimeMetrics<Collection<JavaChangeOperation>> universalMetric;
-	
-	public PartitionResponseTimeMetrics(AndamaGroup threadGroup, AndamaSettings settings,
+	public PartitionTempDepthMetrics(AndamaGroup threadGroup, AndamaSettings settings,
 			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalResponseTimeMetrics<Collection<JavaChangeOperation>>(genealogy, this);
+		universalMetric = new UniversalTempDepthMetrics<Collection<JavaChangeOperation>>(genealogy, this);
 	}
 	
 	@Override
-	public int daysDiff(Collection<JavaChangeOperation> p1, Collection<JavaChangeOperation> p2) {
-		return DaysBetweenUtils.getDaysBetween(p1, p2);
-		
+	public int daysDiff(Collection<JavaChangeOperation> t1, Collection<JavaChangeOperation> t2) {
+		return DaysBetweenUtils.getDaysBetween(t1, t2);
 	}
 	
 	@Override

@@ -7,21 +7,21 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalParentAgeMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempParentsMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
-public class TransactionParentAgeMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
+public class TransactionTempParentsMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
 	
 	
-	private UniversalParentAgeMetrics<RCSTransaction> universalMetric;
+	private UniversalTempParentsMetrics<RCSTransaction> universalMetric;
 	
-	public TransactionParentAgeMetrics(AndamaGroup threadGroup, AndamaSettings settings,
+	public TransactionTempParentsMetrics(AndamaGroup threadGroup, AndamaSettings settings,
 			ChangeGenealogy<RCSTransaction> genealogy) {
 		super(threadGroup, settings, genealogy);
-		universalMetric = new UniversalParentAgeMetrics<RCSTransaction>(genealogy, this);
+		universalMetric = new UniversalTempParentsMetrics<RCSTransaction>(genealogy, this);
 	}
 	
 	@Override
