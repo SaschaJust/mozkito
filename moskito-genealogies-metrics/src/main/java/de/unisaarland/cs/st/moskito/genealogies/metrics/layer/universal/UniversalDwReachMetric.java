@@ -8,8 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
@@ -40,8 +38,6 @@ public class UniversalDwReachMetric<T> {
 		if (nodes.isEmpty()) {
 			return result;
 		}
-		
-		System.out.println(StringUtils.join(nodes.toArray(new String[nodes.size()]), ","));
 		
 		Set<T> level = new HashSet<T>();
 		
