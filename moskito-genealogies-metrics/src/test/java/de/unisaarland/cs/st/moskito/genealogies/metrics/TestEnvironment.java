@@ -30,8 +30,6 @@ public class TestEnvironment {
 		tmpGraphDBFile = FileUtils.createRandomDir("moskito", "test_change_genealogy", FileShutdownAction.DELETE);
 		genealogy = TestChangeGenealogy.readFromDB(tmpGraphDBFile);
 		
-		//TODO add vertices and edges
-		
 		genealogy.addVertex("1");
 		genealogy.addVertex("2");
 		genealogy.addVertex("3");

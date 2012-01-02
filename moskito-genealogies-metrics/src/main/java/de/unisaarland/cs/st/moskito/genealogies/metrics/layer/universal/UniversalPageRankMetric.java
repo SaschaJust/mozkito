@@ -20,8 +20,6 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
  */
 public class UniversalPageRankMetric<T> {
 	
-	//TODO requires intensive testing
-	
 	/** The page rank. */
 	public static String        pageRank       = "pageRank";
 	
