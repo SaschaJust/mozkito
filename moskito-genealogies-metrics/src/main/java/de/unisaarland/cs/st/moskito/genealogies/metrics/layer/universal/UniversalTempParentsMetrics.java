@@ -12,8 +12,6 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalTempParentsMetrics<T> {
 	
-	//TODO requires intensive testing
-	
 	private static String      maxTempParentDepth1  = "maxTempParentDepth_1";
 	private static String      maxTempParentDepth2  = "maxTempParentDepth_2";
 	private static String      maxTempParentDepth5  = "maxTempParentDepth_5";
@@ -62,7 +60,7 @@ public class UniversalTempParentsMetrics<T> {
 		parents_10.clear();
 		parents_14.clear();
 		
-		int[] longestPaths = longestPath(node, node);
+		int[] longestPaths = longestPath(node, node, new HashSet<T>());
 		
 		parents_2.addAll(parents_1);
 		parents_5.addAll(parents_2);
@@ -87,46 +85,58 @@ public class UniversalTempParentsMetrics<T> {
 		return result;
 	}
 	
-	private int[] longestPath(T originalNode, T node) {
+	private int[] longestPath(T originalNode, T node, Collection<T> seen) {
 		
-		int[] longestPath = { 0, 0, 0, 0, 0 };
+		int[] result = { 0, 0, 0, 0, 0 };
+		
 		int diff = dayTimeDiff.daysDiff(originalNode, node);
 		if (diff > 14) {
-			return longestPath;
+			return result;
 		}
 		
 		String nodeId = genealogy.getNodeId(node);
 		
+		int[] toAdd = { 0, 0, 0, 0, 0 };
+		
 		for (T dependant : genealogy.getAllParents(node)) {
-			int[] tmp = longestPath(originalNode, dependant);
+			if (seen.contains(dependant)) {
+				continue;
+			}
+			Collection<T> seenCopy = new HashSet<T>(seen);
+			seenCopy.add(dependant);
+			int[] tmp = longestPath(originalNode, dependant, seenCopy);
 			for (int i = 0; i < 5; ++i) {
-				if ((tmp[i] + 1) > longestPath[i]) {
-					longestPath[i] = tmp[i] + 1;
+				if (tmp[i] > toAdd[i]) {
+					toAdd[i] = tmp[i];
 				}
 			}
 		}
 		
+		if (originalNode.equals(node)) {
+			return toAdd;
+		}
+		
+		int j = 0;
 		if (diff < 2) {
 			parents_1.add(nodeId);
 		} else if (diff < 3) {
-			longestPath[0] = 0;
+			j = 1;
 			parents_2.add(nodeId);
 		} else if (diff < 6) {
-			longestPath[0] = 0;
-			longestPath[1] = 0;
+			j = 2;
 			parents_5.add(nodeId);
 		} else if (diff < 11) {
-			longestPath[0] = 0;
-			longestPath[1] = 0;
-			longestPath[2] = 0;
+			j = 3;
 			parents_10.add(nodeId);
 		} else {
-			longestPath[0] = 0;
-			longestPath[1] = 0;
-			longestPath[2] = 0;
-			longestPath[3] = 0;
+			j = 4;
 			parents_14.add(nodeId);
 		}
-		return longestPath;
+		
+		for (int i = j; i < 5; ++i) {
+			result[i] = toAdd[i] + 1;
+		}
+		
+		return result;
 	}
 }

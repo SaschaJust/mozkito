@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
+package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.TestEnvironment;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.UniversalTestDwReachMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTestDwReachMetric;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalDwReachMetricTest extends TestEnvironment {

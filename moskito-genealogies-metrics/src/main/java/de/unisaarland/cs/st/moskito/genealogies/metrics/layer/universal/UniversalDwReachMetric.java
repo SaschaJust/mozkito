@@ -13,7 +13,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalDwReachMetric<T> {
 	
-	protected static String    dwReach   = "dwReach";
+	public static String       dwReach = "dwReach";
 	
 	private ChangeGenealogy<T> genealogy;
 	

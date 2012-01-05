@@ -1,9 +1,10 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
 
 import java.util.Collection;
 import java.util.Comparator;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
