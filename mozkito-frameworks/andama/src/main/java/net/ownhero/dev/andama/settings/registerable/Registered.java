@@ -13,20 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.settings;
+package net.ownhero.dev.andama.settings.registerable;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+/**
+ * Classes extending {@link Registered} can dynamically register config options
+ * to the tool chain. Additionally there is support to automatically generate
+ * config option names following the standard naming convention.
+ * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ */
 public abstract class Registered {
 	
 	/**
 	 * @param clazz
-	 * @return
+	 *            the base class extending {@link Registered}
+	 * @return the lowercase part of the name specifies the category of the
+	 *         registered class, e.g. "engine" for MappingEngine.
 	 */
 	private static final String findRegisteredSuper(final Class<? extends Registered> clazz) {
-		String[] superTag = new String[] { "" };
+		final String[] superTag = new String[] { "" };
 		return findRegisteredSuper(clazz, superTag);
 	}
 	
@@ -38,10 +51,8 @@ public abstract class Registered {
 	@SuppressWarnings ("unchecked")
 	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
 	                                          final String[] superTag) {
-		// FIXME this is specific to Mappings and should be rewritten to work in
-		// a generic way
 		if (clazz.getSuperclass() == Registered.class) {
-			superTag[0] = clazz.getSimpleName().replace("Mapping", "");
+			superTag[0] = clazz.getSimpleName().replaceFirst("^[A-Z][^A-Z]+", "");
 			return superTag[0].toLowerCase();
 		} else if (clazz == Registered.class) {
 			throw new UnrecoverableError("Instance of ABSTRACT class " + Registered.class.getSimpleName()
@@ -50,8 +61,8 @@ public abstract class Registered {
 			Class<? extends Registered> c = clazz;
 			if (Registered.class.isAssignableFrom(c.getSuperclass()) && (c.getSuperclass() != Registered.class)) {
 				c = (Class<? extends Registered>) c.getSuperclass();
-				String string = findRegisteredSuper(c, superTag);
-				String retval = string + "." + clazz.getSimpleName().replace(superTag[0], "").toLowerCase();
+				final String string = findRegisteredSuper(c, superTag);
+				final String retval = string + "." + clazz.getSimpleName().replace(superTag[0], "").toLowerCase();
 				superTag[0] = clazz.getSimpleName();
 				return retval;
 			}
@@ -60,10 +71,9 @@ public abstract class Registered {
 		        + " tries to register config option.");
 	}
 	
-	private AndamaSettings settings;
-	
-	private boolean        registered  = false;
 	private boolean        initialized = false;
+	private boolean        registered  = false;
+	private AndamaSettings settings;
 	
 	/**
 	 * 
@@ -73,7 +83,7 @@ public abstract class Registered {
 	}
 	
 	/**
-	 * @return
+	 * @return a string describing the task of the registered class
 	 */
 	public abstract String getDescription();
 	
@@ -91,8 +101,8 @@ public abstract class Registered {
 	 * @return
 	 */
 	public final String getOptionName(final String option) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("mapping.");
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.settings.getClass().getSimpleName().toLowerCase()).append('.');
 		builder.append(findRegisteredSuper(this.getClass()).toLowerCase()).append('.');
 		builder.append(option);
 		return builder.toString();
@@ -126,7 +136,7 @@ public abstract class Registered {
 	public final boolean isEnabled(final String listSetting,
 	                               final String registered) {
 		if (getSettings() != null) {
-			ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
+			final ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
 			return setting.getValue().contains(registered);
 		} else {
 			return true;
@@ -184,20 +194,13 @@ public abstract class Registered {
 		this.settings = settings;
 	}
 	
-	/**
-	 * @return
-	 */
-	public boolean singleton() {
-		return false;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append(this.getClass().getSuperclass().getSimpleName() + " [class=");
 		builder.append(this.getClass().getSimpleName());
 		builder.append("registered=");
@@ -206,6 +209,14 @@ public abstract class Registered {
 		builder.append(this.initialized);
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	/**
+	 * @param string
+	 * @return
+	 */
+	protected final String truncate(final String string) {
+		return string.substring(0, Math.min(string.length() - 1, 254));
 	}
 	
 }
