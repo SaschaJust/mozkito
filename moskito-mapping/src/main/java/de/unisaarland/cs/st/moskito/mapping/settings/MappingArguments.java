@@ -68,15 +68,15 @@ public class MappingArguments extends AndamaArgumentSet {
 	 * @return
 	 */
 	private String buildRegisteredList(final Collection<Class<? extends Registered>> registereds) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append(FileUtils.lineSeparator);
 		
-		for (Class<? extends Registered> registered : registereds) {
+		for (final Class<? extends Registered> registered : registereds) {
 			try {
 				builder.append('\t').append("  ").append(registered.getSimpleName()).append(": ")
 				       .append(registered.newInstance().getDescription());
-			} catch (InstantiationException e) {
-			} catch (IllegalAccessException e) {
+			} catch (final InstantiationException e) {
+			} catch (final IllegalAccessException e) {
 			}
 			
 			if (builder.length() != 0) {
@@ -94,12 +94,12 @@ public class MappingArguments extends AndamaArgumentSet {
 	 */
 	@Override
 	public MappingFinder getValue() {
-		MappingFinder finder = new MappingFinder();
-		Map<Class<? extends Registered>, Method> methodMap = new HashMap<Class<? extends Registered>, Method>();
-		Method[] methods = finder.getClass().getMethods();
+		final MappingFinder finder = new MappingFinder();
+		final Map<Class<? extends Registered>, Method> methodMap = new HashMap<Class<? extends Registered>, Method>();
+		final Method[] methods = finder.getClass().getMethods();
 		
 		try {
-			for (Registered registered : this.registereds) {
+			for (final Registered registered : this.registereds) {
 				if (methodMap.containsKey(registered.getClass())) {
 					// method finder.addXXX already known
 					methodMap.get(registered.getClass()).invoke(finder, registered);
@@ -108,8 +108,8 @@ public class MappingArguments extends AndamaArgumentSet {
 					boolean found = false;
 					Class<?> registeredSubClass = registered.getClass();
 					
-					while (!found && registeredSubClass != Object.class) {
-						for (Method method : methods) {
+					while (!found && (registeredSubClass != Object.class)) {
+						for (final Method method : methods) {
 							if (method.getName().startsWith("add")) {
 								if ((method.getParameterTypes().length == 1)
 								        && (method.getParameterTypes()[0] == registeredSubClass)) {
@@ -134,7 +134,7 @@ public class MappingArguments extends AndamaArgumentSet {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
@@ -151,29 +151,37 @@ public class MappingArguments extends AndamaArgumentSet {
 	                              final String argumentName,
 	                              final Class<? extends Registered> superClass,
 	                              final boolean isRequired) {
-		Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
+		final Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
 		try {
 			registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(), superClass,
 			                                                              Modifier.ABSTRACT | Modifier.INTERFACE
 			                                                                      | Modifier.PRIVATE));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		addArgument(new ListArgument(settings, "mapping." + argumentName, "A list of mapping " + argumentName
-		        + " that shall be used: " + buildRegisteredList(registeredClasses), "[all]", false));
+		final StringBuilder builder = new StringBuilder();
 		
-		String registereds = System.getProperty("mapping." + argumentName);
-		Set<String> registeredNames = new HashSet<String>();
+		for (final Class<? extends Registered> clazz : registeredClasses) {
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
+			builder.append(clazz.getSimpleName());
+		}
+		addArgument(new ListArgument(settings, "mapping." + argumentName, "A list of mapping " + argumentName
+		        + " that shall be used: " + buildRegisteredList(registeredClasses), builder.toString(), false));
+		
+		final String registereds = System.getProperty("mapping." + argumentName);
+		final Set<String> registeredNames = new HashSet<String>();
 		
 		if (registereds != null) {
-			for (String registeredName : registereds.split(",")) {
+			for (final String registeredName : registereds.split(",")) {
 				registeredNames.add(superClass.getPackage().getName() + "." + registeredName);
 			}
 			
 		}
 		
-		for (Class<? extends Registered> klass : registeredClasses) {
+		for (final Class<? extends Registered> klass : registeredClasses) {
 			if (registeredNames.isEmpty() || registeredNames.contains(klass.getCanonicalName())) {
 				if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
 					if (Logger.logInfo()) {
@@ -182,10 +190,10 @@ public class MappingArguments extends AndamaArgumentSet {
 					}
 					
 					try {
-						Registered instance = klass.newInstance();
+						final Registered instance = klass.newInstance();
 						instance.register(settings, this, isRequired);
 						this.registereds.add(instance);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						
 						if (Logger.logWarn()) {
 							Logger.warn("Skipping registration of " + klass.getSimpleName() + " due to errors: "
