@@ -15,14 +15,14 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.storages;
 
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingStorage extends Registered {
+public abstract class MappingStorage extends StorageAccessor {
 	
 	/*
 	 * (non-Javadoc)

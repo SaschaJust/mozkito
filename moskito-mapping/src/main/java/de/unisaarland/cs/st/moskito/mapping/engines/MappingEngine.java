@@ -15,18 +15,14 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
-import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
 /**
  * 
@@ -52,15 +48,15 @@ import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingEngine extends Registered {
+public abstract class MappingEngine extends StorageAccessor {
 	
-	public static final String unused          = "(unused)";
-	public static final String unknown         = "(unknown)";
 	public static final String defaultNegative = "-1";
 	public static final String defaultPositive = "1";
+	public static final String unknown         = "(unknown)";
+	public static final String unused          = "(unused)";
 	
-	private final boolean      registered      = false;
 	private final boolean      initialized     = false;
+	private final boolean      registered      = false;
 	
 	/**
 	 * Using this method, one can add features to a given {@link MapScore}. The
@@ -139,17 +135,6 @@ public abstract class MappingEngine extends Registered {
 	                           final MappableEntity to,
 	                           final MapScore score);
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.register.Registered#storageDependency
-	 * ()
-	 */
-	@Override
-	public Set<Class<? extends MappingStorage>> storageDependency() {
-		return new HashSet<Class<? extends MappingStorage>>();
-	}
-	
 	/**
 	 * @return an instance of {@link Expression} that represents the support of
 	 *         this engine
@@ -162,7 +147,7 @@ public abstract class MappingEngine extends Registered {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngine [class=");
 		builder.append(this.getClass().getSimpleName());
 		builder.append("registered=");

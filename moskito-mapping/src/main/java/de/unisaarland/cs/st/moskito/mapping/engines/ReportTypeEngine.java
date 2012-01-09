@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.DoubleArgument;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.ioda.JavaUtils;
@@ -28,8 +30,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Or;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -85,16 +85,16 @@ public class ReportTypeEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Confidence that is used if the report isn't of the specified type.",
-		                                         "-1", isRequired && isEnabled()));
+		                                         "-1", isEnabled()));
 		arguments.addArgument(new EnumArgument(settings, getOptionName("type"),
-		                                       "Type the report has to match, e.g. BUG.", null, isRequired
-		                                               && isEnabled(), JavaUtils.enumToArray(Type.BUG)));
+		                                       "Type the report has to match, e.g. BUG.", null, isEnabled(),
+		                                       JavaUtils.enumToArray(Type.BUG)));
 	}
 	
 	/*

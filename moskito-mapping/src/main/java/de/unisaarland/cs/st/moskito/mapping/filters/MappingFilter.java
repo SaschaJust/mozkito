@@ -20,18 +20,18 @@ import java.util.Set;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingFilter extends Registered {
+public abstract class MappingFilter extends StorageAccessor {
 	
-	private MappingSettings settings;
-	private final boolean   registered  = false;
 	private final boolean   initialized = false;
+	private final boolean   registered  = false;
+	private MappingSettings settings;
 	
 	public MappingFilter() {
 		
@@ -59,7 +59,7 @@ public abstract class MappingFilter extends Registered {
 	@Override
 	public boolean isEnabled() {
 		if (getSettings() != null) {
-			ListArgument setting = (ListArgument) getSettings().getSetting("mapping.filters");
+			final ListArgument setting = (ListArgument) getSettings().getSetting("mapping.filters");
 			return setting.getValue().contains(this.getClass().getSimpleName());
 		} else {
 			return true;
@@ -72,7 +72,7 @@ public abstract class MappingFilter extends Registered {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingFilter [settings=");
 		builder.append(this.settings);
 		builder.append(", registered=");

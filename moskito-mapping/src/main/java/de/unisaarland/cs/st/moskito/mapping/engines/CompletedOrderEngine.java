@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -26,8 +28,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -80,14 +80,13 @@ public class CompletedOrderEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score in case the report was resolved before the transaction.",
-		                                         this.scoreReportResolvedBeforeTransaction + "", isRequired
-		                                                 && isEnabled()));
+		                                         this.scoreReportResolvedBeforeTransaction + "", isEnabled()));
 	}
 	
 	/*
@@ -101,8 +100,8 @@ public class CompletedOrderEngine extends MappingEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final MapScore score) {
-		RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
-		Report report = ((MappableReport) to).getReport();
+		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
+		final Report report = ((MappableReport) to).getReport();
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {

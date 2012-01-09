@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
 import net.ownhero.dev.kisa.Logger;
@@ -42,8 +44,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 
 /**
@@ -74,8 +74,9 @@ public class TimestampEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		@SuppressWarnings ("unchecked")
-		List<String> list = new LinkedList<String>((Set<String>) getSettings().getSetting(getOptionName("confidence"))
-		                                                                      .getValue());
+		final List<String> list = new LinkedList<String>(
+		                                                 (Set<String>) getSettings().getSetting(getOptionName("confidence"))
+		                                                                            .getValue());
 		CollectionCheck.minSize(list,
 		                        1,
 		                        "There are 1 to 2 values that have to be specified for a time interval to be valid. If only one is specified, the first one defaults to 0.");
@@ -110,10 +111,10 @@ public class TimestampEngine extends MappingEngine {
 	 */
 	private int parseIntervalString(final String string) {
 		int value = 0;
-		Regex regex = new Regex(
-		                        "\\s*[+-]?({days}[0-9]+)d\\s*({hours}[0-9]+)h\\s*({minutes}[0-9]+)m\\s*({seconds}[0-9]+)s",
-		                        Pattern.CASE_INSENSITIVE);
-		List<RegexGroup> find = regex.find(string);
+		final Regex regex = new Regex(
+		                              "\\s*[+-]?({days}[0-9]+)d\\s*({hours}[0-9]+)h\\s*({minutes}[0-9]+)m\\s*({seconds}[0-9]+)s",
+		                              Pattern.CASE_INSENSITIVE);
+		final List<RegexGroup> find = regex.find(string);
 		
 		if (find == null) {
 			throw new Shutdown("Interval specification invalid. String under subject: " + string + " using regex "
@@ -139,15 +140,15 @@ public class TimestampEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new ListArgument(
 		                                       settings,
 		                                       getOptionName("confidence"),
 		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isRequired && isEnabled()));
+		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isEnabled()));
 	}
 	
 	/*
@@ -163,22 +164,23 @@ public class TimestampEngine extends MappingEngine {
 	                  final MapScore score) {
 		double value = 0d;
 		
-		DateTime element1Timestamp = ((DateTime) element1.get(FieldKey.CREATION_TIMESTAMP));
-		DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
-		DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
+		final DateTime element1Timestamp = ((DateTime) element1.get(FieldKey.CREATION_TIMESTAMP));
+		final DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
+		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
-		Report report = ((MappableReport) element2).getReport();
+		final Report report = ((MappableReport) element2).getReport();
 		
-		Interval interval = new Interval(
-		                                 element1Timestamp.plus(getWindowReportResolvedAfterTransaction().getStartMillis()),
-		                                 element1Timestamp.plus(getWindowReportResolvedAfterTransaction().getEndMillis()));
+		final Interval interval = new Interval(
+		                                       element1Timestamp.plus(getWindowReportResolvedAfterTransaction().getStartMillis()),
+		                                       element1Timestamp.plus(getWindowReportResolvedAfterTransaction().getEndMillis()));
 		
 		if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
-			History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
-			for (HistoryElement element : history.getElements()) {
-				EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName().toLowerCase());
+			final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
+			for (final HistoryElement element : history.getElements()) {
+				final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
+				                                                                           .toLowerCase());
 				@SuppressWarnings ("unchecked")
-				Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
+				final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
 				if (val.equals(Resolution.RESOLVED)) {
 					if (interval.contains(element.getTimestamp())) {
 						value = 1;

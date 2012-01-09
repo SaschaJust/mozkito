@@ -16,7 +16,7 @@
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 
 /**
  * 
@@ -39,7 +39,7 @@ import de.unisaarland.cs.st.moskito.mapping.register.Registered;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingStrategy extends Registered {
+public abstract class MappingStrategy extends StorageAccessor {
 	
 	/*
 	 * (non-Javadoc)

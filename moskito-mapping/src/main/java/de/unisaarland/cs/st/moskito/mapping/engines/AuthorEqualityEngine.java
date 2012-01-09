@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -23,8 +25,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * This engine scores according to the equality of the authors of both entities.
@@ -73,13 +73,13 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score for equal authors in transaction and report comments.",
-		                                         this.scoreAuthorEquality + "", isRequired && isEnabled()));
+		                                         this.scoreAuthorEquality + "", isEnabled()));
 	}
 	
 	/*

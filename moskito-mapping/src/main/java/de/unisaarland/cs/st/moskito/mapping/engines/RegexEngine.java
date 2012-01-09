@@ -27,6 +27,8 @@ import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -39,8 +41,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -54,8 +54,8 @@ public class RegexEngine extends MappingEngine {
 	 */
 	private class Matcher {
 		
-		private double score;
 		private Regex  regex;
+		private double score;
 		
 		/**
 		 * @param score
@@ -107,7 +107,7 @@ public class RegexEngine extends MappingEngine {
 		 */
 		@Override
 		public String toString() {
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			builder.append("Matcher [score=");
 			builder.append(this.score);
 			builder.append(", regex=");
@@ -118,13 +118,13 @@ public class RegexEngine extends MappingEngine {
 		
 	}
 	
+	private URI                 configPath;
 	/*
 	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)"
 	 * Pattern.CASE_INSENSITIVE 1.0 "fixing bug #({match}##ID##)"
 	 * Pattern.CASE_INSENSITIVE
 	 */
 	private Collection<Matcher> matchers;
-	private URI                 configPath;
 	
 	/**
 	 * @param arg0
@@ -150,7 +150,7 @@ public class RegexEngine extends MappingEngine {
 		if (!(obj instanceof RegexEngine)) {
 			return false;
 		}
-		RegexEngine other = (RegexEngine) obj;
+		final RegexEngine other = (RegexEngine) obj;
 		if (this.configPath == null) {
 			if (other.configPath != null) {
 				return false;
@@ -340,9 +340,12 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		try {
-			CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(getConfigPath().toURL()
-			                                                                                         .openStream())),
-			                                 ' ');
+			final CSVReader reader = new CSVReader(
+			                                       new BufferedReader(
+			                                                          new InputStreamReader(
+			                                                                                getConfigPath().toURL()
+			                                                                                               .openStream())),
+			                                       ' ');
 			String[] line = null;
 			while ((line = reader.readNext()) != null) {
 				getMatchers().add(new Matcher(line[0], line[1], line.length > 2
@@ -353,7 +356,7 @@ public class RegexEngine extends MappingEngine {
 			if (Logger.logDebug()) {
 				Logger.debug("Loaded patterns: " + JavaUtils.collectionToString(getMatchers()));
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new Shutdown("Regex configuration read error.", e);
 		}
 	}
@@ -398,40 +401,13 @@ public class RegexEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new URIArgument(settings, getOptionName("file"),
 		                                      "URI to file containing the regular expressions used to map the IDs.",
 		                                      null, isEnabled()));
-	}
-	
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.net.URI#relativize(java.net.URI)
-	 */
-	public URI relativize(final URI arg0) {
-		return this.configPath.relativize(arg0);
-	}
-	
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.net.URI#resolve(java.lang.String)
-	 */
-	public URI resolve(final String arg0) {
-		return this.configPath.resolve(arg0);
-	}
-	
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.net.URI#resolve(java.net.URI)
-	 */
-	public URI resolve(final URI arg0) {
-		return this.configPath.resolve(arg0);
 	}
 	
 	/*
@@ -452,8 +428,8 @@ public class RegexEngine extends MappingEngine {
 			Logger.debug(this.getClass().getSimpleName() + " checking " + element1);
 		}
 		
-		for (Matcher matcher : this.matchers) {
-			Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
+		for (final Matcher matcher : this.matchers) {
+			final Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
 			
 			if (value < matcher.getScore()) {
 				

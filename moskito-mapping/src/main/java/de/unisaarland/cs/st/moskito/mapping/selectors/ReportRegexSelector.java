@@ -21,6 +21,8 @@ import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -29,8 +31,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -79,24 +79,24 @@ public class ReportRegexSelector extends MappingSelector {
 	@Override
 	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
 	                                                final Class<T> targetType) {
-		List<T> list = new LinkedList<T>();
+		final List<T> list = new LinkedList<T>();
 		try {
-			List<String> ids = new LinkedList<String>();
-			Regex regex = new Regex(this.pattern);
+			final List<String> ids = new LinkedList<String>();
+			final Regex regex = new Regex(this.pattern);
 			PersistenceUtil util;
 			
 			util = PersistenceManager.getUtil();
 			
 			try {
 				
-				Criteria<?> criteria = util.createCriteria(targetType.newInstance().getBaseType());
+				final Criteria<?> criteria = util.createCriteria(targetType.newInstance().getBaseType());
 				
 				for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
-					Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
-					List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
+					final Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
+					final List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
 					
 					if (findAll != null) {
-						for (List<RegexGroup> match : findAll) {
+						for (final List<RegexGroup> match : findAll) {
 							
 							ids.add(match.get(0).getMatch());
 						}
@@ -104,21 +104,21 @@ public class ReportRegexSelector extends MappingSelector {
 				}
 				
 				criteria.in("id", ids);
-				List<?> load = util.load(criteria);
+				final List<?> load = util.load(criteria);
 				
-				for (Object instance : load) {
+				for (final Object instance : load) {
 					try {
-						Constructor<T> constructor = targetType.getConstructor(instance.getClass());
+						final Constructor<T> constructor = targetType.getConstructor(instance.getClass());
 						list.add(constructor.newInstance(instance));
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw new UnrecoverableError(e);
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new UnrecoverableError(e);
 			}
 			
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
@@ -132,8 +132,8 @@ public class ReportRegexSelector extends MappingSelector {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
