@@ -15,6 +15,10 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings.registerable;
 
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -38,9 +42,9 @@ public abstract class Registered {
 	 * @return the lowercase part of the name specifies the category of the
 	 *         registered class, e.g. "engine" for MappingEngine.
 	 */
-	private static final String findRegisteredSuper(final Class<? extends Registered> clazz) {
-		final String[] superTag = new String[] { "" };
-		return findRegisteredSuper(clazz, superTag);
+	private static final String findRegisteredSuper(final Class<? extends Registered> clazz,
+	                                                final Set<String> superTags) {
+		return findRegisteredSuper(clazz, superTags, false);
 	}
 	
 	/**
@@ -50,10 +54,18 @@ public abstract class Registered {
 	 */
 	@SuppressWarnings ("unchecked")
 	private static String findRegisteredSuper(final Class<? extends Registered> clazz,
-	                                          final String[] superTag) {
+	                                          final Set<String> superTags,
+	                                          final boolean abstractSuccessor) {
 		if (clazz.getSuperclass() == Registered.class) {
-			superTag[0] = clazz.getSimpleName().replaceFirst("^[A-Z][^A-Z]+", "");
-			return superTag[0].toLowerCase();
+			if (((clazz.getModifiers() & Modifier.ABSTRACT) == 0) || !abstractSuccessor) {
+				superTags.add(clazz.getSimpleName());
+				return clazz.getSimpleName().toLowerCase();
+			} else {
+				return null;
+			}
+			// superTag[0] = clazz.getSimpleName().replaceFirst("^[A-Z][^A-Z]+",
+			// "");
+			
 		} else if (clazz == Registered.class) {
 			throw new UnrecoverableError("Instance of ABSTRACT class " + Registered.class.getSimpleName()
 			        + " tries to register config option.");
@@ -61,9 +73,18 @@ public abstract class Registered {
 			Class<? extends Registered> c = clazz;
 			if (Registered.class.isAssignableFrom(c.getSuperclass()) && (c.getSuperclass() != Registered.class)) {
 				c = (Class<? extends Registered>) c.getSuperclass();
-				final String string = findRegisteredSuper(c, superTag);
-				final String retval = string + "." + clazz.getSimpleName().replace(superTag[0], "").toLowerCase();
-				superTag[0] = clazz.getSimpleName();
+				final String string = findRegisteredSuper(c, superTags, (clazz.getModifiers() & Modifier.ABSTRACT) != 0);
+				String retval;
+				String simpleName = clazz.getSimpleName();
+				for (final String tag : superTags) {
+					simpleName = simpleName.replace(tag, "");
+				}
+				if (string != null) {
+					retval = string + "." + simpleName.toLowerCase();
+				} else {
+					retval = simpleName;
+				}
+				superTags.add(simpleName);
 				return retval;
 			}
 		}
@@ -80,6 +101,72 @@ public abstract class Registered {
 	 */
 	public Registered() {
 		super();
+	}
+	
+	final String deriveSettingsClassificationString(final Class<? extends AndamaSettings> settingsClass,
+	                                                final Set<String> tokens,
+	                                                final StringBuilder result) {
+		if (settingsClass == AndamaSettings.class) {
+			tokens.add("Settings");
+			final String string = AndamaSettings.class.getSimpleName().replace("Settings", "");
+			return string;
+		} else {
+			@SuppressWarnings ("unchecked")
+			final String helper = deriveSettingsClassificationString((Class<? extends AndamaSettings>) settingsClass.getSuperclass(),
+			                                                         tokens, result);
+			String name = settingsClass.getSimpleName();
+			for (final String token : tokens) {
+				name = name.replace(token, "");
+			}
+			
+			// Remove same prefix if length > 2 and following character is
+			// uppercase
+			int len = 0;
+			
+			while (name.regionMatches(0, helper, 0, len + 1)) {
+				++len;
+			}
+			
+			while ((len > 2) && ((len + 1) < name.length()) && (!Character.isUpperCase(name.charAt(len)))) {
+				--len;
+			}
+			
+			if (len > 2) {
+				String newtoken = name.substring(0, len);
+				newtoken = name.replace(newtoken, "");
+				tokens.add(newtoken);
+				if (result.length() > 0) {
+					result.insert(0, '.');
+				}
+				result.insert(0, newtoken.toLowerCase());
+				name = name.replace(newtoken, "");
+			}
+			
+			// Remove same suffix if length > 2 and succeeding character is
+			// uppercase
+			len = 0;
+			
+			while (name.regionMatches(name.length() - len - 1, helper, helper.length() - len - 1, len + 1)) {
+				++len;
+			}
+			
+			while ((len > 2) && (len <= name.length()) && !Character.isUpperCase(name.charAt(len - 1))) {
+				--len;
+			}
+			
+			if (len > 2) {
+				String newtoken = name.substring(name.length() - len - 1, len);
+				newtoken = name.replace(newtoken, "");
+				tokens.add(newtoken);
+				if (result.length() > 0) {
+					result.insert(0, '.');
+				}
+				result.insert(0, newtoken.toLowerCase());
+				name = name.replace(newtoken, "");
+			}
+			
+			return name;
+		}
 	}
 	
 	/**
@@ -102,8 +189,18 @@ public abstract class Registered {
 	 */
 	public final String getOptionName(final String option) {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(this.settings.getClass().getSimpleName().toLowerCase()).append('.');
-		builder.append(findRegisteredSuper(this.getClass()).toLowerCase()).append('.');
+		final Set<String> tokens = new HashSet<String>();
+		final String settingsName = deriveSettingsClassificationString(this.settings.getClass(), tokens, builder);
+		if (settingsName.length() > 0) {
+			if (builder.length() > 0) {
+				builder.insert(0, '.');
+			}
+			builder.insert(0, settingsName.toLowerCase());
+			tokens.add(settingsName);
+		}
+		
+		builder.append('.');
+		builder.append(findRegisteredSuper(this.getClass(), tokens).toLowerCase()).append('.');
 		builder.append(option);
 		return builder.toString();
 	}
