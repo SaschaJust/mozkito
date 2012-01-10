@@ -13,7 +13,6 @@ import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
@@ -111,13 +110,13 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				
 				Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder
 						.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
-				                GenealogyPartitionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
-				                        | Modifier.PRIVATE);
+								GenealogyPartitionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
+								| Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, ChangeGenealogy.class);
+						        AndamaGroup.class, AndamaSettings.class, PartitionChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}
@@ -141,13 +140,13 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			try {
 				Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder
 						.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
-				                GenealogyTransactionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
-				                        | Modifier.PRIVATE);
+								GenealogyTransactionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
+								| Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, ChangeGenealogy.class);
+						        AndamaGroup.class, AndamaSettings.class, TransactionChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}
@@ -167,13 +166,13 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			
 			try {
 				Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(
-				        GenealogyCoreMetric.class.getPackage(), GenealogyCoreMetric.class, Modifier.ABSTRACT
-				                | Modifier.INTERFACE | Modifier.PRIVATE);
+						GenealogyCoreMetric.class.getPackage(), GenealogyCoreMetric.class, Modifier.ABSTRACT
+						| Modifier.INTERFACE | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, ChangeGenealogy.class);
+						        AndamaGroup.class, AndamaSettings.class, CoreChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}
