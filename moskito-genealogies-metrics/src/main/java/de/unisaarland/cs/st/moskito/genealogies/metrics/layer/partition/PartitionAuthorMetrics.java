@@ -10,7 +10,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
@@ -33,7 +33,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<Collection<JavaChangeOperation>> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
 		Collection<JavaChangeOperation> transaction = item.getNode();

@@ -5,7 +5,6 @@ import java.util.Collection;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalTestTempDepthMetric implements DayTimeDiff<String> {
 	
@@ -22,8 +21,8 @@ public class UniversalTestTempDepthMetric implements DayTimeDiff<String> {
 		return Math.abs(i1 - i2);
 	}
 	
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<String> item) {
-		return universalMetric.handle(item.getNode());
+	public Collection<GenealogyMetricValue> handle(String item) {
+		return universalMetric.handle(item);
 	}
 	
 }

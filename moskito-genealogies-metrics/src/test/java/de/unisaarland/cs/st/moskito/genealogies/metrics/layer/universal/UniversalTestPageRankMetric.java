@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalTestPageRankMetric {
 	
@@ -15,8 +13,8 @@ public class UniversalTestPageRankMetric {
 		universalMetric = new UniversalPageRankMetric<String>(genealogy);
 	}
 	
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<String> item, boolean last) {
-		return universalMetric.handle(item.getNode(), last);
+	public Collection<GenealogyMetricValue> handle(String item, boolean last) {
+		return universalMetric.handle(item, last);
 	}
 	
 }

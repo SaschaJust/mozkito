@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTestTempDepthMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalTempDepthMetricsTest extends TestEnvironment {
 	
@@ -24,8 +23,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 		Iterator<String> itemIter = genealogy.vertexSet();
 		while (itemIter.hasNext()) {
 			String item = itemIter.next();
-			GenealogyNode<String> node = new GenealogyNode<String>(item, item);
-			metricValues.addAll(metric.handle(node));
+			metricValues.addAll(metric.handle(item));
 		}
 		
 		assertEquals(140, metricValues.size());

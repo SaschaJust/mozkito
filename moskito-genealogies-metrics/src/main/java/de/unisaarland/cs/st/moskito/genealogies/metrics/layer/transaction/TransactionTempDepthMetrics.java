@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
@@ -31,11 +31,11 @@ public class TransactionTempDepthMetrics extends GenealogyTransactionMetric impl
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalTempDepthMetrics.getMetricNames();
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<RCSTransaction> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

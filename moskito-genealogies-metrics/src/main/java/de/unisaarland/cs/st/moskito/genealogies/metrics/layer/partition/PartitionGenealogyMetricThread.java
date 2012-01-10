@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.metrics;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,16 +10,19 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 
 
-public abstract class GenealogyMetricThread<T> extends AndamaTransformer<GenealogyNode<T>, GenealogyMetricValue>
+public abstract class PartitionGenealogyMetricThread extends
+AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue>
 implements
-GenealogyMetric<T> {
+        GenealogyMetric<GenealogyPartitionNode> {
 	
 	static private Map<String, GenealogyMetric<?>> registeredMetrics = new HashMap<String, GenealogyMetric<?>>();
 	
-	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
+	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
 		super(threadGroup, settings, false);
 		
 		for(String mName : this.getMetricNames()){
@@ -32,7 +35,7 @@ GenealogyMetric<T> {
 			registeredMetrics.put(mName, this);
 		}
 		
-		new ProcessHook<GenealogyNode<T>, GenealogyMetricValue>(this) {
+		new ProcessHook<GenealogyPartitionNode, GenealogyMetricValue>(this) {
 			
 			/*
 			 * (non-Javadoc)
@@ -41,7 +44,7 @@ GenealogyMetric<T> {
 			 */
 			@Override
 			public void process() {
-				GenealogyNode<T> inputData = getInputData();
+				GenealogyPartitionNode inputData = getInputData();
 				Collection<GenealogyMetricValue> mValues = handle(inputData);
 				for (GenealogyMetricValue mValue : mValues) {
 					providePartialOutputData(mValue);
@@ -51,7 +54,7 @@ GenealogyMetric<T> {
 			}
 		};
 		
-		new PostExecutionHook<GenealogyNode<T>, GenealogyMetricValue>(this) {
+		new PostExecutionHook<GenealogyPartitionNode, GenealogyMetricValue>(this) {
 			
 			@Override
 			public void postExecution() {
@@ -64,7 +67,7 @@ GenealogyMetric<T> {
 	public abstract Collection<String> getMetricNames();
 	
 	@Override
-	public abstract Collection<GenealogyMetricValue> handle(GenealogyNode<T> item);
+	public abstract Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item);
 	
 	public void postProcess() {
 	}

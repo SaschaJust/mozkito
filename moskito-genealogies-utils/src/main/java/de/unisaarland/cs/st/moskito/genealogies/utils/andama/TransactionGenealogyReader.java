@@ -9,18 +9,18 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
+public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactionNode> {
 	
-	private Iterator<JavaChangeOperation> iterator;
+	private Iterator<RCSTransaction> iterator;
 	
-	public GenealogyReader(AndamaGroup threadGroup, AndamaSettings settings,
-			final CoreChangeGenealogy changeGenealogy) {
+	public TransactionGenealogyReader(AndamaGroup threadGroup, AndamaSettings settings,
+			final TransactionChangeGenealogy changeGenealogy) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<GenealogyCoreNode, GenealogyCoreNode>(this) {
+		new PreExecutionHook<GenealogyTransactionNode, GenealogyTransactionNode>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -28,22 +28,22 @@ public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
 			}
 		};
 		
-		new ProcessHook<GenealogyCoreNode, GenealogyCoreNode>(this) {
+		new ProcessHook<GenealogyTransactionNode, GenealogyTransactionNode>(this) {
 			
 			@Override
 			public void process() {
 				if (iterator.hasNext()) {
-					JavaChangeOperation t = iterator.next();
+					RCSTransaction t = iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
 					}
 					
-					GenealogyCoreNode node = null;
+					GenealogyTransactionNode node = null;
 					if (iterator.hasNext()) {
-						node = new GenealogyCoreNode(t, changeGenealogy.getNodeId(t));
+						node = new GenealogyTransactionNode(t, changeGenealogy.getNodeId(t));
 					} else {
-						node = new GenealogyCoreNode(t, changeGenealogy.getNodeId(t), true);
+						node = new GenealogyTransactionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
 				} else {

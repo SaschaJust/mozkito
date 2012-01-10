@@ -11,7 +11,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
@@ -44,7 +44,7 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<Collection<JavaChangeOperation>> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
 		Collection<JavaChangeOperation> partition = item.getNode();
@@ -62,7 +62,7 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		metricValues.add(new GenealogyMetricValue(avgDepChangeSize, nodeId, dependantStats.getMean()));
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId, dependantStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId, dependantStats.getSum()));
-
+		
 		for (Collection<JavaChangeOperation> dependant : genealogy.getAllParents(partition)) {
 			parentStats.addValue(dependant.size());
 		}

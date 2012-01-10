@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
@@ -39,7 +39,7 @@ public class CoreTempDepthMetrics extends GenealogyCoreMetric implements DayTime
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<JavaChangeOperation> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

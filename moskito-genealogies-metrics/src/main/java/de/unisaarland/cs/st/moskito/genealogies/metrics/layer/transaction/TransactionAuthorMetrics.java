@@ -10,7 +10,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
@@ -33,7 +33,7 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric{
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<RCSTransaction> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
 		RCSTransaction transaction = item.getNode();

@@ -7,7 +7,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
@@ -32,7 +32,7 @@ public class CorePageRankMetric extends GenealogyCoreMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<JavaChangeOperation> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
 		return universalMetric.handle(item.getNode(), item.isLast());
 	}
 	

@@ -5,8 +5,6 @@ import java.util.Comparator;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalTestDwReachMetric {
 	
@@ -22,8 +20,8 @@ public class UniversalTestDwReachMetric {
 		});
 	}
 	
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<String> item) {
-		return universalMetric.handle(item.getNode());
+	public Collection<GenealogyMetricValue> handle(String item) {
+		return universalMetric.handle(item);
 	}
 	
 }

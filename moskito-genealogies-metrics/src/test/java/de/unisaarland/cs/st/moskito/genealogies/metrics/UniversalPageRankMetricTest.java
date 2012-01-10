@@ -8,10 +8,8 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTestPageRankMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalPageRankMetricTest extends TestEnvironment {
 	
@@ -24,8 +22,7 @@ public class UniversalPageRankMetricTest extends TestEnvironment {
 		Iterator<String> itemIter = genealogy.vertexSet();
 		while (itemIter.hasNext()) {
 			String item = itemIter.next();
-			GenealogyNode<String> node = new GenealogyNode<String>(item, item);
-			metricValues.addAll(metric.handle(node, !itemIter.hasNext()));
+			metricValues.addAll(metric.handle(item, !itemIter.hasNext()));
 		}
 		
 		assertEquals(14, metricValues.size());

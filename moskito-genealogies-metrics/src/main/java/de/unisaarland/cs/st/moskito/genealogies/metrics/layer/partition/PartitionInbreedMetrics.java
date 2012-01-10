@@ -7,7 +7,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalInbreedMetrics;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class PartitionInbreedMetrics extends GenealogyPartitionMetric {
@@ -23,11 +23,11 @@ public class PartitionInbreedMetrics extends GenealogyPartitionMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalInbreedMetrics.getMetricNames();
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<Collection<JavaChangeOperation>> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

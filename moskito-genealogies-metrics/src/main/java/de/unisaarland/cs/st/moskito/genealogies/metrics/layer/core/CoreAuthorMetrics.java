@@ -10,7 +10,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class CoreAuthorMetrics extends GenealogyCoreMetric {
@@ -31,7 +31,7 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<JavaChangeOperation> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
 		JavaChangeOperation operation = item.getNode();

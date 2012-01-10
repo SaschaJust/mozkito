@@ -1,6 +1,7 @@
 package de.unisaarland.cs.st.moskito.genealogies.utils.andama;
 
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -9,18 +10,18 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
+public class PartitionGenealogyReader extends AndamaSource<GenealogyPartitionNode> {
 	
-	private Iterator<JavaChangeOperation> iterator;
+	private Iterator<Collection<JavaChangeOperation>> iterator;
 	
-	public GenealogyReader(AndamaGroup threadGroup, AndamaSettings settings,
-			final CoreChangeGenealogy changeGenealogy) {
+	public PartitionGenealogyReader(AndamaGroup threadGroup, AndamaSettings settings,
+			final PartitionChangeGenealogy changeGenealogy) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<GenealogyCoreNode, GenealogyCoreNode>(this) {
+		new PreExecutionHook<GenealogyPartitionNode, GenealogyPartitionNode>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -28,22 +29,22 @@ public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
 			}
 		};
 		
-		new ProcessHook<GenealogyCoreNode, GenealogyCoreNode>(this) {
+		new ProcessHook<GenealogyPartitionNode, GenealogyPartitionNode>(this) {
 			
 			@Override
 			public void process() {
 				if (iterator.hasNext()) {
-					JavaChangeOperation t = iterator.next();
+					Collection<JavaChangeOperation> t = iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
 					}
 					
-					GenealogyCoreNode node = null;
+					GenealogyPartitionNode node = null;
 					if (iterator.hasNext()) {
-						node = new GenealogyCoreNode(t, changeGenealogy.getNodeId(t));
+						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t));
 					} else {
-						node = new GenealogyCoreNode(t, changeGenealogy.getNodeId(t), true);
+						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
 				} else {

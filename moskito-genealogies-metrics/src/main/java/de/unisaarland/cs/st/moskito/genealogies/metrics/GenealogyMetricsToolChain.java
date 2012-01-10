@@ -18,13 +18,16 @@ import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyReader;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.PartitionGenealogyReader;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.TransactionGenealogyReader;
 
 public class GenealogyMetricsToolChain extends AndamaChain {
 	
@@ -101,9 +104,10 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		if (granularity.equals("CHANGEOPERATIONPARTITION")) {
 			PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(genealogy,
 					new DefaultPartitionGenerator(genealogy));
-			new GenealogyReader<Collection<JavaChangeOperation>>(this.threadPool.getThreadGroup(), getSettings(),
+			new PartitionGenealogyReader(this.threadPool.getThreadGroup(),
+					getSettings(),
 					partitionChangeGenealogy);
-			new GenealogyMetricMux<Collection<JavaChangeOperation>>(this.threadPool.getThreadGroup(), getSettings());
+			new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
 			//start all partition metrics
 			try {
@@ -116,7 +120,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(
-						        AndamaGroup.class, AndamaSettings.class, PartitionChangeGenealogy.class);
+								AndamaGroup.class, AndamaSettings.class, PartitionChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}
@@ -131,9 +135,9 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			
 		} else if (granularity.equals("TRANSACTION")) {
 			TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(genealogy);
-			new GenealogyReader<RCSTransaction>(this.threadPool.getThreadGroup(), getSettings(),
+			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
 					transactionChangeGenealogy);
-			new GenealogyMetricMux<RCSTransaction>(this.threadPool.getThreadGroup(), getSettings());
+			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
 			//start all transaction metrics
 			
@@ -146,7 +150,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(
-						        AndamaGroup.class, AndamaSettings.class, TransactionChangeGenealogy.class);
+								AndamaGroup.class, AndamaSettings.class, TransactionChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}
@@ -160,8 +164,8 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			}
 			
 		} else {
-			new GenealogyReader<JavaChangeOperation>(this.threadPool.getThreadGroup(), getSettings(), genealogy);
-			new GenealogyMetricMux<JavaChangeOperation>(this.threadPool.getThreadGroup(), getSettings());
+			new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+			new GenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			//start all core metrics
 			
 			try {
@@ -172,7 +176,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(
-						        AndamaGroup.class, AndamaSettings.class, CoreChangeGenealogy.class);
+								AndamaGroup.class, AndamaSettings.class, CoreChangeGenealogy.class);
 						if (constructor != null) {
 							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 						}

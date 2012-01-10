@@ -12,7 +12,7 @@ import org.joda.time.Days;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
@@ -52,7 +52,7 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<JavaChangeOperation> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

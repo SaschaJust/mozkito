@@ -9,7 +9,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalResponseTimeMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
@@ -33,11 +33,11 @@ DayTimeDiff<Collection<JavaChangeOperation>> {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalResponseTimeMetrics.getMetricNames();
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<Collection<JavaChangeOperation>> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

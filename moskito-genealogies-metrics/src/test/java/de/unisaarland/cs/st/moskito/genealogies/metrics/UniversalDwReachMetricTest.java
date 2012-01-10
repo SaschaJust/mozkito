@@ -8,10 +8,8 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTestDwReachMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
 
 public class UniversalDwReachMetricTest extends TestEnvironment {
 	
@@ -24,8 +22,7 @@ public class UniversalDwReachMetricTest extends TestEnvironment {
 		Iterator<String> itemIter = genealogy.vertexSet();
 		while (itemIter.hasNext()) {
 			String item = itemIter.next();
-			GenealogyNode<String> node = new GenealogyNode<String>(item, item);
-			metricValues.addAll(metric.handle(node));
+			metricValues.addAll(metric.handle(item));
 		}
 		
 		assertEquals(14, metricValues.size());

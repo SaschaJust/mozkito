@@ -7,7 +7,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalStructuralHolesMetrics;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
@@ -24,11 +24,11 @@ public class TransactionStructuralHolesMetrics extends GenealogyTransactionMetri
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalStructuralHolesMetrics.getMetricNames();
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<RCSTransaction> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
 		return universalMetric.handle(item.getNode());
 	}
 	

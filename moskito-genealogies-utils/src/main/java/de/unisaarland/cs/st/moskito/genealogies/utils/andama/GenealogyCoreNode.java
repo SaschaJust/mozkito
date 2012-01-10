@@ -1,25 +1,27 @@
 package de.unisaarland.cs.st.moskito.genealogies.utils.andama;
 
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class GenealogyNode<T> {
+
+public class GenealogyCoreNode {
 	
-	private T      t;
+	private JavaChangeOperation t;
 	private String nodeId;
 	private boolean lastNode;
 	
-	public GenealogyNode(T t, String nodeId) {
+	public GenealogyCoreNode(JavaChangeOperation t, String nodeId) {
 		this.t = t;
 		this.nodeId = nodeId;
 		this.lastNode = false;
 	}
 	
-	public GenealogyNode(T t, String nodeId, boolean lastNode) {
+	public GenealogyCoreNode(JavaChangeOperation t, String nodeId, boolean lastNode) {
 		this.t = t;
 		this.nodeId = nodeId;
 		this.lastNode = lastNode;
 	}
 	
-	public T getNode() {
+	public JavaChangeOperation getNode() {
 		return t;
 	}
 	

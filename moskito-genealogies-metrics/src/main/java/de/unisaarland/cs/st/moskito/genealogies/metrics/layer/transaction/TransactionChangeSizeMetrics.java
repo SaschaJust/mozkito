@@ -13,7 +13,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyNode;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -55,7 +55,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyNode<RCSTransaction> item) {
+	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
 		RCSTransaction transaction = item.getNode();
