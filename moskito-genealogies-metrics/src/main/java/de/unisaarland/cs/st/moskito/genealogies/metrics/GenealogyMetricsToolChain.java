@@ -193,7 +193,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		
 		//start a demuxer and a sink that receives all the metric values
 		//and stores the overall result matrix
-		new GenealogyMetricDemux<GenealogyMetricValue>(this.threadPool.getThreadGroup(), getSettings());
+		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
 		metricSink = new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(),
 				outputFileArgument.getValue());
 	}
