@@ -23,6 +23,17 @@ public class UniversalPageRankMetric<T> {
 	/** The page rank. */
 	public static String        pageRank       = "pageRank";
 	
+	/**
+	 * Gets the metric names.
+	 * 
+	 * @return the metric names
+	 */
+	public static Collection<String> getMetricNames() {
+		Collection<String> metricNames = new ArrayList<String>(2);
+		metricNames.add(pageRank);
+		return metricNames;
+	}
+	
 	/** The tentative cache. */
 	private Map<String, Double> tentativeCache = new HashMap<String, Double>();
 	
@@ -106,17 +117,6 @@ public class UniversalPageRankMetric<T> {
 			tentativeCache.put(nodeId, pageRank);
 		}
 		return new Tuple<Double, Boolean>(pageRank, confirmed);
-	}
-	
-	/**
-	 * Gets the metric names.
-	 * 
-	 * @return the metric names
-	 */
-	public Collection<String> getMetricNames() {
-		Collection<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(pageRank);
-		return metricNames;
 	}
 	
 	/**

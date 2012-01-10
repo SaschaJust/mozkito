@@ -10,24 +10,23 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalInOutDegreeMetrics<T> {
 	
-	private ChangeGenealogy<T> genealogy;
-	
-	private String             inDegree     = "InDegree";
-	private String             avgInDegree  = "AvgInDegree";
-	private String             outDegree    = "OutDegree";
-	private String             avgOutDegree = "AvgOutDegree";
-	
-	public UniversalInOutDegreeMetrics(ChangeGenealogy<T> genealogy) {
-		this.genealogy = genealogy;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(inDegree);
 		result.add(avgInDegree);
 		result.add(outDegree);
 		result.add(avgOutDegree);
 		return result;
+	}
+	
+	private ChangeGenealogy<T> genealogy;
+	private static String      inDegree     = "InDegree";
+	private static String      avgInDegree  = "AvgInDegree";
+	private static String      outDegree    = "OutDegree";
+	private static String      avgOutDegree = "AvgOutDegree";
+	
+	public UniversalInOutDegreeMetrics(ChangeGenealogy<T> genealogy) {
+		this.genealogy = genealogy;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {

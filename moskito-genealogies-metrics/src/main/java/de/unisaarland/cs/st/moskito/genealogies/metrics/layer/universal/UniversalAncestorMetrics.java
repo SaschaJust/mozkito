@@ -52,6 +52,9 @@ public class UniversalAncestorMetrics<T> {
 	/** The call dependants d3. */
 	public static String callDependantsD3       = "NumCallDependants_depth_3";
 	
+	/** The metric names. */
+	private static List<String>       metricNames;
+	
 	/**
 	 * Compose metric name.
 	 * 
@@ -68,28 +71,12 @@ public class UniversalAncestorMetrics<T> {
 		return "Num" + eType.toString() + "DependantsD" + depth;
 	}
 	
-	/** The metric names. */
-	private List<String>       metricNames;
-	
-	/** The genealogy. */
-	private ChangeGenealogy<T> genealogy;
-	
-	/**
-	 * Instantiates a new universal dependants metrics.
-	 * 
-	 * @param genealogy
-	 *            the genealogy
-	 */
-	public UniversalAncestorMetrics(ChangeGenealogy<T> genealogy){
-		this.genealogy = genealogy;
-	}
-	
 	/**
 	 * Gets the metric names.
 	 * 
 	 * @return the metric names
 	 */
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		if ((metricNames != null) && (!metricNames.isEmpty())) {
 			return metricNames;
 		}
@@ -109,6 +96,19 @@ public class UniversalAncestorMetrics<T> {
 			metricNames.add(composeMetricName(eType, 3));
 		}
 		return metricNames;
+	}
+	
+	/** The genealogy. */
+	private ChangeGenealogy<T> genealogy;
+	
+	/**
+	 * Instantiates a new universal dependants metrics.
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 */
+	public UniversalAncestorMetrics(ChangeGenealogy<T> genealogy){
+		this.genealogy = genealogy;
 	}
 	
 	/**

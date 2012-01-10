@@ -17,19 +17,19 @@ public class UniversalParentAgeMetrics<T> {
 	private static String      minParentAge = "minParentAge";
 	private static String      maxParentAge = "maxParentAge";
 	
-	public UniversalParentAgeMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayComparator) {
-		this.genealogy = genealogy;
-		this.dayComparator = dayComparator;
-	}
-	
-	
-	
-	public final Collection<String> getMetricNames() {
+	public static final Collection<String> getMetricNames() {
 		Collection<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(avgParentAge);
 		metricNames.add(minParentAge);
 		metricNames.add(maxParentAge);
 		return metricNames;
+	}
+	
+	
+	
+	public UniversalParentAgeMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayComparator) {
+		this.genealogy = genealogy;
+		this.dayComparator = dayComparator;
 	}
 	
 	/**

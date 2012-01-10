@@ -24,20 +24,7 @@ public class UniversalTempDepthMetrics<T> {
 	public static String       numTempResponses10 = "numTempResponses_10";
 	public static String       numTempResponses14 = "numTempResponses_14";
 	
-	private ChangeGenealogy<T> genealogy;
-	private DayTimeDiff<T>     dayTimeDiff;
-	private Set<String>        responses_1        = new HashSet<String>();
-	private Set<String>        responses_2        = new HashSet<String>();
-	private Set<String>        responses_5        = new HashSet<String>();
-	private Set<String>        responses_10       = new HashSet<String>();
-	private Set<String>        responses_14       = new HashSet<String>();
-	
-	public UniversalTempDepthMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
-		this.genealogy = genealogy;
-		this.dayTimeDiff = dayTimeDiff;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(maxTempDepth1);
 		result.add(maxTempDepth2);
@@ -50,6 +37,19 @@ public class UniversalTempDepthMetrics<T> {
 		result.add(numTempResponses10);
 		result.add(numTempResponses14);
 		return result;
+	}
+	private ChangeGenealogy<T> genealogy;
+	private DayTimeDiff<T>     dayTimeDiff;
+	private Set<String>        responses_1        = new HashSet<String>();
+	private Set<String>        responses_2        = new HashSet<String>();
+	private Set<String>        responses_5        = new HashSet<String>();
+	private Set<String>        responses_10       = new HashSet<String>();
+	
+	private Set<String>        responses_14       = new HashSet<String>();
+	
+	public UniversalTempDepthMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
+		this.genealogy = genealogy;
+		this.dayTimeDiff = dayTimeDiff;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {
@@ -116,7 +116,7 @@ public class UniversalTempDepthMetrics<T> {
 		if (originalNode.equals(node)) {
 			return toAdd;
 		}
-
+		
 		int j = 0;
 		if (diff < 2) {
 			responses_1.add(nodeId);

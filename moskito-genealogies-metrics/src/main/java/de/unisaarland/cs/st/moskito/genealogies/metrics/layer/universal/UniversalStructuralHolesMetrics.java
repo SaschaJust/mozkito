@@ -19,13 +19,7 @@ public class UniversalStructuralHolesMetrics<T> {
 	private static String      outEfficiency = "OutEfficiency";
 	private static String      efficiency    = "Efficiency";
 	
-	private ChangeGenealogy<T> genealogy;
-	
-	public UniversalStructuralHolesMetrics(ChangeGenealogy<T> genealogy) {
-		this.genealogy = genealogy;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(inEffSize);
 		result.add(outEffSize);
@@ -35,6 +29,12 @@ public class UniversalStructuralHolesMetrics<T> {
 		result.add(outEfficiency);
 		result.add(efficiency);
 		return result;
+	}
+	
+	private ChangeGenealogy<T> genealogy;
+	
+	public UniversalStructuralHolesMetrics(ChangeGenealogy<T> genealogy) {
+		this.genealogy = genealogy;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {

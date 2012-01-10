@@ -28,7 +28,7 @@ public class CoreChildrenMetrics extends GenealogyCoreMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalChildrenMetrics.getMetricNames();
 	}
 	
 	@Override

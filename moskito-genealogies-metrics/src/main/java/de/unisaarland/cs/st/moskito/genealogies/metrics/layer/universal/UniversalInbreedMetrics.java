@@ -17,19 +17,19 @@ public class UniversalInbreedMetrics<T> {
 	private static String      avgInbreedChildren = "AvgInbreedChildren";
 	private static String      avgInbreedParents  = "AvgInbreedParents";
 	
-	private ChangeGenealogy<T> genealogy;
-	
-	public UniversalInbreedMetrics(ChangeGenealogy<T> genealogy) {
-		this.genealogy = genealogy;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(numInbreedChildren);
 		result.add(numInbreedParents);
 		result.add(avgInbreedChildren);
 		result.add(avgInbreedParents);
 		return result;
+	}
+	
+	private ChangeGenealogy<T> genealogy;
+	
+	public UniversalInbreedMetrics(ChangeGenealogy<T> genealogy) {
+		this.genealogy = genealogy;
 	}
 	
 	@SuppressWarnings("unchecked")

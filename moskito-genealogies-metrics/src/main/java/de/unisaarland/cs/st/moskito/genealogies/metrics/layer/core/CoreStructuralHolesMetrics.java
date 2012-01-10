@@ -28,7 +28,7 @@ public class CoreStructuralHolesMetrics extends GenealogyCoreMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalStructuralHolesMetrics.getMetricNames();
 	}
 	
 	@Override

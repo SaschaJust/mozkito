@@ -28,7 +28,7 @@ public class CoreInOutDegreeMetrics extends GenealogyCoreMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalInOutDegreeMetrics.getMetricNames();
 	}
 	
 	@Override

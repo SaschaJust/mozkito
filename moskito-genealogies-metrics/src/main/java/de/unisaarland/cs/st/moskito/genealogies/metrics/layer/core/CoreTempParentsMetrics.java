@@ -35,7 +35,7 @@ public class CoreTempParentsMetrics extends GenealogyCoreMetric implements DayTi
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalTempParentsMetrics.getMetricNames();
 	}
 	
 	@Override

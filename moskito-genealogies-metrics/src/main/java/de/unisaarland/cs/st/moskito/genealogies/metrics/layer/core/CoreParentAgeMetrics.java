@@ -35,7 +35,7 @@ public class CoreParentAgeMetrics extends GenealogyCoreMetric implements DayTime
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalParentAgeMetrics.getMetricNames();
 	}
 	
 	@Override

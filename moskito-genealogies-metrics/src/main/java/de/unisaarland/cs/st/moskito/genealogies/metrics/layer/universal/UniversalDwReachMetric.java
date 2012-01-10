@@ -15,21 +15,21 @@ public class UniversalDwReachMetric<T> {
 	
 	public static String       dwReach = "dwReach";
 	
+	public static Collection<String> getMetricNames() {
+		Collection<String> metricNames = new ArrayList<String>(2);
+		metricNames.add(dwReach);
+		return metricNames;
+	}
+	
 	private ChangeGenealogy<T> genealogy;
 	
 	private Comparator<T>      comparator;
 	
+	
+	
 	public UniversalDwReachMetric(ChangeGenealogy<T> genealogy, Comparator<T> comparator) {
 		this.genealogy = genealogy;
 		this.comparator = comparator;
-	}
-	
-	
-	
-	public Collection<String> getMetricNames() {
-		Collection<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(dwReach);
-		return metricNames;
 	}
 	
 	private List<Set<T>> getReach(T originalNode, Collection<T> nodes, Set<T> seen) {

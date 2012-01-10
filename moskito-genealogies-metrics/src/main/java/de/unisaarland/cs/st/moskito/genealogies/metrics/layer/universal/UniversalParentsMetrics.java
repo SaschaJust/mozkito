@@ -56,6 +56,9 @@ public class UniversalParentsMetrics<T> {
 	/** The call parents d3. */
 	public static String callParentsD3       = "NumCallParents_depth_3";
 	
+	/** The metric names. */
+	private static List<String>       metricNames;
+	
 	/**
 	 * Compose metric name.
 	 * 
@@ -74,28 +77,12 @@ public class UniversalParentsMetrics<T> {
 		return "Num" + eType.toString() + "Parents";
 	}
 	
-	/** The metric names. */
-	private List<String>       metricNames;
-	
-	/** The genealogy. */
-	private ChangeGenealogy<T> genealogy;
-	
-	/**
-	 * Instantiates a new universal parents metrics.
-	 * 
-	 * @param genealogy
-	 *            the genealogy
-	 */
-	public UniversalParentsMetrics(ChangeGenealogy<T> genealogy){
-		this.genealogy = genealogy;
-	}
-	
 	/**
 	 * Gets the metric names.
 	 * 
 	 * @return the metric names
 	 */
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		if ((metricNames != null) && (!metricNames.isEmpty())) {
 			return metricNames;
 		}
@@ -116,6 +103,19 @@ public class UniversalParentsMetrics<T> {
 			metricNames.add(composeMetricName(eType, 3));
 		}
 		return metricNames;
+	}
+	
+	/** The genealogy. */
+	private ChangeGenealogy<T> genealogy;
+	
+	/**
+	 * Instantiates a new universal parents metrics.
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 */
+	public UniversalParentsMetrics(ChangeGenealogy<T> genealogy){
+		this.genealogy = genealogy;
 	}
 	
 	/**

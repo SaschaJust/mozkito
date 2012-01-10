@@ -28,7 +28,7 @@ public class CorePageRankMetric extends GenealogyCoreMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalPageRankMetric.getMetricNames();
 	}
 	
 	@Override

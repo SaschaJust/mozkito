@@ -35,7 +35,7 @@ public class CoreTempDepthMetrics extends GenealogyCoreMetric implements DayTime
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalTempDepthMetrics.getMetricNames();
 	}
 	
 	@Override

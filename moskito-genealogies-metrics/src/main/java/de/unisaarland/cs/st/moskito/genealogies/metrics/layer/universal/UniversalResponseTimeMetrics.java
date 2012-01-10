@@ -17,19 +17,19 @@ public class UniversalResponseTimeMetrics<T> {
 	private static String minResponseTime = "minResponseTime";
 	private static String maxResponseTime = "maxResponseTime";
 	
-	public UniversalResponseTimeMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayComparator) {
-		this.genealogy = genealogy;
-		this.dayComparator = dayComparator;
-	}
-	
-	
-	
-	public final Collection<String> getMetricNames() {
+	public final static Collection<String> getMetricNames() {
 		Collection<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(avgResponseTime);
 		metricNames.add(minResponseTime);
 		metricNames.add(maxResponseTime);
 		return metricNames;
+	}
+	
+	
+	
+	public UniversalResponseTimeMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayComparator) {
+		this.genealogy = genealogy;
+		this.dayComparator = dayComparator;
 	}
 	
 	/**

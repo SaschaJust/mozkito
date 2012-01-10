@@ -13,17 +13,17 @@ public class UniversalSiblingMetrics<T> {
 	
 	private static String      numSiblingChildren = "NumSiblingChildren";
 	private static String      avgSiblingChildren = "AvgSiblingChildren";
-	private ChangeGenealogy<T> genealogy;
-	
-	public UniversalSiblingMetrics(ChangeGenealogy<T> genealogy) {
-		this.genealogy = genealogy;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static  Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(numSiblingChildren);
 		result.add(avgSiblingChildren);
 		return result;
+	}
+	
+	private ChangeGenealogy<T> genealogy;
+	
+	public UniversalSiblingMetrics(ChangeGenealogy<T> genealogy) {
+		this.genealogy = genealogy;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {

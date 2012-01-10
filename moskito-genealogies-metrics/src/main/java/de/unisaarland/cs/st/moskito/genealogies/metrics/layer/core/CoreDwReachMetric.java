@@ -48,7 +48,7 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalDwReachMetric.getMetricNames();
 	}
 	
 	@Override

@@ -18,13 +18,7 @@ public class UniversalChildrenMetrics<T> {
 	private static String numChildrenIn       = "NumChildrenIn";
 	private static String avgChildrenParents  = "AvgChildrenParents";
 	private static String avgChildrenIn       = "AvgChildrenIn";
-	private ChangeGenealogy<T> genealogy;
-	
-	public UniversalChildrenMetrics(ChangeGenealogy<T> genealogy) {
-		this.genealogy = genealogy;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(numChildrenChildren);
 		result.add(numChildrenOut);
@@ -35,6 +29,12 @@ public class UniversalChildrenMetrics<T> {
 		result.add(avgChildrenParents);
 		result.add(avgChildrenIn);
 		return result;
+	}
+	
+	private ChangeGenealogy<T> genealogy;
+	
+	public UniversalChildrenMetrics(ChangeGenealogy<T> genealogy) {
+		this.genealogy = genealogy;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {
@@ -65,7 +65,7 @@ public class UniversalChildrenMetrics<T> {
 		
 		result.add(new GenealogyMetricValue(numChildrenIn, nodeId, childrenIn.getSum()));
 		result.add(new GenealogyMetricValue(avgChildrenIn, nodeId, childrenIn.getMean()));
-
+		
 		return result;
 	}
 }

@@ -23,20 +23,7 @@ public class UniversalTempParentsMetrics<T> {
 	private static String      numTempParents5      = "numTempParents_5";
 	private static String      numTempParents10     = "numTempParents_10";
 	private static String      numTempParents14     = "numTempParents_14";
-	private ChangeGenealogy<T> genealogy;
-	private DayTimeDiff<T>     dayTimeDiff;
-	private Set<String>        parents_1            = new HashSet<String>();
-	private Set<String>        parents_2            = new HashSet<String>();
-	private Set<String>        parents_5            = new HashSet<String>();
-	private Set<String>        parents_10           = new HashSet<String>();
-	private Set<String>        parents_14           = new HashSet<String>();
-	
-	public UniversalTempParentsMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
-		this.genealogy = genealogy;
-		this.dayTimeDiff = dayTimeDiff;
-	}
-	
-	public Collection<String> getMetricNames() {
+	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(maxTempParentDepth1);
 		result.add(maxTempParentDepth2);
@@ -49,6 +36,19 @@ public class UniversalTempParentsMetrics<T> {
 		result.add(numTempParents10);
 		result.add(numTempParents14);
 		return result;
+	}
+	private ChangeGenealogy<T> genealogy;
+	private DayTimeDiff<T>     dayTimeDiff;
+	private Set<String>        parents_1            = new HashSet<String>();
+	private Set<String>        parents_2            = new HashSet<String>();
+	private Set<String>        parents_5            = new HashSet<String>();
+	private Set<String>        parents_10           = new HashSet<String>();
+	
+	private Set<String>        parents_14           = new HashSet<String>();
+	
+	public UniversalTempParentsMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
+		this.genealogy = genealogy;
+		this.dayTimeDiff = dayTimeDiff;
 	}
 	
 	public Collection<GenealogyMetricValue> handle(T node) {

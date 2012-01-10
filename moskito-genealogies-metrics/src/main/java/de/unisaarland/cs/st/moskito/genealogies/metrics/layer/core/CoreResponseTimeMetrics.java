@@ -35,7 +35,7 @@ public class CoreResponseTimeMetrics extends GenealogyCoreMetric implements DayT
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		return universalMetric.getMetricNames();
+		return UniversalResponseTimeMetrics.getMetricNames();
 	}
 	
 	@Override
