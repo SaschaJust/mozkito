@@ -10,6 +10,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
@@ -19,6 +20,10 @@ public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyC
 	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
 		super(threadGroup, settings, false);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Loaded: " + this.getClass().getGenericSuperclass().toString());
+		}
 		
 		for (String mName : this.getMetricNames()) {
 			if (registeredMetrics.containsKey(mName)) {

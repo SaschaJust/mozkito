@@ -43,6 +43,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		super(new GenealogySettings());
 		GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new AndamaPool(GenealogyMetricsToolChain.class.getSimpleName(), this);
+		settings.setLoggerArg(false);
 		genealogyArgs = settings.setGenealogyArgs(true);
 		granularityArg = new EnumArgument(settings, "genealogy.metric.level",
 				"The granularity level the metrics should be computed on.", "CHANGEOPERATION", true, new String[] {
