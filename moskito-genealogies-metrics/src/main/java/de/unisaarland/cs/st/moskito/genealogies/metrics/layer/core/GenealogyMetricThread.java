@@ -1,5 +1,7 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +24,11 @@ public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyC
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
+			ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
+			Type type2 = type.getActualTypeArguments()[0];
 			Logger.debug("Loaded: " + this.getClass().toString() + ":"
-			        + this.getClass().getGenericSuperclass().toString());
+			        + this.getClass().getGenericSuperclass().toString() + ":" + type + ":" + type2);
+
 		}
 		
 		for (String mName : this.getMetricNames()) {
