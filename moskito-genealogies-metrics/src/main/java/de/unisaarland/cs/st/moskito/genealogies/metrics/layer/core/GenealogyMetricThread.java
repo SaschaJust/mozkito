@@ -22,7 +22,8 @@ public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyC
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Loaded: " + this.getClass().getGenericSuperclass().toString());
+			Logger.debug("Loaded: " + this.getClass().toString() + ":"
+			        + this.getClass().getGenericSuperclass().toString());
 		}
 		
 		for (String mName : this.getMetricNames()) {
