@@ -20,14 +20,14 @@ import java.util.Set;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
-import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
+import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingFilter extends StorageAccessor {
+public abstract class MappingFilter extends Node {
 	
 	private final boolean   initialized = false;
 	private final boolean   registered  = false;

@@ -17,14 +17,14 @@ package de.unisaarland.cs.st.moskito.mapping.splitters;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
+import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingSplitter extends StorageAccessor {
+public abstract class MappingSplitter extends Node {
 	
 	/*
 	 * (non-Javadoc)
