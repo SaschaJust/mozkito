@@ -65,7 +65,7 @@ public class UniversalAncestorMetrics<T> {
 	 * @return the string
 	 */
 	public static String composeMetricName(GenealogyEdgeType eType, int depth) {
-		if (depth > 1) {
+		if (depth < 2) {
 			return "Num" + eType.toString() + "Dependants";
 		}
 		return "Num" + eType.toString() + "DependantsD" + depth;
