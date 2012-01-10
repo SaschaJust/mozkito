@@ -10,22 +10,18 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
-
-public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue>
-implements
-GenealogyMetric<GenealogyCoreNode> {
+public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
 	
-	static private Map<String, GenealogyMetric<?>> registeredMetrics = new HashMap<String, GenealogyMetric<?>>();
+	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
 	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
 		super(threadGroup, settings, false);
 		
-		for(String mName : this.getMetricNames()){
-			if(registeredMetrics.containsKey(mName)){
+		for (String mName : this.getMetricNames()) {
+			if (registeredMetrics.containsKey(mName)) {
 				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
 						+ mName + "` is already registered by class `"
 						+ registeredMetrics.get(mName).getClass().getCanonicalName() + "`. Class `"
@@ -62,10 +58,8 @@ GenealogyMetric<GenealogyCoreNode> {
 		};
 	}
 	
-	@Override
 	public abstract Collection<String> getMetricNames();
 	
-	@Override
 	public abstract Collection<GenealogyMetricValue> handle(GenealogyCoreNode item);
 	
 	public void postProcess() {

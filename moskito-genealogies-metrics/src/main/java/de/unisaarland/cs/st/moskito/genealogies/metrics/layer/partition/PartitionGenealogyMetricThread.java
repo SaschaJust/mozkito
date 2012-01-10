@@ -10,17 +10,14 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 
 
 public abstract class PartitionGenealogyMetricThread extends
-AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue>
-implements
-        GenealogyMetric<GenealogyPartitionNode> {
+AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 	
-	static private Map<String, GenealogyMetric<?>> registeredMetrics = new HashMap<String, GenealogyMetric<?>>();
+	static private Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
 	
 	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
 		super(threadGroup, settings, false);
@@ -63,10 +60,8 @@ implements
 		};
 	}
 	
-	@Override
 	public abstract Collection<String> getMetricNames();
 	
-	@Override
 	public abstract Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item);
 	
 	public void postProcess() {
