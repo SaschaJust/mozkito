@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -31,8 +33,6 @@ import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -82,26 +82,26 @@ public class TransactionRegexSelector extends MappingSelector {
 	@Override
 	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
 	                                                final Class<T> targetType) {
-		List<T> list = new LinkedList<T>();
+		final List<T> list = new LinkedList<T>();
 		try {
-			List<Long> ids = new LinkedList<Long>();
-			Regex regex = new Regex(this.pattern);
+			final List<Long> ids = new LinkedList<Long>();
+			final Regex regex = new Regex(this.pattern);
 			PersistenceUtil util;
 			
 			util = PersistenceManager.getUtil();
 			
-			Criteria<Report> criteria = util.createCriteria(Report.class);
+			final Criteria<Report> criteria = util.createCriteria(Report.class);
 			
-			List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
+			final List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
 			
 			if (findAll != null) {
-				for (List<RegexGroup> match : findAll) {
+				for (final List<RegexGroup> match : findAll) {
 					
 					ids.add(Long.parseLong(match.get(0).getMatch()));
 				}
 			}
 			criteria.in("id", ids);
-			List<Report> loadedList = util.load(criteria);
+			final List<Report> loadedList = util.load(criteria);
 			
 			list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
 				
@@ -111,7 +111,7 @@ public class TransactionRegexSelector extends MappingSelector {
 				}
 			}));
 			
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
@@ -125,8 +125,8 @@ public class TransactionRegexSelector extends MappingSelector {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),

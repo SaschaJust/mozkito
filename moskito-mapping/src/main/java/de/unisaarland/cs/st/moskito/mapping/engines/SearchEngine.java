@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 
@@ -30,8 +32,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
@@ -60,13 +60,13 @@ public abstract class SearchEngine extends MappingEngine {
 		try {
 			query = queryParser.parse(queryString);
 			
-			Set<Term> terms = new HashSet<Term>();
+			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
 			
 			if (terms.size() < (Long) getSettings().getSetting(getOptionName("minTokens")).getValue()) {
 				return null;
 			}
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		
@@ -92,17 +92,17 @@ public abstract class SearchEngine extends MappingEngine {
 		this.storage = getStorage(LuceneStorage.class);
 		
 		if (storage != null) {
-			String value = (String) getSettings().getSetting(getOptionName("language")).getValue();
-			String[] split = value.split(":");
+			final String value = (String) getSettings().getSetting(getOptionName("language")).getValue();
+			final String[] split = value.split(":");
 			try {
 				if (this.storage.getAnalyzer() == null) {
-					Class<?> clazz = Class.forName("org.apache.lucene.analysis." + split[0] + "." + split[1]
+					final Class<?> clazz = Class.forName("org.apache.lucene.analysis." + split[0] + "." + split[1]
 					        + "Analyzer");
-					Constructor<?> constructor = clazz.getConstructor(Version.class);
-					Analyzer newInstance = (Analyzer) constructor.newInstance(Version.LUCENE_31);
+					final Constructor<?> constructor = clazz.getConstructor(Version.class);
+					final Analyzer newInstance = (Analyzer) constructor.newInstance(Version.LUCENE_31);
 					this.storage.setAnalyzer(newInstance);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new UnrecoverableError(e);
 			}
 		}
@@ -115,16 +115,15 @@ public abstract class SearchEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new LongArgument(settings, getOptionName("minTokens"),
-		                                       "minimum number of tokens required for a search.", "3", isRequired
-		                                               && isEnabled()));
+		                                       "minimum number of tokens required for a search.", "3", isEnabled()));
 		arguments.addArgument(new StringArgument(settings, getOptionName("language"),
 		                                         "minimum number of tokens required for a search.", "en:English",
-		                                         isRequired && isEnabled()));
+		                                         isEnabled()));
 	}
 	
 	/*

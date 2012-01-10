@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 
 /**
  * Selectors analyze a {@link MappableEntity} and find possible candidates that
@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.moskito.mapping.register.Registered;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingSelector extends Registered {
+public abstract class MappingSelector extends StorageAccessor {
 	
 	/*
 	 * (non-Javadoc)

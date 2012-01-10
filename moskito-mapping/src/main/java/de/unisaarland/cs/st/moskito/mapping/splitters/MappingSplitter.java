@@ -17,14 +17,14 @@ package de.unisaarland.cs.st.moskito.mapping.splitters;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingSplitter extends Registered {
+public abstract class MappingSplitter extends StorageAccessor {
 	
 	/*
 	 * (non-Javadoc)
@@ -52,7 +52,7 @@ public abstract class MappingSplitter extends Registered {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingSplitter [settings=");
 		builder.append(getSettings());
 		builder.append(", initialized=");

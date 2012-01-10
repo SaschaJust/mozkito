@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
-import de.unisaarland.cs.st.moskito.mapping.register.Registered;
+import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
@@ -47,11 +47,11 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public class MappingFinder {
 	
 	private final Map<String, MappingEngine>                             engines    = new HashMap<String, MappingEngine>();
-	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
-	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
 	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
 	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
-	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
+	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
 	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
 	
 	/**
@@ -117,13 +117,13 @@ public class MappingFinder {
 	 * @return
 	 */
 	public FilteredMapping filter(final PersistentMapping mapping) {
-		Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
+		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
 		
-		for (MappingFilter filter : this.filters.values()) {
+		for (final MappingFilter filter : this.filters.values()) {
 			filter.filter(mapping, triggeringFilters);
 		}
 		
-		FilteredMapping filteredMapping = new FilteredMapping(mapping, triggeringFilters);
+		final FilteredMapping filteredMapping = new FilteredMapping(mapping, triggeringFilters);
 		return filteredMapping;
 	}
 	
@@ -136,14 +136,14 @@ public class MappingFinder {
 	 */
 	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz,
 	                                                   final Class<V> toClazz) {
-		List<MappingSelector> list = new LinkedList<MappingSelector>();
+		final List<MappingSelector> list = new LinkedList<MappingSelector>();
 		
-		for (Class<? extends MappingSelector> klass : this.selectors.keySet()) {
+		for (final Class<? extends MappingSelector> klass : this.selectors.keySet()) {
 			try {
 				if (klass.newInstance().supports(fromClazz, toClazz)) {
 					list.add(this.selectors.get(klass));
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Omitting selector " + klass.getSimpleName() + " due to instantiation error: "
 					        + e.getMessage());
@@ -163,16 +163,16 @@ public class MappingFinder {
 	 */
 	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
 	                                                       final Class<T> targetClass) {
-		Set<T> candidates = new HashSet<T>();
+		final Set<T> candidates = new HashSet<T>();
 		
 		try {
-			List<MappingSelector> selectors = findSelectors(source.getBaseType(),
-			                                                ((MappableEntity) targetClass.newInstance()).getBaseType());
+			final List<MappingSelector> selectors = findSelectors(source.getBaseType(),
+			                                                      ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
-			for (MappingSelector selector : selectors) {
+			for (final MappingSelector selector : selectors) {
 				candidates.addAll(selector.parse(source, targetClass));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
 		
@@ -183,7 +183,7 @@ public class MappingFinder {
 	 * @param persistenceUtil
 	 */
 	public void loadData(final PersistenceUtil persistenceUtil) {
-		for (Class<? extends MappingStorage> key : this.storages.keySet()) {
+		for (final Class<? extends MappingStorage> key : this.storages.keySet()) {
 			this.storages.get(key).loadData(persistenceUtil);
 		}
 	}
@@ -194,8 +194,8 @@ public class MappingFinder {
 	 */
 	public PersistentMapping map(final MapScore score) {
 		PersistentMapping mapping = new PersistentMapping(score);
-		for (String key : this.strategies.keySet()) {
-			MappingStrategy strategy = this.strategies.get(key);
+		for (final String key : this.strategies.keySet()) {
+			final MappingStrategy strategy = this.strategies.get(key);
 			mapping = strategy.map(mapping);
 			mapping.addStrategy(strategy);
 		}
@@ -208,22 +208,22 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param registered
+	 * @param accessor
 	 */
-	private void provideStorages(final Registered registered) {
-		for (Class<? extends MappingStorage> key : registered.storageDependency()) {
+	private void provideStorages(final StorageAccessor accessor) {
+		for (final Class<? extends MappingStorage> key : accessor.storageDependency()) {
 			if (!this.storages.keySet().contains(key)) {
 				try {
-					MappingStorage storage = key.newInstance();
+					final MappingStorage storage = key.newInstance();
 					this.storages.put(key, storage);
-				} catch (InstantiationException e) {
+				} catch (final InstantiationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
 			
-			registered.provideStorage(this.storages.get(key));
+			accessor.provideStorage(this.storages.get(key));
 		}
 	}
 	
@@ -234,16 +234,16 @@ public class MappingFinder {
 	 */
 	public MapScore score(final MappableEntity element1,
 	                      final MappableEntity element2) {
-		MapScore score = new MapScore(element1, element2);
+		final MapScore score = new MapScore(element1, element2);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Scoring with " + this.engines.size() + " engines: "
 			        + JavaUtils.collectionToString(this.engines.values()));
 		}
 		
-		for (String engineName : this.engines.keySet()) {
-			MappingEngine mappingEngine = this.engines.get(engineName);
-			int check = mappingEngine.supported().check(element1.getClass(), element2.getClass());
+		for (final String engineName : this.engines.keySet()) {
+			final MappingEngine mappingEngine = this.engines.get(engineName);
+			final int check = mappingEngine.supported().check(element1.getClass(), element2.getClass());
 			
 			if (check > 0) {
 				mappingEngine.score(element1, element2, score);
@@ -260,10 +260,10 @@ public class MappingFinder {
 	 * @return
 	 */
 	public List<Annotated> split(final FilteredMapping data) {
-		LinkedList<Annotated> list = new LinkedList<Annotated>();
+		final LinkedList<Annotated> list = new LinkedList<Annotated>();
 		
-		for (Class<? extends MappingSplitter> key : this.splitters.keySet()) {
-			MappingSplitter splitter = this.splitters.get(key);
+		for (final Class<? extends MappingSplitter> key : this.splitters.keySet()) {
+			final MappingSplitter splitter = this.splitters.get(key);
 			
 			list.addAll(splitter.process());
 		}

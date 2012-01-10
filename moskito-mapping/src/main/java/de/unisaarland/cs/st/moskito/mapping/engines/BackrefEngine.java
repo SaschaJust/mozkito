@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -22,8 +24,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from'
@@ -71,13 +71,13 @@ public class BackrefEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final MappingSettings settings,
-	                     final MappingArguments arguments,
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired && isEnabled());
+		super.register(settings, arguments, isEnabled());
 		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
 		                                         "Score for backreference in transaction and report.",
-		                                         this.scoreBackRef + "", isRequired && isEnabled()));
+		                                         this.scoreBackRef + "", isEnabled()));
 	}
 	
 	/*
@@ -91,8 +91,8 @@ public class BackrefEngine extends MappingEngine {
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
 	                  final MapScore score) {
-		String fullText = element2.getText();
-		String id = element1.get(FieldKey.ID).toString();
+		final String fullText = element2.getText();
+		final String id = element1.get(FieldKey.ID).toString();
 		
 		if (fullText.contains(id.toString())) {
 			score.addFeature(getScoreBackRef(), FieldKey.ID.name(), id, id, "FULLTEXT", truncate(fullText),
