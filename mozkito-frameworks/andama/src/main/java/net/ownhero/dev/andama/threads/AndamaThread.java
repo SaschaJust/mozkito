@@ -691,8 +691,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			
 			this.inputCache.put(caller, localCache);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (Logger.logError()) {
+				Logger.error("Determining calling class failed.", e);
+			}
 		}
 		
 		return localCache;
