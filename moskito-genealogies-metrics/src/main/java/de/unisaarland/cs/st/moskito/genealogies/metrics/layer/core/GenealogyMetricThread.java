@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +10,6 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
@@ -22,14 +19,6 @@ public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, 
 	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
-		
-		if (Logger.logDebug()) {
-			ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
-			Type type2 = type.getActualTypeArguments()[0];
-			Logger.debug("Loaded: " + this.getClass().toString() + ":"
-					+ this.getClass().getGenericSuperclass().toString() + ":" + type + ":" + type2);
-			
-		}
 		
 		for (String mName : metric.getMetricNames()) {
 			if (registeredMetrics.containsKey(mName)) {
