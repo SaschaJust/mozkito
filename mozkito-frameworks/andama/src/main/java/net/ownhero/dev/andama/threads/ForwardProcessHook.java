@@ -3,6 +3,8 @@
  */
 package net.ownhero.dev.andama.threads;
 
+import net.ownhero.dev.kisa.Logger;
+
 /**
  * @author just
  * 
@@ -12,7 +14,7 @@ public class ForwardProcessHook<K> extends ProcessHook<K, K> {
 	/**
 	 * @param thread
 	 */
-	public ForwardProcessHook(AndamaThread<K, K> thread) {
+	public ForwardProcessHook(final AndamaThread<K, K> thread) {
 		super(thread);
 	}
 	
@@ -22,8 +24,11 @@ public class ForwardProcessHook<K> extends ProcessHook<K, K> {
 	 */
 	@Override
 	public void process() {
-		K data = getThread().getInputData();
+		final K data = getThread().getInputData();
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Providing output data: " + data);
+		}
 		provideOutputData(data);
 	}
 	
