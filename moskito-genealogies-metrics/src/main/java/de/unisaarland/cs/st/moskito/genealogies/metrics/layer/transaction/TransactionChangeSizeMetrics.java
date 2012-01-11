@@ -5,13 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
@@ -31,9 +29,8 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
 	public static String sumParentChangeSize = "sumParentChangeSize";
 	private PersistenceUtil persistenceUtil;
 	
-	public TransactionChangeSizeMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<RCSTransaction> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy) {
+		super(genealogy);
 		try {
 			persistenceUtil = PersistenceManager.getUtil();
 		} catch (UninitializedDatabaseException e) {

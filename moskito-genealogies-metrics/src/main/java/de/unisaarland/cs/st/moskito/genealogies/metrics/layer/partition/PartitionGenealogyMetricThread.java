@@ -14,15 +14,16 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 
 
-public abstract class PartitionGenealogyMetricThread extends
+public class PartitionGenealogyMetricThread extends
 AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 	
 	static private Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
 	
-	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
+	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings,
+	        final GenealogyPartitionMetric metric) {
 		super(threadGroup, settings, false);
 		
-		for(String mName : this.getMetricNames()){
+		for (String mName : metric.getMetricNames()) {
 			if(registeredMetrics.containsKey(mName)){
 				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
 						+ mName + "` is already registered by class `"
@@ -42,7 +43,7 @@ AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 			@Override
 			public void process() {
 				GenealogyPartitionNode inputData = getInputData();
-				Collection<GenealogyMetricValue> mValues = handle(inputData);
+				Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
 				for (GenealogyMetricValue mValue : mValues) {
 					providePartialOutputData(mValue);
 				}
@@ -59,10 +60,6 @@ AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 			}
 		};
 	}
-	
-	public abstract Collection<String> getMetricNames();
-	
-	public abstract Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item);
 	
 	public void postProcess() {
 	}

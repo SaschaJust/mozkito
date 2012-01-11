@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
@@ -22,8 +20,8 @@ public class CoreResponseTimeMetrics extends GenealogyCoreMetric implements DayT
 	
 	UniversalResponseTimeMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreResponseTimeMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CoreResponseTimeMetrics(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalResponseTimeMetrics<JavaChangeOperation>(genealogy, this);
 	}
 	

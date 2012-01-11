@@ -128,7 +128,7 @@ public interface ChangeGenealogy<T> {
 	 *         otherwise.
 	 */
 	public String getNodeId(T t);
-	
+
 	/**
 	 * Gets the parents.
 	 * 

@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalInOutDegreeMetrics;
@@ -20,8 +18,8 @@ public class CoreInOutDegreeMetrics extends GenealogyCoreMetric {
 	
 	UniversalInOutDegreeMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreInOutDegreeMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CoreInOutDegreeMetrics(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalInOutDegreeMetrics<JavaChangeOperation>(genealogy);
 	}
 	

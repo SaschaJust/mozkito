@@ -2,9 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalResponseTimeMetrics;
@@ -19,9 +17,8 @@ DayTimeDiff<Collection<JavaChangeOperation>> {
 	
 	private UniversalResponseTimeMetrics<Collection<JavaChangeOperation>> universalMetric;
 	
-	public PartitionResponseTimeMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public PartitionResponseTimeMetrics(PartitionChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalResponseTimeMetrics<Collection<JavaChangeOperation>>(genealogy, this);
 	}
 	

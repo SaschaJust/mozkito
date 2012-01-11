@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
@@ -18,8 +16,8 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	public static String numDepAuthors    = "changeSize";
 	public static String numParentAuthors = "avgDepChangeSize";
 	
-	public CoreAuthorMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CoreAuthorMetrics(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 	}
 	
 	@Override

@@ -3,12 +3,9 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 import java.util.Collection;
 import java.util.Comparator;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-
 import org.joda.time.Days;
 
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
@@ -21,9 +18,8 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	
 	private static int                             dayDiffSize = 14;
 	
-	public TransactionDwReachMetric(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<RCSTransaction> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public TransactionDwReachMetric(TransactionChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalDwReachMetric<RCSTransaction>(genealogy, new Comparator<RCSTransaction>() {
 			
 			@Override

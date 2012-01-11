@@ -7,10 +7,8 @@ import java.util.Collection;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -19,10 +17,13 @@ import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyReader;
@@ -120,10 +121,11 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				
 				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, PartitionChangeGenealogy.class);
+						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass
+								.getConstructor(PartitionChangeGenealogy.class);
 						if (constructor != null) {
-							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+							GenealogyPartitionMetric metric = constructor.newInstance(genealogy);
+							new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
 						}
 					}
 				}
@@ -150,10 +152,12 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, TransactionChangeGenealogy.class);
+						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass
+						        .getConstructor(TransactionChangeGenealogy.class);
 						if (constructor != null) {
-							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+							GenealogyTransactionMetric metric = constructor.newInstance(genealogy);
+							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
+							        metric);
 						}
 					}
 				}
@@ -176,10 +180,11 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				
 				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(
-								AndamaGroup.class, AndamaSettings.class, CoreChangeGenealogy.class);
+						Constructor<? extends GenealogyCoreMetric> constructor = metricClass
+								.getConstructor(CoreChangeGenealogy.class);
 						if (constructor != null) {
-							constructor.newInstance(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+							GenealogyCoreMetric coreMetric = constructor.newInstance(genealogy);
+							new GenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), coreMetric);
 						}
 					}
 				}

@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -19,9 +17,8 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric{
 	public static String    numDepAuthors    = "changeSize";
 	public static String    numParentAuthors = "avgDepChangeSize";
 	
-	public TransactionAuthorMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<RCSTransaction> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public TransactionAuthorMetrics(TransactionChangeGenealogy genealogy) {
+		super(genealogy);
 	}
 	
 	@Override

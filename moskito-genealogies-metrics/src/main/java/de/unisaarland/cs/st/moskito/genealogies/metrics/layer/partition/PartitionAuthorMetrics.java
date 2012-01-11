@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -19,9 +17,8 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 	public static String    numDepAuthors    = "changeSize";
 	public static String    numParentAuthors = "avgDepChangeSize";
 	
-	public PartitionAuthorMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public PartitionAuthorMetrics(PartitionChangeGenealogy genealogy) {
+		super(genealogy);
 	}
 	
 	@Override

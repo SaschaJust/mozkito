@@ -2,9 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalAncestorMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
@@ -14,9 +12,8 @@ public class PartitionDependantsMetrics extends GenealogyPartitionMetric {
 	
 	private UniversalAncestorMetrics<Collection<JavaChangeOperation>> universalMetric;
 	
-	public PartitionDependantsMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public PartitionDependantsMetrics(PartitionChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalAncestorMetrics<Collection<JavaChangeOperation>>(
 				genealogy);
 	}

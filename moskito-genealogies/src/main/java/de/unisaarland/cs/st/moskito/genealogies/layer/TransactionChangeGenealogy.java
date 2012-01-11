@@ -76,10 +76,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public String getNodeId(RCSTransaction t) {
-		if(this.containsVertex(t)){
-			return t.getId();
-		}
-		return null;
+		return partitionChangeGenealogy.getNodeId(transactionToPartition(t));
 	}
 	
 	@Override

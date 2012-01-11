@@ -132,15 +132,21 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 		return edges;
 	}
 	
+	
 	@Override
 	public String getNodeId(Collection<JavaChangeOperation> t) {
 		if(this.containsVertex(t) && (!t.isEmpty())){
 			Iterator<JavaChangeOperation> iterator = t.iterator();
 			StringBuilder sb = new StringBuilder();
+			
+			JavaChangeOperation op = iterator.next();
+			
 			sb.append("[");
-			sb.append(String.valueOf(iterator.next().getId()));
+			sb.append(core.getNodeId(op));
 			while(iterator.hasNext()){
-				sb.append(String.valueOf(iterator.next().getId()));
+				op = iterator.next();
+				sb.append(",");
+				sb.append(sb.append(core.getNodeId(op)));
 			}
 			sb.append("]");
 			return sb.toString();

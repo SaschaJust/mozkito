@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
-import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -25,9 +22,8 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	public static String maxParentChangeSize = "maxParentChangeSize";
 	public static String sumParentChangeSize = "sumParentChangeSize";
 	
-	public PartitionChangeSizeMetrics(AndamaGroup threadGroup, AndamaSettings settings,
-			ChangeGenealogy<Collection<JavaChangeOperation>> genealogy) {
-		super(threadGroup, settings, genealogy);
+	public PartitionChangeSizeMetrics(PartitionChangeGenealogy genealogy) {
+		super(genealogy);
 	}
 	
 	@Override

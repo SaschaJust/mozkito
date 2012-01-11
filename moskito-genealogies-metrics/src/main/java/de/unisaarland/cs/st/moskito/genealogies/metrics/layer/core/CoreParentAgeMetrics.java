@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
@@ -22,8 +20,8 @@ public class CoreParentAgeMetrics extends GenealogyCoreMetric implements DayTime
 	
 	UniversalParentAgeMetrics<JavaChangeOperation> universalMetric;
 	
-	public CoreParentAgeMetrics(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CoreParentAgeMetrics(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalParentAgeMetrics<JavaChangeOperation>(genealogy, this);
 	}
 	

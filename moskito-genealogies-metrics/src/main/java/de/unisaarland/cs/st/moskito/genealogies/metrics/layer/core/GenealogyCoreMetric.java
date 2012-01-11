@@ -1,16 +1,15 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
+import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
 
-public abstract class GenealogyCoreMetric extends GenealogyMetricThread {
+public abstract class GenealogyCoreMetric implements GenealogyMetric<GenealogyCoreNode> {
 	
 	protected CoreChangeGenealogy genealogy;
 	
-	public GenealogyCoreMetric(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings);
+	public GenealogyCoreMetric(CoreChangeGenealogy genealogy) {
 		this.genealogy = genealogy;
 	}
 }

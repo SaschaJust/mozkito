@@ -3,9 +3,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 import java.util.Collection;
 import java.util.Comparator;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -26,8 +23,8 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 	
 	private UniversalDwReachMetric<JavaChangeOperation> universalMetric;
 	
-	public CoreDwReachMetric(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CoreDwReachMetric(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalDwReachMetric<JavaChangeOperation>(genealogy,
 				new Comparator<JavaChangeOperation>() {
 			

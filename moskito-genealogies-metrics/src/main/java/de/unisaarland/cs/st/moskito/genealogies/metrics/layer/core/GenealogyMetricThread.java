@@ -16,22 +16,22 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
-public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
+public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
 	
 	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
 	
-	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings) {
+	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
 			ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
 			Type type2 = type.getActualTypeArguments()[0];
 			Logger.debug("Loaded: " + this.getClass().toString() + ":"
-			        + this.getClass().getGenericSuperclass().toString() + ":" + type + ":" + type2);
-
+					+ this.getClass().getGenericSuperclass().toString() + ":" + type + ":" + type2);
+			
 		}
 		
-		for (String mName : this.getMetricNames()) {
+		for (String mName : metric.getMetricNames()) {
 			if (registeredMetrics.containsKey(mName)) {
 				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
 						+ mName + "` is already registered by class `"
@@ -51,7 +51,7 @@ public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyC
 			@Override
 			public void process() {
 				GenealogyCoreNode inputData = getInputData();
-				Collection<GenealogyMetricValue> mValues = handle(inputData);
+				Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
 				for (GenealogyMetricValue mValue : mValues) {
 					providePartialOutputData(mValue);
 				}
@@ -68,10 +68,6 @@ public abstract class GenealogyMetricThread extends AndamaTransformer<GenealogyC
 			}
 		};
 	}
-	
-	public abstract Collection<String> getMetricNames();
-	
-	public abstract Collection<GenealogyMetricValue> handle(GenealogyCoreNode item);
 	
 	public void postProcess() {
 	}

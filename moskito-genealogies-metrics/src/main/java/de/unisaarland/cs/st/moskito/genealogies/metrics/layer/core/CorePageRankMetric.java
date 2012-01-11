@@ -2,8 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
@@ -20,8 +18,8 @@ public class CorePageRankMetric extends GenealogyCoreMetric {
 	
 	UniversalPageRankMetric<JavaChangeOperation> universalMetric;
 	
-	public CorePageRankMetric(AndamaGroup threadGroup, AndamaSettings settings, CoreChangeGenealogy genealogy) {
-		super(threadGroup, settings, genealogy);
+	public CorePageRankMetric(CoreChangeGenealogy genealogy) {
+		super(genealogy);
 		universalMetric = new UniversalPageRankMetric<JavaChangeOperation>(genealogy);
 	}
 	
