@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
-import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
+import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
@@ -210,7 +210,7 @@ public class MappingFinder {
 	/**
 	 * @param accessor
 	 */
-	private void provideStorages(final StorageAccessor accessor) {
+	private void provideStorages(final Node accessor) {
 		for (final Class<? extends MappingStorage> key : accessor.storageDependency()) {
 			if (!this.storages.keySet().contains(key)) {
 				try {

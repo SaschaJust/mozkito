@@ -8,7 +8,7 @@ import java.util.Set;
 import net.ownhero.dev.andama.settings.registerable.Registered;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
-public abstract class StorageAccessor extends Registered {
+public abstract class Node extends Registered {
 	
 	private final Map<Class<? extends MappingStorage>, MappingStorage> storages = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	

@@ -15,13 +15,13 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.training;
 
-import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
+import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingTrainer extends StorageAccessor {
+public abstract class MappingTrainer extends Node {
 	
 	/**
 	 * 

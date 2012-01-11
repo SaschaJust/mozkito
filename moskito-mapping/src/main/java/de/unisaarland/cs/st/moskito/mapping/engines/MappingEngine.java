@@ -21,7 +21,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
-import de.unisaarland.cs.st.moskito.mapping.register.StorageAccessor;
+import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
 /**
@@ -48,7 +48,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingEngine extends StorageAccessor {
+public abstract class MappingEngine extends Node {
 	
 	public static final String defaultNegative = "-1";
 	public static final String defaultPositive = "1";

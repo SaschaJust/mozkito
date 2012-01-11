@@ -192,6 +192,7 @@ public class MappingArguments extends AndamaArgumentSet {
 					try {
 						final Registered instance = klass.newInstance();
 						instance.register(settings, this, isRequired);
+						instance.init();
 						this.registereds.add(instance);
 					} catch (final Exception e) {
 						
