@@ -51,7 +51,7 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public String getDescription() {
-		return "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
+		return "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
 	}
 	
 	/**
