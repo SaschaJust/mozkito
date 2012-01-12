@@ -22,7 +22,6 @@ public class JavaChangeOperationProcessQueueTest extends TestEnvironment {
 		
 		int counter = 0;
 		
-		JavaChangeOperationProcessQueue.IteratorMode mode = JavaChangeOperationProcessQueue.IteratorMode.DD;
 		
 		Set<JavaChangeOperation> deletedDefinitions = new HashSet<JavaChangeOperation>();
 		deletedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T3F1D));
