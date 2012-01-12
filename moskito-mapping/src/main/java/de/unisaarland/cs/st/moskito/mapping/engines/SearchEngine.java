@@ -58,7 +58,8 @@ public abstract class SearchEngine extends MappingEngine {
 		}
 		
 		try {
-			query = queryParser.parse(queryString);
+			// FIXME remove truncate and fix query string accordingly
+			query = queryParser.parse(truncate(queryString));
 			
 			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
