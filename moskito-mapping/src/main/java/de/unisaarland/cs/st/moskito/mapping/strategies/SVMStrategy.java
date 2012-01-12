@@ -49,8 +49,7 @@ public class SVMStrategy extends MappingStrategy {
 	 */
 	@Override
 	public PersistentMapping map(final PersistentMapping mapping) {
-		// TODO Auto-generated method stub
-		return null;
+		return mapping;
 	}
 	
 }
