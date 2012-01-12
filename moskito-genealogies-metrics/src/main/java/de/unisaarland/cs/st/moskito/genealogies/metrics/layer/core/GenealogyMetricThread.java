@@ -11,6 +11,10 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
@@ -19,10 +23,12 @@ public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, 
 	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
 	
 	private Iterator<GenealogyMetricValue>            iter              = null;
+	private String                                    metricName        = "<UNKNOWN>";
 	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
 		
+		metricName = StringUtils.join(metric.getMetricNames().toArray(new String[metric.getMetricNames().size()]));
 		for (String mName : metric.getMetricNames()) {
 			if (registeredMetrics.containsKey(mName)) {
 				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
@@ -43,8 +49,13 @@ public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, 
 			@Override
 			public void process() {
 				
+
 				if((iter == null) || (!iter.hasNext())){
 					GenealogyCoreNode inputData = getInputData();
+					if (Logger.logDebug()) {
+						Logger.debug("Metric " + metricName + " handling " + inputData);
+					}
+
 					Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
 					iter = mValues.iterator();
 					if ((iter == null) || (!iter.hasNext())) {
@@ -72,5 +83,4 @@ public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, 
 	
 	public void postProcess() {
 	}
-	
 }
