@@ -22,6 +22,7 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -53,7 +54,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public String getDescription() {
-		return "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
+		return "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
 	}
 	
 	/**
@@ -96,7 +97,10 @@ public class TransactionRegexSelector extends MappingSelector {
 			
 			if (findAll != null) {
 				for (final List<RegexGroup> match : findAll) {
-					
+					if (Logger.logWarn()) {
+						Logger.warn("While parsing transaction " + element.get(FieldKey.ID).toString()
+						        + " i stumpled upon this match: " + match.get(0).getMatch());
+					}
 					ids.add(Long.parseLong(match.get(0).getMatch()));
 				}
 			}
