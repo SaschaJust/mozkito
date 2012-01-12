@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -17,10 +18,11 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionN
 public class PartitionGenealogyMetricThread extends
 AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 	
+	Iterator<GenealogyMetricValue>                             iter              = null;
 	static private Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
 	
 	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings,
-	        final GenealogyPartitionMetric metric) {
+			final GenealogyPartitionMetric metric) {
 		super(threadGroup, settings, false);
 		
 		for (String mName : metric.getMetricNames()) {
@@ -42,13 +44,16 @@ AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 			 */
 			@Override
 			public void process() {
-				GenealogyPartitionNode inputData = getInputData();
-				Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
-				for (GenealogyMetricValue mValue : mValues) {
-					providePartialOutputData(mValue);
+				if ((iter != null) && (iter.hasNext())) {
+					providePartialOutputData(iter.next());
+					if (!iter.hasNext()) {
+						setCompleted();
+					}
+				} else {
+					GenealogyPartitionNode inputData = getInputData();
+					Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
+					iter = mValues.iterator();
 				}
-				setCompleted();
-				
 			}
 		};
 		

@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -17,9 +18,10 @@ public class TransactionGenealogyMetricThread extends
 AndamaTransformer<GenealogyTransactionNode, GenealogyMetricValue> {
 	
 	static private Map<String, TransactionGenealogyMetricThread> registeredMetrics = new HashMap<String, TransactionGenealogyMetricThread>();
+	protected Iterator<GenealogyMetricValue>                     iter;
 	
 	public TransactionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings,
-	        final GenealogyTransactionMetric metric) {
+			final GenealogyTransactionMetric metric) {
 		super(threadGroup, settings, false);
 		
 		for (String mName : metric.getMetricNames()) {
@@ -41,13 +43,16 @@ AndamaTransformer<GenealogyTransactionNode, GenealogyMetricValue> {
 			 */
 			@Override
 			public void process() {
-				GenealogyTransactionNode inputData = getInputData();
-				Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
-				for (GenealogyMetricValue mValue : mValues) {
-					providePartialOutputData(mValue);
+				if ((iter != null) && (iter.hasNext())) {
+					providePartialOutputData(iter.next());
+					if (!iter.hasNext()) {
+						setCompleted();
+					}
+				} else {
+					GenealogyTransactionNode inputData = getInputData();
+					Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
+					iter = mValues.iterator();
 				}
-				setCompleted();
-				
 			}
 		};
 		
