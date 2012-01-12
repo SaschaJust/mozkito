@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -16,6 +17,8 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
 	
 	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
+	
+	private Iterator<GenealogyMetricValue>            iter              = null;
 	
 	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
@@ -39,13 +42,16 @@ public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, 
 			 */
 			@Override
 			public void process() {
-				GenealogyCoreNode inputData = getInputData();
-				Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
-				for (GenealogyMetricValue mValue : mValues) {
-					providePartialOutputData(mValue);
+				if ((iter != null) && (iter.hasNext())) {
+					providePartialOutputData(iter.next());
+					if (!iter.hasNext()) {
+						setCompleted();
+					}
+				} else {
+					GenealogyCoreNode inputData = getInputData();
+					Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
+					iter = mValues.iterator();
 				}
-				setCompleted();
-				
 			}
 		};
 		
