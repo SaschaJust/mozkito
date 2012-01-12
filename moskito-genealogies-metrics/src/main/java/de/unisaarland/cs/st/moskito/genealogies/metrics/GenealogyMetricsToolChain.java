@@ -203,10 +203,4 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		metricSink = new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(),
 				outputFileArgument.getValue());
 	}
-	
-	@Override
-	public void shutdown() {
-		
-	}
-	
 }
