@@ -35,8 +35,8 @@ public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
 				if (iterator.hasNext()) {
 					JavaChangeOperation t = iterator.next();
 					
-					if (Logger.logInfo()) {
-						Logger.info("Providing " + t);
+					if (Logger.logDebug()) {
+						Logger.debug("Providing " + t);
 					}
 					
 					GenealogyCoreNode node = null;
