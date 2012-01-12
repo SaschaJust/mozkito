@@ -54,9 +54,9 @@ public class UniversalPageRankMetric<T> {
 	 */
 	public UniversalPageRankMetric(ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
-		for (T root : genealogy.getRoots()) {
-			computePageRank(root, new HashSet<T>());
-		}
+		//		for (T root : genealogy.getRoots()) {
+		//			computePageRank(root, new HashSet<T>());
+		//		}
 	}
 	
 	/**
@@ -78,44 +78,44 @@ public class UniversalPageRankMetric<T> {
 		double pageRank = 0d;
 		
 		boolean confirmed = true;
-		
-		Collection<T> incoming = genealogy.getAllDependants(node);
-		for (T in : incoming) {
-			Tuple<Double, Boolean> pageRankIn = null;
-			double numOutIn = genealogy.getAllDependants(in).size();
-			if (seen.contains(in)) {
-				confirmed = false;
-				if (!tentativeCache.containsKey(in)) {
-					continue;
-				}
-				pageRankIn = new Tuple<Double, Boolean>(tentativeCache.get(in), false);
-			} else {
-				if (numOutIn < 1) {
-					numOutIn = genealogy.vertexSize();
-				}
-				Collection<T> seenCopy = new HashSet<T>(seen);
-				seenCopy.add(in);
-				pageRankIn = computePageRank(in, seenCopy);
-			}
-			pageRank += pageRankIn.getFirst() / numOutIn;
-			confirmed &= pageRankIn.getSecond();
-		}
-		
-		pageRank = 0.1 + (0.9 * pageRank);
-		
-		if (tentativeCache.containsKey(nodeId)) {
-			if (tentativeCache.get(nodeId) == pageRank) {
-				confirmed = true;
-			}
-		}
-		
-		if (confirmed) {
-			tentativeCache.remove(nodeId);
-			confirmedCache.put(nodeId, pageRank);
-			//check if node is delayed!
-		} else {
-			tentativeCache.put(nodeId, pageRank);
-		}
+		//
+		//		Collection<T> incoming = genealogy.getAllDependants(node);
+		//		for (T in : incoming) {
+		//			Tuple<Double, Boolean> pageRankIn = null;
+		//			double numOutIn = genealogy.getAllDependants(in).size();
+		//			if (seen.contains(in)) {
+		//				confirmed = false;
+		//				if (!tentativeCache.containsKey(in)) {
+		//					continue;
+		//				}
+		//				pageRankIn = new Tuple<Double, Boolean>(tentativeCache.get(in), false);
+		//			} else {
+		//				if (numOutIn < 1) {
+		//					numOutIn = genealogy.vertexSize();
+		//				}
+		//				Collection<T> seenCopy = new HashSet<T>(seen);
+		//				seenCopy.add(in);
+		//				pageRankIn = computePageRank(in, seenCopy);
+		//			}
+		//			pageRank += pageRankIn.getFirst() / numOutIn;
+		//			confirmed &= pageRankIn.getSecond();
+		//		}
+		//
+		//		pageRank = 0.1 + (0.9 * pageRank);
+		//
+		//		if (tentativeCache.containsKey(nodeId)) {
+		//			if (tentativeCache.get(nodeId) == pageRank) {
+		//				confirmed = true;
+		//			}
+		//		}
+		//
+		//		if (confirmed) {
+		//			tentativeCache.remove(nodeId);
+		//			confirmedCache.put(nodeId, pageRank);
+		//			//check if node is delayed!
+		//		} else {
+		//			tentativeCache.put(nodeId, pageRank);
+		//		}
 		return new Tuple<Double, Boolean>(pageRank, confirmed);
 	}
 	

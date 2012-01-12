@@ -50,9 +50,9 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 					}
 					
 					providePartialOutputData(new OperationCollection(changeOperations));
-				} else {
-					provideOutputData(null, true);
-					setCompleted();
+					if(!iterator.hasNext()){
+						setCompleted();
+					}
 				}
 			}
 		};

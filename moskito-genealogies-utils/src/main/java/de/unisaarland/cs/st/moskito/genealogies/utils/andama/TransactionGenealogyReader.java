@@ -46,9 +46,9 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 						node = new GenealogyTransactionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
-				} else {
-					provideOutputData(null, true);
-					setCompleted();
+					if (!iterator.hasNext()) {
+						setCompleted();
+					}
 				}
 			}
 		};
