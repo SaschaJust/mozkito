@@ -62,7 +62,7 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 			
 			@Override
 			public void process() {
-				LogEntry data = getInputData();
+				final LogEntry data = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing " + data);
@@ -73,12 +73,14 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 					        + data.getRevision() + ")");
 				}
 				
-				RCSTransaction rcsTransaction = RCSTransaction.createTransaction(data.getRevision(), data.getMessage(),
-				                                                                 data.getDateTime(), data.getAuthor(),
-				                                                                 data.getOriginalId());
+				final RCSTransaction rcsTransaction = RCSTransaction.createTransaction(data.getRevision(),
+				                                                                       data.getMessage(),
+				                                                                       data.getDateTime(),
+				                                                                       data.getAuthor(),
+				                                                                       data.getOriginalId());
 				tids.add(data.getRevision());
-				Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
-				for (String fileName : changedPaths.keySet()) {
+				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
+				for (final String fileName : changedPaths.keySet()) {
 					RCSFile file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
@@ -108,10 +110,6 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 					}
 					
 					new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
-				}
-				
-				if (Logger.logTrace()) {
-					Logger.trace("filling queue [" + outputSize() + "]");
 				}
 				
 				provideOutputData(rcsTransaction);
