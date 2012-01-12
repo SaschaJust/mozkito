@@ -166,11 +166,6 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public String getName();
 	
 	/**
-	 * @return the output storage of the instance. Can be null.
-	 */
-	public AndamaDataStorage<V> getOutputStorage();
-	
-	/**
 	 * @return
 	 */
 	public Collection<AndamaThreadable<V, ?>> getOutputThreads();
@@ -245,16 +240,6 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	 *            may not be null
 	 */
 	public void setInputStorage(final AndamaDataStorage<K> storage);
-	
-	/**
-	 * Sets the output storage of the object. In case
-	 * {@link AndamaThreadable#hasOutputConnector()} returns false, this method
-	 * won't do anything.
-	 * 
-	 * @param storage
-	 *            may not be null
-	 */
-	public void setOutputStorage(final AndamaDataStorage<V> storage);
 	
 	/**
 	 * shuts down the current thread

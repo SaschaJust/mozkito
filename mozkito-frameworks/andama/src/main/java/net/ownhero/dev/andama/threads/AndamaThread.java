@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -161,47 +162,45 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		}
 	}
 	
-	private final Set<CountDownLatch>                         awaitingLatches      = new HashSet<CountDownLatch>();
-	private final Map<AndamaThread<?, ?>, CountDownLatch>     dependencies         = new HashMap<AndamaThread<?, ?>, CountDownLatch>();
-	private final Map<Class<?>, K>                            inputCache           = new HashMap<Class<?>, K>();
-	private Tuple<K, CountDownLatch>                          inputDataTuple;
-	private final Set<InputHook<K, V>>                        inputHooks           = new HashSet<InputHook<K, V>>();
-	private AndamaDataStorage<K>                              inputStorage;
-	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads         = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
-	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads         = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
-	private V                                                 outputData;
-	private final Set<OutputHook<K, V>>                       outputHooks          = new HashSet<OutputHook<K, V>>();
+	private final Set<CountDownLatch>                                             awaitingLatches      = new HashSet<CountDownLatch>();
+	private final Map<AndamaThread<?, ?>, CountDownLatch>                         dependencies         = new HashMap<AndamaThread<?, ?>, CountDownLatch>();
+	private final Map<Class<?>, K>                                                inputCache           = new HashMap<Class<?>, K>();
+	private Tuple<K, CountDownLatch>                                              inputDataTuple;
+	private final Set<InputHook<K, V>>                                            inputHooks           = new HashSet<InputHook<K, V>>();
+	private AndamaDataStorage<K>                                                  inputStorage;
+	private final LinkedBlockingDeque<AndamaThreadable<?, K>>                     inputThreads         = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
+	private final LinkedBlockingDeque<AndamaThreadable<?, ?>>                     knownThreads         = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
+	private V                                                                     outputData;
+	private final Set<OutputHook<K, V>>                                           outputHooks          = new HashSet<OutputHook<K, V>>();
 	
-	private CountDownLatch                                    outputLatch          = null;
-	private AndamaDataStorage<V>                              outputStorage;
+	private Collection<CountDownLatch>                                            outputLatches        = new LinkedList<CountDownLatch>();
 	
-	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads        = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
+	private final ConcurrentHashMap<AndamaThreadable<V, ?>, AndamaDataStorage<V>> outputThreads        = new ConcurrentHashMap<AndamaThreadable<V, ?>, AndamaDataStorage<V>>();
+	private boolean                                                               parallelizable       = false;
+	private final Set<PostExecutionHook<K, V>>                                    postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
 	
-	private boolean                                           parallelizable       = false;
-	private final Set<PostExecutionHook<K, V>>                postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
-	private final Set<PostInputHook<K, V>>                    postInputHooks       = new HashSet<PostInputHook<K, V>>();
+	private final Set<PostInputHook<K, V>>                                        postInputHooks       = new HashSet<PostInputHook<K, V>>();
+	private final Set<PostOutputHook<K, V>>                                       postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
+	private final Set<PostProcessHook<K, V>>                                      postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
 	
-	private final Set<PostOutputHook<K, V>>                   postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
-	private final Set<PostProcessHook<K, V>>                  postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
 	// hooks
-	private final Set<PreExecutionHook<K, V>>                 preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
+	private final Set<PreExecutionHook<K, V>>                                     preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
+	private final Set<PreInputHook<K, V>>                                         preInputHooks        = new HashSet<PreInputHook<K, V>>();
+	private final Set<PreOutputHook<K, V>>                                        preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
 	
-	private final Set<PreInputHook<K, V>>                     preInputHooks        = new HashSet<PreInputHook<K, V>>();
-	private final Set<PreOutputHook<K, V>>                    preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
-	private final Set<PreProcessHook<K, V>>                   preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
+	private final Set<PreProcessHook<K, V>>                                       preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
+	private final Set<ProcessHook<K, V>>                                          processHooks         = new HashSet<ProcessHook<K, V>>();
 	
-	private final Set<ProcessHook<K, V>>                      processHooks         = new HashSet<ProcessHook<K, V>>();
-	private final Set<CountDownLatch>                         processLatches       = new HashSet<CountDownLatch>();
+	private final Set<CountDownLatch>                                             processLatches       = new HashSet<CountDownLatch>();
+	private final AndamaSettings                                                  settings;
 	
-	private final AndamaSettings                              settings;
-	private boolean                                           shutdown;
+	private boolean                                                               shutdown;
 	
-	private boolean                                           skipData             = false;
-	
-	private final AndamaGroup                                 threadGroup;
-	private Integer                                           threadID             = -1;
-	private final boolean                                     waitForLatch         = false;
-	private boolean                                           warningSameInputdata = false;
+	private boolean                                                               skipData             = false;
+	private final AndamaGroup                                                     threadGroup;
+	private Integer                                                               threadID             = -1;
+	private final boolean                                                         waitForLatch         = false;
+	private boolean                                                               warningSameInputdata = false;
 	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
@@ -229,16 +228,10 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		if (hasInputConnector()) {
 			if (setting != null) {
 				this.inputStorage = new AndamaDataStorage<K>(setting.getValue().intValue());
+				this.inputStorage.registerOutput(this);
 			} else {
 				this.inputStorage = new AndamaDataStorage<K>();
-			}
-		}
-		
-		if (hasOutputConnector()) {
-			if (setting != null) {
-				this.outputStorage = new AndamaDataStorage<V>(setting.getValue().intValue());
-			} else {
-				this.outputStorage = new AndamaDataStorage<V>();
+				this.inputStorage.registerOutput(this);
 			}
 		}
 		
@@ -248,10 +241,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		                        this.inputStorage != null,
 		                        "Either this class has no input connector, then inputStorage must be null, or it has one and inputStorage must not be null. [hasInputConnector(): %s] [inputStorage!=null: %s]",
 		                        hasInputConnector(), this.inputStorage != null);
-		CompareCondition.equals(hasInputConnector(),
-		                        this.inputStorage != null,
-		                        "Either this class has no output connector, then outputStorage must be null, or it has one and outputStorage must not be null. [hasOutputConnector(): %s] [outputStorage!=null: %s]",
-		                        hasOutputConnector(), this.outputStorage != null);
+		
 		Condition.check(!this.shutdown, "`shutdown` must not be set after constructor.");
 		Condition.notNull(this.settings, "`settings` must not be null.");
 		Condition.notNull(this.threadGroup, "`threadGroup` must not be null.");
@@ -475,7 +465,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		if (hasInputConnector()) {
 			this.inputThreads.add(thread);
 			this.knownThreads.add(thread);
-			this.setInputStorage(thread.getOutputStorage());
 			
 			if (Logger.logInfo()) {
 				Logger.info("[" + getHandle() + "] Linking input connector to [" + thread.getHandle() + "]");
@@ -498,10 +487,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	@Override
 	public final boolean connectOutput(@NotNull final AndamaThreadable<V, ?> thread) {
-		if (hasOutputConnector()) {
-			this.outputThreads.add(thread);
+		if (hasOutputConnector() && !this.outputThreads.containsKey(thread)) {
 			this.knownThreads.add(thread);
-			this.setOutputStorage(thread.getInputStorage());
+			
+			final AndamaDataStorage<V> storage = thread.getInputStorage();
+			storage.registerInput(this);
+			this.outputThreads.put(thread, storage);
 			
 			if (Logger.logInfo()) {
 				Logger.info("[" + getHandle() + "] Linking output connector to [" + thread.getHandle() + "]");
@@ -570,9 +561,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	@Override
 	public final void disconnectOutput(@NotNull final AndamaThreadable<V, ?> thread) {
 		if (hasOutputConnector()) {
-			if (this.outputThreads.contains(thread)) {
+			if (this.outputThreads.containsKey(thread)) {
+				this.outputThreads.get(thread).unregisterInput(this);
 				this.outputThreads.remove(thread);
-				this.outputStorage.unregisterOutput(thread);
 				this.knownThreads.remove(thread);
 				
 				if (Logger.logInfo()) {
@@ -606,16 +597,17 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
-		AndamaThreadable<V, ?> outputThread = null;
+		final ArrayList<AndamaThreadable<V, ?>> outputThreadables = new ArrayList<AndamaThreadable<V, ?>>(
+		                                                                                                  this.outputThreads.size());
+		outputThreadables.addAll(this.outputThreads.keySet());
 		
-		while ((outputThread = this.outputThreads.poll()) != null) {
-			
+		for (final AndamaThreadable<V, ?> outputThread : outputThreadables) {
 			if (Logger.logDebug()) {
 				Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
 			}
 			outputThread.disconnectInput(this);
+			this.outputThreads.remove(outputThread);
 		}
-		
 		AndamaThreadable<?, K> inputThread = null;
 		
 		while ((inputThread = this.inputThreads.poll()) != null) {
@@ -676,24 +668,32 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		try {
 			caller = JavaUtils.getCallingClass();
 			
-			if (!this.warningSameInputdata && this.inputCache.containsKey(caller) && (localCache != null)) {
-				if (this.inputCache.get(caller) == localCache) {
-					if (Logger.logWarn()) {
-						Logger.warn("Multiple request of input data element (" + localCache.toString() + ") within "
-						        + this.toString());
-						Logger.warn("This might not be an issue if you call " + JavaUtils.getThisMethodName()
-						        + " multiple times within one hook.");
-						Logger.warn("Though, make sure your hooks set the completed flag after having processed your input element.");
-						Logger.warn("Otherwise you will read the same input data in the next around again.");
-						Logger.warn("The completed flag can be set by either setting it explicitly with the according setter or");
-						Logger.warn("Calling the provide output data method instead of the provide partial output data.");
-						Logger.warn("This warning will be suppressed for the remaining execution.");
+			if (caller != AndamaThread.class) {
+				if (!this.warningSameInputdata && this.inputCache.containsKey(caller) && (localCache != null)) {
+					if (this.inputCache.get(caller) == localCache) {
+						if (Logger.logWarn()) {
+							if (Logger.logDebug()) {
+								final Throwable throwable = new Throwable();
+								throwable.fillInStackTrace();
+								
+								Logger.debug("Caller: " + caller.getSimpleName(), throwable);
+							}
+							Logger.warn("Multiple request of input data element (" + localCache.toString()
+							        + ") within " + this.toString());
+							Logger.warn("This might not be an issue if you call " + JavaUtils.getThisMethodName()
+							        + " multiple times within one hook.");
+							Logger.warn("Though, make sure your hooks set the completed flag after having processed your input element.");
+							Logger.warn("Otherwise you will read the same input data in the next around again.");
+							Logger.warn("The completed flag can be set by either setting it explicitly with the according setter or");
+							Logger.warn("Calling the provide output data method instead of the provide partial output data.");
+							Logger.warn("This warning will be suppressed for the remaining execution.");
+						}
+						this.warningSameInputdata = true;
 					}
-					this.warningSameInputdata = true;
 				}
+				
+				this.inputCache.put(caller, localCache);
 			}
-			
-			this.inputCache.put(caller, localCache);
 		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Determining calling class failed.", e);
@@ -774,16 +774,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getOutputStorage()
-	 */
-	@Override
-	public final AndamaDataStorage<V> getOutputStorage() {
-		return this.outputStorage;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getOutputThreads()
 	 */
 	@Override
@@ -791,7 +781,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		final LinkedList<AndamaThreadable<V, ?>> list = new LinkedList<AndamaThreadable<V, ?>>();
 		
 		if (isOutputConnected()) {
-			list.addAll(this.outputThreads);
+			list.addAll(this.outputThreads.keySet());
 		}
 		
 		return list;
@@ -1032,21 +1022,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	public boolean isWaitForLatch() {
 		return this.waitForLatch;
-	}
-	
-	/**
-	 * Requests the current size of the output storage. Make sure there is a
-	 * valid output storage, i.e. you are using an implementation where
-	 * {@link AndamaThread#hasOutputConnector()} is true.
-	 * 
-	 * @return the size of the output storage
-	 */
-	protected final int outputSize() {
-		Check.notNull(this.outputStorage,
-		              "When requesting the inputSize, there has to be already an outputStorage attached");
-		Check.check(hasOutputConnector(), "When requesting the outputSize, there has to exist an outputConnector");
-		
-		return this.outputStorage.size();
 	}
 	
 	/**
@@ -1513,20 +1488,6 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		this.outputData = outputData;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setOutputStorage
-	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
-	 */
-	@Override
-	public final void setOutputStorage(@NotNull final AndamaDataStorage<V> storage) {
-		if (hasOutputConnector()) {
-			this.outputStorage = storage;
-			storage.registerInput(this);
-		}
-	}
-	
 	/**
 	 * Set the current shutdown status. This method only sets the variable. Call
 	 * {@link AndamaThread#shutdown()} to initiate a proper shutdown.
@@ -1573,14 +1534,16 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			
 			setShutdown(true);
 			
-			AndamaThread<V, ?> outputThread = null;
+			final ArrayList<AndamaThreadable<V, ?>> outputThreadables = new ArrayList<AndamaThreadable<V, ?>>(
+			                                                                                                  this.outputThreads.size());
+			outputThreadables.addAll(this.outputThreads.keySet());
 			
-			while ((outputThread = (AndamaThread<V, ?>) this.outputThreads.poll()) != null) {
-				
+			for (final AndamaThreadable<V, ?> outputThread : outputThreadables) {
 				if (Logger.logDebug()) {
 					Logger.debug("Disconnecting from output thread: " + outputThread.getHandle());
 				}
 				outputThread.disconnectInput(this);
+				this.outputThreads.remove(outputThread);
 			}
 			
 			AndamaThread<?, K> inputThread = null;
@@ -1676,9 +1639,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return
 	 * @throws InterruptedException
 	 */
-	final CountDownLatch write(final V data) throws InterruptedException {
+	final Collection<CountDownLatch> write(final V data) throws InterruptedException {
 		Condition.notNull(data, "[write] `data` should not be null.");
-		Condition.notNull(this.outputStorage, "[write] `outputStorage` should not be null.");
 		Condition.check(hasOutputConnector(), "[write] `hasOutputConnector()` should be true, but is: %s",
 		                hasOutputConnector());
 		
@@ -1686,7 +1648,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			Logger.trace("writing data: " + data);
 		}
 		
-		return this.outputStorage.write(data);
+		final LinkedList<CountDownLatch> latches = new LinkedList<CountDownLatch>();
+		
+		for (final AndamaThreadable<V, ?> thread : this.outputThreads.keySet()) {
+			latches.add(this.outputThreads.get(thread).write(data));
+		}
+		return latches;
 	}
 	
 	/**
@@ -1694,14 +1661,16 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @throws InterruptedException
 	 */
 	final void writeOutputData(final V data) throws InterruptedException {
-		this.outputLatch = write(data);
+		this.outputLatches = write(data);
 		
 		if (this.isWaitForLatch()) {
 			if (Logger.logDebug()) {
 				Logger.debug("Waiting for latch to be resolved.");
 			}
 			
-			this.outputLatch.await();
+			for (final CountDownLatch latch : this.outputLatches) {
+				latch.await();
+			}
 		}
 	}
 	

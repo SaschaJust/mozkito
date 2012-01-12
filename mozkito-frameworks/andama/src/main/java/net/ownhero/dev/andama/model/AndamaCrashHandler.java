@@ -31,6 +31,8 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaCrashHandler extends ThreadGroup {
 	
+	private static boolean                              executed = false;
+	
 	private static Map<AndamaChain, AndamaCrashHandler> handlers = new HashMap<AndamaChain, AndamaCrashHandler>();
 	
 	/**
@@ -42,9 +44,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		}
 	}
 	
-	private AndamaChain    application = null;
-	
-	private static boolean executed    = false;
+	private AndamaChain application = null;
 	
 	/**
 	 * @param application
@@ -62,8 +62,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	 * @return information about class loading
 	 */
 	private String getClassLoadingInformation() {
-		ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
-		StringBuilder builder = new StringBuilder();
+		final ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("Loaded classes: ");
 		builder.append("total: ").append(bean.getTotalLoadedClassCount()).append(" ");
 		builder.append("current: ").append(bean.getLoadedClassCount()).append(" ");
@@ -78,7 +78,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	 * @return the complete crash report in one string
 	 */
 	private String getCrashReport(final Throwable e) {
-		StringBuilder body = new StringBuilder();
+		final StringBuilder body = new StringBuilder();
 		
 		body.append("Application crashed. An automated, anonymous crash report will be send to help us fix the problem.");
 		body.append(AndamaUtils.lineSeparator);
@@ -122,7 +122,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append("<<< Crash Report <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			
 		}
 		
@@ -137,7 +137,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append("<<< System Information <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			
 		}
 		
@@ -151,7 +151,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append("<<< Application Setup <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			
 		}
 		try {
@@ -162,7 +162,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append("<<< Application ToolInfo <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			
 		}
 		
@@ -174,7 +174,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append("<<< Active Threads <<<");
 			body.append(AndamaUtils.lineSeparator);
 			body.append(AndamaUtils.lineSeparator);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			
 		}
 		
@@ -185,8 +185,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	 * @return
 	 */
 	private String getRuntimeInformation() {
-		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
-		StringBuilder builder = new StringBuilder();
+		final RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("VM: ");
 		builder.append(bean.getVmVendor()).append(" ");
 		builder.append(bean.getVmName()).append(" ");
@@ -209,8 +209,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	 * @return some system information
 	 */
 	private String getSystemInformation() {
-		OperatingSystemMXBean systemMXBean = ManagementFactory.getOperatingSystemMXBean();
-		StringBuilder builder = new StringBuilder();
+		final OperatingSystemMXBean systemMXBean = ManagementFactory.getOperatingSystemMXBean();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("Operating System: ");
 		builder.append(systemMXBean.getName()).append(" ").append(systemMXBean.getVersion()).append(" ")
 		       .append(systemMXBean.getArch());
@@ -250,11 +250,11 @@ public class AndamaCrashHandler extends ThreadGroup {
 	private void sendReport(final String report) {
 		if (this.application.getSettings().isCrashEmailDisabled()) {
 			try {
-				Properties mailProps = this.application.getSettings().getMailArguments().getValue();
+				final Properties mailProps = this.application.getSettings().getMailArguments().getValue();
 				
-				Session session = Session.getDefaultInstance(mailProps, null);
-				Transport transport = session.getTransport();
-				MimeMessage message = new MimeMessage(session);
+				final Session session = Session.getDefaultInstance(mailProps, null);
+				final Transport transport = session.getTransport();
+				final MimeMessage message = new MimeMessage(session);
 				message.setSubject(mailProps.getProperty("mail.subject"));
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailProps.getProperty("mail.to")));
 				message.setFrom(new InternetAddress(mailProps.getProperty("mail.sender.address"),
@@ -269,11 +269,11 @@ public class AndamaCrashHandler extends ThreadGroup {
 				}
 				transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
 				transport.close();
-			} catch (MessagingException e) {
+			} catch (final MessagingException e) {
 				if (Logger.logWarn()) {
 					Logger.warn(e.getMessage(), e);
 				}
-			} catch (UnsupportedEncodingException e) {
+			} catch (final UnsupportedEncodingException e) {
 				if (Logger.logWarn()) {
 					Logger.warn(e.getMessage(), e);
 				}
@@ -303,10 +303,10 @@ public class AndamaCrashHandler extends ThreadGroup {
 				
 				if (Logger.logError()) {
 					Logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
-					Logger.error(arg1.getMessage());
+					Logger.error(arg1.getMessage(), arg1);
 				}
 				
-				String crashReport = getCrashReport(arg1);
+				final String crashReport = getCrashReport(arg1);
 				
 				if (Logger.logError()) {
 					Logger.error(crashReport);
@@ -339,12 +339,12 @@ public class AndamaCrashHandler extends ThreadGroup {
 	private String visit(final ThreadGroup group,
 	                     final int level) {
 		// Get threads in `group'
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		int numThreads = group.activeCount();
-		Thread[] threads = new Thread[numThreads * 2];
+		final Thread[] threads = new Thread[numThreads * 2];
 		numThreads = group.enumerate(threads, false);
 		
-		StringBuilder indent = new StringBuilder();
+		final StringBuilder indent = new StringBuilder();
 		for (int i = 0; i < level; ++i) {
 			indent.append("  ");
 		}
@@ -352,7 +352,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		// Enumerate each thread in `group'
 		for (int i = 0; i < numThreads; i++) {
 			// Get thread
-			Thread thread = threads[i];
+			final Thread thread = threads[i];
 			builder.append(indent);
 			builder.append("|-");
 			builder.append(thread.getName()).append(" [");
@@ -360,7 +360,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			builder.append(thread.getPriority()).append(", ");
 			builder.append(thread.getState().name());
 			builder.append(AndamaUtils.lineSeparator);
-			for (StackTraceElement element : thread.getStackTrace()) {
+			for (final StackTraceElement element : thread.getStackTrace()) {
 				builder.append(indent);
 				builder.append("| ");
 				builder.append(element.toString());
@@ -371,7 +371,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		
 		// Get thread subgroups of `group'
 		int numGroups = group.activeGroupCount();
-		ThreadGroup[] groups = new ThreadGroup[numGroups * 2];
+		final ThreadGroup[] groups = new ThreadGroup[numGroups * 2];
 		numGroups = group.enumerate(groups, false);
 		
 		// Recursively visit each subgroup

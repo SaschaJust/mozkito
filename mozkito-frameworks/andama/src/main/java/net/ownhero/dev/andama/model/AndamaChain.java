@@ -15,6 +15,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
  */
 public abstract class AndamaChain extends Thread {
 	
+	private AndamaPool           pool;
 	private final AndamaSettings settings;
 	
 	/**
@@ -25,11 +26,19 @@ public abstract class AndamaChain extends Thread {
 		AndamaCrashHandler.init(this);
 	}
 	
+	public AndamaPool getPool() {
+		return this.pool;
+	}
+	
 	/**
 	 * @return
 	 */
 	public AndamaSettings getSettings() {
 		return this.settings;
+	}
+	
+	void setPool(final AndamaPool pool) {
+		this.pool = pool;
 	}
 	
 	/**
@@ -41,5 +50,7 @@ public abstract class AndamaChain extends Thread {
 	/**
 	 * Calls shutdown on all components and shuts down all related threads.
 	 */
-	public abstract void shutdown();
+	public void shutdown() {
+		getPool().shutdown();
+	}
 }

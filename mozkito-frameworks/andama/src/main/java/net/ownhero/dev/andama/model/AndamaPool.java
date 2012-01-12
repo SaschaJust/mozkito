@@ -32,6 +32,7 @@ public class AndamaPool {
 	 */
 	public AndamaPool(final String name, final AndamaChain toolchain) {
 		this.threads = new AndamaGroup(name, toolchain);
+		toolchain.setPool(this);
 	}
 	
 	/**
@@ -48,9 +49,9 @@ public class AndamaPool {
 	public void execute() {
 		connectThreads();
 		
-		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
+		for (final AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			if (!thread.checkConnections()) {
-				for (AndamaThreadable<?, ?> thread2 : this.threads.getThreads()) {
+				for (final AndamaThreadable<?, ?> thread2 : this.threads.getThreads()) {
 					thread2.shutdown();
 				}
 				shutdown();
@@ -58,17 +59,17 @@ public class AndamaPool {
 			}
 		}
 		
-		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
+		for (final AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			((Thread) thread).start();
 		}
 		
 		// AndamaWatcher watcher = new AndamaWatcher(getThreadGroup());
 		// watcher.start();
 		
-		for (AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
+		for (final AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			try {
 				((Thread) thread).join(10000);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
