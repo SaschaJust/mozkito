@@ -82,6 +82,7 @@ public class AndamaGraph {
 	 * @param andamaGroup
 	 * @return
 	 */
+	@SuppressWarnings ("rawtypes")
 	public static AndamaGraph buildGraph(final AndamaGroup andamaGroup) {
 		final AndamaGraph andamaGraph = new AndamaGraph(andamaGroup);
 		if (Logger.logInfo()) {
@@ -100,7 +101,37 @@ public class AndamaGraph {
 					threads.addAll(andamaGroup.getThreads());
 					
 					if (Logger.logInfo()) {
-						Logger.info("Building graph for: " + JavaUtils.collectionToString(threads));
+						Logger.info("Building graph with " + threads.size() + " nodes for: "
+						        + JavaUtils.collectionToString(threads));
+						List<AndamaSource> sources = new LinkedList<AndamaSource>();
+						List<AndamaFilter> filters = new LinkedList<AndamaFilter>();
+						List<AndamaTransformer> transformers = new LinkedList<AndamaTransformer>();
+						List<AndamaMultiplexer> multiplexers = new LinkedList<AndamaMultiplexer>();
+						List<AndamaDemultiplexer> demulitplexer = new LinkedList<AndamaDemultiplexer>();
+						List<AndamaSink> sinks = new LinkedList<AndamaSink>();
+						for (AndamaThreadable<?, ?> thread : threads) {
+							if (AndamaSource.class.isAssignableFrom(thread.getClass())) {
+								sources.add((AndamaSource) thread);
+							} else if (AndamaFilter.class.isAssignableFrom(thread.getClass())) {
+								filters.add((AndamaFilter) thread);
+							} else if (AndamaTransformer.class.isAssignableFrom(thread.getClass())) {
+								transformers.add((AndamaTransformer) thread);
+							} else if (AndamaMultiplexer.class.isAssignableFrom(thread.getClass())) {
+								multiplexers.add((AndamaMultiplexer) thread);
+							} else if (AndamaDemultiplexer.class.isAssignableFrom(thread.getClass())) {
+								demulitplexer.add((AndamaDemultiplexer) thread);
+							} else if (AndamaSink.class.isAssignableFrom(thread.getClass())) {
+								sinks.add((AndamaSink) thread);
+							} else {
+								// TODO error
+							}
+						}
+						Logger.info("Sources: " + sources.size());
+						Logger.info("Filters: " + filters.size());
+						Logger.info("Transformers: " + transformers.size());
+						Logger.info("Multiplexers: " + multiplexers.size());
+						Logger.info("Demultiplexers: " + demulitplexer.size());
+						Logger.info("Sinks: " + sinks.size());
 					}
 					
 					AndamaThreadable<?, ?> thread = null;
