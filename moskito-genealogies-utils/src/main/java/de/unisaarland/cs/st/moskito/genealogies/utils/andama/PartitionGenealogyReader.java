@@ -47,9 +47,9 @@ public class PartitionGenealogyReader extends AndamaSource<GenealogyPartitionNod
 						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
-				} else {
-					provideOutputData(null, true);
-					setCompleted();
+					if(!iterator.hasNext()){
+						setCompleted();
+					}
 				}
 			}
 		};
