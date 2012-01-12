@@ -32,6 +32,7 @@ import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
 import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
@@ -243,7 +244,12 @@ public class MappingFinder {
 		
 		for (final String engineName : this.engines.keySet()) {
 			final MappingEngine mappingEngine = this.engines.get(engineName);
-			final int check = mappingEngine.supported().check(element1.getClass(), element2.getClass());
+			final Expression expression = mappingEngine.supported();
+			if (expression == null) {
+				throw new UnrecoverableError("Engine: " + engineName + " returns NULL when asked for supported fields.");
+			}
+			
+			final int check = expression.check(element1.getClass(), element2.getClass());
 			
 			if (check > 0) {
 				mappingEngine.score(element1, element2, score);

@@ -18,9 +18,12 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.DoubleArgument;
+import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -109,7 +112,7 @@ public class EssentialChangeEngine extends MappingEngine {
 	@Override
 	public Expression supported() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Atom(Index.FROM, FieldKey.BODY);
 	}
 	
 }
