@@ -22,6 +22,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
@@ -68,26 +69,30 @@ public class DescriptionSearchEngine extends SearchEngine {
 		                        to.getBaseType());
 		
 		try {
-			String fromBody = from.get(FieldKey.BODY).toString();
-			String toId = to.get(FieldKey.ID).toString();
+			final String fromBody = from.get(FieldKey.BODY).toString();
+			final String toId = to.get(FieldKey.ID).toString();
 			
 			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer());
-			Query query = buildQuery(fromBody, this.parser);
+			final Query query = buildQuery(fromBody, this.parser);
 			
-			ScoreDoc[] hits = getStorage().getIsearcherReports().search(query, null, 1000).scoreDocs;
-			// Iterate through the results:
-			for (ScoreDoc hit : hits) {
-				Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-				String bugId = hitDoc.get("bugid");
-				
-				if (bugId.compareTo(toId) == 0) {
-					score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody), truncate(query.toString()),
-					                 FieldKey.BODY.name(), truncate(hitDoc.get("comment")),
-					                 truncate(hitDoc.get("comment")), this.getClass());
-					break;
+			final TopDocs topDocs = getStorage().getIsearcherReports().search(query, null, 1000);
+			if (topDocs != null) {
+				final ScoreDoc[] hits = topDocs.scoreDocs;
+				// Iterate through the results:
+				for (final ScoreDoc hit : hits) {
+					final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
+					final String bugId = hitDoc.get("bugid");
+					
+					if (bugId.compareTo(toId) == 0) {
+						score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody),
+						                 truncate(query.toString()), FieldKey.BODY.name(),
+						                 truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
+						                 this.getClass());
+						break;
+					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
 	}

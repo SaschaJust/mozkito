@@ -256,7 +256,7 @@ public class MappingFinder {
 			} else if (check < 0) {
 				mappingEngine.score(element2, element1, score);
 			} else if (Logger.logInfo()) {
-				Logger.info("Skipping engine %s due to type incompatibility.", engineName);
+				Logger.info("Skipping engine " + engineName + " due to type incompatibility.");
 			}
 		}
 		return score;
