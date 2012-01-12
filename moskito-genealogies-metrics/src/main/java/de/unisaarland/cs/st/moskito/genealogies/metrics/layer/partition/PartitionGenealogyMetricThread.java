@@ -44,15 +44,19 @@ AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
 			 */
 			@Override
 			public void process() {
-				if ((iter != null) && (iter.hasNext())) {
-					providePartialOutputData(iter.next());
-					if (!iter.hasNext()) {
-						setCompleted();
-					}
-				} else {
+				if ((iter == null) || (!iter.hasNext())) {
 					GenealogyPartitionNode inputData = getInputData();
 					Collection<GenealogyMetricValue> mValues = metric.handle(inputData);
 					iter = mValues.iterator();
+					if ((iter == null) || (!iter.hasNext())) {
+						skipData();
+						return;
+					}
+				}
+				
+				providePartialOutputData(iter.next());
+				if (!iter.hasNext()) {
+					setCompleted();
 				}
 			}
 		};
