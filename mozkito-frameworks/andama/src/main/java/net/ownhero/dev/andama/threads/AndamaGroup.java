@@ -3,9 +3,10 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaCrashHandler;
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -22,9 +23,9 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaGroup extends ThreadGroup {
 	
-	private final Collection<AndamaThreadable<?, ?>> threads = new LinkedList<AndamaThreadable<?, ?>>();
-	private final AndamaSettings                     settings;
-	private final AndamaChain                        toolchain;
+	private final AndamaSettings               settings;
+	private final List<AndamaThreadable<?, ?>> threads = new LinkedList<AndamaThreadable<?, ?>>();
+	private final AndamaChain                  toolchain;
 	
 	/**
 	 * The only valid constructor of {@link AndamaGroup}
@@ -46,8 +47,13 @@ public class AndamaGroup extends ThreadGroup {
 	 * @param thread
 	 *            the {@link AndamaThread} that shall be managed.
 	 */
-	public void addThread(final AndamaThread<?, ?> thread) {
-		this.getThreads().add(thread);
+	public Integer addThread(final AndamaThread<?, ?> thread) {
+		if (getThreads().add(thread)) {
+			return getThreads().indexOf(thread);
+		} else {
+			throw new UnrecoverableError("Could not add thread " + thread.toString() + " to threadGroup " + getName()
+			        + ".");
+		}
 	}
 	
 	/**
@@ -62,7 +68,7 @@ public class AndamaGroup extends ThreadGroup {
 	 * 
 	 * @return the threads under surveillance.
 	 */
-	public final Collection<AndamaThreadable<?, ?>> getThreads() {
+	public final List<AndamaThreadable<?, ?>> getThreads() {
 		return this.threads;
 	}
 	
@@ -84,7 +90,7 @@ public class AndamaGroup extends ThreadGroup {
 	 * Shuts down all managed threads.
 	 */
 	public void shutdown() {
-		for (AndamaThreadable<?, ?> thread : this.getThreads()) {
+		for (final AndamaThreadable<?, ?> thread : getThreads()) {
 			thread.shutdown();
 		}
 	}

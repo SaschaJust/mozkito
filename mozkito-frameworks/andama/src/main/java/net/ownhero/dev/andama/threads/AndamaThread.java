@@ -161,47 +161,48 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		}
 	}
 	
-	private final Set<CountDownLatch>                         awaitingLatches    = new HashSet<CountDownLatch>();
-	private final Map<AndamaThread<?, ?>, CountDownLatch>     dependencies       = new HashMap<AndamaThread<?, ?>, CountDownLatch>();
+	private final Set<CountDownLatch>                         awaitingLatches      = new HashSet<CountDownLatch>();
+	private final Map<AndamaThread<?, ?>, CountDownLatch>     dependencies         = new HashMap<AndamaThread<?, ?>, CountDownLatch>();
+	private final Map<Class<?>, K>                            inputCache           = new HashMap<Class<?>, K>();
 	private Tuple<K, CountDownLatch>                          inputDataTuple;
-	private final Set<InputHook<K, V>>                        inputHooks         = new HashSet<InputHook<K, V>>();
+	private final Set<InputHook<K, V>>                        inputHooks           = new HashSet<InputHook<K, V>>();
 	private AndamaDataStorage<K>                              inputStorage;
-	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads       = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
-	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads       = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
+	private final LinkedBlockingDeque<AndamaThreadable<?, K>> inputThreads         = new LinkedBlockingDeque<AndamaThreadable<?, K>>();
+	private final LinkedBlockingDeque<AndamaThreadable<?, ?>> knownThreads         = new LinkedBlockingDeque<AndamaThreadable<?, ?>>();
 	private V                                                 outputData;
-	private final Set<OutputHook<K, V>>                       outputHooks        = new HashSet<OutputHook<K, V>>();
-	private CountDownLatch                                    outputLatch        = null;
+	private final Set<OutputHook<K, V>>                       outputHooks          = new HashSet<OutputHook<K, V>>();
 	
+	private CountDownLatch                                    outputLatch          = null;
 	private AndamaDataStorage<V>                              outputStorage;
-	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads      = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
 	
-	private boolean                                           parallelizable     = false;
+	private final LinkedBlockingDeque<AndamaThreadable<V, ?>> outputThreads        = new LinkedBlockingDeque<AndamaThreadable<V, ?>>();
 	
-	private final Set<PostExecutionHook<K, V>>                postExecutionHooks = new HashSet<PostExecutionHook<K, V>>();
-	private final Set<PostInputHook<K, V>>                    postInputHooks     = new HashSet<PostInputHook<K, V>>();
-	private final Set<PostOutputHook<K, V>>                   postOutputHooks    = new HashSet<PostOutputHook<K, V>>();
+	private boolean                                           parallelizable       = false;
+	private final Set<PostExecutionHook<K, V>>                postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
+	private final Set<PostInputHook<K, V>>                    postInputHooks       = new HashSet<PostInputHook<K, V>>();
 	
-	private final Set<PostProcessHook<K, V>>                  postProcessHooks   = new HashSet<PostProcessHook<K, V>>();
+	private final Set<PostOutputHook<K, V>>                   postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
+	private final Set<PostProcessHook<K, V>>                  postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
 	// hooks
-	private final Set<PreExecutionHook<K, V>>                 preExecutionHooks  = new HashSet<PreExecutionHook<K, V>>();
-	private final Set<PreInputHook<K, V>>                     preInputHooks      = new HashSet<PreInputHook<K, V>>();
+	private final Set<PreExecutionHook<K, V>>                 preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
 	
-	private final Set<PreOutputHook<K, V>>                    preOutputHooks     = new HashSet<PreOutputHook<K, V>>();
-	private final Set<PreProcessHook<K, V>>                   preProcessHooks    = new HashSet<PreProcessHook<K, V>>();
-	private final Set<ProcessHook<K, V>>                      processHooks       = new HashSet<ProcessHook<K, V>>();
+	private final Set<PreInputHook<K, V>>                     preInputHooks        = new HashSet<PreInputHook<K, V>>();
+	private final Set<PreOutputHook<K, V>>                    preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
+	private final Set<PreProcessHook<K, V>>                   preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
 	
-	private final Set<CountDownLatch>                         processLatches     = new HashSet<CountDownLatch>();
+	private final Set<ProcessHook<K, V>>                      processHooks         = new HashSet<ProcessHook<K, V>>();
+	private final Set<CountDownLatch>                         processLatches       = new HashSet<CountDownLatch>();
+	
 	private final AndamaSettings                              settings;
-	
 	private boolean                                           shutdown;
-	private boolean                                           skipData           = false;
+	
+	private boolean                                           skipData             = false;
 	
 	private final AndamaGroup                                 threadGroup;
-	
-	private final boolean                                     waitForLatch       = false;
-	private final Map<Class<?>, K>                            inputCache         = new HashMap<Class<?>, K>();
+	private Integer                                           threadID             = -1;
+	private final boolean                                     waitForLatch         = false;
 	private boolean                                           warningSameInputdata = false;
-
+	
 	/**
 	 * The constructor of the {@link AndamaThread}. This should be called from
 	 * all extending classes.
@@ -219,7 +220,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		super(threadGroup, "default");
 		setName(this.getClass().getSimpleName());
 		this.parallelizable = parallelizable;
-		threadGroup.addThread(this);
+		setThreadID(threadGroup.addThread(this));
 		this.threadGroup = threadGroup;
 		this.settings = settings;
 		@SuppressWarnings ("unchecked")
@@ -668,9 +669,9 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 * @return the inputData
 	 */
 	public final K getInputData() {
-		K localCache = this.inputDataTuple != null
-		                                          ? this.inputDataTuple.getFirst()
-		                                          : null;
+		final K localCache = this.inputDataTuple != null
+		                                                ? this.inputDataTuple.getFirst()
+		                                                : null;
 		Class<?> caller;
 		try {
 			caller = JavaUtils.getCallingClass();
@@ -693,7 +694,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 			}
 			
 			this.inputCache.put(caller, localCache);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Determining calling class failed.", e);
 			}
@@ -903,6 +904,11 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	@Override
 	final public State getState() {
 		return super.getState();
+	}
+	
+	@Override
+	public Integer getThreadID() {
+		return this.threadID;
 	}
 	
 	/*
@@ -1537,6 +1543,10 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	 */
 	protected final void setSkipData(final boolean skipData) {
 		this.skipData = skipData;
+	}
+	
+	private void setThreadID(final Integer threadID) {
+		this.threadID = threadID;
 	}
 	
 	/*

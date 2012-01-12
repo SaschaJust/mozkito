@@ -44,7 +44,7 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 		if (AndamaSource.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = source
 			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
@@ -53,7 +53,7 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
 			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
@@ -64,14 +64,14 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
 			} else if (AndamaFilter.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
 		} else if (AndamaTransformer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = filter
 			if (AndamaTransformer.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
@@ -84,14 +84,14 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return 1;
 			}
 		} else if (AndamaSink.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = sink
 			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
-				return arg0.getName().compareTo(arg1.getName());
+				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return 1;
 			}
@@ -99,7 +99,7 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 		
 		try {
 			throw new UnsupportedThreadTypeException(arg0.getClass().getCanonicalName());
-		} catch (UnsupportedThreadTypeException e) {
+		} catch (final UnsupportedThreadTypeException e) {
 			e.printStackTrace();
 		}
 		return 0;

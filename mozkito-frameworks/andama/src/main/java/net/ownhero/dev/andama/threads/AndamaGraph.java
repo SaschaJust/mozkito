@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.graph.RelationType;
@@ -103,13 +104,13 @@ public class AndamaGraph {
 					if (Logger.logInfo()) {
 						Logger.info("Building graph with " + threads.size() + " nodes for: "
 						        + JavaUtils.collectionToString(threads));
-						List<AndamaSource> sources = new LinkedList<AndamaSource>();
-						List<AndamaFilter> filters = new LinkedList<AndamaFilter>();
-						List<AndamaTransformer> transformers = new LinkedList<AndamaTransformer>();
-						List<AndamaMultiplexer> multiplexers = new LinkedList<AndamaMultiplexer>();
-						List<AndamaDemultiplexer> demulitplexer = new LinkedList<AndamaDemultiplexer>();
-						List<AndamaSink> sinks = new LinkedList<AndamaSink>();
-						for (AndamaThreadable<?, ?> thread : threads) {
+						final List<AndamaSource> sources = new LinkedList<AndamaSource>();
+						final List<AndamaFilter> filters = new LinkedList<AndamaFilter>();
+						final List<AndamaTransformer> transformers = new LinkedList<AndamaTransformer>();
+						final List<AndamaMultiplexer> multiplexers = new LinkedList<AndamaMultiplexer>();
+						final List<AndamaDemultiplexer> demulitplexer = new LinkedList<AndamaDemultiplexer>();
+						final List<AndamaSink> sinks = new LinkedList<AndamaSink>();
+						for (final AndamaThreadable<?, ?> thread : threads) {
 							if (AndamaSource.class.isAssignableFrom(thread.getClass())) {
 								sources.add((AndamaSource) thread);
 							} else if (AndamaFilter.class.isAssignableFrom(thread.getClass())) {
@@ -138,7 +139,7 @@ public class AndamaGraph {
 					
 					while (((thread = threads.poll()) != null)
 					        && AndamaSource.class.isAssignableFrom(thread.getClass())) {
-						Node newNode = andamaGraph.getNode(thread);
+						final Node newNode = andamaGraph.getNode(thread);
 						openBranches.add(newNode);
 					}
 					
@@ -377,7 +378,7 @@ public class AndamaGraph {
 	                                                                     final Collection<AndamaThreadable<?, ?>> threads,
 	                                                                     final AndamaGraph graph) {
 		final HashSet<Object> set = new HashSet<Object>();
-		final LinkedList<AndamaThreadable<?, ?>> list = new LinkedList<AndamaThreadable<?, ?>>();
+		final TreeSet<AndamaThreadable<?, ?>> list = new TreeSet<AndamaThreadable<?, ?>>(new AndamaThreadComparator());
 		
 		for (final Node node : openBranches) {
 			set.add(graph.getProperty(NodeProperty.OUTPUTTYPE, node));
@@ -489,9 +490,9 @@ public class AndamaGraph {
 	
 	private final Map<String, RelationshipIndex> markerIndexes = new HashMap<String, RelationshipIndex>();
 	
+	private final String                         markerPrefix  = "marker";
 	private final List<Integer>                  markers       = new LinkedList<Integer>();
 	private final Map<String, Node>              nodes         = new HashMap<String, Node>();
-	private final String                         markerPrefix  = "marker";
 	private Integer                              solutionMarker;
 	
 	private RelationshipIndex                    workingMarkerRelationship;
@@ -522,15 +523,15 @@ public class AndamaGraph {
 		// Check for available solutions
 		this.solutionMarker = findSolutionMarker(andamaGroup);
 		
-		Transaction tx = this.graph.beginTx();
+		final Transaction tx = this.graph.beginTx();
 		// clean up working colors
 		this.workingMarkerRelationship = this.graph.index().forRelationships(AndamaGraph.workingMarker);
 		this.workingMarkerRelationship.delete();
 		tx.success();
 		tx.finish();
 		
-		String[] markerNames = this.graph.index().relationshipIndexNames();
-		for (String markerName : markerNames) {
+		final String[] markerNames = this.graph.index().relationshipIndexNames();
+		for (final String markerName : markerNames) {
 			if (markerName.startsWith(this.markerPrefix)) {
 				this.markers.add(Integer.parseInt(markerName.substring(this.markerPrefix.length())));
 			}
@@ -607,18 +608,18 @@ public class AndamaGraph {
 		
 		while (query.hasNext()) {
 			final Relationship relationship = query.next();
-			final String fromName = getProperty(NodeProperty.NODENAME, relationship.getStartNode()).toString();
-			final String toName = getProperty(NodeProperty.NODENAME, relationship.getEndNode()).toString();
+			final Integer fromName = (Integer) getProperty(NodeProperty.NODENAME, relationship.getStartNode());
+			final Integer toName = (Integer) getProperty(NodeProperty.NODENAME, relationship.getEndNode());
 			AndamaThreadable<?, V> fromThread = null;
 			AndamaThreadable<V, ?> toThread = null;
 			
 			for (final AndamaThreadable<?, ?> thread : this.andamaGroup.getThreads()) {
-				if (thread.getHandle().equals(fromName)) {
+				if (thread.getThreadID().equals(fromName)) {
 					fromThread = (AndamaThreadable<?, V>) thread;
 					if ((fromThread != null) && (toThread != null)) {
 						break;
 					}
-				} else if (thread.getHandle().equals(toName)) {
+				} else if (thread.getThreadID().equals(toName)) {
 					toThread = (AndamaThreadable<V, ?>) thread;
 					if ((fromThread != null) && (toThread != null)) {
 						break;
@@ -731,7 +732,7 @@ public class AndamaGraph {
 			} else {
 				return null;
 			}
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			return null;
 		} finally {
 			tx.success();
@@ -783,7 +784,7 @@ public class AndamaGraph {
 			
 			tx.success();
 			tx.finish();
-			this.nodes.put((String) getProperty(NodeProperty.NODENAME, thread), node);
+			this.nodes.put("" + getProperty(NodeProperty.NODENAME, thread), node);
 			return node;
 		}
 	}
@@ -807,7 +808,7 @@ public class AndamaGraph {
 			outputType = regex.replaceAll(outputType, "$1");
 		}
 		
-		final String nodeName = (String) getProperty(NodeProperty.NODENAME, node);;
+		final String nodeName = "" + getProperty(NodeProperty.NODENAME, node);;
 		final String nodeType = (String) getProperty(NodeProperty.NODETYPE, node);;
 		
 		final StringBuilder tag = new StringBuilder();
@@ -862,7 +863,7 @@ public class AndamaGraph {
 				
 				return clazz.getCanonicalName();
 			case NODENAME:
-				return thread.getHandle();
+				return thread.getThreadID();
 			case NODEID:
 				return thread.hashCode();
 			default:
@@ -887,7 +888,7 @@ public class AndamaGraph {
 	 */
 	private boolean paint() {
 		final AndamaGraph andamaGraph = this;
-		Integer marker = getNextMarker();
+		final Integer marker = getNextMarker();
 		final String markerName = "marker" + marker;
 		
 		if (Logger.logInfo()) {

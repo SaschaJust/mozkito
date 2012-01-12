@@ -187,6 +187,11 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public abstract StackTraceElement[] getStackTrace();
 	
 	/**
+	 * @return the internal thread id (within the {@link AndamaGroup}).
+	 */
+	Integer getThreadID();
+	
+	/**
 	 * @return true if the object has an input connector-false otherwise
 	 */
 	public boolean hasInputConnector();
