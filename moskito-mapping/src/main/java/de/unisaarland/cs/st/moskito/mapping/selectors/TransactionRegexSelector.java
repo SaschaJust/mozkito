@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class TransactionRegexSelector extends MappingSelector {
 	
-	private String pattern = "(\\d{2,})";
+	private String pattern;
 	
 	/*
 	 * (non-Javadoc)
@@ -140,7 +140,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		                                         "Pattern of transaction ids to scan for.", "\\d{2,}", isRequired));
+		                                         "Pattern of transaction ids to scan for.", "(\\d{2,})", isRequired));
 	}
 	
 	/**

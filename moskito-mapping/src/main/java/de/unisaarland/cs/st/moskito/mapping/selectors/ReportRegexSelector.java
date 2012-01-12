@@ -42,7 +42,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class ReportRegexSelector extends MappingSelector {
 	
-	private String pattern = "(\\p{XDigit}{7,})";
+	private String pattern;
 	
 	/*
 	 * (non-Javadoc)
@@ -137,7 +137,7 @@ public class ReportRegexSelector extends MappingSelector {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		                                         "Pattern of report ids to scan for.", "\\p{XDigit}{7,}", isRequired));
+		                                         "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})", isRequired));
 	}
 	
 	/**
