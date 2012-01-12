@@ -20,6 +20,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -34,6 +35,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -75,7 +77,10 @@ public class DescriptionSearchEngine extends SearchEngine {
 			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer());
 			final Query query = buildQuery(fromBody, this.parser);
 			
-			final TopDocs topDocs = getStorage().getIsearcherReports().search(query, null, 1000);
+			final LuceneStorage luceneStorage = getStorage();
+			final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
+			final TopDocs topDocs = indexSearcher.search(query, null, 1000);
+			
 			if (topDocs != null) {
 				final ScoreDoc[] hits = topDocs.scoreDocs;
 				// Iterate through the results:
