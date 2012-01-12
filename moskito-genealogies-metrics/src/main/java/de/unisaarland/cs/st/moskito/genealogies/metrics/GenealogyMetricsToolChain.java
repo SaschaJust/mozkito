@@ -38,8 +38,6 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 	private EnumArgument        granularityArg;
 	private OutputFileArgument  outputFileArgument;
 	
-	private GenealogyMetricSink metricSink;
-	
 	public GenealogyMetricsToolChain() {
 		super(new GenealogySettings());
 		GenealogySettings settings = (GenealogySettings) getSettings();
@@ -66,25 +64,6 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		this.threadPool.execute();
 		if (Logger.logInfo()) {
 			Logger.info("Terminating threads.");
-		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("Checking metric consitency ...");
-		}
-		if (!metricSink.isConsistent()) {
-			throw new UnrecoverableError(
-					"Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
-		}
-		if (Logger.logInfo()) {
-			Logger.info("done.");
-		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("Writing metrics to output file ...");
-		}
-		metricSink.writeToFile();
-		if (Logger.logInfo()) {
-			Logger.info("done.");
 		}
 	}
 	
@@ -153,11 +132,11 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass
-						        .getConstructor(TransactionChangeGenealogy.class);
+								.getConstructor(TransactionChangeGenealogy.class);
 						if (constructor != null) {
 							GenealogyTransactionMetric metric = constructor.newInstance(genealogy);
 							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-							        metric);
+									metric);
 						}
 					}
 				}
@@ -200,7 +179,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		//start a demuxer and a sink that receives all the metric values
 		//and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		metricSink = new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(),
+		new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(),
 				outputFileArgument.getValue());
 	}
 }

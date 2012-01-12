@@ -52,9 +52,4 @@ public class GenealogyToolChain extends AndamaChain {
 		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 		
 	}
-	
-	@Override
-	public void shutdown() {
-		
-	}
 }

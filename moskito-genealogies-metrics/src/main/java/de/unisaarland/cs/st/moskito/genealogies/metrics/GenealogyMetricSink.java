@@ -13,6 +13,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -53,6 +54,33 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				}
 			}
 		};
+		
+		new PostExecutionHook<GenealogyMetricValue, GenealogyMetricValue>(this) {
+			
+			@Override
+			public void postExecution() {
+				if (Logger.logInfo()) {
+					Logger.info("Checking metric consitency ...");
+				}
+				if (!GenealogyMetricSink.this.isConsistent()) {
+					throw new UnrecoverableError(
+					        "Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
+				}
+				if (Logger.logInfo()) {
+					Logger.info("done.");
+				}
+				
+				if (Logger.logInfo()) {
+					Logger.info("Writing metrics to output file ...");
+				}
+				GenealogyMetricSink.this.writeToFile();
+				if (Logger.logInfo()) {
+					Logger.info("done.");
+				}
+			}
+			
+		};
+
 	}
 	
 	public boolean isConsistent() {
@@ -118,7 +146,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 						Logger.warn("There is an inconsistency in the number of metric values between individual nodes. This will lead to metric values dropped for affected nodes.");
 					}
 				}
-
+				
 				for(String metricId : metricIDs){
 					writer.write(",");
 					if (!metricValuesForNode.containsKey(metricId)) {
