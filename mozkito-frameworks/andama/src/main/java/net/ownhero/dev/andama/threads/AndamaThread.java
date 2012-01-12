@@ -676,7 +676,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		try {
 			caller = JavaUtils.getCallingClass();
 			
-			if (!this.warningSameInputdata && this.inputCache.containsKey(caller)) {
+			if (!this.warningSameInputdata && this.inputCache.containsKey(caller) && (localCache != null)) {
 				if (this.inputCache.get(caller) == localCache) {
 					if (Logger.logWarn()) {
 						Logger.warn("Multiple request of input data element (" + localCache.toString() + ") within "
