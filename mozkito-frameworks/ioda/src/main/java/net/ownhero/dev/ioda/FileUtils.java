@@ -52,6 +52,9 @@ public class FileUtils {
 			
 			@Override
 			public void run() {
+				if (Logger.logInfo()) {
+					Logger.info("Deleting temporary files using shutdown hook.");
+				}
 				Set<File> filesToDelete = new HashSet<File>();
 				if (fileManager.containsKey(FileShutdownAction.DELETE)) {
 					filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
