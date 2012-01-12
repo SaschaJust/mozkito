@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class TransactionRegexSelector extends MappingSelector {
 	
-	private String pattern = "(\\d{2,})";
+	private String pattern;
 	
 	/*
 	 * (non-Javadoc)
@@ -94,12 +94,18 @@ public class TransactionRegexSelector extends MappingSelector {
 			final Criteria<Report> criteria = util.createCriteria(Report.class);
 			
 			final List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
+			if (Logger.logDebug()) {
+				Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
+				        + (findAll != null
+				                          ? findAll.size()
+				                          : 0) + " matches for regex '" + this.pattern + "'.");
+			}
 			
 			if (findAll != null) {
 				for (final List<RegexGroup> match : findAll) {
-					if (Logger.logWarn()) {
-						Logger.warn("While parsing transaction " + element.get(FieldKey.ID).toString()
-						        + " i stumpled upon this match: " + match.get(0).getMatch());
+					if (Logger.logDebug()) {
+						Logger.debug("While parsing transaction " + element.get(FieldKey.ID).toString()
+						        + " i stumbled upon this match: " + match.get(0).getMatch());
 					}
 					ids.add(Long.parseLong(match.get(0).getMatch()));
 				}
@@ -134,7 +140,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
 		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		                                         "Pattern of transaction ids to scan for.", "\\d{2,}", isRequired));
+		                                         "Pattern of transaction ids to scan for.", "(\\d{2,})", isRequired));
 	}
 	
 	/**
