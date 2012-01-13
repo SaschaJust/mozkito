@@ -190,14 +190,24 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
+		if (this == obj) {
+	        return true;
+        }
+		if (obj == null) {
+	        return false;
+        }
+		if (getClass() != obj.getClass()) {
+	        return false;
+        }
 		CallGraph other = (CallGraph) obj;
 		if (classCallGraph == null) {
-			if (other.classCallGraph != null) return false;
+			if (other.classCallGraph != null) {
+	            return false;
+            }
 		} else if (methodCallGraph == null) {
-			if (other.methodCallGraph != null) return false;
+			if (other.methodCallGraph != null) {
+	            return false;
+            }
 		} else {
 			boolean equal = true;
 			DirectedSparseGraph<ClassVertex, CallGraphEdge> otherClassCallGraph = other.getClassCallGraph();
@@ -207,8 +217,6 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 				for (CallGraphEdge e : classCallGraph.getOutEdges(v)) {
 					ClassVertex n = classCallGraph.getDest(e);
 					equal &= (otherClassCallGraph.findEdge(v, n) != null);
-					int i = 1;
-					++i;
 				}
 			}
 			
@@ -218,8 +226,6 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 				for (CallGraphEdge e : getOutEdges(v)) {
 					MethodVertex n = getDest(e);
 					equal &= (other.findEdge(v, n) != null);
-					int i = 1;
-					++i;
 				}
 			}
 
@@ -398,10 +404,10 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((classCallGraph == null)
+		result = (prime * result) + ((classCallGraph == null)
 				? 0
 				: classCallGraph.hashCode());
-		result = prime * result + ((methodCallGraph == null)
+		result = (prime * result) + ((methodCallGraph == null)
 				? 0
 				: methodCallGraph.hashCode());
 		return result;

@@ -114,7 +114,6 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	}
 	
 	public SerialFileChangeCoupling serialize(RCSTransaction transaction) {
-		Set<RCSTransaction> parents = transaction.getParents();
 		List<String> premise = new LinkedList<String>();
 		for (RCSFile file : getPremise()) {
 			premise.add(file.getPath(transaction));
