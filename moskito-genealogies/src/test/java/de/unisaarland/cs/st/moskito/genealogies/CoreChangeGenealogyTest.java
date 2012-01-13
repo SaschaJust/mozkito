@@ -37,7 +37,7 @@ public class CoreChangeGenealogyTest extends TestEnvironment {
 				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.CallOnDefinition));
 		
 		assertFalse(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T1F1),
-				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.DeletedCallOnCall));
+				environmentOperations.get(TestEnvironmentOperation.T3F1D), GenealogyEdgeType.DefinitionOnDeletedDefinition));
 		
 		//check if edges really exist
 		

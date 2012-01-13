@@ -2,7 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.TreeSet;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
@@ -31,7 +31,8 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			public void preExecution() {
 				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
+				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
+				list.addAll(persistenceUtil.load(criteria));
 				iterator = list.iterator();
 			}
 		};

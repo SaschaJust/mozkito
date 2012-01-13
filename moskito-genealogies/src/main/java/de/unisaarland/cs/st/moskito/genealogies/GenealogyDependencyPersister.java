@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.moskito.genealogies;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
@@ -67,6 +68,13 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 							if (element instanceof JavaMethodDefinition) {
 								//find the previous operation that added the same method definition
 								JavaChangeOperation previousDefinition = registry.removeDefiniton(operation);
+								
+								if (operation.isBefore(previousDefinition)) {
+									throw new UnrecoverableError(
+									        "Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+													+ operation + ", previous definition=" + previousDefinition);
+								}
+
 								if (previousDefinition == null) {
 									if (Logger.logWarn()) {
 										Logger.warn("WARNING! Cannot find the JavaChangeOperation that added `"
@@ -96,6 +104,13 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								if (!registry.existsDefinition(element, false)) {
 									JavaChangeOperation previousDefinitionDeletion = registry
 											.findPreviousDefinitionDeletion(element);
+									if (operation.isBefore(previousDefinitionDeletion)) {
+										throw new UnrecoverableError(
+												"Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
+														+ operation
+														+ ", previous definition="
+														+ previousDefinitionDeletion);
+									}
 									if (previousDefinitionDeletion != null) {
 										genealogy.addEdge(operation, previousDefinitionDeletion,
 												GenealogyEdgeType.DeletedCallOnDeletedDefinition);
@@ -110,6 +125,13 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								registry.addMethodDefiniton(operation);
 								
 								JavaChangeOperation previousDefinition = registry.findPreviousDefinition(element, true);
+								
+								if (operation.isBefore(previousDefinition)) {
+									throw new UnrecoverableError(
+											"Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+													+ operation + ", previous definition=" + previousDefinition);
+								}
+								
 								if (previousDefinition != null) {
 									if (previousDefinition.getChangeType().equals(ChangeType.Deleted)) {
 										genealogy.addEdge(operation, previousDefinition,
@@ -143,7 +165,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Received package " + operationQueue.toString() + " with " + localCounter
-					        + " elements.");
+							+ " elements.");
 				}
 				counter += localCounter;
 			}

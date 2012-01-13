@@ -92,6 +92,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		JavaElement depElement = dependent.getChangedElementLocation().getElement();
 		JavaElement targetElement = target.getChangedElementLocation().getElement();
 		ChangeType targetChangeType = target.getChangeType();
+		
+		if (dependent.getRevision().getTransaction().getTimestamp()
+				.isBefore(target.getRevision().getTransaction().getTimestamp())) {
+			if (Logger.logError()) {
+				Logger.error("Trying to add edge between dependent and target for which "
+						+ "the dependant occured before the target. THIS IS IMPOSSIBLE. "
+						+ "The future cannot influence the past: " + dependent + " --> " + target);
+			}
+			return false;
+		}
+		
 		switch (edgeType) {
 			case DefinitionOnDefinition:
 			case DefinitionOnDeletedDefinition:
@@ -352,7 +363,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public int edgeSize(){
+	public int edgeSize() {
 		int result = 0;
 		IndexHits<Node> nodes = nodes();
 		for (Node node : nodes) {
@@ -388,7 +399,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Returns a collection containing nodes that  are connected through an outgoing edge.
+	 * Returns a collection containing nodes that are connected through an
+	 * outgoing edge.
 	 * 
 	 * @return all dependents
 	 */
@@ -519,13 +531,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public GraphDatabaseService getGraphDBService(){
+	public GraphDatabaseService getGraphDBService() {
 		return this.graph;
 	}
 	
-	private Node getNodeForVertex(final JavaChangeOperation op){
+	private Node getNodeForVertex(final JavaChangeOperation op) {
 		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, op.getId());
-		if(!indexHits.hasNext()){
+		if (!indexHits.hasNext()) {
 			return null;
 		}
 		Node node = indexHits.next();
@@ -535,7 +547,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	@Override
 	public String getNodeId(JavaChangeOperation t) {
-		if(this.containsVertex(t)){
+		if (this.containsVertex(t)) {
 			return String.valueOf(t.getId());
 		}
 		return null;

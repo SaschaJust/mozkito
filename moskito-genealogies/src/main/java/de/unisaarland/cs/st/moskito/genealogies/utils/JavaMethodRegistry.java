@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -74,6 +75,10 @@ public class JavaMethodRegistry {
 			invocationsInClass.put(fullQualifiedName, new ArrayList<JavaChangeOperation>());
 		}
 		ArrayList<JavaChangeOperation> invList = invocationsInClass.get(fullQualifiedName);
+		if ((!invList.isEmpty()) && (call.isBefore(invList.get(invList.size() - 1)))) {
+			throw new UnrecoverableError(
+					"Attempt to add an earlier JavaChangeOperation to the JavaMethodRegistry than the previous registered event. This might lead to serious problems. Abort! Please ensure to process JavaChangeOperations following repository timeline.");
+		}
 		invList.add(call);
 	}
 	
@@ -590,6 +595,13 @@ public class JavaMethodRegistry {
 			this.methodDefinitionDeletions.put(fullName, new ArrayList<JavaChangeOperation>());
 		}
 		this.methodDefinitionDeletions.get(fullName).add(del);
+		if (def.getRevision().getTransaction().getTimestamp()
+				.isAfter(del.getRevision().getTransaction().getTimestamp())) {
+			if (Logger.logError()) {
+				Logger.error("Found method definition that was added after the deletion! Should not happen!");
+			}
+			return null;
+		}
 		return def;
 	}
 	
@@ -616,6 +628,12 @@ public class JavaMethodRegistry {
 		
 		JavaChangeOperation toDelete = this.findPreviousInvocation(element, location, false);
 		
+		if (del.isBefore(toDelete)) {
+			throw new UnrecoverableError(
+					"Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
+			                + del + ", previous definition=" + toDelete);
+		}
+		
 		if (!this.methodInvocations.containsKey(callingPosition)) {
 			return null;
 		}
@@ -631,6 +649,7 @@ public class JavaMethodRegistry {
 			deletions.put(fullName, new ArrayList<JavaChangeOperation>());
 		}
 		deletions.get(fullName).add(del);
+		
 		return toDelete;
 	}
 	
