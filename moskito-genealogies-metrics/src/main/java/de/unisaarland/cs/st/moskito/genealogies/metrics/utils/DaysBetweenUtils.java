@@ -46,19 +46,19 @@ public class DaysBetweenUtils {
 			}
 		}
 		
-		int diff = Days.daysBetween(p1LateTime, p2EarlyTime).getDays();
-		int diff2 = Days.daysBetween(p2LateTime, p1EarlyTime).getDays();
+		int diff = Math.abs(Days.daysBetween(p1LateTime, p2EarlyTime).getDays());
+		int diff2 = Math.abs(Days.daysBetween(p2LateTime, p1EarlyTime).getDays());
 		return Math.min(diff, diff2);
 		
 	}
 	
 	public static int getDaysBetween(JavaChangeOperation op1, JavaChangeOperation op2) {
-		return Days.daysBetween(op1.getRevision().getTransaction().getTimestamp(),
-				op2.getRevision().getTransaction().getTimestamp()).getDays();
+		return Math.abs(Days.daysBetween(op1.getRevision().getTransaction().getTimestamp(),
+		        op2.getRevision().getTransaction().getTimestamp()).getDays());
 	}
 	
 	public static int getDaysBetween(RCSTransaction t1, RCSTransaction t2) {
-		return Days.daysBetween(t1.getTimestamp(), t2.getTimestamp()).getDays();
+		return Math.abs(Days.daysBetween(t1.getTimestamp(), t2.getTimestamp()).getDays());
 	}
 	
 }

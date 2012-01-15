@@ -24,7 +24,7 @@ public class GenealogyReader extends AndamaSource<GenealogyCoreNode> {
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet();
+				iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		

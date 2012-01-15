@@ -202,9 +202,27 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	}
 	
 	@Override
+	public int inDegree(Collection<JavaChangeOperation> node, GenealogyEdgeType... edgeTypes) {
+		int numEdges = 0;
+		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, edgeTypes)) {
+			numEdges += this.getEdges(dependant, node).size();
+		}
+		return numEdges;
+	}
+	
+	@Override
 	public int outDegree(Collection<JavaChangeOperation> node) {
 		int numEdges = 0;
 		for (Collection<JavaChangeOperation> parent : this.getParents(node, GenealogyEdgeType.values())) {
+			numEdges += this.getEdges(node, parent).size();
+		}
+		return numEdges;
+	}
+	
+	@Override
+	public int outDegree(Collection<JavaChangeOperation> node, GenealogyEdgeType... edgeTypes) {
+		int numEdges = 0;
+		for (Collection<JavaChangeOperation> parent : this.getParents(node, edgeTypes)) {
 			numEdges += this.getEdges(node, parent).size();
 		}
 		return numEdges;
@@ -218,14 +236,14 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * ()
 	 */
 	@Override
-	public Iterator<Collection<JavaChangeOperation>> vertexSet() {
+	public Iterable<Collection<JavaChangeOperation>> vertexSet() {
 		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
 		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		while (vertexIterator.hasNext()) {
 			JavaChangeOperation elem = vertexIterator.next();
 			result.add(elem);
 		}
-		return buildPartitions(result).iterator();
+		return buildPartitions(result);
 	}
 	
 	/*

@@ -24,7 +24,7 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet();
+				iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		

@@ -632,6 +632,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
+	@Override
+	public int inDegree(JavaChangeOperation op, GenealogyEdgeType... edgeTypes) {
+		Node node = getNodeForVertex(op);
+		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
+		int numEdges = 0;
+		for (@SuppressWarnings("unused") Relationship r : relationships) {
+			++numEdges;
+		}
+		return numEdges;
+	}
+	
 	/**
 	 * Vertex set.
 	 * 
@@ -652,11 +663,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
-	/**
-	 * 
-	 * @return an iterator over all JavaChangeOperations contained by this
-	 *         change genealogy
-	 */
+	@Override
+	public int outDegree(JavaChangeOperation op, GenealogyEdgeType... edgeTypes) {
+		Node node = getNodeForVertex(op);
+		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
+		int numEdges = 0;
+		for (@SuppressWarnings("unused") Relationship r : relationships) {
+			++numEdges;
+		}
+		return numEdges;
+	}
+	
 	public Iterator<JavaChangeOperation> vertexIterator() {
 		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, "*");
 		
@@ -669,8 +686,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public Iterator<JavaChangeOperation> vertexSet() {
-		return vertexIterator();
+	public Iterable<JavaChangeOperation> vertexSet() {
+		IndexHits<Node> indexHits = nodeIndex.query(NODE_ID, "*");
+		
+		Set<Long> operations = new HashSet<Long>();
+		for (Node node : indexHits) {
+			operations.add((Long) node.getProperty(NODE_ID));
+		}
+		indexHits.close();
+		return new CoreGenealogyVertexIterator(operations, persistenceUtil);
 	}
 	
 	/**

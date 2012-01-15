@@ -8,7 +8,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
-public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation> {
+public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation>, Iterable<JavaChangeOperation> {
 	
 	private final Collection<Long> operationIds;
 	private Iterator<Long>         iterator;
@@ -23,6 +23,11 @@ public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation
 	@Override
 	public boolean hasNext() {
 		return iterator.hasNext();
+	}
+	
+	@Override
+	public Iterator<JavaChangeOperation> iterator() {
+		return this;
 	}
 	
 	@Override

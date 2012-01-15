@@ -25,7 +25,7 @@ public class PartitionGenealogyReader extends AndamaSource<GenealogyPartitionNod
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet();
+				iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		

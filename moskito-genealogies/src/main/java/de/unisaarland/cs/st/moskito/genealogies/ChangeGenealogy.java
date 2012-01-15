@@ -2,7 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -128,7 +127,7 @@ public interface ChangeGenealogy<T> {
 	 *         otherwise.
 	 */
 	public String getNodeId(T t);
-
+	
 	/**
 	 * Gets the parents.
 	 * 
@@ -156,6 +155,17 @@ public interface ChangeGenealogy<T> {
 	public int inDegree(T node);
 	
 	/**
+	 * In degree.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
+	 * @return the int
+	 */
+	public int inDegree(T node, GenealogyEdgeType... edgeTypes);
+	
+	/**
 	 * Out degree.
 	 *
 	 * @param node the node
@@ -164,11 +174,22 @@ public interface ChangeGenealogy<T> {
 	public int outDegree(T node);
 	
 	/**
+	 * Out degree.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
+	 * @return the int
+	 */
+	public int outDegree(T node, GenealogyEdgeType... edgeTypes);
+	
+	/**
 	 * Vertex set.
 	 * 
 	 * @return the iterator
 	 */
-	public Iterator<T> vertexSet();
+	public Iterable<T> vertexSet();
 	
 	/**
 	 * Vertex size.
