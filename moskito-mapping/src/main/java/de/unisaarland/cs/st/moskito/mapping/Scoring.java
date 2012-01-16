@@ -32,10 +32,10 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 public class Scoring extends AndamaChain {
 	
-	private final AndamaPool        threadPool;
 	private final DatabaseArguments databaseArguments;
 	private final LoggerArguments   logSettings;
 	private final MappingArguments  mappingArguments;
+	private final AndamaPool        threadPool;
 	
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class Scoring extends AndamaChain {
 	public Scoring() {
 		super(new MappingSettings());
 		this.threadPool = new AndamaPool(Bugs.class.getSimpleName(), this);
-		MappingSettings settings = getSettings();
+		final MappingSettings settings = getSettings();
 		this.databaseArguments = settings.setDatabaseArgs(true, "mapping");
 		this.logSettings = settings.setLoggerArg(true);
 		this.mappingArguments = settings.setMappingArgs(true);
@@ -87,7 +87,7 @@ public class Scoring extends AndamaChain {
 	public void setup() {
 		this.logSettings.getValue();
 		
-		MappingFinder finder = this.mappingArguments.getValue();
+		final MappingFinder finder = this.mappingArguments.getValue();
 		
 		if (finder == null) {
 			if (Logger.logError()) {
@@ -105,22 +105,31 @@ public class Scoring extends AndamaChain {
 				new ScoringTransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
 				new ScoringTransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				new ScoringReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new ScoringMappingFilter(this.threadPool.getThreadGroup(), getSettings(), finder);
+				// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
+				// getSettings(), finder);
 				new ScoringCandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
-				new ScoringFilterMux(this.threadPool.getThreadGroup(), getSettings());
-				new ScoringMappingMux(this.threadPool.getThreadGroup(), getSettings());
-				new ScoringMapScoreMux(this.threadPool.getThreadGroup(), getSettings());
+				// new ScoringFilterMux(this.threadPool.getThreadGroup(),
+				// getSettings());
+				// new ScoringMappingMux(this.threadPool.getThreadGroup(),
+				// getSettings());
+				// new ScoringMapScoreMux(this.threadPool.getThreadGroup(),
+				// getSettings());
 				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new ScoringMappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
+				// new ScoringMappingProcessor(this.threadPool.getThreadGroup(),
+				// getSettings(), finder);
 				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				ScoringSplitter splitter = new ScoringSplitter(this.threadPool.getThreadGroup(), getSettings(), finder,
-				                                               persistenceUtil);
-				ScoringFilterPersister persister = new ScoringFilterPersister(this.threadPool.getThreadGroup(),
-				                                                              getSettings(), persistenceUtil);
-				new ScoringMappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				// ScoringSplitter splitter = new
+				// ScoringSplitter(this.threadPool.getThreadGroup(),
+				// getSettings(), finder,
+				// persistenceUtil);
+				// ScoringFilterPersister persister = new
+				// ScoringFilterPersister(this.threadPool.getThreadGroup(),
+				// getSettings(), persistenceUtil);
+				// new ScoringMappingPersister(this.threadPool.getThreadGroup(),
+				// getSettings(), persistenceUtil);
 				
-				splitter.waitFor(persister);
-			} catch (UninitializedDatabaseException e) {
+				// splitter.waitFor(persister);
+			} catch (final UninitializedDatabaseException e) {
 				
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);

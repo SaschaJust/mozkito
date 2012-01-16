@@ -50,6 +50,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -78,32 +79,32 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 */
 	private static final long     serialVersionUID  = 3241584366125944268L;
-	private long                  id                = -1l;
+	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
 	private String                category;
 	private SortedSet<Comment>    comments          = new TreeSet<Comment>(new CommentComparator());
-	private String                description;
-	private Severity              severity          = Severity.UNKNOWN;
-	private Priority              priority          = Priority.UNKNOWN;
-	private Resolution            resolution        = Resolution.UNKNOWN;
-	private String                subject;
-	private SortedSet<Long>       siblings          = new TreeSet<Long>();
-	private History               history;
-	private Status                status            = Status.UNKNOWN;
-	private Type                  type              = Type.UNKNOWN;
-	private DateTime              creationTimestamp;
-	private DateTime              resolutionTimestamp;
-	private DateTime              lastUpdateTimestamp;
-	private DateTime              lastFetch;
-	private String                version;
-	private String                summary;
 	private String                component;
-	private String                product;
+	private DateTime              creationTimestamp;
+	private String                description;
 	private byte[]                hash              = new byte[33];
-	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
+	private History               history;
+	private long                  id                = -1l;
+	private DateTime              lastFetch;
+	private DateTime              lastUpdateTimestamp;
 	// assignedTo
 	// submitter
 	// resolver
 	private PersonContainer       personContainer   = new PersonContainer();
+	private Priority              priority          = Priority.UNKNOWN;
+	private String                product;
+	private Resolution            resolution        = Resolution.UNKNOWN;
+	private DateTime              resolutionTimestamp;
+	private Severity              severity          = Severity.UNKNOWN;
+	private SortedSet<Long>       siblings          = new TreeSet<Long>();
+	private Status                status            = Status.UNKNOWN;
+	private String                subject;
+	private String                summary;
+	private Type                  type              = Type.UNKNOWN;
+	private String                version;
 	
 	private Report() {
 		super();
@@ -135,9 +136,11 @@ public class Report implements Annotated, Comparable<Report> {
 	public boolean addComment(@NotNull final Comment comment) {
 		Condition.notNull(getComments(),
 		                  "The container holding the comments must be initialized before adding a comment to the report.");
+		CollectionCondition.notContains(getComments(), comment,
+		                                "The comment with id %d is already contained in the report.", comment.getId());
 		
-		SortedSet<Comment> comments = getComments();
-		boolean ret = comments.add(comment);
+		final SortedSet<Comment> comments = getComments();
+		final boolean ret = comments.add(comment);
 		setComments(comments);
 		comment.setBugReport(this);
 		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
@@ -151,8 +154,8 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
 		Condition.notNull(getHistory(), "The history handler must not be null when adding a history element.");
-		History history = getHistory();
-		boolean ret = history.add(historyElement);
+		final History history = getHistory();
+		final boolean ret = history.add(historyElement);
 		setHistory(history);
 		historyElement.setBugId(getId());
 		return ret;
@@ -165,15 +168,15 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public boolean addSibling(@NotNull final Long sibling) {
 		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
-		SortedSet<Long> siblings = getSiblings();
-		boolean ret = siblings.add(sibling);
+		final SortedSet<Long> siblings = getSiblings();
+		final boolean ret = siblings.add(sibling);
 		setSiblings(siblings);
 		return ret;
 	}
 	
 	@Override
 	protected Report clone() throws CloneNotSupportedException {
-		Report report = new Report();
+		final Report report = new Report();
 		report.setCategory(getCategory());
 		report.setComments(getComments());
 		report.setDescription(getDescription());
@@ -227,7 +230,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public List<AttachmentEntry> getAttachmentEntries() {
-		return attachmentEntries;
+		return this.attachmentEntries;
 	}
 	
 	/**
@@ -235,7 +238,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getCategory() {
-		return category;
+		return this.category;
 	}
 	
 	/**
@@ -244,7 +247,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@OrderBy
 	@ManyToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public SortedSet<Comment> getComments() {
-		return comments;
+		return this.comments;
 	}
 	
 	/**
@@ -252,7 +255,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getComponent() {
-		return component;
+		return this.component;
 	}
 	
 	/**
@@ -272,7 +275,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getCreationTimestamp() {
-		return creationTimestamp;
+		return this.creationTimestamp;
 	}
 	
 	/**
@@ -282,26 +285,26 @@ public class Report implements Annotated, Comparable<Report> {
 	@Lob
 	@Column (columnDefinition = "TEXT")
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 	
 	public Object getField(final String lowerFieldName) {
-		Method[] methods = this.getClass().getDeclaredMethods();
-		String getter = "get" + lowerFieldName;
+		final Method[] methods = this.getClass().getDeclaredMethods();
+		final String getter = "get" + lowerFieldName;
 		
-		for (Method method : methods) {
+		for (final Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter)) {
 				try {
 					return method.invoke(this);
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
-				} catch (InvocationTargetException e) {
+				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
@@ -321,7 +324,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public byte[] getHash() {
-		return hash;
+		return this.hash;
 	}
 	
 	/**
@@ -329,7 +332,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public History getHistory() {
-		return history;
+		return this.history;
 	}
 	
 	/**
@@ -337,7 +340,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Id
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -345,7 +348,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getLastFetch() {
-		return lastFetch;
+		return this.lastFetch;
 	}
 	
 	/**
@@ -377,7 +380,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getLastUpdateTimestamp() {
-		return lastUpdateTimestamp;
+		return this.lastUpdateTimestamp;
 	}
 	
 	/**
@@ -385,7 +388,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public PersonContainer getPersonContainer() {
-		return personContainer;
+		return this.personContainer;
 	}
 	
 	/**
@@ -393,7 +396,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Priority getPriority() {
-		return priority;
+		return this.priority;
 	}
 	
 	/**
@@ -401,7 +404,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getProduct() {
-		return product;
+		return this.product;
 	}
 	
 	/**
@@ -409,7 +412,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Resolution getResolution() {
-		return resolution;
+		return this.resolution;
 	}
 	
 	/**
@@ -429,7 +432,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public DateTime getResolutionTimestamp() {
-		return resolutionTimestamp;
+		return this.resolutionTimestamp;
 	}
 	
 	/**
@@ -446,7 +449,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Severity getSeverity() {
-		return severity;
+		return this.severity;
 	}
 	
 	/**
@@ -455,7 +458,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@ElementCollection
 	@OrderBy
 	public SortedSet<Long> getSiblings() {
-		return siblings;
+		return this.siblings;
 	}
 	
 	/**
@@ -463,7 +466,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Status getStatus() {
-		return status;
+		return this.status;
 	}
 	
 	/**
@@ -473,7 +476,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@Lob
 	@Column (columnDefinition = "TEXT")
 	public String getSubject() {
-		return subject;
+		return this.subject;
 	}
 	
 	/**
@@ -492,7 +495,7 @@ public class Report implements Annotated, Comparable<Report> {
 	@Lob
 	@Column (columnDefinition = "TEXT")
 	public String getSummary() {
-		return summary;
+		return this.summary;
 	}
 	
 	/**
@@ -500,7 +503,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Enumerated (EnumType.ORDINAL)
 	public Type getType() {
-		return type;
+		return this.type;
 	}
 	
 	/**
@@ -508,7 +511,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	public String getVersion() {
-		return version;
+		return this.version;
 	}
 	
 	/**
@@ -583,24 +586,24 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public void setField(final String fieldName,
 	                     final Object fieldValue) {
-		String lowerFieldName = fieldName.toLowerCase();
-		Method[] methods = this.getClass().getDeclaredMethods();
-		String getter = "set" + lowerFieldName;
+		final String lowerFieldName = fieldName.toLowerCase();
+		final Method[] methods = this.getClass().getDeclaredMethods();
+		final String getter = "set" + lowerFieldName;
 		
-		for (Method method : methods) {
+		for (final Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
 			        && ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
 				try {
 					method.invoke(this, fieldValue);
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
-				} catch (InvocationTargetException e) {
+				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
@@ -806,17 +809,17 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public Collection<Report> timewarp(final Interval interval,
 	                                   final String field) {
-		LinkedList<Report> reports = new LinkedList<Report>();
+		final LinkedList<Report> reports = new LinkedList<Report>();
 		Report report = timewarp(interval.getEnd());
 		
-		History history = report.getHistory().get(field);
+		final History history = report.getHistory().get(field);
 		
-		LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
-		ListIterator<HistoryElement> iterator = list.listIterator(list.size());
+		final LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
+		final ListIterator<HistoryElement> iterator = list.listIterator(list.size());
 		while (iterator.hasPrevious()) {
-			HistoryElement element = iterator.previous();
+			final HistoryElement element = iterator.previous();
 			if (interval.contains(element.getTimestamp())) {
-				History historyPatch = new History(getId());
+				final History historyPatch = new History(getId());
 				historyPatch.add(element);
 				reports.add(report = historyPatch.rollback(report, element.getTimestamp()));
 			} else {
@@ -837,7 +840,7 @@ public class Report implements Annotated, Comparable<Report> {
 		String hash;
 		try {
 			hash = JavaUtils.byteArrayToHexString(getHash());
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
