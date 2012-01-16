@@ -313,7 +313,9 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected final String truncate(final String string) {
-		return string.substring(0, Math.min(string.length() - 1, 254));
+		return string != null
+		                     ? string.substring(0, Math.min(string.length() - 1, 254))
+		                     : "";
 	}
 	
 }
