@@ -54,7 +54,7 @@ public class MappableEnhancedReport extends MappableEntity {
 	 */
 	public MappableEnhancedReport(final EnhancedReport report) {
 		super();
-		this.setReport(report);
+		setReport(report);
 	}
 	
 	/*
@@ -70,9 +70,9 @@ public class MappableEnhancedReport extends MappableEntity {
 			case BODY:
 				return getReport().getDescription();
 			case CHANGER:
-				Set<Person> persons = new HashSet<Person>();
+				final Set<Person> persons = new HashSet<Person>();
 				
-				Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
+				final Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
 				
 				while (iterator.hasNext()) {
 					persons.add(iterator.next().getAuthor());
@@ -117,7 +117,7 @@ public class MappableEnhancedReport extends MappableEntity {
 			case COMMENT:
 				if (getReport().getComments().size() > index) {
 					
-					Iterator<Comment> iterator = getReport().getComments().iterator();
+					final Iterator<Comment> iterator = getReport().getComments().iterator();
 					Comment comment = null;
 					
 					for (int i = 0; i <= index; ++i) {
@@ -129,15 +129,15 @@ public class MappableEnhancedReport extends MappableEntity {
 					return null;
 				}
 			case CHANGER:
-				Set<Person> persons = new HashSet<Person>();
+				final Set<Person> persons = new HashSet<Person>();
 				
-				Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
+				final Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
 				
 				while (iterator.hasNext()) {
 					persons.add(iterator.next().getAuthor());
 				}
 				
-				Iterator<Person> iterator2 = persons.iterator();
+				final Iterator<Person> iterator2 = persons.iterator();
 				Person person = null;
 				
 				for (int i = 0; i <= index; ++i) {
@@ -163,6 +163,11 @@ public class MappableEnhancedReport extends MappableEntity {
 		return Report.class;
 	}
 	
+	@Override
+	public String getId() {
+		return getReport().getId() + "";
+	}
+	
 	/**
 	 * @return
 	 */
@@ -177,13 +182,13 @@ public class MappableEnhancedReport extends MappableEntity {
 	 */
 	@Override
 	public String getText() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append(getReport().getSubject()).append(FileUtils.lineSeparator);
 		builder.append(getReport().getSummary()).append(FileUtils.lineSeparator);
 		builder.append(getReport().getDescription()).append(FileUtils.lineSeparator);
 		
-		for (Comment comment : getReport().getComments()) {
+		for (final Comment comment : getReport().getComments()) {
 			builder.append(comment.getMessage()).append(FileUtils.lineSeparator);;
 		}
 		

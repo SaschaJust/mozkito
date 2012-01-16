@@ -143,7 +143,7 @@ public class MappableTransaction extends MappableEntity {
 	 */
 	@Transient
 	public RCSFile getFile(@NotNegative final int index) {
-		Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
+		final Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
 		
 		if (changedFiles.size() > index) {
 			return (RCSFile) CollectionUtils.get(changedFiles, index);
@@ -155,6 +155,7 @@ public class MappableTransaction extends MappableEntity {
 	/**
 	 * @return
 	 */
+	@Override
 	@Transient
 	public String getId() {
 		return getTransaction().getId();

@@ -82,9 +82,9 @@ public class MappableReport extends MappableEntity implements Annotated {
 			case BODY:
 				return getReport().getDescription();
 			case CHANGER:
-				Set<Person> persons = new HashSet<Person>();
+				final Set<Person> persons = new HashSet<Person>();
 				
-				Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
+				final Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
 				
 				while (iterator.hasNext()) {
 					persons.add(iterator.next().getAuthor());
@@ -130,7 +130,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 			case COMMENT:
 				if (getReport().getComments().size() > index) {
 					
-					Iterator<Comment> iterator = getReport().getComments().iterator();
+					final Iterator<Comment> iterator = getReport().getComments().iterator();
 					Comment comment = null;
 					
 					for (int i = 0; i <= index; ++i) {
@@ -142,15 +142,15 @@ public class MappableReport extends MappableEntity implements Annotated {
 					return null;
 				}
 			case CHANGER:
-				Set<Person> persons = new HashSet<Person>();
+				final Set<Person> persons = new HashSet<Person>();
 				
-				Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
+				final Iterator<HistoryElement> iterator = getReport().getHistory().getElements().iterator();
 				
 				while (iterator.hasNext()) {
 					persons.add(iterator.next().getAuthor());
 				}
 				
-				Iterator<Person> iterator2 = persons.iterator();
+				final Iterator<Person> iterator2 = persons.iterator();
 				Person person = null;
 				
 				for (int i = 0; i <= index; ++i) {
@@ -186,6 +186,11 @@ public class MappableReport extends MappableEntity implements Annotated {
 		return getReport().getDescription();
 	}
 	
+	@Override
+	public String getId() {
+		return getReport().getId() + "";
+	}
+	
 	/**
 	 * @return the report
 	 */
@@ -202,13 +207,13 @@ public class MappableReport extends MappableEntity implements Annotated {
 	@Override
 	@Transient
 	public String getText() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append(getReport().getSubject()).append(FileUtils.lineSeparator);
 		builder.append(getReport().getSummary()).append(FileUtils.lineSeparator);
 		builder.append(getReport().getDescription()).append(FileUtils.lineSeparator);
 		
-		for (Comment comment : getReport().getComments()) {
+		for (final Comment comment : getReport().getComments()) {
 			builder.append(comment.getMessage()).append(FileUtils.lineSeparator);;
 		}
 		

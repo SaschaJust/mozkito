@@ -83,23 +83,13 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Transient
 	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
-		Map<FieldKey, Object> ret = new HashMap<FieldKey, Object>();
+		final Map<FieldKey, Object> ret = new HashMap<FieldKey, Object>();
 		
-		for (FieldKey key : keys) {
+		for (final FieldKey key : keys) {
 			ret.put(key, get(key));
 		}
 		
 		return ret;
-	}
-	
-	@Basic
-	@Access (AccessType.PROPERTY)
-	public int getTest() {
-		return this.test;
-	}
-	
-	public void setTest(int test) {
-		this.test = test;
 	}
 	
 	/**
@@ -110,7 +100,7 @@ public abstract class MappableEntity implements Annotated {
 	public Object getAny(final FieldKey... keys) {
 		Object ret = null;
 		
-		for (FieldKey key : keys) {
+		for (final FieldKey key : keys) {
 			ret = get(key);
 			if (ret != null) {
 				return ret;
@@ -126,10 +116,10 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Transient
 	public String getAsOneString(final FieldKey... keys) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		Object o = null;
 		
-		for (FieldKey key : keys) {
+		for (final FieldKey key : keys) {
 			if ((o = get(key)) != null) {
 				builder.append(o.toString());
 				builder.append(FileUtils.lineSeparator);
@@ -163,16 +153,25 @@ public abstract class MappableEntity implements Annotated {
 		return this.getClass().getSimpleName();
 	}
 	
+	@Transient
+	public abstract String getId();
+	
 	/**
 	 * @param key
 	 * @return
 	 */
 	@Transient
 	public int getSize(final FieldKey key) {
-		Object o = get(key);
+		final Object o = get(key);
 		return o != null
 		                ? CollectionUtils.size(o)
 		                : -1;
+	}
+	
+	@Basic
+	@Access (AccessType.PROPERTY)
+	public int getTest() {
+		return this.test;
 	}
 	
 	/**
@@ -187,6 +186,10 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	public final void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
+	}
+	
+	public void setTest(final int test) {
+		this.test = test;
 	}
 	
 	/**
