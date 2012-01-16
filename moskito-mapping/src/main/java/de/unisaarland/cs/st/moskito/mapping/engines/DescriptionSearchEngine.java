@@ -77,24 +77,26 @@ public class DescriptionSearchEngine extends SearchEngine {
 			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer());
 			final Query query = buildQuery(fromBody, this.parser);
 			
-			final LuceneStorage luceneStorage = getStorage();
-			final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
-			if (indexSearcher != null) {
-				final TopDocs topDocs = indexSearcher.search(query, null, 1000);
-				
-				if (topDocs != null) {
-					final ScoreDoc[] hits = topDocs.scoreDocs;
-					// Iterate through the results:
-					for (final ScoreDoc hit : hits) {
-						final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-						final String bugId = hitDoc.get("bugid");
-						
-						if (bugId.compareTo(toId) == 0) {
-							score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody),
-							                 truncate(query.toString()), FieldKey.BODY.name(),
-							                 truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
-							                 this.getClass());
-							break;
+			if (query != null) {
+				final LuceneStorage luceneStorage = getStorage();
+				final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
+				if (indexSearcher != null) {
+					final TopDocs topDocs = indexSearcher.search(query, null, 1000);
+					
+					if (topDocs != null) {
+						final ScoreDoc[] hits = topDocs.scoreDocs;
+						// Iterate through the results:
+						for (final ScoreDoc hit : hits) {
+							final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
+							final String bugId = hitDoc.get("bugid");
+							
+							if (bugId.compareTo(toId) == 0) {
+								score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody),
+								                 truncate(query.toString()), FieldKey.BODY.name(),
+								                 truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
+								                 this.getClass());
+								break;
+							}
 						}
 					}
 				}
