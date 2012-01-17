@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class CoreChangeGenealogyTest extends TestEnvironment {

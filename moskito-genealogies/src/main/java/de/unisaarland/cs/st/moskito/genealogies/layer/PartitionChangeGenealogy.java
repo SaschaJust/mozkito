@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
-import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
@@ -194,11 +194,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	@Override
 	public int inDegree(Collection<JavaChangeOperation> node) {
-		int numEdges = 0;
-		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, GenealogyEdgeType.values())) {
-			numEdges += this.getEdges(dependant, node).size();
-		}
-		return numEdges;
+		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
@@ -212,11 +208,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	@Override
 	public int outDegree(Collection<JavaChangeOperation> node) {
-		int numEdges = 0;
-		for (Collection<JavaChangeOperation> parent : this.getParents(node, GenealogyEdgeType.values())) {
-			numEdges += this.getEdges(node, parent).size();
-		}
-		return numEdges;
+		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override

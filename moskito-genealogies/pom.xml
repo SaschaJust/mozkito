@@ -21,6 +21,11 @@
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>moskito-rcs</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
 			<version>1.5.M02</version>
@@ -74,6 +79,16 @@
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-3d-demos</artifactId>
 			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-neo4j-graph</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop</groupId>
+			<artifactId>gremlin</artifactId>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 

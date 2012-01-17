@@ -26,9 +26,9 @@ import org.junit.Ignore;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -77,7 +77,8 @@ public class TestEnvironment {
 	}
 	
 	public static void setup() {
-		
+		//TODO replace by setup using compressed genealogy directory.
+		//TODO this setup should be a net test
 		transactionMap.clear();
 		environmentOperations.clear();
 		environmentTransactions.clear();
@@ -293,9 +294,10 @@ public class TestEnvironment {
 		//done everything is set.
 		persistenceUtil.commitTransaction();
 		
-		tmpGraphDBFile = FileUtils.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
-		
+		tmpGraphDBFile = FileUtils.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.KEEP);
+		System.out.println(tmpGraphDBFile.getAbsolutePath());
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, getPersistenceUtil());
+		
 		assertTrue(changeGenealogy != null);
 		
 		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {

@@ -106,11 +106,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public int inDegree(RCSTransaction node) {
-		int numEdges = 0;
-		for(RCSTransaction dependant : this.getDependants(node, GenealogyEdgeType.values())){
-			numEdges += this.getEdges(dependant,node).size();
-		}
-		return numEdges;
+		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
@@ -124,11 +120,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public int outDegree(RCSTransaction node) {
-		int numEdges = 0;
-		for(RCSTransaction parent : this.getParents(node, GenealogyEdgeType.values())){
-			numEdges += this.getEdges(node, parent).size();
-		}
-		return numEdges;
+		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
