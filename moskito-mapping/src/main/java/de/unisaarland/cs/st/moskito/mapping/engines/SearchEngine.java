@@ -115,9 +115,8 @@ public abstract class SearchEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments,
-	                     final boolean isRequired) {
-		super.register(settings, arguments, isEnabled());
+	                     final AndamaArgumentSet arguments) {
+		super.register(settings, arguments);
 		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
 		                   true);
 		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);

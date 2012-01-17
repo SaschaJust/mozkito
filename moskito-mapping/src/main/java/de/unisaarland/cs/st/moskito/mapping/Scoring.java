@@ -46,7 +46,7 @@ public class Scoring extends AndamaChain {
 		final MappingSettings settings = getSettings();
 		this.databaseArguments = settings.setDatabaseArgs(true, "mapping");
 		this.logSettings = settings.setLoggerArg(true);
-		this.mappingArguments = settings.setMappingArgs(true);
+		this.mappingArguments = settings.setMappingArgs(this, true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
 		                    false);
 		new LongArgument(settings, "cache.size",

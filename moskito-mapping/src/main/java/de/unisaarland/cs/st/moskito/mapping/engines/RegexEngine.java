@@ -401,9 +401,8 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments,
-	                     final boolean isRequired) {
-		super.register(settings, arguments, isRequired);
+	                     final AndamaArgumentSet arguments) {
+		super.register(settings, arguments);
 		registerURIOption(settings, arguments, "file",
 		                  "URI to file containing the regular expressions used to map the IDs.", null, true);
 	}

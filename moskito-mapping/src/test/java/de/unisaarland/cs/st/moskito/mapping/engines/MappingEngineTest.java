@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Properties;
 
+import net.ownhero.dev.andama.model.AndamaChain;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -109,7 +111,14 @@ public class MappingEngineTest {
 		System.setProperties(properties);
 		
 		this.settings = new MappingSettings();
-		this.arguments = new MappingArguments(this.settings, true);
+		this.arguments = new MappingArguments(new AndamaChain(this.settings) {
+			
+			@Override
+			public void setup() {
+				// TODO Auto-generated method stub
+				
+			}
+		}, this.settings, true);
 		this.settings.parseArguments();
 		
 		score = new MapScore(mappableReport, mappableTransaction);
@@ -120,7 +129,7 @@ public class MappingEngineTest {
 		final BackrefEngine engine = new BackrefEngine();
 		System.err.println(this.settings.toString());
 		
-		engine.register(this.settings, this.arguments, true);
+		engine.register(this.settings, this.arguments);
 		engine.init();
 		
 		engine.score(mappableReport, mappableTransaction, score);

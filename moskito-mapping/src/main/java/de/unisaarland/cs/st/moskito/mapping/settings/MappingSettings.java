@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
+import net.ownhero.dev.andama.model.AndamaChain;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
 /**
@@ -27,8 +28,9 @@ public class MappingSettings extends TrackerSettings {
 	 * @param isRequired
 	 * @return
 	 */
-	public MappingArguments setMappingArgs(final boolean isRequired) {
-		MappingArguments mappingArguments = new MappingArguments(this, isRequired);
+	public MappingArguments setMappingArgs(final AndamaChain chain,
+	                                       final boolean isRequired) {
+		final MappingArguments mappingArguments = new MappingArguments(chain, this, isRequired);
 		return mappingArguments;
 	}
 	
