@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
@@ -74,9 +73,9 @@ public class EssentialChangeEngine extends MappingEngine {
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
 		// TODO register further config options if you need some
-		registerOption(settings, arguments, "confidence",
-		               "Confidence that is used if the changes done in the transaction arent essential.",
-		               this.confidence + "", true, DoubleArgument.class);
+		registerDoubleOption(settings, arguments, "confidence",
+		                     "Confidence that is used if the changes done in the transaction arent essential.",
+		                     this.confidence + "", true);
 	}
 	
 	/*

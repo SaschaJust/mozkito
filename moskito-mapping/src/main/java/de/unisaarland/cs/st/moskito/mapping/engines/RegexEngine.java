@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -405,9 +404,8 @@ public class RegexEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		registerOption(settings, arguments, "file",
-		               "URI to file containing the regular expressions used to map the IDs.", null, true,
-		               URIArgument.class);
+		registerURIOption(settings, arguments, "file",
+		                  "URI to file containing the regular expressions used to map the IDs.", null, true);
 	}
 	
 	/*

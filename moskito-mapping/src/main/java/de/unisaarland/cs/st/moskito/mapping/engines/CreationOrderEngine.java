@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.DoubleArgument;
 
 import org.joda.time.DateTime;
 
@@ -75,9 +74,9 @@ public class CreationOrderEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		registerOption(settings, arguments, "confidence",
-		               "Score in case the report was created after the transaction.",
-		               this.scoreReportCreatedAfterTransaction + "", true, DoubleArgument.class);
+		registerDoubleOption(settings, arguments, "confidence",
+		                     "Score in case the report was created after the transaction.",
+		                     this.scoreReportCreatedAfterTransaction + "", true);
 	}
 	
 	/*

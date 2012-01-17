@@ -17,8 +17,7 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.DoubleArgument;
-import net.ownhero.dev.andama.settings.EnumArgument;
+import net.ownhero.dev.ioda.JavaUtils;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -88,11 +87,10 @@ public class ReportTypeEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		registerOption(settings, arguments, "confidence",
-		               "Confidence that is used if the report isn't of the specified type.", "-1", true,
-		               DoubleArgument.class);
-		registerOption(settings, arguments, "type", "Type the report has to match, e.g. BUG.", null, true,
-		               EnumArgument.class);
+		registerDoubleOption(settings, arguments, "confidence",
+		                     "Confidence that is used if the report isn't of the specified type.", "-1", true);
+		registerEnumOption(settings, arguments, "type", "Type the report has to match, e.g. BUG.", null, true,
+		                   JavaUtils.enumToArray(Type.BUG));
 	}
 	
 	/*

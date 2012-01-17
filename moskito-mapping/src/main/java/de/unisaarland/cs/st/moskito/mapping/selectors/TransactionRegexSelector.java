@@ -21,7 +21,6 @@ import java.util.List;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -139,8 +138,8 @@ public class TransactionRegexSelector extends MappingSelector {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		registerOption(settings, arguments, "pattern", "Pattern of transaction ids to scan for.", "(\\d{2,})", true,
-		               StringArgument.class);
+		registerStringOption(settings, arguments, "pattern", "Pattern of transaction ids to scan for.", "(\\d{2,})",
+		                     true);
 	}
 	
 	/**

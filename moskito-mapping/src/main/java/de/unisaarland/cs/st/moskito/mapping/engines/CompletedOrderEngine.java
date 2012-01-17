@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.DoubleArgument;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -83,9 +82,9 @@ public class CompletedOrderEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		registerOption(settings, arguments, "confidence",
-		               "Score in case the report was resolved before the transaction.",
-		               this.scoreReportResolvedBeforeTransaction + "", true, DoubleArgument.class);
+		registerDoubleOption(settings, arguments, "confidence",
+		                     "Score in case the report was resolved before the transaction.",
+		                     this.scoreReportResolvedBeforeTransaction + "", true);
 	}
 	
 	/*

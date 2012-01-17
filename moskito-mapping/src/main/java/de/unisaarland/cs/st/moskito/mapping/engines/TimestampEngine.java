@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -142,11 +141,11 @@ public class TimestampEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		registerOption(settings,
-		               arguments,
-		               "confidence",
-		               "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		               "-0d 0h 10m 0s,+0d 2h 0m 0s", true, ListArgument.class);
+		registerListOption(settings,
+		                   arguments,
+		                   "confidence",
+		                   "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
+		                   "-0d 0h 10m 0s,+0d 2h 0m 0s", true);
 	}
 	
 	/*

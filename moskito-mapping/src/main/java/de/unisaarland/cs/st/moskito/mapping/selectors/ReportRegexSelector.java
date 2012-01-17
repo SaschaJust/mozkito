@@ -23,7 +23,6 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
@@ -136,8 +135,8 @@ public class ReportRegexSelector extends MappingSelector {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		registerOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})", true,
-		               StringArgument.class);
+		registerStringOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
+		                     true);
 	}
 	
 	/**

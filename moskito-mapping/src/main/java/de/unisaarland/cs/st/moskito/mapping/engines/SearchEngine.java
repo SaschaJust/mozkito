@@ -22,8 +22,6 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.LongArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -120,10 +118,9 @@ public abstract class SearchEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		registerOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3", true,
-		               LongArgument.class);
-		registerOption(settings, arguments, "language", "Language used for stemming.", "en:English", true,
-		               StringArgument.class);
+		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
+		                   true);
+		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);
 	}
 	
 	/*
