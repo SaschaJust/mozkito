@@ -16,15 +16,37 @@
 package net.ownhero.dev.andama.settings.registerable;
 
 import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.BooleanArgument;
+import net.ownhero.dev.andama.settings.DirectoryArgument;
+import net.ownhero.dev.andama.settings.DoubleArgument;
+import net.ownhero.dev.andama.settings.EnumArgument;
+import net.ownhero.dev.andama.settings.InputFileArgument;
 import net.ownhero.dev.andama.settings.ListArgument;
+import net.ownhero.dev.andama.settings.LongArgument;
+import net.ownhero.dev.andama.settings.MaskedStringArgument;
+import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.settings.URIArgument;
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.ArrayCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * Classes extending {@link Registered} can dynamically register config options
@@ -35,6 +57,26 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  * 
  */
 public abstract class Registered {
+	
+	private static String buildRegisteredList(final Collection<Class<? extends Registered>> registereds) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(FileUtils.lineSeparator);
+		
+		for (final Class<? extends Registered> registered : registereds) {
+			try {
+				builder.append('\t').append("  ").append(registered.getSimpleName()).append(": ")
+				       .append(registered.newInstance().getDescription());
+			} catch (final InstantiationException e) {
+			} catch (final IllegalAccessException e) {
+			}
+			
+			if (builder.length() != 0) {
+				builder.append(FileUtils.lineSeparator);
+			}
+		}
+		
+		return builder.toString();
+	}
 	
 	/**
 	 * @param clazz
@@ -92,15 +134,106 @@ public abstract class Registered {
 		        + " tries to register config option.");
 	}
 	
-	private boolean        initialized = false;
-	private boolean        registered  = false;
-	private AndamaSettings settings;
+	public static Set<? extends Registered> handleRegistered(final AndamaChain chain,
+	                                                         final AndamaSettings settings,
+	                                                         final AndamaArgumentSet arguments,
+	                                                         final String argumentName,
+	                                                         final Class<? extends Registered> superClass,
+	                                                         final boolean isRequired) {
+		final Set<Registered> registereds = new HashSet<Registered>();
+		
+		final Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
+		try {
+			registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(), superClass,
+			                                                              Modifier.ABSTRACT | Modifier.INTERFACE
+			                                                                      | Modifier.PRIVATE));
+		} catch (final Exception e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		for (final Class<? extends Registered> clazz : registeredClasses) {
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
+			builder.append(clazz.getSimpleName());
+		}
+		arguments.addArgument(new ListArgument(settings, chain.getName() + "." + argumentName, "A list of "
+		        + chain.getName() + " " + argumentName + "s that shall be used: "
+		        + buildRegisteredList(registeredClasses), builder.toString(), isRequired));
+		
+		final String registeredstring = System.getProperty(chain.getName() + "." + argumentName);
+		final Set<String> registeredNames = new HashSet<String>();
+		
+		if (registeredstring != null) {
+			for (final String registeredName : registeredstring.split(",")) {
+				registeredNames.add(superClass.getPackage().getName() + "." + registeredName);
+			}
+			
+		}
+		
+		for (final Class<? extends Registered> klass : registeredClasses) {
+			if (registeredNames.isEmpty() || registeredNames.contains(klass.getCanonicalName())) {
+				if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
+					if (Logger.logInfo()) {
+						Logger.info("Adding new " + klass.getSuperclass().getSimpleName() + " "
+						        + klass.getCanonicalName());
+					}
+					
+					try {
+						final Registered instance = klass.newInstance();
+						instance.register(settings, arguments);
+						instance.init();
+						registereds.add(instance);
+					} catch (final Exception e) {
+						
+						if (Logger.logWarn()) {
+							Logger.warn("Skipping registration of " + klass.getSimpleName() + " due to errors: "
+							        + e.getMessage());
+						}
+					}
+				}
+			} else {
+				if (Logger.logInfo()) {
+					Logger.info("Not loading available engine: " + klass.getSimpleName());
+				}
+			}
+		}
+		
+		return registereds;
+	}
+	
+	private boolean                                             initialized       = false;
+	
+	private boolean                                             registered        = false;
+	
+	private final Map<String, Tuple<String, AndamaArgument<?>>> registeredOptions = new HashMap<String, Tuple<String, AndamaArgument<?>>>();
+	
+	private AndamaSettings                                      settings;
 	
 	/**
 	 * 
 	 */
 	public Registered() {
 		super();
+	}
+	
+	/**
+	 * @param optionName
+	 * @param configString
+	 * @param argument
+	 * @return
+	 */
+	private boolean addOption(final String optionName,
+	                          final String configString,
+	                          final AndamaArgument<?> argument) {
+		if (!this.registeredOptions.containsKey(optionName)) {
+			this.registeredOptions.put(optionName, new Tuple<String, AndamaArgument<?>>(configString, argument));
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	final String deriveSettingsClassificationString(final Class<? extends AndamaSettings> settingsClass,
@@ -182,12 +315,20 @@ public abstract class Registered {
 	}
 	
 	/**
+	 * @param optionName
+	 * @return
+	 */
+	protected Tuple<String, AndamaArgument<?>> getOption(final String optionName) {
+		return this.registeredOptions.get(optionName);
+	}
+	
+	/**
 	 * @param settings
 	 * @param arguments
 	 * @param option
 	 * @return
 	 */
-	public final String getOptionName(final String option) {
+	final String getOptionName(final String option) {
 		final StringBuilder builder = new StringBuilder();
 		final Set<String> tokens = new HashSet<String>();
 		final String settingsName = deriveSettingsClassificationString(this.settings.getClass(), tokens, builder);
@@ -261,11 +402,298 @@ public abstract class Registered {
 	 */
 	@NoneNull
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments,
-	                     final boolean isRequired) {
+	                     final AndamaArgumentSet arguments) {
 		setSettings(settings);
 		setRegistered(true);
 	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerBooleanOption(@NotNull final AndamaSettings settings,
+	                                        @NotNull final AndamaArgumentSet arguments,
+	                                        @NotNull final String name,
+	                                        @NotNull final String description,
+	                                        final String defaultValue,
+	                                        @NotNull final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new BooleanArgument(settings, configString, description, defaultValue,
+		                                                       required && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerDirectoryOption(@NotNull final AndamaSettings settings,
+	                                          @NotNull final AndamaArgumentSet arguments,
+	                                          @NotNull final String name,
+	                                          @NotNull final String description,
+	                                          final String defaultValue,
+	                                          final boolean required,
+	                                          final boolean create) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new DirectoryArgument(settings, configString, description, defaultValue,
+		                                                         required && isEnabled(), create);
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerDoubleOption(@NotNull final AndamaSettings settings,
+	                                       @NotNull final AndamaArgumentSet arguments,
+	                                       @NotNull final String name,
+	                                       @NotNull final String description,
+	                                       final String defaultValue,
+	                                       final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new DoubleArgument(settings, configString, description, defaultValue,
+		                                                      required && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param defaultValue
+	 * @param description
+	 * @param required
+	 * @param type
+	 * @return
+	 */
+	protected boolean registerEnumOption(final AndamaSettings settings,
+	                                     final AndamaArgumentSet arguments,
+	                                     final String name,
+	                                     final String description,
+	                                     final String defaultValue,
+	                                     final boolean required,
+	                                     final String[] validValues) {
+		if (defaultValue != null) {
+			ArrayCondition.contains(validValues, defaultValue,
+			                        "Default value '%s' has to be contained in valid values array: ", defaultValue,
+			                        validValues);
+		}
+		
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new EnumArgument(settings, configString, description, defaultValue, required
+		        && isEnabled(), validValues);
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+		
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerInputFileOption(@NotNull final AndamaSettings settings,
+	                                          @NotNull final AndamaArgumentSet arguments,
+	                                          @NotNull final String name,
+	                                          @NotNull final String description,
+	                                          final String defaultValue,
+	                                          final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new InputFileArgument(settings, configString, description, defaultValue,
+		                                                         required && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @param create
+	 * @return
+	 */
+	protected boolean registerListOption(@NotNull final AndamaSettings settings,
+	                                     @NotNull final AndamaArgumentSet arguments,
+	                                     @NotNull final String name,
+	                                     @NotNull final String description,
+	                                     final String defaultValue,
+	                                     final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new ListArgument(settings, configString, description, defaultValue, required
+		        && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerLongOption(@NotNull final AndamaSettings settings,
+	                                     @NotNull final AndamaArgumentSet arguments,
+	                                     @NotNull final String name,
+	                                     @NotNull final String description,
+	                                     final String defaultValue,
+	                                     final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new LongArgument(settings, configString, description, defaultValue, required
+		        && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerMaskedStringOption(@NotNull final AndamaSettings settings,
+	                                             @NotNull final AndamaArgumentSet arguments,
+	                                             @NotNull final String name,
+	                                             @NotNull final String description,
+	                                             final String defaultValue,
+	                                             final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new MaskedStringArgument(settings, configString, description, defaultValue,
+		                                                            required && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerOutputFileOption(@NotNull final AndamaSettings settings,
+	                                           @NotNull final AndamaArgumentSet arguments,
+	                                           @NotNull final String name,
+	                                           @NotNull final String description,
+	                                           final String defaultValue,
+	                                           final boolean required,
+	                                           final boolean create) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new OutputFileArgument(settings, configString, description, defaultValue,
+		                                                          required && isEnabled(), create);
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerStringOption(@NotNull final AndamaSettings settings,
+	                                       @NotNull final AndamaArgumentSet arguments,
+	                                       @NotNull final String name,
+	                                       @NotNull final String description,
+	                                       final String defaultValue,
+	                                       final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new StringArgument(settings, configString, description, defaultValue,
+		                                                      required && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	/**
+	 * @param settings
+	 * @param arguments
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
+	protected boolean registerURIOption(@NotNull final AndamaSettings settings,
+	                                    @NotNull final AndamaArgumentSet arguments,
+	                                    @NotNull final String name,
+	                                    @NotNull final String description,
+	                                    final String defaultValue,
+	                                    final boolean required) {
+		final String configString = getOptionName(name);
+		final AndamaArgument<?> argument = new URIArgument(settings, configString, description, defaultValue, required
+		        && isEnabled());
+		addOption(name, configString, argument);
+		return arguments.addArgument(argument);
+	}
+	
+	// protected boolean registerOption(final AndamaSettings settings,
+	// final AndamaArgumentSet arguments,
+	// final String name,
+	// final String description,
+	// final String defaultValue,
+	// final boolean required,
+	// final Class<EnumArgument> type) {
+	// final Constructor<?>[] constructors = type.getConstructors();
+	// final LinkedList<Constructor<?>> validConstructors = new
+	// LinkedList<Constructor<?>>();
+	// for (final Constructor<?> constructor : constructors) {
+	// if (constructor.getParameterTypes().length >= 5) {
+	// validConstructors.add(constructor);
+	// }
+	// }
+	//
+	// final String configString = getOptionName(name);
+	// final Object[] initargs = new Object[] { settings, configString,
+	// description, defaultValue,
+	// required && isEnabled() };
+	// for (final Constructor<?> constructor : validConstructors) {
+	// try {
+	// final AndamaArgument<?> argument = (AndamaArgument<?>)
+	// constructor.newInstance(initargs);
+	// addOption(name, configString, argument);
+	// return arguments.addArgument(argument);
+	// } catch (final Exception e) {
+	// throw new UnrecoverableError(e);
+	// }
+	// }
+	//
+	// return false;
+	// }
 	
 	/**
 	 * @param initialized
