@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 

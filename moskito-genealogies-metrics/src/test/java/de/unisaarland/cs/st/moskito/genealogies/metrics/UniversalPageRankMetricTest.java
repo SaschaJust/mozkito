@@ -19,7 +19,7 @@ public class UniversalPageRankMetricTest extends TestEnvironment {
 		UniversalTestPageRankMetric metric = new UniversalTestPageRankMetric(genealogy);
 		Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
 		
-		Iterator<String> itemIter = genealogy.vertexSet();
+		Iterator<String> itemIter = genealogy.vertexSet().iterator();
 		while (itemIter.hasNext()) {
 			String item = itemIter.next();
 			metricValues.addAll(metric.handle(item, !itemIter.hasNext()));
