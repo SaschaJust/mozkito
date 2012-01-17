@@ -52,13 +52,16 @@ public class FileUtils {
 			
 			@Override
 			public void run() {
-				if (Logger.logInfo()) {
-					Logger.info("Deleting temporary files using shutdown hook.");
+				if (!fileManager.get(FileShutdownAction.DELETE).isEmpty()) {
+					if (Logger.logInfo()) {
+						Logger.info("Deleting " + fileManager.get(FileShutdownAction.DELETE).size()
+						        + " temporary files using shutdown hook.");
+					}
 				}
-				Set<File> filesToDelete = new HashSet<File>();
+				final Set<File> filesToDelete = new HashSet<File>();
 				if (fileManager.containsKey(FileShutdownAction.DELETE)) {
 					filesToDelete.addAll(fileManager.get(FileShutdownAction.DELETE));
-					for (File f : filesToDelete) {
+					for (final File f : filesToDelete) {
 						if (f.exists()) {
 							if (f.isDirectory()) {
 								try {
@@ -66,7 +69,7 @@ public class FileUtils {
 										Logger.debug("Deleting directory: " + f.getAbsolutePath());
 									}
 									deleteDirectory(f);
-								} catch (IOException e) {
+								} catch (final IOException e) {
 									if (Logger.logWarn()) {
 										Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
 									}
@@ -78,7 +81,7 @@ public class FileUtils {
 								if (!f.delete()) {
 									try {
 										FileUtils.forceDelete(f);
-									} catch (IOException e) {
+									} catch (final IOException e) {
 										if (Logger.logWarn()) {
 											Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
 										}
@@ -95,8 +98,7 @@ public class FileUtils {
 	public static final String                        fileSeparator     = System.getProperty("file.separator");
 	public static final String                        lineSeparator     = System.getProperty("line.separator");
 	public static final String                        pathSeparator     = System.getProperty("path.separator");
-	public static final File                          tmpDir            = org.apache.commons.io.FileUtils
-	                                                                            .getTempDirectory();
+	public static final File                          tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
 	
 	private static int                                MAX_PERM          = 0;
 	
@@ -115,7 +117,8 @@ public class FileUtils {
 	
 	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
 	
-	public static void addToFileManager(final File file, final FileShutdownAction shutdownAction) {
+	public static void addToFileManager(final File file,
+	                                    final FileShutdownAction shutdownAction) {
 		if (!fileManager.containsKey(shutdownAction)) {
 			fileManager.put(shutdownAction, new HashSet<File>());
 		}
@@ -127,27 +130,28 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean bunzip2(final File bzip2File, final File directory) {
+	public static boolean bunzip2(final File bzip2File,
+	                              final File directory) {
 		try {
 			ensureFilePermissions(bzip2File, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
 			
-			FileInputStream fis = new FileInputStream(bzip2File);
-			CBZip2InputStream zis = new CBZip2InputStream(fis);
+			final FileInputStream fis = new FileInputStream(bzip2File);
+			final CBZip2InputStream zis = new CBZip2InputStream(fis);
 			
-			int BUFFER = 2048;
-			byte[] buffer = new byte[BUFFER];
+			final int BUFFER = 2048;
+			final byte[] buffer = new byte[BUFFER];
 			String path = bzip2File.getName();
-			int i = path.lastIndexOf(".");
+			final int i = path.lastIndexOf(".");
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
 				// TODO error
 			}
 			
-			File outputFile = new File(path);
+			final File outputFile = new File(path);
 			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
 			
 			while ((zis.read(buffer)) != -1) {
 				stream.write(buffer);
@@ -156,12 +160,12 @@ public class FileUtils {
 			stream.flush();
 			stream.close();
 			zis.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -183,10 +187,10 @@ public class FileUtils {
 	@NoneNull
 	public static String checkExecutable(final String command) throws ExternalExecutableException {
 		if (command.startsWith(FileUtils.fileSeparator)
-		        || ((command.length() > 2 /* device char + ':' */+ FileUtils.fileSeparator.length())
+		        || ((command.length() > (2 /* device char + ':' */+ FileUtils.fileSeparator.length()))
 		                && (command.charAt(1) == ':') && command.substring(2).startsWith(FileUtils.fileSeparator))) {
 			// We got an absolute path here
-			File executable = new File(command);
+			final File executable = new File(command);
 			if (!executable.exists()) {
 				throw new ExternalExecutableException("File `" + command + "` does not exist.");
 			} else if (!executable.isFile()) {
@@ -201,11 +205,11 @@ public class FileUtils {
 			return command;
 		} else {
 			// relative path
-			String pathVariable = System.getenv("PATH");
-			String[] paths = pathVariable.split(":");
+			final String pathVariable = System.getenv("PATH");
+			final String[] paths = pathVariable.split(":");
 			File executable;
 			
-			for (String path : paths) {
+			for (final String path : paths) {
 				executable = new File(path + FileUtils.fileSeparator + command);
 				if (executable.exists() && executable.isFile() && executable.canExecute()) {
 					return executable.getAbsolutePath();
@@ -223,13 +227,14 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	@NoneNull
-	public static void copyFileToDirectory(final File srcFile, final File destDir,
-	        final FileShutdownAction shutdownAction) throws IOException {
+	public static void copyFileToDirectory(final File srcFile,
+	                                       final File destDir,
+	                                       final FileShutdownAction shutdownAction) throws IOException {
 		
 		org.apache.commons.io.FileUtils.copyFileToDirectory(srcFile, destDir);
 		
-		String filename = srcFile.getName();
-		File copiedFile = new File(destDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+		final String filename = srcFile.getName();
+		final File copiedFile = new File(destDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
 		if (!copiedFile.exists()) {
 			if (Logger.logWarn()) {
 				Logger.warn("Requested file copy operation (file " + srcFile.getAbsolutePath() + " into dir "
@@ -238,6 +243,18 @@ public class FileUtils {
 		} else {
 			addToFileManager(copiedFile, shutdownAction);
 		}
+	}
+	
+	/**
+	 * @param directory
+	 * @param shutdownAction
+	 * @return
+	 */
+	public static File createDir(final File directory,
+	                             final FileShutdownAction shutdownAction) {
+		final String dirName = directory.getAbsolutePath();
+		final int index = dirName.lastIndexOf(FileUtils.fileSeparator);
+		return createDir(new File(dirName.substring(0, index)), dirName.substring(index), shutdownAction);
 	}
 	
 	/**
@@ -252,18 +269,20 @@ public class FileUtils {
 	 * @return the file handle corresponding to the requested new directory if
 	 *         existed or created. <code>null</code> otherwise.
 	 */
-	public static File createDir(final File parentDir, final String name, final FileShutdownAction shutdownAction) {
+	public static File createDir(final File parentDir,
+	                             final String name,
+	                             final FileShutdownAction shutdownAction) {
 		
 		try {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return null;
 		}
 		
-		File newDir = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + name);
+		final File newDir = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + name);
 		if (newDir.exists()) {
 			if (newDir.isDirectory()) {
 				
@@ -298,17 +317,6 @@ public class FileUtils {
 	}
 	
 	/**
-	 * @param directory
-	 * @param shutdownAction
-	 * @return
-	 */
-	public static File createDir(final File directory, FileShutdownAction shutdownAction) {
-		String dirName = directory.getAbsolutePath();
-		int index = dirName.lastIndexOf(FileUtils.fileSeparator);
-		return createDir(new File(dirName.substring(0, index)), dirName.substring(index), shutdownAction);
-	}
-	
-	/**
 	 * Creates the random dir.
 	 * 
 	 * @param parentDir
@@ -319,11 +327,13 @@ public class FileUtils {
 	 *            the suffix
 	 * @return the file
 	 */
-	public static File createRandomDir(final File parentDir, final String prefix, final String suffix,
-	        final FileShutdownAction shutdownAction) {
+	public static File createRandomDir(final File parentDir,
+	                                   final String prefix,
+	                                   final String suffix,
+	                                   final FileShutdownAction shutdownAction) {
 		
 		try {
-			File file = File.createTempFile(prefix, suffix, parentDir);
+			final File file = File.createTempFile(prefix, suffix, parentDir);
 			if (!file.delete()) {
 				if (Logger.logError()) {
 					Logger.error("Could not delete random file `" + file.getAbsolutePath() + "`");
@@ -338,7 +348,7 @@ public class FileUtils {
 			}
 			addToFileManager(file, shutdownAction);
 			return file;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error("Could not create random file in `" + tmpDir.getAbsolutePath() + "`");
 			}
@@ -356,8 +366,9 @@ public class FileUtils {
 	 * @return the file
 	 */
 	public static File createRandomDir(final String prefix,
-	
-	final String suffix, final FileShutdownAction shutdownAction) {
+	                                   
+	                                   final String suffix,
+	                                   final FileShutdownAction shutdownAction) {
 		return createRandomDir(tmpDir, prefix, suffix, shutdownAction);
 		
 	}
@@ -369,10 +380,10 @@ public class FileUtils {
 	 */
 	public static File createRandomFile(final FileShutdownAction shutdownAction) {
 		try {
-			File file = File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
+			final File file = File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
 			addToFileManager(file, shutdownAction);
 			return file;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -399,8 +410,9 @@ public class FileUtils {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void dump(final byte[] data, final File file) throws IOException {
-		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+	public static void dump(final byte[] data,
+	                        final File file) throws IOException {
+		final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
 		stream.write(data);
 		stream.flush();
 		stream.close();
@@ -416,9 +428,10 @@ public class FileUtils {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public static void ensureFilePermissions(@NotNull final File file, int permissions) throws FilePermissionException {
+	public static void ensureFilePermissions(@NotNull final File file,
+	                                         int permissions) throws FilePermissionException {
 		CompareCondition.less(permissions, getMAX_PERM(),
-		        "Filepermission alias must be less then the maximum known alias bitmask.");
+		                      "Filepermission alias must be less then the maximum known alias bitmask.");
 		
 		if (((permissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
@@ -455,7 +468,7 @@ public class FileUtils {
 	public static List<String> fileToLines(final File file) {
 		try {
 			return org.apache.commons.io.FileUtils.readLines(file);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return null;
 		}
 	}
@@ -504,8 +517,9 @@ public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Iterator<File> getFileIterator(final File directory, final String[] extensions,
-	        final boolean recursive) throws IOException {
+	public static Iterator<File> getFileIterator(final File directory,
+	                                             final String[] extensions,
+	                                             final boolean recursive) throws IOException {
 		return org.apache.commons.io.FileUtils.iterateFiles(directory, extensions, recursive);
 	}
 	
@@ -523,8 +537,8 @@ public class FileUtils {
 	}
 	
 	public static Map<FileShutdownAction, Set<File>> getManagedOpenFiles() {
-		Map<FileShutdownAction, Set<File>> openFiles = new HashMap<FileShutdownAction, Set<File>>();
-		for (FileShutdownAction key : fileManager.keySet()) {
+		final Map<FileShutdownAction, Set<File>> openFiles = new HashMap<FileShutdownAction, Set<File>>();
+		for (final FileShutdownAction key : fileManager.keySet()) {
 			openFiles.put(key, new HashSet<File>(fileManager.get(key)));
 		}
 		return openFiles;
@@ -547,9 +561,10 @@ public class FileUtils {
 	 * @return the recursive directories
 	 */
 	public static List<File> getRecursiveDirectories(final File baseDirectory) {
-		List<File> list = new LinkedList<File>();
-		for (String subDirectoryPath : baseDirectory.list()) {
-			File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator + subDirectoryPath);
+		final List<File> list = new LinkedList<File>();
+		for (final String subDirectoryPath : baseDirectory.list()) {
+			final File subDirectory = new File(baseDirectory.getAbsolutePath() + FileUtils.fileSeparator
+			        + subDirectoryPath);
 			if (subDirectory.isDirectory() && subDirectory.canExecute() && subDirectory.canRead()) {
 				list.add(subDirectory);
 				list.addAll(getRecursiveDirectories(subDirectory));
@@ -580,7 +595,8 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir, final String name) {
+			public boolean accept(final File dir,
+			                      final String name) {
 				return false;
 			}
 		}, new IOFileFilter() {
@@ -591,7 +607,8 @@ public class FileUtils {
 			}
 			
 			@Override
-			public boolean accept(final File dir, final String name) {
+			public boolean accept(final File dir,
+			                      final String name) {
 				return true;
 			}
 			
@@ -603,26 +620,27 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean gunzip(final File gzipFile, final File directory) {
+	public static boolean gunzip(final File gzipFile,
+	                             final File directory) {
 		try {
 			ensureFilePermissions(gzipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
 			
-			FileInputStream fis = new FileInputStream(gzipFile);
-			GZIPInputStream zis = new GZIPInputStream(fis);
-			int BUFFER = 2048;
-			byte[] buffer = new byte[BUFFER];
+			final FileInputStream fis = new FileInputStream(gzipFile);
+			final GZIPInputStream zis = new GZIPInputStream(fis);
+			final int BUFFER = 2048;
+			final byte[] buffer = new byte[BUFFER];
 			String path = gzipFile.getName();
-			int i = path.lastIndexOf(".");
+			final int i = path.lastIndexOf(".");
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
 				// TODO error
 			}
 			
-			File outputFile = new File(path);
+			final File outputFile = new File(path);
 			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
 			
 			while ((zis.read(buffer)) != -1) {
 				stream.write(buffer);
@@ -631,12 +649,12 @@ public class FileUtils {
 			stream.flush();
 			stream.close();
 			zis.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -657,12 +675,14 @@ public class FileUtils {
 	 * @return the collection
 	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
-	public static Collection<File> listFiles(final File directory, final String[] extensions, final boolean recursive) {
+	public static Collection<File> listFiles(final File directory,
+	                                         final String[] extensions,
+	                                         final boolean recursive) {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
 	public static String permissionsToString(final File file) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		if (file.exists()) {
 			
@@ -693,7 +713,7 @@ public class FileUtils {
 	}
 	
 	private static void removeFromFileManager(final File file) {
-		for (FileShutdownAction key : fileManager.keySet()) {
+		for (final FileShutdownAction key : fileManager.keySet()) {
 			fileManager.get(key).remove(file);
 		}
 	}
@@ -703,26 +723,27 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean unlzma(final File lzmaFile, final File directory) {
+	public static boolean unlzma(final File lzmaFile,
+	                             final File directory) {
 		try {
 			ensureFilePermissions(lzmaFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
 			
-			int BUFFER = 2048;
-			FileInputStream fis = new FileInputStream(lzmaFile);
-			LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
-			byte[] buffer = new byte[BUFFER];
+			final int BUFFER = 2048;
+			final FileInputStream fis = new FileInputStream(lzmaFile);
+			final LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+			final byte[] buffer = new byte[BUFFER];
 			String path = lzmaFile.getName();
-			int i = path.lastIndexOf(".");
+			final int i = path.lastIndexOf(".");
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
 				// TODO error
 			}
 			
-			File outputFile = new File(path);
+			final File outputFile = new File(path);
 			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
 			
 			while ((zis.read(buffer)) != -1) {
 				stream.write(buffer);
@@ -731,12 +752,12 @@ public class FileUtils {
 			stream.flush();
 			stream.close();
 			zis.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -750,15 +771,16 @@ public class FileUtils {
 	 * @param directory
 	 * @return
 	 */
-	public static boolean untar(final File tarFile, final File directory) {
+	public static boolean untar(final File tarFile,
+	                            final File directory) {
 		try {
 			ensureFilePermissions(tarFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
 			
-			int BUFFER = 2048;
+			final int BUFFER = 2048;
 			BufferedOutputStream dest = null;
-			FileInputStream fis = new FileInputStream(tarFile);
-			TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
+			final FileInputStream fis = new FileInputStream(tarFile);
+			final TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
 			ArchiveEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
 				if (entry.isDirectory()) {
@@ -769,9 +791,9 @@ public class FileUtils {
 					Logger.debug("Extracting: " + entry);
 				}
 				int count;
-				byte data[] = new byte[BUFFER];
+				final byte data[] = new byte[BUFFER];
 				// write the files to the disk
-				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
 				        + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
@@ -781,12 +803,12 @@ public class FileUtils {
 				dest.close();
 			}
 			zis.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -805,15 +827,16 @@ public class FileUtils {
 	 * @return true on success, false otherwise
 	 */
 	@NoneNull
-	public static boolean unzip(final File zipFile, final File directory) {
+	public static boolean unzip(final File zipFile,
+	                            final File directory) {
 		try {
 			ensureFilePermissions(zipFile, READABLE_FILE);
 			ensureFilePermissions(directory, WRITABLE_DIR);
 			
-			int BUFFER = 2048;
+			final int BUFFER = 2048;
 			BufferedOutputStream dest = null;
-			FileInputStream fis = new FileInputStream(zipFile);
-			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			final FileInputStream fis = new FileInputStream(zipFile);
+			final ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
 			ZipEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
 				if (entry.isDirectory()) {
@@ -824,9 +847,9 @@ public class FileUtils {
 					Logger.debug("Extracting: " + entry);
 				}
 				int count;
-				byte data[] = new byte[BUFFER];
+				final byte data[] = new byte[BUFFER];
 				// write the files to the disk
-				FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
 				        + FileUtils.fileSeparator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
@@ -836,12 +859,12 @@ public class FileUtils {
 				dest.close();
 			}
 			zis.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return false;
-		} catch (FilePermissionException e) {
+		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
