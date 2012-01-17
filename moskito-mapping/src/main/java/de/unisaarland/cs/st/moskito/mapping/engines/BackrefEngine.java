@@ -61,7 +61,7 @@ public class BackrefEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setScoreBackRef((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
+		setScoreBackRef((Double) getOption("confidence").getSecond().getValue());
 	}
 	
 	/*
@@ -75,9 +75,8 @@ public class BackrefEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
-		                                         "Score for backreference in transaction and report.",
-		                                         this.scoreBackRef + "", isEnabled()));
+		registerOption(settings, arguments, "confidence", "Score for backreference in transaction and report.",
+		               this.scoreBackRef + "", true, DoubleArgument.class);
 	}
 	
 	/*

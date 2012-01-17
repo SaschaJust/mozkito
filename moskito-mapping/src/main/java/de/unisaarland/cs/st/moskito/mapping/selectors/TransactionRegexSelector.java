@@ -71,7 +71,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	@Override
 	public void init() {
 		super.init();
-		setPattern((String) getSettings().getSetting(getOptionName("pattern")).getValue());
+		setPattern((String) getOption("pattern").getSecond().getValue());
 	}
 	
 	/*
@@ -139,8 +139,8 @@ public class TransactionRegexSelector extends MappingSelector {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		                                         "Pattern of transaction ids to scan for.", "(\\d{2,})", isRequired));
+		registerOption(settings, arguments, "pattern", "Pattern of transaction ids to scan for.", "(\\d{2,})", true,
+		               StringArgument.class);
 	}
 	
 	/**

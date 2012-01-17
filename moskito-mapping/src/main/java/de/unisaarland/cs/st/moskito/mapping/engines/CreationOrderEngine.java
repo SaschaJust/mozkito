@@ -61,7 +61,7 @@ public class CreationOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		setScoreReportCreatedAfterTransaction((Double) getSettings().getSetting(getOptionName("confidence")).getValue());
+		setScoreReportCreatedAfterTransaction((Double) getOption("confidence").getSecond().getValue());
 	}
 	
 	/*
@@ -75,9 +75,9 @@ public class CreationOrderEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		arguments.addArgument(new DoubleArgument(settings, getOptionName("confidence"),
-		                                         "Score in case the report was created after the transaction.",
-		                                         this.scoreReportCreatedAfterTransaction + "", isEnabled()));
+		registerOption(settings, arguments, "confidence",
+		               "Score in case the report was created after the transaction.",
+		               this.scoreReportCreatedAfterTransaction + "", true, DoubleArgument.class);
 	}
 	
 	/*

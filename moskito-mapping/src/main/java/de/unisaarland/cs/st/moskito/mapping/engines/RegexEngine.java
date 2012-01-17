@@ -327,7 +327,7 @@ public class RegexEngine extends MappingEngine {
 	@Override
 	public void init() {
 		super.init();
-		setConfigPath((URI) getSettings().getSetting(getOptionName("file")).getValue());
+		setConfigPath((URI) getOption("file").getSecond().getValue());
 		setMatchers(new LinkedList<RegexEngine.Matcher>());
 		
 		if (!getConfigPath().getScheme().equalsIgnoreCase("file")) {
@@ -405,9 +405,9 @@ public class RegexEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new URIArgument(settings, getOptionName("file"),
-		                                      "URI to file containing the regular expressions used to map the IDs.",
-		                                      null, isEnabled()));
+		registerOption(settings, arguments, "file",
+		               "URI to file containing the regular expressions used to map the IDs.", null, true,
+		               URIArgument.class);
 	}
 	
 	/*

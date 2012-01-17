@@ -68,7 +68,7 @@ public class ReportRegexSelector extends MappingSelector {
 	@Override
 	public void init() {
 		super.init();
-		setPattern((String) getSettings().getSetting(getOptionName("pattern")).getValue());
+		setPattern((String) getOption("pattern").getSecond().getValue());
 	}
 	
 	/*
@@ -136,8 +136,8 @@ public class ReportRegexSelector extends MappingSelector {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isRequired);
-		arguments.addArgument(new StringArgument(settings, getOptionName("pattern"),
-		                                         "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})", isRequired));
+		registerOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})", true,
+		               StringArgument.class);
 	}
 	
 	/**

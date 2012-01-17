@@ -116,14 +116,6 @@ public class MappingEngineTest {
 	}
 	
 	@Test
-	public void test() {
-		final BackrefEngine engine = new BackrefEngine();
-		engine.setSettings(new MappingSettings());
-		final String name = engine.getOptionName("test");
-		System.err.println(name);
-	}
-	
-	@Test
 	public void testBackrefEngine() {
 		final BackrefEngine engine = new BackrefEngine();
 		System.err.println(this.settings.toString());

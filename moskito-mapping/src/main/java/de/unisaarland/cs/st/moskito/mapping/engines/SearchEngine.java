@@ -64,7 +64,7 @@ public abstract class SearchEngine extends MappingEngine {
 			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
 			
-			if (terms.size() < (Long) getSettings().getSetting(getOptionName("minTokens")).getValue()) {
+			if (terms.size() < (Long) getOption("minTokens").getSecond().getValue()) {
 				return null;
 			}
 		} catch (final ParseException e) {
@@ -93,7 +93,7 @@ public abstract class SearchEngine extends MappingEngine {
 		this.storage = getStorage(LuceneStorage.class);
 		
 		if (storage != null) {
-			final String value = (String) getSettings().getSetting(getOptionName("language")).getValue();
+			final String value = (String) getOption("language").getSecond().getValue();
 			final String[] split = value.split(":");
 			try {
 				if (this.storage.getAnalyzer() == null) {
@@ -120,11 +120,10 @@ public abstract class SearchEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		arguments.addArgument(new LongArgument(settings, getOptionName("minTokens"),
-		                                       "minimum number of tokens required for a search.", "3", isEnabled()));
-		arguments.addArgument(new StringArgument(settings, getOptionName("language"),
-		                                         "minimum number of tokens required for a search.", "en:English",
-		                                         isEnabled()));
+		registerOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3", true,
+		               LongArgument.class);
+		registerOption(settings, arguments, "language", "Language used for stemming.", "en:English", true,
+		               StringArgument.class);
 	}
 	
 	/*

@@ -74,9 +74,7 @@ public class TimestampEngine extends MappingEngine {
 	public void init() {
 		super.init();
 		@SuppressWarnings ("unchecked")
-		final List<String> list = new LinkedList<String>(
-		                                                 (Set<String>) getSettings().getSetting(getOptionName("confidence"))
-		                                                                            .getValue());
+		final List<String> list = new LinkedList<String>((Set<String>) getOption("confidence").getSecond().getValue());
 		CollectionCheck.minSize(list,
 		                        1,
 		                        "There are 1 to 2 values that have to be specified for a time interval to be valid. If only one is specified, the first one defaults to 0.");
@@ -144,11 +142,11 @@ public class TimestampEngine extends MappingEngine {
 	                     final AndamaArgumentSet arguments,
 	                     final boolean isRequired) {
 		super.register(settings, arguments, isEnabled());
-		arguments.addArgument(new ListArgument(
-		                                       settings,
-		                                       getOptionName("confidence"),
-		                                       "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                                       "-0d 0h 10m 0s,+0d 2h 0m 0s", isEnabled()));
+		registerOption(settings,
+		               arguments,
+		               "confidence",
+		               "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
+		               "-0d 0h 10m 0s,+0d 2h 0m 0s", true, ListArgument.class);
 	}
 	
 	/*
