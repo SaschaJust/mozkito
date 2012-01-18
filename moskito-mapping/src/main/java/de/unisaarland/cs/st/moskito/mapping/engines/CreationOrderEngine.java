@@ -89,14 +89,17 @@ public class CreationOrderEngine extends MappingEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
+		double confidence = 0d;
 		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
-			score.addFeature(getScoreReportCreatedAfterTransaction(), FieldKey.CREATION_TIMESTAMP.name(),
-			                 ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
-			                 ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
-			                 FieldKey.CREATION_TIMESTAMP.name(),
-			                 ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),
-			                 ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(), this.getClass());
+			confidence = getScoreReportCreatedAfterTransaction();
 		}
+		
+		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(),
+		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(), FieldKey.CREATION_TIMESTAMP.name(),
+		           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+		           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString());
+		
 	}
 	
 	/**

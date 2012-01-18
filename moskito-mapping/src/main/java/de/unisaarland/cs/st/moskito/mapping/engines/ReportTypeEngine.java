@@ -105,11 +105,10 @@ public class ReportTypeEngine extends MappingEngine {
 	                  final Mapping score) {
 		if (element1 instanceof MappableReport) {
 			if (element1.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), unused, unknown, unknown, FieldKey.TYPE.name(),
-				                 element1.get(FieldKey.TYPE).toString(), element1.get(FieldKey.TYPE).toString(),
-				                 this.getClass());
+				score.addFeature(getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
+				                 element1.get(FieldKey.TYPE).toString(), unused, unknown, unknown, this.getClass());
 			}
-		}
+		} else
 		
 		if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) != getType()) {
@@ -117,6 +116,8 @@ public class ReportTypeEngine extends MappingEngine {
 				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
 				                 this.getClass());
 			}
+		} else {
+			score.addFeature(0, unused, unknown, unknown, unused, unknown, unknown, this.getClass());
 		}
 		
 	}

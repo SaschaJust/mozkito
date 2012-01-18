@@ -68,6 +68,9 @@ public class CommentSearchEngine extends SearchEngine {
 	                  final Mapping score) {
 		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
 		                        to.getBaseType());
+		double confidence = 0d;
+		String toContent = null;
+		String toSubstring = null;
 		try {
 			final String fromBody = from.get(FieldKey.BODY).toString();
 			final String toId = to.get(FieldKey.ID).toString();
@@ -88,15 +91,17 @@ public class CommentSearchEngine extends SearchEngine {
 						final String bugId = hitDoc.get("bugid");
 						
 						if (bugId.compareTo(toId) == 0) {
-							score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody),
-							                 truncate(query.toString()), FieldKey.COMMENT.name(),
-							                 truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
-							                 this.getClass());
+							confidence = hit.score;
+							toContent = hitDoc.get("comment");
+							toSubstring = hitDoc.get("comment");
 							break;
 						}
 					}
 				}
 			}
+			
+			addFeature(score, confidence, FieldKey.BODY.name(), fromBody, query.toString(), FieldKey.COMMENT.name(),
+			           toContent, toSubstring);
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}

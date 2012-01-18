@@ -433,7 +433,7 @@ public class RegexEngine extends MappingEngine {
 				if (Logger.logDebug()) {
 					Logger.debug("Using regex '" + regex.getPattern() + "'.");
 				}
-				if (regex.find(element1.get(FieldKey.BODY).toString()) != null) {
+				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
 					
 					value += matcher.getScore();
 					relevantString = regex.getGroup("match");
@@ -441,12 +441,8 @@ public class RegexEngine extends MappingEngine {
 			}
 		}
 		
-		if (!relevantString.isEmpty()) {
-			score.addFeature(value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
-			                 FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID)
-			                                                                                   .toString(),
-			                 this.getClass());
-		}
+		addFeature(score, value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
+		           FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID).toString());
 	}
 	
 	/**

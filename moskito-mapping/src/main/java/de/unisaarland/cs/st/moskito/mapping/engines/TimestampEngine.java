@@ -188,11 +188,11 @@ public class TimestampEngine extends MappingEngine {
 				}
 			}
 			
-			score.addFeature(value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
-			                 element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
-			                 element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString(),
-			                 this.getClass());
 		}
+		
+		addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
+		           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
+		           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 	}
 	
 	/**

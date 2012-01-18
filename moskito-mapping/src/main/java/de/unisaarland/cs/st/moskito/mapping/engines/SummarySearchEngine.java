@@ -63,6 +63,10 @@ public class SummarySearchEngine extends SearchEngine {
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
 	                  final Mapping score) {
+		
+		double confidence = 0d;
+		String toContent = null;
+		String toSubstring = null;
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
 			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
@@ -80,15 +84,17 @@ public class SummarySearchEngine extends SearchEngine {
 						final Long bugId = Long.parseLong(hitDoc.get("bugid"));
 						
 						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) {
-							score.addFeature(hit.score, "message", truncate(element1.get(FieldKey.BODY).toString()),
-							                 truncate(element1.get(FieldKey.BODY).toString()), "summary",
-							                 truncate(element2.get(FieldKey.SUMMARY).toString()),
-							                 truncate(element2.get(FieldKey.SUMMARY).toString()), this.getClass());
+							confidence = hit.score;
+							toContent = element2.get(FieldKey.SUMMARY).toString();
+							toSubstring = element2.get(FieldKey.SUMMARY).toString();
+							
 							break;
 						}
 					}
 				}
 			}
+			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY),
+			           "summary", toContent, toSubstring);
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}

@@ -91,25 +91,12 @@ public class BackrefEngine extends MappingEngine {
 		final String fullText = element2.getText();
 		final String id = element1.get(FieldKey.ID).toString();
 		
+		double confidence = 0d;
 		if (fullText.contains(id.toString())) {
-			score.addFeature(getScoreBackRef(), FieldKey.ID.name(), id, id, "FULLTEXT", truncate(fullText),
-			                 truncate(fullText), this.getClass());
-			// } else {
-			// boolean found = false;
-			// for (Comment comment : report.getComments()) {
-			// if (comment.getMessage().contains(transaction.getId())) {
-			// found = true;
-			// score.addFeature(getScoreBackRef(), "id", transaction.getId(),
-			// "comment" + comment.getId()
-			// + ":message", truncate(comment.getMessage()), this.getClass());
-			// break;
-			// }
-			// }
-			// if (!found) {
-			// score.addFeature(0, "id", transaction.getId(), "report",
-			// "description|comments", this.getClass());
-			// }
+			confidence = getScoreBackRef();
+			
 		}
+		addFeature(score, confidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText);
 	}
 	
 	/**

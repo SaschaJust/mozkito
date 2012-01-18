@@ -99,19 +99,22 @@ public class CompletedOrderEngine extends MappingEngine {
 	                  final Mapping score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
+		double confidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			score.addFeature(getScoreReportResolvedBeforeTransaction(), FieldKey.CREATION_TIMESTAMP.name(),
-			                 transaction.getTimestamp().toString(), transaction.getTimestamp().toString(),
-			                 FieldKey.CREATION_TIMESTAMP.name(),
-			                 report.getResolution() != null
-			                                               ? report.getResolutionTimestamp().toString()
-			                                               : unknown,
-			                 report.getResolution() != null
-			                                               ? report.getResolutionTimestamp().toString()
-			                                               : unknown, this.getClass());
+			confidence = getScoreReportResolvedBeforeTransaction();
 		}
+		
+		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp().toString(),
+		           transaction.getTimestamp().toString(), FieldKey.CREATION_TIMESTAMP.name(),
+		           report.getResolution() != null
+		                                         ? report.getResolutionTimestamp().toString()
+		                                         : unknown,
+		           report.getResolution() != null
+		                                         ? report.getResolutionTimestamp().toString()
+		                                         : unknown);
+		
 	}
 	
 	/**
