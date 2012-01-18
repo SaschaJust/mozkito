@@ -17,7 +17,7 @@ package mapping;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.Scoring;
+import de.unisaarland.cs.st.moskito.mapping.MappingChain;
 
 /**
  * @author just
@@ -34,7 +34,7 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			Scoring scoring = new Scoring();
+			MappingChain scoring = new MappingChain();
 			scoring.setName(scoring.getClass().getSimpleName());
 			scoring.start();
 			scoring.join();

@@ -26,7 +26,7 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -57,12 +57,12 @@ public class SummarySearchEngine extends SearchEngine {
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
 			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);

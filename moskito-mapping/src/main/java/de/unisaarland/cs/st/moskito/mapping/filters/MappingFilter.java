@@ -19,7 +19,7 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
@@ -43,7 +43,7 @@ public abstract class MappingFilter extends Node {
 	 * @param score
 	 */
 	@NoneNull
-	public abstract Set<? extends MappingFilter> filter(final PersistentMapping mapping,
+	public abstract Set<? extends MappingFilter> filter(final Mapping mapping,
 	                                                    Set<? extends MappingFilter> triggeringFilters);
 	
 	/**

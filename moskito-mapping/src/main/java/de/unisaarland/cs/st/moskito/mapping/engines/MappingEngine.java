@@ -20,7 +20,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -59,11 +59,11 @@ public abstract class MappingEngine extends Node {
 	private final boolean      registered      = false;
 	
 	/**
-	 * Using this method, one can add features to a given {@link MapScore}. The
+	 * Using this method, one can add features to a given {@link Mapping}. The
 	 * given score will be manipulated using the values given.
 	 * 
 	 * @param score
-	 *            the {@link MapScore} a new feature shall be added
+	 *            the {@link Mapping} a new feature shall be added
 	 * @param confidence
 	 *            a confidence value representing the impact of the feature
 	 * @param fromFieldName
@@ -85,7 +85,7 @@ public abstract class MappingEngine extends Node {
 	 *            the particular substring of the field (see {@link FieldKey})
 	 *            of the "to" entity that caused this feature
 	 */
-	public final void addFeature(@NotNull final MapScore score,
+	public final void addFeature(@NotNull final Mapping score,
 	                             final double confidence,
 	                             @NotNull @NotEmpty final String fromFieldName,
 	                             final Object fromFieldContent,
@@ -127,13 +127,13 @@ public abstract class MappingEngine extends Node {
 	 * @param to
 	 *            the 'to' entity
 	 * @param score
-	 *            the actual {@link MapScore} that will be manipulated by this
+	 *            the actual {@link Mapping} that will be manipulated by this
 	 *            method
 	 */
 	@NoneNull
 	public abstract void score(final MappableEntity from,
 	                           final MappableEntity to,
-	                           final MapScore score);
+	                           final Mapping score);
 	
 	/**
 	 * @return an instance of {@link Expression} that represents the support of

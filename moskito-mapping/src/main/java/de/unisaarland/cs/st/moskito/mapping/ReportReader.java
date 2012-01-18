@@ -26,18 +26,18 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
+public class ReportReader extends AndamaSource<Report> {
 	
-	private Iterator<RCSTransaction> iterator;
+	private Iterator<Report> iterator;
 	
 	/**
 	 * @param threadGroup
@@ -45,26 +45,26 @@ public class ScoringTransactionReader extends AndamaSource<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringTransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
+	public ReportReader(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<Report, Report>(this) {
 			
 			@Override
 			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
-				ScoringTransactionReader.this.iterator = list.iterator();
+				Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class);
+				List<Report> list = persistenceUtil.load(criteria);
+				ReportReader.this.iterator = list.iterator();
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Report, Report>(this) {
 			
 			@Override
 			public void process() {
-				if (ScoringTransactionReader.this.iterator.hasNext()) {
-					RCSTransaction report = ScoringTransactionReader.this.iterator.next();
+				if (ReportReader.this.iterator.hasNext()) {
+					Report report = ReportReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + report);

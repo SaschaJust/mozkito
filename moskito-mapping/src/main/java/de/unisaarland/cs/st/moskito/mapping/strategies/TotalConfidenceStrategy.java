@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -39,14 +39,16 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public PersistentMapping map(final PersistentMapping mapping) {
-		switch (Double.compare(mapping.getScore().getTotalConfidence(), 0d)) {
+	public Mapping map(final Mapping mapping) {
+		switch (Double.compare(mapping.getTotalConfidence(), 0d)) {
 			case -1:
-				mapping.setValid(false);
+				mapping.addStrategy(getHandle(), false);
 				break;
 			case 1:
-				mapping.setValid(true);
+				mapping.addStrategy(getHandle(), true);
 				break;
+			default:
+				mapping.addStrategy(getHandle(), null);
 		}
 		return mapping;
 	}

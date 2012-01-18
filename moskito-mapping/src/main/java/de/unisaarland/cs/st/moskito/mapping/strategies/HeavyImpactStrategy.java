@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
 
 /**
  * Only consider the feature with the highest impact.
@@ -42,9 +42,9 @@ public class HeavyImpactStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public PersistentMapping map(final PersistentMapping mapping) {
+	public Mapping map(final Mapping mapping) {
 		double maxabs = 0d;
-		for (MappingEngineFeature feature : mapping.getScore().getFeatures()) {
+		for (final MappingEngineFeature feature : mapping.getFeatures()) {
 			if (Math.abs(feature.getConfidence()) > Math.abs(maxabs)) {
 				maxabs = feature.getConfidence();
 			}
@@ -52,11 +52,13 @@ public class HeavyImpactStrategy extends MappingStrategy {
 		
 		switch (Double.compare(maxabs, 0d)) {
 			case -1:
-				mapping.setValid(false);
+				mapping.addStrategy(getHandle(), false);
 				break;
 			case 1:
-				mapping.setValid(true);
+				mapping.addStrategy(getHandle(), true);
 				break;
+			default:
+				mapping.addStrategy(getHandle(), null);
 		}
 		return mapping;
 	}

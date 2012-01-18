@@ -18,23 +18,26 @@
  */
 package de.unisaarland.cs.st.moskito.mapping;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringMappingPersister extends AndamaSink<PersistentMapping> {
+public class TransactionReader extends AndamaSource<RCSTransaction> {
 	
-	private Integer i = 0;
+	private Iterator<RCSTransaction> iterator;
 	
 	/**
 	 * @param threadGroup
@@ -42,43 +45,35 @@ public class ScoringMappingPersister extends AndamaSink<PersistentMapping> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringMappingPersister(final AndamaGroup threadGroup, final MappingSettings settings,
+	public TransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<PersistentMapping, PersistentMapping>(this) {
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				persistenceUtil.beginTransaction();
+				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				List<RCSTransaction> list = persistenceUtil.load(criteria);
+				TransactionReader.this.iterator = list.iterator();
 			}
 		};
 		
-		new ProcessHook<PersistentMapping, PersistentMapping>(this) {
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
-				PersistentMapping score = getInputData();
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + score);
+				if (TransactionReader.this.iterator.hasNext()) {
+					RCSTransaction report = TransactionReader.this.iterator.next();
+					
+					if (Logger.logInfo()) {
+						Logger.info("Providing " + report);
+					}
+					
+					providePartialOutputData(report);
+				} else {
+					provideOutputData(null, true);
 				}
-				
-				if ((++ScoringMappingPersister.this.i % 50) == 0) {
-					persistenceUtil.commitTransaction();
-					persistenceUtil.beginTransaction();
-				}
-				
-				persistenceUtil.save(score);
-			}
-		};
-		
-		new PostExecutionHook<PersistentMapping, PersistentMapping>(this) {
-			
-			@Override
-			public void postExecution() {
-				persistenceUtil.commitTransaction();
-				persistenceUtil.shutdown();
 			}
 		};
 	}

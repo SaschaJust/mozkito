@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import java.util.List;
+import java.util.Queue;
 
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -42,14 +42,17 @@ public class LoneWarriorStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public PersistentMapping map(final PersistentMapping mapping) {
-		List<MappingEngineFeature> features = mapping.getScore().getFeatures();
-		for (MappingEngineFeature feature : features) {
+	public Mapping map(final Mapping mapping) {
+		final Queue<MappingEngineFeature> features = mapping.getFeatures();
+		Boolean valid = null;
+		for (final MappingEngineFeature feature : features) {
 			if (Double.compare(feature.getConfidence(), 0.0d) > 0) {
-				mapping.setValid(true);
+				valid = true;
 				break;
 			}
 		}
+		
+		mapping.addStrategy(getHandle(), valid);
 		
 		return mapping;
 	}

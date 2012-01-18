@@ -13,68 +13,50 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-/**
- * 
- */
+
 package de.unisaarland.cs.st.moskito.mapping;
 
-import java.util.Iterator;
-import java.util.List;
-
+import net.ownhero.dev.andama.threads.AndamaFilter;
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringReportReader extends AndamaSource<Report> {
-	
-	private Iterator<Report> iterator;
+public class MappingProcessor extends AndamaFilter<Mapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
-	 * @param persistenceUtil
 	 */
-	public ScoringReportReader(final AndamaGroup threadGroup, final MappingSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public MappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings,
+	        final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		
-		new PreExecutionHook<Report, Report>(this) {
-			
-			@Override
-			public void preExecution() {
-				Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class);
-				List<Report> list = persistenceUtil.load(criteria);
-				ScoringReportReader.this.iterator = list.iterator();
-			}
-		};
-		
-		new ProcessHook<Report, Report>(this) {
+		new ProcessHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				if (ScoringReportReader.this.iterator.hasNext()) {
-					Report report = ScoringReportReader.this.iterator.next();
-					
+				final Mapping inputData = getInputData();
+				final Mapping mapping = finder.map(inputData);
+				if (mapping != null) {
 					if (Logger.logInfo()) {
-						Logger.info("Providing " + report);
+						Logger.info("Providing for store operation: " + mapping);
 					}
-					
-					providePartialOutputData(report);
+					setOutputData(mapping);
 				} else {
-					provideOutputData(null, true);
+					if (Logger.logDebug()) {
+						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
+					}
+					skipOutputData(mapping);
 				}
 			}
 		};
 	}
+	
 }

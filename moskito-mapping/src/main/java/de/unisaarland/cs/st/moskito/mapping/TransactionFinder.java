@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringTransactionFinder extends AndamaTransformer<Report, Candidate> {
+public class TransactionFinder extends AndamaTransformer<Report, Candidate> {
 	
 	/**
 	 * @param threadGroup
@@ -31,7 +31,7 @@ public class ScoringTransactionFinder extends AndamaTransformer<Report, Candidat
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public ScoringTransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings,
+	public TransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final MappingFinder finder) {
 		super(threadGroup, settings, true);
 		

@@ -39,7 +39,7 @@ public class FilteredMapping implements Annotated {
 	 * 
 	 */
 	private static final long serialVersionUID = -4228229393714955483L;
-	private PersistentMapping mapping;
+	private Mapping           mapping;
 	private List<String>      filters          = new LinkedList<String>();
 	
 	/**
@@ -51,8 +51,8 @@ public class FilteredMapping implements Annotated {
 	/**
 	 * @param score
 	 */
-	public FilteredMapping(final PersistentMapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
-		for (MappingFilter filter : triggeringFilters) {
+	public FilteredMapping(final Mapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
+		for (final MappingFilter filter : triggeringFilters) {
 			getFilters().add(filter.getClass().getCanonicalName());
 		}
 	}
@@ -70,7 +70,7 @@ public class FilteredMapping implements Annotated {
 	 */
 	@Id
 	@OneToOne (cascade = {}, fetch = FetchType.EAGER, optional = false)
-	public PersistentMapping getMapping() {
+	public Mapping getMapping() {
 		return this.mapping;
 	}
 	
@@ -86,7 +86,7 @@ public class FilteredMapping implements Annotated {
 	 * @param mapping
 	 *            the mapping to set
 	 */
-	public void setMapping(final PersistentMapping mapping) {
+	public void setMapping(final Mapping mapping) {
 		this.mapping = mapping;
 	}
 	
@@ -96,7 +96,7 @@ public class FilteredMapping implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("FilteredMapping [mapping=");
 		builder.append(getMapping());
 		builder.append(", filters=");

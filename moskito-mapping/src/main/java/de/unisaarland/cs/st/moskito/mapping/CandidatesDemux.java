@@ -12,9 +12,9 @@ import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringCandidatesDemux extends AndamaDemultiplexer<Candidate> {
+public class CandidatesDemux extends AndamaDemultiplexer<Candidate> {
 	
-	public ScoringCandidatesDemux(final AndamaGroup threadGroup, final AndamaSettings settings) {
+	public CandidatesDemux(final AndamaGroup threadGroup, final AndamaSettings settings) {
 		super(threadGroup, settings, false);
 	}
 	

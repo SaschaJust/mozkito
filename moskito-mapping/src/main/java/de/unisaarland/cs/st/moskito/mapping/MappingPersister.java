@@ -13,50 +13,73 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-
+/**
+ * 
+ */
 package de.unisaarland.cs.st.moskito.mapping;
 
 import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringMappingFilter extends AndamaTransformer<PersistentMapping, FilteredMapping> {
+public class MappingPersister extends AndamaSink<Mapping> {
+	
+	private Integer i = 0;
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
+	 * @param persistenceUtil
 	 */
-	public ScoringMappingFilter(final AndamaGroup threadGroup, final MappingSettings settings,
-	        final MappingFinder finder) {
+	public MappingPersister(final AndamaGroup threadGroup, final MappingSettings settings,
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		new ProcessHook<PersistentMapping, FilteredMapping>(this) {
+		
+		new PreExecutionHook<Mapping, Mapping>(this) {
+			
+			@Override
+			public void preExecution() {
+				persistenceUtil.beginTransaction();
+			}
+		};
+		
+		new ProcessHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				FilteredMapping mapping = finder.filter(getInputData());
-				if (mapping != null) {
-					if (Logger.logInfo()) {
-						Logger.info("Providing for store operation: " + mapping);
-					}
-					setOutputData(mapping);
-				} else {
-					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
-					}
-					skipOutputData(mapping);
+				final Mapping score = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Storing " + score);
 				}
+				
+				if ((++MappingPersister.this.i % 50) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
+				
+				persistenceUtil.save(score);
+			}
+		};
+		
+		new PostExecutionHook<Mapping, Mapping>(this) {
+			
+			@Override
+			public void postExecution() {
+				persistenceUtil.commitTransaction();
+				persistenceUtil.shutdown();
 			}
 		};
 	}
-	
 }

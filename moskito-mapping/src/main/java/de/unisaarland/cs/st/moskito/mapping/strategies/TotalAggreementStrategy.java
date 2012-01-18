@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import java.util.List;
+import java.util.Queue;
 
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -42,26 +42,26 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public PersistentMapping map(final PersistentMapping mapping) {
-		if (mapping.getValid() == null) {
-			int value = 0;
-			
-			List<MappingEngineFeature> features = mapping.getScore().getFeatures();
-			for (MappingEngineFeature feature : features) {
-				int cache = Double.compare(feature.getConfidence(), 0.0d);
-				if (Math.abs(value - cache) > 1) {
-					value = 0;
-					break;
-				} else {
-					value = cache;
-				}
+	public Mapping map(final Mapping mapping) {
+		int value = 0;
+		
+		final Queue<MappingEngineFeature> features = mapping.getFeatures();
+		for (final MappingEngineFeature feature : features) {
+			final int cache = Double.compare(feature.getConfidence(), 0.0d);
+			if (Math.abs(value - cache) > 1) {
+				value = 0;
+				break;
+			} else {
+				value = cache;
 			}
-			
-			if (value > 0) {
-				mapping.setValid(true);
-			} else if (value < 0) {
-				mapping.setValid(false);
-			}
+		}
+		
+		if (value > 0) {
+			mapping.addStrategy(getHandle(), true);
+		} else if (value < 0) {
+			mapping.addStrategy(getHandle(), false);
+		} else {
+			mapping.addStrategy(getHandle(), null);
 		}
 		
 		return mapping;

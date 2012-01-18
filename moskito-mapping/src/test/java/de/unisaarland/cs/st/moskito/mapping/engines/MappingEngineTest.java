@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
@@ -33,7 +33,7 @@ public class MappingEngineTest {
 	static MappableReport      mappableReport;
 	static MappableTransaction mappableTransaction;
 	static Report              report;
-	static MapScore            score;
+	static Mapping            score;
 	static RCSTransaction      transaction;
 	
 	@BeforeClass
@@ -122,7 +122,7 @@ public class MappingEngineTest {
 		}, this.settings, true);
 		this.settings.parseArguments();
 		
-		score = new MapScore(mappableReport, mappableTransaction);
+		score = new Mapping(mappableReport, mappableTransaction);
 	}
 	
 	@Test
@@ -144,7 +144,7 @@ public class MappingEngineTest {
 		System.err.println(feature.getTransactionSubstring());
 		assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
 		
-		score = new MapScore(mappableTransaction, mappableReport);
+		score = new Mapping(mappableTransaction, mappableReport);
 		engine.score(mappableTransaction, mappableReport, score);
 		feature = score.getFeatures().iterator().next();
 		confidence = feature.getConfidence();

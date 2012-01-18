@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
+public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
 	
 	/**
 	 * @param threadGroup
@@ -31,7 +31,7 @@ public class ScoringReportFinder extends AndamaTransformer<RCSTransaction, Candi
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public ScoringReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder) {
+	public ReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, true);
 		
 		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();

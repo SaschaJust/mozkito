@@ -21,29 +21,30 @@ import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringMappingProcessor extends AndamaTransformer<MapScore, PersistentMapping> {
+public class Filter extends AndamaTransformer<Mapping, FilteredMapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
 	 */
-	public ScoringMappingProcessor(final AndamaGroup threadGroup, final MappingSettings settings,
+	public Filter(final AndamaGroup threadGroup, final MappingSettings settings,
 	        final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		new ProcessHook<MapScore, PersistentMapping>(this) {
+		new ProcessHook<Mapping, FilteredMapping>(this) {
 			
 			@Override
 			public void process() {
-				PersistentMapping mapping = finder.map(getInputData());
+				final Mapping inputData = getInputData();
+				final FilteredMapping mapping = finder.filter(inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);
@@ -51,7 +52,7 @@ public class ScoringMappingProcessor extends AndamaTransformer<MapScore, Persist
 					setOutputData(mapping);
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
+						Logger.debug("Discarding " + mapping + " due to non-positive score (" + inputData + ").");
 					}
 					skipOutputData(mapping);
 				}

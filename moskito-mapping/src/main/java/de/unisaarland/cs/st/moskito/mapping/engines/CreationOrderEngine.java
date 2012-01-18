@@ -22,7 +22,7 @@ import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -83,12 +83,12 @@ public class CreationOrderEngine extends MappingEngine {
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
 	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
 			score.addFeature(getScoreReportCreatedAfterTransaction(), FieldKey.CREATION_TIMESTAMP.name(),
 			                 ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),

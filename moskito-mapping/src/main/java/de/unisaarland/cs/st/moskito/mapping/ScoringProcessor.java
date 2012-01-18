@@ -24,14 +24,14 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringProcessor extends AndamaTransformer<Candidate, MapScore> {
+public class ScoringProcessor extends AndamaTransformer<Candidate, Mapping> {
 	
 	/**
 	 * @param threadGroup
@@ -40,9 +40,9 @@ public class ScoringProcessor extends AndamaTransformer<Candidate, MapScore> {
 	 */
 	public ScoringProcessor(final AndamaGroup threadGroup, final MappingSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		final MapScore zeroScore = new MapScore(null, null);
+		final Mapping zeroScore = new Mapping(null, null);
 		
-		new ProcessHook<Candidate, MapScore>(this) {
+		new ProcessHook<Candidate, Mapping>(this) {
 			
 			@Override
 			public void process() {
@@ -52,7 +52,7 @@ public class ScoringProcessor extends AndamaTransformer<Candidate, MapScore> {
 					Logger.debug("Processing mapping for " + candidate.getFrom() + " to " + candidate.getTo() + ".");
 				}
 				
-				MapScore score = finder.score(candidate.getFrom(), candidate.getTo());
+				Mapping score = finder.score(candidate.getFrom(), candidate.getTo());
 				
 				if (score.compareTo(zeroScore) > 0) {
 					if (Logger.logInfo()) {

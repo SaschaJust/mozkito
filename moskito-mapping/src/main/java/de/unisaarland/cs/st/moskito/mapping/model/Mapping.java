@@ -18,9 +18,11 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.persistence.Basic;
 import javax.persistence.ElementCollection;
@@ -28,12 +30,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.elements.MapId;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
@@ -47,26 +51,29 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
  */
 @Entity
 @IdClass (MapId.class)
-public class MapScore implements Annotated, Comparable<MapScore> {
+public class Mapping implements Annotated, Comparable<Mapping> {
 	
-	private static final long          serialVersionUID = -8606759070008468513L;
+	private static final long           serialVersionUID = -8606759070008468513L;
 	
-	private List<MappingEngineFeature> features         = new LinkedList<MappingEngineFeature>();
-	private double                     totalConfidence  = 0.0d;
+	private Queue<MappingEngineFeature> features         = new LinkedBlockingQueue<MappingEngineFeature>();
+	private Map<String, Boolean>        strategies       = new ConcurrentHashMap<String, Boolean>();
+	private double                      totalConfidence  = 0.0d;
 	
-	private MappableEntity             element1;
-	private MappableEntity             element2;
+	private MappableEntity              element1;
+	private MappableEntity              element2;
 	
-	private String                     fromId;
-	private String                     class1;
+	private String                      fromId;
+	private String                      class1;
 	
-	private String                     toId;
-	private String                     class2;
+	private String                      toId;
+	private String                      class2;
 	
 	/**
-	 * used by persistence provider only
+	 * @deprecated use {@link Mapping#Mapping(MappableEntity, MappableEntity)}
+	 *             used by persistence provider only
 	 */
-	public MapScore() {
+	@Deprecated
+	public Mapping() {
 		
 	}
 	
@@ -74,7 +81,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @param transaction
 	 * @param report
 	 */
-	public MapScore(final MappableEntity element1, final MappableEntity element2) {
+	public Mapping(final MappableEntity element1, final MappableEntity element2) {
 		setElement1(element1);
 		setElement2(element2);
 	}
@@ -99,12 +106,22 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 		                                           reportFieldName, reportSubstring, mappingEngine));
 	}
 	
+	/**
+	 * @param strategyName
+	 * @param valid
+	 */
+	@Transient
+	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
+	                        final Boolean valid) {
+		getStrategies().put(strategyName, valid);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final MapScore arg0) {
+	public int compareTo(final Mapping arg0) {
 		return Double.compare(getTotalConfidence(), arg0.getTotalConfidence());
 	}
 	
@@ -114,13 +131,13 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	private String fetchId(final Object o) {
 		try {
-			Method method = o.getClass().getMethod("getId", new Class<?>[0]);
+			final Method method = o.getClass().getMethod("getId", new Class<?>[0]);
 			return (String) method.invoke(o, new Object[0]);
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalArgumentException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
+		} catch (final SecurityException e) {
+		} catch (final NoSuchMethodException e) {
+		} catch (final IllegalArgumentException e) {
+		} catch (final IllegalAccessException e) {
+		} catch (final InvocationTargetException e) {
 		}
 		return null;
 	}
@@ -148,11 +165,11 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 			return this.element1;
 		} else {
 			try {
-				Class<?> clazz = Class.forName(getClass1());
+				final Class<?> clazz = Class.forName(getClass1());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new UnrecoverableError(e);
-			} catch (UninitializedDatabaseException e) {
+			} catch (final UninitializedDatabaseException e) {
 				throw new UnrecoverableError(e);
 			}
 		}
@@ -167,11 +184,11 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 			return this.element2;
 		} else {
 			try {
-				Class<?> clazz = Class.forName(getClass2());
+				final Class<?> clazz = Class.forName(getClass2());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new UnrecoverableError(e);
-			} catch (UninitializedDatabaseException e) {
+			} catch (final UninitializedDatabaseException e) {
 				throw new UnrecoverableError(e);
 			}
 		}
@@ -181,7 +198,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @return the features
 	 */
 	@ElementCollection (fetch = FetchType.EAGER)
-	public List<MappingEngineFeature> getFeatures() {
+	public Queue<MappingEngineFeature> getFeatures() {
 		return this.features;
 	}
 	
@@ -199,13 +216,21 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	@Transient
 	public Set<Class<? extends MappingEngine>> getScoringEngines() {
-		HashSet<Class<? extends MappingEngine>> engines = new HashSet<Class<? extends MappingEngine>>();
+		final HashSet<Class<? extends MappingEngine>> engines = new HashSet<Class<? extends MappingEngine>>();
 		
-		for (MappingEngineFeature feature : getFeatures()) {
+		for (final MappingEngineFeature feature : getFeatures()) {
 			engines.add(feature.getEngine());
 		}
 		
 		return engines;
+	}
+	
+	/**
+	 * @return
+	 */
+	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	public Map<String, Boolean> getStrategies() {
+		return this.strategies;
 	}
 	
 	/**
@@ -265,7 +290,7 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 * @param features
 	 *            the features to set
 	 */
-	public void setFeatures(final List<MappingEngineFeature> features) {
+	public void setFeatures(final Queue<MappingEngineFeature> features) {
 		this.features = features;
 	}
 	
@@ -274,6 +299,13 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	public void setFromId(final String id1) {
 		this.fromId = id1;
+	}
+	
+	/**
+	 * @param strategies
+	 */
+	public void setStrategies(final Map<String, Boolean> strategies) {
+		this.strategies = strategies;
 	}
 	
 	/**
@@ -297,8 +329,8 @@ public class MapScore implements Annotated, Comparable<MapScore> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("MapScore [totalConfidence=");
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Mapping [totalConfidence=");
 		builder.append(getTotalConfidence());
 		builder.append(", element1=");
 		builder.append(getElement1());

@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
 /**
@@ -54,5 +54,5 @@ public abstract class MappingStrategy extends Node {
 	 * @param mapping
 	 * @return
 	 */
-	public abstract PersistentMapping map(PersistentMapping mapping);
+	public abstract Mapping map(Mapping mapping);
 }

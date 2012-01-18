@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -45,10 +45,10 @@ public class SVMStrategy extends MappingStrategy {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy#map
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
-	public PersistentMapping map(final PersistentMapping mapping) {
+	public Mapping map(final Mapping mapping) {
 		return mapping;
 	}
 	

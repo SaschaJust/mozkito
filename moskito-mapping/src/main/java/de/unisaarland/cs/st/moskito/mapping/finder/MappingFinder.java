@@ -29,8 +29,7 @@ import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
@@ -117,7 +116,7 @@ public class MappingFinder {
 	 * @param mapping
 	 * @return
 	 */
-	public FilteredMapping filter(final PersistentMapping mapping) {
+	public FilteredMapping filter(final Mapping mapping) {
 		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
 		
 		for (final MappingFilter filter : this.filters.values()) {
@@ -193,19 +192,14 @@ public class MappingFinder {
 	 * @param score
 	 * @return
 	 */
-	public PersistentMapping map(final MapScore score) {
-		PersistentMapping mapping = new PersistentMapping(score);
+	public Mapping map(final Mapping mapping) {
 		for (final String key : this.strategies.keySet()) {
 			final MappingStrategy strategy = this.strategies.get(key);
-			mapping = strategy.map(mapping);
-			mapping.addStrategy(strategy);
+			strategy.map(mapping);
 		}
 		
-		if ((mapping.getValid() != null) && (mapping.getValid() == true)) {
-			return mapping;
-		} else {
-			return null;
-		}
+		return mapping;
+		
 	}
 	
 	/**
@@ -233,9 +227,9 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public MapScore score(final MappableEntity element1,
-	                      final MappableEntity element2) {
-		final MapScore score = new MapScore(element1, element2);
+	public Mapping score(final MappableEntity element1,
+	                     final MappableEntity element2) {
+		final Mapping score = new Mapping(element1, element2);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Scoring with " + this.engines.size() + " engines: "
