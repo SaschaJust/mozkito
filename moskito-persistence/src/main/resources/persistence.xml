@@ -125,13 +125,13 @@
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<!--<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>-->
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
 			<property name="openjpa.ConnectionUserName" value="miner"/>
 			<property name="openjpa.RuntimeUnenhancedClasses" value="unsupported"/>
-			<property name="openjpa.ConnectionRetainMode" value="transaction"/>
+			<property name="openjpa.ConnectionRetainMode" value="always"/>
 			<!--<property name="openjpa.Log" value="SQL=TRACE"/> -->
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
 		</properties>
