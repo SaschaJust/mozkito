@@ -628,10 +628,14 @@ public class JavaMethodRegistry {
 		
 		JavaChangeOperation toDelete = this.findPreviousInvocation(element, location, false);
 		
+		if (toDelete == null) {
+			return null;
+		}
+
 		if (del.isBefore(toDelete)) {
 			throw new UnrecoverableError(
 					"Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
-			                + del + ", previous definition=" + toDelete);
+							+ del + ", previous definition=" + toDelete);
 		}
 		
 		if (!this.methodInvocations.containsKey(callingPosition)) {
