@@ -17,11 +17,11 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.persistence.Basic;
@@ -55,7 +55,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	private static final long           serialVersionUID = -8606759070008468513L;
 	
 	private Queue<MappingEngineFeature> features         = new LinkedBlockingQueue<MappingEngineFeature>();
-	private Map<String, Boolean>        strategies       = new ConcurrentHashMap<String, Boolean>();
+	private Map<String, Boolean>        strategies       = new HashMap<String, Boolean>();
 	private double                      totalConfidence  = 0.0d;
 	
 	private MappableEntity              element1;
