@@ -1,7 +1,6 @@
 package de.unisaarland.cs.st.moskito.genealogies.core;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,6 +10,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.neo4j.graphdb.Direction;
@@ -24,6 +24,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.GenealogyPersistenceAdapter;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
@@ -36,7 +37,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
+public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>, GenealogyPersistenceAdapter {
 	
 	public static final String         NODE_ID       = "javachangeooeration_id";
 	public static final String         ROOT_VERTICES = "root_vertices";
@@ -61,8 +62,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *            the graph
 	 * @param dbFile
 	 */
-	@NoneNull
-	public CoreChangeGenealogy(final GraphDatabaseService graph, File dbFile, PersistenceUtil persistenceUtil) {
+	public CoreChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull File dbFile,
+			PersistenceUtil persistenceUtil) {
 		this.graph = graph;
 		this.dbFile = dbFile;
 		this.persistenceUtil = persistenceUtil;
@@ -275,21 +276,25 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			return false;
 		}
 		
-		Transaction tx = graph.beginTx();
-		Relationship relationship = from.createRelationshipTo(to, edgeType);
-		if (relationship == null) {
-			tx.failure();
-			tx.finish();
-			return false;
+		boolean edgeAlreadyExists = false;
+		for (GenealogyEdgeType existingEdgeType : getEdges(dependent, target)) {
+			if (existingEdgeType.equals(edgeType)) {
+				edgeAlreadyExists = true;
+				break;
+			}
 		}
-		
-		rootIndex.remove(to, ROOT_VERTICES);
-		
-		tx.success();
-		tx.finish();
-		
-		
-		
+		if (!edgeAlreadyExists) {
+			Transaction tx = graph.beginTx();
+			Relationship relationship = from.createRelationshipTo(to, edgeType);
+			if (relationship == null) {
+				tx.failure();
+				tx.finish();
+				return false;
+			}
+			rootIndex.remove(to, ROOT_VERTICES);
+			tx.success();
+			tx.finish();
+		}
 		return true;
 	}
 	
@@ -497,8 +502,27 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	@Override
 	public Collection<GenealogyEdgeType> getEdges(JavaChangeOperation from, JavaChangeOperation to) {
-		Collection<GenealogyEdgeType> result = new ArrayList<GenealogyEdgeType>(1);
-		result.add(getEdge(from, to));
+		Node fromNode = getNodeForVertex(from);
+		Node toNode = getNodeForVertex(to);
+		if ((fromNode == null) || (toNode == null)) {
+			if (Logger.logWarn()) {
+				Logger.warn("You cannot retrieve edges for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty null.");
+			}
+			return null;
+		}
+		
+		Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
+				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
+				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		
+		Collection<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
+		for (Relationship rel : relationships) {
+			if (rel.getEndNode().equals(toNode)) {
+				RelationshipType relationshipType = rel.getType();
+				result.add(GenealogyEdgeType.valueOf(relationshipType.toString()));
+			}
+		}
 		return result;
 	}
 	
@@ -614,7 +638,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	private JavaChangeOperation getVertexForNode(Node dependentNode) {
 		Long operationId = (Long) dependentNode.getProperty(NODE_ID);
-		return persistenceUtil.loadById(operationId, JavaChangeOperation.class);
+		return loadById(operationId, JavaChangeOperation.class);
 	}
 	
 	public boolean hasVertex(final JavaChangeOperation vertex) {
@@ -641,6 +665,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			++numEdges;
 		}
 		return numEdges;
+	}
+	
+	@Override
+	public JavaChangeOperation loadById(final long id, Class<? extends JavaChangeOperation> clazz) {
+		return persistenceUtil.loadById(id, clazz);
 	}
 	
 	/**
@@ -682,7 +711,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			operations.add((Long) node.getProperty(NODE_ID));
 		}
 		indexHits.close();
-		return new CoreGenealogyVertexIterator(operations, persistenceUtil);
+		return new CoreGenealogyVertexIterator(operations, this);
 	}
 	
 	@Override
@@ -694,7 +723,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			operations.add((Long) node.getProperty(NODE_ID));
 		}
 		indexHits.close();
-		return new CoreGenealogyVertexIterator(operations, persistenceUtil);
+		return new CoreGenealogyVertexIterator(operations, this);
 	}
 	
 	/**
