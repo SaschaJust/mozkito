@@ -64,9 +64,11 @@ public class TestEnvironment {
 	
 	private static Repository                                        repository;
 	
-	protected static CoreChangeGenealogy                             changeGenealogy;
+	protected static CoreChangeGenealogy                             changeGenealogy = null;
 	
 	protected static File                                            tmpGraphDBFile;
+	
+	private static boolean                                           dbImported              = false;
 	
 	public static PersistenceUtil getPersistenceUtil() {
 		return persistenceUtil;
@@ -83,109 +85,112 @@ public class TestEnvironment {
 		environmentOperations.clear();
 		environmentTransactions.clear();
 		
-		// UNZIP git repo
-		URL zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
-		if (zipURL == null) {
-			fail();
+		if (!dbImported) {
+			// UNZIP git repo
+			URL zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
+			if (zipURL == null) {
+				fail();
+			}
+			
+			File baseDir = null;
+			try {
+				baseDir = new File((new URL(zipURL.toString().substring(0,
+						zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			
+			File zipFile = null;
+			try {
+				zipFile = new File(zipURL.toURI());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			if (Logger.logInfo()) {
+				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			}
+			FileUtils.unzip(zipFile, baseDir);
+			// UNZIP END
+			
+			repository = null;
+			try {
+				repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (UnregisteredRepositoryTypeException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			
+			URL url = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
+			File urlFile = null;
+			try {
+				urlFile = new File(url.toURI());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			
+			try {
+				repository.setup(urlFile.toURI(), null, null);
+			} catch (Exception e) {
+				fail(e.getMessage());
+			}
+			
+			System.setProperty("database.name", "reposuite_genealogies_test");
+			OpenJPAUtil.createTestSessionFactory("ppa");
+			try {
+				persistenceUtil = OpenJPAUtil.getInstance();
+			} catch (UninitializedDatabaseException e) {
+				e.printStackTrace();
+				fail();
+			}
+			
+			//unzip the database dump
+			zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql.zip");
+			if (zipURL == null) {
+				fail();
+			}
+			try {
+				zipFile = new File(zipURL.toURI());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			if (Logger.logInfo()) {
+				Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			}
+			FileUtils.unzip(zipFile, baseDir);
+			
+			//load the database dump into the test database
+			url = TestEnvironment.class.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql");
+			try {
+				urlFile = new File(url.toURI());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			
+			String psqlString = null;
+			try {
+				psqlString = FileUtils.readFileToString(urlFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
+			}
+			persistenceUtil.executeNativeQuery(psqlString);
+			dbImported = true;
 		}
 		
-		File baseDir = null;
-		try {
-			baseDir = new File((new URL(zipURL.toString().substring(0,
-					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-			fail();
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		
-		File zipFile = null;
-		try {
-			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
-		}
-		FileUtils.unzip(zipFile, baseDir);
-		// UNZIP END
-		
-		repository = null;
-		try {
-			repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-			fail();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-			fail();
-		} catch (UnregisteredRepositoryTypeException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		
-		URL url = TestEnvironment.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
-		File urlFile = null;
-		try {
-			urlFile = new File(url.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		
-		try {
-			repository.setup(urlFile.toURI(), null, null);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		System.setProperty("database.name", "reposuite_genealogies_test");
-		OpenJPAUtil.createTestSessionFactory("ppa");
-		try {
-			persistenceUtil = OpenJPAUtil.getInstance();
-		} catch (UninitializedDatabaseException e) {
-			e.printStackTrace();
-			fail();
-		}
-		
-		//unzip the database dump
-		zipURL = TestEnvironment.class.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql.zip");
-		if (zipURL == null) {
-			fail();
-		}
-		try {
-			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
-		}
-		FileUtils.unzip(zipFile, baseDir);
-		
-		//load the database dump into the test database
-		url = TestEnvironment.class.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql");
-		try {
-			urlFile = new File(url.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		
-		String psqlString = null;
-		try {
-			psqlString = FileUtils.readFileToString(urlFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
-		
-		persistenceUtil.executeNativeQuery(psqlString);
 		
 		persistenceUtil.beginTransaction();
 		
@@ -294,8 +299,7 @@ public class TestEnvironment {
 		//done everything is set.
 		persistenceUtil.commitTransaction();
 		
-		tmpGraphDBFile = FileUtils.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.KEEP);
-		System.out.println(tmpGraphDBFile.getAbsolutePath());
+		tmpGraphDBFile = FileUtils.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, getPersistenceUtil());
 		
 		assertTrue(changeGenealogy != null);
