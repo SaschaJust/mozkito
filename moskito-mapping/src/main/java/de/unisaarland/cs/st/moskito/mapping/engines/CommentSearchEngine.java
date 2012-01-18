@@ -100,8 +100,8 @@ public class CommentSearchEngine extends SearchEngine {
 				}
 			}
 			
-			addFeature(score, confidence, FieldKey.BODY.name(), fromBody, query.toString(), FieldKey.COMMENT.name(),
-			           toContent, toSubstring);
+			addFeature(score, confidence, FieldKey.BODY.name(), fromBody, query, FieldKey.COMMENT.name(), toContent,
+			           toSubstring);
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
