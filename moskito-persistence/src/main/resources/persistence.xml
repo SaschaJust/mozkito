@@ -112,12 +112,11 @@
 		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.History</class>
 		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement</class>
 		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.Report</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.model.MapScore</class>
+		<class>de.unisaarland.cs.st.moskito.mapping.model.Mapping</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.Class2Bugs</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.File2Bugs</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.Method2Bugs</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport</class>
