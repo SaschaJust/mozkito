@@ -31,15 +31,20 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			@Override
 			public void preExecution() {
 				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				criteria.eq("branch", RCSBranch.MASTER);
 				
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
-				list.addAll(persistenceUtil.load(criteria));
+				
+				for (RCSTransaction transaction : persistenceUtil.load(criteria)) {
+					if (transaction.getBranch().equals(RCSBranch.MASTER)) {
+						list.add(transaction);
+					}
+				}
+				
 				if (Logger.logInfo()) {
 					Logger.info("Added " + list.size()
-					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
+							+ " RCSTransactions that were found in MASTER branch to build the change genealogy.");
 				}
-
+				
 				iterator = list.iterator();
 			}
 		};
