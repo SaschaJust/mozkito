@@ -76,6 +76,8 @@ public class MappingArguments extends AndamaArgumentSet {
 		final Method[] methods = finder.getClass().getMethods();
 		
 		try {
+			Registered.initRegistereds(this.registereds);
+			
 			for (final Registered registered : this.registereds) {
 				if (methodMap.containsKey(registered.getClass())) {
 					// method finder.addXXX already known
