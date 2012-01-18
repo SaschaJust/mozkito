@@ -73,7 +73,7 @@ public class ReportTypeEngine extends MappingEngine {
 		super.init();
 		
 		setConfidence((Double) getOption("confidence").getSecond().getValue());
-		setType((Type) getOption("type").getSecond().getValue());
+		setType(Type.valueOf((String) getOption("type").getSecond().getValue()));
 	}
 	
 	/*
