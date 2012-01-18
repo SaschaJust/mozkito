@@ -78,8 +78,8 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								} else {
 									if (operation.isBefore(previousDefinition)) {
 										throw new UnrecoverableError(
-										        "Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-										                + operation + ", previous definition=" + previousDefinition);
+												"Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+														+ operation + ", previous definition=" + previousDefinition);
 									}
 									genealogy.addEdge(operation, previousDefinition,
 											GenealogyEdgeType.DeletedDefinitionOnDefinition);
@@ -128,7 +128,11 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								if (operation.isBefore(previousDefinition)) {
 									throw new UnrecoverableError(
 											"Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-													+ operation + ", previous definition=" + previousDefinition);
+									                + operation + " in transaction "
+									                + operation.getRevision().getTransaction().getId()
+									                + ", previous definition=" + previousDefinition
+									                + " in transaction "
+									                + previousDefinition.getRevision().getTransaction().getId());
 								}
 								
 								if (previousDefinition != null) {
