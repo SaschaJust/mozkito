@@ -227,6 +227,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	/**
 	 * @return
 	 */
+	@ElementCollection
 	public Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
