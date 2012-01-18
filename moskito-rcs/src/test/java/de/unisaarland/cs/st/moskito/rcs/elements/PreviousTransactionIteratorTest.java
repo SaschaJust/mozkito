@@ -923,7 +923,7 @@ public class PreviousTransactionIteratorTest {
 		
 		RCSBranch aBranch = new RCSBranch("aBranch");
 		aBranch.setBegin(a);
-		aBranch.setMergedIn(this.z.getId());
+		aBranch.addMergedIn(this.z.getId());
 		aBranch.setEnd(a);
 		a.setBranch(aBranch);
 		a.addParent(this.x);

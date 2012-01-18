@@ -145,7 +145,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 						//there is no later transaction within this new branch . Otherwise we would have seen the parent already
 						this.branches.put(parent, newBranch);
 						//set transaction to be merge transaction for new branch
-						newBranch.setMergedIn(revId);
+						newBranch.addMergedIn(revId);
 					}
 				}
 				

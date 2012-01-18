@@ -86,12 +86,12 @@ public class RCSTransactionTest {
 		RCSBranch branch_c = new RCSBranch("branch_a");
 		branch_c.setBegin(c);
 		branch_c.setEnd(j);
-		branch_c.setMergedIn(l.getId());
+		branch_c.addMergedIn(l.getId());
 		
 		RCSBranch branch_f = new RCSBranch("branch_c");
 		branch_f.setBegin(f);
 		branch_f.setEnd(k);
-		branch_f.setMergedIn(m.getId());
+		branch_f.addMergedIn(m.getId());
 		
 		RCSBranch branch_i = new RCSBranch("branch_f");
 		branch_i.setBegin(i);
@@ -373,7 +373,7 @@ public class RCSTransactionTest {
 		
 		branch.setBegin(this.x);
 		branch.setEnd(this.x);
-		branch.setMergedIn("y");
+		branch.addMergedIn("y");
 		
 		assertTrue(this.z.compareTo(this.x) < 0);
 		assertTrue(t.compareTo(this.x) < 0);
