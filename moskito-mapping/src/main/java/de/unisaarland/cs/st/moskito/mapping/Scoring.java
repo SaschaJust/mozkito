@@ -112,12 +112,11 @@ public class Scoring extends AndamaChain {
 				// getSettings());
 				// new ScoringMappingMux(this.threadPool.getThreadGroup(),
 				// getSettings());
-				// new ScoringMapScoreMux(this.threadPool.getThreadGroup(),
-				// getSettings());
+				new ScoringMapScoreMux(this.threadPool.getThreadGroup(), getSettings());
 				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
-				// new ScoringMappingProcessor(this.threadPool.getThreadGroup(),
-				// getSettings(), finder);
-				new ScoringPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+				new ScoringMappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
+				// new ScoringPersister(this.threadPool.getThreadGroup(),
+				// getSettings(), persistenceUtil);
 				// ScoringSplitter splitter = new
 				// ScoringSplitter(this.threadPool.getThreadGroup(),
 				// getSettings(), finder,
@@ -125,8 +124,7 @@ public class Scoring extends AndamaChain {
 				// ScoringFilterPersister persister = new
 				// ScoringFilterPersister(this.threadPool.getThreadGroup(),
 				// getSettings(), persistenceUtil);
-				// new ScoringMappingPersister(this.threadPool.getThreadGroup(),
-				// getSettings(), persistenceUtil);
+				new ScoringMappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 				
 				// splitter.waitFor(persister);
 			} catch (final UninitializedDatabaseException e) {
