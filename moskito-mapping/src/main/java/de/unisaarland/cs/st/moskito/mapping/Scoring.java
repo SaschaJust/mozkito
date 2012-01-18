@@ -41,7 +41,7 @@ public class Scoring extends AndamaChain {
 	 * 
 	 */
 	public Scoring() {
-		super(new MappingSettings());
+		super(new MappingSettings(), "mapping");
 		this.threadPool = new AndamaPool(Bugs.class.getSimpleName(), this);
 		final MappingSettings settings = getSettings();
 		this.databaseArguments = settings.setDatabaseArgs(true, "mapping");

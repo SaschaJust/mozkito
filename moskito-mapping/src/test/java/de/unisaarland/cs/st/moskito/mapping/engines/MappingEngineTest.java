@@ -111,7 +111,7 @@ public class MappingEngineTest {
 		System.setProperties(properties);
 		
 		this.settings = new MappingSettings();
-		this.arguments = new MappingArguments(new AndamaChain(this.settings) {
+		this.arguments = new MappingArguments(new AndamaChain(this.settings, "test") {
 			
 			@Override
 			public void setup() {
