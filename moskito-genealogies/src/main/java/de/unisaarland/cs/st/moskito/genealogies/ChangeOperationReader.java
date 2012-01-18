@@ -35,6 +35,11 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				list.addAll(persistenceUtil.load(criteria));
+				if (Logger.logInfo()) {
+					Logger.info("Added " + list.size()
+					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
+				}
+
 				iterator = list.iterator();
 			}
 		};
