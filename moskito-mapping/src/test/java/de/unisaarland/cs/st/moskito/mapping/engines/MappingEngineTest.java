@@ -100,18 +100,19 @@ public class MappingEngineTest {
 		mappableTransaction = new MappableTransaction(transaction);
 	}
 	
-	MappingArguments arguments;
-	MappingSettings  settings;
+	MappingArguments    arguments;
+	MappingSettings     settings;
+	static final String chainName = "test";
 	
 	@Before
 	public void setup() {
 		final Properties properties = System.getProperties();
-		properties.put("mapping.engines", "BackrefEngine");
-		properties.put("mapping.engine.backref.confidence", "1.0");
+		properties.put(chainName + ".engines", "BackrefEngine");
+		properties.put(chainName + ".engine.backref.confidence", "1.0");
 		System.setProperties(properties);
 		
 		this.settings = new MappingSettings();
-		this.arguments = new MappingArguments(new AndamaChain(this.settings, "test") {
+		this.arguments = new MappingArguments(new AndamaChain(this.settings, chainName) {
 			
 			@Override
 			public void setup() {
