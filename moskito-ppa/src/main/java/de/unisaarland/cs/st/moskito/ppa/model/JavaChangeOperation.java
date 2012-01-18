@@ -263,13 +263,15 @@ public class JavaChangeOperation implements Annotated {
 		return result;
 	}
 	
+	@NoneNull
 	public boolean isAfter(JavaChangeOperation other){
 		return this.getRevision().getTransaction().getTimestamp().isAfter(other.getRevision().getTransaction().getTimestamp());
 	}
 	
+	@NoneNull
 	public boolean isBefore(JavaChangeOperation other){
 		return this.getRevision().getTransaction().getTimestamp()
-		        .isBefore(other.getRevision().getTransaction().getTimestamp());
+				.isBefore(other.getRevision().getTransaction().getTimestamp());
 	}
 	
 	@Column (columnDefinition = "boolean default 'TRUE'")
