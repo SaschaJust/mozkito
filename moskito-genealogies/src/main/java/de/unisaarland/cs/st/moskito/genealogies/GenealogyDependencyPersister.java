@@ -69,12 +69,6 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								//find the previous operation that added the same method definition
 								JavaChangeOperation previousDefinition = registry.removeDefiniton(operation);
 								
-								if (operation.isBefore(previousDefinition)) {
-									throw new UnrecoverableError(
-											"Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-													+ operation + ", previous definition=" + previousDefinition);
-								}
-								
 								if (previousDefinition == null) {
 									if (Logger.logWarn()) {
 										Logger.warn("WARNING! Cannot find the JavaChangeOperation that added `"
@@ -82,6 +76,11 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 												+ "` when adding JavaMethodDefinitionDeletion.");
 									}
 								} else {
+									if (operation.isBefore(previousDefinition)) {
+										throw new UnrecoverableError(
+										        "Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+										                + operation + ", previous definition=" + previousDefinition);
+									}
 									genealogy.addEdge(operation, previousDefinition,
 											GenealogyEdgeType.DeletedDefinitionOnDefinition);
 									++depCounter;
@@ -107,10 +106,10 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									if (previousDefinitionDeletion != null) {
 										if (operation.isBefore(previousDefinitionDeletion)) {
 											throw new UnrecoverableError(
-											        "Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
-											                + operation
-											                + ", previous definition="
-											                + previousDefinitionDeletion);
+													"Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
+															+ operation
+															+ ", previous definition="
+															+ previousDefinitionDeletion);
 										}
 										genealogy.addEdge(operation, previousDefinitionDeletion,
 												GenealogyEdgeType.DeletedCallOnDeletedDefinition);
