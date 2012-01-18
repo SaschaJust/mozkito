@@ -29,12 +29,10 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
-import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -270,22 +268,8 @@ public class JavaChangeOperation implements Annotated {
 	}
 	
 	public boolean isBefore(JavaChangeOperation other){
-		RCSRevision thisRevision = this.getRevision();
-		Condition.check(thisRevision != null, "getRevision is NULL for JavaChangeOperation: " + this.toString());
-		RCSTransaction thisTransaction = thisRevision.getTransaction();
-		Condition.check(thisTransaction != null, "getTransaction is NULL for JavaChangeOperation: " + this.toString());
-		DateTime thisTimeStamp = thisTransaction.getTimestamp();
-		Condition.check(thisTimeStamp != null, "getTimestamp is NULL for JavaChangeOperation: " + this.toString());
-		
-		RCSRevision otherRevision = other.getRevision();
-		Condition.check(otherRevision != null, "getRevision is NULL for JavaChangeOperation: " + other.toString());
-		RCSTransaction otherTransaction = otherRevision.getTransaction();
-		Condition
-		.check(otherTransaction != null, "getTransaction is NULL for JavaChangeOperation: " + other.toString());
-		DateTime otherTimeStamp = otherTransaction.getTimestamp();
-		Condition.check(otherTimeStamp != null, "getTimestamp is NULL for JavaChangeOperation: " + other.toString());
-		
-		return thisTimeStamp.isBefore(otherTimeStamp);
+		return this.getRevision().getTransaction().getTimestamp()
+		        .isBefore(other.getRevision().getTransaction().getTimestamp());
 	}
 	
 	@Column (columnDefinition = "boolean default 'TRUE'")
