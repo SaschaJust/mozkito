@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		
 		changeGenealogy.close();
 		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, getPersistenceUtil(),
-		        new TransactionPartitioner());
+				new TransactionPartitioner());
 		
 		assertEquals(16, tdg.edgeSize());
 		
@@ -236,11 +235,9 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		Iterator<RCSTransaction> vertexIter = tdg.vertexSet();
-		
 		Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
-		while (vertexIter.hasNext()) {
-			vertices.add(vertexIter.next());
+		for (RCSTransaction v : tdg.vertexSet()) {
+			vertices.add(v);
 		}
 		
 		assertTrue(environmentTransactions.values().containsAll(vertices));

@@ -21,9 +21,76 @@
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>moskito-rcs</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
 			<version>1.5.M02</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-algorithms</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-visualization</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-samples</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-jai</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-jai-samples</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-3d</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-3d-demos</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-neo4j-graph</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop</groupId>
+			<artifactId>gremlin</artifactId>
+			<version>1.2</version>
+		</dependency>
 	</dependencies>
+
+
 </project>

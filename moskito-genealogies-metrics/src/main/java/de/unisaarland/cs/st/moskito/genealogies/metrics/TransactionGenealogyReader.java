@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.utils.andama;
+package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 
 import java.util.Iterator;
@@ -24,7 +24,7 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet();
+				iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		

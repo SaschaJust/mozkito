@@ -8,8 +8,8 @@ import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class PartitionDwReachMetric extends GenealogyPartitionMetric {

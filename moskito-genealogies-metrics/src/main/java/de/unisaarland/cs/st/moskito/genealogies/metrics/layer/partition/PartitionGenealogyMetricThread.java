@@ -12,7 +12,7 @@ import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyPartitionNode;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 
 
 public class PartitionGenealogyMetricThread extends

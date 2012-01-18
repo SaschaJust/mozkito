@@ -2,7 +2,6 @@ package de.unisaarland.cs.st.moskito.genealogies.layer;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -180,7 +179,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the iterator
 	 */
 	@Override
-	public abstract Iterator<T> vertexSet();
+	public abstract Iterable<T> vertexSet();
 	
 	/**
 	 * Vertex size.

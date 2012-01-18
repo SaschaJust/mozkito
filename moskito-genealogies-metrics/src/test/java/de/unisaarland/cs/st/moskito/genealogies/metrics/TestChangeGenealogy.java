@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -308,8 +307,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	@Override
 	public int inDegree(String s) {
+		return inDegree(s, GenealogyEdgeType.values());
+	}
+	
+	@Override
+	public int inDegree(String s, GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(s);
-		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, GenealogyEdgeType.values());
+		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		int numEdges = 0;
 		for (@SuppressWarnings("unused") Relationship r : relationships) {
 			++numEdges;
@@ -328,8 +332,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	@Override
 	public int outDegree(String s) {
+		return outDegree(s, GenealogyEdgeType.values());
+	}
+	
+	@Override
+	public int outDegree(String s, GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(s);
-		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, GenealogyEdgeType.values());
+		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
 		int numEdges = 0;
 		for (@SuppressWarnings("unused") Relationship r : relationships) {
 			++numEdges;
@@ -338,7 +347,7 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public Iterator<String> vertexSet() {
+	public Iterable<String> vertexSet() {
 		IndexHits<Node> indexHits = nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 		
 		Set<String> operations = new HashSet<String>();
@@ -346,7 +355,7 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 			operations.add(node.getProperty(CoreChangeGenealogy.NODE_ID).toString());
 		}
 		indexHits.close();
-		return operations.iterator();
+		return operations;
 	}
 	
 	@Override

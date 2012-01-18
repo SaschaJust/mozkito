@@ -4,10 +4,10 @@ import java.util.Collection;
 
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalTempParentsMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 

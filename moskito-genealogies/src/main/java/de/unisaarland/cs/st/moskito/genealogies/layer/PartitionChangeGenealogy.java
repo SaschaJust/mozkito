@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
-import de.unisaarland.cs.st.moskito.genealogies.core.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
@@ -194,8 +194,13 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	@Override
 	public int inDegree(Collection<JavaChangeOperation> node) {
+		return inDegree(node, GenealogyEdgeType.values());
+	}
+	
+	@Override
+	public int inDegree(Collection<JavaChangeOperation> node, GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, GenealogyEdgeType.values())) {
+		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, edgeTypes)) {
 			numEdges += this.getEdges(dependant, node).size();
 		}
 		return numEdges;
@@ -203,8 +208,13 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	@Override
 	public int outDegree(Collection<JavaChangeOperation> node) {
+		return outDegree(node, GenealogyEdgeType.values());
+	}
+	
+	@Override
+	public int outDegree(Collection<JavaChangeOperation> node, GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (Collection<JavaChangeOperation> parent : this.getParents(node, GenealogyEdgeType.values())) {
+		for (Collection<JavaChangeOperation> parent : this.getParents(node, edgeTypes)) {
 			numEdges += this.getEdges(node, parent).size();
 		}
 		return numEdges;
@@ -218,14 +228,14 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * ()
 	 */
 	@Override
-	public Iterator<Collection<JavaChangeOperation>> vertexSet() {
+	public Iterable<Collection<JavaChangeOperation>> vertexSet() {
 		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
 		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		while (vertexIterator.hasNext()) {
 			JavaChangeOperation elem = vertexIterator.next();
 			result.add(elem);
 		}
-		return buildPartitions(result).iterator();
+		return buildPartitions(result);
 	}
 	
 	/*

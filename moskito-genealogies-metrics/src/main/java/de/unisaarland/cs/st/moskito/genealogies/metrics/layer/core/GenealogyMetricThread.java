@@ -15,8 +15,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyCoreNode;
 
 public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
 	

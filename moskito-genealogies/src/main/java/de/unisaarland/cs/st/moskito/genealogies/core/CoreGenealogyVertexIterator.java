@@ -4,20 +4,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.genealogies.GenealogyPersistenceAdapter;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 
-public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation> {
+public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation>, Iterable<JavaChangeOperation> {
 	
 	private final Collection<Long> operationIds;
 	private Iterator<Long>         iterator;
-	private PersistenceUtil        persistenceUtil;
+	private GenealogyPersistenceAdapter persistenceAdapter;
 	
-	public CoreGenealogyVertexIterator(Set<Long> operations, PersistenceUtil persistenceUtil) {
+	public CoreGenealogyVertexIterator(Set<Long> operations, GenealogyPersistenceAdapter persistenceAdapter) {
 		operationIds = operations;
 		iterator = operationIds.iterator();
-		this.persistenceUtil = persistenceUtil;
+		this.persistenceAdapter = persistenceAdapter;
 	}
 	
 	@Override
@@ -26,9 +26,14 @@ public class CoreGenealogyVertexIterator implements Iterator<JavaChangeOperation
 	}
 	
 	@Override
+	public Iterator<JavaChangeOperation> iterator() {
+		return this;
+	}
+	
+	@Override
 	public JavaChangeOperation next() {
 		Long nextId = iterator.next();
-		return persistenceUtil.loadById(nextId, JavaChangeOperation.class);
+		return persistenceAdapter.loadById(nextId, JavaChangeOperation.class);
 	}
 	
 	@Override

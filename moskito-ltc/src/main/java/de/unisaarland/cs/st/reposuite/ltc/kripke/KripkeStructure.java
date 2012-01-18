@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +51,7 @@ public class KripkeStructure<V> {
 	 * @return Kripke structure created from the given object usage model.
 	 */
 	public static <T> KripkeStructure<T> createFrom(final ChangeGenealogy<T> changeGenealogy,
-	                                                final LabelGenerator<T> labelGenerator) {
+			final LabelGenerator<T> labelGenerator) {
 		// This method creates a Kripke structure from the given OUM by
 		// following the method described in the following paper:
 		// Jonsson, Bengt, Ahmed Hussain Khan, and Joachim Parrow. 1990.
@@ -71,9 +70,7 @@ public class KripkeStructure<V> {
 		kripkeStruct.markStateAsInitial(initialState);
 		
 		HashMap<T, State> vertices2States = new HashMap<T, State>();
-		Iterator<T> vertexSet = changeGenealogy.vertexSet();
-		while (vertexSet.hasNext()) {
-			T v = vertexSet.next();
+		for (T v : changeGenealogy.vertexSet()) {
 			Collection<T> allParents = changeGenealogy.getAllParents(v);
 			if (allParents.isEmpty()) {
 				continue;
@@ -162,7 +159,7 @@ public class KripkeStructure<V> {
 	 *            Label to add.
 	 */
 	public void addLabelToState(final State state,
-	                            final Label label) {
+			final Label label) {
 		assert this.state2labels.containsKey(state);
 		this.state2labels.get(state).add(label);
 	}
@@ -176,7 +173,7 @@ public class KripkeStructure<V> {
 	 *            Final state of the transition.
 	 */
 	public void addState(final State from,
-	                     final State to) {
+			final State to) {
 		assert this.state2successors.containsKey(from);
 		assert this.state2successors.containsKey(to);
 		assert this.state2predecessors.containsKey(from);
@@ -315,8 +312,8 @@ public class KripkeStructure<V> {
 			Integer outdegree = state2outdegree.get(state);
 			Set<Label> labels = this.state2labels.get(state);
 			Triple<Integer, Integer, Set<Label>> equivClass = new Triple<Integer, Integer, Set<Label>>(indegree,
-			                                                                                           outdegree,
-			                                                                                           labels);
+					outdegree,
+					labels);
 			if (!result.containsKey(equivClass)) {
 				result.put(equivClass, new HashSet<State>());
 			}
@@ -440,7 +437,7 @@ public class KripkeStructure<V> {
 	 *         evaluated at the given state.
 	 */
 	public boolean isFormulaFalse(final State state,
-	                              final CTLFormula formula) {
+			final CTLFormula formula) {
 		return this.falseFormulas.get(state).contains(formula);
 	}
 	
@@ -458,7 +455,7 @@ public class KripkeStructure<V> {
 	 *         evaluated at the given state.
 	 */
 	public boolean isFormulaTrue(final State state,
-	                             final CTLFormula formula) {
+			final CTLFormula formula) {
 		return this.trueFormulas.get(state).contains(formula);
 	}
 	
@@ -496,7 +493,7 @@ public class KripkeStructure<V> {
 		List<List<State>> otherClassesList = new ArrayList<List<State>>();
 		Map<State, State> this2other = new HashMap<State, State>();
 		for (Triple<Integer, Integer, Set<Label>> properties : new HashSet<Triple<Integer, Integer, Set<Label>>>(
-		                                                                                                         thisClasses.keySet())) {
+				thisClasses.keySet())) {
 			Set<State> thisClass = thisClasses.get(properties);
 			Set<State> otherClass = otherClasses.get(properties);
 			if (thisClass.size() != otherClass.size()) {
@@ -560,8 +557,8 @@ public class KripkeStructure<V> {
 	 *            Truth value of the formula in that state.
 	 */
 	public void markEvaluatedFormula(final State state,
-	                                 final CTLFormula formula,
-	                                 final boolean truthValue) {
+			final CTLFormula formula,
+			final boolean truthValue) {
 		if (truthValue) {
 			this.trueFormulas.get(state).add(formula);
 		} else {
@@ -674,7 +671,7 @@ public class KripkeStructure<V> {
 	 *         given state; <code>false</code> otherwise.
 	 */
 	public boolean wasFormulaEvaluated(final State state,
-	                                   final CTLFormula formula) {
+			final CTLFormula formula) {
 		return this.trueFormulas.get(state).contains(formula) || this.falseFormulas.get(state).contains(formula);
 	}
 }

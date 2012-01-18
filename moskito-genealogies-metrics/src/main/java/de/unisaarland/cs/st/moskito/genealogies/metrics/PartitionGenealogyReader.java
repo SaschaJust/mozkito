@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.utils.andama;
+package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ public class PartitionGenealogyReader extends AndamaSource<GenealogyPartitionNod
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet();
+				iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		

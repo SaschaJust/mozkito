@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.genealogies.utils.andama;
+package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 import java.util.Collection;
 

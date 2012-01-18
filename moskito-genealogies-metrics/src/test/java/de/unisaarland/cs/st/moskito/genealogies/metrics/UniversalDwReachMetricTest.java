@@ -3,7 +3,6 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.junit.Test;
@@ -19,9 +18,7 @@ public class UniversalDwReachMetricTest extends TestEnvironment {
 		UniversalTestDwReachMetric metric = new UniversalTestDwReachMetric(genealogy);
 		Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
 		
-		Iterator<String> itemIter = genealogy.vertexSet();
-		while (itemIter.hasNext()) {
-			String item = itemIter.next();
+		for (String item : genealogy.vertexSet()) {
 			metricValues.addAll(metric.handle(item));
 		}
 		

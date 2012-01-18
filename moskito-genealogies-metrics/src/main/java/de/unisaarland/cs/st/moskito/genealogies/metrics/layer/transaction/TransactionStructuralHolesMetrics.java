@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.UniversalStructuralHolesMetrics;
-import de.unisaarland.cs.st.moskito.genealogies.utils.andama.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 
