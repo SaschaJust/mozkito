@@ -25,13 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -229,7 +227,6 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	/**
 	 * @return
 	 */
-	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
