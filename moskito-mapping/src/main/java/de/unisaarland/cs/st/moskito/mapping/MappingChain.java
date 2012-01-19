@@ -23,9 +23,11 @@ import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.Bugs;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
@@ -112,8 +114,13 @@ public class MappingChain extends AndamaChain {
 				// getSettings());
 				// new ScoringMappingMux(this.threadPool.getThreadGroup(),
 				// getSettings());
-				new ScoringProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new MappingProcessor(this.threadPool.getThreadGroup(), getSettings(), finder);
+				for (final MappingEngine engine : this.mappingArguments.getEngines()) {
+					new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
+				}
+				
+				for (final MappingStrategy strategy : this.mappingArguments.getStrategies()) {
+					new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
+				}
 				// new ScoringPersister(this.threadPool.getThreadGroup(),
 				// getSettings(), persistenceUtil);
 				// ScoringSplitter splitter = new

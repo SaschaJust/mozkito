@@ -41,27 +41,47 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
 public class MappingArguments extends AndamaArgumentSet {
 	
 	private final Set<Registered> registereds = new HashSet<Registered>();
+	private Set<MappingEngine>    engines     = new HashSet<MappingEngine>();
+	private Set<MappingStrategy>  strategies  = new HashSet<MappingStrategy>();
 	
 	/**
 	 * @param isRequired
 	 * @param mappingSettings
 	 * 
 	 */
+	@SuppressWarnings ("unchecked")
 	public MappingArguments(final AndamaChain chain, final MappingSettings settings, final boolean isRequired) {
 		super();
-		
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "engines", MappingEngine.class,
-		                                                    isRequired));
+		// TODO additionally store the individual sets. We want to persist the
+		// registered engines/filters/selectors/splitters/strategies as well.
+		this.engines = (Set<MappingEngine>) Registered.handleRegistered(chain, settings, this, "engines",
+		                                                                MappingEngine.class, isRequired);
+		this.registereds.addAll(this.engines);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "filters", MappingFilter.class,
 		                                                    isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "selectors", MappingSelector.class,
 		                                                    isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "splitters", MappingSplitter.class,
 		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "strategies", MappingStrategy.class,
-		                                                    isRequired));
+		this.strategies = (Set<MappingStrategy>) Registered.handleRegistered(chain, settings, this, "strategies",
+		                                                                     MappingStrategy.class, isRequired);
+		this.registereds.addAll(this.strategies);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "trainers", MappingTrainer.class,
 		                                                    isRequired));
+	}
+	
+	/**
+	 * @return
+	 */
+	public Set<MappingEngine> getEngines() {
+		return this.engines;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Set<MappingStrategy> getStrategies() {
+		return this.strategies;
 	}
 	
 	/*

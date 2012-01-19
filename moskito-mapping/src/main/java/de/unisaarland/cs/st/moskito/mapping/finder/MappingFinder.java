@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
@@ -192,11 +191,12 @@ public class MappingFinder {
 	 * @param score
 	 * @return
 	 */
-	public Mapping map(final Mapping mapping) {
-		for (final String key : this.strategies.keySet()) {
-			final MappingStrategy strategy = this.strategies.get(key);
-			strategy.map(mapping);
+	public Mapping map(final MappingStrategy strategy,
+	                   final Mapping mapping) {
+		if (Logger.logDebug()) {
+			Logger.debug("Mapping with strategy: " + strategy.getHandle());
 		}
+		strategy.map(mapping);
 		
 		return mapping;
 		
@@ -227,32 +227,31 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public Mapping score(final MappableEntity element1,
+	public Mapping score(final MappingEngine engine,
+	                     final MappableEntity element1,
 	                     final MappableEntity element2) {
 		final Mapping score = new Mapping(element1, element2);
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Scoring with " + this.engines.size() + " engines: "
-			        + JavaUtils.collectionToString(this.engines.values()));
+			Logger.debug("Scoring with engine: " + engine.getHandle());
 		}
 		
-		for (final String engineName : this.engines.keySet()) {
-			final MappingEngine mappingEngine = this.engines.get(engineName);
-			final Expression expression = mappingEngine.supported();
-			if (expression == null) {
-				throw new UnrecoverableError("Engine: " + engineName + " returns NULL when asked for supported fields.");
-			}
-			
-			final int check = expression.check(element1.getClass(), element2.getClass());
-			
-			if (check > 0) {
-				mappingEngine.score(element1, element2, score);
-			} else if (check < 0) {
-				mappingEngine.score(element2, element1, score);
-			} else if (Logger.logInfo()) {
-				Logger.info("Skipping engine " + engineName + " due to type incompatibility.");
-			}
+		final Expression expression = engine.supported();
+		if (expression == null) {
+			throw new UnrecoverableError("Engine: " + engine.getHandle()
+			        + " returns NULL when asked for supported fields.");
 		}
+		
+		final int check = expression.check(element1.getClass(), element2.getClass());
+		
+		if (check > 0) {
+			engine.score(element1, element2, score);
+		} else if (check < 0) {
+			engine.score(element2, element1, score);
+		} else if (Logger.logInfo()) {
+			Logger.info("Skipping engine " + engine.getHandle() + " due to type incompatibility.");
+		}
+		
 		return score;
 	}
 	
