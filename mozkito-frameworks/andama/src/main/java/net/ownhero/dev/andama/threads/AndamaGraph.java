@@ -102,8 +102,8 @@ public class AndamaGraph {
 					threads.addAll(andamaGroup.getThreads());
 					
 					if (Logger.logInfo()) {
-						Logger.info("Building graph with " + threads.size() + " nodes for: "
-						        + JavaUtils.collectionToString(threads));
+						Logger.info("Building graph with " + threads.size() + " nodes for "
+						        + andamaGroup.getToolchain().getName());
 						final List<AndamaSource> sources = new LinkedList<AndamaSource>();
 						final List<AndamaFilter> filters = new LinkedList<AndamaFilter>();
 						final List<AndamaTransformer> transformers = new LinkedList<AndamaTransformer>();
@@ -127,12 +127,15 @@ public class AndamaGraph {
 								// TODO error
 							}
 						}
-						Logger.info("Sources: " + sources.size());
-						Logger.info("Filters: " + filters.size());
-						Logger.info("Transformers: " + transformers.size());
-						Logger.info("Multiplexers: " + multiplexers.size());
-						Logger.info("Demultiplexers: " + demulitplexer.size());
-						Logger.info("Sinks: " + sinks.size());
+						Logger.info("Sources: " + sources.size() + " - " + JavaUtils.collectionToString(sources));
+						Logger.info("Filters: " + filters.size() + " - " + JavaUtils.collectionToString(filters));
+						Logger.info("Transformers: " + transformers.size() + " - "
+						        + JavaUtils.collectionToString(transformers));
+						Logger.info("Multiplexers: " + multiplexers.size() + " - "
+						        + JavaUtils.collectionToString(multiplexers));
+						Logger.info("Demultiplexers: " + demulitplexer.size() + " - "
+						        + JavaUtils.collectionToString(demulitplexer));
+						Logger.info("Sinks: " + sinks.size() + " - " + JavaUtils.collectionToString(sinks));
 					}
 					
 					AndamaThreadable<?, ?> thread = null;
