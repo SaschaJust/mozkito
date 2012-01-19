@@ -159,11 +159,13 @@ public abstract class Registered {
 			}
 			builder.append(clazz.getSimpleName());
 		}
-		arguments.addArgument(new ListArgument(settings, chain.getName() + "." + argumentName, "A list of "
-		        + chain.getName() + " " + argumentName + "s that shall be used: "
-		        + buildRegisteredList(registeredClasses), builder.toString(), isRequired));
+		arguments.addArgument(new ListArgument(settings, chain.getName().toLowerCase() + "." + argumentName,
+		                                       "A list of " + chain.getName() + " " + argumentName
+		                                               + "s that shall be used: "
+		                                               + buildRegisteredList(registeredClasses), builder.toString(),
+		                                       isRequired));
 		
-		final String registeredstring = System.getProperty(chain.getName() + "." + argumentName);
+		final String registeredstring = System.getProperty(chain.getName().toLowerCase() + "." + argumentName);
 		final Set<String> registeredNames = new HashSet<String>();
 		
 		if (registeredstring != null) {
@@ -184,13 +186,12 @@ public abstract class Registered {
 					try {
 						final Registered instance = klass.newInstance();
 						instance.register(settings, arguments);
-						instance.init();
 						registereds.add(instance);
 					} catch (final Exception e) {
 						
 						if (Logger.logWarn()) {
 							Logger.warn("Skipping registration of " + klass.getSimpleName() + " due to errors: "
-							        + e.getMessage());
+							                    + e.getMessage(), e);
 						}
 					}
 				}
@@ -202,6 +203,15 @@ public abstract class Registered {
 		}
 		
 		return registereds;
+	}
+	
+	/**
+	 * @param registereds
+	 */
+	public static void initRegistereds(final Set<Registered> registereds) {
+		for (final Registered registered : registereds) {
+			registered.init();
+		}
 	}
 	
 	private boolean                                             initialized       = false;
@@ -741,9 +751,10 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected final String truncate(final String string) {
-		return string != null
-		                     ? string.substring(0, Math.min(string.length() - 1, 254))
-		                     : "";
+		return (string != null)
+		                       ? string.substring(0, Math.min(string.length(), 254))
+		                       : "";
+		
 	}
 	
 }

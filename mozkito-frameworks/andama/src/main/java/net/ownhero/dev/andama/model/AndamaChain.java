@@ -23,6 +23,13 @@ public abstract class AndamaChain extends Thread {
 	 */
 	public AndamaChain(final AndamaSettings settings) {
 		this.settings = settings;
+		setName(this.getClass().getSimpleName());
+		AndamaCrashHandler.init(this);
+	}
+	
+	public AndamaChain(final AndamaSettings settings, final String chainName) {
+		this.settings = settings;
+		setName(chainName);
 		AndamaCrashHandler.init(this);
 	}
 	
