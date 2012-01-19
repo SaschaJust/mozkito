@@ -53,13 +53,13 @@ public class PersonsReader extends AndamaSource<PersonContainer> {
 			
 			@Override
 			public void preExecution() {
-				Criteria<PersonContainer> criteria = persistenceUtil.createCriteria(PersonContainer.class);
-				List<PersonContainer> containerList = persistenceUtil.load(criteria);
+				final Criteria<PersonContainer> criteria = persistenceUtil.createCriteria(PersonContainer.class);
+				final List<PersonContainer> containerList = persistenceUtil.load(criteria);
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Analyzing " + containerList.size() + " person containers.");
 				}
-				iterator = containerList.listIterator();
+				PersonsReader.this.iterator = containerList.listIterator();
 			}
 		};
 		
@@ -67,8 +67,15 @@ public class PersonsReader extends AndamaSource<PersonContainer> {
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					provideOutputData(iterator.next());
+				if (PersonsReader.this.iterator.hasNext()) {
+					final PersonContainer personContainer = PersonsReader.this.iterator.next();
+					if (PersonsReader.this.iterator.hasNext()) {
+						provideOutputData(personContainer, false);
+					} else {
+						provideOutputData(personContainer, true);
+					}
+				} else {
+					skipData();
 				}
 			}
 		};
