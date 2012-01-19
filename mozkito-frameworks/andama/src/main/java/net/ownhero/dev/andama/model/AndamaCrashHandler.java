@@ -293,11 +293,13 @@ public class AndamaCrashHandler extends ThreadGroup {
 		if (!AndamaCrashHandler.executed) {
 			AndamaCrashHandler.executed = true;
 			
-			if ((arg1 == null) || (arg1 instanceof Shutdown)) {
+			if ((arg1 == null)) {
+				Logger.error("Received shutdown notification from " + arg0.getName() + " without any reason.");
+			} else if (arg1 instanceof Shutdown) {
 				
-				if (Logger.logInfo()) {
-					Logger.info("Received shutdown notification from " + arg0.getName() + " with notice: "
-					        + arg1.getMessage());
+				if (Logger.logError()) {
+					Logger.error("Received shutdown notification from " + arg0.getName() + " with notice: "
+					                     + arg1.getMessage(), arg1);
 				}
 			} else {
 				
