@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.mapping.selectors;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
