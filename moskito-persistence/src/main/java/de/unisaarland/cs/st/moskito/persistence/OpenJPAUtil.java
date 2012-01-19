@@ -37,6 +37,7 @@ import javax.persistence.criteria.Root;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.LogLevel;
@@ -60,6 +61,7 @@ import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 public class OpenJPAUtil implements PersistenceUtil {
 	
 	private static OpenJPAEntityManagerFactory factory;
+	private static PersistenceUtil             singleUtil = null;
 	
 	/**
 	 * @param properties
@@ -67,7 +69,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	public static void createSessionFactory(final Properties properties) {
 		if (factory == null) {
 			if (type == null) {
-				String url = (String) properties.get("openjpa.ConnectionURL");
+				final String url = (String) properties.get("openjpa.ConnectionURL");
 				if (url != null) {
 					type = url.split(":")[1];
 				} else {
@@ -78,9 +80,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 			String unit = properties.getProperty("openjpa.persistence-unit");
 			
 			if (unit == null) {
-				StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+				final StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 				ArrayUtils.reverse(trace);
-				for (StackTraceElement element : trace) {
+				for (final StackTraceElement element : trace) {
 					Class<?> activeClass;
 					try {
 						activeClass = Class.forName(element.getClassName());
@@ -88,7 +90,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 							unit = activeClass.getSimpleName().toLowerCase();
 							break;
 						}
-					} catch (ClassNotFoundException e) {
+					} catch (final ClassNotFoundException e) {
 					}
 				}
 				
@@ -109,7 +111,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Using options: ");
-				for (Object property : properties.keySet()) {
+				for (final Object property : properties.keySet()) {
 					Logger.debug(property + ": " + properties.getProperty((String) property));
 				}
 			}
@@ -154,15 +156,15 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @param driver
 	 */
 	public static void createSessionFactory(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver,
-			final String unit) {
-		String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
+	                                        final String database,
+	                                        final String user,
+	                                        final String password,
+	                                        final String type,
+	                                        final String driver,
+	                                        final String unit) {
+		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
 		
-		Properties properties = new Properties();
+		final Properties properties = new Properties();
 		properties.put("openjpa.ConnectionURL", url);
 		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
 		properties.put("openjpa.ConnectionDriverName", driver);
@@ -179,9 +181,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	public static void createTestSessionFactory(final String string) {
 		Logger.setLogLevel(LogLevel.OFF);
-		Properties properties = new Properties();
-		String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de") + "/"
-				+ System.getProperty("database.name", "reposuite_test");
+		final Properties properties = new Properties();
+		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
+		        + "/" + System.getProperty("database.name", "reposuite_test");
 		properties.put("openjpa.ConnectionURL", url);
 		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
@@ -194,6 +196,21 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/**
 	 * @return
+	 */
+	private static AndamaChain determineToolchain() {
+		final Thread thread = Thread.currentThread();
+		if (thread instanceof AndamaChain) {
+			return (AndamaChain) thread;
+		} else if ((thread.getThreadGroup() != null) && (thread.getThreadGroup() instanceof AndamaGroup)) {
+			return ((AndamaGroup) thread.getThreadGroup()).getToolchain();
+		} else {
+			return null;
+		}
+		
+	}
+	
+	/**
+	 * @return
 	 * @throws UninitializedDatabaseException
 	 */
 	public static PersistenceUtil getInstance() throws UninitializedDatabaseException {
@@ -201,12 +218,22 @@ public class OpenJPAUtil implements PersistenceUtil {
 			throw new UninitializedDatabaseException();
 		}
 		
-		if (provider.containsKey(Thread.currentThread().getName())) {
-			return provider.get(Thread.currentThread().getName());
+		if (singleUtil != null) {
+			return singleUtil;
+		}
+		final AndamaChain toolchain = determineToolchain();
+		
+		if (toolchain != null) {
+			if (provider.containsKey(toolchain)) {
+				return provider.get(toolchain);
+			} else {
+				final OpenJPAUtil util = new OpenJPAUtil();
+				provider.put(Thread.currentThread(), util);
+				return util;
+			}
 		} else {
-			OpenJPAUtil util = new OpenJPAUtil();
-			provider.put(Thread.currentThread(), util);
-			return util;
+			singleUtil = new OpenJPAUtil();
+			return singleUtil;
 		}
 	}
 	
@@ -267,29 +294,27 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> Criteria<T> createCriteria(final Class<T> clazz) {
-		OpenJPACriteriaBuilder builder = factory.getCriteriaBuilder();
-		OpenJPACriteriaQuery<T> query = factory.getCriteriaBuilder().createQuery(clazz);
-		Root<T> root = query.from(clazz);
-		Criteria<T> criteria = new Criteria<T>(root, builder, query);
+		final OpenJPACriteriaBuilder builder = factory.getCriteriaBuilder();
+		final OpenJPACriteriaQuery<T> query = factory.getCriteriaBuilder().createQuery(clazz);
+		final Root<T> root = query.from(clazz);
+		final Criteria<T> criteria = new Criteria<T>(root, builder, query);
 		return criteria;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
 	 * (java.lang.String)
 	 */
 	@Override
 	public <T> Query createNativeQuery(final String query,
-			final Class<T> clazz) {
+	                                   final Class<T> clazz) {
 		return this.entityManager.createNativeQuery(query, clazz);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
 	 * (java.lang.String)
 	 */
 	@Override
@@ -299,8 +324,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#delete(de.
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#delete(de.
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
@@ -318,9 +342,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 	public void executeNativeQuery(final String queryString) {
 		try {
 			this.entityManager.getTransaction().begin();
-			OpenJPAEntityManager ojem = (OpenJPAEntityManager) this.entityManager;
-			Connection conn = (Connection) ojem.getConnection();
-			Statement statement = conn.createStatement();
+			final OpenJPAEntityManager ojem = (OpenJPAEntityManager) this.entityManager;
+			final Connection conn = (Connection) ojem.getConnection();
+			final Statement statement = conn.createStatement();
 			if (queryString.trim().toLowerCase().startsWith("select")) {
 				statement.execute(queryString);
 			} else {
@@ -328,7 +352,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 			statement.close();
 			this.entityManager.getTransaction().commit();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 			this.entityManager.getTransaction().rollback();
 		}
@@ -337,7 +361,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public List executeNativeSelectQuery(final String queryString) {
-		Query nativeQuery = this.entityManager.createNativeQuery(queryString);
+		final Query nativeQuery = this.entityManager.createNativeQuery(queryString);
 		return nativeQuery.getResultList();
 	}
 	
@@ -349,14 +373,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public void executeQuery(final String queryString) {
-		Query query = this.entityManager.createQuery(queryString);
+		final Query query = this.entityManager.createQuery(queryString);
 		query.executeUpdate();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#exmerge(de
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#exmerge(de
 	 * .unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
@@ -383,19 +406,19 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@SuppressWarnings ("deprecation")
 	@Override
 	public String getToolInformation() {
-		OpenJPAConfiguration configuration = factory.getConfiguration();
-		Map<String, Object> properties = configuration.toProperties(false);
-		StringBuilder builder = new StringBuilder();
+		final OpenJPAConfiguration configuration = factory.getConfiguration();
+		final Map<String, Object> properties = configuration.toProperties(false);
+		final StringBuilder builder = new StringBuilder();
 		int max = 0;
 		
-		for (String key : properties.keySet()) {
+		for (final String key : properties.keySet()) {
 			if (key.length() > max) {
 				max = key.length();
 			}
 		}
 		
-		Regex regex = new Regex(".*password.*", Pattern.CASE_INSENSITIVE);
-		for (String key : properties.keySet()) {
+		final Regex regex = new Regex(".*password.*", Pattern.CASE_INSENSITIVE);
+		for (final String key : properties.keySet()) {
 			// FIXME this should actually check for case-insensitive matches of
 			// "password" and "username"
 			if (regex.matches(key)) {
@@ -426,7 +449,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public synchronized void globalShutdown() {
-		for (Thread t : provider.keySet()) {
+		for (final Thread t : provider.keySet()) {
 			provider.get(t).shutdown();
 		}
 		factory.close();
@@ -435,13 +458,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#load(javax
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#load(javax
 	 * .persistence.criteria.CriteriaQuery)
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria) {
-		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
+		final TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery());
 		return query.getResultList();
 	}
 	
@@ -452,8 +474,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria,
-			final int sizeLimit) {
-		TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery()).setMaxResults(sizeLimit);
+	                        final int sizeLimit) {
+		final TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery()).setMaxResults(sizeLimit);
 		return query.getResultList();
 	}
 	
@@ -465,19 +487,19 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T, I> T loadById(final I id,
-			final Class<T> clazz) {
+	                         final Class<T> clazz) {
 		// determine id column
-		for (Method m : clazz.getDeclaredMethods()) {
+		for (final Method m : clazz.getDeclaredMethods()) {
 			// found
 			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) {
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
-						|| wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
-					Criteria<T> criteria = createCriteria(clazz);
+				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
+					final Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
 					
 					column = m.getName().substring(3, 4).toLowerCase() + m.getName().substring(4);
 					criteria.eq(column, id);
-					List<T> list = load(criteria);
+					final List<T> list = load(criteria);
 					if (!list.isEmpty()) {
 						return list.get(0);
 					} else {
@@ -485,14 +507,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 					}
 				} else {
 					throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
-							+ ") does not match actual id type (" + m.getReturnType().getCanonicalName()
-							+ ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
+					        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
+					        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
 				}
 			}
 		}
 		
 		throw new UnrecoverableError("Class " + clazz.getCanonicalName()
-				+ " does not have an Id column defined for a getter.");
+		        + " does not have an Id column defined for a getter.");
 	}
 	
 	/*
@@ -535,8 +557,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#shutdown()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#shutdown()
 	 */
 	@Override
 	public void shutdown() {
@@ -547,8 +568,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#update(de.
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#update(de.
 	 * unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override

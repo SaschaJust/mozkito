@@ -60,7 +60,8 @@ public abstract class MappingEngine extends Node {
 	
 	/**
 	 * Using this method, one can add features to a given {@link Mapping}. The
-	 * given score will be manipulated using the values given.
+	 * given score will be manipulated using the values given. The values are
+	 * automatically <code>null</code> checked and truncated if needed.
 	 * 
 	 * @param score
 	 *            the {@link Mapping} a new feature shall be added
