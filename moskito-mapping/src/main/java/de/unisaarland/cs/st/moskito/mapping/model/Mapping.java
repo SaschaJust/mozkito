@@ -268,7 +268,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	public void setElement1(final MappableEntity element1) {
 		this.element1 = element1;
 		if (element1 != null) {
-			setClass1(element1.getClass().getCanonicalName());
+			setClass1(element1.getClass().getSimpleName());
 			setFromId(fetchId(element1));
 		}
 	}
@@ -280,7 +280,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 		this.element2 = element2;
 		
 		if (element2 != null) {
-			setClass2(element2.getClass().getCanonicalName());
+			setClass2(element2.getClass().getSimpleName());
 			setToId(fetchId(element2));
 		}
 	}

@@ -60,7 +60,7 @@ public class MappingEngineFeature implements Annotated {
 		setFromSubstring(fromSubstring);
 		setToFieldName(toFieldName);
 		setToSubstring(toSubstring);
-		setFqClassName(mappingEngine.getCanonicalName());
+		setFqClassName(mappingEngine.getSimpleName());
 		
 		if (!cache.containsKey(getFqClassName())) {
 			cache.put(getFqClassName(), mappingEngine);
@@ -84,17 +84,17 @@ public class MappingEngineFeature implements Annotated {
 				return cache.get(this.fqClassName);
 			} else {
 				@SuppressWarnings ("unchecked")
-				Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
+				final Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
 				cache.put(this.fqClassName, engineClass);
 				return engineClass;
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			
 			if (Logger.logError()) {
 				Logger.error("Cannot find MappingEngine: " + this.fqClassName, e);
 			}
 			return null;
-		} catch (ClassCastException e) {
+		} catch (final ClassCastException e) {
 			if (Logger.logError()) {
 				Logger.error("Found corresponding class, but not of type MappingEngine: " + this.fqClassName, e);
 			}
@@ -191,7 +191,7 @@ public class MappingEngineFeature implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngineFeature [confidence=");
 		builder.append(this.confidence);
 		builder.append(", fromFieldName=");
