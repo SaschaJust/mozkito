@@ -90,42 +90,58 @@ public final class Atom extends Expression {
 		switch (this.idx) {
 			case FROM:
 				if (this.type != null) {
-					return target1 == this.type;
+					try {
+						return target1.newInstance().getBaseType() == this.type;
+					} catch (final Exception e) {
+						throw new UnrecoverableError(e.getMessage(), e);
+					}
 				} else {
 					try {
 						return target1.newInstance().supported().containsAll(this.keys);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				}
 			case TO:
 				if (this.type != null) {
-					return target2 == this.type;
+					try {
+						return target2.newInstance().getBaseType() == this.type;
+					} catch (final Exception e) {
+						throw new UnrecoverableError(e.getMessage(), e);
+					}
 				} else {
 					try {
 						return target2.newInstance().supported().containsAll(this.keys);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				}
 			case ONE:
 				if (oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
-						return target1 == this.type;
+						try {
+							return target1.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target1.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
 				} else {
 					if (this.type != null) {
-						return target2 == this.type;
+						try {
+							return target2.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target2.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
@@ -133,21 +149,29 @@ public final class Atom extends Expression {
 			case OTHER:
 				if (!oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
-						return target1 == this.type;
+						try {
+							return target1.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target1.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
 				} else {
 					if (this.type != null) {
-						return target2 == this.type;
+						try {
+							return target2.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target2.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
