@@ -11,19 +11,17 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TransactionFinder extends AndamaTransformer<Report, Candidate> {
+public class TransactionFinder extends AndamaTransformer<Report, Mapping> {
 	
 	/**
 	 * @param threadGroup
@@ -31,29 +29,27 @@ public class TransactionFinder extends AndamaTransformer<Report, Candidate> {
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public TransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings,
-	        final MappingFinder finder) {
+	public TransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, true);
 		
-		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		final LinkedList<Mapping> candidates = new LinkedList<Mapping>();
 		
-		new PreProcessHook<Report, Candidate>(this) {
+		new PreProcessHook<Report, Mapping>(this) {
 			
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					MappableReport mapReport = new MappableReport(getInputData());
-					Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
-					                                                                      MappableTransaction.class);
-					for (MappableTransaction mapTransaction : transactionCandidates) {
-						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapReport,
-						                                                                       mapTransaction)));
+					final MappableReport mapReport = new MappableReport(getInputData());
+					final Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
+					                                                                            MappableTransaction.class);
+					for (final MappableTransaction mapTransaction : transactionCandidates) {
+						candidates.add(new Mapping(mapReport, mapTransaction));
 					}
 				}
 			}
 		};
 		
-		new ProcessHook<Report, Candidate>(this) {
+		new ProcessHook<Report, Mapping>(this) {
 			
 			@Override
 			public void process() {

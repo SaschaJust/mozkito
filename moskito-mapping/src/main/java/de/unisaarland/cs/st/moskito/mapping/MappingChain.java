@@ -21,10 +21,10 @@ import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.Bugs;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
@@ -44,7 +44,7 @@ public class MappingChain extends AndamaChain {
 	 */
 	public MappingChain() {
 		super(new MappingSettings(), "mapping");
-		this.threadPool = new AndamaPool(Bugs.class.getSimpleName(), this);
+		this.threadPool = new AndamaPool(Mapping.class.getSimpleName(), this);
 		final MappingSettings settings = getSettings();
 		this.databaseArguments = settings.setDatabaseArgs(true, "mapping");
 		this.logSettings = settings.setLoggerArg(true);

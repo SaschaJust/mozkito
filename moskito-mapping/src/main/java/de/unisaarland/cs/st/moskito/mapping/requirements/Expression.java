@@ -65,4 +65,5 @@ public abstract class Expression {
 	public abstract boolean check(final Class<? extends MappableEntity> target1,
 	                              final Class<? extends MappableEntity> target2,
 	                              final Index oneEquals);
+	
 }

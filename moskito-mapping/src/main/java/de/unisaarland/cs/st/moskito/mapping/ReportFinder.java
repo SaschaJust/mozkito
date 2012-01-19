@@ -11,19 +11,17 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.ioda.Tuple;
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
+public class ReportFinder extends AndamaTransformer<RCSTransaction, Mapping> {
 	
 	/**
 	 * @param threadGroup
@@ -34,32 +32,33 @@ public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
 	public ReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, true);
 		
-		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		final LinkedList<Mapping> mappings = new LinkedList<Mapping>();
 		
-		new PreProcessHook<RCSTransaction, Candidate>(this) {
+		new PreProcessHook<RCSTransaction, Mapping>(this) {
 			
 			@Override
 			public void preProcess() {
-				if (candidates.isEmpty()) {
-					MappableTransaction mapTransaction = new MappableTransaction(getInputData());
-					Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction, MappableReport.class);
-					for (MappableReport mapReport : reportCandidates) {
-						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapTransaction,
-						                                                                       mapReport)));
+				if (mappings.isEmpty()) {
+					final MappableTransaction mapTransaction = new MappableTransaction(getInputData());
+					final Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction,
+					                                                                  MappableReport.class);
+					
+					for (final MappableReport mapReport : reportCandidates) {
+						mappings.add(new Mapping(mapTransaction, mapReport));
 					}
 				}
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, Candidate>(this) {
+		new ProcessHook<RCSTransaction, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				if (!candidates.isEmpty()) {
-					if (candidates.size() == 1) {
-						provideOutputData(candidates.poll());
+				if (!mappings.isEmpty()) {
+					if (mappings.size() == 1) {
+						provideOutputData(mappings.poll());
 					} else {
-						provideOutputData(candidates.poll(), false);
+						provideOutputData(mappings.poll(), false);
 					}
 				}
 			}
