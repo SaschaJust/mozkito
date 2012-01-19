@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class BackrefEngine extends MappingEngine {
 	
-	private double scoreBackRef;
+	private double scoreBackRef = 1d;
 	
 	/*
 	 * (non-Javadoc)
