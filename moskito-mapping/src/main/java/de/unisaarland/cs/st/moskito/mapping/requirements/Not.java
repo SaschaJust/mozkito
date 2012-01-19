@@ -55,4 +55,14 @@ public class Not extends Expression {
 	public Expression getExpression() {
 		return this.expression;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 */
+	@Override
+	public String toString() {
+		return "!" + this.expression.toString();
+	}
 }

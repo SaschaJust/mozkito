@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -50,7 +52,7 @@ public final class Atom extends Expression {
 	 * @param type
 	 *            the type that the corresponding entity is required to match
 	 */
-	public Atom(final Index idx, final Class<?> type) {
+	public Atom(@NotNull final Index idx, final Class<?> type) {
 		this.idx = idx;
 		this.type = type;
 	}
@@ -61,7 +63,7 @@ public final class Atom extends Expression {
 	 * @param key
 	 *            the {@link FieldKey} the entity has to support
 	 */
-	public Atom(final Index idx, final FieldKey key) {
+	public Atom(@NotNull final Index idx, final FieldKey key) {
 		this.idx = idx;
 		this.keys.add(key);
 	}
@@ -72,7 +74,7 @@ public final class Atom extends Expression {
 	 * @param keys
 	 *            the {@link FieldKey}s the entity has to support
 	 */
-	public Atom(final Index idx, final FieldKey... keys) {
+	public Atom(@NotNull final Index idx, final FieldKey... keys) {
 		this.idx = idx;
 		CollectionUtils.addAll(this.keys, keys);
 	}
@@ -202,5 +204,19 @@ public final class Atom extends Expression {
 	 */
 	public Class<?> getType() {
 		return this.type;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 */
+	@Override
+	public String toString() {
+		if (this.type != null) {
+			return "(" + this.idx.name() + "<type> = " + this.type.getSimpleName() + ")";
+		} else {
+			return "(" + this.idx.name() + "<fields> ⊂ " + JavaUtils.collectionToString(this.keys) + ")";
+		}
 	}
 }

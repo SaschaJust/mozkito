@@ -65,4 +65,14 @@ public final class And extends Expression {
 	public Expression getExpression2() {
 		return this.expression2;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 */
+	@Override
+	public String toString() {
+		return "(" + this.expression1.toString() + " && " + this.expression2.toString() + ")";
+	}
 }

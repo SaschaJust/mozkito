@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.JavaUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -60,11 +62,22 @@ public final class All extends Expression {
 	public boolean check(final Class<? extends MappableEntity> target1,
 	                     final Class<? extends MappableEntity> target2,
 	                     final Index oneEquals) {
-		for (Expression expression : this.expressions) {
+		for (final Expression expression : this.expressions) {
 			if (!expression.check(target1, target2, oneEquals)) {
 				return false;
 			}
 		}
 		return true;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 */
+	@Override
+	public String toString() {
+		return "(∀ [true] : " + JavaUtils.collectionToString(this.expressions) + ")";
+	}
+	
 }
