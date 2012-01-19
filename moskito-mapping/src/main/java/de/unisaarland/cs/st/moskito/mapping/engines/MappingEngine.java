@@ -93,23 +93,28 @@ public abstract class MappingEngine extends Node {
 	                             @NotNull @NotEmpty final String toFieldName,
 	                             final Object toFieldContent,
 	                             final Object toSubstring) {
-		score.addFeature(confidence, truncate(fromFieldName),
+		score.addFeature(confidence, truncate(fromFieldName != null
+		                                                           ? fromFieldName
+		                                                           : unused),
 		                 truncate(fromFieldContent != null
 		                                                  ? fromFieldContent.toString()
-		                                                  : unused),
+		                                                  : unknown),
 		                 truncate(fromSubstring != null
 		                                               ? fromSubstring.toString()
 		                                               : truncate(fromFieldContent != null
 		                                                                                  ? fromFieldContent.toString()
-		                                                                                  : unused)),
-		                 truncate(toFieldName), truncate(toFieldContent != null
-		                                                                       ? toFieldContent.toString()
-		                                                                       : unused),
+		                                                                                  : unknown)),
+		                 truncate(toFieldName != null
+		                                             ? toFieldName
+		                                             : unused),
+		                 truncate(toFieldContent != null
+		                                                ? toFieldContent.toString()
+		                                                : unknown),
 		                 truncate(toSubstring != null
 		                                             ? toSubstring.toString()
 		                                             : truncate(toFieldContent != null
 		                                                                              ? toFieldContent.toString()
-		                                                                              : unused)), getClass());
+		                                                                              : unknown)), getClass());
 	}
 	
 	/*

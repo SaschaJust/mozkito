@@ -106,14 +106,9 @@ public class CompletedOrderEngine extends MappingEngine {
 			confidence = getScoreReportResolvedBeforeTransaction();
 		}
 		
-		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp().toString(),
-		           transaction.getTimestamp().toString(), FieldKey.CREATION_TIMESTAMP.name(),
-		           report.getResolution() != null
-		                                         ? report.getResolutionTimestamp().toString()
-		                                         : unknown,
-		           report.getResolution() != null
-		                                         ? report.getResolutionTimestamp().toString()
-		                                         : unknown);
+		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
+		           transaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
+		           report.getResolutionTimestamp());
 		
 	}
 	
