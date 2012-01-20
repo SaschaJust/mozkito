@@ -16,6 +16,8 @@
 package de.unisaarland.cs.st.moskito.mapping.requirements;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -184,6 +186,29 @@ public final class Atom extends Expression {
 		return false;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause
+	 * (java.lang.Class, java.lang.Class,
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 */
+	@Override
+	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
+	                                        final Class<? extends MappableEntity> target2,
+	                                        final Index oneEquals) {
+		return check(target1, target2, oneEquals)
+		                                         ? null
+		                                         : new LinkedList<Expression>() {
+			                                         
+			                                         private static final long serialVersionUID = 1L;
+			                                         
+			                                         {
+				                                         add(Atom.this);
+			                                         }
+		                                         };
+	}
+	
 	/**
 	 * @return the index the atom refers to
 	 */
@@ -216,7 +241,7 @@ public final class Atom extends Expression {
 		if (this.type != null) {
 			return "(" + this.idx.name() + "<type> = " + this.type.getSimpleName() + ")";
 		} else {
-			return "(" + this.idx.name() + "<fields> ⊂ " + JavaUtils.collectionToString(this.keys) + ")";
+			return "(" + this.idx.name() + "<fields> ⊇ " + JavaUtils.collectionToString(this.keys) + ")";
 		}
 	}
 }

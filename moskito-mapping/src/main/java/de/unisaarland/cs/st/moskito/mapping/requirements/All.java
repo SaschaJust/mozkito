@@ -17,6 +17,8 @@ package de.unisaarland.cs.st.moskito.mapping.requirements;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -68,6 +70,33 @@ public final class All extends Expression {
 			}
 		}
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause
+	 * (java.lang.Class, java.lang.Class,
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 */
+	@Override
+	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
+	                                        final Class<? extends MappableEntity> target2,
+	                                        final Index oneEquals) {
+		if (!check(target1, target2, oneEquals)) {
+			final List<Expression> list = new LinkedList<Expression>();
+			for (final Expression expression : this.expressions) {
+				final List<Expression> failureCause = expression.getFailureCause(target1, target2, oneEquals);
+				if (failureCause != null) {
+					list.addAll(failureCause);
+				}
+			}
+			
+			return list;
+			
+		} else {
+			return null;
+		}
 	}
 	
 	/*

@@ -160,7 +160,7 @@ public class MappableEnhancedReport extends MappableEntity {
 	 */
 	@Override
 	public Class<?> getBaseType() {
-		return Report.class;
+		return EnhancedReport.class;
 	}
 	
 	@Override

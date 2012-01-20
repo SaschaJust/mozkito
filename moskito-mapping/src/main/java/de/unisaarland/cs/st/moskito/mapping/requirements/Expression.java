@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.requirements;
 
+import java.util.List;
+
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
 /**
@@ -65,4 +67,14 @@ public abstract class Expression {
 	public abstract boolean check(final Class<? extends MappableEntity> target1,
 	                              final Class<? extends MappableEntity> target2,
 	                              final Index oneEquals);
+	
+	/**
+	 * @param target1
+	 * @param target2
+	 * @param oneEquals
+	 * @return
+	 */
+	public abstract List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
+	                                                 final Class<? extends MappableEntity> target2,
+	                                                 final Index oneEquals);
 }

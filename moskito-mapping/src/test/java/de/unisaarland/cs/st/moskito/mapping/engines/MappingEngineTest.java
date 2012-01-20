@@ -1,10 +1,22 @@
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.Tuple;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -19,10 +31,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
@@ -33,7 +48,7 @@ public class MappingEngineTest {
 	static MappableReport      mappableReport;
 	static MappableTransaction mappableTransaction;
 	static Report              report;
-	static Mapping            score;
+	static Mapping             score;
 	static RCSTransaction      transaction;
 	
 	@BeforeClass
@@ -155,5 +170,95 @@ public class MappingEngineTest {
 		System.err.println(feature.getTransactionFieldName());
 		System.err.println(feature.getTransactionSubstring());
 		assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
+	}
+	
+	@SuppressWarnings ({ "deprecation", "serial" })
+	@Test
+	public void testSupported() {
+		int failed = 0;
+		final Set<Class<? extends MappableEntity>> mappableClasses = new HashSet<Class<? extends MappableEntity>>();
+		final Collection<MappableEntity> mappableEntities = new LinkedList<MappableEntity>();
+		
+		try {
+			mappableClasses.addAll(ClassFinder.getClassesExtendingClass(MappableEntity.class.getPackage(),
+			                                                            MappableEntity.class, Modifier.ABSTRACT
+			                                                                    | Modifier.INTERFACE | Modifier.PRIVATE));
+			for (final Class<? extends MappableEntity> clazz : mappableClasses) {
+				mappableEntities.add(clazz.newInstance());
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		final MappableEntity transaction = new MappableTransaction();
+		final MappableEntity report = new MappableReport();
+		
+		final Map<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>> map = new HashMap<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>>() {
+			
+			{
+				put(new AuthorEqualityEngine(), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
+					
+					{
+						for (final MappableEntity fromEntity : mappableEntities) {
+							for (final MappableEntity toEntity : mappableEntities) {
+								if (fromEntity.getBaseType() != toEntity.getBaseType()) {
+									add(new Tuple<MappableEntity, MappableEntity>(fromEntity, toEntity));
+								}
+							}
+							
+						}
+						
+					}
+				});
+				put(new TimestampEngine(), new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
+					
+					{
+						add(new Tuple<MappableEntity, MappableEntity>(transaction, report));
+					}
+				});
+				
+			}
+		};
+		
+		for (final MappingEngine engine : map.keySet()) {
+			System.out.println("Checking engine support for: " + engine.getHandle() + " with " + map.get(engine).size()
+			        + " combinations.");
+			final Expression supported = engine.supported();
+			for (final Tuple<MappableEntity, MappableEntity> tuple : map.get(engine)) {
+				final MappableEntity fromEntity = tuple.getFirst();
+				final MappableEntity toEntity = tuple.getSecond();
+				
+				if (supported.check(fromEntity.getClass(), toEntity.getClass()) == 0) {
+					List<Expression> failureCause = null;
+					String oneEquals = null;
+					if (!supported.check(fromEntity.getClass(), toEntity.getClass(), Index.FROM)) {
+						failureCause = supported.getFailureCause(fromEntity.getClass(), toEntity.getClass(), Index.FROM);
+						oneEquals = "FROM";
+					} else {
+						failureCause = supported.getFailureCause(fromEntity.getClass(), toEntity.getClass(), Index.TO);
+						oneEquals = "TO";
+					}
+					
+					System.err.println("["
+					        + engine.getClass().getSimpleName()
+					        + "] While checking if the engine supports mapping FROM:"
+					        + fromEntity.getBaseType().getSimpleName()
+					        + " => TO:"
+					        + toEntity.getBaseType().getSimpleName()
+					        + " the required condition failed. Engine requires the following expression to evaluate to true: "
+					        + supported.toString() + " (with ONE == " + oneEquals + "). Minimized failure cause: "
+					        + failureCause);
+					++failed;
+				} else {
+					System.out.println("[" + engine.getClass().getSimpleName() + "] Test for supported mapping FROM:"
+					        + fromEntity.getBaseType().getSimpleName() + " => TO:"
+					        + toEntity.getBaseType().getSimpleName() + " succeeded. Matched following criterion: "
+					        + supported.toString());
+				}
+			}
+		}
+		if (failed > 0) {
+			fail(("Test had " + failed + " errors."));
+		}
 	}
 }

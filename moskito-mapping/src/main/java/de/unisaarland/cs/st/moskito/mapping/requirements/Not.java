@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.requirements;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
 /**
@@ -54,6 +57,36 @@ public class Not extends Expression {
 	 */
 	public Expression getExpression() {
 		return this.expression;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause
+	 * (java.lang.Class, java.lang.Class,
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 */
+	@Override
+	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
+	                                        final Class<? extends MappableEntity> target2,
+	                                        final Index oneEquals) {
+		final List<Expression> failureCause = this.expression.getFailureCause(target1, target2, oneEquals);
+		if (failureCause == null) {
+			return check(target1, target2, oneEquals)
+			                                         ? null
+			                                         : new LinkedList<Expression>() {
+				                                         
+				                                         private static final long serialVersionUID = 1L;
+				                                         
+				                                         {
+					                                         add(Not.this);
+				                                         }
+			                                         };
+		} else {
+			return check(target1, target2, oneEquals)
+			                                         ? null
+			                                         : failureCause;
+		}
 	}
 	
 	/*

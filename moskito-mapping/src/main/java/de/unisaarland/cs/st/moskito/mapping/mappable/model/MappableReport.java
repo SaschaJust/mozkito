@@ -245,6 +245,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 				add(FieldKey.BODY);
 				add(FieldKey.CHANGER);
 				add(FieldKey.CLOSED_TIMESTAMP);
+				add(FieldKey.RESOLUTION_TIMESTAMP);
 			}
 		};
 	}
