@@ -385,7 +385,7 @@ public abstract class Registered {
 	                               final String registered) {
 		if (getSettings() != null) {
 			final ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
-			return (setting.getValue() != null) & setting.getValue().contains(registered);
+			return (setting != null) && (setting.getValue() != null) && setting.getValue().contains(registered);
 		} else {
 			return true;
 		}
