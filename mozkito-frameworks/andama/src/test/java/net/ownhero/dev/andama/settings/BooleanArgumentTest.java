@@ -29,13 +29,13 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "fAlse", false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(false, arg.getValue());
-		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(false, arg.getValue());
+		assertEquals(false, arg.isRequired());
 	}
 	
 	@Test
@@ -44,13 +44,13 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "fAlse", true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(false, arg.getValue());
 		assertEquals(true, arg.isRequired());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(false, arg.getValue());
 	}
 	
 	@Test
@@ -59,13 +59,13 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "TRuE", false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(true, arg.getValue());
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(true, arg.getValue());
 	}
 	
 	@Test
@@ -74,13 +74,13 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", "trUe", true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(true, arg.getValue());
 		assertEquals(true, arg.isRequired());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(true, arg.getValue());
 	}
 	
 	@Test
@@ -89,13 +89,13 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, false);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(null, arg.getValue());
 		assertEquals(false, arg.isRequired());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
@@ -104,7 +104,6 @@ public class BooleanArgumentTest {
 		BooleanArgument arg = new BooleanArgument(settings, "testArg", "this is only a test argument", null, true);
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
-		assertEquals(null, arg.getValue());
 		assertEquals(true, arg.isRequired());
 		try {
 			settings.parseArguments();
@@ -112,6 +111,7 @@ public class BooleanArgumentTest {
 		} catch (Shutdown e) {
 			
 		}
+		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
@@ -153,14 +153,13 @@ public class BooleanArgumentTest {
 		}
 		
 		arg.setStringValue("false");
-		assertEquals(false, arg.getValue());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(false, arg.getValue());
 		arg.setStringValue(null);
-		assertEquals(null, arg.getValue());
 		try {
 			settings.parseArguments();
 			fail();
@@ -168,11 +167,11 @@ public class BooleanArgumentTest {
 			
 		}
 		arg.setStringValue("tRuE");
-		assertEquals(true, arg.getValue());
 		try {
 			settings.parseArguments();
 		} catch (Shutdown e) {
 			fail();
 		}
+		assertEquals(true, arg.getValue());
 	}
 }

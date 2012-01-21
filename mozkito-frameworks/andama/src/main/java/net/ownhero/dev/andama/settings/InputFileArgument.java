@@ -17,7 +17,6 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -51,7 +50,7 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 *            location must already exist.
 	 */
 	public InputFileArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
@@ -60,9 +59,9 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public File getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
 		}
 		
 		File file = new File(this.stringValue.trim());
@@ -70,27 +69,28 @@ public class InputFileArgument extends AndamaArgument<File> {
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is a directory. Expected file. Abort.");
+						+ "` is a directory. Expected file. Abort.");
 			}
-			throw new Shutdown();
+			return false;
 		}
 		
 		if (!file.exists() && this.isRequired()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` does not exists but is required!");
+						+ "` does not exists but is required!");
 			}
-			throw new Shutdown();
+			return false;
 		}
 		
 		if (!file.exists() && !this.isRequired()) {
 			if (Logger.logWarn()) {
 				Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` does not exists and is not required! Ignoring file argument!");
+						+ "` does not exists and is not required! Ignoring file argument!");
 			}
-			throw new Shutdown();
+			return false;
 		}
 		
-		return file;
+		this.setCachedValue(file);
+		return true;
 	}
 }

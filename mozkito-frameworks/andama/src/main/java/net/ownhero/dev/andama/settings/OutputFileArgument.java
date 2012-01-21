@@ -18,7 +18,6 @@ package net.ownhero.dev.andama.settings;
 import java.io.File;
 import java.io.IOException;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -52,7 +51,7 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 *            possible.
 	 */
 	public OutputFileArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
+			final String defaultValue, final boolean isRequired, final boolean overwrite) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
 	}
@@ -62,35 +61,35 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public File getValue() {
+	public boolean init() {
 		// FIME seprate input and output files. Fix the mustExist and overwrite
 		// conbinations!
 		if (this.stringValue == null) {
-			return null;
+			return false;
 		}
 		File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is a directory. Expected file. Abort.");
+						+ "` is a directory. Expected file. Abort.");
 			}
-			throw new Shutdown();
+			return false;
 		}
 		if (file.exists() && (!this.overwrite) && (!this.selfWritten)) {
 			if (this.isRequired()) {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already. Please remove file or choose different argument value.");
+							+ "` exists already. Please remove file or choose different argument value.");
 				}
-				throw new Shutdown();
+				return false;
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already and cannot be overwritten. Ignoring argument!.");
+							+ "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
-				return null;
+				return false;
 			}
 			
 		} else if (file.exists() && (this.overwrite)) {
@@ -105,14 +104,14 @@ public class OutputFileArgument extends AndamaArgument<File> {
 				if (Logger.logError()) {
 					Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
 				}
-				throw new Shutdown();
+				return false;
 			}
 			try {
 				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					throw new Shutdown();
+					return false;
 				}
 			} catch (IOException e) {
 				if (Logger.logError()) {
@@ -129,9 +128,9 @@ public class OutputFileArgument extends AndamaArgument<File> {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
 					if (this.isRequired()) {
-						throw new Shutdown();
+						return false;
 					} else {
-						return null;
+						setCachedValue(null);
 					}
 				}
 			} catch (IOException e) {
@@ -140,13 +139,14 @@ public class OutputFileArgument extends AndamaArgument<File> {
 					Logger.error(e.getMessage());
 				}
 				if (this.isRequired()) {
-					throw new Shutdown();
+					return false;
 				} else {
-					return null;
+					setCachedValue(null);
 				}
 			}
 		}
 		this.selfWritten = true;
-		return file;
+		this.setCachedValue(file);
+		return true;
 	}
 }

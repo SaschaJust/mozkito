@@ -15,7 +15,6 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -35,7 +34,7 @@ public class LongArgument extends AndamaArgument<Long> {
 	 * @throws DuplicateArgumentException
 	 */
 	public LongArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
@@ -44,20 +43,21 @@ public class LongArgument extends AndamaArgument<Long> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public Long getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
 		}
 		
 		try {
-			return new Long(this.stringValue);
+			this.setCachedValue(new Long(this.stringValue));
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error("Value given for argument `" + getName()
-				        + "` could not be interpreted as a Long value. Abort!");
+						+ "` could not be interpreted as a Long value. Abort!");
 			}
 			
-			throw new Shutdown();
+			return false;
 		}
+		return true;
 	}
 }

@@ -18,13 +18,16 @@ package net.ownhero.dev.andama.settings;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaArgumentSet {
+public abstract class AndamaArgumentSet<T> {
 	
 	private final HashMap<String, AndamaArgument<?>> arguments;
+	private T                                        cachedValue;
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
@@ -61,6 +64,25 @@ public abstract class AndamaArgumentSet {
 		return this.arguments;
 	}
 	
-	public abstract Object getValue();
+	T getCachedValue() {
+		return cachedValue;
+	}
+	
+	public final T getValue() {
+		T cachedValue = this.getCachedValue();
+		if (cachedValue == null) {
+			throw new UnrecoverableError(
+			        "Fatal error! The AndamaArgument Set"
+			                + this.toString()
+			                + " was not initialized properly. The cachedValue was not set by the init method. Please fix the init method of the corresponding AndamaArgumentSet.");
+		}
+		return cachedValue;
+	}
+
+	abstract boolean init();
+	
+	void setCachedValue(T cachedValue) {
+		this.cachedValue = cachedValue;
+	}
 	
 }

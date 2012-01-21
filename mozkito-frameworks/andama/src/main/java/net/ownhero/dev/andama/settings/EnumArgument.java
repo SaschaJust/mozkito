@@ -34,7 +34,7 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * 
 	 */
 	public EnumArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final String[] possibleValues) {
+			final String defaultValue, final boolean isRequired, final String[] possibleValues) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.possibleValues = new HashSet<String>();
 		for (String s : possibleValues) {
@@ -47,8 +47,9 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public String getValue() {
-		return this.stringValue;
+	public boolean init() {
+		this.setCachedValue(stringValue);
+		return true;
 	}
 	
 	/*
