@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
 
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -21,7 +22,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.WriterAppender;
-import org.apache.log4j.varia.LevelMatchFilter;
 import org.apache.log4j.varia.LevelRangeFilter;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,17 @@ public class Logger {
 	}
 	
 	private static enum TerminalColor {
-		RED ("\u001b[33m"), YELLOW ("\u001b[31m"), NONE ("\u001b[m");
+		RED ("\u001b[0;31m"), YELLOW ("\u001b[0;33m"), NONE ("\u001b[m");
+		
+		public static boolean isSupported() {
+			String termVariable = System.getenv("TERM");
+			if (termVariable != null) {
+				Pattern pattern = Pattern.compile(".*color.*", Pattern.CASE_INSENSITIVE);
+				return pattern.matcher(termVariable).matches();
+			}
+			
+			return false;
+		}
 		
 		private final String tag;
 		
@@ -134,35 +144,65 @@ public class Logger {
 	
 	static {
 		// CONSOLE APPENDER
-		// TODO take actual settings into account
-		// TODO check terminal to support colors
-		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
-		final LevelRangeFilter normalFilter = new LevelRangeFilter();
-		normalFilter.setLevelMax(Level.TRACE);
-		normalFilter.setLevelMin(Level.INFO);
-		consoleDefaultAppender.addFilter(normalFilter);
 		
-		final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
-		final LevelRangeFilter errorFilter = new LevelRangeFilter();
-		errorFilter.setLevelMax(Level.ERROR);
-		errorFilter.setLevelMin(Level.FATAL);
-		consoleErrorAppender.addFilter(errorFilter);
-		
-		final WriterAppender consoleWarningAppender = new WriterAppender(warningLayout, System.err);
-		final LevelMatchFilter warningFilter = new LevelMatchFilter();
-		consoleWarningAppender.addFilter(warningFilter);
-		
-		consoleDefaultAppender.setLayout(defaultLayout);
-		final LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 		// set levels and minLevel
 		final LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
-		consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+		
+		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
+		final LevelRangeFilter normalFilter = new LevelRangeFilter();
+		
+		if (TerminalColor.isSupported()) {
+			
+			if (consoleLevel.compareTo(LogLevel.INFO) < 0) {
+				// e.g. consoleLevel = ERROR
+				// then don't do default logging at all
+				
+			} else {
+				// e.g. consoleLevel = DEBUG
+				normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+				normalFilter.setLevelMax(Level.INFO);
+				consoleDefaultAppender.addFilter(normalFilter);
+				consoleDefaultAppender.setLayout(defaultLayout);
+				consoleDefaultAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
+			}
+			
+			// if we got log level ERROR, add stylized ERROR log appender
+			if (consoleLevel.compareTo(LogLevel.ERROR) >= 0) {
+				final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
+				final LevelRangeFilter errorFilter = new LevelRangeFilter();
+				errorFilter.setLevelMin(Level.ERROR);
+				errorFilter.setLevelMax(Level.FATAL);
+				consoleErrorAppender.addFilter(errorFilter);
+				consoleErrorAppender.setLayout(errorLayout);
+				consoleErrorAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleErrorAppender);
+			}
+			
+			if (consoleLevel.compareTo(LogLevel.WARN) >= 0) {
+				final WriterAppender consoleWarningAppender = new WriterAppender(warningLayout, System.err);
+				final LevelRangeFilter warningFilter = new LevelRangeFilter();
+				warningFilter.setLevelMin(Level.WARN);
+				warningFilter.setLevelMax(Level.WARN);
+				consoleWarningAppender.addFilter(warningFilter);
+				consoleWarningAppender.setLayout(warningLayout);
+				consoleWarningAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleWarningAppender);
+			}
+		} else {
+			normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+			consoleDefaultAppender.addFilter(normalFilter);
+			consoleDefaultAppender.activateOptions();
+			org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
+		}
+		
+		// consoleDefaultAppender.setLayout(defaultLayout);
+		
+		// consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
 		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
 			maxLevel = consoleLevel;
 		}
-		consoleDefaultAppender.addFilter(consoleLevelRangeFilter);
-		consoleDefaultAppender.activateOptions();
-		org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
+		
 		readConfiguration();
 		
 	}
