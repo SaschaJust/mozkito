@@ -52,7 +52,8 @@ public class FileUtils {
 			
 			@Override
 			public void run() {
-				if (!fileManager.get(FileShutdownAction.DELETE).isEmpty()) {
+				if ((fileManager.get(FileShutdownAction.DELETE) != null)
+				        && !fileManager.get(FileShutdownAction.DELETE).isEmpty()) {
 					if (Logger.logInfo()) {
 						Logger.info("Deleting " + fileManager.get(FileShutdownAction.DELETE).size()
 						        + " temporary files using shutdown hook.");
@@ -474,6 +475,86 @@ public class FileUtils {
 	}
 	
 	/**
+	 * @param topLevelDir
+	 * @param filter
+	 * @return
+	 */
+	public static Iterator<File> findFiles(final File topLevelDir,
+	                                       final IOFileFilter filter) {
+		if (!topLevelDir.isDirectory()) {
+			return null;
+		}
+		
+		if (filter != null) {
+			return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, filter, new IOFileFilter() {
+				
+				@Override
+				public boolean accept(final File file) {
+					return true;
+				}
+				
+				@Override
+				public boolean accept(final File dir,
+				                      final String name) {
+					return true;
+				}
+			});
+		} else {
+			return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
+				
+				@Override
+				public boolean accept(final File file) {
+					return true;
+				}
+				
+				@Override
+				public boolean accept(final File dir,
+				                      final String name) {
+					return true;
+				}
+			}, new IOFileFilter() {
+				
+				@Override
+				public boolean accept(final File file) {
+					return true;
+				}
+				
+				@Override
+				public boolean accept(final File dir,
+				                      final String name) {
+					return true;
+				}
+			});
+		}
+	}
+	
+	/**
+	 * @param topLevelDir
+	 * @param name
+	 * @return
+	 */
+	public static Iterator<File> findFiles(final File topLevelDir,
+	                                       final String name) {
+		return findFiles(topLevelDir, new IOFileFilter() {
+			
+			@Override
+			public boolean accept(final File file) {
+				if (file.getName().equals(name)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			
+			@Override
+			public boolean accept(final File dir,
+			                      final String name) {
+				return false;
+			}
+		});
+	}
+	
+	/**
 	 * Force delete.
 	 * 
 	 * @param file
@@ -584,7 +665,7 @@ public class FileUtils {
 	 */
 	@NoneNull
 	public static Iterator<File> getSubDirectoryIterator(final File topLevelDir) {
-		if ((!topLevelDir.exists()) || (topLevelDir.isDirectory())) {
+		if ((!topLevelDir.exists()) || (!topLevelDir.isDirectory())) {
 			return null;
 		}
 		return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
