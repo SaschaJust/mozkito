@@ -159,7 +159,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return this.isRequired;
 	}
 	
-	void setCachedValue(T cachedValue) {
+	public void setCachedValue(T cachedValue) {
 		init = true;
 		this.cachedValue = cachedValue;
 	}

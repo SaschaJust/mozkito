@@ -72,16 +72,16 @@ public abstract class AndamaArgumentSet<T> {
 		T cachedValue = this.getCachedValue();
 		if (cachedValue == null) {
 			throw new UnrecoverableError(
-			        "Fatal error! The AndamaArgument Set"
-			                + this.toString()
-			                + " was not initialized properly. The cachedValue was not set by the init method. Please fix the init method of the corresponding AndamaArgumentSet.");
+					"Fatal error! The AndamaArgument Set"
+							+ this.toString()
+							+ " was not initialized properly. The cachedValue was not set by the init method. Please fix the init method of the corresponding AndamaArgumentSet.");
 		}
 		return cachedValue;
 	}
-
+	
 	abstract boolean init();
 	
-	void setCachedValue(T cachedValue) {
+	public void setCachedValue(T cachedValue) {
 		this.cachedValue = cachedValue;
 	}
 	
