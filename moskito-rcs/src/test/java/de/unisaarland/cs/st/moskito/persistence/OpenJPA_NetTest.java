@@ -40,7 +40,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class OpenJPATest {
+public class OpenJPA_NetTest {
 	
 	@AfterClass
 	public static void afterClass() {

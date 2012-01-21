@@ -37,7 +37,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class OpenJPATest {
+public class OpenJPA_NetTest {
 	
 	/**
 	 * @throws java.lang.Exception

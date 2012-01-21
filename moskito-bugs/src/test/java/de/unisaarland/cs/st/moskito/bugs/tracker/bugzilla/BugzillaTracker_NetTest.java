@@ -57,7 +57,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.History;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
-public class BugzillaTrackerTest {
+public class BugzillaTracker_NetTest {
 	
 	@Before
 	public void setUp() throws Exception {
@@ -70,7 +70,7 @@ public class BugzillaTrackerTest {
 	@Test
 	public void testAttachments() {
 		BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTrackerTest.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml").toString();
+		String url = BugzillaTracker_NetTest.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml").toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
 		String pattern = "bugzilla_" + Tracker.bugIdPlaceholder + ".xml";
 		
@@ -167,7 +167,7 @@ public class BugzillaTrackerTest {
 	@Test
 	public void testParse() {
 		BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTrackerTest.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml").toString();
+		String url = BugzillaTracker_NetTest.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml").toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_114562.xml"));
 		String pattern = "bugzilla_" + Tracker.bugIdPlaceholder + ".xml";
 		

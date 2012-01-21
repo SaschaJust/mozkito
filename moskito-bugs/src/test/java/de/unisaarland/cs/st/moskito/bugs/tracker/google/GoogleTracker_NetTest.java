@@ -50,7 +50,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleRawContent;
 import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleTracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
-public class GoogleTrackerTest {
+public class GoogleTracker_NetTest {
 	
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
 	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");

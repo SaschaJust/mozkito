@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
-public class OpenJPATest {
+public class OpenJPA_NetTest {
 	
 	@AfterClass
 	public static void afterClass() {

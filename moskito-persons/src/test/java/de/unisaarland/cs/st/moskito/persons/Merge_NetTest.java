@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  *
  */
-public class MergeTest {
+public class Merge_NetTest {
 	
 	/**
 	 * @throws java.lang.Exception
