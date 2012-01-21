@@ -32,23 +32,25 @@ public class BooleanArgument extends AndamaArgument<Boolean> {
 	 * 
 	 */
 	public BooleanArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see net.ownhero.dev.andama.settings.AndamaArgument#getValue()
 	 */
 	@Override
-	public Boolean getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
+		} else if (this.stringValue.trim().equals("")) {
+			this.setCachedValue(true);
+		} else {
+			this.setCachedValue(Boolean.parseBoolean(this.stringValue));
 		}
-		if (this.stringValue.trim().equals("")) {
-			return true;
-		}
-		return Boolean.parseBoolean(this.stringValue);
+		return true;
 	}
 	
 }

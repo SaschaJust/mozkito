@@ -17,7 +17,6 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -42,7 +41,7 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	 *            Attempts to create directory if not exist
 	 */
 	public DirectoryArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean create) {
+			final String defaultValue, final boolean isRequired, final boolean create) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.create = create;
 	}
@@ -52,9 +51,9 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public File getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
 		}
 		
 		File file = new File(this.stringValue.trim());
@@ -63,26 +62,27 @@ public class DirectoryArgument extends AndamaArgument<File> {
 			if (!this.create) {
 				if (Logger.logError()) {
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` does not exist.");
+							+ "` does not exist.");
 				}
-				throw new Shutdown();
+				return false;
 			} else {
 				if (!file.mkdirs()) {
 					if (Logger.logError()) {
 						Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-						        + "` does not exist and cannot be created.");
+								+ "` does not exist and cannot be created.");
 					}
-					throw new Shutdown();
+					return false;
 				}
 			}
 		}
 		if (!file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The directory `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is not a directory. Please remove file or choose different argument value.");
+						+ "` is not a directory. Please remove file or choose different argument value.");
 			}
-			throw new Shutdown();
+			return false;
 		}
-		return file;
+		this.setCachedValue(file);
+		return true;
 	}
 }

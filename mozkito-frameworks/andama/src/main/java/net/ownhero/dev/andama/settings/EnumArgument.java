@@ -17,7 +17,6 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.HashSet;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -34,7 +33,7 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * 
 	 */
 	public EnumArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final String[] possibleValues) {
+			final String defaultValue, final boolean isRequired, final String[] possibleValues) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.possibleValues = new HashSet<String>();
 		for (String s : possibleValues) {
@@ -47,19 +46,12 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public String getValue() {
-		return this.stringValue;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#setStringValue
-	 * (java.lang.String)
-	 */
-	@Override
-	protected void setStringValue(String value) {
-		value = value.toUpperCase();
+	public boolean init() {
+		if (stringValue == null) {
+			this.setCachedValue(null);
+			return true;
+		}
+		String value = stringValue.toUpperCase();
 		
 		if (!this.possibleValues.contains(value)) {
 			StringBuilder ss = new StringBuilder();
@@ -80,9 +72,11 @@ public class EnumArgument extends AndamaArgument<String> {
 				Logger.error(ss.toString());
 			}
 			
-			throw new Shutdown();
+			return false;
 		}
 		
-		super.setStringValue(value);
+		this.setCachedValue(value);
+		return true;
 	}
+	
 }

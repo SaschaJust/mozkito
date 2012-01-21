@@ -15,6 +15,8 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
@@ -27,6 +29,8 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	private final String name;
 	protected String     stringValue;
 	private boolean      wasSet;
+	private T            cachedValue;
+	private boolean      init = false;
 	
 	/**
 	 * @param settings
@@ -41,7 +45,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 *            Set to <code>true</code> if this argument will be required
 	 */
 	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
@@ -92,6 +96,10 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return true;
 	}
 	
+	protected T getCachedValue() {
+		return cachedValue;
+	}
+	
 	/**
 	 * @return
 	 */
@@ -120,7 +128,13 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return this.name;
 	}
 	
-	public abstract T getValue();
+	public final T getValue() {
+		if(!init){
+			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName()
+					+ " before calling init() is not allowed! Please fix your code.");
+		}
+		return this.getCachedValue();
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -131,16 +145,23 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((this.name == null)
-		                                                ? 0
-		                                                : this.name.hashCode());
+				? 0
+						: this.name.hashCode());
 		return result;
 	}
+	
+	protected abstract boolean init();
 	
 	/**
 	 * @return <code>true</code> if the argument is set to be required
 	 */
 	public boolean isRequired() {
 		return this.isRequired;
+	}
+	
+	protected void setCachedValue(T cachedValue) {
+		init = true;
+		this.cachedValue = cachedValue;
 	}
 	
 	/**
@@ -168,8 +189,9 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 */
 	@Override
 	public String toString() {
-		return "Argument [required=" + this.isRequired + ", name=" + this.name + ", default=" + this.defaultValue
-		        + ", value=" + this.stringValue + ", description=" + this.description + "]";
+		return this.getClass().getSimpleName() + " [required=" + this.isRequired + ", name=" + this.name + ", default="
+				+ this.defaultValue
+				+ ", value=" + this.stringValue + ", description=" + this.description + "]";
 	}
 	
 	/**

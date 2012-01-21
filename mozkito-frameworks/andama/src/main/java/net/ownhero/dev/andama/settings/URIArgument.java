@@ -19,7 +19,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -44,7 +43,7 @@ public class URIArgument extends AndamaArgument<URI> {
 	 * @throws DuplicateArgumentException
 	 */
 	public URIArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -54,9 +53,10 @@ public class URIArgument extends AndamaArgument<URI> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public URI getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			setCachedValue(null);
+			return true;
 		}
 		
 		URI uri = null;
@@ -99,7 +99,7 @@ public class URIArgument extends AndamaArgument<URI> {
 		
 		String err = null;
 		Regex uriRegex = new Regex(
-		                           "^(({scheme}[^:/?#]+):)?(//({authority}[^/?#]*))?({path}[^?#]*)(\\?({query}[^#]*))?(#({fragment}.*))?");
+				"^(({scheme}[^:/?#]+):)?(//({authority}[^/?#]*))?({path}[^?#]*)(\\?({query}[^#]*))?(#({fragment}.*))?");
 		try {
 			if (uriRegex.find(this.stringValue) == null) {
 				err = "URI does not match regex: " + uriRegex.getPattern();
@@ -118,14 +118,14 @@ public class URIArgument extends AndamaArgument<URI> {
 								
 								if (Logger.logInfo()) {
 									Logger.info("Found readable " + (file.isDirectory()
-									                                                   ? "directory"
-									                                                   : "file") + " at location: "
-									        + file.getAbsolutePath());
+											? "directory"
+													: "file") + " at location: "
+													+ file.getAbsolutePath());
 								}
 								uri = new URI("file", null, file.getAbsolutePath(), null);
 							} else {
 								err = "Local path does not reference an existing, readable file/dir: "
-								        + file.getAbsolutePath();
+										+ file.getAbsolutePath();
 							}
 						} else {
 							err = "`path` part of the URI is not set: " + this.stringValue;
@@ -139,14 +139,21 @@ public class URIArgument extends AndamaArgument<URI> {
 			}
 			
 			if (err != null) {
-				throw new UnrecoverableError("When parsing URI string `" + this.stringValue + "` for argument `"
-				        + getName() + "`, the following error occurred: " + err);
+				if (Logger.logError()) {
+					Logger.error("When parsing URI string `" + this.stringValue + "` for argument `"
+							+ getName() + "`, the following error occurred: " + err);
+				}
+				return false;
 			} else {
-				return uri;
+				this.setCachedValue(uri);
 			}
 		} catch (URISyntaxException e) {
-			throw new UnrecoverableError("When parsing URI string `" + this.stringValue + "` for argument `"
-			        + getName() + "`, the following error occurred: " + e.getMessage());
+			if (Logger.logError()) {
+				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `"
+						+ getName() + "`, the following error occurred: " + e.getMessage());
+			}
+			return false;
 		}
+		return true;
 	}
 }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -35,7 +34,7 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	 * @throws DuplicateArgumentException
 	 */
 	public DoubleArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
@@ -44,20 +43,22 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public Double getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
+			return true;
 		}
 		
 		try {
-			return new Double(this.stringValue);
+			this.setCachedValue(Double.valueOf(this.stringValue));
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error("Value given for argument `" + getName()
-				        + "` could not be interpreted as a Double value. Abort!");
+						+ "` could not be interpreted as a Double value. Abort!");
 			}
 			
-			throw new Shutdown();
+			return false;
 		}
+		return true;
 	}
 }

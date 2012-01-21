@@ -100,7 +100,7 @@ public class AndamaSettings {
 	 * @param argSet
 	 * @return <code>true</code> if all arguments in the set could be added.
 	 */
-	protected boolean addArgumentSet(final AndamaArgumentSet argSet) {
+	protected <T> boolean addArgumentSet(final AndamaArgumentSet<T> argSet) {
 		
 		HashMap<String, AndamaArgument<?>> tmpArguments = new HashMap<String, AndamaArgument<?>>(this.arguments);
 		
@@ -272,12 +272,24 @@ public class AndamaSettings {
 		}
 		Logger.readConfiguration();
 		
-		if (this.helpArg.getValue()) {
+		for (AndamaArgument<?> argument : arguments.values()) {
+			if (!argument.init()) {
+				if (Logger.logError()) {
+					Logger.error("Could not initialize AdmamaArgument " + argument.toString()
+							+ ". Please see error earlier error messages, refer to the argument help information, "
+							+ "or review the init() method of the corresponding AdmamaArgument.");
+				}
+				System.err.println(getHelpString());
+				throw new Shutdown();
+			}
+		}
+		
+		if (!validateSettings()) {
 			System.err.println(getHelpString());
 			throw new Shutdown();
 		}
 		
-		if (!validateSettings()) {
+		if (this.helpArg.getValue()) {
 			System.err.println(getHelpString());
 			throw new Shutdown();
 		}

@@ -12,3 +12,5 @@ de.unisaarland.cs.st.reposuite.callgraph.eclipse/bin/
 !de.unisaarland.cs.st.reposuite.callgraph.eclipse/.project
 
 /eclipse-apps/
+.log
+me.agl/

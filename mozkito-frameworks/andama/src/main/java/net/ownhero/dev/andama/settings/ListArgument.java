@@ -39,7 +39,7 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.delimiter = ",";
 	}
@@ -61,7 +61,7 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final String delimiter) {
+			final String defaultValue, final boolean isRequired, final String delimiter) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.delimiter = delimiter;
 	}
@@ -71,14 +71,16 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public HashSet<String> getValue() {
+	public boolean init() {
 		if (this.stringValue == null) {
-			return null;
+			this.setCachedValue(null);
+			return true;
 		}
 		HashSet<String> result = new HashSet<String>();
 		for (String s : this.stringValue.split(this.delimiter)) {
 			result.add(s.trim());
 		}
-		return result;
+		this.setCachedValue(result);
+		return true;
 	}
 }

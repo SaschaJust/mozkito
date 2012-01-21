@@ -32,7 +32,7 @@ public class StringArgument extends AndamaArgument<String> {
 	 * @throws DuplicateArgumentException
 	 */
 	public StringArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+			final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -42,7 +42,8 @@ public class StringArgument extends AndamaArgument<String> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public String getValue() {
-		return this.stringValue;
+	public boolean init() {
+		this.setCachedValue(stringValue);
+		return true;
 	}
 }
