@@ -455,9 +455,9 @@ public class Regex {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.pattern == null)
-		                                                 ? 0
-		                                                 : this.pattern.hashCode());
+		result = (prime * result) + ((this.pattern == null)
+		                                                   ? 0
+		                                                   : this.pattern.hashCode());
 		return result;
 	}
 	
@@ -544,8 +544,6 @@ public class Regex {
 	@NoneNull
 	public String replaceAll(final String text,
 	                         final String replacement) {
-		Condition.isNull(new Regex("(?<!\\\\)\\$|^\\$").find(replacement),
-		                 "We do not allow references/patterns in this method");
 		Condition.check((find(text) == null)
 		                        || (this.matched && !this.pattern.replacer(replacement).replace(text).equals(text)),
 		                "This is done to ensure matches are not replaced by themselves");
