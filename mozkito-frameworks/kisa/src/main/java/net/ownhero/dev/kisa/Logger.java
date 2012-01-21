@@ -73,10 +73,15 @@ public class Logger {
 		RED ("\u001b[0;31m"), YELLOW ("\u001b[0;33m"), NONE ("\u001b[m");
 		
 		public static boolean isSupported() {
-			String termVariable = System.getenv("TERM");
-			if (termVariable != null) {
-				Pattern pattern = Pattern.compile(".*color.*", Pattern.CASE_INSENSITIVE);
-				return pattern.matcher(termVariable).matches();
+			if (System.getProperty("disableTermColors") == null) {
+				if (System.console() != null) { // avoid colors when piping
+					                            // output
+					String termVariable = System.getenv("TERM");
+					if (termVariable != null) {
+						Pattern pattern = Pattern.compile(".*color.*", Pattern.CASE_INSENSITIVE);
+						return pattern.matcher(termVariable).matches() || termVariable.equalsIgnoreCase("screen");
+					}
+				}
 			}
 			
 			return false;
