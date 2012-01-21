@@ -46,10 +46,11 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	public boolean init() {
 		if (this.stringValue == null) {
 			this.setCachedValue(null);
+			return true;
 		}
 		
 		try {
-			this.setCachedValue(new Double(this.stringValue));
+			this.setCachedValue(Double.valueOf(this.stringValue));
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error("Value given for argument `" + getName()

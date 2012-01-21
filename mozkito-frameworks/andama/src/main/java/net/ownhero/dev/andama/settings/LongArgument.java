@@ -46,10 +46,11 @@ public class LongArgument extends AndamaArgument<Long> {
 	public boolean init() {
 		if (this.stringValue == null) {
 			this.setCachedValue(null);
+			return true;
 		}
 		
 		try {
-			this.setCachedValue(new Long(this.stringValue));
+			this.setCachedValue(Long.valueOf(this.stringValue));
 		} catch (NumberFormatException e) {
 			if (Logger.logError()) {
 				Logger.error("Value given for argument `" + getName()

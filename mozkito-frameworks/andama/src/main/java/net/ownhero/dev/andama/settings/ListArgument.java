@@ -74,6 +74,7 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	public boolean init() {
 		if (this.stringValue == null) {
 			this.setCachedValue(null);
+			return true;
 		}
 		HashSet<String> result = new HashSet<String>();
 		for (String s : this.stringValue.split(this.delimiter)) {
