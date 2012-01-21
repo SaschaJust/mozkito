@@ -22,6 +22,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.utils.AndamaUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -117,6 +118,14 @@ public class AndamaCrashHandler extends ThreadGroup {
 				body.append(AndamaUtils.lineSeparator);
 				
 				t = t.getCause();
+			}
+			
+			if (e instanceof UnrecoverableError) {
+				final String failureCause = ((UnrecoverableError) e).analyzeFailureCause();
+				if (failureCause != null) {
+					body.append("Analization of failure cause:").append(AndamaUtils.lineSeparator);
+					body.append(failureCause).append(AndamaUtils.lineSeparator);
+				}
 			}
 			
 			body.append("<<< Crash Report <<<");

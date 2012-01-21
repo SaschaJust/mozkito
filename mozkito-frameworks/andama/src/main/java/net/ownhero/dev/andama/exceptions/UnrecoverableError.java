@@ -40,4 +40,11 @@ public class UnrecoverableError extends Error {
 		super(arg0);
 	}
 	
+	/**
+	 * 
+	 */
+	public String analyzeFailureCause() {
+		return null;
+	}
+	
 }
