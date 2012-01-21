@@ -4,16 +4,19 @@
 package net.ownhero.dev.andama.exceptions;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
 import net.ownhero.dev.andama.utils.AndamaUtils;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
@@ -41,24 +44,50 @@ public class ClassLoadingError extends UnrecoverableError {
      */
 	private static final long serialVersionUID = -6022478069512988369L;
 	
-	public ClassLoadingError(final String message, final Throwable t, final String className) {
-		this(message, t, className, System.getProperty("java.class.path"));
+	/**
+	 * @param message
+	 * @param cause
+	 * @param className
+	 */
+	public ClassLoadingError(final String message, final Throwable cause, final String className) {
+		this(message, cause, className, System.getProperty("java.class.path"));
 	}
 	
-	public ClassLoadingError(final String message, final Throwable t, final String className, final String classPath) {
-		super(message, t);
+	/**
+	 * @param message
+	 * @param cause
+	 * @param className
+	 * @param classPath
+	 */
+	public ClassLoadingError(final String message, final Throwable cause, final String className, final String classPath) {
+		super(message, cause);
 		this.className = className;
 		this.classPath = classPath;
 	}
 	
-	public ClassLoadingError(final Throwable t, final String className) {
-		this(defaultMessage, t, className, System.getProperty("java.class.path"));
+	/**
+	 * @param cause
+	 * @param className
+	 */
+	public ClassLoadingError(final Throwable cause, final String className) {
+		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
 	}
 	
-	public ClassLoadingError(final Throwable t, final String className, final String classPath) {
-		this(defaultMessage, t, className, classPath);
+	/**
+	 * @param cause
+	 * @param className
+	 * @param classPath
+	 */
+	public ClassLoadingError(final Throwable cause, final String className, final String classPath) {
+		this(defaultMessage, cause, className, classPath);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause
+	 * ()
+	 */
 	@Override
 	public String analyzeFailureCause() {
 		final StringBuilder builder = new StringBuilder();
@@ -71,14 +100,14 @@ public class ClassLoadingError extends UnrecoverableError {
 		// ClassNotFoundException - if the class cannot be located
 		
 		if (cause instanceof ExceptionInInitializerError) {
-			final StackTraceElement[] trace = cause.getStackTrace();
 			Throwable t = cause;
 			final LinkedList<StackTraceElement> relevants = new LinkedList<StackTraceElement>();
 			
 			while (t != null) {
 				final LinkedList<StackTraceElement> localRelevants = new LinkedList<StackTraceElement>();
-				for (final StackTraceElement element : trace) {
-					if (element.getClassName().equals(getClassName())) {
+				for (final StackTraceElement element : t.getStackTrace()) {
+					String elementClassName = element.getClassName();
+					if (elementClassName.equals(getClassName())) {
 						localRelevants.addFirst(element);
 					}
 				}
@@ -93,35 +122,46 @@ public class ClassLoadingError extends UnrecoverableError {
 				       .append(AndamaUtils.lineSeparator);
 				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 				
-				final InputStream stream = Thread.currentThread().getContextClassLoader()
-				                                 .getResourceAsStream(element.getFileName());
-				if (stream != null) {
-					builder.append("Source code: ").append(AndamaUtils.lineSeparator);
-					
-					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+				Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
+				BufferedReader reader = null;
+				while (iterator.hasNext()) {
+					File file = iterator.next();
+					System.err.println(file.getName());
+					System.err.println("Trying to load file " + file.getAbsolutePath());
 					try {
-						int line = 1;
-						String theLine = null;
-						while ((line < (element.getLineNumber() - contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
-							reader.readLine();
-							++line;
-						}
-						
-						final int charLength = (int) Math.log10(element.getLineNumber() + contextSize);
-						
-						while ((line <= (element.getLineNumber() + contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
-							builder.append("Line ").append(String.format("%0" + charLength + "d", line))
-							       .append(theLine).append(AndamaUtils.lineSeparator);
-							++line;
-						}
-						
-					} catch (final IOException e) {
+						reader = new BufferedReader(new FileReader(file));
+					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					break;
+					
 				}
+				
+				builder.append("Source code: ").append(AndamaUtils.lineSeparator);
+				
+				try {
+					int line = 1;
+					String theLine = null;
+					while ((line < (element.getLineNumber() - contextSize)) && ((theLine = reader.readLine()) != null)) {
+						reader.readLine();
+						++line;
+					}
+					
+					final int charLength = (int) Math.log10(element.getLineNumber() + contextSize) + 1;
+					
+					while ((line <= (element.getLineNumber() + contextSize)) && ((theLine = reader.readLine()) != null)) {
+						++line;
+						builder.append(String.format(" %-" + charLength + "s:  ", line));
+						builder.append(theLine);
+						builder.append(AndamaUtils.lineSeparator);
+					}
+					
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		} else if (cause instanceof ClassNotFoundException) {
 			// try to find matching class in the classpath
