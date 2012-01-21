@@ -21,6 +21,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.WriterAppender;
+import org.apache.log4j.varia.LevelMatchFilter;
 import org.apache.log4j.varia.LevelRangeFilter;
 import org.slf4j.LoggerFactory;
 
@@ -52,22 +53,36 @@ public class Logger {
 		
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.io.ByteArrayOutputStream#close()
 		 */
 		@Override
 		public void close() throws IOException {
 			super.close();
-			latch.countDown();
+			this.latch.countDown();
 		}
 		
 		/**
 		 * @return
 		 */
 		public CountDownLatch latch() {
-			return latch;
+			return this.latch;
 		}
 	}
+	
+	private static enum TerminalColor {
+		RED ("\u001b[33m"), YELLOW ("\u001b[31m"), NONE ("\u001b[m");
+		
+		private final String tag;
+		
+		TerminalColor(final String tag) {
+			this.tag = tag;
+		}
+		
+		public String getTag() {
+			return this.tag;
+		}
+	}
+	
 	private static class Tuple<K, M> {
 		
 		private final K first;
@@ -94,7 +109,6 @@ public class Logger {
 		
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -103,30 +117,52 @@ public class Logger {
 		}
 	}
 	
-	
 	private static Set<String> registeredAppenders = new HashSet<String>();
 	
-	private static LogLevel logLevel = LogLevel.WARN;
+	private static LogLevel    logLevel            = LogLevel.WARN;
 	
-	private static boolean  debug    = false;
+	private static boolean     debug               = false;
 	
-	private static LogLevel              maxLevel       = null;
-	private static Layout                layout         = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
+	private static LogLevel    maxLevel            = null;
+	private static Layout      defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
+	private static Layout      errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] "
+	                                                       + TerminalColor.RED.getTag() + "%-5p"
+	                                                       + TerminalColor.NONE.getTag() + " %m%n");
+	private static Layout      warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] "
+	                                                       + TerminalColor.YELLOW.getTag() + "%-5p"
+	                                                       + TerminalColor.NONE.getTag() + " %m%n");
 	
 	static {
 		// CONSOLE APPENDER
-		WriterAppender consoleAppender = new WriterAppender(layout, System.err);
-		consoleAppender.setLayout(layout);
-		LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
+		// TODO take actual settings into account
+		// TODO check terminal to support colors
+		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
+		final LevelRangeFilter normalFilter = new LevelRangeFilter();
+		normalFilter.setLevelMax(Level.TRACE);
+		normalFilter.setLevelMin(Level.INFO);
+		consoleDefaultAppender.addFilter(normalFilter);
+		
+		final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
+		final LevelRangeFilter errorFilter = new LevelRangeFilter();
+		errorFilter.setLevelMax(Level.ERROR);
+		errorFilter.setLevelMin(Level.FATAL);
+		consoleErrorAppender.addFilter(errorFilter);
+		
+		final WriterAppender consoleWarningAppender = new WriterAppender(warningLayout, System.err);
+		final LevelMatchFilter warningFilter = new LevelMatchFilter();
+		consoleWarningAppender.addFilter(warningFilter);
+		
+		consoleDefaultAppender.setLayout(defaultLayout);
+		final LevelRangeFilter consoleLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 		// set levels and minLevel
-		LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
+		final LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
 		consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
 		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
 			maxLevel = consoleLevel;
 		}
-		consoleAppender.addFilter(consoleLevelRangeFilter);
-		consoleAppender.activateOptions();
-		org.apache.log4j.Logger.getRootLogger().addAppender(consoleAppender);
+		consoleDefaultAppender.addFilter(consoleLevelRangeFilter);
+		consoleDefaultAppender.activateOptions();
+		org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
 		readConfiguration();
 		
 	}
@@ -138,13 +174,13 @@ public class Logger {
 		final LoggerOutputStream debugStream = new LoggerOutputStream();
 		final OutputStream stream = new BufferedOutputStream(debugStream);
 		
-		Thread thread = new Thread() {
+		final Thread thread = new Thread() {
 			
 			@Override
 			public void run() {
 				try {
 					debugStream.latch.await();
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
 					}
@@ -182,7 +218,8 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void debug(final String message, final int offset) {
+	public static void debug(final String message,
+	                         final int offset) {
 		debug(message, null, null, offset);
 	}
 	
@@ -196,7 +233,8 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void debug(final String fmt, final Object obj) {
+	public static void debug(final String fmt,
+	                         final Object obj) {
 		debug(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -212,7 +250,9 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void debug(final String fmt, final Object obj1, final Object obj2) {
+	public static void debug(final String fmt,
+	                         final Object obj1,
+	                         final Object obj2) {
 		debug(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -232,16 +272,18 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void debug(final String message, final Object[] arguments, final Throwable t,
-			@GreaterInt(ref = 2) final int offset) {
+	private static void debug(final String message,
+	                          final Object[] arguments,
+	                          final Throwable t,
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-				|| (arguments == null),
-				"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-				|| ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
 		
-		Tuple<org.slf4j.Logger, String> ret = tags(offset);
+		final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
 		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
@@ -270,7 +312,8 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void debug(final String message, final Throwable t) {
+	public static void debug(final String message,
+	                         final Throwable t) {
 		debug(message, null, t, 3);
 	}
 	
@@ -298,7 +341,8 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void error(final String message, final int offset) {
+	public static void error(final String message,
+	                         final int offset) {
 		error(message, null, null, offset);
 	}
 	
@@ -312,7 +356,8 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void error(final String fmt, final Object obj) {
+	public static void error(final String fmt,
+	                         final Object obj) {
 		error(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -328,7 +373,9 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void error(final String fmt, final Object obj1, final Object obj2) {
+	public static void error(final String fmt,
+	                         final Object obj1,
+	                         final Object obj2) {
 		error(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -348,17 +395,19 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void error(final String message, final Object[] arguments, final Throwable t,
-			@GreaterInt(ref = 2) final int offset) {
+	private static void error(final String message,
+	                          final Object[] arguments,
+	                          final Throwable t,
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-				|| (arguments == null),
-				"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-				|| ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
-			Tuple<org.slf4j.Logger, String> ret = tags(offset);
+			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
@@ -376,7 +425,7 @@ public class Logger {
 				ret.getFirst().error("[" + ret.getSecond() + "] " + message);
 			}
 		} else {
-			org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
+			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
 			
 			if (arguments != null) {
 				if (arguments.length >= 2) {
@@ -405,7 +454,8 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void error(final String message, final Throwable t) {
+	public static void error(final String message,
+	                         final Throwable t) {
 		error(message, null, t, 3);
 	}
 	
@@ -449,7 +499,8 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void info(final String message, final int offset) {
+	public static void info(final String message,
+	                        final int offset) {
 		info(message, null, null, offset);
 	}
 	
@@ -463,7 +514,8 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void info(final String fmt, final Object obj) {
+	public static void info(final String fmt,
+	                        final Object obj) {
 		info(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -479,7 +531,9 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void info(final String fmt, final Object obj1, final Object obj2) {
+	public static void info(final String fmt,
+	                        final Object obj1,
+	                        final Object obj2) {
 		info(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -499,17 +553,19 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void info(final String message, final Object[] arguments, final Throwable t,
-			@GreaterInt(ref = 2) final int offset) {
+	private static void info(final String message,
+	                         final Object[] arguments,
+	                         final Throwable t,
+	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-				|| (arguments == null),
-				"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-				|| ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
-			Tuple<org.slf4j.Logger, String> ret = tags(offset);
+			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
@@ -527,7 +583,7 @@ public class Logger {
 				ret.getFirst().info("[" + ret.getSecond() + "] " + message);
 			}
 		} else {
-			org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
+			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
 			
 			if (arguments != null) {
 				if (arguments.length >= 2) {
@@ -556,7 +612,8 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void info(final String message, final Throwable t) {
+	public static void info(final String message,
+	                        final Throwable t) {
 		info(message, null, t, 3);
 	}
 	
@@ -583,29 +640,28 @@ public class Logger {
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
-		//		for (Appender appender : appenders) {
-		//			appender.close();
-		//			org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
-		//		}
-		//		appenders.clear();
+		// for (Appender appender : appenders) {
+		// appender.close();
+		// org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
+		// }
+		// appenders.clear();
 		//
 		//
-		//		for (String clazz : classAppenders.keySet()) {
-		//			classAppenders.get(clazz).close();
-		//			LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
-		//		}
-		//		//		LogManager.resetConfiguration();
-		//		classAppenders.clear();
-		
+		// for (String clazz : classAppenders.keySet()) {
+		// classAppenders.get(clazz).close();
+		// LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
+		// }
+		// // LogManager.resetConfiguration();
+		// classAppenders.clear();
 		
 		// FILE APPENDER
 		if (!registeredAppenders.contains("log.file")) {
-			String logFileName = System.getProperty("log.file", ".log");
-			RollingFileAppender fileAppender = new RollingFileAppender();
-			fileAppender.setLayout(layout);
-			LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
+			final String logFileName = System.getProperty("log.file", ".log");
+			final RollingFileAppender fileAppender = new RollingFileAppender();
+			fileAppender.setLayout(defaultLayout);
+			final LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 			// set levels and minLevel
-			LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO").toUpperCase());
+			final LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO").toUpperCase());
 			fileLevelRangeFilter.setLevelMin(Level.toLevel(fileLevel.toString()));
 			if ((maxLevel == null) || (fileLevel.compareTo(maxLevel) > 0)) {
 				maxLevel = fileLevel;
@@ -619,20 +675,20 @@ public class Logger {
 			registeredAppenders.add("log.file");
 		}
 		
-		for (Entry<Object, Object> prop : System.getProperties().entrySet()) {
+		for (final Entry<Object, Object> prop : System.getProperties().entrySet()) {
 			if (prop.getKey().toString().startsWith("log.class.")) {
 				if (!registeredAppenders.contains(prop.getKey().toString())) {
-					String className = prop.getKey().toString().substring(10);
-					String[] values = prop.getValue().toString().split(",");
+					final String className = prop.getKey().toString().substring(10);
+					final String[] values = prop.getValue().toString().split(",");
 					Condition.check(values.length < 3, "log.class. arguments can have two options at most.");
 					Condition.check(values.length > 0, "log.class. arguments must have at least a log level specified.");
-					org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
-					LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
+					final org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
+					final LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
 					classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
 					if (values.length > 1) {
-						RollingFileAppender classFileAppender = new RollingFileAppender();
+						final RollingFileAppender classFileAppender = new RollingFileAppender();
 						classFileAppender.setFile(values[1]);
-						classFileAppender.setLayout(layout);
+						classFileAppender.setLayout(defaultLayout);
 						classFileAppender.setMaxFileSize("1GB");
 						classFileAppender.activateOptions();
 						classLogger.addAppender(classFileAppender);
@@ -692,21 +748,19 @@ public class Logger {
 	 *         instance and the exact calling location (class, method, line
 	 *         number). Both entries are guaranteed to not be null
 	 */
-	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt(ref = 1) final int offset) {
-		Throwable throwable = new Throwable();
+	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
+		final Throwable throwable = new Throwable();
 		throwable.fillInStackTrace();
 		
-		CompareCondition
-		.greater(
-				throwable.getStackTrace().length,
-				offset,
-				"The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
+		CompareCondition.greater(throwable.getStackTrace().length,
+		                         offset,
+		                         "The length of the created stacktrace must never be less than the specified offset (which determines the original location).");
 		
-		Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
-		String methodName = throwable.getStackTrace()[offset].getMethodName();
-		String className = throwable.getStackTrace()[offset].getClassName();
+		final Integer lineNumber = throwable.getStackTrace()[offset].getLineNumber();
+		final String methodName = throwable.getStackTrace()[offset].getMethodName();
+		final String className = throwable.getStackTrace()[offset].getClassName();
 		
-		org.slf4j.Logger logger = LoggerFactory.getLogger(className);
+		final org.slf4j.Logger logger = LoggerFactory.getLogger(className);
 		
 		Condition.notNull(lineNumber, "Linenumber determined from stacktrace must never be null.");
 		CompareCondition.greater(lineNumber, 0, "Determined line number has to be always greater than 0.");
@@ -747,7 +801,8 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void trace(final String message, final int offset) {
+	public static void trace(final String message,
+	                         final int offset) {
 		trace(message, null, null, offset);
 	}
 	
@@ -761,7 +816,8 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void trace(final String fmt, final Object obj) {
+	public static void trace(final String fmt,
+	                         final Object obj) {
 		trace(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -777,7 +833,9 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void trace(final String fmt, final Object obj1, final Object obj2) {
+	public static void trace(final String fmt,
+	                         final Object obj1,
+	                         final Object obj2) {
 		trace(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -797,16 +855,18 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void trace(final String message, final Object[] arguments, final Throwable t,
-			@GreaterInt(ref = 2) final int offset) {
+	private static void trace(final String message,
+	                          final Object[] arguments,
+	                          final Throwable t,
+	                          @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-				|| (arguments == null),
-				"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-				|| ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logTrace(), "Calling the debug method requires debug to be enabled.");
 		
-		Tuple<org.slf4j.Logger, String> ret = tags(offset);
+		final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 		
 		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
@@ -835,7 +895,8 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void trace(final String message, final Throwable t) {
+	public static void trace(final String message,
+	                         final Throwable t) {
 		trace(message, null, t, 3);
 	}
 	
@@ -863,7 +924,8 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	public static void warn(final String message, final int offset) {
+	public static void warn(final String message,
+	                        final int offset) {
 		warn(message, null, null, offset);
 	}
 	
@@ -877,7 +939,8 @@ public class Logger {
 	 * @param obj
 	 *            the object that shall be logged
 	 */
-	public static void warn(final String fmt, final Object obj) {
+	public static void warn(final String fmt,
+	                        final Object obj) {
 		warn(fmt, new Object[] { obj }, null, 3);
 	}
 	
@@ -893,7 +956,9 @@ public class Logger {
 	 * @param obj2
 	 *            an object that shall be logged
 	 */
-	public static void warn(final String fmt, final Object obj1, final Object obj2) {
+	public static void warn(final String fmt,
+	                        final Object obj1,
+	                        final Object obj2) {
 		warn(fmt, new Object[] { obj1, obj2 }, null, 3);
 	}
 	
@@ -913,17 +978,19 @@ public class Logger {
 	 * @param offset
 	 *            determines the offset in the stacktrace
 	 */
-	private static void warn(final String message, final Object[] arguments, final Throwable t,
-			@GreaterInt(ref = 2) final int offset) {
+	private static void warn(final String message,
+	                         final Object[] arguments,
+	                         final Throwable t,
+	                         @GreaterInt (ref = 2) final int offset) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-				|| (arguments == null),
-				"Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
 		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-				|| ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debug) {
-			Tuple<org.slf4j.Logger, String> ret = tags(offset);
+			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
@@ -941,7 +1008,7 @@ public class Logger {
 				ret.getFirst().warn("[" + ret.getSecond() + "] " + message);
 			}
 		} else {
-			org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
+			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
 			
 			if (arguments != null) {
 				if (arguments.length >= 2) {
@@ -970,7 +1037,8 @@ public class Logger {
 	 * @param t
 	 *            the exception that shall be logged
 	 */
-	public static void warn(final String message, final Throwable t) {
+	public static void warn(final String message,
+	                        final Throwable t) {
 		warn(message, null, t, 3);
 	}
 	
