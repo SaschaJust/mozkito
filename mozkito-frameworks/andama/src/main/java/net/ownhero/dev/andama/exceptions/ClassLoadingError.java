@@ -87,35 +87,40 @@ public class ClassLoadingError extends UnrecoverableError {
 			}
 			
 			final StackTraceElement element = relevants.pollLast();
-			builder.append("The initialization provoked by loading the class '" + getClassName() + "' failed.")
-			       .append(AndamaUtils.lineSeparator);
-			builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 			
-			final InputStream stream = Thread.currentThread().getContextClassLoader()
-			                                 .getResourceAsStream(element.getFileName());
-			if (stream != null) {
-				builder.append("Source code: ").append(AndamaUtils.lineSeparator);
+			if (element != null) {
+				builder.append("The initialization provoked by loading the class '" + getClassName() + "' failed.")
+				       .append(AndamaUtils.lineSeparator);
+				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 				
-				final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-				try {
-					int line = 1;
-					String theLine = null;
-					while ((line < (element.getLineNumber() - contextSize)) && ((theLine = reader.readLine()) != null)) {
-						reader.readLine();
-						++line;
+				final InputStream stream = Thread.currentThread().getContextClassLoader()
+				                                 .getResourceAsStream(element.getFileName());
+				if (stream != null) {
+					builder.append("Source code: ").append(AndamaUtils.lineSeparator);
+					
+					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+					try {
+						int line = 1;
+						String theLine = null;
+						while ((line < (element.getLineNumber() - contextSize))
+						        && ((theLine = reader.readLine()) != null)) {
+							reader.readLine();
+							++line;
+						}
+						
+						final int charLength = (int) Math.log10(element.getLineNumber() + contextSize);
+						
+						while ((line <= (element.getLineNumber() + contextSize))
+						        && ((theLine = reader.readLine()) != null)) {
+							builder.append("Line ").append(String.format("%0" + charLength + "d", line))
+							       .append(theLine).append(AndamaUtils.lineSeparator);
+							++line;
+						}
+						
+					} catch (final IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					
-					final int charLength = (int) Math.log10(element.getLineNumber() + contextSize);
-					
-					while ((line <= (element.getLineNumber() + contextSize)) && ((theLine = reader.readLine()) != null)) {
-						builder.append("Line ").append(String.format("%0" + charLength + "d", line)).append(theLine)
-						       .append(AndamaUtils.lineSeparator);
-						++line;
-					}
-					
-				} catch (final IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		} else if (cause instanceof ClassNotFoundException) {
