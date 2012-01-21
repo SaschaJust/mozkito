@@ -16,9 +16,12 @@
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.andama.exceptions.NoSuchContructorError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -93,16 +96,30 @@ public abstract class SearchEngine extends MappingEngine {
 		if (storage != null) {
 			final String value = (String) getOption("language").getSecond().getValue();
 			final String[] split = value.split(":");
+			Class<?> clazz = null;
+			Constructor<?> constructor = null;
+			final String className = "org.apache.lucene.analysis." + split[0] + "." + split[1] + "Analyzer";
 			try {
 				if (this.storage.getAnalyzer() == null) {
-					final Class<?> clazz = Class.forName("org.apache.lucene.analysis." + split[0] + "." + split[1]
-					        + "Analyzer");
-					final Constructor<?> constructor = clazz.getConstructor(Version.class);
+					clazz = Class.forName(className);
+					constructor = clazz.getConstructor(Version.class);
 					final Analyzer newInstance = (Analyzer) constructor.newInstance(Version.LUCENE_31);
 					this.storage.setAnalyzer(newInstance);
 				}
-			} catch (final Exception e) {
+			} catch (final ClassNotFoundException e) {
+				throw new ClassLoadingError(e, className);
+			} catch (final SecurityException e) {
 				throw new UnrecoverableError(e);
+			} catch (final NoSuchMethodException e) {
+				throw new NoSuchContructorError(e, constructor, Version.class);
+			} catch (final IllegalArgumentException e) {
+				throw new UnrecoverableError(e);
+			} catch (final InstantiationException e) {
+				throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, clazz, constructor, Version.LUCENE_31);
+			} catch (final IllegalAccessException e) {
+				throw new UnrecoverableError(e);
+			} catch (final InvocationTargetException e) {
+				throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, clazz, constructor, Version.LUCENE_31);
 			}
 		}
 	}
