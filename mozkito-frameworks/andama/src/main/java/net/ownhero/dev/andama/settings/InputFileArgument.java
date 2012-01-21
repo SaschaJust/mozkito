@@ -59,7 +59,7 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public boolean init() {
+	protected boolean init() {
 		if (this.stringValue == null) {
 			this.setCachedValue(null);
 			return true;

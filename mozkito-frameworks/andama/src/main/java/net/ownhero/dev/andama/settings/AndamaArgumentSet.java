@@ -64,7 +64,7 @@ public abstract class AndamaArgumentSet<T> {
 		return this.arguments;
 	}
 	
-	T getCachedValue() {
+	protected T getCachedValue() {
 		return cachedValue;
 	}
 	
@@ -79,9 +79,9 @@ public abstract class AndamaArgumentSet<T> {
 		return cachedValue;
 	}
 	
-	abstract boolean init();
+	protected abstract boolean init();
 	
-	public void setCachedValue(T cachedValue) {
+	protected void setCachedValue(T cachedValue) {
 		this.cachedValue = cachedValue;
 	}
 	

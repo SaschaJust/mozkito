@@ -96,7 +96,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return true;
 	}
 	
-	T getCachedValue() {
+	protected T getCachedValue() {
 		return cachedValue;
 	}
 	
@@ -150,7 +150,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return result;
 	}
 	
-	abstract boolean init();
+	protected abstract boolean init();
 	
 	/**
 	 * @return <code>true</code> if the argument is set to be required
@@ -159,7 +159,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return this.isRequired;
 	}
 	
-	public void setCachedValue(T cachedValue) {
+	protected void setCachedValue(T cachedValue) {
 		init = true;
 		this.cachedValue = cachedValue;
 	}
