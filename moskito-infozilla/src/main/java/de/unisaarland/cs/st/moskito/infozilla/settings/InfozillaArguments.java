@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilterChain;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class InfozillaArguments extends AndamaArgumentSet {
+public class InfozillaArguments extends AndamaArgumentSet<InfozillaFilterChain> {
 	
 	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
 	
@@ -45,13 +45,13 @@ public class InfozillaArguments extends AndamaArgumentSet {
 		try {
 			Package package1 = InfozillaFilter.class.getPackage();
 			Collection<Class<? extends InfozillaFilter>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                          InfozillaFilter.class,
-			                                                                                                          Modifier.ABSTRACT
-			                                                                                                                  | Modifier.INTERFACE
-			                                                                                                                  | Modifier.PRIVATE);
+					InfozillaFilter.class,
+					Modifier.ABSTRACT
+					| Modifier.INTERFACE
+					| Modifier.PRIVATE);
 			
 			addArgument(new ListArgument(settings, "mapping.filters", "A list of mapping filters that shall be used.",
-			                             buildFilterList(classesExtendingClass), false));
+					buildFilterList(classesExtendingClass), false));
 			
 			String filters = System.getProperty("mapping.filters");
 			Set<String> filterNames = new HashSet<String>();
@@ -108,7 +108,7 @@ public class InfozillaArguments extends AndamaArgumentSet {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public InfozillaFilterChain getValue() {
+	public boolean init() {
 		InfozillaFilterChain chain = new InfozillaFilterChain();
 		
 		for (InfozillaFilter filter : this.filters) {
@@ -116,7 +116,8 @@ public class InfozillaArguments extends AndamaArgumentSet {
 			chain.addFilter(filter);
 		}
 		
-		return chain;
+		setCachedValue(chain);
+		return true;
 	}
 	
 }

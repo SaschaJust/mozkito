@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class DatabaseArguments extends AndamaArgumentSet {
+public class DatabaseArguments extends AndamaArgumentSet<Boolean> {
 	
 	private final AndamaSettings settings;
 	
@@ -66,7 +66,7 @@ public class DatabaseArguments extends AndamaArgumentSet {
 	 * @see de.unisaarland.cs.st.moskito.settings.AndamaArgumentSet#getValue()
 	 */
 	@Override
-	public Boolean getValue() {
+	public boolean init() {
 		Map<String, AndamaArgument<?>> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
@@ -74,7 +74,8 @@ public class DatabaseArguments extends AndamaArgumentSet {
 				arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
 				arguments.get("database.middleware").getValue(), arguments.get("database.unit")
 				.getValue())) {
-			return null;
+			setCachedValue(false);
+			return true;
 		}
 		
 		try {
@@ -104,9 +105,10 @@ public class DatabaseArguments extends AndamaArgumentSet {
 				Logger.error("Could not initialize database middleware "
 						+ arguments.get("database.middleware").getValue() + ".", e);
 			}
-			return null;
+			setCachedValue(false);
+			return true;
 		}
-		
+		setCachedValue(true);
 		return true;
 	}
 }

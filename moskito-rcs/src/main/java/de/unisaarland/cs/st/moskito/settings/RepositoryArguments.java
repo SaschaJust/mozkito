@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class RepositoryArguments extends AndamaArgumentSet {
+public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	
 	private final StringArgument endRevision;
 	private final StringArgument passArg;
@@ -54,18 +54,18 @@ public class RepositoryArguments extends AndamaArgumentSet {
 	public RepositoryArguments(final RepositorySettings settings, final boolean isRequired) {
 		super();
 		this.repoDirArg = new URIArgument(settings, "repository.uri", "URI where the rcs repository is located", null,
-		                                  isRequired);
+				isRequired);
 		this.repoTypeArg = new EnumArgument(settings, "repository.type", "Type of the repository. Possible values: "
-		        + JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
-		                                    JavaUtils.enumToArray(RepositoryType.SUBVERSION));
+				+ JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
+				JavaUtils.enumToArray(RepositoryType.SUBVERSION));
 		this.userArg = new MaskedStringArgument(settings, "repository.user", "Username to access repository", null,
-		                                        false);
+				false);
 		this.passArg = new MaskedStringArgument(settings, "repository.password", "Password to access repository", null,
-		                                        false);
+				false);
 		this.startRevision = new StringArgument(settings, "repository.transaction.start", "Revision to start with",
-		                                        null, false);
+				null, false);
 		this.endRevision = new StringArgument(settings, "repository.transaction.stop", "Revision to stop at", "HEAD",
-		                                      false);
+				false);
 		this.settings = settings;
 	}
 	
@@ -95,7 +95,7 @@ public class RepositoryArguments extends AndamaArgumentSet {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public Repository getValue() {
+	public boolean init() {
 		URI repositoryURI = this.getRepoDirArg().getValue();
 		String username = this.getUserArg().getValue();
 		String password = this.getPassArg().getValue();
@@ -103,7 +103,8 @@ public class RepositoryArguments extends AndamaArgumentSet {
 		String endRevision = this.endRevision.getValue();
 		
 		if (JavaUtils.AnyNull(repositoryURI, this.getRepoTypeArg().getValue())) {
-			return null;
+			setCachedValue(null);
+			return true;
 		}
 		
 		RepositoryType rcsType = RepositoryType.valueOf(this.getRepoTypeArg().getValue());
@@ -128,12 +129,13 @@ public class RepositoryArguments extends AndamaArgumentSet {
 			
 			this.settings.addToolInformation(repository.getHandle(), repository.gatherToolInformation());
 			
-			return repository;
+			setCachedValue(repository);
+			return true;
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
+			return false;
 		}
 	}
 }

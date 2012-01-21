@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -14,7 +13,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 
-public class GenealogyArguments extends AndamaArgumentSet {
+public class GenealogyArguments extends AndamaArgumentSet<CoreChangeGenealogy> {
 	
 	private DirectoryArgument graphDBArg;
 	private DatabaseArguments dbArgs;
@@ -27,14 +26,13 @@ public class GenealogyArguments extends AndamaArgumentSet {
 	}
 	
 	@Override
-	public CoreChangeGenealogy getValue() {
+	public boolean init() {
 		
 		if (!this.dbArgs.getValue()) {
 			if (Logger.logError()) {
 				Logger.error("Could not connect to database!");
 			}
-			
-			throw new Shutdown();
+			return false;
 		}
 		PersistenceUtil persistenceUtil;
 		try {
@@ -42,7 +40,8 @@ public class GenealogyArguments extends AndamaArgumentSet {
 		} catch (UninitializedDatabaseException e1) {
 			throw new UnrecoverableError(e1);
 		}
-		return ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
+		setCachedValue(ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil));
+		return true;
 	}
 	
 }

@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingArguments extends AndamaArgumentSet {
+public class MappingArguments extends AndamaArgumentSet<MappingFinder> {
 	
 	private final Set<Registered> registereds = new HashSet<Registered>();
 	private Set<MappingEngine>    engines     = new HashSet<MappingEngine>();
@@ -58,16 +58,16 @@ public class MappingArguments extends AndamaArgumentSet {
 		                                                                MappingEngine.class, isRequired);
 		this.registereds.addAll(this.engines);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "filters", MappingFilter.class,
-		                                                    isRequired));
+				isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "selectors", MappingSelector.class,
-		                                                    isRequired));
+				isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "splitters", MappingSplitter.class,
 		                                                    isRequired));
 		this.strategies = (Set<MappingStrategy>) Registered.handleRegistered(chain, settings, this, "strategies",
 		                                                                     MappingStrategy.class, isRequired);
 		this.registereds.addAll(this.strategies);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "trainers", MappingTrainer.class,
-		                                                    isRequired));
+				isRequired));
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class MappingArguments extends AndamaArgumentSet {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public MappingFinder getValue() {
+	public boolean init() {
 		final MappingFinder finder = new MappingFinder();
 		final Map<Class<? extends Registered>, Method> methodMap = new HashMap<Class<? extends Registered>, Method>();
 		final Method[] methods = finder.getClass().getMethods();
@@ -111,7 +111,7 @@ public class MappingArguments extends AndamaArgumentSet {
 						for (final Method method : methods) {
 							if (method.getName().startsWith("add")) {
 								if ((method.getParameterTypes().length == 1)
-								        && (method.getParameterTypes()[0] == registeredSubClass)) {
+										&& (method.getParameterTypes()[0] == registeredSubClass)) {
 									found = true;
 									methodMap.put(registered.getClass(), method);
 									method.invoke(finder, registered);
@@ -125,11 +125,9 @@ public class MappingArguments extends AndamaArgumentSet {
 						
 						if (Logger.logError()) {
 							Logger.error("Could not find 'add' method in " + MappingFinder.class.getSimpleName()
-							        + " for type " + registered.getClass().getSimpleName());
+									+ " for type " + registered.getClass().getSimpleName());
 						}
-						throw new UnrecoverableError("Could not find 'add' method in "
-						        + MappingFinder.class.getSimpleName() + " for type "
-						        + registered.getClass().getSimpleName());
+						return false;
 					}
 				}
 			}
@@ -137,7 +135,8 @@ public class MappingArguments extends AndamaArgumentSet {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		return finder;
+		setCachedValue(finder);
+		return true;
 	}
 	
 }

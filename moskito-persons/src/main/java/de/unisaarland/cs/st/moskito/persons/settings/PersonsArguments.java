@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PersonsArguments extends AndamaArgumentSet {
+public class PersonsArguments extends AndamaArgumentSet<MergingProcessor> {
 	
 	private final Set<MergingEngine> engines = new HashSet<MergingEngine>();
 	
@@ -50,13 +50,13 @@ public class PersonsArguments extends AndamaArgumentSet {
 		try {
 			Package package1 = MergingEngine.class.getPackage();
 			Collection<Class<? extends MergingEngine>> engineClasses = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                MergingEngine.class,
-			                                                                                                Modifier.ABSTRACT
-			                                                                                                        | Modifier.INTERFACE
-			                                                                                                        | Modifier.PRIVATE);
+					MergingEngine.class,
+					Modifier.ABSTRACT
+					| Modifier.INTERFACE
+					| Modifier.PRIVATE);
 			
 			addArgument(new ListArgument(settings, "persons.engines", "A list of merging engines that shall be used: "
-			        + buildEngineList(engineClasses), "[all]", false));
+					+ buildEngineList(engineClasses), "[all]", false));
 			
 			String engines = System.getProperty("persons.engines");
 			Set<String> engineNames = new HashSet<String>();
@@ -110,7 +110,7 @@ public class PersonsArguments extends AndamaArgumentSet {
 		for (Class<? extends MergingEngine> klass : engines) {
 			try {
 				builder.append('\t').append("  ").append(klass.getSimpleName()).append(": ")
-				       .append(klass.newInstance().getDescription());
+				.append(klass.newInstance().getDescription());
 			} catch (InstantiationException e) {
 				if (Logger.logWarn()) {
 					Logger.warn(e.getMessage(), e);
@@ -134,7 +134,7 @@ public class PersonsArguments extends AndamaArgumentSet {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public MergingProcessor getValue() {
+	public boolean init() {
 		MergingProcessor finder = new MergingProcessor();
 		
 		for (MergingEngine engine : this.engines) {
@@ -142,7 +142,8 @@ public class PersonsArguments extends AndamaArgumentSet {
 			finder.addEngine(engine);
 		}
 		
-		return finder;
+		setCachedValue(finder);
+		return true;
 	}
 	
 }
