@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.persistence.model;
 
@@ -19,7 +19,7 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -169,20 +169,21 @@ public class EnumTuple implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.enumClass == null)
-		                                                   ? 0
-		                                                   : this.enumClass.hashCode());
-		result = prime * result + ((this.newValue == null)
-		                                                  ? 0
-		                                                  : this.newValue.hashCode());
-		result = prime * result + ((this.oldValue == null)
-		                                                  ? 0
-		                                                  : this.oldValue.hashCode());
+		result = (prime * result) + ((this.enumClass == null)
+		                                                     ? 0
+		                                                     : this.enumClass.hashCode());
+		result = (prime * result) + ((this.newValue == null)
+		                                                    ? 0
+		                                                    : this.newValue.hashCode());
+		result = (prime * result) + ((this.oldValue == null)
+		                                                    ? 0
+		                                                    : this.oldValue.hashCode());
 		return result;
 	}
 	
 	/**
-	 * @param enumClass the enumClass to set
+	 * @param enumClass
+	 *            the enumClass to set
 	 */
 	@Transient
 	public void setEnumClass(final Class<?> enumClass) {
@@ -207,19 +208,21 @@ public class EnumTuple implements Annotated {
 				setNewValue(_enum);
 			}
 		} catch (ClassNotFoundException e) {
-			throw new UnrecoverableError(e);
+			throw new ClassLoadingError(e, className);
 		}
 	}
 	
 	/**
-	 * @param enumClassName the enumClassName to set
+	 * @param enumClassName
+	 *            the enumClassName to set
 	 */
 	private void setEnumClassName(final String enumClassName) {
 		this.enumClassName = enumClassName;
 	}
 	
 	/**
-	 * @param newStringValue the newStringValue to set
+	 * @param newStringValue
+	 *            the newStringValue to set
 	 */
 	private void setNewStringValue(final String newStringValue) {
 		this.newStringValue = newStringValue;
@@ -240,7 +243,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
-	 * @param oldStringValue the oldStringValue to set
+	 * @param oldStringValue
+	 *            the oldStringValue to set
 	 */
 	private void setOldStringValue(final String oldStringValue) {
 		this.oldStringValue = oldStringValue;

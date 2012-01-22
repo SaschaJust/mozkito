@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
@@ -167,7 +168,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 				final Class<?> clazz = Class.forName(getClass1());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
 			} catch (final ClassNotFoundException e) {
-				throw new UnrecoverableError(e);
+				throw new ClassLoadingError(e, getClass1());
 			} catch (final UninitializedDatabaseException e) {
 				throw new UnrecoverableError(e);
 			}
@@ -186,7 +187,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 				final Class<?> clazz = Class.forName(getClass2());
 				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
 			} catch (final ClassNotFoundException e) {
-				throw new UnrecoverableError(e);
+				throw new ClassLoadingError(e, getClass2());
 			} catch (final UninitializedDatabaseException e) {
 				throw new UnrecoverableError(e);
 			}

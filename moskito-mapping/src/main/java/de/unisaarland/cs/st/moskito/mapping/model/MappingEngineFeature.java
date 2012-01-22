@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -80,23 +81,23 @@ public class MappingEngineFeature implements Annotated {
 	@Transient
 	public Class<? extends MappingEngine> getEngine() {
 		try {
-			if (cache.containsKey(this.fqClassName)) {
-				return cache.get(this.fqClassName);
+			if (cache.containsKey(getFqClassName())) {
+				return cache.get(getFqClassName());
 			} else {
 				@SuppressWarnings ("unchecked")
-				final Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
-				cache.put(this.fqClassName, engineClass);
+				final Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(getFqClassName());
+				cache.put(getFqClassName(), engineClass);
 				return engineClass;
 			}
 		} catch (final ClassNotFoundException e) {
 			
 			if (Logger.logError()) {
-				Logger.error("Cannot find MappingEngine: " + this.fqClassName, e);
+				Logger.error("Cannot find MappingEngine: " + getFqClassName(), e);
 			}
-			return null;
+			throw new ClassLoadingError(e, getFqClassName());
 		} catch (final ClassCastException e) {
 			if (Logger.logError()) {
-				Logger.error("Found corresponding class, but not of type MappingEngine: " + this.fqClassName, e);
+				Logger.error("Found corresponding class, but not of type MappingEngine: " + getFqClassName(), e);
 			}
 			return null;
 		}
