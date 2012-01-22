@@ -32,7 +32,6 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.joda.time.DateTime;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -144,9 +143,7 @@ public class ChangeGenealogyUtils {
 	
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment() {
 		
-		DateTime now = new DateTime();
-		
-		System.setProperty("database.name", "reposuite_genealogies_test_" + now.getMillis());
+		System.setProperty("database.name", "reposuite_genealogies_test");
 		OpenJPAUtil.createTestSessionFactory("ppa");
 		
 		PersistenceUtil persistenceUtil = null;

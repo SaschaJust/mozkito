@@ -48,16 +48,16 @@ public class DatabaseArguments extends AndamaArgumentSet<Boolean> {
 		this.settings = settings;
 		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
 		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
-		                                     "miner", isRequired));
+				"miner", isRequired));
 		addArgument(new StringArgument(settings, "database.host", "Name of database host. Default: localhost",
-		                               "localhost", isRequired));
+				"localhost", isRequired));
 		addArgument(new MaskedStringArgument(settings, "database.password", "Password for database. Default: miner",
-		                                     "miner", isRequired));
+				"miner", isRequired));
 		addArgument(new EnumArgument(settings, "database.type", "Possible values: "
-		        + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
-		                             JavaUtils.enumToArray(DatabaseType.POSTGRESQL)));
+				+ JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
+				JavaUtils.enumToArray(DatabaseType.POSTGRESQL)));
 		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
-		                               "org.postgresql.Driver", isRequired));
+				"org.postgresql.Driver", isRequired));
 		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
 		addArgument(new StringArgument(settings, "database.unit", "The persistence unit config tag used.", unit, true));
 	}
@@ -67,33 +67,32 @@ public class DatabaseArguments extends AndamaArgumentSet<Boolean> {
 	 * @see de.unisaarland.cs.st.moskito.settings.AndamaArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public Boolean getValue() {
 		Map<String, AndamaArgument<?>> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
-		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
-		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
-		                      arguments.get("database.middleware").getValue(), arguments.get("database.unit")
-		                                                                                .getValue())) {
-			setCachedValue(false);
-			return true;
+				arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
+				arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
+				arguments.get("database.middleware").getValue(), arguments.get("database.unit")
+				.getValue())) {
+			return false;
 		}
 		String className = PersistenceUtil.class.getPackage().getName() + "."
-		        + arguments.get("database.middleware").getValue() + "Util";
+				+ arguments.get("database.middleware").getValue() + "Util";
 		
 		try {
 			@SuppressWarnings ("unchecked")
 			Class<PersistenceUtil> middlewareClass = (Class<PersistenceUtil>) Class.forName(className);
 			
 			Method method = middlewareClass.getMethod("createSessionFactory", String.class, String.class, String.class,
-			                                          String.class, String.class, String.class, String.class);
+					String.class, String.class, String.class, String.class);
 			method.invoke(null, arguments.get("database.host").getValue().toString(), arguments.get("database.name")
-			                                                                                   .getValue().toString(),
-			              arguments.get("database.user").getValue().toString(), arguments.get("database.password")
-			                                                                             .getValue().toString(),
-			              arguments.get("database.type").getValue().toString(), arguments.get("database.driver")
-			                                                                             .getValue().toString(),
-			              arguments.get("database.unit").getValue().toString());
+					.getValue().toString(),
+					arguments.get("database.user").getValue().toString(), arguments.get("database.password")
+					.getValue().toString(),
+					arguments.get("database.type").getValue().toString(), arguments.get("database.driver")
+					.getValue().toString(),
+					arguments.get("database.unit").getValue().toString());
 			PersistenceManager.registerMiddleware(middlewareClass);
 			
 			String toolInfo = PersistenceManager.getUtil().getToolInformation();
@@ -101,20 +100,17 @@ public class DatabaseArguments extends AndamaArgumentSet<Boolean> {
 		} catch (ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Could not initialize database middleware "
-				        + arguments.get("database.middleware").getValue() + ".", e);
+						+ arguments.get("database.middleware").getValue() + ".", e);
 				Logger.error(new ClassLoadingError(e, className).analyzeFailureCause());
 			}
-			setCachedValue(false);
-			return true;
+			return false;
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error("Could not initialize database middleware "
-				        + arguments.get("database.middleware").getValue() + ".", e);
+						+ arguments.get("database.middleware").getValue() + ".", e);
 			}
-			setCachedValue(false);
-			return true;
+			return false;
 		}
-		setCachedValue(true);
 		return true;
 	}
 }
