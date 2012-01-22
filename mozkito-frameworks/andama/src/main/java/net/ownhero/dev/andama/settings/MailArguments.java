@@ -49,8 +49,8 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
-		setCachedValue(new Properties() {
+	public Properties getValue() {
+		return new Properties() {
 			
 			private static final long serialVersionUID = -4075576523389682827L;
 			
@@ -71,8 +71,7 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 				}
 				
 			}
-		});
-		return true;
+		};
 	}
 	
 }

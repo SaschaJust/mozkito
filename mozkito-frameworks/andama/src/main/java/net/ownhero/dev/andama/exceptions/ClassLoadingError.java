@@ -40,8 +40,8 @@ public class ClassLoadingError extends UnrecoverableError {
 	static final private int  suggestionCount  = 5;
 	static final private int  contextSize      = 3;
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -6022478069512988369L;
 	
 	/**
@@ -94,7 +94,7 @@ public class ClassLoadingError extends UnrecoverableError {
 	 * @param classPath
 	 */
 	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className,
-	        final String classPath) {
+			final String classPath) {
 		super(message, cause);
 		this.className = className;
 		this.classPath = classPath;
@@ -116,7 +116,7 @@ public class ClassLoadingError extends UnrecoverableError {
 	 * @param classPath
 	 */
 	public ClassLoadingError(final String message, final LinkageError cause, final String className,
-	        final String classPath) {
+			final String classPath) {
 		super(message, cause);
 		this.className = className;
 		this.classPath = classPath;
@@ -159,7 +159,7 @@ public class ClassLoadingError extends UnrecoverableError {
 			
 			if (element != null) {
 				builder.append("The initialization provoked by loading the class '" + getClassName() + "' failed.")
-				       .append(AndamaUtils.lineSeparator);
+				.append(AndamaUtils.lineSeparator);
 				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 				
 				final Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
@@ -171,7 +171,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						reader = new BufferedReader(new FileReader(file));
 					} catch (final FileNotFoundException e) {
 						builder.append("Source code providing failed for: ").append(file.getAbsolutePath())
-						       .append(AndamaUtils.lineSeparator);
+						.append(AndamaUtils.lineSeparator);
 					}
 					break;
 					
@@ -184,7 +184,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						int line = 1;
 						String theLine = null;
 						while ((line < (element.getLineNumber() - contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
+								&& ((theLine = reader.readLine()) != null)) {
 							reader.readLine();
 							++line;
 						}
@@ -192,7 +192,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						final int charLength = (int) Math.log10(element.getLineNumber() + contextSize) + 1;
 						
 						while ((line <= (element.getLineNumber() + contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
+								&& ((theLine = reader.readLine()) != null)) {
 							++line;
 							builder.append(String.format(" %-" + charLength + "s:  ", line));
 							builder.append(theLine);
@@ -201,9 +201,9 @@ public class ClassLoadingError extends UnrecoverableError {
 						
 					} catch (final IOException e) {
 						builder.append("Source code providing failed while reading from file: ")
-						       .append(file != null
-						                           ? file.getAbsolutePath()
-						                           : "(null)").append(AndamaUtils.lineSeparator);
+						.append(file != null
+						? file.getAbsolutePath()
+								: "(null)").append(AndamaUtils.lineSeparator);
 					}
 				}
 			}
@@ -219,11 +219,7 @@ public class ClassLoadingError extends UnrecoverableError {
 				builder.append("ClassName '" + this.className + "' is invalid.");
 			} else {
 				Set<String> classNames = new HashSet<String>();
-				try {
 					classNames = ClassFinder.getAllClassNames(getClassPath());
-				} catch (IOException e1) {
-					builder.append("Error while reading class names in class path: " + e1.getMessage());
-				}
 				boolean contained = false;
 				Set<String> sameName = new HashSet<String>();
 				for (final String fqClassName : classNames) {
@@ -237,8 +233,8 @@ public class ClassLoadingError extends UnrecoverableError {
 					} else {
 						String[] split = getClassName().split("\\.");
 						if (fqClassName.endsWith("." + (split.length > 1
-						                                                ? split[split.length - 1]
-						                                                : split[0]))) {
+								? split[split.length - 1]
+										: split[0]))) {
 							sameName.add(fqClassName);
 						}
 					}
@@ -246,13 +242,13 @@ public class ClassLoadingError extends UnrecoverableError {
 				
 				if (contained) {
 					builder.append("Class '"
-					        + getClassName()
-					        + "' is contained in the classpath but could not be found by the classloader (for some reason). Classpath: "
-					        + getClassPath());
+							+ getClassName()
+							+ "' is contained in the classpath but could not be found by the classloader (for some reason). Classpath: "
+							+ getClassPath());
 				} else {
 					builder.append("Class '" + getClassName()
-					                       + "' is not contained in the classpath. Did you mean one of these: ")
-					       .append(AndamaUtils.lineSeparator);
+							+ "' is not contained in the classpath. Did you mean one of these: ")
+							.append(AndamaUtils.lineSeparator);
 					final Directory directory = new RAMDirectory();
 					try {
 						final Set<String> simpleClassNames = new HashSet<String>();
@@ -271,34 +267,34 @@ public class ClassLoadingError extends UnrecoverableError {
 						final Analyzer analyzer = new org.apache.lucene.analysis.en.EnglishAnalyzer(Version.LUCENE_35);
 						final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, analyzer);
 						final Dictionary dictionary = new PlainTextDictionary(
-						                                                      new StringReader(
-						                                                                       StringUtils.join(simpleClassNames,
-						                                                                                        AndamaUtils.lineSeparator)));
+								new StringReader(
+										StringUtils.join(simpleClassNames,
+												AndamaUtils.lineSeparator)));
 						spellChecker.indexDictionary(dictionary, indexWriterConfig, true);
 						
 						final String fqClassName = getClassName();
 						final String[] split = fqClassName.split("\\.");
 						final String simpleClassName = split.length > 1
-						                                               ? split[split.length - 1]
-						                                               : split[0];
-						final String[] suggestions = spellChecker.suggestSimilar(simpleClassName, suggestionCount);
-						
-						final Set<String> fqSuggestions = new HashSet<String>();
-						for (final String suggestion : sameName) {
-							builder.append("  ").append(suggestion).append(AndamaUtils.lineSeparator);
-						}
-						for (final String suggestion : suggestions) {
-							for (final String theClassName : classNames) {
+								? split[split.length - 1]
+										: split[0];
+								final String[] suggestions = spellChecker.suggestSimilar(simpleClassName, suggestionCount);
 								
-								if (theClassName.endsWith("." + suggestion)) {
-									fqSuggestions.add(theClassName);
+								final Set<String> fqSuggestions = new HashSet<String>();
+								for (final String suggestion : sameName) {
+									builder.append("  ").append(suggestion).append(AndamaUtils.lineSeparator);
 								}
-							}
-						}
-						
-						for (final String fqSuggestion : fqSuggestions) {
-							builder.append("  ").append(fqSuggestion).append(AndamaUtils.lineSeparator);
-						}
+								for (final String suggestion : suggestions) {
+									for (final String theClassName : classNames) {
+										
+										if (theClassName.endsWith("." + suggestion)) {
+											fqSuggestions.add(theClassName);
+										}
+									}
+								}
+								
+								for (final String fqSuggestion : fqSuggestions) {
+									builder.append("  ").append(fqSuggestion).append(AndamaUtils.lineSeparator);
+								}
 					} catch (final IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -309,7 +305,7 @@ public class ClassLoadingError extends UnrecoverableError {
 			}
 		} else if (cause instanceof UnrecoverableError) {
 			builder.append("Failure raised from another " + UnrecoverableError.class.getSimpleName() + ". Cause:")
-			       .append(AndamaUtils.lineSeparator);
+			.append(AndamaUtils.lineSeparator);
 			builder.append(((UnrecoverableError) cause).analyzeFailureCause());
 			
 		} else if (cause instanceof LinkageError) {
