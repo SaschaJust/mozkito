@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
-import net.ownhero.dev.andama.exceptions.NoSuchContructorError;
+import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
@@ -111,7 +111,7 @@ public abstract class SearchEngine extends MappingEngine {
 			} catch (final SecurityException e) {
 				throw new UnrecoverableError(e);
 			} catch (final NoSuchMethodException e) {
-				throw new NoSuchContructorError(e, constructor, Version.class);
+				throw new NoSuchConstructorError(e, constructor, Version.class);
 			} catch (final IllegalArgumentException e) {
 				throw new UnrecoverableError(e);
 			} catch (final InstantiationException e) {
