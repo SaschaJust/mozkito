@@ -106,7 +106,7 @@ public class ClassLoadingError extends UnrecoverableError {
 			while (t != null) {
 				final LinkedList<StackTraceElement> localRelevants = new LinkedList<StackTraceElement>();
 				for (final StackTraceElement element : t.getStackTrace()) {
-					String elementClassName = element.getClassName();
+					final String elementClassName = element.getClassName();
 					if (elementClassName.equals(getClassName())) {
 						localRelevants.addFirst(element);
 					}
@@ -122,46 +122,52 @@ public class ClassLoadingError extends UnrecoverableError {
 				       .append(AndamaUtils.lineSeparator);
 				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 				
-				Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
+				final Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
 				BufferedReader reader = null;
+				File file = null;
 				while (iterator.hasNext()) {
-					File file = iterator.next();
+					file = iterator.next();
 					System.err.println(file.getName());
 					System.err.println("Trying to load file " + file.getAbsolutePath());
 					try {
 						reader = new BufferedReader(new FileReader(file));
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (final FileNotFoundException e) {
+						builder.append("Source code providing failed for: ").append(file.getAbsolutePath())
+						       .append(AndamaUtils.lineSeparator);
 					}
 					break;
 					
 				}
 				
-				builder.append("Source code: ").append(AndamaUtils.lineSeparator);
-				
-				try {
-					int line = 1;
-					String theLine = null;
-					while ((line < (element.getLineNumber() - contextSize)) && ((theLine = reader.readLine()) != null)) {
-						reader.readLine();
-						++line;
+				if (reader != null) {
+					builder.append("Source code: ").append(AndamaUtils.lineSeparator);
+					
+					try {
+						int line = 1;
+						String theLine = null;
+						while ((line < (element.getLineNumber() - contextSize))
+						        && ((theLine = reader.readLine()) != null)) {
+							reader.readLine();
+							++line;
+						}
+						
+						final int charLength = (int) Math.log10(element.getLineNumber() + contextSize) + 1;
+						
+						while ((line <= (element.getLineNumber() + contextSize))
+						        && ((theLine = reader.readLine()) != null)) {
+							++line;
+							builder.append(String.format(" %-" + charLength + "s:  ", line));
+							builder.append(theLine);
+							builder.append(AndamaUtils.lineSeparator);
+						}
+						
+					} catch (final IOException e) {
+						builder.append("Source code providing failed while reading from file: ")
+						       .append(file != null
+						                           ? file.getAbsolutePath()
+						                           : "(null)").append(AndamaUtils.lineSeparator);
 					}
-					
-					final int charLength = (int) Math.log10(element.getLineNumber() + contextSize) + 1;
-					
-					while ((line <= (element.getLineNumber() + contextSize)) && ((theLine = reader.readLine()) != null)) {
-						++line;
-						builder.append(String.format(" %-" + charLength + "s:  ", line));
-						builder.append(theLine);
-						builder.append(AndamaUtils.lineSeparator);
-					}
-					
-				} catch (final IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-				
 			}
 		} else if (cause instanceof ClassNotFoundException) {
 			// try to find matching class in the classpath
