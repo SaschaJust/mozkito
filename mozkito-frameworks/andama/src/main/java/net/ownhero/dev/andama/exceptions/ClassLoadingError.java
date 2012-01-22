@@ -167,8 +167,6 @@ public class ClassLoadingError extends UnrecoverableError {
 				File file = null;
 				while (iterator.hasNext()) {
 					file = iterator.next();
-					System.err.println(file.getName());
-					System.err.println("Trying to load file " + file.getAbsolutePath());
 					try {
 						reader = new BufferedReader(new FileReader(file));
 					} catch (final FileNotFoundException e) {
@@ -220,8 +218,14 @@ public class ClassLoadingError extends UnrecoverableError {
 			if ((getClassName() == null) || getClassName().isEmpty()) {
 				builder.append("ClassName '" + this.className + "' is invalid.");
 			} else {
-				final Set<String> classNames = ClassFinder.getAllClassNames(getClassPath());
+				Set<String> classNames = new HashSet<String>();
+				try {
+					classNames = ClassFinder.getAllClassNames(getClassPath());
+				} catch (IOException e1) {
+					builder.append("Error while reading class names in class path: " + e1.getMessage());
+				}
 				boolean contained = false;
+				Set<String> sameName = new HashSet<String>();
 				for (final String fqClassName : classNames) {
 					if (fqClassName.equals(getClassName())) {
 						// the class is in the class path but can't be found by
@@ -230,6 +234,13 @@ public class ClassLoadingError extends UnrecoverableError {
 						contained = true;
 						
 						break;
+					} else {
+						String[] split = getClassName().split("\\.");
+						if (fqClassName.endsWith("." + (split.length > 1
+						                                                ? split[split.length - 1]
+						                                                : split[0]))) {
+							sameName.add(fqClassName);
+						}
 					}
 				}
 				
@@ -273,8 +284,12 @@ public class ClassLoadingError extends UnrecoverableError {
 						final String[] suggestions = spellChecker.suggestSimilar(simpleClassName, suggestionCount);
 						
 						final Set<String> fqSuggestions = new HashSet<String>();
+						for (final String suggestion : sameName) {
+							builder.append("  ").append(suggestion).append(AndamaUtils.lineSeparator);
+						}
 						for (final String suggestion : suggestions) {
 							for (final String theClassName : classNames) {
+								
 								if (theClassName.endsWith("." + suggestion)) {
 									fqSuggestions.add(theClassName);
 								}
@@ -282,7 +297,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						}
 						
 						for (final String fqSuggestion : fqSuggestions) {
-							builder.append(fqSuggestion).append(AndamaUtils.lineSeparator);
+							builder.append("  ").append(fqSuggestion).append(AndamaUtils.lineSeparator);
 						}
 					} catch (final IOException e) {
 						// TODO Auto-generated catch block
