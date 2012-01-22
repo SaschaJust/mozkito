@@ -35,7 +35,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				
 				for (RCSTransaction transaction : persistenceUtil.load(criteria)) {
-					if (transaction.getBranch().equals(RCSBranch.MASTER)) {
+					if (transaction.getBranch().equals(RCSBranch.getMasterBranch())) {
 						list.add(transaction);
 					}
 				}

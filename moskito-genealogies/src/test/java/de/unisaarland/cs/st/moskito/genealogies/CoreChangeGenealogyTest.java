@@ -4,24 +4,35 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class CoreChangeGenealogyTest extends TestEnvironment {
+public class CoreChangeGenealogyTest {
 	
 	@Test
 	public void testChangeGenealogy() {
-		TestEnvironment.setup();
-		
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		File tmpGraphDBFile = testEnvironment.getTmpGraphDBFile();
+		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
+		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
+		        .getEnvironmentOperations();
+
 		changeGenealogy.close();
-		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, getPersistenceUtil());
+		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		assertEquals(41, changeGenealogy.vertexSize());
 		assertEquals(16, changeGenealogy.edgeSize());
 		

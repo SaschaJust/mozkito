@@ -54,7 +54,7 @@ public class RCSFile implements Annotated, Serializable {
 	private long                generatedId;
 	
 	private Map<String, String> changedNames = new HashMap<String, String>();
-
+	
 	/**
 	 * used by PersistenceUtil to create a {@link RCSFile} instance
 	 */
@@ -161,7 +161,8 @@ public class RCSFile implements Annotated, Serializable {
 				// transaction ids
 				for (RCSTransaction p : currentParents) {
 					RCSBranch parentBranch = p.getBranch();
-					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.equals(RCSBranch.MASTER))) {
+					if ((!parentBranch.equals(current.getBranch()))
+					        && (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
 				}

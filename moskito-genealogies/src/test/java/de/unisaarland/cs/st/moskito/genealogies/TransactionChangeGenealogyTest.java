@@ -4,25 +4,35 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionPartitioner;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class TransactionChangeGenealogyTest extends TestEnvironment {
+public class TransactionChangeGenealogyTest {
 	
 	@Test
 	public void test() {
-		TestEnvironment.setup();
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		File tmpGraphDBFile = testEnvironment.getTmpGraphDBFile();
+		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
+		Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, getPersistenceUtil(),
+		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, persistenceUtil,
 				new TransactionPartitioner());
 		
 		assertEquals(16, tdg.edgeSize());

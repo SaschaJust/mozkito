@@ -7,16 +7,19 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.genealogies.TestEnvironment;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.JungGenealogyGraph.Edge;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class JungGenealogyGraphTest extends TestEnvironment {
+public class JungGenealogyGraphTest {
 	
 	@Test
 	public void testCoreLayer() {
-		TestEnvironment.setup();
+		
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+
 		JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(changeGenealogy);
 		assertEquals(changeGenealogy.vertexSize(), jungGraph.getVertexCount());
 		for (JavaChangeOperation op : changeGenealogy.vertexSet()) {

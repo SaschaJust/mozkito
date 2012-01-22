@@ -19,6 +19,7 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -33,9 +34,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.openjpa.persistence.jdbc.Index;
 
+import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.persistence.Criteria;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * The Class RCSBranch.
@@ -46,16 +53,46 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @Table(name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	private static final long serialVersionUID = 5419737140470855522L;
+	private static final long serialVersionUID   = 5419737140470855522L;
 	
 	private long              generatedId;
 	private String            name;
-	private RCSBranch         parent           = null;
-	private RCSTransaction    begin            = null;
-	private RCSTransaction    end              = null;
-	public static RCSBranch   MASTER           = new RCSBranch("master", true);
-	private boolean           open             = false;
-	private String            mergedIn         = null;
+	private RCSBranch         parent             = null;
+	private RCSTransaction    begin              = null;
+	private RCSTransaction    end                = null;
+	
+	private boolean           open               = false;
+	private String            mergedIn           = null;
+	
+	private static RCSBranch  MASTER_BRANCH      = null;
+	private static String     MASTER_BRANCH_NAME = "master";
+	
+	public static RCSBranch getMasterBranch() {
+		if (MASTER_BRANCH == null) {
+			try {
+				PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
+				Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name",
+						MASTER_BRANCH_NAME);
+				List<RCSBranch> loadedBranches = persistenceUtil.load(criteria);
+				if (loadedBranches.isEmpty()) {
+					MASTER_BRANCH = new RCSBranch(MASTER_BRANCH_NAME);
+					MASTER_BRANCH.setOpen(true);
+					if (Logger.logDebug()) {
+						Logger.debug("Creating new RCSBranch.MASTER_BRANCH due to the fact that none existed in the DB.");
+					}
+				} else {
+					MASTER_BRANCH = loadedBranches.get(0);
+				}
+			} catch (UninitializedDatabaseException e) {
+				MASTER_BRANCH = new RCSBranch(MASTER_BRANCH_NAME);
+				MASTER_BRANCH.setOpen(true);
+				if (Logger.logWarn()) {
+					Logger.warn("Creating new RCSBranch.MASTER_BRANCH due to the fact that no persistence util could be loaded. This might lead to severe consequences in productive runs but may be ok for testing purposes.");
+				}
+			}
+		}
+		return MASTER_BRANCH;
+	}
 	
 	/**
 	 * Instantiates a new rCS branch.
@@ -72,19 +109,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	public RCSBranch(final String name) {
 		this.setName(name);
-	}
-	
-	/**
-	 * Instantiates a new rCS branch.
-	 * 
-	 * @param name
-	 *            might be null
-	 * @param open
-	 *            the open
-	 */
-	private RCSBranch(final String name, final boolean open) {
-		this.setName(name);
-		this.markOpen();
 	}
 	
 	/**
@@ -111,19 +135,19 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		if (this.equals(other)) {
 			return 0;
 		}
-		if (other.equals(MASTER)) {
+		if (other.equals(getMasterBranch())) {
 			return 1;
-		} else if (this.equals(MASTER)) {
+		} else if (this.equals(getMasterBranch())) {
 			return -1;
 		}
-		while ((p != null) && (!p.equals(MASTER))) {
+		while ((p != null) && (!p.equals(getMasterBranch()))) {
 			if (p.equals(other)) {
 				return 1;
 			}
 			p = p.getParent();
 		}
 		RCSBranch c = other.getParent();
-		while ((c != null) && (!c.equals(MASTER))) {
+		while ((c != null) && (!c.equals(getMasterBranch()))) {
 			if (c.equals(this)) {
 				return -1;
 			}
@@ -293,10 +317,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
-		result = prime * result + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
-		result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
-		result = prime * result + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
+		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
+		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
+		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
 		return result;
 	}
 	

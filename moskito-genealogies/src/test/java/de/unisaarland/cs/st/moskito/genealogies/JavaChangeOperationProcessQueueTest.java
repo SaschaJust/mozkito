@@ -3,17 +3,27 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class JavaChangeOperationProcessQueueTest extends TestEnvironment {
+public class JavaChangeOperationProcessQueueTest {
 	
 	@Test
 	public void test() {
-		setup();
+		
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
+				.getEnvironmentOperations();
+
 		JavaChangeOperationProcessQueue queue = new JavaChangeOperationProcessQueue();
 		
 		for (JavaChangeOperation op : environmentOperations.values()) {
