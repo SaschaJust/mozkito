@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -110,10 +112,37 @@ public class ClassFinder {
 	/**
 	 * @param classPath
 	 * @return
+	 * @throws IOException
 	 */
-	public static Set<String> getAllClassNames(final String classPath) {
+	public static Set<String> getAllClassNames(final String classPath) throws IOException {
 		final HashSet<String> classNames = new HashSet<String>();
 		
+		final List<String> pathList = new LinkedList<String>();
+		
+		String classPaths = classPath == null
+		                                     ? System.getProperty("java.class.path")
+		                                     : classPath;
+		String[] split = classPaths.split(System.getProperty("path.separator"));
+		for (final String cp : split) {
+			pathList.add(cp);
+		}
+		classPaths = System.getProperty("reposuiteClassLookup");
+		if (classPaths != null) {
+			split = classPaths.split(System.getProperty("path.separator"));
+			for (final String cp : split) {
+				pathList.add(cp);
+			}
+		}
+		
+		new HashSet<Class<?>>();
+		
+		for (final String cp : pathList) {
+			if (cp.endsWith(".jar")) {
+				classNames.addAll(getClassNamesFromJarFile(cp));
+			} else {
+				classNames.addAll(getClassNamesFromClassPath(cp));
+			}
+		}
 		return classNames;
 	}
 	
@@ -468,6 +497,80 @@ public class ClassFinder {
 			} while ((matchingClass == null) && !aClass.equals(Object.class));
 		}
 		return classList;
+	}
+	
+	/**
+	 * @param cp
+	 * @return
+	 * @throws IOException
+	 */
+	private static Collection<? extends String> getClassNamesFromClassPath(final String cp) throws IOException {
+		Set<String> classNames = new HashSet<String>();
+		
+		Iterator<File> iterator = FileUtils.findFiles(new File(cp), new IOFileFilter() {
+			
+			@Override
+			public boolean accept(final File file) {
+				return file.getName().endsWith(".class");
+			}
+			
+			@Override
+			public boolean accept(final File dir,
+			                      final String name) {
+				return name.endsWith(".class");
+			}
+		});
+		
+		while (iterator.hasNext()) {
+			String path = iterator.next().getAbsolutePath();
+			if (path.startsWith(cp)) {
+				path = path.substring(cp.length());
+			}
+			path = path.replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".");
+			path = path.replaceAll("\\$[^.]+", "");
+			if (path.endsWith(".class")) {
+				path = path.substring(0, path.length() - ".class".length());
+			}
+			path = path.replaceFirst("^\\.+", "");
+			classNames.add(path);
+		}
+		return classNames;
+	}
+	
+	/**
+	 * @param filePath
+	 * @return
+	 */
+	private static Set<String> getClassNamesFromJarFile(final String filePath) {
+		Set<String> classNames = new HashSet<String>();
+		try {
+			final JarFile currentFile = new JarFile(filePath);
+			
+			/*
+			 * step through all elements in the jar file and check if there
+			 * exists a class file in given package. If so, load it and add it
+			 * to the collection.
+			 */
+			for (final Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
+				final JarEntry current = e.nextElement();
+				
+				if (current.getName().endsWith(".class")) {
+					String path = current.getName();
+					path = path.replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".");
+					path = path.replaceAll("\\$[^.]+", "");
+					if (path.endsWith(".class")) {
+						path = path.substring(0, path.length() - ".class".length());
+					}
+					path = path.replaceFirst("^\\.+", "");
+					classNames.add(path);
+				}
+			}
+		} catch (final IOException e) {
+			if (Logger.logWarn()) {
+				Logger.warn("Skipping invalid JAR file `" + filePath + "`: " + e.getMessage(), e);
+			}
+		}
+		return classNames;
 	}
 	
 	/**
