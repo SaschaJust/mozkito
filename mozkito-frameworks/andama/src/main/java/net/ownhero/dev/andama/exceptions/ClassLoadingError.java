@@ -45,11 +45,45 @@ public class ClassLoadingError extends UnrecoverableError {
 	private static final long serialVersionUID = -6022478069512988369L;
 	
 	/**
+	 * @param cause
+	 * @param className
+	 */
+	public ClassLoadingError(final ClassNotFoundException cause, final String className) {
+		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
+	}
+	
+	/**
+	 * @param cause
+	 * @param className
+	 * @param classPath
+	 */
+	public ClassLoadingError(final ClassNotFoundException cause, final String className, final String classPath) {
+		this(defaultMessage, cause, className, classPath);
+	}
+	
+	/**
+	 * @param cause
+	 * @param className
+	 */
+	public ClassLoadingError(final LinkageError cause, final String className) {
+		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
+	}
+	
+	/**
+	 * @param cause
+	 * @param className
+	 * @param classPath
+	 */
+	public ClassLoadingError(final LinkageError cause, final String className, final String classPath) {
+		this(defaultMessage, cause, className, classPath);
+	}
+	
+	/**
 	 * @param message
 	 * @param cause
 	 * @param className
 	 */
-	public ClassLoadingError(final String message, final Throwable cause, final String className) {
+	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className) {
 		this(message, cause, className, System.getProperty("java.class.path"));
 	}
 	
@@ -59,27 +93,33 @@ public class ClassLoadingError extends UnrecoverableError {
 	 * @param className
 	 * @param classPath
 	 */
-	public ClassLoadingError(final String message, final Throwable cause, final String className, final String classPath) {
+	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className,
+	        final String classPath) {
 		super(message, cause);
 		this.className = className;
 		this.classPath = classPath;
 	}
 	
 	/**
+	 * @param message
 	 * @param cause
 	 * @param className
 	 */
-	public ClassLoadingError(final Throwable cause, final String className) {
-		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
+	public ClassLoadingError(final String message, final LinkageError cause, final String className) {
+		this(message, cause, className, System.getProperty("java.class.path"));
 	}
 	
 	/**
+	 * @param message
 	 * @param cause
 	 * @param className
 	 * @param classPath
 	 */
-	public ClassLoadingError(final Throwable cause, final String className, final String classPath) {
-		this(defaultMessage, cause, className, classPath);
+	public ClassLoadingError(final String message, final LinkageError cause, final String className,
+	        final String classPath) {
+		super(message, cause);
+		this.className = className;
+		this.classPath = classPath;
 	}
 	
 	/*
