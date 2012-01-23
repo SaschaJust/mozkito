@@ -223,6 +223,7 @@ public class AndamaSettings {
 		if (System.getProperty("andamaSettings") != null) {
 			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
 			boolean parseSettingFile = true;
+			settingsArg.init();
 			File settingFile = new File(this.settingsArg.getValue());
 			if (!settingFile.exists()) {
 				if (Logger.logWarn()) {
