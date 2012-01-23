@@ -51,14 +51,17 @@ public class OpenJPA_RCS_NetTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		System.err.println("Creating new test session factory.");
 		OpenJPAUtil.createTestSessionFactory("rcs");
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		try {
+			System.err.println("Executing global shutdown.");
 			OpenJPAUtil.getInstance().globalShutdown();
 		} catch (final UninitializedDatabaseException e) {
+			System.err.println("Caught exception when trying to execute global shutdown.");
 			e.printStackTrace();
 		}
 	}
