@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.persistence;
 
@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class OpenJPA_NetTest {
+public class OpenJPA_RCS_NetTest {
 	
 	@AfterClass
 	public static void afterClass() {
@@ -58,8 +58,8 @@ public class OpenJPA_NetTest {
 	public void tearDown() throws Exception {
 		try {
 			OpenJPAUtil.getInstance().globalShutdown();
-		} catch (UninitializedDatabaseException e) {
-			
+		} catch (final UninitializedDatabaseException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -68,20 +68,20 @@ public class OpenJPA_NetTest {
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
-			RCSBranch branch = new RCSBranch("testBranch");
+			final RCSBranch branch = new RCSBranch("testBranch");
 			branch.setMergedIn("0123456789abcde");
-			RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
-					"committed begin",
-					new DateTime(),
-					new Person("just", "Sascha Just",
-							"sascha.just@st.cs.uni-saarland.de"),
-					"000000000000000");
-			RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
-					"committed end",
-					new DateTime(),
-					new Person("just", "Sascha Just",
-							"sascha.just@st.cs.uni-saarland.de"),
-					"0123456789abcde");
+			final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
+			                                                                         "committed begin",
+			                                                                         new DateTime(),
+			                                                                         new Person("just", "Sascha Just",
+			                                                                                    "sascha.just@st.cs.uni-saarland.de"),
+			                                                                         "000000000000000");
+			final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
+			                                                                       "committed end",
+			                                                                       new DateTime(),
+			                                                                       new Person("just", "Sascha Just",
+			                                                                                  "sascha.just@st.cs.uni-saarland.de"),
+			                                                                       "0123456789abcde");
 			
 			beginTransaction.setBranch(branch);
 			endTransaction.setBranch(branch);
@@ -94,15 +94,15 @@ public class OpenJPA_NetTest {
 			beginTransaction.addChild(endTransaction);
 			persistenceUtil.commitTransaction();
 			
-			List<RCSBranch> list = persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class));
+			final List<RCSBranch> list = persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class));
 			
 			assertFalse(list.isEmpty());
 			assertEquals(1, list.size());
-			for (RCSBranch b : list) {
+			for (final RCSBranch b : list) {
 				assertEquals(branch, b);
 				assertEquals("0123456789abcde", b.getMergedIn());
 			}
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			fail(e.getMessage());
 		}
 	}
@@ -113,10 +113,10 @@ public class OpenJPA_NetTest {
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
 			
-			Person person = new Person("just", null, null);
-			RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
-			RCSFile file = new RCSFileManager().createFile("test.java", transaction);
-			RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
+			final Person person = new Person("just", null, null);
+			final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
+			final RCSFile file = new RCSFileManager().createFile("test.java", transaction);
+			final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 			
 			assertTrue(transaction.getRevisions().contains(revision));
 			transaction.setBranch(new RCSBranch("master"));
@@ -127,7 +127,7 @@ public class OpenJPA_NetTest {
 			assertTrue(transaction.getRevisions().contains(revision));
 			
 			// revision
-			List<RCSRevision> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
+			final List<RCSRevision> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
 			assertFalse(revisionList.isEmpty());
 			assertEquals(1, revisionList.size());
 			assertEquals(revision, revisionList.get(0));
@@ -136,7 +136,7 @@ public class OpenJPA_NetTest {
 			assertEquals(file, revisionList.get(0).getChangedFile());
 			
 			// file
-			List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
+			final List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
 			assertFalse(fileList.isEmpty());
 			assertEquals(1, fileList.size());
 			assertEquals(file, fileList.get(0));
@@ -145,7 +145,7 @@ public class OpenJPA_NetTest {
 			assertEquals("test.java", fileList.get(0).getLatestPath());
 			
 			// person
-			List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+			final List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
 			assertFalse(personList.isEmpty());
 			assertEquals(1, personList.size());
 			assertEquals(person, personList.get(0));
@@ -158,14 +158,14 @@ public class OpenJPA_NetTest {
 			assertTrue(personList.get(0).getFullnames().isEmpty());
 			
 			// transaction
-			List<RCSTransaction> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
+			final List<RCSTransaction> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
 			assertFalse(transactionList.isEmpty());
 			assertEquals(1, transactionList.size());
 			assertEquals(transaction, transactionList.get(0));
 			assertEquals(person, transactionList.get(0).getAuthor());
 			assertFalse(transactionList.get(0).getRevisions().isEmpty());
 			assertEquals(1, transactionList.get(0).getRevisions().size());
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			fail(e.getMessage());
 		}
 	}
@@ -176,34 +176,34 @@ public class OpenJPA_NetTest {
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
 			
-			RCSFileManager fileManager = new RCSFileManager();
-			Person person = new Person("kim", null, null);
-			RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
+			final RCSFileManager fileManager = new RCSFileManager();
+			final Person person = new Person("kim", null, null);
+			final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
 			
-			RCSFile file = fileManager.createFile("test.java", rcsTransaction);
+			final RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 			file.assignTransaction(rcsTransaction, "formerTest.java");
-			RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
+			final RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 			persistenceUtil.beginTransaction();
 			rcsTransaction.setBranch(RCSBranch.getMasterBranch());
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 			persistenceUtil.commitTransaction();
 			
-			List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
+			final List<RCSFile> fileList = persistenceUtil.load(persistenceUtil.createCriteria(RCSFile.class));
 			assertEquals(1, fileList.size());
 			assertEquals(file, fileList.get(0));
 			
-			List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+			final List<Person> personList = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
 			assertFalse(personList.isEmpty());
 			assertTrue(personList.contains(person));
 			
-			List<RCSRevision> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
+			final List<RCSRevision> revisionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSRevision.class));
 			assertEquals(1, revisionList.size());
 			assertEquals(revision, revisionList.get(0));
 			
-			List<RCSTransaction> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
+			final List<RCSTransaction> transactionList = persistenceUtil.load(persistenceUtil.createCriteria(RCSTransaction.class));
 			assertFalse(transactionList.isEmpty());
 			assertTrue(transactionList.contains(rcsTransaction));
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			fail();
 		}
 		

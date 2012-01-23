@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.persistence;
 
@@ -28,12 +28,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
-public class OpenJPA_NetTest {
+public class OpenJPA_Persistence_NetTest {
 	
 	@AfterClass
 	public static void afterClass() {
@@ -52,8 +50,8 @@ public class OpenJPA_NetTest {
 	@After
 	public void tearDown() throws Exception {
 		try {
-			OpenJPAUtil.getInstance().shutdown();
-		} catch (UninitializedDatabaseException e) {
+			OpenJPAUtil.getInstance().globalShutdown();
+		} catch (final UninitializedDatabaseException e) {
 			
 		}
 	}
@@ -63,18 +61,18 @@ public class OpenJPA_NetTest {
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
-			Person person = new Person("username", "fullname", "em@i.l");
+			final Person person = new Person("username", "fullname", "em@i.l");
 			
 			persistenceUtil.beginTransaction();
 			persistenceUtil.save(person);
 			persistenceUtil.commitTransaction();
 			
-			List<Person> list = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+			final List<Person> list = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
 			
 			assertFalse(list.isEmpty());
 			assertEquals(1, list.size());
 			assertEquals(person, list.get(0));
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			fail(e.getMessage());
 		}
 	}
@@ -84,10 +82,10 @@ public class OpenJPA_NetTest {
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
-			PersonContainer personContainer = new PersonContainer();
-			Person person1 = new Person("username1", "full name1", "em1@i.l");
-			Person person2 = new Person("username2", "full name2", "em21@i.l");
-			Person person3 = new Person("username3", "full name3", "em3@i.l");
+			final PersonContainer personContainer = new PersonContainer();
+			final Person person1 = new Person("username1", "full name1", "em1@i.l");
+			final Person person2 = new Person("username2", "full name2", "em21@i.l");
+			final Person person3 = new Person("username3", "full name3", "em3@i.l");
 			
 			personContainer.add("role1", person1);
 			personContainer.add("role2", person2);
@@ -97,7 +95,7 @@ public class OpenJPA_NetTest {
 			persistenceUtil.save(personContainer);
 			persistenceUtil.commitTransaction();
 			
-			List<PersonContainer> list = persistenceUtil.load(persistenceUtil.createCriteria(PersonContainer.class));
+			final List<PersonContainer> list = persistenceUtil.load(persistenceUtil.createCriteria(PersonContainer.class));
 			
 			assertFalse(list.isEmpty());
 			assertEquals(1, list.size());
@@ -107,7 +105,7 @@ public class OpenJPA_NetTest {
 			assertEquals(person1, list.get(0).get("role1"));
 			assertEquals(person2, list.get(0).get("role2"));
 			assertEquals(person3, list.get(0).get("role3"));
-		} catch (UninitializedDatabaseException e) {
+		} catch (final UninitializedDatabaseException e) {
 			fail(e.getMessage());
 		}
 	}
