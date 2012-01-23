@@ -2,9 +2,14 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
@@ -18,12 +23,12 @@ public class JavaChangeOperationProcessQueueTest {
 	
 	@Test
 	public void test() {
-		
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
 				.getEnvironmentOperations();
-
+		
 		JavaChangeOperationProcessQueue queue = new JavaChangeOperationProcessQueue();
 		
 		for (JavaChangeOperation op : environmentOperations.values()) {
@@ -118,6 +123,12 @@ public class JavaChangeOperationProcessQueueTest {
 			++counter;
 		}
 		assertEquals(addedCalls.size(), counter);
+		changeGenealogy.close();
+		try {
+			FileUtils.deleteDirectory(tmpGraphDBFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

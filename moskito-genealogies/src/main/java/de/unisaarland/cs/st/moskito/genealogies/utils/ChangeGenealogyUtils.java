@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedWriter;
@@ -28,7 +26,6 @@ import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -141,7 +138,7 @@ public class ChangeGenealogyUtils {
 	
 	
 	
-	public static GenealogyTestEnvironment getGenealogyTestEnvironment() {
+	public static GenealogyTestEnvironment getGenealogyTestEnvironment(File tmpGraphDBFile) {
 		
 		System.setProperty("database.name", "reposuite_genealogies_test");
 		OpenJPAUtil.createTestSessionFactory("ppa");
@@ -363,8 +360,6 @@ public class ChangeGenealogyUtils {
 		//done everything is set.
 		persistenceUtil.commitTransaction();
 		
-		File tmpGraphDBFile = FileUtils
-				.createRandomDir("reposuite", "change_genealogy_test", FileShutdownAction.DELETE);
 		CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		
 		if (changeGenealogy == null) {
@@ -380,12 +375,63 @@ public class ChangeGenealogyUtils {
 			}
 		}
 		
-		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
-			for (JavaChangeOperation op : transactionEntry.getValue()) {
-				assertTrue(changeGenealogy.hasVertex(op));
-				assertFalse(changeGenealogy.addVertex(op));
-			}
-		}
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
+				environmentOperations.get(TestEnvironmentOperation.T1F1),
+				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
+				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.CallOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
+				environmentOperations.get(TestEnvironmentOperation.T1F1),
+				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
+				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.DefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
+				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3D),
+				environmentOperations.get(TestEnvironmentOperation.T2F3), GenealogyEdgeType.DeletedCallOnCall);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3A),
+				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
+				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
+				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T6F2),
+				environmentOperations.get(TestEnvironmentOperation.T3F2M),
+				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T7F2),
+				environmentOperations.get(TestEnvironmentOperation.T6F2),
+				GenealogyEdgeType.DefinitionOnDeletedDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
+				environmentOperations.get(TestEnvironmentOperation.T7F2), GenealogyEdgeType.DefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T9F1),
+				environmentOperations.get(TestEnvironmentOperation.T3F1A),
+				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
+				environmentOperations.get(TestEnvironmentOperation.T9F1),
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
+				environmentOperations.get(TestEnvironmentOperation.T9F1),
+				GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
+				environmentOperations.get(TestEnvironmentOperation.T4F3A), GenealogyEdgeType.DeletedCallOnCall);
+		
+		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
+				environmentOperations.get(TestEnvironmentOperation.T5F4), GenealogyEdgeType.DeletedCallOnCall);
 		
 		return new GenealogyTestEnvironment(persistenceUtil, transactionMap, environmentTransactions,
 				environmentOperations, repository, changeGenealogy, tmpGraphDBFile);

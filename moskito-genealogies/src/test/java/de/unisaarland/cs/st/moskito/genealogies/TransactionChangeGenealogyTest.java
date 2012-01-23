@@ -5,10 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
@@ -25,9 +29,9 @@ public class TransactionChangeGenealogyTest {
 	
 	@Test
 	public void test() {
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment();
+		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		File tmpGraphDBFile = testEnvironment.getTmpGraphDBFile();
 		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
@@ -254,6 +258,11 @@ public class TransactionChangeGenealogyTest {
 		assertTrue(vertices.containsAll(environmentTransactions.values()));
 		
 		tdg.close();
+		try {
+			FileUtils.deleteDirectory(tmpGraphDBFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
