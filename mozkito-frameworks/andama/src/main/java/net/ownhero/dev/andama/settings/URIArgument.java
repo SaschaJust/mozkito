@@ -154,7 +154,7 @@ public class URIArgument extends AndamaArgument<URI> {
 			}
 			return false;
 		}
-		this.setCachedValue(null);
+		this.setCachedValue(uri);
 		return true;
 	}
 }
