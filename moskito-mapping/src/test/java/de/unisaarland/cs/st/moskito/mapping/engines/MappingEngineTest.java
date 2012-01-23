@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
@@ -140,7 +141,7 @@ public class MappingEngineTest {
 		score = new Mapping(mappableReport, mappableTransaction);
 	}
 	
-	@Test
+	@Test (expected = UnrecoverableError.class)
 	public void testBackrefEngine() {
 		final BackrefEngine engine = new BackrefEngine();
 		System.err.println(this.settings.toString());
