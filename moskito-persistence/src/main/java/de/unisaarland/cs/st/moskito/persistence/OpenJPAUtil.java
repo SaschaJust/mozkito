@@ -195,10 +195,15 @@ public class OpenJPAUtil implements PersistenceUtil {
 		for (final Thread t : provider.keySet()) {
 			provider.get(t).shutdown();
 		}
-		singleUtil.shutdown();
-		singleUtil = null;
-		factory.close();
-		factory = null;
+		if (singleUtil != null) {
+			singleUtil.shutdown();
+			singleUtil = null;
+		}
+		if (factory != null) {
+			factory.close();
+			factory = null;
+		}
+		
 		provider.clear();
 		OpenJPAUtil.createSessionFactory(properties);
 	}
@@ -461,10 +466,15 @@ public class OpenJPAUtil implements PersistenceUtil {
 		for (final Thread t : provider.keySet()) {
 			provider.get(t).shutdown();
 		}
-		singleUtil.shutdown();
-		singleUtil = null;
-		factory.close();
-		factory = null;
+		if (singleUtil != null) {
+			singleUtil.shutdown();
+			singleUtil = null;
+		}
+		if (factory != null) {
+			factory.close();
+			factory = null;
+		}
+		
 		provider.clear();
 	}
 	
