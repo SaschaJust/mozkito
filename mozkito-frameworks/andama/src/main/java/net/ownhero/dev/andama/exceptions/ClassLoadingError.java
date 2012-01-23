@@ -3,10 +3,7 @@
  */
 package net.ownhero.dev.andama.exceptions;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
@@ -163,48 +160,11 @@ public class ClassLoadingError extends UnrecoverableError {
 				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
 				
 				final Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
-				BufferedReader reader = null;
 				File file = null;
-				while (iterator.hasNext()) {
-					file = iterator.next();
-					try {
-						reader = new BufferedReader(new FileReader(file));
-					} catch (final FileNotFoundException e) {
-						builder.append("Source code providing failed for: ").append(file.getAbsolutePath())
-						       .append(AndamaUtils.lineSeparator);
-					}
-					break;
-					
-				}
 				
-				if (reader != null) {
-					builder.append("Source code: ").append(AndamaUtils.lineSeparator);
-					
-					try {
-						int line = 1;
-						String theLine = null;
-						while ((line < (element.getLineNumber() - contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
-							reader.readLine();
-							++line;
-						}
-						
-						final int charLength = (int) Math.log10(element.getLineNumber() + contextSize) + 1;
-						
-						while ((line <= (element.getLineNumber() + contextSize))
-						        && ((theLine = reader.readLine()) != null)) {
-							++line;
-							builder.append(String.format(" %-" + charLength + "s:  ", line));
-							builder.append(theLine);
-							builder.append(AndamaUtils.lineSeparator);
-						}
-						
-					} catch (final IOException e) {
-						builder.append("Source code providing failed while reading from file: ")
-						       .append(file != null
-						                           ? file.getAbsolutePath()
-						                           : "(null)").append(AndamaUtils.lineSeparator);
-					}
+				if (iterator.hasNext()) {
+					file = iterator.next();
+					builder.append(getSourceCode(file, element.getLineNumber(), contextSize));
 				}
 			}
 		} else if (cause instanceof ClassNotFoundException) {
@@ -221,11 +181,11 @@ public class ClassLoadingError extends UnrecoverableError {
 				Set<String> classNames = new HashSet<String>();
 				try {
 					classNames = ClassFinder.getAllClassNames(getClassPath());
-				} catch (IOException e1) {
+				} catch (final IOException e1) {
 					builder.append("Error while reading class names in class path: " + e1.getMessage());
 				}
 				boolean contained = false;
-				Set<String> sameName = new HashSet<String>();
+				final Set<String> sameName = new HashSet<String>();
 				for (final String fqClassName : classNames) {
 					if (fqClassName.equals(getClassName())) {
 						// the class is in the class path but can't be found by
@@ -235,7 +195,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						
 						break;
 					} else {
-						String[] split = getClassName().split("\\.");
+						final String[] split = getClassName().split("\\.");
 						if (fqClassName.endsWith("." + (split.length > 1
 						                                                ? split[split.length - 1]
 						                                                : split[0]))) {
