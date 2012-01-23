@@ -25,8 +25,8 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	 * @param constructor
 	 * @param arguments
 	 */
-	public NoSuchConstructorError(final NoSuchMethodException t, final Class<?> clazz, final Object... arguments) {
-		this(defaultMessage, t, clazz, arguments);
+	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Object... arguments) {
+		this(defaultMessage, cause, clazz, arguments);
 	}
 	
 	/**
@@ -35,8 +35,9 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	 * @param constructor
 	 * @param arguments
 	 */
-	public NoSuchConstructorError(final String message, final NoSuchMethodException t, final Class<?> clazz,
+	public NoSuchConstructorError(final String message, final NoSuchMethodException cause, final Class<?> clazz,
 	        final Object... arguments) {
+		super(message, cause);
 		this.clazz = clazz;
 		this.arguments = arguments;
 	}
@@ -123,7 +124,9 @@ public class NoSuchConstructorError extends UnrecoverableError {
 		
 		if ((modifiers & Modifier.STATIC) != 0) {
 			builder.append("static ");
-		} else if ((modifiers & Modifier.FINAL) != 0) {
+		}
+		
+		if ((modifiers & Modifier.FINAL) != 0) {
 			builder.append("final ");
 		}
 		
