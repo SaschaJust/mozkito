@@ -73,9 +73,8 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	 * de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public Boolean getValue() {
 		Logger.readConfiguration();
-		setCachedValue(true);
 		return true;
 	}
 	
