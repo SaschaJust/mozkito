@@ -132,7 +132,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	public final T getValue() {
 		if (!init) {
-			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance"
+			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
 					+ getName() + " before calling init() is not allowed! Please fix your code.");
 		}
 		return this.getCachedValue();
