@@ -24,6 +24,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
+
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,7 +34,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
@@ -39,11 +41,10 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 
 public class ChangeCouplingRuleFactoryTest {
 	
@@ -65,7 +66,7 @@ public class ChangeCouplingRuleFactoryTest {
 			
 			persistenceUtil = OpenJPAUtil.getInstance();
 			URL sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
-			        + "change_file_couplings.psql");
+					+ "change_file_couplings.psql");
 			
 			File sqlFile = new File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
@@ -111,6 +112,7 @@ public class ChangeCouplingRuleFactoryTest {
 		
 		DateTime now = new DateTime();
 		RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "");
+		rcsTransaction.setBranch(RCSBranch.getMasterBranch());
 		RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
 		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
@@ -128,6 +130,7 @@ public class ChangeCouplingRuleFactoryTest {
 		// ### transaction 2
 		
 		RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", now.plus(10000), person, "");
+		rcsTransaction2.setBranch(RCSBranch.getMasterBranch());
 		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
 		RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
@@ -138,6 +141,7 @@ public class ChangeCouplingRuleFactoryTest {
 		// ### transaction 3
 		
 		RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", now.plus(20000), person, "");
+		rcsTransaction3.setBranch(RCSBranch.getMasterBranch());
 		new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
 		
 		fileC.assignTransaction(rcsTransaction3, "C.java");
@@ -148,6 +152,7 @@ public class ChangeCouplingRuleFactoryTest {
 		// ### transaction 4
 		
 		RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", now.plus(30000), person, "");
+		rcsTransaction4.setBranch(RCSBranch.getMasterBranch());
 		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
@@ -156,8 +161,8 @@ public class ChangeCouplingRuleFactoryTest {
 		persistenceUtil.commitTransaction();
 		
 		List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
-		                                                                                                1, 0,
-		                                                                                                persistenceUtil);
+				1, 0,
+				persistenceUtil);
 		assertEquals(9, changeCouplingRules.size());
 		FileChangeCoupling rule = changeCouplingRules.get(0);
 		assertEquals(1, rule.getPremise().size());

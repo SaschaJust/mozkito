@@ -72,12 +72,11 @@ public class TrackerArguments extends AndamaArgumentSet<Tracker> {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public Tracker getValue() {
 		Map<String, AndamaArgument<?>> arguments = getArguments();
 		
 		if (JavaUtils.AnyNull(arguments.get("tracker.fetchURI").getValue(), arguments.get("tracker.type").getValue())) {
-			this.setCachedValue(null);
-			return true;
+			return null;
 		}
 		
 		TrackerType trackerType = TrackerType.valueOf(arguments.get("tracker.type").getValue().toString().toUpperCase());
@@ -119,13 +118,12 @@ public class TrackerArguments extends AndamaArgumentSet<Tracker> {
 			
 			tracker.setup(fetchURIArg, overviewURIArg, patternArg, usernameArg, passwordArg, startArg, stopArg,
 					cacheDirArg);
-			this.setCachedValue(tracker);
-			return true;
+			return tracker;
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			return false;
+			return null;
 		}
 	}
 }

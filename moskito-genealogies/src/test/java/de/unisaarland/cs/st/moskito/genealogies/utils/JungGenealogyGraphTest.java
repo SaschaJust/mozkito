@@ -3,20 +3,29 @@ package de.unisaarland.cs.st.moskito.genealogies.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
+
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.genealogies.TestEnvironment;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.JungGenealogyGraph.Edge;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
-public class JungGenealogyGraphTest extends TestEnvironment {
+public class JungGenealogyGraphTest {
 	
 	@Test
 	public void testCoreLayer() {
-		TestEnvironment.setup();
+		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
+		
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
+		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		
 		JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(changeGenealogy);
 		assertEquals(changeGenealogy.vertexSize(), jungGraph.getVertexCount());
 		for (JavaChangeOperation op : changeGenealogy.vertexSet()) {
@@ -78,7 +87,12 @@ public class JungGenealogyGraphTest extends TestEnvironment {
 			}
 			
 		}
-		
+		changeGenealogy.close();
+		try {
+			FileUtils.deleteDirectory(tmpGraphDBFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

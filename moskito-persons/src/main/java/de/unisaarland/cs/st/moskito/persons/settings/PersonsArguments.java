@@ -134,7 +134,7 @@ public class PersonsArguments extends AndamaArgumentSet<MergingProcessor> {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public MergingProcessor getValue() {
 		MergingProcessor finder = new MergingProcessor();
 		
 		for (MergingEngine engine : this.engines) {
@@ -142,8 +142,7 @@ public class PersonsArguments extends AndamaArgumentSet<MergingProcessor> {
 			finder.addEngine(engine);
 		}
 		
-		setCachedValue(finder);
-		return true;
+		return finder;
 	}
 	
 }

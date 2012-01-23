@@ -75,7 +75,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				Condition.check(revFields.length > 0, "The fileds in the temporary csv filed should never be empty");
 				Condition.check(revFields[0].trim().equals(decoId),
-				"the first field in the current temp csv line must equal the current tranaction id");
+						"the first field in the current temp csv line must equal the current tranaction id");
 				
 				//if decoration starts with "ref/remotes/" then it's a branch name. Set branchName of current branch.
 				//else if it starts with "refs/tags" it's a tag
@@ -105,7 +105,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				if (!this.branches.containsKey(revId)) {
 					if ((branchName == null) || branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
-						this.branches.put(revId, RCSBranch.MASTER);
+						this.branches.put(revId, RCSBranch.getMasterBranch());
 					} else {
 						this.branches.put(revId, new RCSBranch(branchName));
 					}
@@ -113,13 +113,13 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				Condition
 				.check(this.branches.containsKey(revId),
-				"The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
+						"The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
 				
 				RCSBranch commitBranch = this.branches.get(revId);
 				this.branches.remove(revId);
 				
 				//if this is a named branch change name of branch
-				if ((branchName != null) && (!commitBranch.equals(RCSBranch.MASTER))) {
+				if ((branchName != null) && (!commitBranch.equals(RCSBranch.getMasterBranch()))) {
 					commitBranch.setName(branchName);
 					
 					//if branch is non-merged, make it as such
@@ -158,12 +158,12 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			}
 			if ((revListFileIterator.hasNext()) || (decorateListIterator.hasNext())) {
 				throw new UnrecoverableError(
-				"Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
+						"Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
 			}
 			this.depIter = depList.iterator();
 		} catch (Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
-			                             + FileUtils.lineSeparator + e.getMessage(), e);
+					+ FileUtils.lineSeparator + e.getMessage(), e);
 		}
 	}
 	
@@ -173,7 +173,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				this.revision }, this.cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
-			"Could not initialize DependencyIterator for Git repo. Could not get decorateList");
+					"Could not initialize DependencyIterator for Git repo. Could not get decorateList");
 		}
 		File decorateListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		BufferedWriter decorateListWriter = new BufferedWriter(new FileWriter(decorateListFile));
@@ -218,8 +218,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
-			                             "Could not initialize DependencyIterator for Git repo: could not get revList using revision"
-			                             + this.revision + ".");
+					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
+							+ this.revision + ".");
 		}
 		File revListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));

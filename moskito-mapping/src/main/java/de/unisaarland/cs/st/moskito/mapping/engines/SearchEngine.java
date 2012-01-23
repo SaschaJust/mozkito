@@ -50,7 +50,7 @@ public abstract class SearchEngine extends MappingEngine {
 	 * @return
 	 */
 	protected Query buildQuery(String queryString,
-	                           final QueryParser queryParser) {
+			final QueryParser queryParser) {
 		Query query = null;
 		queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ");
 		
@@ -132,10 +132,10 @@ public abstract class SearchEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+			final AndamaArgumentSet arguments) {
 		super.register(settings, arguments);
 		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
-		                   true);
+				true);
 		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);
 	}
 	

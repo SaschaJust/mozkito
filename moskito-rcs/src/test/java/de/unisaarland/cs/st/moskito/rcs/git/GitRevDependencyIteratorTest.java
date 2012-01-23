@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.RegexGroup;
 
 import org.junit.After;
@@ -35,10 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependency;
-import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
-import de.unisaarland.cs.st.moskito.rcs.git.GitRevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
-import net.ownhero.dev.ioda.FileUtils;
 
 
 public class GitRevDependencyIteratorTest {
@@ -80,7 +78,7 @@ public class GitRevDependencyIteratorTest {
 	@Test
 	public void testIter() {
 		GitRevDependencyIterator iter = new GitRevDependencyIterator(repo.getWokingCopyLocation(),
-		"67635fe9efeb2fd3751df9ea67650c71e59e3df1");
+				"67635fe9efeb2fd3751df9ea67650c71e59e3df1");
 		
 		assertTrue(iter.hasNext());
 		RevDependency dep = iter.next();
@@ -266,7 +264,7 @@ public class GitRevDependencyIteratorTest {
 		assertTrue(parents.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
 		assertTrue(parents.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
 		assertTrue(dep.isMerge());
-
+		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
 		assertEquals("67635fe9efeb2fd3751df9ea67650c71e59e3df1", dep.getId());
@@ -282,26 +280,26 @@ public class GitRevDependencyIteratorTest {
 		
 		//check braches and branch hierarchy
 		assertFalse(branch_e52.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_e52);
+		assertEquals(RCSBranch.getMasterBranch(), branch_e52);
 		assertEquals(null, branch_e52.getMergedIn());
 		assertTrue(branch_e52.isOpen());
 		
 		assertFalse(branch_19b.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_19b);
+		assertEquals(RCSBranch.getMasterBranch(), branch_19b);
 		
 		assertFalse(branch_9d6.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_9d6);
+		assertEquals(RCSBranch.getMasterBranch(), branch_9d6);
 		
 		assertFalse(branch_dee.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_dee);
+		assertEquals(RCSBranch.getMasterBranch(), branch_dee);
 		
 		assertTrue(branch_d23.hasParent());
 		assertEquals(branch_ae9, branch_cbc);
-		assertEquals(RCSBranch.MASTER, branch_d23.getParent());
+		assertEquals(RCSBranch.getMasterBranch(), branch_d23.getParent());
 		
 		assertTrue(branch_cbc.hasParent());
 		assertEquals(branch_ae9, branch_cbc);
-		assertEquals(RCSBranch.MASTER, branch_cbc.getParent());
+		assertEquals(RCSBranch.getMasterBranch(), branch_cbc.getParent());
 		
 		assertTrue(branch_98d.hasParent());
 		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30Branch", branch_98d.getName());
@@ -311,15 +309,15 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(branch_ae9.hasParent());
 		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0Branch", branch_ae9.getName());
-		assertEquals(RCSBranch.MASTER, branch_ae9.getParent());
+		assertEquals(RCSBranch.getMasterBranch(), branch_ae9.getParent());
 		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", branch_ae9.getMergedIn());
 		assertFalse(branch_ae9.isOpen());
 		
 		assertFalse(branch_827.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_827);
+		assertEquals(RCSBranch.getMasterBranch(), branch_827);
 		
 		assertFalse(branch_927.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_927);
+		assertEquals(RCSBranch.getMasterBranch(), branch_927);
 		
 		assertFalse(branch_1ac.hasParent());
 		assertEquals("origin/maintenance", branch_1ac.getName());
@@ -327,25 +325,25 @@ public class GitRevDependencyIteratorTest {
 		assertTrue(branch_e52.isOpen());
 		
 		assertFalse(branch_41a.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_41a);
+		assertEquals(RCSBranch.getMasterBranch(), branch_41a);
 		
 		assertFalse(branch_376.hasParent());
 		assertEquals(branch_1ac, branch_376);
 		
 		assertFalse(branch_637.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_637);
+		assertEquals(RCSBranch.getMasterBranch(), branch_637);
 		
 		assertFalse(branch_d98.hasParent());
 		assertEquals(branch_1ac, branch_d98);
 		
 		assertFalse(branch_9be.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_9be);
+		assertEquals(RCSBranch.getMasterBranch(), branch_9be);
 		
 		assertFalse(branch_a92.hasParent());
 		assertEquals(branch_1ac, branch_a92);
 		
 		assertFalse(branch_fe5.hasParent());
-		assertEquals(RCSBranch.MASTER, branch_fe5);
+		assertEquals(RCSBranch.getMasterBranch(), branch_fe5);
 		
 		assertFalse(branch_676.hasParent());
 		assertEquals(branch_1ac, branch_676);
