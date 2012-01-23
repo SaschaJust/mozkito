@@ -192,6 +192,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
 		properties.put("openjpa.persistence-unit", string);
 		// properties.put("openjpa.Log", "Runtime=TRACE");
+		for (final Thread t : provider.keySet()) {
+			provider.get(t).shutdown();
+		}
+		singleUtil.shutdown();
+		singleUtil = null;
+		factory.close();
+		factory = null;
+		provider.clear();
 		OpenJPAUtil.createSessionFactory(properties);
 	}
 	
