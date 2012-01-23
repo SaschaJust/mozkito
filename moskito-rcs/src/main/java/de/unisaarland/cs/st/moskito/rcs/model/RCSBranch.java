@@ -53,41 +53,78 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 @Table(name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	private static final long serialVersionUID   = 5419737140470855522L;
+	private static final long      serialVersionUID   = 5419737140470855522L;
 	
-	private long              generatedId;
-	private String            name;
-	private RCSBranch         parent             = null;
-	private RCSTransaction    begin              = null;
-	private RCSTransaction    end                = null;
+	private long                   generatedId;
+	private String                 name;
+	private RCSBranch              parent             = null;
+	private RCSTransaction         begin              = null;
+	private RCSTransaction         end                = null;
 	
-	private boolean           open               = false;
-	private String            mergedIn           = null;
+	private boolean                open               = false;
+	private String                 mergedIn           = null;
 	
-	private static RCSBranch  MASTER_BRANCH      = null;
-	private static String     MASTER_BRANCH_NAME = "master";
+	private static RCSBranch       MASTER_BRANCH      = null;
+	private static PersistenceUtil MASTER_BRANCH_UTIL = null;
+	private static String          MASTER_BRANCH_NAME = "master";
+	
+	private static RCSBranch createNewMasterBranch() {
+		RCSBranch masterBranch = new RCSBranch(MASTER_BRANCH_NAME);
+		masterBranch.setOpen(true);
+		return masterBranch;
+	}
 	
 	public static RCSBranch getMasterBranch() {
-		if (MASTER_BRANCH == null) {
-			try {
-				PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
-				Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name",
-						MASTER_BRANCH_NAME);
-				List<RCSBranch> loadedBranches = persistenceUtil.load(criteria);
-				if (loadedBranches.isEmpty()) {
-					MASTER_BRANCH = new RCSBranch(MASTER_BRANCH_NAME);
-					MASTER_BRANCH.setOpen(true);
+		
+		PersistenceUtil persistenceUtil = null;
+		try {
+			persistenceUtil = PersistenceManager.getUtil();
+		} catch (UninitializedDatabaseException e) {
+			if (Logger.logError()) {
+				Logger.error("Attempt to create RCSBranch.MASTER_BRANCH_UTIL failed. "
+						+ "It seems that there is no database connection configured.");
+			}
+		}
+		
+		//If we could no load persistenceUtil
+		if (persistenceUtil == null) {
+			if (MASTER_BRANCH == null) {
+				//There is no MASTER_BRACHAN. We cannot load it,
+				//so we return new created MASTER_BRANCH
+				if (Logger.logWarn()) {
+					Logger.warn("There exists no database connection. "
+							+ "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
+							+ "Returning new RCSBRanch.MASTER_BRANCH.");
+				}
+				MASTER_BRANCH = createNewMasterBranch();
+			}
+		} else {
+			//We could get a valid persistence util.
+			//The existed no previous persistence util: try to load persisted MASTER_BRANCH
+			if ((MASTER_BRANCH_UTIL == null) || (!MASTER_BRANCH_UTIL.equals(persistenceUtil))) {
+				
+				if (MASTER_BRANCH_UTIL != null) {
 					if (Logger.logDebug()) {
-						Logger.debug("Creating new RCSBranch.MASTER_BRANCH due to the fact that none existed in the DB.");
+						Logger.debug("Previous RCSBRanch.MASTER_BRANCH was bound to different persistenceUtil. Reloading RCSBranch.MASTER_BRANCH.");
 					}
+				}
+
+				MASTER_BRANCH_UTIL = persistenceUtil;
+				//try to load MASTER_BRANCH or create new one.
+				Criteria<RCSBranch> criteria = MASTER_BRANCH_UTIL.createCriteria(RCSBranch.class).eq("name",
+						MASTER_BRANCH_NAME);
+				List<RCSBranch> loadedBranches = MASTER_BRANCH_UTIL.load(criteria);
+				if (loadedBranches.isEmpty()) {
+					//We could not load a persisted MASTER_BRANCH. So, create a new one and return.
+					if (Logger.logDebug()) {
+						Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH " +
+								"from existing database connection failed. " +
+								"No persisted master branch found. " +
+								"Returning new RCSBranch.MASTER_BRANCH.");
+					}
+					MASTER_BRANCH = createNewMasterBranch();
 				} else {
 					MASTER_BRANCH = loadedBranches.get(0);
-				}
-			} catch (UninitializedDatabaseException e) {
-				MASTER_BRANCH = new RCSBranch(MASTER_BRANCH_NAME);
-				MASTER_BRANCH.setOpen(true);
-				if (Logger.logWarn()) {
-					Logger.warn("Creating new RCSBranch.MASTER_BRANCH due to the fact that no persistence util could be loaded. This might lead to severe consequences in productive runs but may be ok for testing purposes.");
 				}
 			}
 		}

@@ -117,7 +117,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private String                  message;
 	private Set<RCSTransaction>     children  = new HashSet<RCSTransaction>();
 	private Set<RCSTransaction>     parents   = new HashSet<RCSTransaction>();
-	private RCSBranch               branch    = RCSBranch.getMasterBranch();
+	private RCSBranch               branch    = null;
 	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
 	private DateTime                javaTimestamp;
 	private Set<String>             tags      = new HashSet<String>();
@@ -128,7 +128,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * used by PersistenceUtil to create RCSTransaction instance.
 	 */
 	protected RCSTransaction() {
-		
 	}
 	
 	/**
@@ -153,7 +152,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		setTimestamp(timestamp);
 		setAuthor(author);
 		setOriginalId(originalId);
-		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
