@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kisa.Logger;
@@ -17,27 +16,16 @@ import net.ownhero.dev.kisa.Logger;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 public class RCSBranch_NetTest {
 	
 	@Test
 	public void testLoadPersistedMasterBranch() {
 		
-		AndamaSettings settings = new AndamaSettings();
-		DatabaseArguments dbArgs = new DatabaseArguments(settings, true, "rcs");
-		
-		System.setProperty("database.name", "rcs_branch_test");
-		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
-		System.setProperty("database.user", "miner");
-		System.setProperty("database.password", "miner");
-		settings.parseArguments();
-		
-		if (!dbArgs.getValue()) {
-			fail();
-		}
+		OpenJPAUtil.createTestSessionFactory("rcs");
 		
 		PersistenceUtil persistenceUtil = null;
 		try {
