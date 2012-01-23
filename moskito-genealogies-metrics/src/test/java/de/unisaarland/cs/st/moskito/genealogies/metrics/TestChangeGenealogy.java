@@ -78,7 +78,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 			return false;
 		}
 		
-		rootIndex.remove(to, CoreChangeGenealogy.ROOT_VERTICES);
+		if (getRoots().contains(to)) {
+			rootIndex.remove(to, CoreChangeGenealogy.ROOT_VERTICES);
+		}
 		
 		tx.success();
 		tx.finish();
