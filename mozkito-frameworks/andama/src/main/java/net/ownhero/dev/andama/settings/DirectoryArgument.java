@@ -54,6 +54,7 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	public boolean init() {
 		if (this.stringValue == null) {
 			this.setCachedValue(null);
+			return true;
 		}
 		
 		File file = new File(this.stringValue.trim());
