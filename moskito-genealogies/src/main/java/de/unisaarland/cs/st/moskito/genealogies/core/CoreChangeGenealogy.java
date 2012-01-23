@@ -291,9 +291,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 				tx.finish();
 				return false;
 			}
-			if (getRoots().contains(to)) {
-				rootIndex.remove(to, ROOT_VERTICES);
-			}
+			rootIndex.remove(to, ROOT_VERTICES);
 			tx.success();
 			tx.finish();
 		}
