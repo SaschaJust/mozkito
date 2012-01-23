@@ -219,7 +219,11 @@ public class ClassLoadingError extends UnrecoverableError {
 				builder.append("ClassName '" + this.className + "' is invalid.");
 			} else {
 				Set<String> classNames = new HashSet<String>();
+				try{
 					classNames = ClassFinder.getAllClassNames(getClassPath());
+				} catch (IOException e1) {
+					builder.append("Error while reading class names in class path: " + e1.getMessage());
+				}
 				boolean contained = false;
 				Set<String> sameName = new HashSet<String>();
 				for (final String fqClassName : classNames) {
