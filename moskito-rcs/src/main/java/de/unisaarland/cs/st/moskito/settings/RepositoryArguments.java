@@ -95,7 +95,7 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public Repository getValue() {
 		URI repositoryURI = this.getRepoDirArg().getValue();
 		String username = this.getUserArg().getValue();
 		String password = this.getPassArg().getValue();
@@ -103,8 +103,7 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 		String endRevision = this.endRevision.getValue();
 		
 		if (JavaUtils.AnyNull(repositoryURI, this.getRepoTypeArg().getValue())) {
-			setCachedValue(null);
-			return true;
+			return null;
 		}
 		
 		RepositoryType rcsType = RepositoryType.valueOf(this.getRepoTypeArg().getValue());
@@ -129,13 +128,12 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 			
 			this.settings.addToolInformation(repository.getHandle(), repository.gatherToolInformation());
 			
-			setCachedValue(repository);
-			return true;
+			return repository;
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			return false;
+			return null;
 		}
 	}
 }

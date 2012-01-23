@@ -55,16 +55,16 @@ public class MappingArguments extends AndamaArgumentSet<MappingFinder> {
 		// TODO additionally store the individual sets. We want to persist the
 		// registered engines/filters/selectors/splitters/strategies as well.
 		this.engines = (Set<MappingEngine>) Registered.handleRegistered(chain, settings, this, "engines",
-		                                                                MappingEngine.class, isRequired);
+				MappingEngine.class, isRequired);
 		this.registereds.addAll(this.engines);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "filters", MappingFilter.class,
 				isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "selectors", MappingSelector.class,
 				isRequired));
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "splitters", MappingSplitter.class,
-		                                                    isRequired));
+				isRequired));
 		this.strategies = (Set<MappingStrategy>) Registered.handleRegistered(chain, settings, this, "strategies",
-		                                                                     MappingStrategy.class, isRequired);
+				MappingStrategy.class, isRequired);
 		this.registereds.addAll(this.strategies);
 		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "trainers", MappingTrainer.class,
 				isRequired));
@@ -90,7 +90,7 @@ public class MappingArguments extends AndamaArgumentSet<MappingFinder> {
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public MappingFinder getValue() {
 		final MappingFinder finder = new MappingFinder();
 		final Map<Class<? extends Registered>, Method> methodMap = new HashMap<Class<? extends Registered>, Method>();
 		final Method[] methods = finder.getClass().getMethods();
@@ -127,7 +127,9 @@ public class MappingArguments extends AndamaArgumentSet<MappingFinder> {
 							Logger.error("Could not find 'add' method in " + MappingFinder.class.getSimpleName()
 									+ " for type " + registered.getClass().getSimpleName());
 						}
-						return false;
+						throw new UnrecoverableError("Could not find 'add' method in "
+								+ MappingFinder.class.getSimpleName() + " for type "
+								+ registered.getClass().getSimpleName());
 					}
 				}
 			}
@@ -135,8 +137,7 @@ public class MappingArguments extends AndamaArgumentSet<MappingFinder> {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		setCachedValue(finder);
-		return true;
+		return finder;
 	}
 	
 }

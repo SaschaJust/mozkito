@@ -108,7 +108,7 @@ public class InfozillaArguments extends AndamaArgumentSet<InfozillaFilterChain> 
 	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
-	public boolean init() {
+	public InfozillaFilterChain getValue() {
 		InfozillaFilterChain chain = new InfozillaFilterChain();
 		
 		for (InfozillaFilter filter : this.filters) {
@@ -116,8 +116,7 @@ public class InfozillaArguments extends AndamaArgumentSet<InfozillaFilterChain> 
 			chain.addFilter(filter);
 		}
 		
-		setCachedValue(chain);
-		return true;
+		return chain;
 	}
 	
 }
