@@ -74,11 +74,13 @@ public class PersistenceManager {
 	 * @return
 	 * @throws UninitializedDatabaseException
 	 */
+	@SuppressWarnings ("unchecked")
 	public static PersistenceUtil getUtil() throws UninitializedDatabaseException {
 		try {
 			Class<? extends PersistenceUtil> mw = PersistenceManager.getMiddleware();
 			if (mw == null) {
 				mw = OpenJPAUtil.class;
+				middleware = (Class<PersistenceUtil>) mw;
 			}
 			return (PersistenceUtil) mw.getMethod("getInstance").invoke(null);
 		} catch (final Exception e) {
