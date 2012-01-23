@@ -1,7 +1,5 @@
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
-import static org.junit.Assert.fail;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -148,14 +146,14 @@ public class ChangeGenealogyUtils {
 			persistenceUtil = OpenJPAUtil.getInstance();
 		} catch (UninitializedDatabaseException e) {
 			e.printStackTrace();
-			fail();
+			return null;
 		}
 		
 		
 		// UNZIP git repo
 		URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
 		if (zipURL == null) {
-			fail();
+			return null;
 		}
 		
 		File baseDir = null;
@@ -164,10 +162,10 @@ public class ChangeGenealogyUtils {
 					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		
 		File zipFile = null;
@@ -175,7 +173,7 @@ public class ChangeGenealogyUtils {
 			zipFile = new File(zipURL.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
@@ -188,13 +186,13 @@ public class ChangeGenealogyUtils {
 			repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
 		} catch (InstantiationException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		} catch (IllegalAccessException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		} catch (UnregisteredRepositoryTypeException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		
 		URL url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
@@ -203,26 +201,29 @@ public class ChangeGenealogyUtils {
 			urlFile = new File(url.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		
 		try {
 			repository.setup(urlFile.toURI(), null, null);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			if (Logger.logError()) {
+				Logger.error(e.getMessage());
+			}
+			return null;
 		}
 		
 		//unzip the database dump
 		zipURL = ChangeGenealogyUtils.class
 				.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql.zip");
 		if (zipURL == null) {
-			fail();
+			return null;
 		}
 		try {
 			zipFile = new File(zipURL.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
@@ -235,7 +236,7 @@ public class ChangeGenealogyUtils {
 			urlFile = new File(url.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			fail();
+			return null;
 		}
 		
 		String psqlString = null;
@@ -243,7 +244,7 @@ public class ChangeGenealogyUtils {
 			psqlString = FileUtils.readFileToString(urlFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-			fail();
+			return null;
 		}
 		persistenceUtil.executeNativeQuery(psqlString);
 		
@@ -281,7 +282,7 @@ public class ChangeGenealogyUtils {
 			} else if (transaction.getId().equals("5658606e2f80c30d0b835ed4216e9f8e0cc996fb")) {
 				environmentTransactions.put(10, transaction);
 			} else {
-				fail("Got unexpected RCSTransaction from database: " + transaction.getId());
+				throw new UnrecoverableError("Got unexpected RCSTransaction from database: " + transaction.getId());
 			}
 			
 			Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
@@ -354,7 +355,7 @@ public class ChangeGenealogyUtils {
 		
 		if (transactionMap.size() != 10) {
 			System.err.println("The imported database dump must contain exactly 10 transaction entries.");
-			fail();
+			return null;
 		}
 		
 		//done everything is set.
