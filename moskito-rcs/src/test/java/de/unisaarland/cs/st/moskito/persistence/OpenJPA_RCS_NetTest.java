@@ -68,6 +68,7 @@ public class OpenJPA_RCS_NetTest {
 	
 	@Test
 	public void testRCSBranch() {
+		System.err.println("TEST testRCSBranch");
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
@@ -112,6 +113,7 @@ public class OpenJPA_RCS_NetTest {
 	
 	@Test
 	public void testRCSRevision() {
+		System.err.println("TEST testRCSRevision");
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
@@ -175,6 +177,7 @@ public class OpenJPA_RCS_NetTest {
 	
 	@Test
 	public void testSaveRCSFile() {
+		System.err.println("TEST testSaveRCSFile");
 		PersistenceUtil persistenceUtil;
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
