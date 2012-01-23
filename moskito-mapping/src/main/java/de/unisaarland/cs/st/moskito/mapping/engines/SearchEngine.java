@@ -111,7 +111,7 @@ public abstract class SearchEngine extends MappingEngine {
 			} catch (final SecurityException e) {
 				throw new UnrecoverableError(e);
 			} catch (final NoSuchMethodException e) {
-				throw new NoSuchConstructorError(e, constructor, Version.class);
+				throw new NoSuchConstructorError(e, Version.class);
 			} catch (final IllegalArgumentException e) {
 				throw new UnrecoverableError(e);
 			} catch (final InstantiationException e) {
