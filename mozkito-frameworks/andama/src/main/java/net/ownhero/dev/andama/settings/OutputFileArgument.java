@@ -62,8 +62,8 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 */
 	@Override
 	public boolean init() {
-		// FIME seprate input and output files. Fix the mustExist and overwrite
-		// conbinations!
+		// FIXME separate input and output files. Fix the mustExist and overwrite
+		// combinations!
 		if (this.stringValue == null) {
 			return false;
 		}
