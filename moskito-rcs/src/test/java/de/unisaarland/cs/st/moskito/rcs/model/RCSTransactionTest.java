@@ -17,18 +17,10 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Properties;
-
-import net.ownhero.dev.kisa.Logger;
-
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 public class RCSTransactionTest {
@@ -439,50 +431,4 @@ public class RCSTransactionTest {
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
 	}
-	
-	@Test
-	public void testComparisonFromXStream() {
-		//TODO delete this test again
-		final Properties properties = new Properties();
-		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
-				+ "/" + System.getProperty("database.name", "moskito_xstream_may2011");
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", System.getProperty("database.username", "miner"));
-		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
-		properties.put("openjpa.persistence-unit", "ppa");
-		// properties.put("openjpa.Log", "Runtime=TRACE");
-		
-		System.out.println(properties);
-		
-		System.setProperty("log.console.level", "DEBUG");
-		Logger.readConfiguration();
-		
-		OpenJPAUtil.createSessionFactory(properties);
-		try {
-			PersistenceUtil persistenceUtil = OpenJPAUtil.getInstance();
-			
-			try {
-				Thread.sleep(10000l);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			Criteria<RCSTransaction> c2003 = persistenceUtil.createCriteria(RCSTransaction.class).eq("id",
-					"9d0145a6a6646a4a17342f2d89bab05455888794");
-			RCSTransaction t2003 = persistenceUtil.load(c2003).get(0);
-			
-			Criteria<RCSTransaction> c2009 = persistenceUtil.createCriteria(RCSTransaction.class).eq("id",
-					"4961e37c07a56d511700ffef36feafe1fa22a4d6");
-			RCSTransaction t2009 = persistenceUtil.load(c2009).get(0);
-			
-			assertTrue(t2003.compareTo(t2009) < 0);
-			
-		} catch (UninitializedDatabaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }
