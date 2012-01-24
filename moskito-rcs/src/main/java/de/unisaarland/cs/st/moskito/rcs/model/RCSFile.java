@@ -113,7 +113,7 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return the changedNames
 	 */
 	@ElementCollection
-	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
+	@JoinTable(name = "filenames", joinColumns = { @JoinColumn(name = "fileid", nullable = false) })
 	public Map<String, String> getChangedNames() {
 		return this.changedNames;
 	}
@@ -162,7 +162,7 @@ public class RCSFile implements Annotated, Serializable {
 				for (RCSTransaction p : currentParents) {
 					RCSBranch parentBranch = p.getBranch();
 					if ((!parentBranch.equals(current.getBranch()))
-					        && (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
+							&& (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
 				}
