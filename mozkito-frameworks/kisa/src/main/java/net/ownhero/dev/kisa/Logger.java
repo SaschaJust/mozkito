@@ -725,8 +725,9 @@ public class Logger {
 				if (!registeredAppenders.contains(prop.getKey().toString())) {
 					final String className = prop.getKey().toString().substring(10);
 					final String[] values = prop.getValue().toString().split(",");
-					Condition.check(values.length < 3, "log.class. arguments can have two options at most.");
-					Condition.check(values.length > 0, "log.class. arguments must have at least a log level specified.");
+					CompareCondition.less(values.length, 3, "log.class. arguments can have two options at most.");
+					CompareCondition.greater(values.length, 0,
+					                         "log.class. arguments must have at least a log level specified.");
 					final org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
 					final LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
 					classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
