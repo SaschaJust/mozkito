@@ -14,6 +14,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class RCSTransactionOriginalIDComparator implements Comparator<RCSTransaction> {
 	
+	RCSTransactionTopologicalComparator other = new RCSTransactionTopologicalComparator();
+	
 	@Override
 	public int compare(final RCSTransaction o1,
 	                   final RCSTransaction o2) {
@@ -22,7 +24,11 @@ public class RCSTransactionOriginalIDComparator implements Comparator<RCSTransac
 			Integer id2 = Integer.parseInt(o2.getOriginalId());
 			
 			int retval = id1.compareTo(id2);
-			System.err.println("GREP COMPARE " + id1 + " vs " + id2 + " = " + retval);
+			int otherval = this.other.compare(o1, o2);
+			if (retval != otherval) {
+				System.err.println("COMPERROR: " + o1.getId() + "/" + o1.getOriginalId() + " vs " + o2.getId() + "/"
+				        + o2.getOriginalId() + " TOPO:" + otherval + " ORIGINALID:" + retval);
+			}
 			return retval;
 		} catch (NumberFormatException e) {
 			throw new UnrecoverableError("This comparator is not valid for non-integer original ids.", e);
