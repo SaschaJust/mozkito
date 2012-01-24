@@ -688,6 +688,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		string.append(StringEscapeUtils.escapeJava(getMessage()));
 		string.append(", timestamp=");
 		string.append(getTimestamp());
+		string.append(", originalid=");
+		string.append(getOriginalId());
 		string.append(", revisionCount=");
 		string.append(getRevisions().size());
 		string.append(", author=");

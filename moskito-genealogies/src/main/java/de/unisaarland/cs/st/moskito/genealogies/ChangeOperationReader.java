@@ -25,7 +25,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+			final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
@@ -35,9 +35,9 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
 				TreeSet<RCSTransaction> list_topo = new TreeSet<RCSTransaction>(
-				                                                                new RCSTransactionTopologicalComparator());
+						new RCSTransactionTopologicalComparator());
 				TreeSet<RCSTransaction> list_orgid = new TreeSet<RCSTransaction>(
-				                                                                 new RCSTransactionOriginalIDComparator());
+						new RCSTransactionOriginalIDComparator());
 				
 				for (RCSTransaction transaction : persistenceUtil.load(criteria)) {
 					if (transaction.getBranch().equals(RCSBranch.getMasterBranch())) {
@@ -53,6 +53,8 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				while (it_topo.hasNext()) {
 					RCSTransaction transaction_topo = it_topo.next();
 					RCSTransaction transaction_orgid = it_orgid.next();
+					System.err.println("########### " + transaction_topo + " ## " + transaction_orgid);
+					
 					if (last != null) {
 						if (last.compareTo(transaction_topo) != -1) {
 							System.err.println("ERROR: " + last + " vs " + transaction_topo + " WRONG ORDER (-1).");
@@ -62,7 +64,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 						}
 						if (!transaction_topo.equals(transaction_orgid)) {
 							System.err.println("ERROR: Got different order (TOPO vs ORGID). TOPO: " + transaction_topo
-							        + " VS ORGID: " + transaction_orgid);
+									+ " VS ORGID: " + transaction_orgid);
 						}
 						last = transaction_topo;
 					}
@@ -70,7 +72,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				
 				if (Logger.logInfo()) {
 					Logger.info("Added " + list_topo.size()
-					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
+							+ " RCSTransactions that were found in MASTER branch to build the change genealogy.");
 				}
 				
 				ChangeOperationReader.this.iterator = list_topo.iterator();
@@ -84,7 +86,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				if (ChangeOperationReader.this.iterator.hasNext()) {
 					RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
 					Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-					                                                                                         transaction);
+							transaction);
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + transaction);
