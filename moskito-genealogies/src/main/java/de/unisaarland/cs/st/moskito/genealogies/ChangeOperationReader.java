@@ -54,7 +54,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				}
 				
 				Collections.sort(topo_sorted_list, new RCSTransactionTopologicalComparator());
-				Collections.sort(orgid_sorted_list, new RCSTransactionTopologicalComparator());
+				Collections.sort(orgid_sorted_list, new RCSTransactionOriginalIDComparator());
 				
 				RCSTransaction last = null;
 				Iterator<RCSTransaction> it_topo = list_topo.iterator();
