@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
@@ -132,82 +135,23 @@ public class Logger {
 		}
 	}
 	
-	private static Set<String> registeredAppenders = new HashSet<String>();
+	private static Set<String>          registeredAppenders = new HashSet<String>();
 	
-	private static LogLevel    logLevel            = LogLevel.WARN;
+	private static LogLevel             logLevel            = LogLevel.WARN;
 	
-	private static boolean     debug               = false;
+	private static boolean              debug               = false;
 	
-	private static LogLevel    maxLevel            = null;
-	private static Layout      defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
-	private static Layout      errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] "
-	                                                       + TerminalColor.RED.getTag() + "%-5p"
-	                                                       + TerminalColor.NONE.getTag() + " %m%n");
-	private static Layout      warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] "
-	                                                       + TerminalColor.YELLOW.getTag() + "%-5p"
-	                                                       + TerminalColor.NONE.getTag() + " %m%n");
+	private static LogLevel             maxLevel            = null;
+	private static Layout               defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
+	private static Layout               errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] "
+	                                                                + TerminalColor.RED.getTag() + "%-5p"
+	                                                                + TerminalColor.NONE.getTag() + " %m%n");
+	private static Layout               warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] "
+	                                                                + TerminalColor.YELLOW.getTag() + "%-5p"
+	                                                                + TerminalColor.NONE.getTag() + " %m%n");
+	private static List<WriterAppender> consoleAppenders    = new LinkedList<WriterAppender>();
 	
 	static {
-		// CONSOLE APPENDER
-		
-		// set levels and minLevel
-		final LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
-		
-		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
-		final LevelRangeFilter normalFilter = new LevelRangeFilter();
-		
-		if (TerminalColor.isSupported()) {
-			
-			if (consoleLevel.compareTo(LogLevel.INFO) < 0) {
-				// e.g. consoleLevel = ERROR
-				// then don't do default logging at all
-				
-			} else {
-				// e.g. consoleLevel = DEBUG
-				normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
-				normalFilter.setLevelMax(Level.INFO);
-				consoleDefaultAppender.addFilter(normalFilter);
-				consoleDefaultAppender.setLayout(defaultLayout);
-				consoleDefaultAppender.activateOptions();
-				org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
-			}
-			
-			// if we got log level ERROR, add stylized ERROR log appender
-			if (consoleLevel.compareTo(LogLevel.ERROR) >= 0) {
-				final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
-				final LevelRangeFilter errorFilter = new LevelRangeFilter();
-				errorFilter.setLevelMin(Level.ERROR);
-				errorFilter.setLevelMax(Level.FATAL);
-				consoleErrorAppender.addFilter(errorFilter);
-				consoleErrorAppender.setLayout(errorLayout);
-				consoleErrorAppender.activateOptions();
-				org.apache.log4j.Logger.getRootLogger().addAppender(consoleErrorAppender);
-			}
-			
-			if (consoleLevel.compareTo(LogLevel.WARN) >= 0) {
-				final WriterAppender consoleWarningAppender = new WriterAppender(warningLayout, System.err);
-				final LevelRangeFilter warningFilter = new LevelRangeFilter();
-				warningFilter.setLevelMin(Level.WARN);
-				warningFilter.setLevelMax(Level.WARN);
-				consoleWarningAppender.addFilter(warningFilter);
-				consoleWarningAppender.setLayout(warningLayout);
-				consoleWarningAppender.activateOptions();
-				org.apache.log4j.Logger.getRootLogger().addAppender(consoleWarningAppender);
-			}
-		} else {
-			normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
-			consoleDefaultAppender.addFilter(normalFilter);
-			consoleDefaultAppender.activateOptions();
-			org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
-		}
-		
-		// consoleDefaultAppender.setLayout(defaultLayout);
-		
-		// consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
-		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
-			maxLevel = consoleLevel;
-		}
-		
 		readConfiguration();
 		
 	}
@@ -685,68 +629,9 @@ public class Logger {
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
-		// for (Appender appender : appenders) {
-		// appender.close();
-		// org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
-		// }
-		// appenders.clear();
-		//
-		//
-		// for (String clazz : classAppenders.keySet()) {
-		// classAppenders.get(clazz).close();
-		// LogManager.getLogger(clazz).removeAppender(classAppenders.get(clazz));
-		// }
-		// // LogManager.resetConfiguration();
-		// classAppenders.clear();
-		
-		// FILE APPENDER
-		if (!registeredAppenders.contains("log.file")) {
-			final String logFileName = System.getProperty("log.file", ".log");
-			final RollingFileAppender fileAppender = new RollingFileAppender();
-			fileAppender.setLayout(defaultLayout);
-			final LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
-			// set levels and minLevel
-			final LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO").toUpperCase());
-			fileLevelRangeFilter.setLevelMin(Level.toLevel(fileLevel.toString()));
-			if ((maxLevel == null) || (fileLevel.compareTo(maxLevel) > 0)) {
-				maxLevel = fileLevel;
-			}
-			
-			fileAppender.setFile(logFileName);
-			fileAppender.addFilter(fileLevelRangeFilter);
-			fileAppender.setMaxFileSize("10GB");
-			fileAppender.activateOptions();
-			org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
-			registeredAppenders.add("log.file");
-		}
-		
-		for (final Entry<Object, Object> prop : System.getProperties().entrySet()) {
-			if (prop.getKey().toString().startsWith("log.class.")) {
-				if (!registeredAppenders.contains(prop.getKey().toString())) {
-					final String className = prop.getKey().toString().substring(10);
-					final String[] values = prop.getValue().toString().split(",");
-					CompareCondition.less(values.length, 3, "log.class. arguments can have two options at most.");
-					CompareCondition.greater(values.length, 0,
-					                         "log.class. arguments must have at least a log level specified.");
-					final org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
-					final LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
-					classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
-					if (values.length > 1) {
-						final RollingFileAppender classFileAppender = new RollingFileAppender();
-						classFileAppender.setFile(values[1]);
-						classFileAppender.setLayout(defaultLayout);
-						classFileAppender.setMaxFileSize("1GB");
-						classFileAppender.activateOptions();
-						classLogger.addAppender(classFileAppender);
-					}
-					// set maxLevel
-					if ((maxLevel == null) || (classLogLevel.compareTo(maxLevel) > 0)) {
-						maxLevel = classLogLevel;
-					}
-					registeredAppenders.add(prop.getKey().toString());
-				}
-			}
-		}
+		updateConsoleLevel();
+		updateFileLevel();
+		updateClassLevels();
 		
 		setLogLevel(maxLevel);
 		
@@ -774,6 +659,20 @@ public class Logger {
 	 */
 	public static void readConfiguration(final URL url) {
 		PropertyConfigurator.configure(url);
+	}
+	
+	public static synchronized void setConsoleLevel(final LogLevel level) {
+		Properties properties = System.getProperties();
+		properties.put("log.console.level", level.name());
+		System.setProperties(properties);
+		updateConsoleLevel();
+	}
+	
+	public static void setFileLevel(final LogLevel level) {
+		Properties properties = System.getProperties();
+		properties.put("log.file.level", level.name());
+		System.setProperties(properties);
+		updateFileLevel();
 	}
 	
 	public static void setLogLevel(final LogLevel logLevel) {
@@ -944,6 +843,133 @@ public class Logger {
 	public static void trace(final String message,
 	                         final Throwable t) {
 		trace(message, null, t, 3);
+	}
+	
+	/**
+	 * 
+	 */
+	public static void updateClassLevels() {
+		for (final Entry<Object, Object> prop : System.getProperties().entrySet()) {
+			if (prop.getKey().toString().startsWith("log.class.")) {
+				if (!registeredAppenders.contains(prop.getKey().toString())) {
+					final String className = prop.getKey().toString().substring(10);
+					final String[] values = prop.getValue().toString().split(",");
+					CompareCondition.less(values.length, 3, "log.class. arguments can have two options at most.");
+					CompareCondition.greater(values.length, 0,
+					                         "log.class. arguments must have at least a log level specified.");
+					final org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
+					final LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
+					classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
+					if (values.length > 1) {
+						final RollingFileAppender classFileAppender = new RollingFileAppender();
+						classFileAppender.setFile(values[1]);
+						classFileAppender.setLayout(defaultLayout);
+						classFileAppender.setMaxFileSize("1GB");
+						classFileAppender.activateOptions();
+						classLogger.addAppender(classFileAppender);
+					}
+					// set maxLevel
+					if ((maxLevel == null) || (classLogLevel.compareTo(maxLevel) > 0)) {
+						maxLevel = classLogLevel;
+					}
+					registeredAppenders.add(prop.getKey().toString());
+				}
+			}
+		}
+	}
+	
+	public static void updateConsoleLevel() {
+		// CONSOLE APPENDER
+		
+		for (WriterAppender appender : consoleAppenders) {
+			org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
+		}
+		
+		// set levels and minLevel
+		final LogLevel consoleLevel = LogLevel.valueOf(System.getProperty("log.console.level", "INFO").toUpperCase());
+		
+		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
+		final LevelRangeFilter normalFilter = new LevelRangeFilter();
+		
+		if (TerminalColor.isSupported()) {
+			
+			if (consoleLevel.compareTo(LogLevel.INFO) < 0) {
+				// e.g. consoleLevel = ERROR
+				// then don't do default logging at all
+				
+			} else {
+				// e.g. consoleLevel = DEBUG
+				normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+				normalFilter.setLevelMax(Level.INFO);
+				consoleDefaultAppender.addFilter(normalFilter);
+				consoleDefaultAppender.setLayout(defaultLayout);
+				consoleDefaultAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
+				consoleAppenders.add(consoleDefaultAppender);
+			}
+			
+			// if we got log level ERROR, add stylized ERROR log appender
+			if (consoleLevel.compareTo(LogLevel.ERROR) >= 0) {
+				final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
+				final LevelRangeFilter errorFilter = new LevelRangeFilter();
+				errorFilter.setLevelMin(Level.ERROR);
+				errorFilter.setLevelMax(Level.FATAL);
+				consoleErrorAppender.addFilter(errorFilter);
+				consoleErrorAppender.setLayout(errorLayout);
+				consoleErrorAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleErrorAppender);
+				consoleAppenders.add(consoleErrorAppender);
+			}
+			
+			if (consoleLevel.compareTo(LogLevel.WARN) >= 0) {
+				final WriterAppender consoleWarningAppender = new WriterAppender(warningLayout, System.err);
+				final LevelRangeFilter warningFilter = new LevelRangeFilter();
+				warningFilter.setLevelMin(Level.WARN);
+				warningFilter.setLevelMax(Level.WARN);
+				consoleWarningAppender.addFilter(warningFilter);
+				consoleWarningAppender.setLayout(warningLayout);
+				consoleWarningAppender.activateOptions();
+				org.apache.log4j.Logger.getRootLogger().addAppender(consoleWarningAppender);
+				consoleAppenders.add(consoleWarningAppender);
+			}
+		} else {
+			normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+			consoleDefaultAppender.addFilter(normalFilter);
+			consoleDefaultAppender.activateOptions();
+			org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
+			consoleAppenders.add(consoleDefaultAppender);
+		}
+		
+		// consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+		if ((maxLevel == null) || (consoleLevel.compareTo(maxLevel) > 0)) {
+			maxLevel = consoleLevel;
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public static void updateFileLevel() {
+		// FILE APPENDER
+		if (!registeredAppenders.contains("log.file")) {
+			final String logFileName = System.getProperty("log.file", ".log");
+			final RollingFileAppender fileAppender = new RollingFileAppender();
+			fileAppender.setLayout(defaultLayout);
+			final LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
+			// set levels and minLevel
+			final LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO").toUpperCase());
+			fileLevelRangeFilter.setLevelMin(Level.toLevel(fileLevel.toString()));
+			if ((maxLevel == null) || (fileLevel.compareTo(maxLevel) > 0)) {
+				maxLevel = fileLevel;
+			}
+			
+			fileAppender.setFile(logFileName);
+			fileAppender.addFilter(fileLevelRangeFilter);
+			fileAppender.setMaxFileSize("10GB");
+			fileAppender.activateOptions();
+			org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+			registeredAppenders.add("log.file");
+		}
 	}
 	
 	/**
