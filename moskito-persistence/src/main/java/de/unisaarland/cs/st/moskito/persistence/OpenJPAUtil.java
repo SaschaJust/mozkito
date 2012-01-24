@@ -429,10 +429,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 		}
 		
-		final Regex regex = new Regex(".*password.*", Pattern.CASE_INSENSITIVE);
+		final Regex regex = new Regex(".*password.*|.*username.*", Pattern.CASE_INSENSITIVE);
 		for (final String key : properties.keySet()) {
-			// FIXME this should actually check for case-insensitive matches of
-			// "password" and "username"
 			if (regex.matches(key)) {
 				properties.put(key, ((String) properties.get(key)).replaceAll(".", "*"));
 			}
