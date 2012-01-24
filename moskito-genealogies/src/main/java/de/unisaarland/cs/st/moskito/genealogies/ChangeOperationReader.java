@@ -40,6 +40,10 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 					}
 				}
 				
+				for (RCSTransaction t : list) {
+					System.err.println(t.toString());
+				}
+
 				if (Logger.logInfo()) {
 					Logger.info("Added " + list.size()
 							+ " RCSTransactions that were found in MASTER branch to build the change genealogy.");
