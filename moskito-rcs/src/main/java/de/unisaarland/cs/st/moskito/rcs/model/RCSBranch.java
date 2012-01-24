@@ -62,12 +62,14 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	private static PersistenceUtil MASTER_BRANCH_UTIL = null;
 	private static String          MASTER_BRANCH_NAME = "master";
 	
+	@Transient
 	private static RCSBranch createNewMasterBranch() {
 		RCSBranch masterBranch = new RCSBranch(MASTER_BRANCH_NAME);
 		masterBranch.setOpen(true);
 		return masterBranch;
 	}
 	
+	@Transient
 	public static RCSBranch getMasterBranch() {
 		return createNewMasterBranch();
 		// PersistenceUtil persistenceUtil = null;
