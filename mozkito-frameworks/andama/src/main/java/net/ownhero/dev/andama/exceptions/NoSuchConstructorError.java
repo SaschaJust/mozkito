@@ -111,45 +111,4 @@ public class NoSuchConstructorError extends UnrecoverableError {
 		return this.clazz;
 	}
 	
-	private String getModifierString(final int modifiers) {
-		final StringBuilder builder = new StringBuilder();
-		
-		if ((modifiers & Modifier.PRIVATE) != 0) {
-			builder.append("private ");
-		} else if ((modifiers & Modifier.PUBLIC) != 0) {
-			builder.append("public ");
-		} else if ((modifiers & Modifier.PROTECTED) != 0) {
-			builder.append("static ");
-		}
-		
-		if ((modifiers & Modifier.STATIC) != 0) {
-			builder.append("static ");
-		}
-		
-		if ((modifiers & Modifier.FINAL) != 0) {
-			builder.append("final ");
-		}
-		
-		if ((modifiers & Modifier.ABSTRACT) != 0) {
-			builder.append("abstract ");
-		}
-		
-		if ((modifiers & Modifier.SYNCHRONIZED) != 0) {
-			builder.append("synchronized ");
-		}
-		
-		if ((modifiers & Modifier.VOLATILE) != 0) {
-			builder.append("volatile ");
-		}
-		
-		if ((modifiers & Modifier.TRANSIENT) != 0) {
-			builder.append("transient ");
-		}
-		
-		if ((modifiers & Modifier.NATIVE) != 0) {
-			builder.append("native ");
-		}
-		
-		return builder.toString();
-	}
 }

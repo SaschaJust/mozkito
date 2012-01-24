@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 import net.ownhero.dev.andama.utils.AndamaUtils;
 
@@ -53,6 +56,145 @@ public class UnrecoverableError extends Error {
 	 */
 	public String analyzeFailureCause() {
 		return null;
+	}
+	
+	/**
+	 * @param types
+	 * @return
+	 */
+	protected String getArgumentString(final Class<?>[] types) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (Class<?> clazz : types) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(clazz.getCanonicalName());
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * @param types
+	 * @return
+	 */
+	protected String getArgumentString(final Object[] types) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (Object object : types) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(object.getClass().getCanonicalName());
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * @param types
+	 * @return
+	 */
+	protected String getArgumentString(final Type[] types) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (Type type : types) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(type);
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * @param constructor
+	 * @return
+	 */
+	protected String getConstructorString(final Constructor<?> constructor) {
+		StringBuilder builder = new StringBuilder();
+		
+		String modifier = getModifierString(constructor.getModifiers());
+		if (modifier.length() > 0) {
+			builder.append(modifier).append(" ");
+		}
+		
+		builder.append(constructor.getName()).append('(');
+		String arguments = getArgumentString(constructor.getGenericParameterTypes());
+		builder.append(arguments).append(')');
+		
+		String exceptions = getArgumentString(constructor.getGenericExceptionTypes());
+		if (exceptions.length() > 0) {
+			builder.append(" throws ").append(exceptions);
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * @param name
+	 * @param modifier
+	 * @param arguments
+	 * @return
+	 */
+	protected String getConstructorString(final String name,
+	                                      final String modifier,
+	                                      final Object[] arguments) {
+		StringBuilder builder = new StringBuilder();
+		
+		if (modifier.length() > 0) {
+			builder.append(modifier).append(" ");
+		}
+		
+		builder.append(name).append('(');
+		String argumentString = getArgumentString(arguments);
+		builder.append(argumentString).append(')');
+		
+		return builder.toString();
+	}
+	
+	protected String getModifierString(final int modifiers) {
+		final StringBuilder builder = new StringBuilder();
+		
+		if ((modifiers & Modifier.PRIVATE) != 0) {
+			builder.append("private ");
+		} else if ((modifiers & Modifier.PUBLIC) != 0) {
+			builder.append("public ");
+		} else if ((modifiers & Modifier.PROTECTED) != 0) {
+			builder.append("static ");
+		}
+		
+		if ((modifiers & Modifier.STATIC) != 0) {
+			builder.append("static ");
+		}
+		
+		if ((modifiers & Modifier.FINAL) != 0) {
+			builder.append("final ");
+		}
+		
+		if ((modifiers & Modifier.ABSTRACT) != 0) {
+			builder.append("abstract ");
+		}
+		
+		if ((modifiers & Modifier.SYNCHRONIZED) != 0) {
+			builder.append("synchronized ");
+		}
+		
+		if ((modifiers & Modifier.VOLATILE) != 0) {
+			builder.append("volatile ");
+		}
+		
+		if ((modifiers & Modifier.TRANSIENT) != 0) {
+			builder.append("transient ");
+		}
+		
+		if ((modifiers & Modifier.NATIVE) != 0) {
+			builder.append("native ");
+		}
+		
+		return builder.toString();
 	}
 	
 	protected String getSourceCode(final File file,

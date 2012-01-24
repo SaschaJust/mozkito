@@ -28,9 +28,35 @@ public class InstantiationError extends UnrecoverableError {
 	 * @param constructor
 	 * @param arguments
 	 */
+	public InstantiationError(final IllegalArgumentException cause, final Class<?> clazz,
+	        final Constructor<?> constructor, final Object... arguments) {
+		this(defaultMessage, cause, clazz, constructor, arguments);
+	}
+	
+	/**
+	 * @param cause
+	 * @param clazz
+	 * @param constructor
+	 * @param arguments
+	 */
 	public InstantiationError(final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
 		this(defaultMessage, cause, clazz, constructor, arguments);
+	}
+	
+	/**
+	 * @param message
+	 * @param cause
+	 * @param clazz
+	 * @param constructor
+	 * @param arguments
+	 */
+	public InstantiationError(final String message, final IllegalArgumentException cause, final Class<?> clazz,
+	        final Constructor<?> constructor, final Object... arguments) {
+		super(message, cause);
+		this.clazz = clazz;
+		this.constructor = constructor;
+		this.arguments = arguments;
 	}
 	
 	/**
@@ -92,9 +118,14 @@ public class InstantiationError extends UnrecoverableError {
 				if (getConstructor() == null) {
 					builder.append("The class does not have a default constructor");
 				} else {
-					builder.append("The constructor used to instantiate the class does not match the given arguments: ");
-					this.constructor.getParameterTypes();
-					
+					builder.append("The constructor used to instantiate the class does not match the given arguments: ")
+					       .append(AndamaUtils.lineSeparator);
+					builder.append("Valid: ").append(getConstructorString(this.constructor))
+					       .append(AndamaUtils.lineSeparator);
+					builder.append("Used:  ")
+					       .append(getConstructorString(this.constructor.getName(),
+					                                    getModifierString(this.constructor.getModifiers()),
+					                                    getArguments())).append(AndamaUtils.lineSeparator);
 				}
 			}
 			
