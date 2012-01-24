@@ -165,7 +165,7 @@
 			<property name="openjpa.ConnectionUserName" value="miner"/>
 			<property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
 			<property name="openjpa.ConnectionRetainMode" value="always"/>
-			<property name="openjpa.Log" value="SQL=TRACE"/>
+			<!-- <property name="openjpa.Log" value="SQL=TRACE"/> -->
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
 		</properties>
 	</persistence-unit>
