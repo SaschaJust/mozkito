@@ -51,7 +51,7 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 *            possible.
 	 */
 	public OutputFileArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
+			final String defaultValue, final boolean isRequired, final boolean overwrite) {
 		super(settings, name, description, defaultValue, isRequired);
 		this.overwrite = overwrite;
 	}
@@ -62,8 +62,8 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 */
 	@Override
 	public boolean init() {
-		// FIXME separate input and output files. Fix the mustExist and
-		// overwrite combinations!
+		// FIXME separate input and output files. Fix the mustExist and overwrite
+		// combinations!
 		if (this.stringValue == null) {
 			return false;
 		}
@@ -72,7 +72,7 @@ public class OutputFileArgument extends AndamaArgument<File> {
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-				        + "` is a directory. Expected file. Abort.");
+						+ "` is a directory. Expected file. Abort.");
 			}
 			return false;
 		}
@@ -81,13 +81,13 @@ public class OutputFileArgument extends AndamaArgument<File> {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already. Please remove file or choose different argument value.");
+							+ "` exists already. Please remove file or choose different argument value.");
 				}
 				return false;
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-					        + "` exists already and cannot be overwritten. Ignoring argument!.");
+							+ "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
 				return false;
 			}
