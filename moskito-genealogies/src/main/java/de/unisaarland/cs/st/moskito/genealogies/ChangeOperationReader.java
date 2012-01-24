@@ -47,7 +47,10 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 					RCSTransaction transaction = it.next();
 					if (last != null) {
 						if (last.compareTo(transaction) != -1) {
-							System.err.println("ERROR: " + last + " vs " + transaction + " WRONG ORDER.");
+							System.err.println("ERROR: " + last + " vs " + transaction + " WRONG ORDER (-1).");
+						}
+						if (transaction.compareTo(last) != 1) {
+							System.err.println("ERROR: " + transaction + " vs " + last + " WRONG ORDER (1).");
 						}
 					}
 				}
