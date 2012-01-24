@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 /**
  * 
@@ -19,7 +19,6 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -34,14 +33,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.kisa.Logger;
-
 import org.apache.openjpa.persistence.jdbc.Index;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
@@ -50,7 +44,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table(name = "rcsbranch")
+@Table (name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long      serialVersionUID   = 5419737140470855522L;
@@ -75,60 +69,64 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	public static RCSBranch getMasterBranch() {
-		
-		PersistenceUtil persistenceUtil = null;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e) {
-			if (Logger.logError()) {
-				Logger.error("Attempt to create RCSBranch.MASTER_BRANCH_UTIL failed. "
-						+ "It seems that there is no database connection configured.");
-			}
-		}
-		
-		//If we could no load persistenceUtil
-		if (persistenceUtil == null) {
-			if (MASTER_BRANCH == null) {
-				//There is no MASTER_BRACHAN. We cannot load it,
-				//so we return new created MASTER_BRANCH
-				if (Logger.logWarn()) {
-					Logger.warn("There exists no database connection. "
-							+ "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
-							+ "Returning new RCSBRanch.MASTER_BRANCH.");
-				}
-				MASTER_BRANCH = createNewMasterBranch();
-			}
-		} else {
-			//We could get a valid persistence util.
-			//The existed no previous persistence util: try to load persisted MASTER_BRANCH
-			if ((MASTER_BRANCH_UTIL == null) || (!MASTER_BRANCH_UTIL.equals(persistenceUtil))) {
-				
-				if (MASTER_BRANCH_UTIL != null) {
-					if (Logger.logDebug()) {
-						Logger.debug("Previous RCSBRanch.MASTER_BRANCH was bound to different persistenceUtil. Reloading RCSBranch.MASTER_BRANCH.");
-					}
-				}
-
-				MASTER_BRANCH_UTIL = persistenceUtil;
-				//try to load MASTER_BRANCH or create new one.
-				Criteria<RCSBranch> criteria = MASTER_BRANCH_UTIL.createCriteria(RCSBranch.class).eq("name",
-						MASTER_BRANCH_NAME);
-				List<RCSBranch> loadedBranches = MASTER_BRANCH_UTIL.load(criteria);
-				if (loadedBranches.isEmpty()) {
-					//We could not load a persisted MASTER_BRANCH. So, create a new one and return.
-					if (Logger.logDebug()) {
-						Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH " +
-								"from existing database connection failed. " +
-								"No persisted master branch found. " +
-								"Returning new RCSBranch.MASTER_BRANCH.");
-					}
-					MASTER_BRANCH = createNewMasterBranch();
-				} else {
-					MASTER_BRANCH = loadedBranches.get(0);
-				}
-			}
-		}
-		return MASTER_BRANCH;
+		return createNewMasterBranch();
+		// PersistenceUtil persistenceUtil = null;
+		// try {
+		// persistenceUtil = PersistenceManager.getUtil();
+		// } catch (UninitializedDatabaseException e) {
+		// if (Logger.logError()) {
+		// Logger.error("Attempt to create RCSBranch.MASTER_BRANCH_UTIL failed. "
+		// + "It seems that there is no database connection configured.");
+		// }
+		// }
+		//
+		// //If we could no load persistenceUtil
+		// if (persistenceUtil == null) {
+		// if (MASTER_BRANCH == null) {
+		// //There is no MASTER_BRACHAN. We cannot load it,
+		// //so we return new created MASTER_BRANCH
+		// if (Logger.logWarn()) {
+		// Logger.warn("There exists no database connection. "
+		// + "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
+		// + "Returning new RCSBRanch.MASTER_BRANCH.");
+		// }
+		// MASTER_BRANCH = createNewMasterBranch();
+		// }
+		// } else {
+		// //We could get a valid persistence util.
+		// //The existed no previous persistence util: try to load persisted
+		// MASTER_BRANCH
+		// if ((MASTER_BRANCH_UTIL == null) ||
+		// (!MASTER_BRANCH_UTIL.equals(persistenceUtil))) {
+		//
+		// if (MASTER_BRANCH_UTIL != null) {
+		// if (Logger.logDebug()) {
+		// Logger.debug("Previous RCSBRanch.MASTER_BRANCH was bound to different persistenceUtil. Reloading RCSBranch.MASTER_BRANCH.");
+		// }
+		// }
+		//
+		// MASTER_BRANCH_UTIL = persistenceUtil;
+		// //try to load MASTER_BRANCH or create new one.
+		// Criteria<RCSBranch> criteria =
+		// MASTER_BRANCH_UTIL.createCriteria(RCSBranch.class).eq("name",
+		// MASTER_BRANCH_NAME);
+		// List<RCSBranch> loadedBranches = MASTER_BRANCH_UTIL.load(criteria);
+		// if (loadedBranches.isEmpty()) {
+		// //We could not load a persisted MASTER_BRANCH. So, create a new one
+		// and return.
+		// if (Logger.logDebug()) {
+		// Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH " +
+		// "from existing database connection failed. " +
+		// "No persisted master branch found. " +
+		// "Returning new RCSBranch.MASTER_BRANCH.");
+		// }
+		// MASTER_BRANCH = createNewMasterBranch();
+		// } else {
+		// MASTER_BRANCH = loadedBranches.get(0);
+		// }
+		// }
+		// }
+		// return MASTER_BRANCH;
 	}
 	
 	/**
@@ -163,7 +161,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -284,7 +281,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -294,7 +291,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -305,9 +302,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the generatedId
 	 */
 	@Id
-	@Index(name = "idx_branchid")
-	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Index (name = "idx_branchid")
+	@Column (name = "id", nullable = false)
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	protected long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -335,7 +332,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the name
 	 */
 	@Basic
-	@Index(name = "idx_name")
+	@Index (name = "idx_name")
 	public String getName() {
 		return this.name;
 	}
@@ -345,7 +342,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -354,10 +351,18 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
-		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
-		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
-		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
+		result = (prime * result) + ((this.getBegin() == null)
+		                                                      ? 0
+		                                                      : this.getBegin().hashCode());
+		result = (prime * result) + ((this.getEnd() == null)
+		                                                    ? 0
+		                                                    : this.getEnd().hashCode());
+		result = (prime * result) + ((this.getName() == null)
+		                                                     ? 0
+		                                                     : this.getName().hashCode());
+		result = (prime * result) + ((this.getParent() == null)
+		                                                       ? 0
+		                                                       : this.getParent().hashCode());
 		return result;
 	}
 	
@@ -451,7 +456,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
