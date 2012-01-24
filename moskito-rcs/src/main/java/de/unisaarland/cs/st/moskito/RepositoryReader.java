@@ -18,7 +18,9 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -31,6 +33,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
@@ -61,19 +64,27 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 				System.out.println("test test test test test ");
 				try {
 					PersistenceUtil util = PersistenceManager.getUtil();
-					Criteria<RCSTransaction> c2003 = util.createCriteria(RCSTransaction.class)
-					                                     .eq("id", "9d0145a6a6646a4a17342f2d89bab05455888794");
-					RCSTransaction t2003 = util.load(c2003).get(0);
-					Criteria<RCSTransaction> c2009 = util.createCriteria(RCSTransaction.class)
-					                                     .eq("id", "4961e37c07a56d511700ffef36feafe1fa22a4d6");
-					RCSTransaction t2009 = util.load(c2009).get(0);
-					System.out.println("t2003 compared to t2009 results in: " + t2003.compareTo(t2009));
+					Criteria<RCSTransaction> criteria = util.createCriteria(RCSTransaction.class);
+					TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
+					
+					for (RCSTransaction transaction : util.load(criteria)) {
+						if (transaction.getBranch().equals(RCSBranch.getMasterBranch())) {
+							list.add(transaction);
+						}
+					}
+					
+					Iterator<RCSTransaction> iterator = list.iterator();
+					
+					while (iterator.hasNext()) {
+						RCSTransaction next = iterator.next();
+						System.out.println(next);
+					}
 				} catch (UninitializedDatabaseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				throw new UnrecoverableError("KABUMM!");
+				System.exit(1337);
 				//
 				// if (Logger.logInfo()) {
 				// Logger.info("Requesting logs from " + repository);
