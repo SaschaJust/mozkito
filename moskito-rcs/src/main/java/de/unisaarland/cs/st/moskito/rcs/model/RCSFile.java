@@ -30,8 +30,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -113,7 +111,7 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return the changedNames
 	 */
 	@ElementCollection
-	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
+	//	@JoinTable (name = "filenames", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
 	public Map<String, String> getChangedNames() {
 		return this.changedNames;
 	}
@@ -162,7 +160,7 @@ public class RCSFile implements Annotated, Serializable {
 				for (RCSTransaction p : currentParents) {
 					RCSBranch parentBranch = p.getBranch();
 					if ((!parentBranch.equals(current.getBranch()))
-					        && (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
+							&& (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
 				}
