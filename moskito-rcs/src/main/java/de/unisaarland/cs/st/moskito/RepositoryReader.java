@@ -18,14 +18,21 @@
  */
 package de.unisaarland.cs.st.moskito;
 
+import java.util.List;
+
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
+import de.unisaarland.cs.st.moskito.persistence.Criteria;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -52,6 +59,20 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			
 			@Override
 			public void preExecution() {
+				System.out.println("test test test test test ");
+				try {
+					PersistenceUtil util = PersistenceManager.getUtil();
+					Criteria<RCSTransaction> criteria = util.createCriteria(RCSTransaction.class);
+					List<RCSTransaction> list = util.load(criteria);
+					for (RCSTransaction transaction : list) {
+						System.out.println(transaction);
+					}
+				} catch (UninitializedDatabaseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.exit(10);
+				
 				if (Logger.logInfo()) {
 					Logger.info("Requesting logs from " + repository);
 				}
