@@ -334,6 +334,8 @@ public class JavaChangeOperation implements Annotated {
 		sb.append(this.getChangedElementLocation().getFilePath());
 		sb.append(", element: ");
 		sb.append(this.getChangedElementLocation().getElement().getFullQualifiedName());
+		sb.append(", transaction: ");
+		sb.append(this.getRevision().getTransaction().getId());
 		sb.append(">");
 		return sb.toString();
 	}

@@ -51,7 +51,8 @@ public class JavaMethodRegistry {
 	public void addCall(JavaChangeOperation call) {
 		JavaElement element = call.getChangedElementLocation().getElement();
 		
-		Condition.check(element instanceof JavaMethodCall, "JavaChangeOperations not touching JavaMethodCalls cannot be added as JavaMethodCall");
+		Condition.check(element instanceof JavaMethodCall,
+				"JavaChangeOperations not touching JavaMethodCalls cannot be added as JavaMethodCall");
 		
 		JavaMethodCall methodCall = ((JavaMethodCall) element);
 		
@@ -66,8 +67,7 @@ public class JavaMethodRegistry {
 			return;
 		}
 		if (!this.methodInvocations.containsKey(callingPosition)) {
-			this.methodInvocations.put(callingPosition,
-					new HashMap<String, ArrayList<JavaChangeOperation>>());
+			this.methodInvocations.put(callingPosition, new HashMap<String, ArrayList<JavaChangeOperation>>());
 		}
 		HashMap<String, ArrayList<JavaChangeOperation>> invocationsInClass = this.methodInvocations
 				.get(callingPosition);
@@ -76,8 +76,11 @@ public class JavaMethodRegistry {
 		}
 		ArrayList<JavaChangeOperation> invList = invocationsInClass.get(fullQualifiedName);
 		if ((!invList.isEmpty()) && (call.isBefore(invList.get(invList.size() - 1)))) {
-			throw new UnrecoverableError(
-					"Attempt to add an earlier JavaChangeOperation to the JavaMethodRegistry than the previous registered event. This might lead to serious problems. Abort! Please ensure to process JavaChangeOperations following repository timeline.");
+			throw new UnrecoverableError("Attempt to add an earlier JavaChangeOperation to the "
+					+ "JavaMethodRegistry than the previous registered event. "
+					+ "This might lead to serious problems. Abort! "
+					+ "Please ensure to process JavaChangeOperations following repository timeline: previousCall="
+					+ invList.get(invList.size() - 1) + " tried to add=" + call);
 		}
 		invList.add(call);
 	}
@@ -241,7 +244,7 @@ public class JavaMethodRegistry {
 			return null;
 		}
 		int index = this.methodDefinitionDeletions.get(element.getFullQualifiedName()).size() - 1;
-		if(index < 0) {
+		if (index < 0) {
 			return null;
 		}
 		return this.methodDefinitionDeletions.get(element.getFullQualifiedName()).get(index);

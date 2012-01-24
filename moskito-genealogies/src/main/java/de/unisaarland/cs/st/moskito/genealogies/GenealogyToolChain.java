@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
+import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -22,7 +23,8 @@ public class GenealogyToolChain extends AndamaChain {
 		
 		this.threadPool = new AndamaPool(GenealogyToolChain.class.getSimpleName(), this);
 		GenealogySettings settings = (GenealogySettings)getSettings();
-		settings.setLoggerArg(false);
+		LoggerArguments loggerArg = settings.setLoggerArg(false);
+		loggerArg.getValue();
 		genealogyArgs = settings.setGenealogyArgs(true);
 		settings.parseArguments();
 	}
