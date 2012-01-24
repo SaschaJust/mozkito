@@ -20,11 +20,11 @@ package de.unisaarland.cs.st.moskito;
 
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -71,21 +71,23 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				System.exit(10);
+				throw new UnrecoverableError("KABUMM!");
 				
-				if (Logger.logInfo()) {
-					Logger.info("Requesting logs from " + repository);
-				}
-				
-				repository.getTransactionCount();
-				final long cacheSize = (Long) getSettings().getSetting("cache.size").getValue();
-				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
-				                                                                 repository.getEndRevision(),
-				                                                                 (int) cacheSize);
-				
-				if (Logger.logInfo()) {
-					Logger.info("Created iterator.");
-				}
+				// if (Logger.logInfo()) {
+				// Logger.info("Requesting logs from " + repository);
+				// }
+				//
+				// repository.getTransactionCount();
+				// final long cacheSize = (Long)
+				// getSettings().getSetting("cache.size").getValue();
+				// RepositoryReader.this.logIterator = (LogIterator)
+				// repository.log(repository.getFirstRevisionId(),
+				// repository.getEndRevision(),
+				// (int) cacheSize);
+				//
+				// if (Logger.logInfo()) {
+				// Logger.info("Created iterator.");
+				// }
 			}
 		};
 		
@@ -93,31 +95,35 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			
 			@Override
 			public void process() {
-				if (RepositoryReader.this.logIterator.hasNext()) {
-					
-					final LogEntry entry = RepositoryReader.this.logIterator.next();
-					
-					if (Logger.logDebug()) {
-						Logger.debug("with entry: " + entry);
-					}
-					
-					if (entry == null) {
-						provideOutputData(null, true);
-						setCompleted();
-						
-						if (Logger.logDebug()) {
-							Logger.debug("No more input data (through hasNext() returned true). this.input: "
-							        + getInputData() + ", this.output: " + getOutputData() + ", this.status: "
-							        + completed());
-						}
-					} else {
-						providePartialOutputData(entry);
-					}
-				} else {
-					provideOutputData(null, true);
-					setCompleted();
-					
-				}
+				throw new UnrecoverableError("KABUMM!");
+				
+				// if (RepositoryReader.this.logIterator.hasNext()) {
+				//
+				// final LogEntry entry =
+				// RepositoryReader.this.logIterator.next();
+				//
+				// if (Logger.logDebug()) {
+				// Logger.debug("with entry: " + entry);
+				// }
+				//
+				// if (entry == null) {
+				// provideOutputData(null, true);
+				// setCompleted();
+				//
+				// if (Logger.logDebug()) {
+				// Logger.debug("No more input data (through hasNext() returned true). this.input: "
+				// + getInputData() + ", this.output: " + getOutputData() +
+				// ", this.status: "
+				// + completed());
+				// }
+				// } else {
+				// providePartialOutputData(entry);
+				// }
+				// } else {
+				// provideOutputData(null, true);
+				// setCompleted();
+				//
+				// }
 			}
 		};
 	}
