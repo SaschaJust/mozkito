@@ -141,9 +141,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 		} else {
 			if (Logger.logWarn()) {
-				final Throwable t = new Throwable();
-				t.fillInStackTrace();
-				Logger.warn("Session factory already exists. Skipping creation: ", t);
+				Logger.warn("Session factory already exists. Skipping creation.");
 			}
 		}
 	}
