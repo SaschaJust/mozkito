@@ -21,10 +21,11 @@ public class RCSTransactionOriginalIDComparator implements Comparator<RCSTransac
 			Integer id1 = Integer.parseInt(o1.getOriginalId());
 			Integer id2 = Integer.parseInt(o2.getOriginalId());
 			
-			return id1.compareTo(id2);
+			int retval = id1.compareTo(id2);
+			System.err.println("GREP COMPARE " + id1 + " vs " + id2 + " = " + retval);
+			return retval;
 		} catch (NumberFormatException e) {
 			throw new UnrecoverableError("This comparator is not valid for non-integer original ids.", e);
 		}
 	}
-	
 }
