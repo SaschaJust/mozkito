@@ -64,6 +64,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 							System.err.println("ERROR: Got different order (TOPO vs ORGID). TOPO: " + transaction_topo
 							        + " VS ORGID: " + transaction_orgid);
 						}
+						last = transaction_topo;
 					}
 				}
 				
