@@ -18,13 +18,12 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import java.util.List;
-
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -62,17 +61,20 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 				System.out.println("test test test test test ");
 				try {
 					PersistenceUtil util = PersistenceManager.getUtil();
-					Criteria<RCSTransaction> criteria = util.createCriteria(RCSTransaction.class);
-					List<RCSTransaction> list = util.load(criteria);
-					for (RCSTransaction transaction : list) {
-						System.out.println(transaction);
-					}
+					Criteria<RCSTransaction> c2003 = util.createCriteria(RCSTransaction.class)
+					                                     .eq("id", "9d0145a6a6646a4a17342f2d89bab05455888794");
+					RCSTransaction t2003 = util.load(c2003).get(0);
+					Criteria<RCSTransaction> c2009 = util.createCriteria(RCSTransaction.class)
+					                                     .eq("id", "4961e37c07a56d511700ffef36feafe1fa22a4d6");
+					RCSTransaction t2009 = util.load(c2009).get(0);
+					System.out.println("t2003 compared to t2009 results in: " + t2003.compareTo(t2009));
 				} catch (UninitializedDatabaseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				throw new UnrecoverableError("KABUMM!");
 				
+				throw new UnrecoverableError("KABUMM!");
+				//
 				// if (Logger.logInfo()) {
 				// Logger.info("Requesting logs from " + repository);
 				// }
@@ -95,37 +97,32 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 			
 			@Override
 			public void process() {
-				throw new UnrecoverableError("KABUMM!");
-				
-				// if (RepositoryReader.this.logIterator.hasNext()) {
-				//
-				// final LogEntry entry =
-				// RepositoryReader.this.logIterator.next();
-				//
-				// if (Logger.logDebug()) {
-				// Logger.debug("with entry: " + entry);
-				// }
-				//
-				// if (entry == null) {
-				// provideOutputData(null, true);
-				// setCompleted();
-				//
-				// if (Logger.logDebug()) {
-				// Logger.debug("No more input data (through hasNext() returned true). this.input: "
-				// + getInputData() + ", this.output: " + getOutputData() +
-				// ", this.status: "
-				// + completed());
-				// }
-				// } else {
-				// providePartialOutputData(entry);
-				// }
-				// } else {
-				// provideOutputData(null, true);
-				// setCompleted();
-				//
-				// }
+				if (RepositoryReader.this.logIterator.hasNext()) {
+					
+					final LogEntry entry = RepositoryReader.this.logIterator.next();
+					
+					if (Logger.logDebug()) {
+						Logger.debug("with entry: " + entry);
+					}
+					
+					if (entry == null) {
+						provideOutputData(null, true);
+						setCompleted();
+						
+						if (Logger.logDebug()) {
+							Logger.debug("No more input data (through hasNext() returned true). this.input: "
+							        + getInputData() + ", this.output: " + getOutputData() + ", this.status: "
+							        + completed());
+						}
+					} else {
+						providePartialOutputData(entry);
+					}
+				} else {
+					provideOutputData(null, true);
+					setCompleted();
+					
+				}
 			}
 		};
 	}
-	
 }
