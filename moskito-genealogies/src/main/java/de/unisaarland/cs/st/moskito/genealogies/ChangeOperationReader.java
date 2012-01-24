@@ -15,15 +15,17 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.comparators.RCSTransactionOriginalIDComparator;
+import de.unisaarland.cs.st.moskito.rcs.comparators.RCSTransactionTopologicalComparator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-
 
 public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public ChangeOperationReader(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil) {
+	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
@@ -32,35 +34,45 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			public void preExecution() {
 				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
-				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
+				TreeSet<RCSTransaction> list_topo = new TreeSet<RCSTransaction>(
+				                                                                new RCSTransactionTopologicalComparator());
+				TreeSet<RCSTransaction> list_orgid = new TreeSet<RCSTransaction>(
+				                                                                 new RCSTransactionOriginalIDComparator());
 				
 				for (RCSTransaction transaction : persistenceUtil.load(criteria)) {
 					if (transaction.getBranch().equals(RCSBranch.getMasterBranch())) {
-						list.add(transaction);
+						list_topo.add(transaction);
+						list_orgid.add(transaction);
 					}
 				}
 				
 				RCSTransaction last = null;
-				Iterator<RCSTransaction> it = list.iterator();
+				Iterator<RCSTransaction> it_topo = list_topo.iterator();
+				Iterator<RCSTransaction> it_orgid = list_topo.iterator();
 				
-				while (it.hasNext()) {
-					RCSTransaction transaction = it.next();
+				while (it_topo.hasNext()) {
+					RCSTransaction transaction_topo = it_topo.next();
+					RCSTransaction transaction_orgid = it_orgid.next();
 					if (last != null) {
-						if (last.compareTo(transaction) != -1) {
-							System.err.println("ERROR: " + last + " vs " + transaction + " WRONG ORDER (-1).");
+						if (last.compareTo(transaction_topo) != -1) {
+							System.err.println("ERROR: " + last + " vs " + transaction_topo + " WRONG ORDER (-1).");
 						}
-						if (transaction.compareTo(last) != 1) {
-							System.err.println("ERROR: " + transaction + " vs " + last + " WRONG ORDER (1).");
+						if (transaction_topo.compareTo(last) != 1) {
+							System.err.println("ERROR: " + transaction_topo + " vs " + last + " WRONG ORDER (1).");
+						}
+						if (!transaction_topo.equals(transaction_orgid)) {
+							System.err.println("ERROR: Got different order (TOPO vs ORGID). TOPO: " + transaction_topo
+							        + " VS ORGID: " + transaction_orgid);
 						}
 					}
 				}
 				
 				if (Logger.logInfo()) {
-					Logger.info("Added " + list.size()
-							+ " RCSTransactions that were found in MASTER branch to build the change genealogy.");
+					Logger.info("Added " + list_topo.size()
+					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
 				}
 				
-				iterator = list.iterator();
+				ChangeOperationReader.this.iterator = list_topo.iterator();
 			}
 		};
 		
@@ -68,22 +80,21 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					RCSTransaction transaction = iterator.next();
-					Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(
-							persistenceUtil, transaction);
+				if (ChangeOperationReader.this.iterator.hasNext()) {
+					RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
+					Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+					                                                                                         transaction);
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + transaction);
 					}
 					
 					providePartialOutputData(new OperationCollection(changeOperations));
-					if(!iterator.hasNext()){
+					if (!ChangeOperationReader.this.iterator.hasNext()) {
 						setCompleted();
 					}
 				}
 			}
 		};
 	}
-	
 }
