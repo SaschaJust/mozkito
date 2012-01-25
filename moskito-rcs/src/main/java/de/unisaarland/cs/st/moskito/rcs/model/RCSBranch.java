@@ -81,7 +81,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		} catch (UninitializedDatabaseException e) {
 			if (Logger.logError()) {
 				Logger.error("Attempt to create RCSBranch.MASTER_BRANCH_UTIL failed. "
-				        + "It seems that there is no database connection configured.");
+						+ "It seems that there is no database connection configured.");
 			}
 		}
 		
@@ -92,8 +92,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 				// so we return new created MASTER_BRANCH
 				if (Logger.logWarn()) {
 					Logger.warn("There exists no database connection. "
-					        + "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
-					        + "Returning new RCSBRanch.MASTER_BRANCH.");
+							+ "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
+							+ "Returning new RCSBRanch.MASTER_BRANCH.");
 				}
 				MASTER_BRANCH = createNewMasterBranch();
 			}
@@ -112,15 +112,15 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 				MASTER_BRANCH_UTIL = persistenceUtil;
 				// try to load MASTER_BRANCH or create new one.
 				Criteria<RCSBranch> criteria = MASTER_BRANCH_UTIL.createCriteria(RCSBranch.class)
-				                                                 .eq("name", MASTER_BRANCH_NAME);
+						.eq("name", MASTER_BRANCH_NAME);
 				List<RCSBranch> loadedBranches = MASTER_BRANCH_UTIL.load(criteria);
 				if (loadedBranches.isEmpty()) {
 					// We could not load a persisted MASTER_BRANCH. So, create a
 					// new one and return.
 					if (Logger.logDebug()) {
 						Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH "
-						        + "from existing database connection failed. " + "No persisted master branch found. "
-						        + "Returning new RCSBranch.MASTER_BRANCH.");
+								+ "from existing database connection failed. " + "No persisted master branch found. "
+								+ "Returning new RCSBranch.MASTER_BRANCH.");
 					}
 					MASTER_BRANCH = createNewMasterBranch();
 				} else {
@@ -226,7 +226,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		}
 		
 		RCSTransaction current = this.getEnd();
-		while (!current.equals(this.getBegin())) {
+		while ((current != null) && (!current.equals(this.getBegin()))) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
@@ -354,17 +354,17 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((this.getBegin() == null)
-		                                                      ? 0
-		                                                      : this.getBegin().hashCode());
+				? 0
+						: this.getBegin().hashCode());
 		result = (prime * result) + ((this.getEnd() == null)
-		                                                    ? 0
-		                                                    : this.getEnd().hashCode());
+				? 0
+						: this.getEnd().hashCode());
 		result = (prime * result) + ((this.getName() == null)
-		                                                     ? 0
-		                                                     : this.getName().hashCode());
+				? 0
+						: this.getName().hashCode());
 		result = (prime * result) + ((this.getParent() == null)
-		                                                       ? 0
-		                                                       : this.getParent().hashCode());
+				? 0
+						: this.getParent().hashCode());
 		return result;
 	}
 	
@@ -374,6 +374,11 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	@Transient
 	public boolean hasParent() {
 		return this.getParent() != null;
+	}
+	
+	@Transient
+	public boolean isMasterBranch(){
+		return this.equals(RCSBranch.getMasterBranch());
 	}
 	
 	/**

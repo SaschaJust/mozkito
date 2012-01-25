@@ -41,7 +41,7 @@ public class PreviousTransactionIteratorTest {
 	/** @formatter:off
 	 * 
 	 * Z
-	 * |\ 
+	 * |\
 	 * | P
 	 * | |\
 	 * | | O
@@ -74,7 +74,7 @@ public class PreviousTransactionIteratorTest {
 	 * B   |
 	 * |  /
 	 * | /
-	 * |/ 
+	 * |/
 	 * X
 	 * 
 	 * Simple merge iterator test.
@@ -85,35 +85,35 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-01T00:00:03.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction i = RCSTransaction.createTransaction("i", "", new DateTime("1999-04-01T00:00:10.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction j = RCSTransaction.createTransaction("j", "", new DateTime("1999-04-01T00:00:11.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction k = RCSTransaction.createTransaction("k", "", new DateTime("1999-04-01T00:00:12.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction l = RCSTransaction.createTransaction("l", "", new DateTime("1999-04-01T00:00:13.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction m = RCSTransaction.createTransaction("m", "", new DateTime("1999-04-01T00:00:14.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction n = RCSTransaction.createTransaction("n", "", new DateTime("1999-04-01T00:00:15.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction o = RCSTransaction.createTransaction("o", "", new DateTime("1999-04-01T00:00:16.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction p = RCSTransaction.createTransaction("p", "", new DateTime("1999-04-01T00:00:17.000+00:00"), this.person1,
-        "");
+				"");
 		
 		RCSBranch dBranch = new RCSBranch("dBranch");
 		dBranch.setBegin(d);
@@ -252,7 +252,7 @@ public class PreviousTransactionIteratorTest {
 	/** @formatter:off
 	 * 
 	 * z
-	 * |\ 
+	 * |\
 	 * | h
 	 * | |
 	 * | d
@@ -268,7 +268,7 @@ public class PreviousTransactionIteratorTest {
 	 * | y
 	 * |/
 	 * x
-	 *  
+	 * 
 	 * 
 	 * 
 	 * Simple merge iterator test.
@@ -280,19 +280,19 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"), this.person1,
-        "");
+				"");
 		
 		RCSBranch yBranch = new RCSBranch("yBranch");
 		yBranch.setBegin(this.y);
@@ -381,10 +381,10 @@ public class PreviousTransactionIteratorTest {
 	 * |\
 	 * |  \
 	 * y   c
-	 * |\ /  
+	 * |\ /
 	 * | b
 	 * a |
-	 * |/ 
+	 * |/
 	 * x
 	 * 
 	 * Simple merge iterator test.
@@ -396,12 +396,12 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		
 		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -464,11 +464,11 @@ public class PreviousTransactionIteratorTest {
 	 * |\
 	 * |  \
 	 * y   c
-	 * |\  | 
+	 * |\  |
 	 * | b |
 	 * | |/
 	 * a/|
-	 * |/ 
+	 * |/
 	 * x
 	 * 
 	 * Simple merge iterator test.
@@ -480,11 +480,11 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -547,13 +547,13 @@ public class PreviousTransactionIteratorTest {
 	 * |\
 	 * |  \
 	 * y   c
-	 * |\  | 
+	 * |\  |
 	 * | b |
 	 * | | d
 	 * | | |
 	 * | |/
 	 * a/|
-	 * |/ 
+	 * |/
 	 * x
 	 * 
 	 * Simple merge iterator test.
@@ -565,13 +565,13 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-03T00:00:00.500+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -641,10 +641,10 @@ public class PreviousTransactionIteratorTest {
 	 * |\
 	 * |  \
 	 * y   |
-	 * |\  c 
+	 * |\  c
 	 * | b |
 	 * a |/
-	 * |/ 
+	 * |/
 	 * x
 	 * 
 	 * Simple merge iterator test.
@@ -656,11 +656,11 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -718,14 +718,14 @@ public class PreviousTransactionIteratorTest {
 	
 	/**@formatter:off
 	 * z
-     * |\
-     * y |
-     * | |
-     * a |
-     * |\|
-     * | b
-     * | |
-     * |/
+	 * |\
+	 * y |
+	 * | |
+	 * a |
+	 * |\|
+	 * | b
+	 * | |
+	 * |/
 	 * x
 	 * 
 	 */
@@ -735,9 +735,9 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		
 		RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
@@ -784,14 +784,14 @@ public class PreviousTransactionIteratorTest {
 	
 	/**@formatter:off
 	 * z
-     * |\
-     * y |
-     * | |
-     * | b
-     * |/|
-     * a |
-     * | |
-     * |/
+	 * |\
+	 * y |
+	 * | |
+	 * | b
+	 * |/|
+	 * a |
+	 * | |
+	 * |/
 	 * x
 	 * 
 	 */
@@ -801,9 +801,9 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-        "");
+				"");
 		
 		RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
@@ -851,22 +851,22 @@ public class PreviousTransactionIteratorTest {
 	
 	@Before
 	public void setUp() {
-		this.master = new RCSBranch("master");
+		this.master = RCSBranch.getMasterBranch();
 		this.person1 = new Person("kim", "", "");
 		this.person2 = new Person("just", "", "");
 		this.x = RCSTransaction.createTransaction("x", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1,
-		                                          "");
+				"");
 		this.y = RCSTransaction.createTransaction("y", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person2,
-		                                          "");
+				"");
 		this.z = RCSTransaction.createTransaction("z", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1,
-		                                          "");
+				"");
 	}
 	
 	/** @formatter:off
-	 * z 
-	 * | 
-	 * y 
-	 * | 
+	 * z
+	 * |
+	 * y
+	 * |
 	 * x
 	 * 
 	 * Simple iterator test.
@@ -897,10 +897,10 @@ public class PreviousTransactionIteratorTest {
 	/** @formatter:off
 	 * 
 	 * z
-	 * |\ 
+	 * |\
 	 * | a
 	 * y |
-	 * |/ 
+	 * |/
 	 * x
 	 * 
 	 * Simple merge iterator test.
@@ -911,7 +911,7 @@ public class PreviousTransactionIteratorTest {
 		this.master.setEnd(this.z);
 		
 		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-        "");
+				"");
 		
 		this.x.setBranch(this.master);
 		this.y.setBranch(this.master);

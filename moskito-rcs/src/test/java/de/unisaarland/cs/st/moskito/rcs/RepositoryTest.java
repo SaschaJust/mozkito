@@ -49,10 +49,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
-import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
+import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -163,11 +164,19 @@ public class RepositoryTest {
 				}
 			}
 		}
+		try {
+			PersistenceUtil util = PersistenceManager.getUtil();
+			util.globalShutdown();
+		} catch (UninitializedDatabaseException e) {
+			
+		}
 	}
 	
 	@BeforeClass
 	public static void beforeClass() {
 		
+		OpenJPAUtil.createTestSessionFactory("rcs");
+
 		// UNZIP mercurial repo
 		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 		if (zipURL == null) {
@@ -209,7 +218,7 @@ public class RepositoryTest {
 		}
 		try {
 			baseDir = new File((new URL(zipURL.toString().substring(0,
-			        zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 			fail();

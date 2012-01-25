@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -62,7 +63,7 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 			this.elementLocks.put(branchOpeningTransaction, new HashSet<RCSBranch>());
 			for (RCSTransaction tmpChild : branchOpeningTransaction.getChildren()) {
 				if (!tmpChild.getBranch().equals(branchOpeningTransaction.getBranch())
-				        && (!this.currentBranches.contains(tmpChild.getBranch()))) {
+						&& (!this.currentBranches.contains(tmpChild.getBranch()))) {
 					this.elementLocks.get(branchOpeningTransaction).add(tmpChild.getBranch());
 				}
 			}
@@ -114,14 +115,25 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 			// if there is no lock
 			
 			RCSTransaction parent = t.getParent(t.getBranch());
+			if ((parent == null) && (!t.getBranch().isMasterBranch())) {
+				Set<RCSTransaction> parents = t.getParents();
+				if (parents.isEmpty()) {
+					throw new UnrecoverableError(
+							"Detected a transaction that has no parent within it's branch nor any parent at all: "
+									+ t.toString());
+				}
+				parent = parents.iterator().next();
+			}
+			
 			if (parent == null) {
 				continue;
 			}
-			
+
 			// add the parent within the current branch. If the parent is not
 			// within the same branch (this was the begin of the current
 			// branch), check if the branch of the parent is processed already.
 			
+
 			if (parent.getBranch().equals(t.getBranch())) {
 				nextChildren.add(parent);
 			} else {
@@ -149,7 +161,16 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 					if (!this.currentBranches.contains(p.getBranch())) {
 						
 						if (p.getBranch().getBegin() != null) {
-							RCSTransaction branchOpeningTransaction = p.getBranch().getBegin().getParent(p.getBranch());
+							
+							RCSTransaction beginOfBranch = p.getBranch().getBegin();
+							Set<RCSTransaction> beginOfBranchParents = beginOfBranch.getParents();
+							if (beginOfBranchParents.isEmpty()) {
+								throw new UnrecoverableError(
+										"Detected a transaction that has no parent within it's branch nor any parent at all: "
+												+ beginOfBranch.toString());
+							}
+							RCSTransaction branchOpeningTransaction = beginOfBranchParents.iterator().next();
+							
 							if (branchOpeningTransaction != null) {
 								// add lock to branchOpeningTransaction
 								this.addLock(branchOpeningTransaction);
