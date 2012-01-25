@@ -39,7 +39,7 @@ import com.a7soft.examxml.ExamXML;
 
 public class EclipsePPALongTest {
 	
-	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Dlog.console.level=DEBUG -Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=reposuite_ppa_test -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
+	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Dlog.console.level=DEBUG -Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=moskito_ppa_junit -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
 	
 	private static File    eclipseBinDir;
 	
