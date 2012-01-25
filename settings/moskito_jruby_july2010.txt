@@ -1,4 +1,4 @@
-database.name=reposuite_jruby_july2010
+database.name=moskito_jruby_july2010
 database.user=miner
 database.password=miner
 log.level=info

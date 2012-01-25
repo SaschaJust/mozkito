@@ -1,4 +1,4 @@
-database.name=reposuite_argouml_june2010
+database.name=moskito_argouml_june2010
 database.user=miner
 database.password=miner
 log.level=info
