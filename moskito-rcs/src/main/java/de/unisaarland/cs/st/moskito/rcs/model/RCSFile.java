@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -175,7 +176,17 @@ public class RCSFile implements Annotated, Serializable {
 				}
 			}
 			
-			current = current.getParent(current.getBranch());
+			RCSTransaction parentTransaction = current.getParent(current.getBranch());
+			if ((parentTransaction == null) && (!current.getBranch().isMasterBranch())) {
+				Set<RCSTransaction> parents = current.getParents();
+				if (parents.isEmpty()) {
+					throw new UnrecoverableError(
+							"Detected a transaction that has no parent within it's branch nor any parent at all: "
+									+ current.toString());
+				}
+				parentTransaction = parents.iterator().next();
+			}
+			current = parentTransaction;
 		}
 		
 		if (current != null) {

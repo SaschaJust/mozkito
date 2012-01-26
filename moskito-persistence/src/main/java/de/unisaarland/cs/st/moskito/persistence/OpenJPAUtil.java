@@ -155,12 +155,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @param driver
 	 */
 	public static void createSessionFactory(final String host,
-	                                        final String database,
-	                                        final String user,
-	                                        final String password,
-	                                        final String type,
-	                                        final String driver,
-	                                        final String unit) {
+			final String database,
+			final String user,
+			final String password,
+			final String type,
+			final String driver,
+			final String unit) {
 		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
 		
 		final Properties properties = new Properties();
@@ -182,7 +182,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		// Logger.setLogLevel(LogLevel.OFF);
 		final Properties properties = new Properties();
 		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
-		        + "/" + System.getProperty("database.name", "reposuite_test");
+				+ "/" + System.getProperty("database.name", "moskito_junit");
 		properties.put("openjpa.ConnectionURL", url);
 		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
 		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
@@ -320,7 +320,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> Query createNativeQuery(final String query,
-	                                   final Class<T> clazz) {
+			final Class<T> clazz) {
 		return this.entityManager.createNativeQuery(query, clazz);
 	}
 	
@@ -492,7 +492,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria,
-	                        final int sizeLimit) {
+			final int sizeLimit) {
 		final TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery()).setMaxResults(sizeLimit);
 		return query.getResultList();
 	}
@@ -505,13 +505,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T, I> T loadById(final I id,
-	                         final Class<T> clazz) {
+			final Class<T> clazz) {
 		// determine id column
 		for (final Method m : clazz.getDeclaredMethods()) {
 			// found
 			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) {
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
-				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
+						|| wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					final Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
 					
@@ -525,14 +525,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 					}
 				} else {
 					throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
-					        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
-					        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
+							+ ") does not match actual id type (" + m.getReturnType().getCanonicalName()
+							+ ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
 				}
 			}
 		}
 		
 		throw new UnrecoverableError("Class " + clazz.getCanonicalName()
-		        + " does not have an Id column defined for a getter.");
+				+ " does not have an Id column defined for a getter.");
 	}
 	
 	/*

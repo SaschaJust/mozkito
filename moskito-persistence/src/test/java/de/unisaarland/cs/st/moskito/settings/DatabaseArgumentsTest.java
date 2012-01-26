@@ -15,7 +15,7 @@ public class DatabaseArgumentsTest {
 		AndamaSettings settings = new AndamaSettings();
 		DatabaseArguments dbArgs = new DatabaseArguments(settings, true, "persistence");
 		
-		System.setProperty("database.name", "rcs_branch_test");
+		System.setProperty("database.name", "moskito_junit");
 		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
 		System.setProperty("database.user", "miner");
 		System.setProperty("database.password", "miner");

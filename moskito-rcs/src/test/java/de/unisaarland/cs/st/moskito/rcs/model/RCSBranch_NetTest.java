@@ -38,6 +38,7 @@ public class RCSBranch_NetTest {
 		//unzip the database dump
 		URL zipURL = this.getClass().getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql.zip");
 		if (zipURL == null) {
+			persistenceUtil.globalShutdown();
 			fail();
 		}
 		File zipFile = null;
@@ -45,6 +46,7 @@ public class RCSBranch_NetTest {
 			zipFile = new File(zipURL.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
+			persistenceUtil.globalShutdown();
 			fail();
 		}
 		
@@ -61,6 +63,7 @@ public class RCSBranch_NetTest {
 			url = new URL("file://" + baseDir + FileUtils.fileSeparator + "reposuite_genealogies_test.psql");
 		} catch (MalformedURLException e2) {
 			e2.printStackTrace();
+			persistenceUtil.globalShutdown();
 			fail();
 		}
 		File urlFile = null;
@@ -68,6 +71,7 @@ public class RCSBranch_NetTest {
 			urlFile = new File(url.toURI());
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
+			persistenceUtil.globalShutdown();
 			fail();
 		}
 		
@@ -76,6 +80,7 @@ public class RCSBranch_NetTest {
 			psqlString = FileUtils.readFileToString(urlFile);
 		} catch (IOException e) {
 			e.printStackTrace();
+			persistenceUtil.globalShutdown();
 			fail();
 		}
 		persistenceUtil.executeNativeQuery(psqlString);
@@ -87,9 +92,10 @@ public class RCSBranch_NetTest {
 			assertEquals(transaction.getBranch(), masterBranch);
 		} catch (UninitializedDatabaseException e) {
 			e.printStackTrace();
+			persistenceUtil.globalShutdown();
 			fail();
 		}
-		
+		persistenceUtil.globalShutdown();
 	}
 	
 }

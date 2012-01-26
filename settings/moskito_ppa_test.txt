@@ -1,4 +1,4 @@
-database.name=reposuite_ppa_test
+database.name=moskito_ppa_test
 database.user=miner
 database.password=miner
 database.host=grid1.st.cs.uni-saarland.de

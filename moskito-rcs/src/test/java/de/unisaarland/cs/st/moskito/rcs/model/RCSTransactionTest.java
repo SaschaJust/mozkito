@@ -95,6 +95,8 @@ public class RCSTransactionTest {
 		branch_i.setBegin(i);
 		
 		RCSBranch.getMasterBranch().setBegin(this.z);
+		this.z.setBranch(RCSBranch.getMasterBranch());
+		this.z.addChild(a);
 		
 		a.setBranch(RCSBranch.getMasterBranch());
 		a.addParent(this.z);

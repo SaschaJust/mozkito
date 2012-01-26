@@ -283,32 +283,44 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	private int compareToTransaction(final RCSTransaction transaction) {
 		if (getBranch().equals(transaction.getBranch())) {
 			
-			// both transaction are in the same branch
-			if ((getBranch().getBegin() == null) || (transaction.getBranch().getBegin() == null)) {
-				
-				if (Logger.logWarn()) {
-					Logger.warn("Comparing transactions of uninitialized branches: start transaction is unknown");
-				}
-				return -1;
+			///IF BOTH TRANSACTIONS ARE IN THE SAME BRANCH
+			
+			if (getBranch().getBegin() == null) {
+				//if any of the branches has no begin transaction, we must quit. The data model is broken.
+				throw new UnrecoverableError(
+				        "The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
+				                + getBranch());
 			}
 			if (getBranch().getBegin().equals(this)) {
+				//if this transaction is the begin of the current branch
 				return -1;
 			} else if (getBranch().getBegin().equals(transaction)) {
+				//if the other transaction is the begin of the current branch
 				return 1;
 			} else {
+				//both transactions are somewhere within the same branch
 				RCSTransaction cache = getParent(getBranch());
 				if (cache == null) {
-					return -1;
+					//this can only happen when this transaction is the begin transaction of the current branch DEADCODE
+					throw new UnrecoverableError(
+							"Detected null parent of transaction that is not the begin of the current branch: "
+									+ this.toString());
 				}
-				while ((cache != getBranch().getBegin()) && (cache != null)) {
+				while ((cache != null) && (!cache.equals(getBranch().getBegin()))) {
+					//as long as there are more parents to fetch from the current branch ...
 					if (cache.equals(transaction)) {
+						//we found the transaction as one of our parents.
 						return 1;
 					}
+					//get next ancestor
 					cache = cache.getParent(cache.getBranch());
 				}
 				return -1;
 			}
 		} else if (getBranch().equals(RCSBranch.getMasterBranch())) {
+			
+			//BOTH TRANSACTIONS ARE WITHIN DIFFERENT BRANCHES
+			
 			if (Logger.logDebug()) {
 				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
 			}
@@ -467,15 +479,14 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return
 	 */
 	@Transient
+	@NoneNull
 	public RCSTransaction getParent(final RCSBranch branch) {
 		if (branch == null) {
 			return null;
 		}
 		
 		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
-			return getParents().isEmpty()
-					? null
-							: getParents().iterator().next();
+			return null;
 		} else {
 			return (RCSTransaction) CollectionUtils.find(getParents(), new Predicate() {
 				
@@ -485,7 +496,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 					if (transaction.getBranch() == null) {
 						return false;
 					}
-					return transaction.getBranch().getName().equals(branch.getName());
+					return transaction.getBranch().equals(branch);
 				}
 			});
 		}
