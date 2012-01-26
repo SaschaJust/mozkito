@@ -115,7 +115,9 @@ public final class MoskitoTestBuilder {
 		
 		body.append("}").append(AndamaUtils.lineSeparator);
 		body.append("}").append(AndamaUtils.lineSeparator);
-		// System.err.println(body);
+		if (System.getProperty("test.debug") != null) {
+			System.err.println(body);
+		}
 		final CtMethod cm = CtNewMethod.make(Modifier.STATIC | Modifier.PUBLIC, CtClass.voidType, "main",
 		                                     new CtClass[] { pool.get("java.lang.String[]") },
 		                                     new CtClass[] { pool.get("java.lang.Throwable") }, body.toString(), cc);
