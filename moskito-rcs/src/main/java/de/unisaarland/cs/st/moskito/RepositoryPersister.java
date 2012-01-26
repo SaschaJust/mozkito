@@ -25,8 +25,6 @@ import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
@@ -40,8 +38,6 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	
 	Integer                 i = 0;
-	private final RCSBranch masterBranch;
-	
 	/**
 	 * @see RepoSuiteSinkThread
 	 * @param threadGroup
@@ -59,12 +55,6 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 				persistenceUtil.beginTransaction();
 			}
 		};
-		
-		// FIXME: this is a Kim quick fix. Simply because we are so stupid and
-		// set the branch on rcstransaction far too late
-		// (to be more precise within the GraphBuilder which is not even part of
-		// this toolchain. KABUMM!)
-		this.masterBranch = BranchFactory.getMasterBranch(persistenceUtil);
 		
 		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			

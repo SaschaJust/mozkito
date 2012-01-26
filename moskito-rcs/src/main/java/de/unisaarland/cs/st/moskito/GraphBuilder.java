@@ -44,7 +44,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class GraphBuilder extends AndamaSink<RCSTransaction> {
 	
 	public GraphBuilder(final AndamaGroup threadGroup, final RepositorySettings settings, final Repository repository,
-	        final PersistenceUtil persistenceUtil) {
+			final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		final Map<String, RevDependency> reverseDependencies = new HashMap<String, RevDependency>();
 		final Map<String, String> latest = new HashMap<String, String>();
@@ -83,7 +83,7 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 				
 				RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
 				RCSBranch rcsBranch = revdep.getCommitBranch();
-				persistenceUtil.update(rcsBranch);
+				//				persistenceUtil.update(rcsBranch);
 				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (String parent : revdep.getParents()) {
@@ -93,8 +93,8 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 							parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
 						} catch (ArrayIndexOutOfBoundsException e) {
 							throw new UnrecoverableError(
-							                             "Got child of parent that is not cached an cannot be loaded anymore.",
-							                             e);
+									"Got child of parent that is not cached an cannot be loaded anymore.",
+									e);
 						}
 						if (parentTransaction != null) {
 							cached.put(parentTransaction.getId(), parentTransaction);
@@ -107,11 +107,11 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 					} else {
 						if (Logger.logError()) {
 							Logger.error("Got child `" + rcsTransaction.getId()
-							        + "` of unknown parent. This should not happen.");
+									+ "` of unknown parent. This should not happen.");
 						}
 						throw new UnrecoverableError(
-						                             new UnrecoverableEntryException(
-						                                                             "Got child of unknown parent. This should not happen."));
+								new UnrecoverableEntryException(
+										"Got child of unknown parent. This should not happen."));
 					}
 				}
 				
