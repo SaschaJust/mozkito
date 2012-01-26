@@ -57,15 +57,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	private OpenJPAEntityManagerFactory factory;
 	
-	private final EntityManager         entityManager;
+	private EntityManager               entityManager;
 	
 	private String                      type;
 	
-	/**
-	 * 
-	 */
 	private OpenJPAUtil() {
-		this.entityManager = this.factory.createEntityManager();
+		
 	}
 	
 	// /**
@@ -189,6 +186,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/**
 	 * @param properties
 	 */
+	@Override
 	public void createSessionFactory(final Properties properties) {
 		if (this.factory == null) {
 			if (this.type == null) {
@@ -268,6 +266,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 				Logger.warn("Session factory already exists. Skipping creation.");
 			}
 		}
+		this.entityManager = this.factory.createEntityManager();
+		
 	}
 	
 	/**
@@ -278,6 +278,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @param type
 	 * @param driver
 	 */
+	@Override
 	public void createSessionFactory(final String host,
 	                                 final String database,
 	                                 final String user,
@@ -302,6 +303,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/**
 	 * @param string
 	 */
+	@Override
 	public void createTestSessionFactory(final String string) {
 		// Logger.setLogLevel(LogLevel.OFF);
 		final Properties properties = new Properties();

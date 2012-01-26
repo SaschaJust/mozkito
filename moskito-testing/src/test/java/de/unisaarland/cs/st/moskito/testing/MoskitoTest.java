@@ -10,7 +10,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
@@ -40,7 +39,7 @@ public abstract class MoskitoTest {
 	/**
 	 * @param util
 	 */
-	private static void setPersistenceUtil(final PersistenceUtil util) {
+	public static void setPersistenceUtil(final PersistenceUtil util) {
 		MoskitoTest.persistenceUtil = util;
 	}
 	
@@ -61,7 +60,6 @@ public abstract class MoskitoTest {
 			}
 		}
 		
-		setPersistenceUtil(PersistenceManager.getUtil());
 	}
 	
 	/**

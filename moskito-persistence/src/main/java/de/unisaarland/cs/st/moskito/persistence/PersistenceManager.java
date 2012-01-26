@@ -23,11 +23,58 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.andama.exceptions.InstantiationError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class PersistenceManager {
+	
+	public static PersistenceUtil createUtil(final String host,
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final Class<? extends PersistenceUtil> middleware) throws UnrecoverableError {
+		
+		PersistenceUtil instance = null;
+		final Class<? extends PersistenceUtil> klass = middleware;
+		try {
+			
+			instance = klass.newInstance();
+			instance.createSessionFactory(host, database, user, password, type, driver, unit);
+		} catch (final InstantiationException e) {
+			throw new InstantiationError(e, klass, null, new Object[0]);
+		} catch (final IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		}
+		return instance;
+	}
+	
+	public static PersistenceUtil createUtil(final String host,
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final String middleware) throws UnrecoverableError {
+		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
+		Class<PersistenceUtil> klass = null;
+		try {
+			
+			klass = (Class<PersistenceUtil>) Class.forName(className);
+			return createUtil(host, database, user, password, type, driver, unit, klass);
+		} catch (final ClassNotFoundException e) {
+			throw new ClassLoadingError(e, className);
+		}
+		
+	}
 	
 	private final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
 	private final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();

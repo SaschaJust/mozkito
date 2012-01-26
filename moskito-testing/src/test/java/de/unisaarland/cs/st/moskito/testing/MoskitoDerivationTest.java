@@ -17,7 +17,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class MoskitoDerivationTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011")
 	public void testFail() {
 		fail();
 	}
