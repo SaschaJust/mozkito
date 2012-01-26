@@ -27,6 +27,7 @@ import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.DatabaseType;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
@@ -81,19 +82,26 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		try {
 			@SuppressWarnings ("unchecked")
 			final Class<PersistenceUtil> middlewareClass = (Class<PersistenceUtil>) Class.forName(className);
+			final PersistenceUtil util = PersistenceManager.createUtil(arguments.get("database.host").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.name").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.user").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.password").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.type").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.driver").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.unit").getValue()
+			                                                                    .toString(),
+			                                                           arguments.get("database.middleware").getValue()
+			                                                                    .toString());
 			
-			final PersistenceUtil instance = middlewareClass.newInstance();
-			instance.createSessionFactory(arguments.get("database.host").getValue().toString(),
-			                              arguments.get("database.name").getValue().toString(),
-			                              arguments.get("database.user").getValue().toString(),
-			                              arguments.get("database.password").getValue().toString(),
-			                              arguments.get("database.type").getValue().toString(),
-			                              arguments.get("database.driver").getValue().toString(),
-			                              arguments.get("database.unit").getValue().toString());
-			
-			final String toolInfo = instance.getToolInformation();
+			final String toolInfo = util.getToolInformation();
 			this.settings.addToolInformation(middlewareClass.getSimpleName(), toolInfo);
-			return instance;
+			return util;
 		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Could not initialize database middleware "
