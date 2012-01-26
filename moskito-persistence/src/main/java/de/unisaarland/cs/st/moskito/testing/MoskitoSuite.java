@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.moskito.testing;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -64,20 +63,6 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		
 	}
 	
-	public static void main(final String[] args) {
-		try {
-			final Tuple<Integer, String> tuple = MoskitoTestBuilder.exec(MoskitoTestBuilder.class);
-			System.err.println("Return code: " + tuple.getFirst());
-			System.err.println("Stack trace: " + tuple.getSecond());
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	private final List<MoskitoTestRun> fTestMethods    = new LinkedList<MoskitoTestRun>();
 	private final List<MoskitoTestRun> fIgnoreMethods  = new LinkedList<MoskitoTestRun>();
 	private final List<Method>         setupMethods    = new LinkedList<Method>();
@@ -104,46 +89,53 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 			final int length = classMethod.getParameterTypes().length;
 			final int modifiers = classMethod.getModifiers();
 			
-			if ((retClass == null) || (length != 0) || Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)
-			        || Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers)) {
+			if ((retClass == null) || (length != 0) || !Modifier.isPublic(modifiers) || Modifier.isInterface(modifiers)
+			        || Modifier.isAbstract(modifiers)) {
 				continue;
 			}
 			
 			classMethod.getName();
 			
-			if (classMethod.getAnnotation(BeforeClass.class) != null) {
-				this.bootMethods.add(classMethod);
-			} else if (classMethod.getAnnotation(Before.class) != null) {
-				this.setupMethods.add(classMethod);
-			} else if (classMethod.getAnnotation(AfterClass.class) != null) {
-				this.shutdownMethods.add(classMethod);
-			} else if (classMethod.getAnnotation(After.class) != null) {
-				this.tearDownMethods.add(classMethod);
-			} else if (classMethod.getAnnotation(Ignore.class) == null) {
-				if (classMethod.getAnnotation(Test.class) != null) {
-					final List<Annotation> annotationList = new LinkedList<Annotation>();
-					for (final Annotation annotation : classMethod.getAnnotations()) {
-						if (annotation.annotationType().getAnnotation(MoskitoTestingAnnotation.class) != null) {
-							annotationList.add(annotation);
-						}
-					}
-					final MoskitoTestRun testRun = new MoskitoTestRun(
-					                                                  classMethod,
-					                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-					                                                                                    classMethod.getName()),
-					                                                  annotationList);
-					getDescription().addChild(testRun.getDescription());
-					this.fTestMethods.add(testRun);
+			if (Modifier.isStatic(modifiers)) {
+				if (classMethod.getAnnotation(BeforeClass.class) != null) {
+					this.bootMethods.add(classMethod);
+				} else if (classMethod.getAnnotation(AfterClass.class) != null) {
+					this.shutdownMethods.add(classMethod);
+				} else {
+					continue;
 				}
 			} else {
-				if (classMethod.getAnnotation(Test.class) != null) {
-					final MoskitoTestRun testRun = new MoskitoTestRun(
-					                                                  classMethod,
-					                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-					                                                                                    classMethod.getName()),
-					                                                  new LinkedList<Annotation>());
-					getDescription().addChild(testRun.getDescription());
-					this.fIgnoreMethods.add(testRun);
+				if (classMethod.getAnnotation(Before.class) != null) {
+					this.setupMethods.add(classMethod);
+					
+				} else if (classMethod.getAnnotation(After.class) != null) {
+					this.tearDownMethods.add(classMethod);
+				} else if (classMethod.getAnnotation(Ignore.class) == null) {
+					if (classMethod.getAnnotation(Test.class) != null) {
+						final List<Annotation> annotationList = new LinkedList<Annotation>();
+						for (final Annotation annotation : classMethod.getAnnotations()) {
+							if (annotation.annotationType().getAnnotation(MoskitoTestingAnnotation.class) != null) {
+								annotationList.add(annotation);
+							}
+						}
+						final MoskitoTestRun testRun = new MoskitoTestRun(
+						                                                  classMethod,
+						                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
+						                                                                                    classMethod.getName()),
+						                                                  annotationList);
+						getDescription().addChild(testRun.getDescription());
+						this.fTestMethods.add(testRun);
+					}
+				} else {
+					if (classMethod.getAnnotation(Test.class) != null) {
+						final MoskitoTestRun testRun = new MoskitoTestRun(
+						                                                  classMethod,
+						                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
+						                                                                                    classMethod.getName()),
+						                                                  new LinkedList<Annotation>());
+						getDescription().addChild(testRun.getDescription());
+						this.fIgnoreMethods.add(testRun);
+					}
 				}
 			}
 		}

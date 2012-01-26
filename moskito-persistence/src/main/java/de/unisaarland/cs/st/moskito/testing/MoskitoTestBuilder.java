@@ -84,7 +84,8 @@ public final class MoskitoTestBuilder {
 		body.append(de.unisaarland.cs.st.moskito.testing.MoskitoTest.class.getCanonicalName())
 		    .append(".setUpBeforeClass(m.getAnnotations());").append(AndamaUtils.lineSeparator);
 		for (final Method bootMethod : bootMethods) {
-			body.append("c." + bootMethod.getName() + "();").append(AndamaUtils.lineSeparator);
+			body.append(testRun.getDescription().getTestClass().getCanonicalName() + "." + bootMethod.getName() + "();")
+			    .append(AndamaUtils.lineSeparator);
 		}
 		
 		body.append("o = (").append(testRun.getDescription().getTestClass().getCanonicalName())
@@ -106,7 +107,8 @@ public final class MoskitoTestBuilder {
 		body.append("}").append(AndamaUtils.lineSeparator);
 		body.append("if (c != null) {").append(AndamaUtils.lineSeparator);
 		for (final Method shutdownMethod : shutdownMethods) {
-			body.append("c." + shutdownMethod.getName() + "();").append(AndamaUtils.lineSeparator);
+			body.append(testRun.getDescription().getTestClass().getCanonicalName() + "." + shutdownMethod.getName()
+			                    + "();").append(AndamaUtils.lineSeparator);
 		}
 		body.append("}").append(AndamaUtils.lineSeparator);
 		
