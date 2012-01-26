@@ -18,13 +18,17 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class JavaChangeOperationProcessQueueTest {
+public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 	
 	@Test
+	@DatabaseSettings(unit = "ppa")
 	public void test() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		        getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
 				.getEnvironmentOperations();

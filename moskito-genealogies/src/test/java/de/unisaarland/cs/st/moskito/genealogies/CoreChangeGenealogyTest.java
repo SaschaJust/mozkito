@@ -23,18 +23,22 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class CoreChangeGenealogyTest {
+public class CoreChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
+	@DatabaseSettings(unit = "ppa")
 	public void testChangeGenealogy() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
+		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		        getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
-		        .getEnvironmentOperations();
-
+				.getEnvironmentOperations();
+		
 		changeGenealogy.close();
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		assertEquals(41, changeGenealogy.vertexSize());
