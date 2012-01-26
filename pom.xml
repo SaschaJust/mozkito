@@ -47,6 +47,7 @@
 	<modules>
 		<module>moskito-utils</module>
 		<module>moskito-persistence</module>
+		<module>moskito-testing</module>
 		<module>moskito-rcs</module>
 		<module>moskito-bugs</module>
 		<module>moskito-persons</module>
