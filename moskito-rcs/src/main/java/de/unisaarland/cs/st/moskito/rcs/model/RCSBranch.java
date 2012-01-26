@@ -35,11 +35,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.apache.openjpa.persistence.jdbc.Unique;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 /**
  * The Class RCSBranch.
@@ -47,7 +49,7 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table (name = "rcsbranch")
+@Table(name = "rcsbranch", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME" }))
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long serialVersionUID   = 5419737140470855522L;
@@ -75,7 +77,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 *            the name
 	 */
 	public RCSBranch(final String name) {
-		setName(name);
+		this.setName(name);
 	}
 	
 	/**
@@ -87,8 +89,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 *            might be null
 	 */
 	public RCSBranch(final String name, final RCSBranch parent) {
-		setName(name);
-		setParent(parent);
+		this.setName(name);
+		this.setParent(parent);
 	}
 	
 	/**
@@ -101,17 +103,18 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
 	public int compareTo(final RCSBranch other) {
-		RCSBranch p = getParent();
-		if (equals(other)) {
+		RCSBranch p = this.getParent();
+		if (this.equals(other)) {
 			return 0;
 		}
 		if (other.isMasterBranch()) {
 			return 1;
-		} else if (isMasterBranch()) {
+		} else if (this.isMasterBranch()) {
 			return -1;
 		}
 		while ((p != null) && (!p.isMasterBranch())) {
@@ -139,9 +142,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
-		final TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
-		for (final String id : tIds) {
-			final RCSTransaction t = containsTransaction(id);
+		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
+		for (String id : tIds) {
+			RCSTransaction t = this.containsTransaction(id);
 			if (t != null) {
 				result.add(t);
 			}
@@ -159,12 +162,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public RCSTransaction containsTransaction(final String tId) {
-		if (getBegin().getId().equals(tId)) {
-			return getBegin();
+		if (this.getBegin().getId().equals(tId)) {
+			return this.getBegin();
 		}
 		
-		RCSTransaction current = getEnd();
-		while ((current != null) && (!current.equals(getBegin()))) {
+		RCSTransaction current = this.getEnd();
+		while ((current != null) && (!current.equals(this.getBegin()))) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
@@ -184,33 +187,33 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		final RCSBranch other = (RCSBranch) obj;
-		if (getBegin() == null) {
+		RCSBranch other = (RCSBranch) obj;
+		if (this.getBegin() == null) {
 			if (other.getBegin() != null) {
 				return false;
 			}
-		} else if (!getBegin().equals(other.getBegin())) {
+		} else if (!this.getBegin().equals(other.getBegin())) {
 			return false;
 		}
-		if (getEnd() == null) {
+		if (this.getEnd() == null) {
 			if (other.getEnd() != null) {
 				return false;
 			}
-		} else if (!getEnd().equals(other.getEnd())) {
+		} else if (!this.getEnd().equals(other.getEnd())) {
 			return false;
 		}
-		if (getName() == null) {
+		if (this.getName() == null) {
 			if (other.getName() != null) {
 				return false;
 			}
-		} else if (!getName().equals(other.getName())) {
+		} else if (!this.getName().equals(other.getName())) {
 			return false;
 		}
-		if (getParent() == null) {
+		if (this.getParent() == null) {
 			if (other.getParent() != null) {
 				return false;
 			}
-		} else if (!getParent().equals(other.getParent())) {
+		} else if (!this.getParent().equals(other.getParent())) {
 			return false;
 		}
 		return true;
@@ -221,7 +224,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -231,7 +234,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -242,9 +245,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the generatedId
 	 */
 	@Id
-	@Index (name = "idx_branchid")
-	@Column (name = "id", nullable = false)
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@Index(name = "idx_branchid")
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -273,7 +276,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the name
 	 */
 	@Basic
-	@Index (name = "idx_name")
+	@Index(name = "idx_name")
 	@Unique
 	public String getName() {
 		return this.name;
@@ -284,7 +287,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -293,18 +296,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((getBegin() == null)
-		                                                 ? 0
-		                                                 : getBegin().hashCode());
-		result = (prime * result) + ((getEnd() == null)
-		                                               ? 0
-		                                               : getEnd().hashCode());
-		result = (prime * result) + ((getName() == null)
-		                                                ? 0
-		                                                : getName().hashCode());
-		result = (prime * result) + ((getParent() == null)
-		                                                  ? 0
-		                                                  : getParent().hashCode());
+		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
+		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
+		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
 		return result;
 	}
 	
@@ -313,12 +308,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean hasParent() {
-		return getParent() != null;
+		return this.getParent() != null;
 	}
 	
 	@Transient
 	public boolean isMasterBranch() {
-		return equals(MASTER_BRANCH_NAME);
+		return this.equals(BranchFactory.getMasterBranch());
 	}
 	
 	/**
@@ -326,7 +321,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean isOpen() {
-		return getEnd() == null;
+		return this.getEnd() == null;
 	}
 	
 	/**
@@ -388,27 +383,28 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append("RCSBranch [name=");
-		sb.append(getName());
+		sb.append(this.getName());
 		sb.append(", parent=");
-		if (getParent() != null) {
-			sb.append(getParent());
+		if (this.getParent() != null) {
+			sb.append(this.getParent());
 		} else {
 			sb.append("null");
 		}
 		sb.append(", end=");
-		if (getEnd() != null) {
-			sb.append(getEnd().getId());
+		if (this.getEnd() != null) {
+			sb.append(this.getEnd().getId());
 		} else {
 			sb.append("null");
 		}
 		sb.append(", mergedIn=");
-		sb.append(getMergedIn());
+		sb.append(this.getMergedIn());
 		sb.append("]");
 		return sb.toString();
 	}

@@ -39,8 +39,8 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	
-	Integer                 i = 0;
-	private final RCSBranch masterBranch;
+	Integer i = 0;
+	private RCSBranch masterBranch;
 	
 	/**
 	 * @see RepoSuiteSinkThread
@@ -49,7 +49,7 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	 * @param persistenceUtil
 	 */
 	public RepositoryPersister(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final PersistenceUtil persistenceUtil) {
+			final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
@@ -60,18 +60,15 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 			}
 		};
 		
-		// FIXME: this is a Kim quick fix. Simply because we are so stupid and
-		// set the branch on rcstransaction far too late
-		// (to be more precise within the GraphBuilder which is not even part of
-		// this toolchain. KABUMM!)
-		this.masterBranch = BranchFactory.getMasterBranch(persistenceUtil);
+		//FIXME: this is a Kim quick fix. Simply because we are so stupid and set the branch on rcstransaction far too late
+		//(to be more precise within the GraphBuilder which is not even part of this toolchain. KABUMM!)
+		masterBranch = BranchFactory.getMasterBranch();
 		
 		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
-				final RCSTransaction data = getInputData();
-				data.setBranch(RepositoryPersister.this.masterBranch);
+				RCSTransaction data = getInputData();
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
