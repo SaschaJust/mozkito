@@ -71,10 +71,8 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		
 		assertFalse(list.isEmpty());
 		assertEquals(2, list.size());
-		for (final RCSBranch b : list) {
-			assertEquals(branch, b);
-			assertEquals("0123456789abcde", b.getMergedIn());
-		}
+		assertTrue(list.contains(branch));
+		assertTrue(list.contains(BranchFactory.getMasterBranch(getPersistenceUtil())));
 	}
 	
 	@Test
@@ -136,6 +134,7 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testSaveRCSFile() {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
