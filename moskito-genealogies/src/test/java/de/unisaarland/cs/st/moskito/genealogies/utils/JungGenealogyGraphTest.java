@@ -16,34 +16,40 @@ import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.JungGenealogyGraph.Edge;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class JungGenealogyGraphTest {
+public class JungGenealogyGraphTest extends MoskitoTest {
 	
 	@Test
+	@DatabaseSettings (unit = "ppa")
 	public void testCoreLayer() {
-		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
+		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
+		                                                      FileShutdownAction.KEEP);
 		
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile);
-		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		                                                                                                  getPersistenceUtil());
+		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		
-		JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(changeGenealogy);
+		final JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(
+		                                                                                                      changeGenealogy);
 		assertEquals(changeGenealogy.vertexSize(), jungGraph.getVertexCount());
-		for (JavaChangeOperation op : changeGenealogy.vertexSet()) {
+		for (final JavaChangeOperation op : changeGenealogy.vertexSet()) {
 			assertTrue(jungGraph.containsVertex(op));
-			int inDegree = changeGenealogy.inDegree(op);
-			int outDegree = changeGenealogy.outDegree(op);
+			final int inDegree = changeGenealogy.inDegree(op);
+			final int outDegree = changeGenealogy.outDegree(op);
 			
 			assertEquals(inDegree, jungGraph.inDegree(op));
 			assertEquals(outDegree, jungGraph.outDegree(op));
 			assertEquals(inDegree + outDegree, jungGraph.degree(op));
 			
-			Collection<JavaChangeOperation> allDependants = changeGenealogy.getAllDependants(op);
-			Collection<JavaChangeOperation> allParents = changeGenealogy.getAllParents(op);
+			final Collection<JavaChangeOperation> allDependants = changeGenealogy.getAllDependants(op);
+			final Collection<JavaChangeOperation> allParents = changeGenealogy.getAllParents(op);
 			
 			assertTrue(jungGraph.getIncidentEdges(op).size() >= (allDependants.size() + allParents.size()));
-			Collection<Edge<JavaChangeOperation>> jungInEdges = jungGraph.getInEdges(op);
+			final Collection<Edge<JavaChangeOperation>> jungInEdges = jungGraph.getInEdges(op);
 			assertEquals(inDegree, jungInEdges.size());
-			for (Edge<JavaChangeOperation> edge : jungInEdges) {
+			for (final Edge<JavaChangeOperation> edge : jungInEdges) {
 				assertEquals(op, edge.to);
 				assertEquals(op, jungGraph.getDest(edge));
 				assertTrue(allDependants.contains(edge.from));
@@ -51,15 +57,15 @@ public class JungGenealogyGraphTest {
 			
 			assertEquals(allDependants.size() + allParents.size(), jungGraph.getNeighborCount(op));
 			
-			Collection<JavaChangeOperation> jungNeighbors = jungGraph.getNeighbors(op);
+			final Collection<JavaChangeOperation> jungNeighbors = jungGraph.getNeighbors(op);
 			assertEquals(allDependants.size() + allParents.size(), jungNeighbors.size());
-			for (JavaChangeOperation neighbor : jungNeighbors) {
+			for (final JavaChangeOperation neighbor : jungNeighbors) {
 				assertTrue(allDependants.contains(neighbor) || allParents.contains(neighbor));
 			}
 			
-			Collection<Edge<JavaChangeOperation>> jungOutEdges = jungGraph.getOutEdges(op);
+			final Collection<Edge<JavaChangeOperation>> jungOutEdges = jungGraph.getOutEdges(op);
 			assertEquals(op.toString(), outDegree, jungOutEdges.size());
-			for (Edge<JavaChangeOperation> edge : jungOutEdges) {
+			for (final Edge<JavaChangeOperation> edge : jungOutEdges) {
 				assertEquals(op, edge.from);
 				assertEquals(op, jungGraph.getSource(edge));
 				assertTrue(allParents.contains(edge.to));
@@ -72,16 +78,16 @@ public class JungGenealogyGraphTest {
 			assertEquals(inDegree, jungGraph.getSuccessorCount(op));
 			assertEquals(allDependants, jungGraph.getSuccessors(op));
 			
-			for (JavaChangeOperation parent : allParents) {
+			for (final JavaChangeOperation parent : allParents) {
 				
-				Collection<GenealogyEdgeType> edgeTypes = changeGenealogy.getEdges(op, parent);
-				for (GenealogyEdgeType eType : edgeTypes) {
+				final Collection<GenealogyEdgeType> edgeTypes = changeGenealogy.getEdges(op, parent);
+				for (final GenealogyEdgeType eType : edgeTypes) {
 					assertTrue(jungGraph.containsEdge(new Edge<JavaChangeOperation>(op, parent, eType)));
 				}
 				assertTrue(edgeTypes.contains(jungGraph.findEdge(op, parent).type));
-				Collection<Edge<JavaChangeOperation>> jungEdgeSet = jungGraph.findEdgeSet(op, parent);
+				final Collection<Edge<JavaChangeOperation>> jungEdgeSet = jungGraph.findEdgeSet(op, parent);
 				assertEquals(edgeTypes.size(), jungEdgeSet.size());
-				for (Edge<JavaChangeOperation> jungEdge : jungEdgeSet) {
+				for (final Edge<JavaChangeOperation> jungEdge : jungEdgeSet) {
 					assertTrue(edgeTypes.contains(jungEdge.type));
 				}
 			}
@@ -90,7 +96,7 @@ public class JungGenealogyGraphTest {
 		changeGenealogy.close();
 		try {
 			FileUtils.deleteDirectory(tmpGraphDBFile);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
