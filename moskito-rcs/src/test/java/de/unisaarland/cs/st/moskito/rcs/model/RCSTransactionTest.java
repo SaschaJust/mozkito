@@ -426,7 +426,7 @@ public class RCSTransactionTest extends MoskitoTest {
 		 * X
 		 */
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.z);
+		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.x);
 		
 		this.x.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
 		this.y.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
