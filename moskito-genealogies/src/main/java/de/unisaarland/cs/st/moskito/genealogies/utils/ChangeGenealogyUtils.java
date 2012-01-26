@@ -34,14 +34,11 @@ import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -136,19 +133,8 @@ public class ChangeGenealogyUtils {
 	
 	
 	
-	public static GenealogyTestEnvironment getGenealogyTestEnvironment(File tmpGraphDBFile) {
-		
-		System.setProperty("database.name", "reposuite_genealogies_test");
-		OpenJPAUtil.createTestSessionFactory("ppa");
-		
-		PersistenceUtil persistenceUtil = null;
-		try {
-			persistenceUtil = OpenJPAUtil.getInstance();
-		} catch (UninitializedDatabaseException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
+	public static GenealogyTestEnvironment getGenealogyTestEnvironment(File tmpGraphDBFile,
+			PersistenceUtil persistenceUtil) {
 		
 		// UNZIP git repo
 		URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
@@ -205,7 +191,7 @@ public class ChangeGenealogyUtils {
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), null, null);
+			repository.setup(urlFile.toURI(), null, null, persistenceUtil);
 		} catch (Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
@@ -493,14 +479,7 @@ public class ChangeGenealogyUtils {
 		
 		settings.parseArguments();
 		
-		persistenceArgs.getValue();
-		
-		PersistenceUtil persistenceUtil;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1);
-		}
+		PersistenceUtil persistenceUtil = persistenceArgs.getValue();
 		
 		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
 		

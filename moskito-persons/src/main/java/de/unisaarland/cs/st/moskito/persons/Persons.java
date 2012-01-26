@@ -80,24 +80,12 @@ public class Persons extends AndamaChain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		PersistenceUtil persistenceUtil = null;
+		PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		
-		if (this.databaseArguments.getValue() != null) {
-			try {
-				persistenceUtil = PersistenceManager.getUtil();
-			} catch (UninitializedDatabaseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				
-				shutdown();
-			}
-			
-		} else {
+		if (persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Database arguments are not set (required when merging persons).");
 			}
-			
 			shutdown();
 		}
 		

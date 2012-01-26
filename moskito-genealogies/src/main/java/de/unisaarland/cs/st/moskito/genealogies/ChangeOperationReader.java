@@ -33,7 +33,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			public void preExecution() {
 				
 				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq(
-				        "branch", BranchFactory.getMasterBranch());
+						"branch", BranchFactory.getMasterBranch(persistenceUtil));
 				
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				

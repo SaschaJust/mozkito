@@ -29,13 +29,9 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
 	public static String sumParentChangeSize = "sumParentChangeSize";
 	private PersistenceUtil persistenceUtil;
 	
-	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy) {
+	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy, PersistenceUtil peristenceUtil) {
 		super(genealogy);
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError(e);
-		}
+		this.persistenceUtil = peristenceUtil;
 	}
 	
 	@Override

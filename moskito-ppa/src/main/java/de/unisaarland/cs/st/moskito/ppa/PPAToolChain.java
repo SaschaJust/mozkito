@@ -31,8 +31,6 @@ import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -131,18 +129,13 @@ public class PPAToolChain extends AndamaChain {
 	 */
 	@Override
 	public void setup() {
-		if (!this.databaseSettings.getValue()) {
+		persistenceUtil = this.databaseSettings.getValue();
+		if (persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not connect to database!");
 			}
 			
 			throw new Shutdown();
-		}
-		
-		try {
-			this.persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1);
 		}
 		
 		File xmlFile = this.asXML.getValue();
