@@ -60,6 +60,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
 
 /**
@@ -99,7 +100,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			final DateTime timestamp,
 			final Person author,
 			final String originalId) {
-		return new RCSTransaction(id, message, timestamp, author, originalId);
+		RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
+		transaction.setBranch(BranchFactory.getMasterBranch());
+		return transaction;
 	}
 	
 	/**

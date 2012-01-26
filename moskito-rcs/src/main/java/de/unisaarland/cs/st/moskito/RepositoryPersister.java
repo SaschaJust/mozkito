@@ -69,7 +69,6 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 			@Override
 			public void process() {
 				RCSTransaction data = getInputData();
-				data.setBranch(masterBranch);
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
