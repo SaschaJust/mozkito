@@ -35,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.apache.openjpa.persistence.jdbc.Unique;
@@ -48,7 +49,7 @@ import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table(name = "rcsbranch")
+@Table(name = "rcsbranch", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME" }))
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long serialVersionUID   = 5419737140470855522L;
