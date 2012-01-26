@@ -21,6 +21,7 @@ import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.MaskedStringArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
@@ -59,6 +60,8 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		                               "org.postgresql.Driver", isRequired));
 		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
 		addArgument(new StringArgument(settings, "database.unit", "The persistence unit config tag used.", unit, true));
+		addArgument(new BooleanArgument(settings, "database.dropContents", "Used to drop the contents before usage.",
+		                                "false", true));
 	}
 	
 	/*
@@ -96,6 +99,8 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 			                                                                    .toString(),
 			                                                           arguments.get("database.unit").getValue()
 			                                                                    .toString(),
+			                                                           (Boolean) arguments.get("database.middleware")
+			                                                                              .getValue(),
 			                                                           arguments.get("database.middleware").getValue()
 			                                                                    .toString());
 			

@@ -21,14 +21,12 @@ import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
@@ -98,49 +96,41 @@ public class MappingChain extends AndamaChain {
 			}
 		}
 		
-		if (this.databaseArguments.getValue() != null) {
-			PersistenceUtil persistenceUtil;
-			try {
-				persistenceUtil = PersistenceManager.getUtil();
-				finder.loadData(persistenceUtil);
-				new ReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
-				new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
-				// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
-				// getSettings(), finder);
-				new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
-				// new ScoringFilterMux(this.threadPool.getThreadGroup(),
-				// getSettings());
-				// new ScoringMappingMux(this.threadPool.getThreadGroup(),
-				// getSettings());
-				for (final MappingEngine engine : this.mappingArguments.getEngines()) {
-					new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
-				}
-				
-				for (final MappingStrategy strategy : this.mappingArguments.getStrategies()) {
-					new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
-				}
-				// new ScoringPersister(this.threadPool.getThreadGroup(),
-				// getSettings(), persistenceUtil);
-				// ScoringSplitter splitter = new
-				// ScoringSplitter(this.threadPool.getThreadGroup(),
-				// getSettings(), finder,
-				// persistenceUtil);
-				// ScoringFilterPersister persister = new
-				// ScoringFilterPersister(this.threadPool.getThreadGroup(),
-				// getSettings(), persistenceUtil);
-				new MappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-				
-				// splitter.waitFor(persister);
-			} catch (final UninitializedDatabaseException e) {
-				
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				shutdown();
+		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+		
+		if (persistenceUtil != null) {
+			
+			finder.loadData(persistenceUtil);
+			new ReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
+			new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
+			new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
+			// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
+			// getSettings(), finder);
+			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
+			// new ScoringFilterMux(this.threadPool.getThreadGroup(),
+			// getSettings());
+			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
+			// getSettings());
+			for (final MappingEngine engine : this.mappingArguments.getEngines()) {
+				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
 			}
+			
+			for (final MappingStrategy strategy : this.mappingArguments.getStrategies()) {
+				new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
+			}
+			// new ScoringPersister(this.threadPool.getThreadGroup(),
+			// getSettings(), persistenceUtil);
+			// ScoringSplitter splitter = new
+			// ScoringSplitter(this.threadPool.getThreadGroup(),
+			// getSettings(), finder,
+			// persistenceUtil);
+			// ScoringFilterPersister persister = new
+			// ScoringFilterPersister(this.threadPool.getThreadGroup(),
+			// getSettings(), persistenceUtil);
+			new MappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+			
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Database arguments not valid. Aborting...");

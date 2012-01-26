@@ -240,42 +240,21 @@ public class OpenJPAUtil implements PersistenceUtil {
 	                                 final String password,
 	                                 final String type,
 	                                 final String driver,
-	                                 final String unit) {
+	                                 final String unit,
+	                                 final boolean dropContents) {
 		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
 		
 		final Properties properties = new Properties();
 		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+		properties.put("openjpa.jdbc.SynchronizeMappings",
+		               dropContents
+		                           ? "buildSchema(SchemaAction='add,deleteTableContents')"
+		                           : "validate");
 		properties.put("openjpa.ConnectionDriverName", driver);
 		properties.put("openjpa.ConnectionUserName", user);
 		properties.put("openjpa.ConnectionPassword", password);
 		properties.put("openjpa.persistence-unit", unit);
 		this.type = type;
-		
-		createSessionFactory(properties);
-	}
-	
-	/**
-	 * @param string
-	 */
-	@Override
-	public void createTestSessionFactory(final String string) {
-		// Logger.setLogLevel(LogLevel.OFF);
-		final Properties properties = new Properties();
-		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
-		        + "/" + System.getProperty("database.name", "moskito_junit");
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", System.getProperty("database.username", "miner"));
-		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
-		properties.put("openjpa.persistence-unit", string);
-		// properties.put("openjpa.Log", "Runtime=TRACE");
-		
-		if (this.factory != null) {
-			this.factory.close();
-			this.factory = null;
-		}
 		
 		createSessionFactory(properties);
 	}

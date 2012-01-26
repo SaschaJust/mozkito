@@ -40,14 +40,14 @@ public class PersistenceManager {
 	                                         final String type,
 	                                         final String driver,
 	                                         final String unit,
+	                                         final boolean dropContents,
 	                                         final Class<? extends PersistenceUtil> middleware) throws UnrecoverableError {
 		
 		PersistenceUtil instance = null;
 		final Class<? extends PersistenceUtil> klass = middleware;
 		try {
-			
 			instance = klass.newInstance();
-			instance.createSessionFactory(host, database, user, password, type, driver, unit);
+			instance.createSessionFactory(host, database, user, password, type, driver, unit, dropContents);
 		} catch (final InstantiationException e) {
 			throw new InstantiationError(e, klass, null, new Object[0]);
 		} catch (final IllegalAccessException e) {
@@ -56,6 +56,7 @@ public class PersistenceManager {
 		return instance;
 	}
 	
+	@SuppressWarnings ("unchecked")
 	public static PersistenceUtil createUtil(final String host,
 	                                         final String database,
 	                                         final String user,
@@ -63,13 +64,14 @@ public class PersistenceManager {
 	                                         final String type,
 	                                         final String driver,
 	                                         final String unit,
+	                                         final boolean dropContents,
 	                                         final String middleware) throws UnrecoverableError {
 		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
 		Class<PersistenceUtil> klass = null;
 		try {
 			
 			klass = (Class<PersistenceUtil>) Class.forName(className);
-			return createUtil(host, database, user, password, type, driver, unit, klass);
+			return createUtil(host, database, user, password, type, driver, unit, dropContents, klass);
 		} catch (final ClassNotFoundException e) {
 			throw new ClassLoadingError(e, className);
 		}

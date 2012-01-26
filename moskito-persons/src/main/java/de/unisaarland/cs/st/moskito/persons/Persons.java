@@ -24,8 +24,6 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.RCS;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
 import de.unisaarland.cs.st.moskito.persons.settings.PersonsArguments;
@@ -51,7 +49,7 @@ public class Persons extends AndamaChain {
 		super(new PersonsSettings());
 		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
 		
-		AndamaSettings settings = getSettings();
+		final AndamaSettings settings = getSettings();
 		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, "persistence");
 		this.logSettings = settings.setLoggerArg(true);
 		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(true);
@@ -80,7 +78,7 @@ public class Persons extends AndamaChain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		
 		if (persistenceUtil == null) {
 			if (Logger.logError()) {
@@ -89,7 +87,7 @@ public class Persons extends AndamaChain {
 			shutdown();
 		}
 		
-		MergingProcessor processor = this.personsArguments.getValue();
+		final MergingProcessor processor = this.personsArguments.getValue();
 		processor.providePersistenceUtil(persistenceUtil);
 		
 		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
@@ -98,8 +96,7 @@ public class Persons extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
+	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
 	 */
 	@Override
 	public void shutdown() {

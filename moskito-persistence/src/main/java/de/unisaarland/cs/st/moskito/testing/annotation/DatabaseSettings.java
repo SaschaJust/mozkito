@@ -26,6 +26,8 @@ public @interface DatabaseSettings {
 	
 	String driver() default "org.postgresql.Driver";
 	
+	boolean dropContents() default true;
+	
 	String hostname() default "grid1.st.cs.uni-saarland.de";
 	
 	String password() default "miner";

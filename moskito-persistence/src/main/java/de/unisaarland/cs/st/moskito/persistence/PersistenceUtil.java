@@ -50,9 +50,8 @@ public interface PersistenceUtil {
 	                                 final String password,
 	                                 final String type,
 	                                 final String driver,
-	                                 final String unit);
-	
-	public void createTestSessionFactory(final String string);
+	                                 final String unit,
+	                                 final boolean dropContents);
 	
 	public void delete(final Annotated object);
 	

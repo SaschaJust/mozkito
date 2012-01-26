@@ -16,7 +16,7 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 		final PersistenceUtil util = PersistenceManager.createUtil(settings.hostname(), settings.database(),
 		                                                           settings.username(), settings.password(),
 		                                                           settings.type(), settings.driver(), settings.unit(),
-		                                                           settings.util());
+		                                                           settings.dropContents(), settings.util());
 		MoskitoTest.setPersistenceUtil(util);
 	}
 	
