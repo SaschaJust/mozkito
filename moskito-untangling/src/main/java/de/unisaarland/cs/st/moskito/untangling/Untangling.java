@@ -52,10 +52,8 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringCollapseVisit
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.moskito.clustering.SumAggregation;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
@@ -331,13 +329,8 @@ public class Untangling {
 		this.repository = this.repositoryArg.getValue();
 		this.dryrun = this.dryRunArg.getValue();
 		
-		this.databaseArgs.getValue();
-		this.persistenceUtil = null;
-		try {
-			this.persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1.getMessage(), e1);
-		}
+		this.persistenceUtil = this.databaseArgs.getValue();
+
 	}
 	
 	/**
