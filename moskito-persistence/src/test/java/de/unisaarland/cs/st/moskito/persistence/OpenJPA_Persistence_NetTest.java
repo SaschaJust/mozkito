@@ -17,97 +17,63 @@ package de.unisaarland.cs.st.moskito.persistence;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class OpenJPA_Persistence_NetTest extends Mos {
-	
-	@AfterClass
-	public static void afterClass() {
-	}
-	
-	@BeforeClass
-	public static void beforeClass() {
-		
-	}
-	
-	@Before
-	public void setUp() throws Exception {
-		OpenJPAUtil.createTestSessionFactory("persistence");
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		try {
-			OpenJPAUtil.getInstance().globalShutdown();
-		} catch (final UninitializedDatabaseException e) {
-			
-		}
-	}
+public class OpenJPA_Persistence_NetTest extends MoskitoTest {
 	
 	@Test
+	@DatabaseSettings (unit = "persistence")
 	public void testPerson() {
-		PersistenceUtil persistenceUtil;
-		try {
-			persistenceUtil = OpenJPAUtil.getInstance();
-			final Person person = new Person("username", "fullname", "em@i.l");
-			
-			persistenceUtil.beginTransaction();
-			persistenceUtil.save(person);
-			persistenceUtil.commitTransaction();
-			
-			final List<Person> list = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
-			
-			assertFalse(list.isEmpty());
-			assertEquals(1, list.size());
-			assertEquals(person, list.get(0));
-		} catch (final UninitializedDatabaseException e) {
-			fail(e.getMessage());
-		}
+		final PersistenceUtil persistenceUtil = getPersistenceUtil();
+		final Person person = new Person("username", "fullname", "em@i.l");
+		
+		persistenceUtil.beginTransaction();
+		persistenceUtil.save(person);
+		persistenceUtil.commitTransaction();
+		
+		final List<Person> list = persistenceUtil.load(persistenceUtil.createCriteria(Person.class));
+		
+		assertFalse(list.isEmpty());
+		assertEquals(1, list.size());
+		assertEquals(person, list.get(0));
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "persistence")
 	public void testPersonContainer() {
-		PersistenceUtil persistenceUtil;
-		try {
-			persistenceUtil = OpenJPAUtil.getInstance();
-			final PersonContainer personContainer = new PersonContainer();
-			final Person person1 = new Person("username1", "full name1", "em1@i.l");
-			final Person person2 = new Person("username2", "full name2", "em21@i.l");
-			final Person person3 = new Person("username3", "full name3", "em3@i.l");
-			
-			personContainer.add("role1", person1);
-			personContainer.add("role2", person2);
-			personContainer.add("role3", person3);
-			
-			persistenceUtil.beginTransaction();
-			persistenceUtil.save(personContainer);
-			persistenceUtil.commitTransaction();
-			
-			final List<PersonContainer> list = persistenceUtil.load(persistenceUtil.createCriteria(PersonContainer.class));
-			
-			assertFalse(list.isEmpty());
-			assertEquals(1, list.size());
-			assertEquals(personContainer, list.get(0));
-			assertFalse(list.get(0).isEmpty());
-			assertEquals(3, list.get(0).size());
-			assertEquals(person1, list.get(0).get("role1"));
-			assertEquals(person2, list.get(0).get("role2"));
-			assertEquals(person3, list.get(0).get("role3"));
-		} catch (final UninitializedDatabaseException e) {
-			fail(e.getMessage());
-		}
+		final PersistenceUtil persistenceUtil = getPersistenceUtil();
+		
+		final PersonContainer personContainer = new PersonContainer();
+		final Person person1 = new Person("username1", "full name1", "em1@i.l");
+		final Person person2 = new Person("username2", "full name2", "em21@i.l");
+		final Person person3 = new Person("username3", "full name3", "em3@i.l");
+		
+		personContainer.add("role1", person1);
+		personContainer.add("role2", person2);
+		personContainer.add("role3", person3);
+		
+		persistenceUtil.beginTransaction();
+		persistenceUtil.save(personContainer);
+		persistenceUtil.commitTransaction();
+		
+		final List<PersonContainer> list = persistenceUtil.load(persistenceUtil.createCriteria(PersonContainer.class));
+		
+		assertFalse(list.isEmpty());
+		assertEquals(1, list.size());
+		assertEquals(personContainer, list.get(0));
+		assertFalse(list.get(0).isEmpty());
+		assertEquals(3, list.get(0).size());
+		assertEquals(person1, list.get(0).get("role1"));
+		assertEquals(person2, list.get(0).get("role2"));
+		assertEquals(person3, list.get(0).get("role3"));
 	}
 	
 }

@@ -5,15 +5,12 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
-
-
 public class DatabaseArgumentsTest {
 	
 	@Test
 	public void test() {
-		AndamaSettings settings = new AndamaSettings();
-		DatabaseArguments dbArgs = new DatabaseArguments(settings, true, "persistence");
+		final AndamaSettings settings = new AndamaSettings();
+		final DatabaseArguments dbArgs = new DatabaseArguments(settings, true, "persistence");
 		
 		System.setProperty("database.name", "moskito_junit");
 		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
@@ -21,9 +18,7 @@ public class DatabaseArgumentsTest {
 		System.setProperty("database.password", "miner");
 		settings.parseArguments();
 		
-		OpenJPAUtil.createTestSessionFactory("ppa");
-		
-		if (!dbArgs.getValue()) {
+		if (dbArgs.getValue() == null) {
 			fail();
 		}
 	}
