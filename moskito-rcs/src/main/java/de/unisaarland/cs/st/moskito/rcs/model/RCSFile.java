@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * 
  */
 @Entity
-@Table (name = "rcsfile")
+@Table(name = "rcsfile")
 public class RCSFile implements Annotated, Serializable {
 	
 	/**
@@ -54,7 +54,7 @@ public class RCSFile implements Annotated, Serializable {
 	private static final long   serialVersionUID = 7232712367403624199L;
 	private long                generatedId;
 	
-	private Map<String, String> changedNames = new HashMap<String, String>();
+	private Map<String, String> changedNames     = new HashMap<String, String>();
 	
 	/**
 	 * used by PersistenceUtil to create a {@link RCSFile} instance
@@ -83,13 +83,13 @@ public class RCSFile implements Annotated, Serializable {
 	 *            the path name
 	 */
 	@Transient
-	public void assignTransaction(final RCSTransaction transaction,
-			final String pathName) {
+	public void assignTransaction(final RCSTransaction transaction, final String pathName) {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -123,8 +123,8 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return the generatedId
 	 */
 	@Id
-	@Column (name = "id")
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -162,8 +162,7 @@ public class RCSFile implements Annotated, Serializable {
 				// transaction ids
 				for (RCSTransaction p : currentParents) {
 					RCSBranch parentBranch = p.getBranch();
-					if ((!parentBranch.equals(current.getBranch()))
-							&& (!parentBranch.equals(RCSBranch.getMasterBranch()))) {
+					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.isMasterBranch())) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
 				}
@@ -203,6 +202,7 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -235,6 +235,7 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

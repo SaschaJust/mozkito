@@ -38,6 +38,7 @@ import net.ownhero.dev.regex.RegexGroup;
 
 import org.apache.commons.io.LineIterator;
 
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
@@ -60,7 +61,6 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			LineIterator revListFileIterator = FileUtils.getLineIterator(this.getRevListFile());
 			LineIterator decorateListIterator = FileUtils.getLineIterator(this.getDecorateListFile());
 			
-			List<String> nonMergedBranches = getNonMergedBranches();
 			List<String> mergeTransactions = getMerges();
 			
 			List<RevDependency> depList = new LinkedList<RevDependency>();
@@ -105,9 +105,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				if (!this.branches.containsKey(revId)) {
 					if ((branchName == null) || branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
-						this.branches.put(revId, RCSBranch.getMasterBranch());
+						this.branches.put(revId, BranchFactory.getMasterBranch());
 					} else {
-						this.branches.put(revId, new RCSBranch(branchName));
+						this.branches.put(revId, BranchFactory.getBranch(branchName));
 					}
 				}
 				
@@ -119,13 +119,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				this.branches.remove(revId);
 				
 				//if this is a named branch change name of branch
-				if ((branchName != null) && (!commitBranch.equals(RCSBranch.getMasterBranch()))) {
+				if ((branchName != null) && (!commitBranch.isMasterBranch())) {
 					commitBranch.setName(branchName);
-					
-					//if branch is non-merged, make it as such
-					if (nonMergedBranches.contains("remotes/" + branchName)) {
-						commitBranch.markOpen();
-					}
 				}
 				
 				if (parents.size() > 0) {
@@ -140,12 +135,13 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				for (int i = 1; i < parents.size(); ++i) {
 					String parent = parents.get(i);
-					RCSBranch newBranch = new RCSBranch(parent + "Branch", commitBranch);
+					RCSBranch newBranch = BranchFactory.getBranch(parent + "Branch");
+					newBranch.setParent(commitBranch);
 					if (!this.branches.containsKey(parent)) {
 						//there is no later transaction within this new branch . Otherwise we would have seen the parent already
 						this.branches.put(parent, newBranch);
 						//set transaction to be merge transaction for new branch
-						newBranch.setMergedIn(revId);
+						newBranch.addMergedIn(revId);
 					}
 				}
 				
@@ -197,16 +193,6 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				this.revision }, this.cloneDir, null, new HashMap<String, String>(), GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not fetch list of transactions merging branches.");
-		}
-		return response.getSecond();
-	}
-	
-	private List<String> getNonMergedBranches() {
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "branch", "-a", "-l",
-				"--no-merged", this.revision }, this.cloneDir, null, new HashMap<String, String>(),
-				GitRepository.charset);
-		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not fetch the non-merged branches for Git repo.");
 		}
 		return response.getSecond();
 	}

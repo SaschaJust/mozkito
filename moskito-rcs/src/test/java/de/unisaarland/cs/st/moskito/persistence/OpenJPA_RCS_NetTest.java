@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
@@ -72,19 +73,19 @@ public class OpenJPA_RCS_NetTest {
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
 			final RCSBranch branch = new RCSBranch("testBranch");
-			branch.setMergedIn("0123456789abcde");
+			branch.addMergedIn("0123456789abcde");
 			final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
-			                                                                         "committed begin",
-			                                                                         new DateTime(),
-			                                                                         new Person("just", "Sascha Just",
-			                                                                                    "sascha.just@st.cs.uni-saarland.de"),
-			                                                                         "000000000000000");
+					"committed begin",
+					new DateTime(),
+					new Person("just", "Sascha Just",
+							"sascha.just@st.cs.uni-saarland.de"),
+					"000000000000000");
 			final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
-			                                                                       "committed end",
-			                                                                       new DateTime(),
-			                                                                       new Person("just", "Sascha Just",
-			                                                                                  "sascha.just@st.cs.uni-saarland.de"),
-			                                                                       "0123456789abcde");
+					"committed end",
+					new DateTime(),
+					new Person("just", "Sascha Just",
+							"sascha.just@st.cs.uni-saarland.de"),
+					"0123456789abcde");
 			
 			beginTransaction.setBranch(branch);
 			endTransaction.setBranch(branch);
@@ -189,7 +190,7 @@ public class OpenJPA_RCS_NetTest {
 			file.assignTransaction(rcsTransaction, "formerTest.java");
 			final RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 			persistenceUtil.beginTransaction();
-			rcsTransaction.setBranch(RCSBranch.getMasterBranch());
+			rcsTransaction.setBranch(BranchFactory.getMasterBranch());
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 			persistenceUtil.commitTransaction();
 			

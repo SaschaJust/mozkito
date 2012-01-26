@@ -19,6 +19,7 @@ import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 public class RCSBranch_NetTest {
 	
@@ -85,7 +86,7 @@ public class RCSBranch_NetTest {
 		}
 		persistenceUtil.executeNativeQuery(psqlString);
 		
-		RCSBranch masterBranch = RCSBranch.getMasterBranch();
+		RCSBranch masterBranch = BranchFactory.getMasterBranch();
 		try {
 			RCSTransaction transaction = PersistenceManager.getUtil().loadById(
 					"a64df287a21f8a7b0690d13c1561171cbf48a0e1", RCSTransaction.class);
