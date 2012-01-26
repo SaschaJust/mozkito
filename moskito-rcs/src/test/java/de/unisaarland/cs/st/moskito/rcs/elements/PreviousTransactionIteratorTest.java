@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -851,7 +852,7 @@ public class PreviousTransactionIteratorTest {
 	
 	@Before
 	public void setUp() {
-		this.master = RCSBranch.getMasterBranch();
+		this.master = BranchFactory.getMasterBranch();
 		this.person1 = new Person("kim", "", "");
 		this.person2 = new Person("just", "", "");
 		this.x = RCSTransaction.createTransaction("x", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1,

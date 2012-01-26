@@ -19,7 +19,6 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -34,15 +33,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.kisa.Logger;
-
 import org.apache.openjpa.persistence.jdbc.Index;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 /**
  * The Class RCSBranch.
@@ -64,72 +58,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	private boolean                open               = false;
 	private String                 mergedIn           = null;
 	
-	private static RCSBranch       MASTER_BRANCH      = null;
-	private static PersistenceUtil MASTER_BRANCH_UTIL = null;
-	private static String          MASTER_BRANCH_NAME = "master";
-	
-	private static RCSBranch createNewMasterBranch() {
-		RCSBranch masterBranch = new RCSBranch(MASTER_BRANCH_NAME);
-		masterBranch.setOpen(true);
-		return masterBranch;
-	}
-	
-	public static RCSBranch getMasterBranch() {
-		PersistenceUtil persistenceUtil = null;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e) {
-			if (Logger.logError()) {
-				Logger.error("Attempt to create RCSBranch.MASTER_BRANCH_UTIL failed. "
-						+ "It seems that there is no database connection configured.");
-			}
-		}
-		
-		// If we could no load persistenceUtil
-		if (persistenceUtil == null) {
-			if (MASTER_BRANCH == null) {
-				// There is no MASTER_BRACHAN. We cannot load it,
-				// so we return new created MASTER_BRANCH
-				if (Logger.logWarn()) {
-					Logger.warn("There exists no database connection. "
-							+ "Request to load persisted RCSBranch.MASTER_BRANCH would fail. "
-							+ "Returning new RCSBRanch.MASTER_BRANCH.");
-				}
-				MASTER_BRANCH = createNewMasterBranch();
-			}
-		} else {
-			// We could get a valid persistence util.
-			// The existed no previous persistence util: try to load persisted
-			// MASTER_BRANCH
-			if ((MASTER_BRANCH_UTIL == null) || (!MASTER_BRANCH_UTIL.equals(persistenceUtil))) {
-				
-				if (MASTER_BRANCH_UTIL != null) {
-					if (Logger.logDebug()) {
-						Logger.debug("Previous RCSBRanch.MASTER_BRANCH was bound to different persistenceUtil. Reloading RCSBranch.MASTER_BRANCH.");
-					}
-				}
-				
-				MASTER_BRANCH_UTIL = persistenceUtil;
-				// try to load MASTER_BRANCH or create new one.
-				Criteria<RCSBranch> criteria = MASTER_BRANCH_UTIL.createCriteria(RCSBranch.class)
-						.eq("name", MASTER_BRANCH_NAME);
-				List<RCSBranch> loadedBranches = MASTER_BRANCH_UTIL.load(criteria);
-				if (loadedBranches.isEmpty()) {
-					// We could not load a persisted MASTER_BRANCH. So, create a
-					// new one and return.
-					if (Logger.logDebug()) {
-						Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH "
-								+ "from existing database connection failed. " + "No persisted master branch found. "
-								+ "Returning new RCSBranch.MASTER_BRANCH.");
-					}
-					MASTER_BRANCH = createNewMasterBranch();
-				} else {
-					MASTER_BRANCH = loadedBranches.get(0);
-				}
-			}
-		}
-		return MASTER_BRANCH;
-	}
+	public static String      MASTER_BRANCH_NAME = "master";
 	
 	/**
 	 * Instantiates a new rCS branch.
@@ -171,19 +100,19 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		if (this.equals(other)) {
 			return 0;
 		}
-		if (other.equals(getMasterBranch())) {
+		if (other.isMasterBranch()) {
 			return 1;
-		} else if (this.equals(getMasterBranch())) {
+		} else if (this.isMasterBranch()) {
 			return -1;
 		}
-		while ((p != null) && (!p.equals(getMasterBranch()))) {
+		while ((p != null) && (!p.isMasterBranch())) {
 			if (p.equals(other)) {
 				return 1;
 			}
 			p = p.getParent();
 		}
 		RCSBranch c = other.getParent();
-		while ((c != null) && (!c.equals(getMasterBranch()))) {
+		while ((c != null) && (!c.isMasterBranch())) {
 			if (c.equals(this)) {
 				return -1;
 			}
@@ -378,7 +307,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	@Transient
 	public boolean isMasterBranch(){
-		return this.equals(RCSBranch.getMasterBranch());
+		return this.equals(BranchFactory.getMasterBranch());
 	}
 	
 	/**
@@ -447,7 +376,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.name = name;
 	}
 	
-	protected void setOpen(final boolean b) {
+	public void setOpen(final boolean b) {
 		this.open = b;
 	}
 	

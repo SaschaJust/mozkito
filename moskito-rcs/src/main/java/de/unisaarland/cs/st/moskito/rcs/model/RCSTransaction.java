@@ -288,8 +288,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			if (getBranch().getBegin() == null) {
 				//if any of the branches has no begin transaction, we must quit. The data model is broken.
 				throw new UnrecoverableError(
-				        "The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
-				                + getBranch());
+						"The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
+								+ getBranch());
 			}
 			if (getBranch().getBegin().equals(this)) {
 				//if this transaction is the begin of the current branch
@@ -317,7 +317,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				}
 				return -1;
 			}
-		} else if (getBranch().equals(RCSBranch.getMasterBranch())) {
+		} else if (getBranch().isMasterBranch()) {
 			
 			//BOTH TRANSACTIONS ARE WITHIN DIFFERENT BRANCHES
 			
@@ -334,7 +334,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			} else {
 				return -1;
 			}
-		} else if (transaction.getBranch().equals(RCSBranch.getMasterBranch())) {
+		} else if (transaction.getBranch().isMasterBranch()) {
 			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			}

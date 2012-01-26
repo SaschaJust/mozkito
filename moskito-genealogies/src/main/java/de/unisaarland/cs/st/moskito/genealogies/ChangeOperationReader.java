@@ -16,7 +16,7 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class ChangeOperationReader extends AndamaSource<OperationCollection> {
@@ -33,7 +33,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			public void preExecution() {
 				
 				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq(
-						"branch", RCSBranch.getMasterBranch());
+				        "branch", BranchFactory.getMasterBranch());
 				
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				

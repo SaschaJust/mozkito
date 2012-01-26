@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 public class RCSTransactionTest {
 	
@@ -94,16 +95,16 @@ public class RCSTransactionTest {
 		RCSBranch branch_i = new RCSBranch("branch_f");
 		branch_i.setBegin(i);
 		
-		RCSBranch.getMasterBranch().setBegin(this.z);
-		this.z.setBranch(RCSBranch.getMasterBranch());
+		BranchFactory.getMasterBranch().setBegin(this.z);
+		this.z.setBranch(BranchFactory.getMasterBranch());
 		this.z.addChild(a);
 		
-		a.setBranch(RCSBranch.getMasterBranch());
+		a.setBranch(BranchFactory.getMasterBranch());
 		a.addParent(this.z);
 		a.addChild(b);
 		a.addChild(c);
 		
-		b.setBranch(RCSBranch.getMasterBranch());
+		b.setBranch(BranchFactory.getMasterBranch());
 		b.addParent(a);
 		b.addChild(e);
 		
@@ -116,7 +117,7 @@ public class RCSTransactionTest {
 		d.addParent(c);
 		d.addChild(g);
 		
-		e.setBranch(RCSBranch.getMasterBranch());
+		e.setBranch(BranchFactory.getMasterBranch());
 		e.addParent(b);
 		e.addChild(l);
 		
@@ -146,12 +147,12 @@ public class RCSTransactionTest {
 		k.addParent(h);
 		k.addChild(m);
 		
-		l.setBranch(RCSBranch.getMasterBranch());
+		l.setBranch(BranchFactory.getMasterBranch());
 		l.addParent(e);
 		l.addParent(j);
 		l.addChild(m);
 		
-		m.setBranch(RCSBranch.getMasterBranch());
+		m.setBranch(BranchFactory.getMasterBranch());
 		m.addParent(k);
 		m.addParent(l);
 		
@@ -351,13 +352,13 @@ public class RCSTransactionTest {
 		
 		RCSTransaction t = new RCSTransaction("t", "", new DateTime("2000-01-01T08:00:01.000+00:00"), this.person1, "");
 		
-		RCSBranch.getMasterBranch().setBegin(this.z);
+		BranchFactory.getMasterBranch().setBegin(this.z);
 		RCSBranch branch = new RCSBranch("branch");
 		
 		this.x.setBranch(branch);
-		this.y.setBranch(RCSBranch.getMasterBranch());
-		this.z.setBranch(RCSBranch.getMasterBranch());
-		t.setBranch(RCSBranch.getMasterBranch());
+		this.y.setBranch(BranchFactory.getMasterBranch());
+		this.z.setBranch(BranchFactory.getMasterBranch());
+		t.setBranch(BranchFactory.getMasterBranch());
 		
 		this.z.addChild(this.x);
 		this.x.addParent(this.z);
@@ -391,7 +392,7 @@ public class RCSTransactionTest {
 		 * Z
 		 */
 		
-		RCSBranch.getMasterBranch().setBegin(
+		BranchFactory.getMasterBranch().setBegin(
 				new RCSTransaction("start", "", new DateTime("2008-01-01T00:00:01.000+00:00"),
 						this.person1, ""));
 		RCSBranch openBranch = new RCSBranch("openBranch");
@@ -401,8 +402,8 @@ public class RCSTransactionTest {
 		this.z.addChild(this.y);
 		this.y.addParent(this.z);
 		
-		this.z.setBranch(RCSBranch.getMasterBranch());
-		this.x.setBranch(RCSBranch.getMasterBranch());
+		this.z.setBranch(BranchFactory.getMasterBranch());
+		this.x.setBranch(BranchFactory.getMasterBranch());
 		this.y.setBranch(openBranch);
 		openBranch.setBegin(this.y);
 		
@@ -419,17 +420,17 @@ public class RCSTransactionTest {
 		 * X
 		 */
 		
-		RCSBranch.getMasterBranch().setBegin(this.z);
+		BranchFactory.getMasterBranch().setBegin(this.z);
 		
-		this.x.setBranch(RCSBranch.getMasterBranch());
-		this.y.setBranch(RCSBranch.getMasterBranch());
+		this.x.setBranch(BranchFactory.getMasterBranch());
+		this.y.setBranch(BranchFactory.getMasterBranch());
 		this.x.addChild(this.y);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
-		RCSBranch.getMasterBranch().setBegin(this.x);
+		BranchFactory.getMasterBranch().setBegin(this.x);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
-		RCSBranch.getMasterBranch().setEnd(this.y);
+		BranchFactory.getMasterBranch().setEnd(this.y);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
 	}

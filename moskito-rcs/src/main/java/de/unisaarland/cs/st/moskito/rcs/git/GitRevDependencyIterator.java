@@ -38,6 +38,7 @@ import net.ownhero.dev.regex.RegexGroup;
 
 import org.apache.commons.io.LineIterator;
 
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
@@ -105,7 +106,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				if (!this.branches.containsKey(revId)) {
 					if ((branchName == null) || branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
-						this.branches.put(revId, RCSBranch.getMasterBranch());
+						this.branches.put(revId, BranchFactory.getMasterBranch());
 					} else {
 						this.branches.put(revId, new RCSBranch(branchName));
 					}
@@ -119,7 +120,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				this.branches.remove(revId);
 				
 				//if this is a named branch change name of branch
-				if ((branchName != null) && (!commitBranch.equals(RCSBranch.getMasterBranch()))) {
+				if ((branchName != null) && (!commitBranch.isMasterBranch())) {
 					commitBranch.setName(branchName);
 					
 					//if branch is non-merged, make it as such
