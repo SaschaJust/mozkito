@@ -1,12 +1,14 @@
 package de.unisaarland.cs.st.moskito.testing_impl;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,18 +21,21 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 
+import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
+
 public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	
 	class MoskitoTestRun {
 		
-		Method      method;
-		Description description;
+		private final Method           method;
+		private final Description      description;
+		private Failure                failure;
+		private final List<Annotation> settings;
 		
-		Failure     failure;
-		
-		public MoskitoTestRun(final Method method, final Description description) {
+		public MoskitoTestRun(final Method method, final Description description, final List<Annotation> settings) {
 			this.method = method;
 			this.description = description;
+			this.settings = settings;
 		}
 		
 		public Description getDescription() {
@@ -45,9 +50,14 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 			return this.method;
 		}
 		
+		public List<Annotation> getSettings() {
+			return this.settings;
+		}
+		
 		public void setFailure(final Failure failure) {
 			this.failure = failure;
 		}
+		
 	}
 	
 	public static void main(final String[] args) {
@@ -68,53 +78,75 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	private final List<MoskitoTestRun> fIgnoreMethods = new LinkedList<MoskitoTestRun>();
 	private final TestClass            fTestClass;
 	
-	private Description                description;
+	private final Description          description;
 	
-	public MoskitoSuite(final Class<?> aClass) throws InitializationError {
+	/**
+	 * @param aClass
+	 * @throws InitializationError
+	 */
+	public MoskitoSuite(@NotNull final Class<?> aClass) throws InitializationError {
 		super(aClass);
 		this.fTestClass = new TestClass(aClass);
+		this.description = Description.createSuiteDescription(this.fTestClass.getJavaClass());
 		
 		final Method[] classMethods = aClass.getDeclaredMethods();
 		for (final Method classMethod : classMethods) {
 			final Class<?> retClass = classMethod.getReturnType();
 			final int length = classMethod.getParameterTypes().length;
 			final int modifiers = classMethod.getModifiers();
+			
 			if ((retClass == null) || (length != 0) || Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)
 			        || Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers)) {
 				continue;
 			}
+			
 			final String methodName = classMethod.getName();
+			
 			if (classMethod.getAnnotation(Ignore.class) == null) {
 				if (methodName.toUpperCase().startsWith("TEST") || (classMethod.getAnnotation(Test.class) != null)) {
+					final List<Annotation> annotationList = new LinkedList<Annotation>();
+					for (final Annotation annotation : classMethod.getAnnotations()) {
+						if (annotation.annotationType().getAnnotation(MoskitoTestingAnnotation.class) != null) {
+							annotationList.add(annotation);
+						}
+					}
 					final MoskitoTestRun testRun = new MoskitoTestRun(
 					                                                  classMethod,
 					                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-					                                                                                    classMethod.getName()));
+					                                                                                    classMethod.getName()),
+					                                                  annotationList);
 					getDescription().addChild(testRun.getDescription());
 					this.fTestMethods.add(testRun);
 				}
-			} else if (classMethod.getAnnotation(Ignore.class) != null) {
-				final MoskitoTestRun testRun = new MoskitoTestRun(
-				                                                  classMethod,
-				                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-				                                                                                    classMethod.getName()));
-				getDescription().addChild(testRun.getDescription());
-				this.fIgnoreMethods.add(testRun);
+			} else {
+				if (methodName.toUpperCase().startsWith("TEST")) {
+					final MoskitoTestRun testRun = new MoskitoTestRun(
+					                                                  classMethod,
+					                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
+					                                                                                    classMethod.getName()),
+					                                                  new LinkedList<Annotation>());
+					getDescription().addChild(testRun.getDescription());
+					this.fIgnoreMethods.add(testRun);
+				}
 			}
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.junit.runners.ParentRunner#getDescription()
+	 */
 	@Override
 	public Description getDescription() {
-		if (this.description == null) {
-			this.description = Description.createSuiteDescription(this.fTestClass.getJavaClass());
-		}
-		// final Description spec =
-		// Description.createSuiteDescription(this.fTestClass.getName(),
-		// this.fTestClass.getJavaClass().getAnnotations());
 		return this.description;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.junit.runners.ParentRunner#run(org.junit.runner.notification.RunNotifier
+	 * )
+	 */
 	@Override
 	public void run(final RunNotifier runNotifier) {
 		final Result result = new Result();

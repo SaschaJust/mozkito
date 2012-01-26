@@ -15,6 +15,7 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import net.ownhero.dev.andama.utils.AndamaUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 
 import org.apache.commons.io.IOUtils;
@@ -56,35 +57,35 @@ public final class MoskitoTest {
 	public static Class<?> prepareTest(final MoskitoSuite.MoskitoTestRun testRun) throws CannotCompileException,
 	                                                                             NotFoundException {
 		final ClassPool pool = ClassPool.getDefault();
-		final CtClass cc = pool.makeClass(testRun.getDescription().getTestClass().getCanonicalName() + "_test."
-		        + testRun.getMethod().getName());
+		final String fqName = testRun.getDescription().getTestClass().getCanonicalName() + "_test."
+		        + testRun.getMethod().getName();
+		final CtClass cc = pool.makeClass(fqName);
 		
-		final StringBuilder builder = new StringBuilder();
-		// builder.append("public void main(java.lang.String[] args) throws java.lang.Throwable {")
-		// .append(AndamaUtils.lineSeparator);
-		builder.append('{').append(AndamaUtils.lineSeparator);
-		builder.append("try {").append(AndamaUtils.lineSeparator);
-		builder.append("Class c = Class.forName(\"").append(testRun.getDescription().getTestClass().getCanonicalName())
-		       .append("\");").append(AndamaUtils.lineSeparator);
-		builder.append("java.lang.reflect.Method m = c.getMethod(\"").append(testRun.getDescription().getMethodName())
-		       .append("\", new Class[0]);").append(AndamaUtils.lineSeparator);
-		builder.append("Object o = c.newInstance();").append(AndamaUtils.lineSeparator);
-		builder.append("m.invoke(o, new Object[0]);").append(AndamaUtils.lineSeparator);
-		builder.append("} catch (Throwable t) {").append(AndamaUtils.lineSeparator);
-		builder.append("t.getCause().printStackTrace();").append(AndamaUtils.lineSeparator);
-		builder.append("throw t.getCause();").append(AndamaUtils.lineSeparator);
-		builder.append("}").append(AndamaUtils.lineSeparator);
-		builder.append("}").append(AndamaUtils.lineSeparator);
-		// System.err.println(builder.toString());
+		final StringBuilder body = new StringBuilder();
+		
+		body.append('{').append(AndamaUtils.lineSeparator);
+		body.append("try {").append(AndamaUtils.lineSeparator);
+		body.append("Class c = Class.forName(\"").append(testRun.getDescription().getTestClass().getCanonicalName())
+		    .append("\");").append(AndamaUtils.lineSeparator);
+		body.append("java.lang.reflect.Method m = c.getMethod(\"").append(testRun.getDescription().getMethodName())
+		    .append("\", new Class[0]);").append(AndamaUtils.lineSeparator);
+		body.append("Object o = c.newInstance();").append(AndamaUtils.lineSeparator);
+		body.append("m.invoke(o, new Object[0]);").append(AndamaUtils.lineSeparator);
+		body.append("} catch (Throwable t) {").append(AndamaUtils.lineSeparator);
+		body.append("t.getCause().printStackTrace();").append(AndamaUtils.lineSeparator);
+		body.append("throw t.getCause();").append(AndamaUtils.lineSeparator);
+		body.append("}").append(AndamaUtils.lineSeparator);
+		body.append("}").append(AndamaUtils.lineSeparator);
 		
 		final CtMethod cm = CtNewMethod.make(Modifier.STATIC | Modifier.PUBLIC, CtClass.voidType, "main",
 		                                     new CtClass[] { pool.get("java.lang.String[]") },
-		                                     new CtClass[] { pool.get("java.lang.Throwable") }, builder.toString(), cc);
-		// = CtNewMethod.make(builder.toString(), cc);
+		                                     new CtClass[] { pool.get("java.lang.Throwable") }, body.toString(), cc);
 		
 		cc.addMethod(cm);
 		try {
 			cc.writeFile("src/main/java");
+			final String relativePath = "src/main/java" + File.separator + fqName.replaceAll("\\.", File.separator);
+			FileUtils.addToFileManager(new File(relativePath), FileUtils.FileShutdownAction.DELETE);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
