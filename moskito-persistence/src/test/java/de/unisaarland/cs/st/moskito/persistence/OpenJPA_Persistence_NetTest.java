@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
-public class OpenJPA_Persistence_NetTest {
+public class OpenJPA_Persistence_NetTest extends Mos {
 	
 	@AfterClass
 	public static void afterClass() {
