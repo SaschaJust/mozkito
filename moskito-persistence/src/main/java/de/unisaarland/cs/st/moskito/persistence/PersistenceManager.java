@@ -34,39 +34,38 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 public class PersistenceManager {
 	
 	public static PersistenceUtil createUtil(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver,
-			final String unit,
-			final boolean dropContents,
-			final Class<? extends PersistenceUtil> middleware) throws UnrecoverableError {
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final boolean dropContents,
+	                                         final Class<?> middleware) throws UnrecoverableError {
 		
 		PersistenceUtil instance = null;
-		final Class<? extends PersistenceUtil> klass = middleware;
 		try {
 			
-			instance = klass.newInstance();
+			instance = (PersistenceUtil) middleware.newInstance();
 			instance.createSessionFactory(host, database, user, password, type, driver, unit, dropContents);
 		} catch (final InstantiationException e) {
-			throw new InstantiationError(e, klass, null, new Object[0]);
+			throw new InstantiationError(e, middleware, null, new Object[0]);
 		} catch (final IllegalAccessException e) {
 			throw new UnrecoverableError(e);
 		}
 		return instance;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public static PersistenceUtil createUtil(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver,
-			final String unit,
-			final boolean dropContents,
-			final String middleware) throws UnrecoverableError {
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final boolean dropContents,
+	                                         final String middleware) throws UnrecoverableError {
 		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
 		Class<PersistenceUtil> klass = null;
 		try {
@@ -88,7 +87,7 @@ public class PersistenceManager {
 	 * @return
 	 */
 	public String getNativeQuery(final PersistenceUtil util,
-			final String id) {
+	                             final String id) {
 		final String databaseType = util.getType().toLowerCase();
 		
 		if (this.nativeQueries.containsKey(databaseType) && this.nativeQueries.get(databaseType).containsKey(id)) {
@@ -104,7 +103,7 @@ public class PersistenceManager {
 	 */
 	@SuppressWarnings ("unchecked")
 	public <T> Criteria<T> getStoredQuery(final String id,
-			final Class<T> clazz) {
+	                                      final Class<T> clazz) {
 		return (Criteria<T>) this.storedQueries.get(clazz).get(id);
 	}
 	
@@ -115,8 +114,8 @@ public class PersistenceManager {
 	 * @return
 	 */
 	public String registerNativeQuery(final String type,
-			final String id,
-			final String query) {
+	                                  final String id,
+	                                  final String query) {
 		final String databaseType = type.toLowerCase();
 		if (!this.nativeQueries.containsKey(databaseType)) {
 			this.nativeQueries.put(databaseType, new HashMap<String, String>());
@@ -140,7 +139,7 @@ public class PersistenceManager {
 	 */
 	@SuppressWarnings ("unchecked")
 	public <T> void registerQuery(final String id,
-			final Criteria<T> criteria) {
+	                              final Criteria<T> criteria) {
 		final Type actualTypeArgument = ((ParameterizedType) criteria.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<T> actualRawTypeArgument = null;
 		if (actualTypeArgument instanceof ParameterizedType) {
