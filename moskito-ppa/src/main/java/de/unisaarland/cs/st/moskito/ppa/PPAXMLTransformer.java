@@ -44,6 +44,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
@@ -56,7 +57,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
-	public static List<JavaChangeOperation> readOperations(final File file) {
+	public static List<JavaChangeOperation> readOperations(final File file, PersistenceUtil persistenceUtil) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
@@ -64,7 +65,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			org.jdom.Document document = saxBuilder.build(reader);
 			reader.close();
-			return readOperations(document.getRootElement());
+			return readOperations(document.getRootElement(), persistenceUtil);
 		} catch (JDOMException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -77,12 +78,13 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 		return new ArrayList<JavaChangeOperation>(0);
 	}
 	
-	public static List<JavaChangeOperation> readOperations(final org.jdom.Element element) {
+	public static List<JavaChangeOperation> readOperations(final org.jdom.Element element,
+			PersistenceUtil persistenceUtil) {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
 			if (Logger.logError()) {
 				Logger.error("RootElement for JavaChangeOperations must have be <" + ROOT_ELEMENT_NAME + "> but was <"
-				        + element.getName() + ">");
+						+ element.getName() + ">");
 			}
 			return result;
 		}
@@ -91,7 +93,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 		List<org.jdom.Element> children = element.getChildren();
 		
 		for (org.jdom.Element child : children) {
-			JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child);
+			JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child, persistenceUtil);
 			if (operation != null) {
 				result.add(operation);
 			}
@@ -112,7 +114,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	 *             the parser configuration exception
 	 */
 	public PPAXMLTransformer(final AndamaGroup threadGroup, final AndamaSettings settings, final OutputStream outStream)
-	        throws ParserConfigurationException {
+			throws ParserConfigurationException {
 		super(threadGroup, settings, false);
 		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
 		final Document document = new org.jdom.Document(operationsElement);

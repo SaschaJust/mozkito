@@ -58,6 +58,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
@@ -71,7 +72,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table (name = "rcstransaction")
+@Table(name = "rcstransaction")
 public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/**
@@ -95,13 +96,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the rCS transaction
 	 */
 	@NoneNull
-	public static RCSTransaction createTransaction(final String id,
-			final String message,
-			final DateTime timestamp,
-			final Person author,
-			final String originalId) {
+	public static RCSTransaction createTransaction(final String id, final String message, final DateTime timestamp,
+			final Person author, final String originalId, final PersistenceUtil persistenceUtil) {
 		RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
-		transaction.setBranch(BranchFactory.getMasterBranch());
+		transaction.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
 		return transaction;
 	}
 	
@@ -242,6 +240,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -381,10 +380,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the branch
 	 */
-	@ManyToOne (fetch = FetchType.LAZY,
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-			optional = false)
-	@JoinColumn (nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, optional = false)
+	@JoinColumn(nullable = false)
 	public RCSBranch getBranch() {
 		return this.branch;
 	}
@@ -410,9 +407,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Transient
 	public RCSTransaction getChild(final RCSBranch branch) {
 		if ((branch.getEnd() != null) && (branch.getEnd().equals(this))) {
-			return getChildren().isEmpty()
-					? null
-							: getChildren().iterator().next();
+			return getChildren().isEmpty() ? null : getChildren().iterator().next();
 		} else {
 			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
 				
@@ -429,8 +424,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the children
 	 */
 	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
-	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {})
+	@JoinTable(name = "rcstransaction_children", joinColumns = { @JoinColumn(nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
 		return this.children;
 	}
@@ -441,7 +436,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @return the id
 	 */
 	@Id
-	@Index (name = "idx_transactionid")
+	@Index(name = "idx_transactionid")
 	public String getId() {
 		return this.id;
 	}
@@ -451,13 +446,11 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * 
 	 * @return the java timestamp
 	 */
-	@Temporal (TemporalType.TIMESTAMP)
-	@Column (name = "timestamp")
-	@Index (name = "idx_timestamp")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "timestamp")
+	@Index(name = "idx_timestamp")
 	protected Date getJavaTimestamp() {
-		return getTimestamp() != null
-				? getTimestamp().toDate()
-						: null;
+		return getTimestamp() != null ? getTimestamp().toDate() : null;
 	}
 	
 	/**
@@ -508,8 +501,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the parents
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
-	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {})
+	@JoinTable(name = "rcstransaction_parents", joinColumns = { @JoinColumn(nullable = true, name = "parentsid") })
 	public Set<RCSTransaction> getParents() {
 		return this.parents;
 	}
@@ -517,7 +510,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	/**
 	 * @return the persons
 	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
 		return this.persons;
 	}
@@ -550,7 +543,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * 
 	 * @return the revisions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
 		return this.revisions;
 	}
@@ -573,7 +566,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return this.javaTimestamp;
 	}
 	
-	@Column (columnDefinition = "boolean default 'FALSE'")
+	@Column(columnDefinition = "boolean default 'FALSE'")
 	public boolean isAtomic() {
 		return this.atomic;
 	}
@@ -594,7 +587,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param branch
 	 *            the branch to set
 	 */
-	public void setBranch(@NotNull ("You cannot set the branch of a transaction to NULL") final RCSBranch branch) {
+	public void setBranch(@NotNull("You cannot set the branch of a transaction to NULL") final RCSBranch branch) {
 		this.branch = branch;
 	}
 	
@@ -623,9 +616,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 *            the new java timestamp
 	 */
 	protected void setJavaTimestamp(final Date date) {
-		this.javaTimestamp = date != null
-				? new DateTime(date)
-		: null;
+		this.javaTimestamp = date != null ? new DateTime(date) : null;
 	}
 	
 	/**
@@ -690,6 +681,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

@@ -15,8 +15,7 @@ public class BranchFactory {
 	private static Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
 	
 	public synchronized static RCSBranch getBranch(@NotNull final String name,
-	                                               final PersistenceUtil persistenceUtil) {
-		
+			final PersistenceUtil persistenceUtil) {
 		if (!branchCache.containsKey(name)) {
 			
 			if (persistenceUtil == null) {
@@ -39,13 +38,14 @@ public class BranchFactory {
 					// new one and return.
 					if (Logger.logDebug()) {
 						Logger.debug("Attempt to lead persisted RCSBranch with name " + name
-						        + " from existing database connection failed. " + "No persisted master branch found. "
-						        + "Returning new RCSBranch.MASTER_BRANCH.");
+								+ " from existing database connection failed. " + "No persisted master branch found. "
+								+ "Returning new RCSBranch.MASTER_BRANCH.");
 					}
 					final RCSBranch newBranch = new RCSBranch(name);
 					if (Logger.logDebug()) {
 						Logger.debug("Creating new Branch " + newBranch.toString());
 					}
+					persistenceUtil.save(newBranch);
 					branchCache.put(name, newBranch);
 				} else {
 					branchCache.put(name, loadedBranches.get(0));

@@ -27,16 +27,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
@@ -64,7 +61,8 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the java change operation if successfull. Otherwise returns
 	 *         <node>null</code>
 	 */
-	public static JavaChangeOperation fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaChangeOperation fromXMLRepresentation(final org.jdom.Element element,
+			PersistenceUtil persistenceUtil) {
 		
 		ChangeType changeType = null;
 		RCSRevision revision = null;
@@ -96,16 +94,11 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		try {
-			PersistenceUtil persistenceUtil = PersistenceManager.getUtil();
-			RCSTransaction transaction = persistenceUtil.loadById(transaction_id, RCSTransaction.class);
-			if (!changedPath.startsWith("/")) {
-				changedPath = "/" + changedPath;
-			}
-			revision = transaction.getRevisionForPath(changedPath);
-		} catch (UninitializedDatabaseException e) {
-			throw new UnrecoverableError("Could not retrieve RCSTransaction. Database uninitialized!", e);
+		RCSTransaction transaction = persistenceUtil.loadById(transaction_id, RCSTransaction.class);
+		if (!changedPath.startsWith("/")) {
+			changedPath = "/" + changedPath;
 		}
+		revision = transaction.getRevisionForPath(changedPath);
 		
 		if (revision == null) {
 			if (Logger.logWarn()) {
@@ -129,7 +122,7 @@ public class JavaChangeOperation implements Annotated {
 	/** The revision. */
 	private RCSRevision         revision;
 	
-	private boolean       essential = true;
+	private boolean             essential = true;
 	
 	@Deprecated
 	public JavaChangeOperation() {
@@ -155,6 +148,7 @@ public class JavaChangeOperation implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -191,7 +185,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the changed element
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
 		return changedElementLocation;
 	}
@@ -211,7 +205,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the change type
 	 */
-	@Enumerated (EnumType.ORDINAL)
+	@Enumerated(EnumType.ORDINAL)
 	public ChangeType getChangeType() {
 		return changeType;
 	}
@@ -222,7 +216,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public long getId() {
 		return id;
 	}
@@ -232,7 +226,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the revision
 	 */
-	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return revision;
 	}
@@ -254,27 +248,25 @@ public class JavaChangeOperation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((getChangedElementLocation() == null)
-				? 0
-						: getChangedElementLocation().hashCode());
-		result = (prime * result) + ((getRevision() == null)
-				? 0
-						: getRevision().hashCode());
+		result = (prime * result)
+				+ ((getChangedElementLocation() == null) ? 0 : getChangedElementLocation().hashCode());
+		result = (prime * result) + ((getRevision() == null) ? 0 : getRevision().hashCode());
 		return result;
 	}
 	
 	@NoneNull
-	public boolean isAfter(JavaChangeOperation other){
-		return this.getRevision().getTransaction().getTimestamp().isAfter(other.getRevision().getTransaction().getTimestamp());
+	public boolean isAfter(JavaChangeOperation other) {
+		return this.getRevision().getTransaction().getTimestamp()
+				.isAfter(other.getRevision().getTransaction().getTimestamp());
 	}
 	
 	@NoneNull
-	public boolean isBefore(JavaChangeOperation other){
+	public boolean isBefore(JavaChangeOperation other) {
 		return this.getRevision().getTransaction().getTimestamp()
 				.isBefore(other.getRevision().getTransaction().getTimestamp());
 	}
 	
-	@Column (columnDefinition = "boolean default 'TRUE'")
+	@Column(columnDefinition = "boolean default 'TRUE'")
 	public boolean isEssential() {
 		return essential;
 	}
