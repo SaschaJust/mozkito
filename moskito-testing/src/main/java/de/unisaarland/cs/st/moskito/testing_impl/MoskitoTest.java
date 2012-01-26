@@ -61,6 +61,9 @@ public final class MoskitoTest {
 		        + testRun.getMethod().getName();
 		final CtClass cc = pool.makeClass(fqName);
 		
+		// create same fields in new class as in test class
+		
+		// create method body
 		final StringBuilder body = new StringBuilder();
 		
 		body.append('{').append(AndamaUtils.lineSeparator);
@@ -69,6 +72,8 @@ public final class MoskitoTest {
 		    .append("\");").append(AndamaUtils.lineSeparator);
 		body.append("java.lang.reflect.Method m = c.getMethod(\"").append(testRun.getDescription().getMethodName())
 		    .append("\", new Class[0]);").append(AndamaUtils.lineSeparator);
+		body.append(de.unisaarland.cs.st.moskito.testing.MoskitoTest.class.getCanonicalName())
+		    .append(".setUpBeforeClass(m.getAnnotations());").append(AndamaUtils.lineSeparator);
 		body.append("Object o = c.newInstance();").append(AndamaUtils.lineSeparator);
 		body.append("m.invoke(o, new Object[0]);").append(AndamaUtils.lineSeparator);
 		body.append("} catch (Throwable t) {").append(AndamaUtils.lineSeparator);

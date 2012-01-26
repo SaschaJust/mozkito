@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author just
@@ -35,5 +36,5 @@ public @interface DatabaseSettings {
 	
 	String username() default "miner";
 	
-	Class<?> util() default OpenJPAUtil.class;
+	Class<? extends PersistenceUtil> util() default OpenJPAUtil.class;
 }
