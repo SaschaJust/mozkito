@@ -73,7 +73,7 @@ public class OpenJPA_RCS_NetTest {
 		try {
 			persistenceUtil = OpenJPAUtil.getInstance();
 			final RCSBranch branch = new RCSBranch("testBranch");
-			branch.setMergedIn("0123456789abcde");
+			branch.addMergedIn("0123456789abcde");
 			final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
 					"committed begin",
 					new DateTime(),

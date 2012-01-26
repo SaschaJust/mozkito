@@ -19,11 +19,14 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.openjpa.persistence.jdbc.Index;
+import org.apache.openjpa.persistence.jdbc.Unique;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
@@ -44,19 +48,17 @@ import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table (name = "rcsbranch")
+@Table(name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	private static final long      serialVersionUID   = 5419737140470855522L;
+	private static final long serialVersionUID   = 5419737140470855522L;
 	
-	private long                   generatedId;
-	private String                 name;
-	private RCSBranch              parent             = null;
-	private RCSTransaction         begin              = null;
-	private RCSTransaction         end                = null;
-	
-	private boolean                open               = false;
-	private String                 mergedIn           = null;
+	private long              generatedId;
+	private String            name;
+	private RCSBranch         parent             = null;
+	private RCSTransaction    begin              = null;
+	private RCSTransaction    end                = null;
+	private Set<String>       mergedIn           = new HashSet<String>();
 	
 	public static String      MASTER_BRANCH_NAME = "master";
 	
@@ -90,8 +92,17 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.setParent(parent);
 	}
 	
+	/**
+	 * @param mergedIn
+	 */
+	@Transient
+	public void addMergedIn(final String mergedIn) {
+		this.mergedIn.add(mergedIn);
+	}
+	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -212,7 +223,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -222,7 +233,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -233,9 +244,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the generatedId
 	 */
 	@Id
-	@Index (name = "idx_branchid")
-	@Column (name = "id", nullable = false)
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@Index(name = "idx_branchid")
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected long getGeneratedId() {
 		return this.generatedId;
 	}
@@ -253,7 +264,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	/**
 	 * @return the name of the branch this branch was merged in (if any)
 	 */
-	public String getMergedIn() {
+	@ElementCollection
+	public Set<String> getMergedIn() {
 		return this.mergedIn;
 	}
 	
@@ -263,7 +275,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @return the name
 	 */
 	@Basic
-	@Index (name = "idx_name")
+	@Index(name = "idx_name")
+	@Unique
 	public String getName() {
 		return this.name;
 	}
@@ -273,7 +286,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -282,18 +295,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getBegin() == null)
-				? 0
-						: this.getBegin().hashCode());
-		result = (prime * result) + ((this.getEnd() == null)
-				? 0
-						: this.getEnd().hashCode());
-		result = (prime * result) + ((this.getName() == null)
-				? 0
-						: this.getName().hashCode());
-		result = (prime * result) + ((this.getParent() == null)
-				? 0
-						: this.getParent().hashCode());
+		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
+		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
+		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
 		return result;
 	}
 	
@@ -306,7 +311,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	@Transient
-	public boolean isMasterBranch(){
+	public boolean isMasterBranch() {
 		return this.equals(BranchFactory.getMasterBranch());
 	}
 	
@@ -315,16 +320,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean isOpen() {
-		return this.open;
-	}
-	
-	/**
-	 * 
-	 */
-	@Transient
-	public void markOpen() {
-		this.setMergedIn(null);
-		this.setOpen(true);
+		return this.getEnd() == null;
 	}
 	
 	/**
@@ -360,10 +356,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	/**
 	 * @param mergedIn
 	 */
-	public void setMergedIn(final String mergedIn) {
-		if (!this.isOpen()) {
-			this.mergedIn = mergedIn;
-		}
+	public void setMergedIn(final Set<String> mergedIn) {
+		this.mergedIn = mergedIn;
 	}
 	
 	/**
@@ -374,10 +368,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	public void setName(final String name) {
 		this.name = name;
-	}
-	
-	public void setOpen(final boolean b) {
-		this.open = b;
 	}
 	
 	/**
@@ -392,6 +382,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
