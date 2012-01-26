@@ -30,17 +30,17 @@ import java.util.Set;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.RegexGroup;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependency;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 
-public class GitRevDependencyIteratorTest {
+public class GitRevDependencyIteratorTest extends MoskitoTest {
 	
 	private static GitRepository repo;
 	
@@ -61,25 +61,19 @@ public class GitRevDependencyIteratorTest {
 			}
 			
 			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null, null);
+			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
+					null, getPersistenceUtil());
 		} catch (Exception e) {
 			fail();
 		}
 	}
 	
-	@Before
-	public void setUp() throws Exception {
-		
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testIter() {
 		GitRevDependencyIterator iter = new GitRevDependencyIterator(repo.getWokingCopyLocation(),
-				"67635fe9efeb2fd3751df9ea67650c71e59e3df1");
+				"67635fe9efeb2fd3751df9ea67650c71e59e3df1", getPersistenceUtil());
 		
 		assertTrue(iter.hasNext());
 		RevDependency dep = iter.next();
@@ -281,26 +275,26 @@ public class GitRevDependencyIteratorTest {
 		
 		//check braches and branch hierarchy
 		assertFalse(branch_e52.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_e52);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_e52);
 		assertEquals(null, branch_e52.getMergedIn());
 		assertTrue(branch_e52.isOpen());
 		
 		assertFalse(branch_19b.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_19b);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_19b);
 		
 		assertFalse(branch_9d6.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_9d6);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_9d6);
 		
 		assertFalse(branch_dee.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_dee);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_dee);
 		
 		assertTrue(branch_d23.hasParent());
 		assertEquals(branch_ae9, branch_cbc);
-		assertEquals(BranchFactory.getMasterBranch(), branch_d23.getParent());
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_d23.getParent());
 		
 		assertTrue(branch_cbc.hasParent());
 		assertEquals(branch_ae9, branch_cbc);
-		assertEquals(BranchFactory.getMasterBranch(), branch_cbc.getParent());
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_cbc.getParent());
 		
 		assertTrue(branch_98d.hasParent());
 		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30Branch", branch_98d.getName());
@@ -310,15 +304,15 @@ public class GitRevDependencyIteratorTest {
 		
 		assertTrue(branch_ae9.hasParent());
 		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0Branch", branch_ae9.getName());
-		assertEquals(BranchFactory.getMasterBranch(), branch_ae9.getParent());
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_ae9.getParent());
 		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", branch_ae9.getMergedIn());
 		assertFalse(branch_ae9.isOpen());
 		
 		assertFalse(branch_827.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_827);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_827);
 		
 		assertFalse(branch_927.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_927);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_927);
 		
 		assertFalse(branch_1ac.hasParent());
 		assertEquals("origin/maintenance", branch_1ac.getName());
@@ -326,25 +320,25 @@ public class GitRevDependencyIteratorTest {
 		assertTrue(branch_e52.isOpen());
 		
 		assertFalse(branch_41a.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_41a);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_41a);
 		
 		assertFalse(branch_376.hasParent());
 		assertEquals(branch_1ac, branch_376);
 		
 		assertFalse(branch_637.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_637);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_637);
 		
 		assertFalse(branch_d98.hasParent());
 		assertEquals(branch_1ac, branch_d98);
 		
 		assertFalse(branch_9be.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_9be);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_9be);
 		
 		assertFalse(branch_a92.hasParent());
 		assertEquals(branch_1ac, branch_a92);
 		
 		assertFalse(branch_fe5.hasParent());
-		assertEquals(BranchFactory.getMasterBranch(), branch_fe5);
+		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_fe5);
 		
 		assertFalse(branch_676.hasParent());
 		assertEquals(branch_1ac, branch_676);
@@ -353,6 +347,7 @@ public class GitRevDependencyIteratorTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testRegEx() {
 		String line1 = "0cc858f14daa9750596051cb5b92c317ed17c401  (hudson-whatever)";
 		String line2 = "ba4fb16f3057524353e5159e505b2f8d8405f38a  (HEAD, origin/master, origin/HEAD, master)";

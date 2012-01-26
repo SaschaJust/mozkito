@@ -29,8 +29,10 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class PreviousTransactionIteratorTest {
+public class PreviousTransactionIteratorTest extends MoskitoTest {
 	
 	private Person         person1;
 	private Person         person2;
@@ -39,82 +41,52 @@ public class PreviousTransactionIteratorTest {
 	private RCSTransaction z;
 	private RCSBranch      master;
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * Z
-	 * |\
-	 * | P
-	 * | |\
-	 * | | O
-	 * | | |
-	 * | | N
-	 * | | |\
-	 * | | M \
-	 * | | |  |
-	 * | | L  |
-	 * | K |  |
-	 * | | |  |
-	 * | J |  |
-	 * | | | /
-	 * | I |/
-	 * | |/|
-	 * | H |
-	 * | | |
-	 * G | |
-	 * |/  |
-	 * F   |
-	 * |\  |
-	 * | \ |
-	 * |  \|
-	 * |   E
-	 * |   |
-	 * |   D
-	 * |   |
-	 * C   |
-	 * |   |
-	 * B   |
-	 * |  /
-	 * | /
-	 * |/
-	 * X
+	 *                Z |\ | P | |\ | | O | | | | | N | | |\ | | M \ | | | | | |
+	 *                L | | K | | | | | | | J | | | | | / | I |/ | |/| | H | | |
+	 *                | G | | |/ | F | |\ | | \ | | \| | E | | | D | | C | | | B
+	 *                | | / | / |/ X
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void complexTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"), this.person1,
-				"");
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-01T00:00:03.000+00:00"), this.person1,
-				"");
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"), this.person1,
-				"");
-		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"), this.person1,
-				"");
-		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"), this.person1,
-				"");
-		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"), this.person1,
-				"");
-		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"), this.person1,
-				"");
-		RCSTransaction i = RCSTransaction.createTransaction("i", "", new DateTime("1999-04-01T00:00:10.000+00:00"), this.person1,
-				"");
-		RCSTransaction j = RCSTransaction.createTransaction("j", "", new DateTime("1999-04-01T00:00:11.000+00:00"), this.person1,
-				"");
-		RCSTransaction k = RCSTransaction.createTransaction("k", "", new DateTime("1999-04-01T00:00:12.000+00:00"), this.person1,
-				"");
-		RCSTransaction l = RCSTransaction.createTransaction("l", "", new DateTime("1999-04-01T00:00:13.000+00:00"), this.person1,
-				"");
-		RCSTransaction m = RCSTransaction.createTransaction("m", "", new DateTime("1999-04-01T00:00:14.000+00:00"), this.person1,
-				"");
-		RCSTransaction n = RCSTransaction.createTransaction("n", "", new DateTime("1999-04-01T00:00:15.000+00:00"), this.person1,
-				"");
-		RCSTransaction o = RCSTransaction.createTransaction("o", "", new DateTime("1999-04-01T00:00:16.000+00:00"), this.person1,
-				"");
-		RCSTransaction p = RCSTransaction.createTransaction("p", "", new DateTime("1999-04-01T00:00:17.000+00:00"), this.person1,
-				"");
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-01T00:00:03.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction i = RCSTransaction.createTransaction("i", "", new DateTime("1999-04-01T00:00:10.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction j = RCSTransaction.createTransaction("j", "", new DateTime("1999-04-01T00:00:11.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction k = RCSTransaction.createTransaction("k", "", new DateTime("1999-04-01T00:00:12.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction l = RCSTransaction.createTransaction("l", "", new DateTime("1999-04-01T00:00:13.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction m = RCSTransaction.createTransaction("m", "", new DateTime("1999-04-01T00:00:14.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction n = RCSTransaction.createTransaction("n", "", new DateTime("1999-04-01T00:00:15.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction o = RCSTransaction.createTransaction("o", "", new DateTime("1999-04-01T00:00:16.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction p = RCSTransaction.createTransaction("p", "", new DateTime("1999-04-01T00:00:17.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		RCSBranch dBranch = new RCSBranch("dBranch");
 		dBranch.setBegin(d);
@@ -200,100 +172,87 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(g,iterator.next());
+		assertEquals(g, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(p,iterator.next());
+		assertEquals(p, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(k,iterator.next());
+		assertEquals(k, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(o,iterator.next());
+		assertEquals(o, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(j,iterator.next());
+		assertEquals(j, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(n,iterator.next());
+		assertEquals(n, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(i,iterator.next());
+		assertEquals(i, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(m,iterator.next());
+		assertEquals(m, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(h,iterator.next());
+		assertEquals(h, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(l,iterator.next());
+		assertEquals(l, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(f,iterator.next());
+		assertEquals(f, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(e,iterator.next());
+		assertEquals(e, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(c,iterator.next());
+		assertEquals(c, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(d,iterator.next());
+		assertEquals(d, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * | h
-	 * | |
-	 * | d
-	 * | |\
-	 * e | |
-	 * | f |
-	 * | | g
-	 * | | |
-	 * | | b
-	 * | |/
-	 * |/|
-	 * a |
-	 * | y
-	 * |/
-	 * x
+	 *                z |\ | h | | | d | |\ e | | | f | | | g | | | | | b | |/
+	 *                |/| a | | y |/ x
 	 * 
 	 * 
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void crossBranchTest() {
 		
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"), this.person1,
-				"");
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"), this.person1,
-				"");
-		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"), this.person1,
-				"");
-		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"), this.person1,
-				"");
-		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"), this.person1,
-				"");
-		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		RCSBranch yBranch = new RCSBranch("yBranch");
 		yBranch.setBegin(this.y);
@@ -347,62 +306,55 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(e,iterator.next());
+		assertEquals(e, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(h,iterator.next());
+		assertEquals(h, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(d,iterator.next());
+		assertEquals(d, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(f,iterator.next());
+		assertEquals(f, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(g,iterator.next());
+		assertEquals(g, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * |  \
-	 * y   c
-	 * |\ /
-	 * | b
-	 * a |
-	 * |/
-	 * x
+	 *                z |\ | \ y c |\ / | b a | |/ x
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator2Test() {
 		
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
-		
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
+		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -441,51 +393,44 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(c,iterator.next());
+		assertEquals(c, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * |  \
-	 * y   c
-	 * |\  |
-	 * | b |
-	 * | |/
-	 * a/|
-	 * |/
-	 * x
+	 *                z |\ | \ y c |\ | | b | | |/ a/| |/ x
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator3Test() {
 		
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
+		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -524,55 +469,46 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(c,iterator.next());
+		assertEquals(c, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * |  \
-	 * y   c
-	 * |\  |
-	 * | b |
-	 * | | d
-	 * | | |
-	 * | |/
-	 * a/|
-	 * |/
-	 * x
+	 *                z |\ | \ y c |\ | | b | | | d | | | | |/ a/| |/ x
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator4Test() {
 		
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-03T00:00:00.500+00:00"), this.person1,
-				"");
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
+		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-03T00:00:00.500+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -615,53 +551,47 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(c,iterator.next());
+		assertEquals(c, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(d,iterator.next());
+		assertEquals(d, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * |  \
-	 * y   |
-	 * |\  c
-	 * | b |
-	 * a |/
-	 * |/
-	 * x
+	 *                z |\ | \ y | |\ c | b | a |/ |/ x
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIteratorTest() {
 		
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
+		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
@@ -699,46 +629,38 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(c,iterator.next());
+		assertEquals(c, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	/**@formatter:off
-	 * z
-	 * |\
-	 * y |
-	 * | |
-	 * a |
-	 * |\|
-	 * | b
-	 * | |
-	 * |/
-	 * x
+	/**
+	 * @formatter:off z |\ y | | | a | |\| | b | | |/ x
 	 * 
 	 */
 	@Test
-	public void patchTest1(){
+	@DatabaseSettings(unit = "rcs")
+	public void patchTest1() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
 		
 		RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
@@ -768,43 +690,35 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	/**@formatter:off
-	 * z
-	 * |\
-	 * y |
-	 * | |
-	 * | b
-	 * |/|
-	 * a |
-	 * | |
-	 * |/
-	 * x
+	/**
+	 * @formatter:off z |\ y | | | | b |/| a | | | |/ x
 	 * 
 	 */
 	@Test
-	public void patchTest2(){
+	@DatabaseSettings(unit = "rcs")
+	public void patchTest2() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"), this.person2,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
+		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", getPersistenceUtil());
 		
 		RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
@@ -834,45 +748,41 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(b,iterator.next());
+		assertEquals(b, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 		
 	}
 	
-	
 	@Before
 	public void setUp() {
-		this.master = BranchFactory.getMasterBranch();
+		this.master = BranchFactory.getMasterBranch(getPersistenceUtil());
 		this.person1 = new Person("kim", "", "");
 		this.person2 = new Person("just", "", "");
 		this.x = RCSTransaction.createTransaction("x", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1,
-				"");
+				"",getPersistenceUtil());
 		this.y = RCSTransaction.createTransaction("y", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person2,
-				"");
+				"",getPersistenceUtil());
 		this.z = RCSTransaction.createTransaction("z", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1,
-				"");
+				"",getPersistenceUtil());
 	}
 	
-	/** @formatter:off
-	 * z
-	 * |
-	 * y
-	 * |
-	 * x
+	/**
+	 * @formatter:off z | y | x
 	 * 
-	 * Simple iterator test.
+	 *                Simple iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void simpleIteratorTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
@@ -887,32 +797,29 @@ public class PreviousTransactionIteratorTest {
 		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 	}
 	
-	/** @formatter:off
+	/**
+	 * @formatter:off
 	 * 
-	 * z
-	 * |\
-	 * | a
-	 * y |
-	 * |/
-	 * x
+	 *                z |\ | a y | |/ x
 	 * 
-	 * Simple merge iterator test.
+	 *                Simple merge iterator test.
 	 */
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void simpleMergeIteratorTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"), this.person1,
-				"");
+		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", getPersistenceUtil());
 		
 		this.x.setBranch(this.master);
 		this.y.setBranch(this.master);
@@ -932,16 +839,15 @@ public class PreviousTransactionIteratorTest {
 		a.addChild(this.z);
 		this.z.addParent(a);
 		
-		
 		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
-		assertEquals(this.y,iterator.next());
+		assertEquals(this.y, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(a,iterator.next());
+		assertEquals(a, iterator.next());
 		
 		assertTrue(iterator.hasNext());
-		assertEquals(this.x,iterator.next());
+		assertEquals(this.x, iterator.next());
 		
 		assertFalse(iterator.hasNext());
 	}

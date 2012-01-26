@@ -43,25 +43,21 @@ import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 import difflib.Delta;
 
-public class RepositoryTest {
+public class RepositoryTest extends MoskitoTest {
 	
 	// [scheme:][//authority][path][?query][#fragment]
 	// [user-info@]host[:port]
@@ -164,19 +160,12 @@ public class RepositoryTest {
 				}
 			}
 		}
-		try {
-			PersistenceUtil util = PersistenceManager.getUtil();
-			util.globalShutdown();
-		} catch (UninitializedDatabaseException e) {
-			
-		}
 	}
 	
 	@BeforeClass
+	@DatabaseSettings(unit = "rcs")
 	public static void beforeClass() {
 		
-		OpenJPAUtil.createTestSessionFactory("rcs");
-
 		// UNZIP mercurial repo
 		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 		if (zipURL == null) {
@@ -290,7 +279,7 @@ public class RepositoryTest {
 			}
 			
 			try {
-				repository.setup(urlFile.toURI(), null, null);
+				repository.setup(urlFile.toURI(), null, null, getPersistenceUtil());
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}
@@ -303,17 +292,8 @@ public class RepositoryTest {
 		return dtf.parseDateTime(timestamp);
 	}
 	
-	@Before
-	public void setUp() throws Exception {
-		
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		
-	}
-	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testAnnotate() {
 		for (Repository repository : repositories) {
 			List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
@@ -358,6 +338,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testCheckout() {
 		for (Repository repository : repositories) {
 			File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
@@ -385,6 +366,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testCheckoutDir() {
 		for (Repository repository : repositories) {
 			File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
@@ -407,6 +389,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testCheckoutFile() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
@@ -418,6 +401,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testDiff() {
 		for (Repository repository : repositories) {
 			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);
@@ -431,6 +415,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testDiffMove() {
 		for (Repository repository : repositories) {
 			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
@@ -444,6 +429,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testGetChangedPaths() {
 		for (Repository repository : repositories) {
 			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
@@ -460,6 +446,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testGetFirstRevisionID() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
@@ -475,6 +462,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testGetFormerPathName() {
 		for (Repository repository : repositories) {
 			String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
@@ -485,6 +473,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testGetLastRevisionID() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
@@ -501,6 +490,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testGetRelativeTransactionId() {
 		for (Repository repository : repositories) {
 			String endRevision = repository.getEndRevision();
@@ -509,6 +499,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testLog() {
 		for (Repository repository : repositories) {
 			List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
@@ -619,6 +610,7 @@ public class RepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testMoveEdit() {
 		for (Repository repository : repositories) {
 			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),

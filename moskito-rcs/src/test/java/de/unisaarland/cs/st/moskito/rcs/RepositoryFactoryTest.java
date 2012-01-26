@@ -21,21 +21,19 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
-import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 import de.unisaarland.cs.st.moskito.rcs.cvs.CVSRepository;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.moskito.rcs.subversion.SubversionRepository;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 
-public class RepositoryFactoryTest {
+public class RepositoryFactoryTest extends MoskitoTest {
 	
 	@Test
 	public void testRegistration() {
 		try {
 			Class<? extends Repository> repositoryHandler = RepositoryFactory
-			        .getRepositoryHandler(RepositoryType.SUBVERSION);
+					.getRepositoryHandler(RepositoryType.SUBVERSION);
 			assertEquals(SubversionRepository.class, repositoryHandler);
 			repositoryHandler = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT);
 			assertEquals(GitRepository.class, repositoryHandler);

@@ -23,24 +23,15 @@ import java.util.List;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
-import de.unisaarland.cs.st.moskito.rcs.git.GitLogParser;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 public class GitLogParserTest {
 	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
-	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testAuthorRegExp() {
 		String author1 = "Author: Carsten Nielsen <heycarsten@gmail.com>";
 		
@@ -110,6 +101,7 @@ public class GitLogParserTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testEmailRegex() {
 		String message = "hjkkjdskj ksdjfkljf;lsjdfkldsj f@lkdsaf elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5 fhdsjfjkshdfjklhsa fjsadfh jkldsahfl";
 		
@@ -131,6 +123,7 @@ public class GitLogParserTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testOriginalIdRegex() {
 		String s = "git-svn-id: http://svn.codehaus.org/jruby/trunk/jruby@7896 961051c9-f516-0410-bf72-c9f7e237a7b7";
 		GitLogParser.originalIdRegex.find(s);
@@ -139,6 +132,7 @@ public class GitLogParserTest {
 	}
 	
 	@Test
+	@DatabaseSettings(unit = "rcs")
 	public void testRegressionBug169() {
 		String message = "Author: jvanzyl <jvanzyl>\nDate:   Tue Jan 13 22:54:37 2004 +0000\n o http://jira.codehaus.org/secure/ViewIssue.jspa?key=XSTR-17\n\ngit-svn-id: file:///scratch/kim/miner_repos/xstream/svn_repo_09_03_2011/trunk@61 f887afa5-a9cb-4ae6-b411-6339e5819859";
 		List<RegexGroup> groups = GitLogParser.gitLogDateFormatRegex.find(message);
