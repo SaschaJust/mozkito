@@ -61,7 +61,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	private String                      type;
 	
-	private OpenJPAUtil() {
+	OpenJPAUtil() {
 		
 	}
 	

@@ -1,4 +1,4 @@
-package de.unisaarland.cs.st.moskito.testing_impl;
+package de.unisaarland.cs.st.moskito.testing;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -62,7 +62,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	
 	public static void main(final String[] args) {
 		try {
-			final Tuple<Integer, String> tuple = MoskitoTest.exec(MoskitoTest.class);
+			final Tuple<Integer, String> tuple = MoskitoTestBuilder.exec(MoskitoTestBuilder.class);
 			System.err.println("Return code: " + tuple.getFirst());
 			System.err.println("Stack trace: " + tuple.getSecond());
 		} catch (final IOException e) {
@@ -168,8 +168,8 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 			final MoskitoTestRun testRun = this.fTestMethods.get(i);
 			runNotifier.fireTestStarted(testRun.getDescription());
 			try {
-				final Class<?> preparedTest = MoskitoTest.prepareTest(testRun);
-				final Tuple<Integer, String> tuple = MoskitoTest.exec(preparedTest);
+				final Class<?> preparedTest = MoskitoTestBuilder.prepareTest(testRun);
+				final Tuple<Integer, String> tuple = MoskitoTestBuilder.exec(preparedTest);
 				if (tuple.getFirst() != 0) {
 					System.err.println("Return code: " + tuple.getFirst());
 					System.err.println("Stack trace: " + tuple.getSecond());

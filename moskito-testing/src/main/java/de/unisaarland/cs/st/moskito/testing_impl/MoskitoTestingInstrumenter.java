@@ -9,7 +9,7 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
-import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTestBuilder;
 
 public class MoskitoTestingInstrumenter {
 	
@@ -17,7 +17,7 @@ public class MoskitoTestingInstrumenter {
 		try {
 			// final CtClass ctClass =
 			// classPool.get(this.getClass().getCanonicalName());
-			if (ctClass.getSuperclass().getName().equals(MoskitoTest.class.getCanonicalName())) {
+			if (ctClass.getSuperclass().getName().equals(MoskitoTestBuilder.class.getCanonicalName())) {
 				final ClassFile ccFile = ctClass.getClassFile();
 				final ConstPool constpool = ccFile.getConstPool();
 				final AnnotationsAttribute attrBeforeClass = new AnnotationsAttribute(constpool,

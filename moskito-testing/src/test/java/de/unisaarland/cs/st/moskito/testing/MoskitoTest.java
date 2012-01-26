@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
-import de.unisaarland.cs.st.moskito.testing_impl.MoskitoSuite;
 
 /**
  * @author just

@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 /**
@@ -24,7 +25,7 @@ public class MoskitoDerivationTest extends MoskitoTest {
 	
 	@Test
 	@Ignore
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "ppa", util = OpenJPAUtil.class)
 	public void testIgnore() {
 		
 	}

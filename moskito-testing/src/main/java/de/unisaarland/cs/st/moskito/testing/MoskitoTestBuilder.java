@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.moskito.testing_impl;
+package de.unisaarland.cs.st.moskito.testing;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
  * @author just
  * 
  */
-public final class MoskitoTest {
+public final class MoskitoTestBuilder {
 	
 	public static Tuple<Integer, String> exec(final Class<?> klass) throws IOException, InterruptedException {
 		final String javaHome = System.getProperty("java.home");
@@ -98,6 +98,6 @@ public final class MoskitoTest {
 		return cc.toClass();
 	}
 	
-	private MoskitoTest() {
+	private MoskitoTestBuilder() {
 	}
 }

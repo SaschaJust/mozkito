@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unisaarland.cs.st.moskito.testing_impl;
+package de.unisaarland.cs.st.moskito.testing;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
