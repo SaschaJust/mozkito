@@ -15,10 +15,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.settings;
 
-import java.util.Map;
-
-import net.ownhero.dev.andama.exceptions.ClassLoadingError;
-import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.BooleanArgument;
@@ -26,7 +22,6 @@ import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.MaskedStringArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.DatabaseType;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -37,7 +32,16 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 	
-	private final AndamaSettings settings;
+	private final AndamaSettings       settings;
+	private final StringArgument       databaseUnit;
+	private final BooleanArgument      databaseDropContents;
+	private final StringArgument       databaseMiddleware;
+	private final StringArgument       databaseDriver;
+	private final EnumArgument         databaseType;
+	private final MaskedStringArgument databasePassword;
+	private final StringArgument       databaseHost;
+	private final StringArgument       databaseUser;
+	private final StringArgument       databaseName;
 	
 	/**
 	 * @param settings
@@ -46,22 +50,33 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 	public DatabaseArguments(final AndamaSettings settings, final boolean isRequired, final String unit) {
 		super();
 		this.settings = settings;
-		addArgument(new StringArgument(settings, "database.name", "Name of the database", null, isRequired));
-		addArgument(new MaskedStringArgument(settings, "database.user", "User name for database. Default: miner",
-		                                     "miner", isRequired));
-		addArgument(new StringArgument(settings, "database.host", "Name of database host. Default: localhost",
-		                               "localhost", isRequired));
-		addArgument(new MaskedStringArgument(settings, "database.password", "Password for database. Default: miner",
-		                                     "miner", isRequired));
-		addArgument(new EnumArgument(settings, "database.type", "Possible values: "
+		this.databaseName = new StringArgument(settings, "database.name", "Name of the database", null, isRequired);
+		addArgument(this.databaseName);
+		this.databaseUser = new MaskedStringArgument(settings, "database.user",
+		                                             "User name for database. Default: miner", "miner", isRequired);
+		addArgument(this.databaseUser);
+		this.databaseHost = new StringArgument(settings, "database.host", "Name of database host. Default: localhost",
+		                                       "localhost", isRequired);
+		addArgument(this.databaseHost);
+		this.databasePassword = new MaskedStringArgument(settings, "database.password",
+		                                                 "Password for database. Default: miner", "miner", isRequired);
+		addArgument(this.databasePassword);
+		this.databaseType = new EnumArgument(settings, "database.type", "Possible values: "
 		        + JavaUtils.enumToString(DatabaseType.POSTGRESQL), DatabaseType.POSTGRESQL.toString(), isRequired,
-		                             JavaUtils.enumToArray(DatabaseType.POSTGRESQL)));
-		addArgument(new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
-		                               "org.postgresql.Driver", isRequired));
-		addArgument(new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA", isRequired));
-		addArgument(new StringArgument(settings, "database.unit", "The persistence unit config tag used.", unit, true));
-		addArgument(new BooleanArgument(settings, "database.dropContents", "Used to drop the contents before usage.",
-		                                "false", true));
+		                                     JavaUtils.enumToArray(DatabaseType.POSTGRESQL));
+		addArgument(this.databaseType);
+		this.databaseDriver = new StringArgument(settings, "database.driver", "Default: org.postgresql.Driver",
+		                                         "org.postgresql.Driver", isRequired);
+		addArgument(this.databaseDriver);
+		this.databaseMiddleware = new StringArgument(settings, "database.middleware", "Default: OpenJPA", "OpenJPA",
+		                                             isRequired);
+		addArgument(this.databaseMiddleware);
+		this.databaseUnit = new StringArgument(settings, "database.unit", "The persistence unit config tag used.",
+		                                       unit, true);
+		addArgument(this.databaseUnit);
+		this.databaseDropContents = new BooleanArgument(settings, "database.dropContents",
+		                                                "Used to drop the contents before usage.", "false", true);
+		addArgument(this.databaseDropContents);
 	}
 	
 	/*
@@ -70,57 +85,27 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 	 */
 	@Override
 	public PersistenceUtil getValue() {
-		final Map<String, AndamaArgument<?>> arguments = getArguments();
+		getArguments();
 		
-		if (JavaUtils.AnyNull(arguments.get("database.host").getValue(), arguments.get("database.name").getValue(),
-		                      arguments.get("database.user").getValue(), arguments.get("database.password").getValue(),
-		                      arguments.get("database.type").getValue(), arguments.get("database.driver").getValue(),
-		                      arguments.get("database.middleware").getValue(), arguments.get("database.unit")
-		                                                                                .getValue())) {
-			return null;
-		}
-		final String className = PersistenceUtil.class.getPackage().getName() + "."
-		        + arguments.get("database.middleware").getValue() + "Util";
-		
-		try {
-			@SuppressWarnings ("unchecked")
-			final Class<PersistenceUtil> middlewareClass = (Class<PersistenceUtil>) Class.forName(className);
-			final PersistenceUtil util = PersistenceManager.createUtil(arguments.get("database.host").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.name").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.user").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.password").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.type").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.driver").getValue()
-			                                                                    .toString(),
-			                                                           arguments.get("database.unit").getValue()
-			                                                                    .toString(),
-			                                                           (Boolean) arguments.get("database.middleware")
-			                                                                              .getValue(),
-			                                                           arguments.get("database.middleware").getValue()
-			                                                                    .toString());
-			
-			final String toolInfo = util.getToolInformation();
-			this.settings.addToolInformation(middlewareClass.getSimpleName(), toolInfo);
-			return util;
-		} catch (final ClassNotFoundException e) {
-			if (Logger.logError()) {
-				Logger.error("Could not initialize database middleware "
-				        + arguments.get("database.middleware").getValue() + ".", e);
-				Logger.error(new ClassLoadingError(e, className).analyzeFailureCause());
-			}
-			return null;
-		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error("Could not initialize database middleware "
-				        + arguments.get("database.middleware").getValue() + ".", e);
-			}
+		if (JavaUtils.AnyNull(this.databaseHost.getValue(), this.databaseName.getValue(), this.databaseUser.getValue(),
+		                      this.databasePassword.getValue(), this.databaseType.getValue(),
+		                      this.databaseDriver.getValue(), this.databaseUnit.getValue(),
+		                      this.databaseDropContents.getValue(), this.databaseMiddleware.getValue())) {
+			// FIXME this should cause an unrecoverable error
 			return null;
 		}
 		
+		final PersistenceUtil util = PersistenceManager.createUtil(this.databaseHost.getValue(),
+		                                                           this.databaseName.getValue(),
+		                                                           this.databaseUser.getValue(),
+		                                                           this.databasePassword.getValue(),
+		                                                           this.databaseType.getValue(),
+		                                                           this.databaseDriver.getValue(),
+		                                                           this.databaseUnit.getValue(),
+		                                                           this.databaseDropContents.getValue(),
+		                                                           this.databaseMiddleware.getValue());
+		
+		this.settings.addToolInformation(this.databaseMiddleware.getValue(), util.getToolInformation());
+		return util;
 	}
 }
