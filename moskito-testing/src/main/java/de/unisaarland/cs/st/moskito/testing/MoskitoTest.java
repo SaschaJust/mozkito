@@ -5,9 +5,6 @@ package de.unisaarland.cs.st.moskito.testing;
 
 import java.lang.annotation.Annotation;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -25,6 +22,7 @@ public abstract class MoskitoTest {
 	
 	static {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+		// FIXME fix kanuni first on frozen classes.
 		// KanuniAgent.initialize();
 	}
 	
@@ -53,6 +51,7 @@ public abstract class MoskitoTest {
 				// FIXME check length and stuff
 				final String simpleName = split[split.length - 1] + "Processor";
 				final String fqName = MoskitoSettingsProcessor.class.getPackage().getName() + "." + simpleName;
+				@SuppressWarnings ("unchecked")
 				final Class<? extends MoskitoSettingsProcessor> processorClass = (Class<? extends MoskitoSettingsProcessor>) Class.forName(fqName);
 				final MoskitoSettingsProcessor processor = processorClass.newInstance();
 				processor.evaluate(annotation);
@@ -64,26 +63,7 @@ public abstract class MoskitoTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-	
-	public MoskitoTest() {
-		
-	}
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
+	public static void tearDownAfterClass(final Annotation[] annotations) throws Exception {
 	}
 	
 }

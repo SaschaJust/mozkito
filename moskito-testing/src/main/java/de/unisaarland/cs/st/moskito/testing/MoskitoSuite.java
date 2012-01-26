@@ -10,6 +10,10 @@ import java.util.List;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -74,11 +78,16 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		}
 	}
 	
-	private final List<MoskitoTestRun> fTestMethods   = new LinkedList<MoskitoTestRun>();
-	private final List<MoskitoTestRun> fIgnoreMethods = new LinkedList<MoskitoTestRun>();
+	private final List<MoskitoTestRun> fTestMethods    = new LinkedList<MoskitoTestRun>();
+	private final List<MoskitoTestRun> fIgnoreMethods  = new LinkedList<MoskitoTestRun>();
+	private final List<Method>         setupMethods    = new LinkedList<Method>();
+	private final List<Method>         tearDownMethods = new LinkedList<Method>();
+	
 	private final TestClass            fTestClass;
 	
 	private final Description          description;
+	private final List<Method>         bootMethods     = new LinkedList<Method>();
+	private final List<Method>         shutdownMethods = new LinkedList<Method>();
 	
 	/**
 	 * @param aClass
@@ -100,10 +109,18 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 				continue;
 			}
 			
-			final String methodName = classMethod.getName();
+			classMethod.getName();
 			
-			if (classMethod.getAnnotation(Ignore.class) == null) {
-				if (methodName.toUpperCase().startsWith("TEST") || (classMethod.getAnnotation(Test.class) != null)) {
+			if (classMethod.getAnnotation(BeforeClass.class) != null) {
+				this.bootMethods.add(classMethod);
+			} else if (classMethod.getAnnotation(Before.class) != null) {
+				this.setupMethods.add(classMethod);
+			} else if (classMethod.getAnnotation(AfterClass.class) != null) {
+				this.shutdownMethods.add(classMethod);
+			} else if (classMethod.getAnnotation(After.class) != null) {
+				this.tearDownMethods.add(classMethod);
+			} else if (classMethod.getAnnotation(Ignore.class) == null) {
+				if (classMethod.getAnnotation(Test.class) != null) {
 					final List<Annotation> annotationList = new LinkedList<Annotation>();
 					for (final Annotation annotation : classMethod.getAnnotations()) {
 						if (annotation.annotationType().getAnnotation(MoskitoTestingAnnotation.class) != null) {
@@ -119,7 +136,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 					this.fTestMethods.add(testRun);
 				}
 			} else {
-				if (methodName.toUpperCase().startsWith("TEST")) {
+				if (classMethod.getAnnotation(Test.class) != null) {
 					final MoskitoTestRun testRun = new MoskitoTestRun(
 					                                                  classMethod,
 					                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
@@ -168,7 +185,9 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 			final MoskitoTestRun testRun = this.fTestMethods.get(i);
 			runNotifier.fireTestStarted(testRun.getDescription());
 			try {
-				final Class<?> preparedTest = MoskitoTestBuilder.prepareTest(testRun);
+				final Class<?> preparedTest = MoskitoTestBuilder.prepareTest(testRun, this.bootMethods,
+				                                                             this.setupMethods, this.tearDownMethods,
+				                                                             this.shutdownMethods);
 				final Tuple<Integer, String> tuple = MoskitoTestBuilder.exec(preparedTest);
 				if (tuple.getFirst() != 0) {
 					System.err.println("Return code: " + tuple.getFirst());

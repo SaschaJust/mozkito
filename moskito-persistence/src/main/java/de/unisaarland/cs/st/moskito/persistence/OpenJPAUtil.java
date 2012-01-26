@@ -65,51 +65,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 		
 	}
 	
-	// /**
-	// * @return
-	// */
-	// private static AndamaChain determineToolchain() {
-	// final Thread thread = Thread.currentThread();
-	// if (thread instanceof AndamaChain) {
-	// return (AndamaChain) thread;
-	// } else if ((thread.getThreadGroup() != null) && (thread.getThreadGroup()
-	// instanceof AndamaGroup)) {
-	// return ((AndamaGroup) thread.getThreadGroup()).getToolchain();
-	// } else {
-	// return null;
-	// }
-	//
-	// }
-	
-	// /**
-	// * @return
-	// * @throws UninitializedDatabaseException
-	// */
-	// public static PersistenceUtil getInstance() throws
-	// UninitializedDatabaseException {
-	// if (factory == null) {
-	// throw new UninitializedDatabaseException();
-	// }
-	//
-	// if (singleUtil != null) {
-	// return singleUtil;
-	// }
-	// final AndamaChain toolchain = determineToolchain();
-	//
-	// if (toolchain != null) {
-	// if (provider.containsKey(toolchain)) {
-	// return provider.get(toolchain);
-	// } else {
-	// final OpenJPAUtil util = new OpenJPAUtil();
-	// provider.put(Thread.currentThread(), util);
-	// return util;
-	// }
-	// } else {
-	// singleUtil = new OpenJPAUtil();
-	// return singleUtil;
-	// }
-	// }
-	
 	/*
 	 * (non-Javadoc)
 	 * @see
