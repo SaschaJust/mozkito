@@ -35,6 +35,9 @@ public class BranchFactory {
 				
 				//create new branch and cache
 				RCSBranch newBranch = new RCSBranch(name);
+				if (Logger.logDebug()) {
+					Logger.debug("Creating new Branch " + newBranch.toString());
+				}
 				if (name.equals(RCSBranch.MASTER_BRANCH_NAME)) {
 					newBranch.setOpen(true);
 				}
@@ -44,17 +47,20 @@ public class BranchFactory {
 				// The existed no previous persistence util: try to load persisted
 				// MASTER_BRANCH
 				Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name",
-				        RCSBranch.MASTER_BRANCH_NAME);
+						RCSBranch.MASTER_BRANCH_NAME);
 				List<RCSBranch> loadedBranches = persistenceUtil.load(criteria);
 				if (loadedBranches.isEmpty()) {
 					// We could not load a persisted MASTER_BRANCH. So, create a
 					// new one and return.
 					if (Logger.logDebug()) {
 						Logger.debug("Attempt to lead persisted RCSBranch.MASTER_BRANCH "
-						        + "from existing database connection failed. " + "No persisted master branch found. "
-						        + "Returning new RCSBranch.MASTER_BRANCH.");
+								+ "from existing database connection failed. " + "No persisted master branch found. "
+								+ "Returning new RCSBranch.MASTER_BRANCH.");
 					}
 					RCSBranch newBranch = new RCSBranch(name);
+					if (Logger.logDebug()) {
+						Logger.debug("Creating new Branch " + newBranch.toString());
+					}
 					if (name.equals(RCSBranch.MASTER_BRANCH_NAME)) {
 						newBranch.setOpen(true);
 					}
@@ -67,7 +73,7 @@ public class BranchFactory {
 		}
 		return branchCache.get(name);
 	}
-
+	
 	public static RCSBranch getMasterBranch(){
 		return getBranch(RCSBranch.MASTER_BRANCH_NAME);
 	}
