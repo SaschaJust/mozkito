@@ -83,7 +83,6 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 				
 				RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
 				RCSBranch rcsBranch = revdep.getCommitBranch();
-				//				persistenceUtil.update(rcsBranch);
 				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (String parent : revdep.getParents()) {
