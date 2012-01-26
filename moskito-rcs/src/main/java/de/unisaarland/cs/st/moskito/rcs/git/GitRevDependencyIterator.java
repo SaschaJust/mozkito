@@ -108,7 +108,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					if ((branchName == null) || branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
 						this.branches.put(revId, BranchFactory.getMasterBranch());
 					} else {
-						this.branches.put(revId, new RCSBranch(branchName));
+						this.branches.put(revId, BranchFactory.getBranch(branchName));
 					}
 				}
 				
@@ -141,7 +141,8 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				for (int i = 1; i < parents.size(); ++i) {
 					String parent = parents.get(i);
-					RCSBranch newBranch = new RCSBranch(parent + "Branch", commitBranch);
+					RCSBranch newBranch = BranchFactory.getBranch(parent + "Branch");
+					newBranch.setParent(commitBranch);
 					if (!this.branches.containsKey(parent)) {
 						//there is no later transaction within this new branch . Otherwise we would have seen the parent already
 						this.branches.put(parent, newBranch);

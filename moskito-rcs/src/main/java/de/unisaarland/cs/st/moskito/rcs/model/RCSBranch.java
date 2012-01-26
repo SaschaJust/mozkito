@@ -386,7 +386,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @param parent
 	 *            the parent to set
 	 */
-	protected void setParent(final RCSBranch parent) {
+	public void setParent(final RCSBranch parent) {
 		this.parent = parent;
 	}
 	
