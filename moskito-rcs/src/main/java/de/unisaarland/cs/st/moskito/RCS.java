@@ -24,7 +24,6 @@ import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
@@ -39,18 +38,18 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class RCS extends AndamaChain {
 	
-	private final AndamaPool      threadPool;
-	private RepositoryArguments   repoSettings;
-	private final LoggerArguments logSettings;
-	private DatabaseArguments     databaseSettings;
-	private boolean               shutdown;
-	private PersistenceUtil       persistenceUtil;
-	private Repository            repository;
+	private final AndamaPool          threadPool;
+	private final RepositoryArguments repoSettings;
+	private final LoggerArguments     logSettings;
+	private final DatabaseArguments   databaseSettings;
+	private boolean                   shutdown;
+	private PersistenceUtil           persistenceUtil;
+	private Repository                repository;
 	
 	public RCS() {
 		super(new RepositorySettings());
 		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
-		RepositorySettings settings = (RepositorySettings) getSettings();
+		final RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");
 		this.logSettings = settings.setLoggerArg(true);
@@ -62,21 +61,6 @@ public class RCS extends AndamaChain {
 		                    false);
 		
 		settings.parseArguments();
-	}
-	
-	public RCS(final Repository repository, final PersistenceUtil persistenceUtil) {
-		super(new RepositorySettings());
-		RepositorySettings settings = (RepositorySettings) getSettings();
-		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
-		this.logSettings = settings.setLoggerArg(true);
-		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
-		new LongArgument(settings, "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
-		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		                    false);
-		this.persistenceUtil = persistenceUtil;
-		this.repository = repository;
 	}
 	
 	/*
@@ -105,31 +89,18 @@ public class RCS extends AndamaChain {
 	public void setup() {
 		this.logSettings.getValue();
 		
+		this.persistenceUtil = this.databaseSettings.getValue();
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
 		if (this.persistenceUtil == null) {
-			if (this.databaseSettings.getValue() != null) {
-				try {
-					this.persistenceUtil = PersistenceManager.getUtil();
-				} catch (Exception e) {
-					e.printStackTrace();
-					if (Logger.logError()) {
-						Logger.error("Database connection could not be established.", e);
-					}
-					shutdown();
-				}
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Missing database settings.");
-				}
-				
-				shutdown();
+			if (Logger.logError()) {
+				Logger.error("Database connection could not be established.");
 			}
+			shutdown();
 		}
 		
-		if (this.repository == null) {
-			this.repository = this.repoSettings.getValue();
-		}
+		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
+		this.repository = this.repoSettings.getValue();
 		// i din't think we can resume repository mining at all.
 		// if (this.persistenceUtil != null) {
 		// String start = repository.getStartRevision().equalsIgnoreCase("HEAD")

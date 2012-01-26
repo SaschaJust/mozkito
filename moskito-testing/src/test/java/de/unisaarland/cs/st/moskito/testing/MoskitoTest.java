@@ -5,8 +5,6 @@ package de.unisaarland.cs.st.moskito.testing;
 
 import java.lang.annotation.Annotation;
 
-import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,7 +27,7 @@ public abstract class MoskitoTest {
 	
 	static {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-		KanuniAgent.initialize();
+		// KanuniAgent.initialize();
 	}
 	
 	/**
@@ -59,7 +57,6 @@ public abstract class MoskitoTest {
 				final String fqName = MoskitoSettingsProcessor.class.getPackage().getName() + "." + simpleName;
 				final Class<? extends MoskitoSettingsProcessor> processorClass = (Class<? extends MoskitoSettingsProcessor>) Class.forName(fqName);
 				final MoskitoSettingsProcessor processor = processorClass.newInstance();
-				System.err.println("Running processor " + processor.getClass().getSimpleName());
 				processor.evaluate(annotation);
 			}
 		}

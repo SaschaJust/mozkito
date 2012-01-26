@@ -24,7 +24,6 @@ import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.andama.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
@@ -50,7 +49,7 @@ public class Graph extends AndamaChain {
 	public Graph() {
 		super(new RepositorySettings());
 		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
-		RepositorySettings settings = (RepositorySettings) getSettings();
+		final RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");
 		this.logSettings = settings.setLoggerArg(true);
@@ -81,28 +80,15 @@ public class Graph extends AndamaChain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		
-		// this has be done done BEFORE other instances like repository since
-		// they could rely on data loading
-		if (this.databaseSettings.getValue() != null) {
-			try {
-				this.persistenceUtil = PersistenceManager.getUtil();
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (Logger.logError()) {
-					Logger.error("Database connection could not be established.", e);
-				}
-				shutdown();
-			}
-		} else {
+		this.persistenceUtil = this.databaseSettings.getValue();
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
-				Logger.error("Missing database settings.");
+				Logger.error("Database connection could not be established.");
 			}
-			
 			shutdown();
 		}
 		
-		Repository repository = this.repoSettings.getValue();
+		final Repository repository = this.repoSettings.getValue();
 		
 		new GraphReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.persistenceUtil);
 		new GraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository,
@@ -111,8 +97,7 @@ public class Graph extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
+	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
 	 */
 	@Override
 	public void shutdown() {

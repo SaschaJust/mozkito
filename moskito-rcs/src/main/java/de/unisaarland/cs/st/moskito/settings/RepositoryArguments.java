@@ -25,6 +25,7 @@ import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
@@ -43,6 +44,8 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	private final StringArgument userArg;
 	private final AndamaSettings settings;
 	
+	PersistenceUtil              persistenceUtil;
+	
 	/**
 	 * Is an argument set that contains all arguments necessary for the
 	 * repositories.
@@ -54,18 +57,18 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	public RepositoryArguments(final RepositorySettings settings, final boolean isRequired) {
 		super();
 		this.repoDirArg = new URIArgument(settings, "repository.uri", "URI where the rcs repository is located", null,
-				isRequired);
+		                                  isRequired);
 		this.repoTypeArg = new EnumArgument(settings, "repository.type", "Type of the repository. Possible values: "
-				+ JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
-				JavaUtils.enumToArray(RepositoryType.SUBVERSION));
+		        + JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
+		                                    JavaUtils.enumToArray(RepositoryType.SUBVERSION));
 		this.userArg = new MaskedStringArgument(settings, "repository.user", "Username to access repository", null,
-				false);
+		                                        false);
 		this.passArg = new MaskedStringArgument(settings, "repository.password", "Password to access repository", null,
-				false);
+		                                        false);
 		this.startRevision = new StringArgument(settings, "repository.transaction.start", "Revision to start with",
-				null, false);
+		                                        null, false);
 		this.endRevision = new StringArgument(settings, "repository.transaction.stop", "Revision to stop at", "HEAD",
-				false);
+		                                      false);
 		this.settings = settings;
 	}
 	
@@ -96,17 +99,17 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	 */
 	@Override
 	public Repository getValue() {
-		URI repositoryURI = this.getRepoDirArg().getValue();
-		String username = this.getUserArg().getValue();
-		String password = this.getPassArg().getValue();
-		String startRevision = this.getStartRevision().getValue();
-		String endRevision = this.endRevision.getValue();
+		final URI repositoryURI = getRepoDirArg().getValue();
+		String username = getUserArg().getValue();
+		String password = getPassArg().getValue();
+		final String startRevision = getStartRevision().getValue();
+		final String endRevision = this.endRevision.getValue();
 		
-		if (JavaUtils.AnyNull(repositoryURI, this.getRepoTypeArg().getValue())) {
+		if (JavaUtils.AnyNull(repositoryURI, getRepoTypeArg().getValue())) {
 			return null;
 		}
 		
-		RepositoryType rcsType = RepositoryType.valueOf(this.getRepoTypeArg().getValue());
+		final RepositoryType rcsType = RepositoryType.valueOf(getRepoTypeArg().getValue());
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			if (Logger.logWarn()) {
@@ -117,23 +120,32 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 		}
 		
 		try {
-			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
-			Repository repository = repositoryClass.newInstance();
+			final Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
+			final Repository repository = repositoryClass.newInstance();
+			
+			if (Logger.logWarn()) {
+				Logger.warn("PersistenceUtil is null, but should be set prior to calling getValue in "
+				        + this.getClass().getSimpleName() + ".");
+			}
 			
 			if ((username == null) && (password == null)) {
-				repository.setup(repositoryURI, startRevision, endRevision);
+				repository.setup(repositoryURI, startRevision, endRevision, this.persistenceUtil);
 			} else {
-				repository.setup(repositoryURI, startRevision, endRevision, username, password);
+				repository.setup(repositoryURI, startRevision, endRevision, username, password, this.persistenceUtil);
 			}
 			
 			this.settings.addToolInformation(repository.getHandle(), repository.gatherToolInformation());
 			
 			return repository;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			return null;
 		}
+	}
+	
+	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+		this.persistenceUtil = persistenceUtil;
 	}
 }

@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -37,7 +36,6 @@ import javax.persistence.criteria.Root;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -51,215 +49,69 @@ import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class OpenJPAUtil implements PersistenceUtil {
 	
-	private static OpenJPAEntityManagerFactory factory;
-	private static PersistenceUtil             singleUtil = null;
+	private OpenJPAEntityManagerFactory factory;
 	
-	/**
-	 * @param properties
-	 */
-	public static void createSessionFactory(final Properties properties) {
-		if (factory == null) {
-			if (type == null) {
-				final String url = (String) properties.get("openjpa.ConnectionURL");
-				if (url != null) {
-					type = url.split(":")[1];
-				} else {
-					type = "unknown";
-				}
-			}
-			
-			String unit = properties.getProperty("openjpa.persistence-unit");
-			
-			if (unit == null) {
-				final StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-				ArrayUtils.reverse(trace);
-				for (final StackTraceElement element : trace) {
-					Class<?> activeClass;
-					try {
-						activeClass = Class.forName(element.getClassName());
-						if (ClassFinder.extending(activeClass, AndamaChain.class)) {
-							unit = activeClass.getSimpleName().toLowerCase();
-							break;
-						}
-					} catch (final ClassNotFoundException e) {
-					}
-				}
-				
-				if (unit == null) {
-					if (Logger.logError()) {
-						Logger.error("You have to set the 'database-unit' property.");
-						
-					}
-					throw new Shutdown("Persistence unit property not specified and can't be determined automatically.");
-				}
-			}
-			
-			properties.remove("openjpa.persistence-unit");
-			
-			if (Logger.logInfo()) {
-				Logger.info("Requesting persistence-unit: " + unit);
-			}
-			
-			if (Logger.logDebug()) {
-				Logger.debug("Using options: ");
-				for (final Object property : properties.keySet()) {
-					Logger.debug(property + ": " + properties.getProperty((String) property));
-				}
-			}
-			factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
-			// FIXME
-			// try {
-			// Collection<Class<?>> annotatedClasses =
-			// ClassFinder.getClassesOfInterface(Core.class.getPackage(),
-			// Annotated.class);
-			//
-			// if (Logger.logInfo()) {
-			// for (Class<?> c : annotatedClasses) {
-			// Logger.info("Registering persistence entity: " +
-			// c.getCanonicalName());
-			// }
-			// }
-			// ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(),
-			// annotatedClasses, null);
-			// } catch (Exception e) {
-			// if (Logger.logError()) {
-			// Logger.error(e.getMessage(), e);
-			// }
-			// throw new RuntimeException(e);
-			// }
-			
-			if (factory == null) {
-				throw new Shutdown("Could not initialize persistence-unit: " + unit);
-			}
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Session factory already exists. Skipping creation.");
-			}
-		}
-	}
+	private final EntityManager         entityManager;
 	
-	/**
-	 * @param host
-	 * @param database
-	 * @param user
-	 * @param password
-	 * @param type
-	 * @param driver
-	 */
-	public static void createSessionFactory(final String host,
-			final String database,
-			final String user,
-			final String password,
-			final String type,
-			final String driver,
-			final String unit) {
-		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
-		
-		final Properties properties = new Properties();
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
-		properties.put("openjpa.ConnectionDriverName", driver);
-		properties.put("openjpa.ConnectionUserName", user);
-		properties.put("openjpa.ConnectionPassword", password);
-		properties.put("openjpa.persistence-unit", unit);
-		OpenJPAUtil.type = type;
-		
-		createSessionFactory(properties);
-	}
-	
-	/**
-	 * @param string
-	 */
-	public static void createTestSessionFactory(final String string) {
-		// Logger.setLogLevel(LogLevel.OFF);
-		final Properties properties = new Properties();
-		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
-				+ "/" + System.getProperty("database.name", "moskito_junit");
-		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
-		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-		properties.put("openjpa.ConnectionUserName", System.getProperty("database.username", "miner"));
-		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
-		properties.put("openjpa.persistence-unit", string);
-		// properties.put("openjpa.Log", "Runtime=TRACE");
-		for (final Thread t : provider.keySet()) {
-			provider.get(t).shutdown();
-		}
-		if (singleUtil != null) {
-			singleUtil.shutdown();
-			singleUtil = null;
-		}
-		if (factory != null) {
-			factory.close();
-			factory = null;
-		}
-		
-		provider.clear();
-		OpenJPAUtil.createSessionFactory(properties);
-	}
-	
-	/**
-	 * @return
-	 */
-	private static AndamaChain determineToolchain() {
-		final Thread thread = Thread.currentThread();
-		if (thread instanceof AndamaChain) {
-			return (AndamaChain) thread;
-		} else if ((thread.getThreadGroup() != null) && (thread.getThreadGroup() instanceof AndamaGroup)) {
-			return ((AndamaGroup) thread.getThreadGroup()).getToolchain();
-		} else {
-			return null;
-		}
-		
-	}
-	
-	/**
-	 * @return
-	 * @throws UninitializedDatabaseException
-	 */
-	public static PersistenceUtil getInstance() throws UninitializedDatabaseException {
-		if (factory == null) {
-			throw new UninitializedDatabaseException();
-		}
-		
-		if (singleUtil != null) {
-			return singleUtil;
-		}
-		final AndamaChain toolchain = determineToolchain();
-		
-		if (toolchain != null) {
-			if (provider.containsKey(toolchain)) {
-				return provider.get(toolchain);
-			} else {
-				final OpenJPAUtil util = new OpenJPAUtil();
-				provider.put(Thread.currentThread(), util);
-				return util;
-			}
-		} else {
-			singleUtil = new OpenJPAUtil();
-			return singleUtil;
-		}
-	}
-	
-	private final EntityManager             entityManager;
-	private static String                   type;
-	
-	private static Map<Thread, OpenJPAUtil> provider = new HashMap<Thread, OpenJPAUtil>();
+	private String                      type;
 	
 	/**
 	 * 
 	 */
 	private OpenJPAUtil() {
-		this.entityManager = factory.createEntityManager();
+		this.entityManager = this.factory.createEntityManager();
 	}
+	
+	// /**
+	// * @return
+	// */
+	// private static AndamaChain determineToolchain() {
+	// final Thread thread = Thread.currentThread();
+	// if (thread instanceof AndamaChain) {
+	// return (AndamaChain) thread;
+	// } else if ((thread.getThreadGroup() != null) && (thread.getThreadGroup()
+	// instanceof AndamaGroup)) {
+	// return ((AndamaGroup) thread.getThreadGroup()).getToolchain();
+	// } else {
+	// return null;
+	// }
+	//
+	// }
+	
+	// /**
+	// * @return
+	// * @throws UninitializedDatabaseException
+	// */
+	// public static PersistenceUtil getInstance() throws
+	// UninitializedDatabaseException {
+	// if (factory == null) {
+	// throw new UninitializedDatabaseException();
+	// }
+	//
+	// if (singleUtil != null) {
+	// return singleUtil;
+	// }
+	// final AndamaChain toolchain = determineToolchain();
+	//
+	// if (toolchain != null) {
+	// if (provider.containsKey(toolchain)) {
+	// return provider.get(toolchain);
+	// } else {
+	// final OpenJPAUtil util = new OpenJPAUtil();
+	// provider.put(Thread.currentThread(), util);
+	// return util;
+	// }
+	// } else {
+	// singleUtil = new OpenJPAUtil();
+	// return singleUtil;
+	// }
+	// }
 	
 	/*
 	 * (non-Javadoc)
@@ -306,8 +158,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> Criteria<T> createCriteria(final Class<T> clazz) {
-		final OpenJPACriteriaBuilder builder = factory.getCriteriaBuilder();
-		final OpenJPACriteriaQuery<T> query = factory.getCriteriaBuilder().createQuery(clazz);
+		final OpenJPACriteriaBuilder builder = this.factory.getCriteriaBuilder();
+		final OpenJPACriteriaQuery<T> query = this.factory.getCriteriaBuilder().createQuery(clazz);
 		final Root<T> root = query.from(clazz);
 		final Criteria<T> criteria = new Criteria<T>(root, builder, query);
 		return criteria;
@@ -320,7 +172,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> Query createNativeQuery(final String query,
-			final Class<T> clazz) {
+	                                   final Class<T> clazz) {
 		return this.entityManager.createNativeQuery(query, clazz);
 	}
 	
@@ -332,6 +184,143 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public Query createQuery(final String query) {
 		return this.entityManager.createQuery(query);
+	}
+	
+	/**
+	 * @param properties
+	 */
+	public void createSessionFactory(final Properties properties) {
+		if (this.factory == null) {
+			if (this.type == null) {
+				final String url = (String) properties.get("openjpa.ConnectionURL");
+				if (url != null) {
+					this.type = url.split(":")[1];
+				} else {
+					this.type = "unknown";
+				}
+			}
+			
+			String unit = properties.getProperty("openjpa.persistence-unit");
+			
+			if (unit == null) {
+				final StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+				ArrayUtils.reverse(trace);
+				for (final StackTraceElement element : trace) {
+					Class<?> activeClass;
+					try {
+						activeClass = Class.forName(element.getClassName());
+						if (ClassFinder.extending(activeClass, AndamaChain.class)) {
+							unit = activeClass.getSimpleName().toLowerCase();
+							break;
+						}
+					} catch (final ClassNotFoundException e) {
+					}
+				}
+				
+				if (unit == null) {
+					if (Logger.logError()) {
+						Logger.error("You have to set the 'database-unit' property.");
+						
+					}
+					throw new Shutdown("Persistence unit property not specified and can't be determined automatically.");
+				}
+			}
+			
+			properties.remove("openjpa.persistence-unit");
+			
+			if (Logger.logInfo()) {
+				Logger.info("Requesting persistence-unit: " + unit);
+			}
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Using options: ");
+				for (final Object property : properties.keySet()) {
+					Logger.debug(property + ": " + properties.getProperty((String) property));
+				}
+			}
+			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
+			// FIXME
+			// try {
+			// Collection<Class<?>> annotatedClasses =
+			// ClassFinder.getClassesOfInterface(Core.class.getPackage(),
+			// Annotated.class);
+			//
+			// if (Logger.logInfo()) {
+			// for (Class<?> c : annotatedClasses) {
+			// Logger.info("Registering persistence entity: " +
+			// c.getCanonicalName());
+			// }
+			// }
+			// ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(),
+			// annotatedClasses, null);
+			// } catch (Exception e) {
+			// if (Logger.logError()) {
+			// Logger.error(e.getMessage(), e);
+			// }
+			// throw new RuntimeException(e);
+			// }
+			
+			if (this.factory == null) {
+				throw new Shutdown("Could not initialize persistence-unit: " + unit);
+			}
+		} else {
+			if (Logger.logWarn()) {
+				Logger.warn("Session factory already exists. Skipping creation.");
+			}
+		}
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 */
+	public void createSessionFactory(final String host,
+	                                 final String database,
+	                                 final String user,
+	                                 final String password,
+	                                 final String type,
+	                                 final String driver,
+	                                 final String unit) {
+		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
+		
+		final Properties properties = new Properties();
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+		properties.put("openjpa.ConnectionDriverName", driver);
+		properties.put("openjpa.ConnectionUserName", user);
+		properties.put("openjpa.ConnectionPassword", password);
+		properties.put("openjpa.persistence-unit", unit);
+		this.type = type;
+		
+		createSessionFactory(properties);
+	}
+	
+	/**
+	 * @param string
+	 */
+	public void createTestSessionFactory(final String string) {
+		// Logger.setLogLevel(LogLevel.OFF);
+		final Properties properties = new Properties();
+		final String url = "jdbc:postgresql://" + System.getProperty("database.host", "grid1.st.cs.uni-saarland.de")
+		        + "/" + System.getProperty("database.name", "moskito_junit");
+		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");
+		properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+		properties.put("openjpa.ConnectionUserName", System.getProperty("database.username", "miner"));
+		properties.put("openjpa.ConnectionPassword", System.getProperty("database.password", "miner"));
+		properties.put("openjpa.persistence-unit", string);
+		// properties.put("openjpa.Log", "Runtime=TRACE");
+		
+		if (this.factory != null) {
+			this.factory.close();
+			this.factory = null;
+		}
+		
+		createSessionFactory(properties);
 	}
 	
 	/*
@@ -418,7 +407,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@SuppressWarnings ("deprecation")
 	@Override
 	public String getToolInformation() {
-		final OpenJPAConfiguration configuration = factory.getConfiguration();
+		final OpenJPAConfiguration configuration = this.factory.getConfiguration();
 		final Map<String, Object> properties = configuration.toProperties(false);
 		final StringBuilder builder = new StringBuilder();
 		int max = 0;
@@ -448,30 +437,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public String getType() {
-		return type;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#globalShutdown
-	 * ()
-	 */
-	@Override
-	public synchronized void globalShutdown() {
-		for (final Thread t : provider.keySet()) {
-			provider.get(t).shutdown();
-		}
-		if (singleUtil != null) {
-			singleUtil.shutdown();
-			singleUtil = null;
-		}
-		if (factory != null) {
-			factory.close();
-			factory = null;
-		}
-		
-		provider.clear();
+		return this.type;
 	}
 	
 	/*
@@ -492,7 +458,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria,
-			final int sizeLimit) {
+	                        final int sizeLimit) {
 		final TypedQuery<T> query = this.entityManager.createQuery(criteria.getQuery()).setMaxResults(sizeLimit);
 		return query.getResultList();
 	}
@@ -505,13 +471,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	@Override
 	public <T, I> T loadById(final I id,
-			final Class<T> clazz) {
+	                         final Class<T> clazz) {
 		// determine id column
 		for (final Method m : clazz.getDeclaredMethods()) {
 			// found
 			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) {
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
-						|| wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
+				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					final Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
 					
@@ -525,14 +491,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 					}
 				} else {
 					throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
-							+ ") does not match actual id type (" + m.getReturnType().getCanonicalName()
-							+ ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
+					        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
+					        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
 				}
 			}
 		}
 		
 		throw new UnrecoverableError("Class " + clazz.getCanonicalName()
-				+ " does not have an Id column defined for a getter.");
+		        + " does not have an Id column defined for a getter.");
 	}
 	
 	/*

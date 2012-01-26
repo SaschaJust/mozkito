@@ -19,6 +19,7 @@
 package de.unisaarland.cs.st.moskito.persistence;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.Query;
 
@@ -41,6 +42,18 @@ public interface PersistenceUtil {
 	
 	public Query createQuery(final String query);
 	
+	public void createSessionFactory(final Properties properties);
+	
+	public void createSessionFactory(final String host,
+	                                 final String database,
+	                                 final String user,
+	                                 final String password,
+	                                 final String type,
+	                                 final String driver,
+	                                 final String unit);
+	
+	public void createTestSessionFactory(final String string);
+	
 	public void delete(final Annotated object);
 	
 	public void executeNativeQuery(final String query);
@@ -57,8 +70,6 @@ public interface PersistenceUtil {
 	public String getToolInformation();
 	
 	public String getType();
-	
-	public void globalShutdown();
 	
 	public <T> List<T> load(final Criteria<T> criteria);
 	

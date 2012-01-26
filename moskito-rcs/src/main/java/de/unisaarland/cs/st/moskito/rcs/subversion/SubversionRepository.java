@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -66,6 +67,7 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.ProtocolType;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -74,7 +76,6 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
 import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -119,17 +120,17 @@ public class SubversionRepository extends Repository {
 		try {
 			
 			relativePath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
-			SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
-			                                          SVNWCUtil.createDefaultOptions(true));
+			final SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
+			                                                SVNWCUtil.createDefaultOptions(true));
 			
-			SVNRevision svnRevision = buildRevision(revision);
+			final SVNRevision svnRevision = buildRevision(revision);
 			
 			// check out the svnurl recursively into the createDir visible from
 			// revision 0 to given revision string
-			SubversionAnnotationHandler annotateHandler = new SubversionAnnotationHandler();
+			final SubversionAnnotationHandler annotateHandler = new SubversionAnnotationHandler();
 			logClient.doAnnotate(relativePath, svnRevision, buildRevision("0"), svnRevision, annotateHandler);
 			return annotateHandler.getResults();
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -153,9 +154,9 @@ public class SubversionRepository extends Repository {
 		SVNRevision svnRevision;
 		
 		try {
-			Long revisionNumber = Long.parseLong(revision);
+			final Long revisionNumber = Long.parseLong(revision);
 			svnRevision = SVNRevision.create(Long.valueOf(revisionNumber));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			svnRevision = SVNRevision.parse(revision.toUpperCase());
 		}
 		
@@ -170,7 +171,7 @@ public class SubversionRepository extends Repository {
 					svnRevision = SVNRevision.create(this.repository.getLatestRevision());
 				}
 			}
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -198,8 +199,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang.
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang.
 	 * String, java.lang.String)
 	 */
 	@Override
@@ -218,17 +218,17 @@ public class SubversionRepository extends Repository {
 		try {
 			
 			checkoutPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
-			SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
-			                                                   SVNWCUtil.createDefaultOptions(true));
+			final SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
+			                                                         SVNWCUtil.createDefaultOptions(true));
 			
-			SVNRevision svnRevision = buildRevision(revision);
+			final SVNRevision svnRevision = buildRevision(revision);
 			// check out the svnurl recursively into the createDir visible from
 			// revision 0 to given revision string
 			updateClient.doCheckout(checkoutPath, this.workingDirectory, svnRevision, svnRevision, SVNDepth.INFINITY,
 			                        false);
 			
 			return this.workingDirectory;
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -249,21 +249,21 @@ public class SubversionRepository extends Repository {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		try {
-			SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
-			SVNRevision fromRevision = buildRevision(baseRevision);
-			SVNRevision toRevision = buildRevision(revisedRevision);
-			SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
-			                                             SVNWCUtil.createDefaultOptions(true));
+			final SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
+			final SVNRevision fromRevision = buildRevision(baseRevision);
+			final SVNRevision toRevision = buildRevision(revisedRevision);
+			final SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
+			                                                   SVNWCUtil.createDefaultOptions(true));
 			diffClient.getDiffGenerator().setDiffDeleted(true);
-			SubversionDiffParser diffParser = new SubversionDiffParser();
+			final SubversionDiffParser diffParser = new SubversionDiffParser();
 			diffClient.setDiffGenerator(diffParser);
 			
 			diffClient.doDiff(repoPath, toRevision, fromRevision, toRevision, SVNDepth.FILES, false,
 			                  new NullOutputStream());
 			
 			// delete tmp diff files
-			File pwd = new File(System.getProperty("user.dir"));
-			for (File file : FileUtils.listFiles(pwd, null, false)) {
+			final File pwd = new File(System.getProperty("user.dir"));
+			for (final File file : FileUtils.listFiles(pwd, null, false)) {
 				if (file.getName().startsWith(".diff.")) {
 					file.delete();
 				}
@@ -271,29 +271,29 @@ public class SubversionRepository extends Repository {
 			
 			return diffParser.getDeltas();
 			
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			// try to checkout file in first revision
-			String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
-			String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-			File parentDir = checkoutPath(parentPath, baseRevision);
+			final String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
+			final String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+			final File parentDir = checkoutPath(parentPath, baseRevision);
 			if ((parentDir == null) || (!parentDir.exists())) {
 				// checkout failed too. Return null
 				return null;
 			}
-			File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
+			final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
 			if (!checkedOutFile.exists()) {
 				return null;
 			}
-			List<String> lines = FileUtils.fileToLines(checkedOutFile);
-			Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
+			final List<String> lines = FileUtils.fileToLines(checkedOutFile);
+			final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
 			return patch.getDeltas();
 		}
 	}
 	
 	@Override
 	public String gatherToolInformation() {
-		StringBuilder builder = new StringBuilder();
-		CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
+		final StringBuilder builder = new StringBuilder();
+		final CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
 		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().getPath());
 		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
@@ -310,16 +310,16 @@ public class SubversionRepository extends Repository {
 	public Map<String, ChangeType> getChangedPaths(@NotNull @NotEmpty final String revision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		Long revisionNumber = buildRevision(revision).getNumber();
-		Map<String, ChangeType> map = new HashMap<String, ChangeType>();
+		final Long revisionNumber = buildRevision(revision).getNumber();
+		final Map<String, ChangeType> map = new HashMap<String, ChangeType>();
 		Collection<SVNLogEntry> logs;
 		
 		try {
 			logs = this.repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
 			
-			for (SVNLogEntry entry : logs) {
-				Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
-				for (Object o : changedPaths.keySet()) {
+			for (final SVNLogEntry entry : logs) {
+				final Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
+				for (final Object o : changedPaths.keySet()) {
 					switch (changedPaths.get(o).getType()) {
 						case 'M':
 							map.put(changedPaths.get(o).getPath(), ChangeType.Modified);
@@ -336,13 +336,13 @@ public class SubversionRepository extends Repository {
 						default:
 							if (Logger.logError()) {
 								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
-								        + RepositorySettings.reportThis);
+								        + AndamaSettings.reportThis);
 							}
 					}
 				}
 			}
 			return map;
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -370,8 +370,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java.
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java.
 	 * lang.String, java.lang.String)
 	 */
 	@Override
@@ -380,18 +379,18 @@ public class SubversionRepository extends Repository {
 	                                @NotEmpty final String pathName) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		Long revisionNumber = buildRevision(revision).getNumber();
+		final Long revisionNumber = buildRevision(revision).getNumber();
 		
 		try {
 			@SuppressWarnings ("unchecked")
-			Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null, revisionNumber,
-			                                                   revisionNumber, true, true);
+			final Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null, revisionNumber,
+			                                                         revisionNumber, true, true);
 			
-			for (SVNLogEntry entry : logs) {
+			for (final SVNLogEntry entry : logs) {
 				@SuppressWarnings ("unchecked")
-				Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
-				for (Object o : changedPaths.keySet()) {
-					SVNLogEntryPath logEntryPath = changedPaths.get(o);
+				final Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
+				for (final Object o : changedPaths.keySet()) {
+					final SVNLogEntryPath logEntryPath = changedPaths.get(o);
 					switch (logEntryPath.getType()) {
 						case 'R':
 						case 'A':
@@ -402,7 +401,7 @@ public class SubversionRepository extends Repository {
 								return logEntryPath.getCopyPath();
 							} else if (logEntryPath.getKind().equals(SVNNodeKind.DIR)
 							        && pathName.startsWith(logEntryPath.getPath().substring(1))) {
-								String copyPath = logEntryPath.getCopyPath().substring(1) + "/";
+								final String copyPath = logEntryPath.getCopyPath().substring(1) + "/";
 								return copyPath
 								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
 							}
@@ -411,7 +410,7 @@ public class SubversionRepository extends Repository {
 				}
 			}
 			
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -437,7 +436,7 @@ public class SubversionRepository extends Repository {
 			                                                                          ? this.endRevision.toString()
 			                                                                          : this.repository.getLatestRevision()
 			                                                                                  + "");
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -448,8 +447,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId
 	 * (java.lang.String, long)
 	 */
 	@Override
@@ -467,7 +465,7 @@ public class SubversionRepository extends Repository {
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
 		if (Logger.logError()) {
-			Logger.error("Support hasn't been implemented yet. " + RepositorySettings.reportThis);
+			Logger.error("Support hasn't been implemented yet. " + AndamaSettings.reportThis);
 		}
 		throw new RuntimeException();
 	}
@@ -480,7 +478,7 @@ public class SubversionRepository extends Repository {
 	public long getTransactionCount() {
 		try {
 			return this.repository.getLatestRevision();
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -515,27 +513,28 @@ public class SubversionRepository extends Repository {
 	                          @NotEmpty final String toRevision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		SVNRevision fromSVNRevision = buildRevision(fromRevision);
-		SVNRevision toSVNRevision = buildRevision(toRevision);
+		final SVNRevision fromSVNRevision = buildRevision(fromRevision);
+		final SVNRevision toSVNRevision = buildRevision(toRevision);
 		
-		List<LogEntry> list = new LinkedList<LogEntry>();
+		final List<LogEntry> list = new LinkedList<LogEntry>();
 		
 		Collection<SVNLogEntry> logs;
 		try {
 			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(),
 			                           toSVNRevision.getNumber(), true, true);
 			LogEntry buff = null;
-			for (SVNLogEntry entry : logs) {
-				LogEntry current = new LogEntry(entry.getRevision() + "", buff,
-				                                (entry.getAuthor() != null
-				                                                          ? new Person(entry.getAuthor(), null, null)
-				                                                          : null), entry.getMessage(),
-				                                new DateTime(entry.getDate()), "");
+			for (final SVNLogEntry entry : logs) {
+				final LogEntry current = new LogEntry(entry.getRevision() + "", buff,
+				                                      (entry.getAuthor() != null
+				                                                                ? new Person(entry.getAuthor(), null,
+				                                                                             null)
+				                                                                : null), entry.getMessage(),
+				                                      new DateTime(entry.getDate()), "");
 				list.add(current);
 				buff = current;
 			}
 			return list;
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -556,7 +555,7 @@ public class SubversionRepository extends Repository {
 			this.endRevision = (endRevision != null
 			                                       ? SVNRevision.parse(endRevision)
 			                                       : SVNRevision.create(this.repository.getLatestRevision()));
-		} catch (SVNException e) {
+		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -578,11 +577,12 @@ public class SubversionRepository extends Repository {
 	@Override
 	public void setup(final URI address,
 	                  final String startRevision,
-	                  final String endRevision) throws MalformedURLException,
-	                                           InvalidProtocolType,
-	                                           InvalidRepositoryURI,
-	                                           UnsupportedProtocolType {
-		setup(address, startRevision, endRevision, null, null);
+	                  final String endRevision,
+	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
+	                                                        InvalidProtocolType,
+	                                                        InvalidRepositoryURI,
+	                                                        UnsupportedProtocolType {
+		setup(address, startRevision, endRevision, null, null, persistenceUtil);
 	}
 	
 	/*
@@ -595,15 +595,16 @@ public class SubversionRepository extends Repository {
 	                  final String startRevision,
 	                  final String endRevision,
 	                  final String username,
-	                  final String password) throws MalformedURLException,
-	                                        InvalidProtocolType,
-	                                        InvalidRepositoryURI,
-	                                        UnsupportedProtocolType {
+	                  final String password,
+	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
+	                                                        InvalidProtocolType,
+	                                                        InvalidRepositoryURI,
+	                                                        UnsupportedProtocolType {
 		setUri(address);
 		this.username = username;
 		this.password = password;
 		
-		if (RepositorySettings.debug) {
+		if (AndamaSettings.debug) {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
 		
@@ -658,8 +659,8 @@ public class SubversionRepository extends Repository {
 				}
 				
 				if (this.username != null) {
-					ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
-					                                                                                     this.password);
+					final ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
+					                                                                                           this.password);
 					this.repository.setAuthenticationManager(authManager);
 				}
 				
@@ -694,7 +695,7 @@ public class SubversionRepository extends Repository {
 					Logger.info("Setup repository: " + this);
 				}
 				
-			} catch (SVNException e) {
+			} catch (final SVNException e) {
 				throw new InvalidRepositoryURI(e.getMessage());
 			}
 			
