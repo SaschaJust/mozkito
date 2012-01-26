@@ -20,7 +20,7 @@ package rcs;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import de.unisaarland.cs.st.moskito.Graph;
-import de.unisaarland.cs.st.moskito.RCS;
+import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -38,7 +38,7 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			RCS rCS = new RCS();
+			RepositoryToolchain rCS = new RepositoryToolchain();
 			rCS.setName(rCS.getClass().getSimpleName());
 			rCS.start();
 			rCS.join();

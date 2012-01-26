@@ -63,6 +63,8 @@ public final class MoskitoTestBuilder {
 	                                   final List<Method> shutdownMethods) throws CannotCompileException,
 	                                                                      NotFoundException {
 		final ClassPool pool = ClassPool.getDefault();
+		pool.appendSystemPath();
+		
 		final String fqName = testRun.getDescription().getTestClass().getCanonicalName() + "_test."
 		        + testRun.getMethod().getName();
 		final CtClass cc = pool.makeClass(fqName);

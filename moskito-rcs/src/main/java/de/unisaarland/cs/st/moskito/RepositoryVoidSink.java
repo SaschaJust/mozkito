@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * This class is a end point for the {@link RCS} tool chain in case no database
+ * This class is a end point for the {@link RepositoryToolchain} tool chain in case no database
  * connection is used. The data received from the previous node is void sinked.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

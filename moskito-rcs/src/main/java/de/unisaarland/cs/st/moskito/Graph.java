@@ -48,7 +48,7 @@ public class Graph extends AndamaChain {
 	 */
 	public Graph() {
 		super(new RepositorySettings());
-		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
+		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");

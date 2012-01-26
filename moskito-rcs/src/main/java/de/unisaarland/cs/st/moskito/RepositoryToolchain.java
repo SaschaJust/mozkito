@@ -31,12 +31,12 @@ import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * {@link RCS} is the standard {@link RepoSuiteToolchain} to mine a repository.
+ * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RCS extends AndamaChain {
+public class RepositoryToolchain extends AndamaChain {
 	
 	private final AndamaPool          threadPool;
 	private final RepositoryArguments repoSettings;
@@ -46,9 +46,9 @@ public class RCS extends AndamaChain {
 	private PersistenceUtil           persistenceUtil;
 	private Repository                repository;
 	
-	public RCS() {
+	public RepositoryToolchain() {
 		super(new RepositorySettings());
-		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
+		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");

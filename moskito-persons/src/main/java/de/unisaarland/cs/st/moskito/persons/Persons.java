@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.model.AndamaPool;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.RCS;
+import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
 import de.unisaarland.cs.st.moskito.persons.settings.PersonsArguments;
@@ -47,7 +47,7 @@ public class Persons extends AndamaChain {
 	 */
 	public Persons() {
 		super(new PersonsSettings());
-		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
+		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
 		
 		final AndamaSettings settings = getSettings();
 		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, "persistence");
