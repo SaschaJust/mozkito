@@ -41,8 +41,7 @@ public class BranchFactory {
 				// We could get a valid persistence util.
 				// The existed no previous persistence util: try to load persisted
 				// MASTER_BRANCH
-				Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name",
-						RCSBranch.MASTER_BRANCH_NAME);
+				Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name", name);
 				List<RCSBranch> loadedBranches = persistenceUtil.load(criteria);
 				if (loadedBranches.isEmpty()) {
 					// We could not load a persisted MASTER_BRANCH. So, create a
