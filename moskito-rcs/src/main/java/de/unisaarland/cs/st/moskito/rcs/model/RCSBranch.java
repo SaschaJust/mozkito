@@ -80,19 +80,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
-	 * Instantiates a new rCS branch.
-	 * 
-	 * @param name
-	 *            might be null
-	 * @param parent
-	 *            might be null
-	 */
-	public RCSBranch(final String name, final RCSBranch parent) {
-		this.setName(name);
-		this.setParent(parent);
-	}
-	
-	/**
 	 * @param mergedIn
 	 */
 	@Transient
@@ -187,20 +174,20 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 			return false;
 		}
 		RCSBranch other = (RCSBranch) obj;
-		if (this.getBegin() == null) {
-			if (other.getBegin() != null) {
-				return false;
-			}
-		} else if (!this.getBegin().equals(other.getBegin())) {
-			return false;
-		}
-		if (this.getEnd() == null) {
-			if (other.getEnd() != null) {
-				return false;
-			}
-		} else if (!this.getEnd().equals(other.getEnd())) {
-			return false;
-		}
+		//		if (this.getBegin() == null) {
+		//			if (other.getBegin() != null) {
+		//				return false;
+		//			}
+		//		} else if (!this.getBegin().equals(other.getBegin())) {
+		//			return false;
+		//		}
+		//		if (this.getEnd() == null) {
+		//			if (other.getEnd() != null) {
+		//				return false;
+		//			}
+		//		} else if (!this.getEnd().equals(other.getEnd())) {
+		//			return false;
+		//		}
 		if (this.getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -208,13 +195,13 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		} else if (!this.getName().equals(other.getName())) {
 			return false;
 		}
-		if (this.getParent() == null) {
-			if (other.getParent() != null) {
-				return false;
-			}
-		} else if (!this.getParent().equals(other.getParent())) {
-			return false;
-		}
+		//		if (this.getParent() == null) {
+		//			if (other.getParent() != null) {
+		//				return false;
+		//			}
+		//		} else if (!this.getParent().equals(other.getParent())) {
+		//			return false;
+		//		}
 		return true;
 	}
 	
@@ -295,10 +282,10 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
-		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
+		//		result = (prime * result) + ((this.getBegin() == null) ? 0 : this.getBegin().hashCode());
+		//		result = (prime * result) + ((this.getEnd() == null) ? 0 : this.getEnd().hashCode());
 		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
-		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
+		//		result = (prime * result) + ((this.getParent() == null) ? 0 : this.getParent().hashCode());
 		return result;
 	}
 	
