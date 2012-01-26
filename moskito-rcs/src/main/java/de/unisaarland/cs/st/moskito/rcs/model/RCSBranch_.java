@@ -4,17 +4,18 @@
 
 package de.unisaarland.cs.st.moskito.rcs.model;
 
+import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.rcs.model.RCSBranch.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Sep 02 15:43:33 CEST 2011")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Thu Jan 26 14:35:53 CET 2012")
 public class RCSBranch_ {
     public static volatile SingularAttribute<RCSBranch,RCSTransaction> begin;
     public static volatile SingularAttribute<RCSBranch,RCSTransaction> end;
     public static volatile SingularAttribute<RCSBranch,Long> generatedId;
-    public static volatile SingularAttribute<RCSBranch,String> mergedIn;
+    public static volatile SetAttribute<RCSBranch,String> mergedIn;
     public static volatile SingularAttribute<RCSBranch,String> name;
     public static volatile SingularAttribute<RCSBranch,de.unisaarland.cs.st.moskito.rcs.model.RCSBranch> parent;
 }
