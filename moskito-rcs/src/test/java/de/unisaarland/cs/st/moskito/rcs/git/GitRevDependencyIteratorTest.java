@@ -46,7 +46,6 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		System.err.println("KABUMM!");
 		try {
 			URL zipURL = GitRevDependencyIteratorTest.class.getResource(FileUtils.fileSeparator
 					+ "testGit.zip");
