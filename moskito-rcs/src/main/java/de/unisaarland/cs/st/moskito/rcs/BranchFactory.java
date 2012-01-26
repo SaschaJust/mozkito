@@ -14,19 +14,17 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 public class BranchFactory {
 	
 	private static Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
-	private static PersistenceUtil        persistenceUtil;
 	
 	public synchronized static RCSBranch getBranch(String name) {
 		
 		if (!branchCache.containsKey(name)) {
 			
-			if (persistenceUtil == null) {
-				try {
-					persistenceUtil = PersistenceManager.getUtil();
-				} catch (UninitializedDatabaseException e) {
-					if (Logger.logWarn()) {
-						Logger.warn("BranchFactory could not connect to database. Creating new branches if required.");
-					}
+			PersistenceUtil persistenceUtil = null;
+			try {
+				persistenceUtil = PersistenceManager.getUtil();
+			} catch (UninitializedDatabaseException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("BranchFactory could not connect to database. Creating new branches if required.");
 				}
 			}
 			
@@ -51,7 +49,7 @@ public class BranchFactory {
 					// new one and return.
 					if (Logger.logDebug()) {
 						Logger.debug("Attempt to lead persisted RCSBranch with name " + name
-						        + " from existing database connection failed. " + "No persisted master branch found. "
+								+ " from existing database connection failed. " + "No persisted master branch found. "
 								+ "Returning new RCSBranch.MASTER_BRANCH.");
 					}
 					RCSBranch newBranch = new RCSBranch(name);
