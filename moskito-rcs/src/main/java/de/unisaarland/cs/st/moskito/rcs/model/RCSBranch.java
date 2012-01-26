@@ -25,20 +25,15 @@ import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import org.apache.openjpa.persistence.jdbc.Index;
-import org.apache.openjpa.persistence.jdbc.Unique;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -48,12 +43,11 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table(name = "rcsbranch", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME" }))
+@Table(name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	private static final long serialVersionUID   = 5419737140470855522L;
 	
-	private long              generatedId;
 	private String            name;
 	private RCSBranch         parent             = null;
 	private RCSTransaction    begin              = null;
@@ -226,19 +220,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
-	 * Gets the generated id.
-	 * 
-	 * @return the generatedId
-	 */
-	@Id
-	@Index(name = "idx_branchid")
-	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected long getGeneratedId() {
-		return this.generatedId;
-	}
-	
-	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
@@ -261,9 +242,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the name
 	 */
+	@Id
 	@Basic
 	@Index(name = "idx_name")
-	@Unique
 	public String getName() {
 		return this.name;
 	}
@@ -328,16 +309,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	public void setEnd(final RCSTransaction end) {
 		this.end = end;
-	}
-	
-	/**
-	 * Sets the generated id.
-	 * 
-	 * @param generatedId
-	 *            the generatedId to set
-	 */
-	protected void setGeneratedId(final long generatedId) {
-		this.generatedId = generatedId;
 	}
 	
 	/**
