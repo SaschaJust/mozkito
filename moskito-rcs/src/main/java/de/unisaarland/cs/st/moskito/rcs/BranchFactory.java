@@ -16,7 +16,6 @@ public class BranchFactory {
 	
 	public synchronized static RCSBranch getBranch(@NotNull final String name,
 	                                               final PersistenceUtil persistenceUtil) {
-		
 		if (!branchCache.containsKey(name)) {
 			
 			if (persistenceUtil == null) {

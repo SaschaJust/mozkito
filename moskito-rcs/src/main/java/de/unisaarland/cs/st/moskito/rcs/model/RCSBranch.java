@@ -41,7 +41,6 @@ import org.apache.openjpa.persistence.jdbc.Index;
 import org.apache.openjpa.persistence.jdbc.Unique;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 /**
  * The Class RCSBranch.
@@ -313,7 +312,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	@Transient
 	public boolean isMasterBranch() {
-		return this.equals(BranchFactory.getMasterBranch());
+		return getName().equals(MASTER_BRANCH_NAME);
 	}
 	
 	/**
