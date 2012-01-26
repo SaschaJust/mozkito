@@ -84,7 +84,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public void addMergedIn(final String mergedIn) {
-		this.mergedIn.add(mergedIn);
+		this.getMergedIn().add(mergedIn);
 	}
 	
 	/*

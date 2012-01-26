@@ -70,7 +70,7 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		final List<RCSBranch> list = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSBranch.class));
 		
 		assertFalse(list.isEmpty());
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		for (final RCSBranch b : list) {
 			assertEquals(branch, b);
 			assertEquals("0123456789abcde", b.getMergedIn());
@@ -158,12 +158,12 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		assertTrue(personList.contains(person));
 		
 		final List<RCSRevision> revisionList = getPersistenceUtil().load(
-		        getPersistenceUtil().createCriteria(RCSRevision.class));
+				getPersistenceUtil().createCriteria(RCSRevision.class));
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
 		
 		final List<RCSTransaction> transactionList = getPersistenceUtil().load(
-		        getPersistenceUtil().createCriteria(RCSTransaction.class));
+				getPersistenceUtil().createCriteria(RCSTransaction.class));
 		assertFalse(transactionList.isEmpty());
 		assertTrue(transactionList.contains(rcsTransaction));
 	}
