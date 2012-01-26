@@ -3,8 +3,6 @@
  */
 package de.unisaarland.cs.st.moskito.testing;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,16 +40,16 @@ public class MoskitoDerivationTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011")
-	public void testFail() {
-		fail();
-	}
-	
-	@Test
 	@Ignore
 	@DatabaseSettings (unit = "ppa", util = OpenJPAUtil.class)
 	public void testIgnore() {
 		
+	}
+	
+	@Test
+	@DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011")
+	public void testNoFail() {
+		// fail();
 	}
 	
 	@Test
