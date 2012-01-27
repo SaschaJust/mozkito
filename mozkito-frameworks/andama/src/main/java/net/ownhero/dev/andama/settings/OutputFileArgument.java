@@ -28,7 +28,6 @@ import net.ownhero.dev.kisa.Logger;
 public class OutputFileArgument extends AndamaArgument<File> {
 	
 	private boolean overwrite   = false;
-	private boolean selfWritten = false;
 	
 	/**
 	 * Constructor for FileArgument. Besides the obvious and general
@@ -74,22 +73,24 @@ public class OutputFileArgument extends AndamaArgument<File> {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 						+ "` is a directory. Expected file. Abort.");
 			}
-			return false;
+			setCachedValue(null);
 		}
-		if (file.exists() && (!this.overwrite) && (!this.selfWritten)) {
+		if (file.exists() && (!this.overwrite)) {
 			if (this.isRequired()) {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 							+ "` exists already. Please remove file or choose different argument value.");
 				}
+				setCachedValue(null);
 				return false;
 			} else {
 				if (Logger.logWarn()) {
 					Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
 							+ "` exists already and cannot be overwritten. Ignoring argument!.");
 				}
-				return false;
+				setCachedValue(null);
+				return true;
 			}
 			
 		} else if (file.exists() && (this.overwrite)) {
@@ -104,48 +105,44 @@ public class OutputFileArgument extends AndamaArgument<File> {
 				if (Logger.logError()) {
 					Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
 				}
-				return false;
+				setCachedValue(null);
+				return true;
 			}
 			try {
 				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					return false;
+					setCachedValue(null);
+					return true;
 				}
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					Logger.error(e.getMessage());
 				}
-				
+				setCachedValue(null);
+				return true;
 			}
-		} else if (!this.selfWritten) {
+		} else {
 			// file does not exist so far
 			try {
 				if (!file.createNewFile()) {
 					if (Logger.logError()) {
 						Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					}
-					if (this.isRequired()) {
-						return false;
-					} else {
-						setCachedValue(null);
-					}
+					setCachedValue(null);
+					return true;
 				}
 			} catch (IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
 					Logger.error(e.getMessage());
 				}
-				if (this.isRequired()) {
-					return false;
-				} else {
-					setCachedValue(null);
-				}
+				setCachedValue(null);
+				return true;
 			}
 		}
-		this.selfWritten = true;
 		this.setCachedValue(file);
 		return true;
 	}
