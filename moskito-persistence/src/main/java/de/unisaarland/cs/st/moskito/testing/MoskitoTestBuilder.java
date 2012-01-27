@@ -77,8 +77,13 @@ public final class MoskitoTestBuilder {
 		    .append("\");").append(AndamaUtils.lineSeparator);
 		body.append("m = c.getMethod(\"").append(testRun.getDescription().getMethodName()).append("\", new Class[0]);")
 		    .append(AndamaUtils.lineSeparator);
+		body.append("try {").append(AndamaUtils.lineSeparator);
 		body.append(de.unisaarland.cs.st.moskito.testing.MoskitoTest.class.getCanonicalName())
 		    .append(".setUpBeforeClass(m.getAnnotations());").append(AndamaUtils.lineSeparator);
+		body.append("} catch (Throwable t) {").append(AndamaUtils.lineSeparator);
+		body.append("t.printStackTrace();").append(AndamaUtils.lineSeparator);
+		body.append("throw t;").append(AndamaUtils.lineSeparator);
+		body.append("}").append(AndamaUtils.lineSeparator);
 		for (final Method bootMethod : bootMethods) {
 			body.append(testRun.getDescription().getTestClass().getCanonicalName() + "." + bootMethod.getName() + "();")
 			    .append(AndamaUtils.lineSeparator);
@@ -93,8 +98,13 @@ public final class MoskitoTestBuilder {
 		
 		body.append("m.invoke(o, new Object[0]);").append(AndamaUtils.lineSeparator);
 		body.append("} catch (Throwable t) {").append(AndamaUtils.lineSeparator);
+		body.append("if (t.getCause() != null) {").append(AndamaUtils.lineSeparator);
 		body.append("t.getCause().printStackTrace();").append(AndamaUtils.lineSeparator);
 		body.append("throw t.getCause();").append(AndamaUtils.lineSeparator);
+		body.append("} else { ").append(AndamaUtils.lineSeparator);
+		body.append("t.printStackTrace();").append(AndamaUtils.lineSeparator);
+		body.append("throw t;").append(AndamaUtils.lineSeparator);
+		body.append("}").append(AndamaUtils.lineSeparator);
 		body.append("} finally {").append(AndamaUtils.lineSeparator);
 		body.append("if (o != null) {").append(AndamaUtils.lineSeparator);
 		for (final Method tearDownMethod : tearDownMethods) {
