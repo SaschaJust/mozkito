@@ -49,7 +49,6 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
-
 /**
  * The Class ChangeGenealogyUtils.
  * 
@@ -74,7 +73,7 @@ public class ChangeGenealogyUtils {
 	/** The genealogies. */
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
-	private static void exportToDOT(CoreChangeGenealogy genealogy, File dotFile) throws IOException {
+	private static void exportToDOT(final CoreChangeGenealogy genealogy, final File dotFile) throws IOException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(dotFile));
 		
 		out.write("digraph g {");
@@ -131,10 +130,8 @@ public class ChangeGenealogyUtils {
 		return sb.toString();
 	}
 	
-	
-	
-	public static GenealogyTestEnvironment getGenealogyTestEnvironment(File tmpGraphDBFile,
-			PersistenceUtil persistenceUtil) {
+	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
+			final PersistenceUtil persistenceUtil) {
 		
 		// UNZIP git repo
 		URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
@@ -200,8 +197,8 @@ public class ChangeGenealogyUtils {
 		}
 		
 		//unzip the database dump
-		zipURL = ChangeGenealogyUtils.class
-				.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql.zip");
+		zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+				+ "moskito_genealogies_test_environment.psql.zip");
 		if (zipURL == null) {
 			return null;
 		}
@@ -217,7 +214,8 @@ public class ChangeGenealogyUtils {
 		FileUtils.unzip(zipFile, baseDir);
 		
 		//load the database dump into the test database
-		url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "reposuite_genealogies_test.psql");
+		url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+		        + "moskito_genealogies_test_environment.psql");
 		try {
 			urlFile = new File(url.toURI());
 		} catch (URISyntaxException e1) {
@@ -241,7 +239,6 @@ public class ChangeGenealogyUtils {
 		Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 		
 		persistenceUtil.beginTransaction();
-		
 		
 		//read all transactions and JavaChangeOperations
 		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
@@ -439,7 +436,7 @@ public class ChangeGenealogyUtils {
 	 *         within specified directory.
 	 */
 	@NoneNull
-	public static CoreChangeGenealogy readFromDB(final File dbFile, PersistenceUtil persistenceUtil) {
+	public static CoreChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
 		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		registerShutdownHook(graph);
 		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
@@ -452,6 +449,7 @@ public class ChangeGenealogyUtils {
 		// shuts down nicely when the VM exits (even if you "Ctrl-C" the
 		// running example before it's completed)
 		Runtime.getRuntime().addShutdownHook(new Thread() {
+			
 			@Override
 			public void run() {
 				graphDb.shutdown();

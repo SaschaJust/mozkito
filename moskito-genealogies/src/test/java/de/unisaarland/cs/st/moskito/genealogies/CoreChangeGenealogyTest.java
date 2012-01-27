@@ -21,6 +21,7 @@ import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
@@ -29,11 +30,11 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class CoreChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "ppa")
+	@DatabaseSettings(unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.DROPIFEXISTS)
 	public void testChangeGenealogy() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		        getPersistenceUtil());
+				getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
