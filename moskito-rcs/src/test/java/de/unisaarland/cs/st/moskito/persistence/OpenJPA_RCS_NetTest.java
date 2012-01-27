@@ -84,7 +84,7 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 		
 		assertTrue(transaction.getRevisions().contains(revision));
-		transaction.setBranch(new RCSBranch("master"));
+		transaction.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(transaction);
 		getPersistenceUtil().commitTransaction();

@@ -276,7 +276,7 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		//check braches and branch hierarchy
 		assertFalse(branch_e52.hasParent());
 		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_e52);
-		assertEquals(null, branch_e52.getMergedIn());
+		assertTrue(branch_e52.getMergedIn().isEmpty());
 		assertTrue(branch_e52.isOpen());
 		
 		assertFalse(branch_19b.hasParent());
@@ -299,14 +299,15 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		assertTrue(branch_98d.hasParent());
 		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30Branch", branch_98d.getName());
 		assertEquals(branch_ae9, branch_98d.getParent());
-		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0", branch_98d.getMergedIn());
-		assertFalse(branch_98d.isOpen());
+		
+		assertEquals(1, branch_98d.getMergedIn().size());
+		assertTrue(branch_98d.getMergedIn().contains("ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
 		
 		assertTrue(branch_ae9.hasParent());
 		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0Branch", branch_ae9.getName());
 		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_ae9.getParent());
-		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", branch_ae9.getMergedIn());
-		assertFalse(branch_ae9.isOpen());
+		assertEquals(1, branch_ae9.getMergedIn().size());
+		assertTrue(branch_ae9.getMergedIn().contains("8273c1e51992a4d7a1da012dbb416864c2749a7f"));
 		
 		assertFalse(branch_827.hasParent());
 		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_827);
@@ -316,8 +317,7 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		
 		assertFalse(branch_1ac.hasParent());
 		assertEquals("origin/maintenance", branch_1ac.getName());
-		assertEquals(null, branch_e52.getMergedIn());
-		assertTrue(branch_e52.isOpen());
+		assertTrue(branch_e52.getMergedIn().isEmpty());
 		
 		assertFalse(branch_41a.hasParent());
 		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_41a);
