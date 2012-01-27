@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class CoreChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.DROPIFEXISTS)
+	@DatabaseSettings(unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.VALIDATE)
 	public void testChangeGenealogy() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
