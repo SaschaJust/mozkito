@@ -64,7 +64,9 @@ public abstract class MoskitoTest {
 	 * @throws java.lang.Exception
 	 */
 	public static void tearDownAfterClass(final Annotation[] annotations) throws Exception {
-		getPersistenceUtil().shutdown();
+		if (getPersistenceUtil() != null) {
+			getPersistenceUtil().shutdown();
+		}
 	}
 	
 }
