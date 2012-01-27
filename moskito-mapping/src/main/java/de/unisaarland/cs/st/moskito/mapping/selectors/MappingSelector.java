@@ -20,6 +20,7 @@ import java.util.List;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * Selectors analyze a {@link MappableEntity} and find possible candidates that
@@ -48,7 +49,8 @@ public abstract class MappingSelector extends Node {
 	 *         entity
 	 */
 	public abstract <T extends MappableEntity> List<T> parse(MappableEntity entity,
-	                                                         Class<T> targetType);
+	                                                         Class<T> targetType,
+	                                                         PersistenceUtil util);
 	
 	/**
 	 * @param from

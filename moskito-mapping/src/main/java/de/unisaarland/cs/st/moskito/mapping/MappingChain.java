@@ -102,9 +102,9 @@ public class MappingChain extends AndamaChain {
 			
 			finder.loadData(persistenceUtil);
 			new ReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
+			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 			new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder);
+			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 			new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
 			// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
 			// getSettings(), finder);

@@ -18,7 +18,6 @@ package de.unisaarland.cs.st.moskito.mapping.selectors;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.kisa.Logger;
@@ -29,12 +28,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -81,48 +78,41 @@ public class TransactionRegexSelector extends MappingSelector {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
-	                                                final Class<T> targetType) {
+	                                                final Class<T> targetType,
+	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
-		try {
-			final List<Long> ids = new LinkedList<Long>();
-			final Regex regex = new Regex(this.pattern);
-			PersistenceUtil util;
-			
-			util = PersistenceManager.getUtil();
-			
-			final Criteria<Report> criteria = util.createCriteria(Report.class);
-			
-			final List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
-			if (Logger.logDebug()) {
-				Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
-				        + (findAll != null
-				                          ? findAll.size()
-				                          : 0) + " matches for regex '" + this.pattern + "'.");
-			}
-			
-			if (findAll != null) {
-				for (final List<RegexGroup> match : findAll) {
-					if (Logger.logDebug()) {
-						Logger.debug("While parsing transaction " + element.get(FieldKey.ID).toString()
-						        + " i stumbled upon this match: " + match.get(0).getMatch());
-					}
-					ids.add(Long.parseLong(match.get(0).getMatch()));
-				}
-			}
-			criteria.in("id", ids);
-			final List<Report> loadedList = util.load(criteria);
-			
-			list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
-				
-				@Override
-				public MappableReport transform(final Object input) {
-					return new MappableReport((Report) input);
-				}
-			}));
-			
-		} catch (final UninitializedDatabaseException e) {
-			throw new Shutdown(e.getMessage(), e);
+		final List<Long> ids = new LinkedList<Long>();
+		final Regex regex = new Regex(this.pattern);
+		
+		final Criteria<Report> criteria = util.createCriteria(Report.class);
+		
+		final List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
+		if (Logger.logDebug()) {
+			Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
+			        + (findAll != null
+			                          ? findAll.size()
+			                          : 0) + " matches for regex '" + this.pattern + "'.");
 		}
+		
+		if (findAll != null) {
+			for (final List<RegexGroup> match : findAll) {
+				if (Logger.logDebug()) {
+					Logger.debug("While parsing transaction " + element.get(FieldKey.ID).toString()
+					        + " i stumbled upon this match: " + match.get(0).getMatch());
+				}
+				ids.add(Long.parseLong(match.get(0).getMatch()));
+			}
+		}
+		criteria.in("id", ids);
+		final List<Report> loadedList = util.load(criteria);
+		
+		list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
+			
+			@Override
+			public MappableReport transform(final Object input) {
+				return new MappableReport((Report) input);
+			}
+		}));
 		
 		return list;
 	}

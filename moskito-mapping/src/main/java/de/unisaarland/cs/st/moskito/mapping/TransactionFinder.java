@@ -18,6 +18,7 @@ import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -31,8 +32,8 @@ public class TransactionFinder extends AndamaTransformer<Report, Candidate> {
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public TransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings,
-	        final MappingFinder finder) {
+	public TransactionFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder,
+	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
 		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
@@ -42,10 +43,11 @@ public class TransactionFinder extends AndamaTransformer<Report, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					MappableReport mapReport = new MappableReport(getInputData());
-					Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
-					                                                                      MappableTransaction.class);
-					for (MappableTransaction mapTransaction : transactionCandidates) {
+					final MappableReport mapReport = new MappableReport(getInputData());
+					final Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
+					                                                                            MappableTransaction.class,
+					                                                                            util);
+					for (final MappableTransaction mapTransaction : transactionCandidates) {
 						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapReport,
 						                                                                       mapTransaction)));
 					}

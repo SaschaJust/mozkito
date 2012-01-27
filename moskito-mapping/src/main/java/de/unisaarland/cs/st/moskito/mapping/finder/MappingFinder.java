@@ -165,7 +165,8 @@ public class MappingFinder {
 	 * @return
 	 */
 	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
-	                                                       final Class<T> targetClass) {
+	                                                       final Class<T> targetClass,
+	                                                       final PersistenceUtil util) {
 		final Set<T> candidates = new HashSet<T>();
 		
 		try {
@@ -173,7 +174,7 @@ public class MappingFinder {
 			                                                      ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
 			for (final MappingSelector selector : selectors) {
-				candidates.addAll(selector.parse(source, targetClass));
+				candidates.addAll(selector.parse(source, targetClass, util));
 			}
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);

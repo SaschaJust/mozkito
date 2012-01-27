@@ -17,6 +17,7 @@ import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -31,7 +32,8 @@ public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public ReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder) {
+	public ReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder,
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, true);
 		
 		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
@@ -41,9 +43,11 @@ public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					MappableTransaction mapTransaction = new MappableTransaction(getInputData());
-					Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction, MappableReport.class);
-					for (MappableReport mapReport : reportCandidates) {
+					final MappableTransaction mapTransaction = new MappableTransaction(getInputData());
+					final Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction,
+					                                                                  MappableReport.class,
+					                                                                  persistenceUtil);
+					for (final MappableReport mapReport : reportCandidates) {
 						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapTransaction,
 						                                                                       mapReport)));
 					}

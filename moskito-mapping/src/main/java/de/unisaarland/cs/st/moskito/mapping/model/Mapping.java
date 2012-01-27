@@ -30,7 +30,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -156,7 +156,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	/**
 	 * @return
 	 */
-	@OneToMany (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.EAGER)
 	public MappableEntity getElement1() {
 		return this.element1;
 	}
@@ -164,7 +164,7 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	/**
 	 * @return
 	 */
-	@OneToMany (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.EAGER)
 	public MappableEntity getElement2() {
 		return this.element2;
 	}

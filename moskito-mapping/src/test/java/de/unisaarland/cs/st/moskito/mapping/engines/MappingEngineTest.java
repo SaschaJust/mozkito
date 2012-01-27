@@ -43,10 +43,9 @@ import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class MappingEngineTest extends MoskitoTest {
+public class MappingEngineTest {
 	
 	static MappableReport      mappableReport;
 	static MappableTransaction mappableTransaction;
@@ -114,7 +113,7 @@ public class MappingEngineTest extends MoskitoTest {
 		transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
 		                                               "Fixing bug 84698384.",
 		                                               new DateTime(2012, 01, 16, 19, 32, 12, 0), developer,
-		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938", getPersistenceUtil());
+		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938", null);
 		mappableTransaction = new MappableTransaction(transaction);
 	}
 	

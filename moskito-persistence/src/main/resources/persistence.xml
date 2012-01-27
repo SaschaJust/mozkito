@@ -121,7 +121,6 @@
 		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport</class>
 		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction</class>
-		<class>de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
