@@ -16,7 +16,7 @@ public class DatabaseArgumentsTest {
 		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
 		System.setProperty("database.user", "miner");
 		System.setProperty("database.password", "miner");
-		System.setProperty("database.dropContents", "true");
+		System.setProperty("database.options", "DROPIFEXISTS");
 		settings.parseArguments();
 		
 		if (dbArgs.getValue() == null) {
