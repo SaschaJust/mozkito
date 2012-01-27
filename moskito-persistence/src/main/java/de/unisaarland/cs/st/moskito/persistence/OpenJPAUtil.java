@@ -241,15 +241,27 @@ public class OpenJPAUtil implements PersistenceUtil {
 	                                 final String type,
 	                                 final String driver,
 	                                 final String unit,
-	                                 final boolean dropContents) {
+	                                 final ConnectOptions options) {
 		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
 		
 		final Properties properties = new Properties();
 		properties.put("openjpa.ConnectionURL", url);
-		properties.put("openjpa.jdbc.SynchronizeMappings",
-		               dropContents
-		                           ? "buildSchema(SchemaAction='add,deleteTableContents')"
-		                           : "validate");
+		switch (options) {
+			case VALIDATE:
+				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
+				break;
+			case CREATE:
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				break;
+			case DROPIFEXISTS:
+				properties.put("openjpa.jdbc.SynchronizeMappings",
+				               "buildSchema(SchemaAction='add,deleteTableContents')");
+				break;
+			default:
+				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
+				break;
+		}
+		
 		properties.put("openjpa.ConnectionDriverName", driver);
 		properties.put("openjpa.ConnectionUserName", user);
 		properties.put("openjpa.ConnectionPassword", password);

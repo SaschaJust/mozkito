@@ -51,7 +51,7 @@ public interface PersistenceUtil {
 	                                 final String type,
 	                                 final String driver,
 	                                 final String unit,
-	                                 final boolean dropContents);
+	                                 final ConnectOptions options);
 	
 	public void delete(final Annotated object);
 	

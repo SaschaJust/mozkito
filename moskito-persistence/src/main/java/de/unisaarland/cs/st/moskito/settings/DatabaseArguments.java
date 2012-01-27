@@ -17,11 +17,11 @@ package de.unisaarland.cs.st.moskito.settings;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.MaskedStringArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.JavaUtils;
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.DatabaseType;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -34,7 +34,7 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 	
 	private final AndamaSettings       settings;
 	private final StringArgument       databaseUnit;
-	private final BooleanArgument      databaseDropContents;
+	private final EnumArgument         databaseOptions;
 	private final StringArgument       databaseMiddleware;
 	private final StringArgument       databaseDriver;
 	private final EnumArgument         databaseType;
@@ -74,9 +74,10 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		this.databaseUnit = new StringArgument(settings, "database.unit", "The persistence unit config tag used.",
 		                                       unit, true);
 		addArgument(this.databaseUnit);
-		this.databaseDropContents = new BooleanArgument(settings, "database.dropContents",
-		                                                "Used to drop the contents before usage.", "false", true);
-		addArgument(this.databaseDropContents);
+		this.databaseOptions = new EnumArgument(settings, "database.options", "Connection options. Valid values: "
+		        + JavaUtils.enumToString(ConnectOptions.CREATE), ConnectOptions.VALIDATE.name(), true,
+		                                        JavaUtils.enumToArray(ConnectOptions.CREATE));
+		addArgument(this.databaseOptions);
 	}
 	
 	/*
@@ -90,7 +91,7 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		if (JavaUtils.AnyNull(this.databaseHost.getValue(), this.databaseName.getValue(), this.databaseUser.getValue(),
 		                      this.databasePassword.getValue(), this.databaseType.getValue(),
 		                      this.databaseDriver.getValue(), this.databaseUnit.getValue(),
-		                      this.databaseDropContents.getValue(), this.databaseMiddleware.getValue())) {
+		                      this.databaseOptions.getValue(), this.databaseMiddleware.getValue())) {
 			// FIXME this should cause an unrecoverable error
 			return null;
 		}
@@ -102,7 +103,7 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		                                                           this.databaseType.getValue(),
 		                                                           this.databaseDriver.getValue(),
 		                                                           this.databaseUnit.getValue(),
-		                                                           this.databaseDropContents.getValue(),
+		                                                           ConnectOptions.valueOf(this.databaseOptions.getValue()),
 		                                                           this.databaseMiddleware.getValue());
 		
 		this.settings.addToolInformation(this.databaseMiddleware.getValue(), util.getToolInformation());

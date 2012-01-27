@@ -44,7 +44,7 @@ public class PersistenceManager {
 	                                         final String type,
 	                                         final String driver,
 	                                         final String unit,
-	                                         final boolean dropContents,
+	                                         final ConnectOptions dropContents,
 	                                         final Class<?> middleware) throws UnrecoverableError {
 		
 		PersistenceUtil instance = null;
@@ -60,6 +60,19 @@ public class PersistenceManager {
 		return instance;
 	}
 	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @param unit
+	 * @param options
+	 * @param middleware
+	 * @return
+	 * @throws UnrecoverableError
+	 */
 	@SuppressWarnings ("unchecked")
 	public static PersistenceUtil createUtil(final String host,
 	                                         final String database,
@@ -68,14 +81,14 @@ public class PersistenceManager {
 	                                         final String type,
 	                                         final String driver,
 	                                         final String unit,
-	                                         final boolean dropContents,
+	                                         final ConnectOptions options,
 	                                         final String middleware) throws UnrecoverableError {
 		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
 		Class<PersistenceUtil> klass = null;
 		try {
 			
 			klass = (Class<PersistenceUtil>) Class.forName(className);
-			return createUtil(host, database, user, password, type, driver, unit, dropContents, klass);
+			return createUtil(host, database, user, password, type, driver, unit, options, klass);
 		} catch (final ClassNotFoundException e) {
 			throw new ClassLoadingError(e, className);
 		}

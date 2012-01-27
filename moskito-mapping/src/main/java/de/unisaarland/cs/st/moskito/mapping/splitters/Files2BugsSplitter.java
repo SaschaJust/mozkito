@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
@@ -53,7 +54,8 @@ public class Files2BugsSplitter extends MappingSplitter {
 		final List<Annotated> ret = new LinkedList<Annotated>();
 		
 		@SuppressWarnings ("unchecked")
-		final List<Object[]> result = util.executeNativeSelectQuery(manager.getNativeQuery(util, "files2bugs"));
+		final List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util,
+		                                                                                              "files2bugs"));
 		Criteria<RCSFile> fileCriteria;
 		Criteria<Report> reportCriteria;
 		long fileid = -1, tmp = -1, bugid = -1;
