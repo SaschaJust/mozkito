@@ -67,6 +67,7 @@ import de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
 import de.unisaarland.cs.st.moskito.ppa.model.ChangeOperations;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation.LineCover;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
@@ -312,7 +313,7 @@ public class PPAUtils {
 	 * @param usePPA
 	 */
 	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors) {
+			final Collection<ChangeOperationVisitor> visitors, JavaElementFactory elementFactory) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -398,7 +399,7 @@ public class PPAUtils {
 			for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 				CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-						.getSecond(), visitors);
+						.getSecond(), visitors, elementFactory);
 			}
 		}
 		
@@ -434,7 +435,7 @@ public class PPAUtils {
 		for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 			CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-					.getSecond(), visitors);
+					.getSecond(), visitors, elementFactory);
 		}
 		
 		// handle modified files
@@ -450,7 +451,8 @@ public class PPAUtils {
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
 			JavaElementLocations oldElems = PPAUtils
-					.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+					.getJavaElementLocationsByCU(oldCU, entry.getValue(),
+							new String[0], elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -460,7 +462,8 @@ public class PPAUtils {
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCU(newFile, new PPAOptions());
 			JavaElementLocations newElems = PPAUtils
-					.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+					.getJavaElementLocationsByCU(newCU, entry.getValue(),
+							new String[0], elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 					entry.getValue(), visitors);
 		}
@@ -468,9 +471,11 @@ public class PPAUtils {
 	
 	private static void generateChangeOperationsForAddedFile(final Repository repository,
 			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
-			final String changedPath, final Collection<ChangeOperationVisitor> visitors) {
+			final String changedPath, final Collection<ChangeOperationVisitor> visitors,
+			JavaElementFactory elementFactory) {
 		ChangeOperations operations = new ChangeOperations();
-		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0]);
+		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
+				elementFactory);
 		for (JavaElementLocation classDef : newElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
 			operations.add(op);
@@ -494,11 +499,13 @@ public class PPAUtils {
 	
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
 			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
-			final String changedPath, final Collection<ChangeOperationVisitor> visitors) {
+			final String changedPath, final Collection<ChangeOperationVisitor> visitors,
+			JavaElementFactory elementFactory) {
 		
 		ChangeOperations operations = new ChangeOperations();
 		
-		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0]);
+		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
+				elementFactory);
 		
 		for (JavaElementLocation classDef : oldElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
@@ -549,8 +556,7 @@ public class PPAUtils {
 		}
 		
 		// generate diff
-		Collection<Delta> diff = repository.diff(changedPath, parentTransaction.getId(),
-				transaction.getId());
+		Collection<Delta> diff = repository.diff(changedPath, parentTransaction.getId(), transaction.getId());
 		ChangeOperations operations = new ChangeOperations();
 		for (Delta delta : diff) {
 			
@@ -720,7 +726,7 @@ public class PPAUtils {
 	}
 	
 	public static void generateChangeOperationsNOPPA(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors) {
+			final Collection<ChangeOperationVisitor> visitors, JavaElementFactory elementFactory) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -779,7 +785,7 @@ public class PPAUtils {
 				File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 				CompilationUnit cu = getCUNoPPA(file);
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-						visitors);
+						visitors, elementFactory);
 			}
 		}
 		
@@ -794,7 +800,7 @@ public class PPAUtils {
 			File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit cu = getCUNoPPA(file);
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-					visitors);
+			        visitors, elementFactory);
 		}
 		
 		// handle modified files
@@ -809,8 +815,8 @@ public class PPAUtils {
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCUNoPPA(oldFile);
-			JavaElementLocations oldElems = PPAUtils
-					.getJavaElementLocationsByCU(oldCU, entry.getValue(), new String[0]);
+			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),
+					new String[0], elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -819,8 +825,8 @@ public class PPAUtils {
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCUNoPPA(newFile);
-			JavaElementLocations newElems = PPAUtils
-					.getJavaElementLocationsByCU(newCU, entry.getValue(), new String[0]);
+			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(),
+					new String[0], elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 					entry.getValue(), visitors);
 		}
@@ -1227,10 +1233,10 @@ public class PPAUtils {
 	 */
 	@NoneNull
 	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu, final String relativePath,
-			final String[] packageFilter) {
+			final String[] packageFilter, JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		
-		JavaElementLocationSet locationSet = new JavaElementLocationSet();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet(elementFactory);
 		
 		if (cu != null) {
 			PPATypeVisitor typeVisitor = new PPATypeVisitor(cu, relativePath, packageFilter, locationSet);
@@ -1257,11 +1263,11 @@ public class PPAUtils {
 	 * @return the java element locations by file
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File file, final String filePrefixPath,
-			final String[] packageFilter) {
+			final String[] packageFilter, JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
-		JavaElementLocationSet locationSet = new JavaElementLocationSet();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet(elementFactory);
 		
 		if (!file.getAbsolutePath().startsWith(filePrefixPath)) {
 			if (Logger.logError()) {
@@ -1300,11 +1306,13 @@ public class PPAUtils {
 	 *            the package filter
 	 * @return the java method elements
 	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir, final String[] packageFilter) {
+	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
+			final String[] packageFilter, JavaElementFactory elementFactory) {
 		
 		try {
 			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
-			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter);
+			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter,
+					elementFactory);
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -1325,11 +1333,11 @@ public class PPAUtils {
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
-			final String filePrefixPath, final String[] packageFilter) {
+			final String filePrefixPath, final String[] packageFilter, JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
-		JavaElementLocationSet locationSet = new JavaElementLocationSet();
+		JavaElementLocationSet locationSet = new JavaElementLocationSet(elementFactory);
 		
 		while (fileIterator.hasNext()) {
 			File file = fileIterator.next();

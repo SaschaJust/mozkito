@@ -13,6 +13,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -24,10 +25,11 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChangeOperation> {
 	
 	public PPATransformer(AndamaGroup threadGroup, AndamaSettings settings, final Repository repository,
-			final Boolean usePPA) {
+			final Boolean usePPA, JavaElementFactory factory) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
+		final JavaElementFactory elementFactory = factory;
 		
 		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
 			
@@ -50,14 +52,14 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 						PPAPersister.available.release();
 					}
 					if (usePPA) {
-
+						
 						PPAUtils.generateChangeOperations(repository, transaction, new HashSet<ChangeOperationVisitor>() {
 							private static final long serialVersionUID = -6294280837922825955L;
 							
 							{
 								add(visitor);
 							}
-						});
+						}, elementFactory);
 					} else {
 						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
 								new HashSet<ChangeOperationVisitor>() {
@@ -67,7 +69,7 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 							{
 								add(visitor);
 							}
-						});
+						}, elementFactory);
 					}
 					PPAPersister.available.release();
 					

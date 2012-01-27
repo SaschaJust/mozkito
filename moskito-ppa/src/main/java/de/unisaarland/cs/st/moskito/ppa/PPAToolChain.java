@@ -141,7 +141,7 @@ public class PPAToolChain extends AndamaChain {
 		File xmlFile = this.asXML.getValue();
 		Repository repository = this.repoSettings.getValue();
 		
-		JavaElementFactory.init(this.persistenceUtil);
+		JavaElementFactory elementFactory = new JavaElementFactory(this.persistenceUtil);
 		
 		// the xml file set, create XMLSinkThread. Otherwise the persistence
 		// middleware persister thread
@@ -186,7 +186,8 @@ public class PPAToolChain extends AndamaChain {
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, this.startWithArg.getValue(),
 				testCaseTransactionArg.getValue());
-		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue());
+		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
+		        elementFactory);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Setup done.");

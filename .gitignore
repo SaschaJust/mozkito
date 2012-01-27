@@ -21,3 +21,5 @@ moskito-ppa-0.2-SNAPSHOT-jar-with-dependencies.jar
 moskito-utils/build
 de.unisaarland.cs.st.moskito.callgraph.eclipse/lib
 
+
+*.class

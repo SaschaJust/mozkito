@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import de.unisaarland.cs.st.moskito.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.moskito.callgraph.visitor.CallGraphPPAVisitor;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
@@ -58,28 +59,28 @@ public class CallGraphToolChain {
 		
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.transactionArg = new StringArgument(settings, "transaction.id",
-		                                         "The transaction id to create the call graph for.", null, false);
+				"The transaction id to create the call graph for.", null, false);
 		this.dirArg = new DirectoryArgument(
-		                                    settings,
-		                                    "source.directory",
-		                                    "(Only used when "
-		                                            + this.transactionArg.getName()
-		                                            + " not set) Use files from from.directory to build the call graph on.",
-		                                    null, false, false);
+				settings,
+				"source.directory",
+				"(Only used when "
+						+ this.transactionArg.getName()
+						+ " not set) Use files from from.directory to build the call graph on.",
+						null, false, false);
 		this.packageFilterArg = new ListArgument(
-		                                         settings,
-		                                         "package.filter",
-		                                         "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-		                                         "", false);
+				settings,
+				"package.filter",
+				"A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
+				"", false);
 		
 		this.cacheDirArg = new DirectoryArgument(
-		                                         settings,
-		                                         "cache.dir",
-		                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
-		                                         null, false, false);
+				settings,
+				"cache.dir",
+				"Directory containing call graphs using the name converntion <transaction_id>.cg",
+				null, false, false);
 		
 		this.outArg = new OutputFileArgument(settings, "output", "File to store the serialized CallGraph in.", null,
-		                                     true, true);
+				true, true);
 		settings.parseArguments();
 		
 		this.transactionId = this.transactionArg.getValue();
@@ -89,7 +90,7 @@ public class CallGraphToolChain {
 			this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
 			if (this.sourceDir == null) {
 				throw new UnrecoverableError("Could not checkout transaction " + this.transactionId
-				        + " from repository " + this.repository.getUri().toString() + ". See errors above.");
+						+ " from repository " + this.repository.getUri().toString() + ". See errors above.");
 			}
 		} else {
 			this.sourceDir = this.dirArg.getValue();
@@ -100,7 +101,10 @@ public class CallGraphToolChain {
 		String[] fileExtensions = { "java" };
 		Collection<File> files = FileUtils.listFiles(this.sourceDir, fileExtensions, true);
 		HashSet<String> packageFilter = this.packageFilterArg.getValue();
-		JavaElementLocationSet elemCache = new JavaElementLocationSet();
+		
+		JavaElementFactory elementFactory = new JavaElementFactory();
+		
+		JavaElementLocationSet elemCache = new JavaElementLocationSet(elementFactory);
 		
 		Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		
@@ -109,9 +113,9 @@ public class CallGraphToolChain {
 		// generate the call graph
 		CallGraph callGraph = null;
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead())
-		        && (this.transactionId != null)) {
+				&& (this.transactionId != null)) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
-			        + ".cg");
+					+ ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 			}
@@ -125,12 +129,12 @@ public class CallGraphToolChain {
 				}
 				relativePath = relativePath.substring(this.sourceDir.getAbsolutePath().length());
 				PPATypeVisitor typeVisitor = new PPATypeVisitor(
-				                                                cuEntry.getValue(),
-				                                                relativePath,
-				                                                packageFilter.toArray(new String[packageFilter.size()]),
-				                                                elemCache);
+						cuEntry.getValue(),
+						relativePath,
+						packageFilter.toArray(new String[packageFilter.size()]),
+						elemCache);
 				CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath,
-				                                                                  elemCache);
+						elemCache);
 				typeVisitor.registerVisitor(callGraphPPAVisitor);
 				cuEntry.getValue().accept(typeVisitor);
 			}

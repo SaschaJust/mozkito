@@ -163,7 +163,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@BeforeClass
-	@DatabaseSettings(unit = "rcs")
 	public static void beforeClass() {
 		
 		// UNZIP mercurial repo

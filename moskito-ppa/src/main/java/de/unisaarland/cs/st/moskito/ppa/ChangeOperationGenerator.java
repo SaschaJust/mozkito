@@ -21,6 +21,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -37,6 +38,7 @@ public class ChangeOperationGenerator {
 	
 	/** The repo. */
 	private final Repository                  repo;
+	private final JavaElementFactory                elementFactory;
 	
 	/**
 	 * Instantiates a new change operation generator.
@@ -44,8 +46,9 @@ public class ChangeOperationGenerator {
 	 * @param repository
 	 *            the repository
 	 */
-	public ChangeOperationGenerator(final Repository repository) {
+	public ChangeOperationGenerator(final Repository repository, final JavaElementFactory elementFactory) {
 		this.repo = repository;
+		this.elementFactory = elementFactory;
 	}
 	
 	/**
@@ -68,8 +71,7 @@ public class ChangeOperationGenerator {
 						+ "/" + size + ")");
 			}
 			
-			
-			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors);
+			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors, elementFactory);
 		}
 		for (ChangeOperationVisitor visitor : this.visitors) {
 			visitor.endVisit();
