@@ -68,7 +68,7 @@ public class AndamaPool {
 		
 		for (final AndamaThreadable<?, ?> thread : this.threads.getThreads()) {
 			try {
-				((Thread) thread).join(10000);
+				((Thread) thread).join();
 			} catch (final InterruptedException e) {
 				
 				if (Logger.logError()) {
