@@ -197,40 +197,40 @@ public class ChangeGenealogyUtils {
 		}
 		
 		//unzip the database dump
-		zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-				+ "moskito_genealogies_test_environment.psql.zip");
-		if (zipURL == null) {
-			return null;
-		}
-		try {
-			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			return null;
-		}
-		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
-		}
-		FileUtils.unzip(zipFile, baseDir);
-		
-		//load the database dump into the test database
-		url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-		        + "moskito_genealogies_test_environment.psql");
-		try {
-			urlFile = new File(url.toURI());
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			return null;
-		}
-		
-		String psqlString = null;
-		try {
-			psqlString = FileUtils.readFileToString(urlFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		persistenceUtil.executeNativeQuery(psqlString);
+		//		zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+		//				+ "moskito_genealogies_test_environment.psql.zip");
+		//		if (zipURL == null) {
+		//			return null;
+		//		}
+		//		try {
+		//			zipFile = new File(zipURL.toURI());
+		//		} catch (URISyntaxException e1) {
+		//			e1.printStackTrace();
+		//			return null;
+		//		}
+		//		if (Logger.logInfo()) {
+		//			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+		//		}
+		//		FileUtils.unzip(zipFile, baseDir);
+		//		
+		//		//load the database dump into the test database
+		//		url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+		//		        + "moskito_genealogies_test_environment.psql");
+		//		try {
+		//			urlFile = new File(url.toURI());
+		//		} catch (URISyntaxException e1) {
+		//			e1.printStackTrace();
+		//			return null;
+		//		}
+		//		
+		//		String psqlString = null;
+		//		try {
+		//			psqlString = FileUtils.readFileToString(urlFile);
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//			return null;
+		//		}
+		//		persistenceUtil.executeNativeQuery(psqlString);
 		
 		//till here we loaded the database dump and extracted the repository.
 		
