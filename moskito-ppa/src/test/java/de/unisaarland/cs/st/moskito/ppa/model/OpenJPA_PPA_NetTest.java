@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class OpenJPA_NetTest extends MoskitoTest {
+public class OpenJPA_PPA_NetTest extends MoskitoTest {
 	
 	@Test
 	@DatabaseSettings (unit = "ppa")
@@ -59,7 +59,7 @@ public class OpenJPA_NetTest extends MoskitoTest {
 		final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
 		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
 		assertEquals(1, list.size());
-		
+		getPersistenceUtil().commitTransaction();
 	}
 	
 }
