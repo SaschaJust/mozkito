@@ -33,6 +33,10 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
  */
 public class PersistenceManager {
 	
+	private static final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
+	
+	private static final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
+	
 	public static PersistenceUtil createUtil(final String host,
 	                                         final String database,
 	                                         final String user,
@@ -78,20 +82,17 @@ public class PersistenceManager {
 		
 	}
 	
-	private final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
-	private final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
-	
 	/**
 	 * @param util
 	 * @param id
 	 * @return
 	 */
-	public String getNativeQuery(final PersistenceUtil util,
-	                             final String id) {
+	public static synchronized String getNativeQuery(final PersistenceUtil util,
+	                                                 final String id) {
 		final String databaseType = util.getType().toLowerCase();
 		
-		if (this.nativeQueries.containsKey(databaseType) && this.nativeQueries.get(databaseType).containsKey(id)) {
-			return this.nativeQueries.get(databaseType).get(id);
+		if (nativeQueries.containsKey(databaseType) && nativeQueries.get(databaseType).containsKey(id)) {
+			return nativeQueries.get(databaseType).get(id);
 		} else {
 			return null;
 		}
@@ -102,9 +103,9 @@ public class PersistenceManager {
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	public <T> Criteria<T> getStoredQuery(final String id,
-	                                      final Class<T> clazz) {
-		return (Criteria<T>) this.storedQueries.get(clazz).get(id);
+	public static synchronized <T> Criteria<T> getStoredQuery(final String id,
+	                                                          final Class<T> clazz) {
+		return (Criteria<T>) storedQueries.get(clazz).get(id);
 	}
 	
 	/**
@@ -113,15 +114,15 @@ public class PersistenceManager {
 	 * @param query
 	 * @return
 	 */
-	public String registerNativeQuery(final String type,
-	                                  final String id,
-	                                  final String query) {
+	public static synchronized String registerNativeQuery(final String type,
+	                                                      final String id,
+	                                                      final String query) {
 		final String databaseType = type.toLowerCase();
-		if (!this.nativeQueries.containsKey(databaseType)) {
-			this.nativeQueries.put(databaseType, new HashMap<String, String>());
+		if (!nativeQueries.containsKey(databaseType)) {
+			nativeQueries.put(databaseType, new HashMap<String, String>());
 		}
 		
-		final Map<String, String> map = this.nativeQueries.get(databaseType);
+		final Map<String, String> map = nativeQueries.get(databaseType);
 		return map.put(id, query);
 	}
 	
@@ -129,7 +130,7 @@ public class PersistenceManager {
 	 * @param <T>
 	 * @param query
 	 */
-	public <T> void registerPreparedQuery(final PreparedQuery<T> query) {
+	public static synchronized <T> void registerPreparedQuery(final PreparedQuery<T> query) {
 		
 	}
 	
@@ -138,8 +139,8 @@ public class PersistenceManager {
 	 * @param query
 	 */
 	@SuppressWarnings ("unchecked")
-	public <T> void registerQuery(final String id,
-	                              final Criteria<T> criteria) {
+	public static synchronized <T> void registerQuery(final String id,
+	                                                  final Criteria<T> criteria) {
 		final Type actualTypeArgument = ((ParameterizedType) criteria.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<T> actualRawTypeArgument = null;
 		if (actualTypeArgument instanceof ParameterizedType) {
@@ -148,10 +149,10 @@ public class PersistenceManager {
 			actualRawTypeArgument = (Class<T>) actualTypeArgument;
 		}
 		
-		if (!this.storedQueries.containsKey(actualRawTypeArgument)) {
-			this.storedQueries.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
+		if (!storedQueries.containsKey(actualRawTypeArgument)) {
+			storedQueries.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
 		}
 		
-		this.storedQueries.get(actualRawTypeArgument).put(id, criteria);
+		storedQueries.get(actualRawTypeArgument).put(id, criteria);
 	}
 }

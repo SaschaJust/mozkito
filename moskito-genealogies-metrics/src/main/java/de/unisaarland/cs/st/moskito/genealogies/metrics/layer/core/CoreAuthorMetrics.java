@@ -13,8 +13,8 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	
-	public static String numDepAuthors    = "changeSize";
-	public static String numParentAuthors = "avgDepChangeSize";
+	private static final String numDepAuthors    = "changeSize";
+	private static final String numParentAuthors = "avgDepChangeSize";
 	
 	public CoreAuthorMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);

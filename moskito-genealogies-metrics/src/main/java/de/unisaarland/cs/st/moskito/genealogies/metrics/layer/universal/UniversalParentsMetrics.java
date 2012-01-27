@@ -30,31 +30,31 @@ public class UniversalParentsMetrics<T> {
 	Map<T, Map<Integer, Map<String, Set<T>>>> cache                   = new HashMap<T, Map<Integer, Map<String, Set<T>>>>();
 	
 	/** The all parents. */
-	public static String allParents          = "NumParents";
+	private static final String allParents          = "NumParents";
 	
 	/** The all parents d2. */
-	public static String allParentsD2        = "NumParents_depth_2";
+	private static final String allParentsD2        = "NumParents_depth_2";
 	
 	/** The all parents d3. */
-	public static String allParentsD3        = "NumParents_depth_3";
+	private static final String allParentsD3        = "NumParents_depth_3";
 	
 	/** The definition parents. */
-	public static String definitionParents   = "NumDefinitionParents";
+	private static final String definitionParents   = "NumDefinitionParents";
 	
 	/** The definition parents d2. */
-	public static String definitionParentsD2 = "NumDefinitionParents_depth_2";
+	private static final String definitionParentsD2 = "NumDefinitionParents_depth_2";
 	
 	/** The definition parents d3. */
-	public static String definitionParentsD3 = "NumDefinitionParents_depth_3";
+	private static final String definitionParentsD3 = "NumDefinitionParents_depth_3";
 	
 	/** The call parents. */
-	public static String callParents         = "NumCallParents";
+	private static final String callParents         = "NumCallParents";
 	
 	/** The call parents d2. */
-	public static String callParentsD2       = "NumCallParents_depth_2";
+	private static final String callParentsD2       = "NumCallParents_depth_2";
 	
 	/** The call parents d3. */
-	public static String callParentsD3       = "NumCallParents_depth_3";
+	private static final String callParentsD3       = "NumCallParents_depth_3";
 	
 	/** The metric names. */
 	private static List<String>       metricNames;
@@ -68,7 +68,7 @@ public class UniversalParentsMetrics<T> {
 	 *            the depth
 	 * @return the string
 	 */
-	public static String composeMetricName(GenealogyEdgeType eType, int depth) {
+	private static final String composeMetricName(GenealogyEdgeType eType, int depth) {
 		if (depth > 1) {
 			return "Num" + eType.toString() + "ParentsD" + depth;
 		} else if (depth < 0) {

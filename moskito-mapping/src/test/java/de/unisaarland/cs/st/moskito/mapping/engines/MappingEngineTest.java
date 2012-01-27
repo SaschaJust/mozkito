@@ -43,8 +43,10 @@ import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class MappingEngineTest {
+public class MappingEngineTest extends MoskitoTest {
 	
 	static MappableReport      mappableReport;
 	static MappableTransaction mappableTransaction;
@@ -112,7 +114,7 @@ public class MappingEngineTest {
 		transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
 		                                               "Fixing bug 84698384.",
 		                                               new DateTime(2012, 01, 16, 19, 32, 12, 0), developer,
-		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
+		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938", getPersistenceUtil());
 		mappableTransaction = new MappableTransaction(transaction);
 	}
 	
@@ -142,6 +144,7 @@ public class MappingEngineTest {
 	}
 	
 	@Test (expected = UnrecoverableError.class)
+	@DatabaseSettings (unit = "mapping")
 	public void testBackrefEngine() {
 		final BackrefEngine engine = new BackrefEngine();
 		System.err.println(this.settings.toString());
@@ -175,6 +178,7 @@ public class MappingEngineTest {
 	
 	@SuppressWarnings ({ "deprecation", "serial" })
 	@Test
+	@DatabaseSettings (unit = "mapping")
 	public void testSupported() {
 		int failed = 0;
 		final Set<Class<? extends MappableEntity>> mappableClasses = new HashSet<Class<? extends MappableEntity>>();

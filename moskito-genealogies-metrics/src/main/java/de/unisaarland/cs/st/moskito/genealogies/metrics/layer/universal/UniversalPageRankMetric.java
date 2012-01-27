@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalPageRankMetric<T> {
 	
 	/** The page rank. */
-	public static String        pageRank       = "pageRank";
+	private static final String pageRank = "pageRank";
 	
 	/**
 	 * Gets the metric names.
@@ -29,22 +29,29 @@ public class UniversalPageRankMetric<T> {
 	 * @return the metric names
 	 */
 	public static Collection<String> getMetricNames() {
-		Collection<String> metricNames = new ArrayList<String>(2);
+		final Collection<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(pageRank);
 		return metricNames;
 	}
 	
+	/**
+	 * @return
+	 */
+	public static String getPagerank() {
+		return pageRank;
+	}
+	
 	/** The tentative cache. */
-	private Map<String, Double> tentativeCache = new HashMap<String, Double>();
+	private final Map<String, Double> tentativeCache = new HashMap<String, Double>();
 	
 	/** The confirmed cache. */
-	private Map<String, Double> confirmedCache = new HashMap<String, Double>();
+	private final Map<String, Double> confirmedCache = new HashMap<String, Double>();
 	
 	/** The genealogy. */
-	private ChangeGenealogy<T>  genealogy;
+	private final ChangeGenealogy<T>  genealogy;
 	
 	/** The to send. */
-	private Map<String, T>      delayed        = new HashMap<String, T>();
+	private final Map<String, T>      delayed        = new HashMap<String, T>();
 	
 	/**
 	 * Instantiates a new universal page rank metric.
@@ -52,11 +59,11 @@ public class UniversalPageRankMetric<T> {
 	 * @param genealogy
 	 *            the genealogy
 	 */
-	public UniversalPageRankMetric(ChangeGenealogy<T> genealogy) {
+	public UniversalPageRankMetric(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
-		//		for (T root : genealogy.getRoots()) {
-		//			computePageRank(root, new HashSet<T>());
-		//		}
+		// for (T root : genealogy.getRoots()) {
+		// computePageRank(root, new HashSet<T>());
+		// }
 	}
 	
 	/**
@@ -68,32 +75,33 @@ public class UniversalPageRankMetric<T> {
 	 *            the seen
 	 * @return the tuple
 	 */
-	private Tuple<Double, Boolean> computePageRank(T node, Collection<T> seen) {
+	private Tuple<Double, Boolean> computePageRank(final T node,
+	                                               final Collection<T> seen) {
 		
-		String nodeId = genealogy.getNodeId(node);
-		if (confirmedCache.containsKey(nodeId)) {
-			return new Tuple<Double, Boolean>(confirmedCache.get(nodeId), true);
+		final String nodeId = this.genealogy.getNodeId(node);
+		if (this.confirmedCache.containsKey(nodeId)) {
+			return new Tuple<Double, Boolean>(this.confirmedCache.get(nodeId), true);
 		}
 		
 		double pageRank = 0d;
 		
 		boolean confirmed = true;
 		
-		Collection<T> incoming = genealogy.getAllDependants(node);
-		for (T in : incoming) {
+		final Collection<T> incoming = this.genealogy.getAllDependants(node);
+		for (final T in : incoming) {
 			Tuple<Double, Boolean> pageRankIn = null;
-			double numOutIn = genealogy.getAllDependants(in).size();
+			double numOutIn = this.genealogy.getAllDependants(in).size();
 			if (seen.contains(in)) {
 				confirmed = false;
-				if (!tentativeCache.containsKey(in)) {
+				if (!this.tentativeCache.containsKey(in)) {
 					continue;
 				}
-				pageRankIn = new Tuple<Double, Boolean>(tentativeCache.get(in), false);
+				pageRankIn = new Tuple<Double, Boolean>(this.tentativeCache.get(in), false);
 			} else {
 				if (numOutIn < 1) {
-					numOutIn = genealogy.vertexSize();
+					numOutIn = this.genealogy.vertexSize();
 				}
-				Collection<T> seenCopy = new HashSet<T>(seen);
+				final Collection<T> seenCopy = new HashSet<T>(seen);
 				seenCopy.add(in);
 				pageRankIn = computePageRank(in, seenCopy);
 			}
@@ -103,18 +111,18 @@ public class UniversalPageRankMetric<T> {
 		
 		pageRank = 0.1 + (0.9 * pageRank);
 		
-		if (tentativeCache.containsKey(nodeId)) {
-			if (tentativeCache.get(nodeId) == pageRank) {
+		if (this.tentativeCache.containsKey(nodeId)) {
+			if (this.tentativeCache.get(nodeId) == pageRank) {
 				confirmed = true;
 			}
 		}
 		
 		if (confirmed) {
-			tentativeCache.remove(nodeId);
-			confirmedCache.put(nodeId, pageRank);
-			//check if node is delayed!
+			this.tentativeCache.remove(nodeId);
+			this.confirmedCache.put(nodeId, pageRank);
+			// check if node is delayed!
 		} else {
-			tentativeCache.put(nodeId, pageRank);
+			this.tentativeCache.put(nodeId, pageRank);
 		}
 		return new Tuple<Double, Boolean>(pageRank, confirmed);
 	}
@@ -126,33 +134,34 @@ public class UniversalPageRankMetric<T> {
 	 *            the node
 	 * @return the collection
 	 */
-	public Collection<GenealogyMetricValue> handle(T node, boolean finalNode) {
-		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
+	public Collection<GenealogyMetricValue> handle(final T node,
+	                                               final boolean finalNode) {
+		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
-		String nodeId = genealogy.getNodeId(node);
+		final String nodeId = this.genealogy.getNodeId(node);
 		
 		Tuple<Double, Boolean> pageRank = computePageRank(node, new HashSet<T>());
 		if (pageRank.getSecond()) {
 			metricValues.add(new GenealogyMetricValue(UniversalPageRankMetric.pageRank, nodeId, pageRank.getFirst()));
 		} else {
-			delayed.put(nodeId,node);
+			this.delayed.put(nodeId, node);
 		}
 		
-		Set<String> sent = new HashSet<String>();
-		for (String delayId : delayed.keySet()) {
-			if (confirmedCache.containsKey(delayId)) {
-				metricValues.add(new GenealogyMetricValue(UniversalPageRankMetric.pageRank, delayId, confirmedCache
-						.get(delayId)));
+		final Set<String> sent = new HashSet<String>();
+		for (final String delayId : this.delayed.keySet()) {
+			if (this.confirmedCache.containsKey(delayId)) {
+				metricValues.add(new GenealogyMetricValue(UniversalPageRankMetric.pageRank, delayId,
+				                                          this.confirmedCache.get(delayId)));
 				sent.add(delayId);
 			}
 		}
-		for(String r : sent){
-			delayed.remove(r);
+		for (final String r : sent) {
+			this.delayed.remove(r);
 		}
 		
 		if (finalNode) {
-			for (String key : delayed.keySet()) {
-				pageRank = computePageRank(delayed.get(key), new HashSet<T>());
+			for (final String key : this.delayed.keySet()) {
+				pageRank = computePageRank(this.delayed.get(key), new HashSet<T>());
 				metricValues.add(new GenealogyMetricValue(UniversalPageRankMetric.pageRank, key, pageRank.getFirst()));
 			}
 			

@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.filters.stacktrace;
 
@@ -27,14 +27,15 @@ import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 public class JavaStacktraceFilter extends StackTraceFilter {
 	
-	private FilterTextRemover textRemover;
+	private FilterTextRemover   textRemover;
 	
 	// Define a reusable Regular Expression for finding Java Stack Traces
-	public static String      JAVA_EXCEPTION  = "^(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1}(\\s|:))";
-	public static String      JAVA_REASON     = "(:?.*?)(at\\s+([\\w<>\\$_]+\\.)+[\\w<>\\$_]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)";
-	public static String      JAVA_TRACE      = "(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
-	public static String      JAVA_CAUSE      = "(Caused by:).*?(Exception|Error)(.*?)(\\s+at.*?\\(.*?:\\d+\\))+";
-	public static String      JAVA_STACKTRACE = JAVA_EXCEPTION + JAVA_REASON + JAVA_TRACE;
+	@SuppressWarnings ("unused")
+	private static final String JAVA_EXCEPTION = "^(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1}(\\s|:))";
+	@SuppressWarnings ("unused")
+	private static final String JAVA_REASON    = "(:?.*?)(at\\s+([\\w<>\\$_]+\\.)+[\\w<>\\$_]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)";
+	@SuppressWarnings ("unused")
+	private static final String JAVA_TRACE     = "(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
 	
 	// private static Pattern pattern_stacktrace_java =
 	// Pattern.compile(JAVA_STACKTRACE, Pattern.DOTALL
@@ -43,10 +44,13 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	// Pattern.DOTALL | Pattern.MULTILINE);
 	
 	/**
-	 * This method is used to create an {@link Stacktrace} object given its String representation.
-	 * @param stackTraceMatchGroup the String representing a StrackTrace Cause.
-	 * 		This usually comes from a RegExHelper matches' group() operation! 
-	 * @return a Stacktrace as represented by the given String 
+	 * This method is used to create an {@link Stacktrace} object given its
+	 * String representation.
+	 * 
+	 * @param stackTraceMatchGroup
+	 *            the String representing a StrackTrace Cause. This usually
+	 *            comes from a RegExHelper matches' group() operation!
+	 * @return a Stacktrace as represented by the given String
 	 */
 	private JavaStacktrace createCause(final String stackTraceMatchGroup) {
 		// String exception = "";
@@ -91,10 +95,13 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	}
 	
 	/**
-	 * This method is used to create an Stacktrace object given its String representation.
-	 * @param stackTraceMatchGroup the String representing a StrackTrace.
-	 * 		This usually comes from a RegExHelper matches' group() operation! 
-	 * @return a Stacktrace as represented by the given String 
+	 * This method is used to create an Stacktrace object given its String
+	 * representation.
+	 * 
+	 * @param stackTraceMatchGroup
+	 *            the String representing a StrackTrace. This usually comes from
+	 *            a RegExHelper matches' group() operation!
+	 * @return a Stacktrace as represented by the given String
 	 */
 	private JavaStacktrace createTrace(final String stackTraceMatchGroup) {
 		// String exception = "";
@@ -141,7 +148,9 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	
 	/**
 	 * Find a list of starting points of x.y.zException or x.y.zError
-	 * @param s The CharSequence to look inside for such starting points
+	 * 
+	 * @param s
+	 *            The CharSequence to look inside for such starting points
 	 * @return an array of possible starting points
 	 */
 	private final int[] findExceptions(final CharSequence s) {
@@ -198,7 +207,9 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	
 	/**
 	 * Find Stacktraces or Causes that match against our exhaustive patterns
-	 * @param s The CharSequence to look in for Stack Traces or Causes
+	 * 
+	 * @param s
+	 *            The CharSequence to look in for Stack Traces or Causes
 	 * @return A list of Matches
 	 */
 	private List<MatchResult> findStacktraces(final CharSequence s) {
@@ -225,28 +236,30 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	
 	/**
 	 * Get a List of Stacktraces that are inside the Text s
-	 * @param inputSequence A CharSequence containing the Text to look for Stack Traces in
+	 * 
+	 * @param inputSequence
+	 *            A CharSequence containing the Text to look for Stack Traces in
 	 * @return A List of Stacktraces
 	 */
 	private List<Stacktrace> getStacktraces(final CharSequence inputSequence) {
-		List<Stacktrace> stackTraces = new ArrayList<Stacktrace>();
+		final List<Stacktrace> stackTraces = new ArrayList<Stacktrace>();
 		
 		// Split the text sequence first by possible exception start otherwise
 		// multiline patterns will run FOREVER!
 		
-		int[] possibleStart = findExceptions(inputSequence);
+		final int[] possibleStart = findExceptions(inputSequence);
 		
-		for (int i = 0; i < possibleStart.length - 1; i++) {
+		for (int i = 0; i < (possibleStart.length - 1); i++) {
 			
-			CharSequence region = inputSequence.subSequence(possibleStart[i], possibleStart[i + 1] - 1);
-			List<MatchResult> matches = findStacktraces(region);
+			final CharSequence region = inputSequence.subSequence(possibleStart[i], possibleStart[i + 1] - 1);
+			final List<MatchResult> matches = findStacktraces(region);
 			
-			for (MatchResult match : matches) {
-				String matchText = match.group();
+			for (final MatchResult match : matches) {
+				final String matchText = match.group();
 				
 				// Mark this Stack Trace match for deletion
-				int traceStart = inputSequence.toString().indexOf(matchText);
-				int traceEnd = traceStart + matchText.length() + 1;
+				final int traceStart = inputSequence.toString().indexOf(matchText);
+				final int traceEnd = traceStart + matchText.length() + 1;
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
 					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
@@ -254,7 +267,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
 					// Create a cause
-					JavaStacktrace cause = createCause(matchText);
+					final JavaStacktrace cause = createCause(matchText);
 					// Add it to the List of Stack Traces
 					cause.setTraceStart(traceStart);
 					cause.setTraceEnd(traceEnd);
@@ -262,7 +275,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 					
 				} else {
 					// Create a trace
-					JavaStacktrace trace = createTrace(matchText);
+					final JavaStacktrace trace = createTrace(matchText);
 					// Add it to the List of Stack Traces
 					trace.setTraceStart(traceStart);
 					trace.setTraceEnd(traceEnd);
@@ -274,16 +287,16 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 		// And for the last region, too !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (possibleStart.length > 0) {
 			
-			CharSequence region = inputSequence.subSequence(possibleStart[possibleStart.length - 1],
-			                                                inputSequence.length());
-			List<MatchResult> matches = findStacktraces(region);
+			final CharSequence region = inputSequence.subSequence(possibleStart[possibleStart.length - 1],
+			                                                      inputSequence.length());
+			final List<MatchResult> matches = findStacktraces(region);
 			
-			for (MatchResult match : matches) {
-				String matchText = match.group();
+			for (final MatchResult match : matches) {
+				final String matchText = match.group();
 				
 				// Mark this Stack Trace match for deletion
-				int traceStart = inputSequence.toString().lastIndexOf(matchText);
-				int traceEnd = traceStart + matchText.length();
+				final int traceStart = inputSequence.toString().lastIndexOf(matchText);
+				final int traceEnd = traceStart + matchText.length();
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
 					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
@@ -292,7 +305,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
 					// Create a cause
-					JavaStacktrace cause = createCause(matchText);
+					final JavaStacktrace cause = createCause(matchText);
 					// Add it to the List of Stack Traces
 					cause.setTraceStart(traceStart);
 					cause.setTraceEnd(traceEnd);
@@ -300,7 +313,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 					
 				} else {
 					// Create a trace
-					JavaStacktrace trace = createTrace(matchText);
+					final JavaStacktrace trace = createTrace(matchText);
 					// Add it to the List of Stack Traces
 					trace.setTraceStart(traceStart);
 					trace.setTraceEnd(traceEnd);
@@ -339,7 +352,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 		// Initialize TextRemover
 		this.textRemover = new FilterTextRemover(inputText);
 		// Get a Bunch of Stack Traces
-		List<Stacktrace> foundStacktraces = getStacktraces(inputText);
+		final List<Stacktrace> foundStacktraces = getStacktraces(inputText);
 		
 		// Do the removal in the textRemover
 		// ==> This is already done in getStacktraces when a MatchResult is

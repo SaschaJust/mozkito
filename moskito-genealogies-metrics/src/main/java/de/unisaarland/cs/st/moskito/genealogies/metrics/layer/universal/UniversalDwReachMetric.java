@@ -13,38 +13,45 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalDwReachMetric<T> {
 	
-	public static String       dwReach = "dwReach";
+	private static final String dwReach = "dwReach";
+	
+	/**
+	 * @return
+	 */
+	public static String getDwreach() {
+		return dwReach;
+	}
 	
 	public static Collection<String> getMetricNames() {
-		Collection<String> metricNames = new ArrayList<String>(2);
+		final Collection<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(dwReach);
 		return metricNames;
 	}
 	
-	private ChangeGenealogy<T> genealogy;
+	private final ChangeGenealogy<T> genealogy;
 	
-	private Comparator<T>      comparator;
+	private final Comparator<T>      comparator;
 	
-	
-	
-	public UniversalDwReachMetric(ChangeGenealogy<T> genealogy, Comparator<T> comparator) {
+	public UniversalDwReachMetric(final ChangeGenealogy<T> genealogy, final Comparator<T> comparator) {
 		this.genealogy = genealogy;
 		this.comparator = comparator;
 	}
 	
-	private List<Set<T>> getReach(T originalNode, Collection<T> nodes, Set<T> seen) {
-		List<Set<T>> result = new LinkedList<Set<T>>();
+	private List<Set<T>> getReach(final T originalNode,
+	                              final Collection<T> nodes,
+	                              final Set<T> seen) {
+		final List<Set<T>> result = new LinkedList<Set<T>>();
 		
 		if (nodes.isEmpty()) {
 			return result;
 		}
 		
-		Set<T> level = new HashSet<T>();
+		final Set<T> level = new HashSet<T>();
 		
-		for (T node : nodes) {
-			for (T dependant : genealogy.getAllDependants(node)) {
+		for (final T node : nodes) {
+			for (final T dependant : this.genealogy.getAllDependants(node)) {
 				if (!seen.contains(dependant)) {
-					if (comparator.compare(originalNode, node) >= 0) {
+					if (this.comparator.compare(originalNode, node) >= 0) {
 						continue;
 					}
 					level.add(dependant);
@@ -54,7 +61,7 @@ public class UniversalDwReachMetric<T> {
 		}
 		result.add(level);
 		
-		List<Set<T>> reach = getReach(originalNode, level, seen);
+		final List<Set<T>> reach = getReach(originalNode, level, seen);
 		for (int i = 0; i < reach.size(); ++i) {
 			if (result.size() == (i + 1)) {
 				result.add(reach.get(i));
@@ -65,24 +72,25 @@ public class UniversalDwReachMetric<T> {
 		return result;
 	}
 	
-	public Collection<GenealogyMetricValue> handle(T node) {
-		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(1);
+	public Collection<GenealogyMetricValue> handle(final T node) {
+		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(1);
 		
-		Set<T> roots = new HashSet<T>();
-		Set<T> seen = new HashSet<T>();
+		final Set<T> roots = new HashSet<T>();
+		final Set<T> seen = new HashSet<T>();
 		roots.add(node);
 		seen.add(node);
-		List<Set<T>> reach = getReach(node, roots, seen);
+		final List<Set<T>> reach = getReach(node, roots, seen);
 		
-		//		System.out.println("########## " + genealogy.getNodeId(node));
-		//		System.out.println(StringUtils.join(reach.toArray(new Object[reach.size()])));
+		// System.out.println("########## " + genealogy.getNodeId(node));
+		// System.out.println(StringUtils.join(reach.toArray(new
+		// Object[reach.size()])));
 		
 		double dwReachValue = 0;
 		for (int i = 0; i < reach.size(); ++i) {
 			dwReachValue += (reach.get(i).size() / ((double) i + 1));
 		}
 		
-		metricValues.add(new GenealogyMetricValue(dwReach, genealogy.getNodeId(node), dwReachValue));
+		metricValues.add(new GenealogyMetricValue(dwReach, this.genealogy.getNodeId(node), dwReachValue));
 		
 		return metricValues;
 	}

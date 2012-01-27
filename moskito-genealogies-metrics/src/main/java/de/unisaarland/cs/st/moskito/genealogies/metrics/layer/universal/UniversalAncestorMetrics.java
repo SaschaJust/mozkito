@@ -26,31 +26,31 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalAncestorMetrics<T> {
 	
 	/** The all dependants. */
-	public static String allDependants        = "NumDependants";
+	private static final String allDependants        = "NumDependants";
 	
 	/** The all dependants d2. */
-	public static String allDependantsD2      = "NumDependants_depth_2";
+	private static final String allDependantsD2      = "NumDependants_depth_2";
 	
 	/** The all dependants d3. */
-	public static String allDependantsD3        = "NumDependants_depth_3";
+	private static final String allDependantsD3        = "NumDependants_depth_3";
 	
 	/** The definition dependants. */
-	public static String definitionDependants = "NumDefinitionDependants";
+	private static final String definitionDependants = "NumDefinitionDependants";
 	
 	/** The definition dependants d2. */
-	public static String definitionDependantsD2 = "NumDefinitionDependants_depth_2";
+	private static final String definitionDependantsD2 = "NumDefinitionDependants_depth_2";
 	
 	/** The definition dependants d3. */
-	public static String definitionDependantsD3 = "NumDefinitionDependants_depth_3";
+	private static final String definitionDependantsD3 = "NumDefinitionDependants_depth_3";
 	
 	/** The call dependants. */
-	public static String callDependants       = "NumCallDependants";
+	private static final String callDependants       = "NumCallDependants";
 	
 	/** The call dependants d2. */
-	public static String callDependantsD2       = "NumCallDependants_depth_2";
+	private static final String callDependantsD2       = "NumCallDependants_depth_2";
 	
 	/** The call dependants d3. */
-	public static String callDependantsD3       = "NumCallDependants_depth_3";
+	private static final String callDependantsD3       = "NumCallDependants_depth_3";
 	
 	/** The metric names. */
 	private static List<String>       metricNames;
@@ -64,7 +64,7 @@ public class UniversalAncestorMetrics<T> {
 	 *            the depth
 	 * @return the string
 	 */
-	public static String composeMetricName(GenealogyEdgeType eType, int depth) {
+	private static final String composeMetricName(GenealogyEdgeType eType, int depth) {
 		if (depth < 2) {
 			return "Num" + eType.toString() + "Dependants";
 		}

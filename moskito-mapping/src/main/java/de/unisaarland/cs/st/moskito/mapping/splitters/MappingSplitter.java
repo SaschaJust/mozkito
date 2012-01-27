@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -44,7 +45,7 @@ public abstract class MappingSplitter extends Node {
 		return isEnabled("mapping.splitters", this.getClass().getSimpleName());
 	}
 	
-	public abstract List<Annotated> process();
+	public abstract List<Annotated> process(PersistenceUtil util);
 	
 	/*
 	 * (non-Javadoc)

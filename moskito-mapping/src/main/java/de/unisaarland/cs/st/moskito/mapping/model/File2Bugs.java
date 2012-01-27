@@ -26,10 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -46,29 +44,27 @@ public class File2Bugs implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5780165055568852588L;
-	RCSFile                   file;
+	private static final long         serialVersionUID = -5780165055568852588L;
 	
-	Set<Report>               reports;
-	
+	private static PersistenceManager manager          = new PersistenceManager();
 	static {
-		PersistenceManager.registerNativeQuery("postgresql",
-		                                       "files2bugsarray",
-		                                       "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
-		                                               + "FROM (                                                                                "
-		                                               + "SELECT changedfile_id, ARRAY(                                                         "
-		                                               + "	SELECT reportid                                                                     "
-		                                               + "	FROM rcsrevision AS revisions                                                       "
-		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 "
-		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           "
-		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
-		                                               + ") AS bugs                                                                             "
-		                                               + "FROM rcsrevision AS A                                                                 "
-		                                               + "ORDER BY changedfile_id                                                               "
-		                                               + ") innerquery                                                                          "
-		                                               + "WHERE array_length(bugs, 1) > 0                                                       "
-		                                               + "GROUP BY file_id, bugs;                                                               ");
-		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
+		manager.registerNativeQuery("postgresql",
+		                            "files2bugsarray",
+		                            "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
+		                                    + "FROM (                                                                                "
+		                                    + "SELECT changedfile_id, ARRAY(                                                         "
+		                                    + "	SELECT reportid                                                                     "
+		                                    + "	FROM rcsrevision AS revisions                                                       "
+		                                    + "	INNER JOIN rcsbugmapping AS mapping                                                 "
+		                                    + "		ON (revisions.transaction_id = mapping.transactionid)                           "
+		                                    + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
+		                                    + ") AS bugs                                                                             "
+		                                    + "FROM rcsrevision AS A                                                                 "
+		                                    + "ORDER BY changedfile_id                                                               "
+		                                    + ") innerquery                                                                          "
+		                                    + "WHERE array_length(bugs, 1) > 0                                                       "
+		                                    + "GROUP BY file_id, bugs;                                                               ");
+		manager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
 		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
 		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
 	}
@@ -76,49 +72,47 @@ public class File2Bugs implements Annotated {
 	/**
 	 * @return
 	 */
-	public static List<File2Bugs> getBugCounts() {
-		List<File2Bugs> ret = new LinkedList<File2Bugs>();
-		PersistenceUtil util;
-		try {
-			util = PersistenceManager.getUtil();
+	public static List<File2Bugs> getBugCounts(final PersistenceUtil util) {
+		final List<File2Bugs> ret = new LinkedList<File2Bugs>();
+		
+		@SuppressWarnings ("unchecked")
+		final List<Object[]> result = util.executeNativeSelectQuery(manager.getNativeQuery(util, "files2bugs"));
+		Criteria<RCSFile> fileCriteria;
+		Criteria<Report> reportCriteria;
+		long fileid = -1, tmp = -1, bugid = -1;
+		RCSFile file = null;
+		final Set<Report> reports = new HashSet<Report>();
+		
+		for (final Object[] entries : result) {
+			tmp = (Long) entries[0];
+			bugid = (Long) entries[1];
 			
-			@SuppressWarnings ("unchecked")
-			List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util, "files2bugs"));
-			Criteria<RCSFile> fileCriteria;
-			Criteria<Report> reportCriteria;
-			long fileid = -1, tmp = -1, bugid = -1;
-			RCSFile file = null;
-			Set<Report> reports = new HashSet<Report>();
-			
-			for (Object[] entries : result) {
-				tmp = (Long) entries[0];
-				bugid = (Long) entries[1];
-				
-				if (tmp != fileid) {
-					if (!reports.isEmpty()) {
-						ret.add(new File2Bugs(file, reports));
-						reports.clear();
-					}
-					
-					fileid = tmp;
-					fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
-					file = util.load(fileCriteria).iterator().next();
+			if (tmp != fileid) {
+				if (!reports.isEmpty()) {
+					ret.add(new File2Bugs(file, reports));
+					reports.clear();
 				}
 				
-				reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
-				reports.addAll(util.load(reportCriteria));
+				fileid = tmp;
+				fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
+				file = util.load(fileCriteria).iterator().next();
 			}
 			
-			if (!reports.isEmpty()) {
-				ret.add(new File2Bugs(file, reports));
-				reports.clear();
-			}
-		} catch (UninitializedDatabaseException e) {
-			throw new Shutdown(e);
+			reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
+			reports.addAll(util.load(reportCriteria));
+		}
+		
+		if (!reports.isEmpty()) {
+			ret.add(new File2Bugs(file, reports));
+			reports.clear();
 		}
 		
 		return ret;
 	}
+	
+	RCSFile     file;
+	
+	Set<Report> reports;
 	
 	/**
 	 * used by persistence provider only
@@ -150,12 +144,12 @@ public class File2Bugs implements Annotated {
 		if (!(obj instanceof File2Bugs)) {
 			return false;
 		}
-		File2Bugs other = (File2Bugs) obj;
+		final File2Bugs other = (File2Bugs) obj;
 		if (getFile() == null) {
 			if (other.getFile() != null) {
 				return false;
 			}
-		} else if (!this.getFile().equals(other.getFile())) {
+		} else if (!getFile().equals(other.getFile())) {
 			return false;
 		}
 		return true;
@@ -211,11 +205,11 @@ public class File2Bugs implements Annotated {
 	 * @return
 	 */
 	public String toCSV() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append(getFile().getLatestPath()).append(",");
 		builder.append(getReports().size()).append(",");
-		StringBuilder b = new StringBuilder();
-		for (Report report : getReports()) {
+		final StringBuilder b = new StringBuilder();
+		for (final Report report : getReports()) {
 			if (b.length() > 0) {
 				b.append(" ");
 			}
@@ -231,12 +225,12 @@ public class File2Bugs implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("RCSFile2Bugs [file=");
 		builder.append(getFile().getGeneratedId());
 		builder.append(", reports=");
-		StringBuilder b = new StringBuilder();
-		for (Report report : getReports()) {
+		final StringBuilder b = new StringBuilder();
+		for (final Report report : getReports()) {
 			if (b.length() > 0) {
 				b.append(",");
 			}

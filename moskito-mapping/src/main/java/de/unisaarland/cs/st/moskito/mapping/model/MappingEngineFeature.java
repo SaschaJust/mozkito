@@ -33,14 +33,14 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @Embeddable
 public class MappingEngineFeature implements Annotated {
 	
-	private static final long                                  serialVersionUID = 4097360257338824107L;
-	private double                                             confidence;
-	private String                                             fromFieldName;
-	private String                                             toFieldName;
-	private String                                             toSubstring;
-	private String                                             fromSubstring;
-	private String                                             fqClassName;
-	private static Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
+	private static final long                                        serialVersionUID = 4097360257338824107L;
+	private double                                                   confidence;
+	private String                                                   fromFieldName;
+	private String                                                   toFieldName;
+	private String                                                   toSubstring;
+	private String                                                   fromSubstring;
+	private String                                                   fqClassName;
+	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
 	 * used by persistence provider only

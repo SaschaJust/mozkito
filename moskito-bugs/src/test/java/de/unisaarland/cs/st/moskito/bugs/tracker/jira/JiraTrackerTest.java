@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
@@ -44,9 +44,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
-import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraIDExtractor;
-import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraTracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraXMLParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.AttachmentEntry;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.History;
@@ -58,7 +55,7 @@ public class JiraTrackerTest {
 	private static URL       url177      = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-177.xml");
 	private static String    baseURL     = url177.toString();
 	private static String    baseDirURL  = baseURL.substring(0, url177.toString().lastIndexOf("JIRA-177.xml"));
-	private static String    pattern     = "JIRA-" + Tracker.bugIdPlaceholder + ".xml";
+	private static String    pattern     = "JIRA-" + Tracker.getBugidplaceholder() + ".xml";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -71,13 +68,13 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testAttachments() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		try {
 			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(451l), new Long(451l), null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -85,17 +82,17 @@ public class JiraTrackerTest {
 		RawReport rawReport = null;
 		try {
 			rawReport = tracker.fetchSource(tracker.getLinkFromId(451l));
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		}
-		XmlReport xmlReport = tracker.createDocument(rawReport);
-		Element rootElement = tracker.getRootElement(xmlReport);
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Element rootElement = tracker.getRootElement(xmlReport);
 		
-		List<AttachmentEntry> attachments = JiraXMLParser.extractAttachments(rootElement, tracker);
+		final List<AttachmentEntry> attachments = JiraXMLParser.extractAttachments(rootElement, tracker);
 		assertEquals(1, attachments.size());
 		
 		assertEquals("38639", attachments.get(0).getId());
@@ -113,21 +110,21 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testFromOverviewParse() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		
 		try {
 			
 			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
 			              null);
 			
-			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
-			XmlReport xmlReport = tracker.createDocument(rawReport);
-			Report report = tracker.parse(xmlReport);
+			final RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
+			final XmlReport xmlReport = tracker.createDocument(rawReport);
+			final Report report = tracker.parse(xmlReport);
 			
 			assertEquals(177, report.getId());
 			assertEquals(null, report.getAssignedTo());
 			assertEquals(null, report.getCategory());
-			SortedSet<Comment> comments = report.getComments();
+			final SortedSet<Comment> comments = report.getComments();
 			assertEquals(16, comments.size());
 			assertTrue(comments.first().getTimestamp().isBefore(comments.last().getTimestamp()));
 			
@@ -167,7 +164,7 @@ public class JiraTrackerTest {
 			                     + "starts-with(@Image, &#39;&quot;&#39;)&#93;</span><br/>\n   <span "
 			                     + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
 			             report.getDescription());
-			History history = report.getHistory();
+			final History history = report.getHistory();
 			assertEquals(0, history.size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
@@ -191,16 +188,16 @@ public class JiraTrackerTest {
 			assertEquals(Type.BUG, report.getType());
 			assertEquals("1.1", report.getVersion());
 			
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -209,11 +206,11 @@ public class JiraTrackerTest {
 	@Test
 	public void testGetHistoryURL() {
 		try {
-			String historyURL = JiraTracker.getHistoryURL(new URI(
-			                                                      "http://jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-210/JAXEN-210.xml"));
+			final String historyURL = JiraTracker.getHistoryURL(new URI(
+			                                                            "http://jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-210/JAXEN-210.xml"));
 			assertEquals("http://jira.codehaus.org/browse/JAXEN-210?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs",
 			             historyURL);
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -221,24 +218,24 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testOverallIdDetection() {
-		String s = "[JAXEN-210] Jaxen does not cope well with numeric types other than Double";
+		final String s = "[JAXEN-210] Jaxen does not cope well with numeric types other than Double";
 		assertTrue(JiraIDExtractor.idRegex.matches(s));
-		List<RegexGroup> find = JiraIDExtractor.idRegex.find(s);
+		final List<RegexGroup> find = JiraIDExtractor.idRegex.find(s);
 		assertEquals(2, find.size());
 		assertEquals(find.get(1).getMatch(), "210");
 	}
 	
 	@Test
 	public void testOverallIdFilter() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		
 		try {
 			tracker.setup(new URI(baseDirURL), overViewUrl.toURI(), pattern, null, null, new Long(1l), new Long(1000l),
 			              null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -246,20 +243,20 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testParse() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		
 		try {
 			
 			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(1l), new Long(1000l), null);
 			
-			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
-			XmlReport xmlReport = tracker.createDocument(rawReport);
-			Report report = tracker.parse(xmlReport);
+			final RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(177l));
+			final XmlReport xmlReport = tracker.createDocument(rawReport);
+			final Report report = tracker.parse(xmlReport);
 			
 			assertEquals(177, report.getId());
 			assertEquals(null, report.getAssignedTo());
 			assertEquals(null, report.getCategory());
-			SortedSet<Comment> comments = report.getComments();
+			final SortedSet<Comment> comments = report.getComments();
 			assertEquals(16, comments.size());
 			assertTrue(comments.first().getTimestamp().isBefore(comments.last().getTimestamp()));
 			
@@ -300,7 +297,7 @@ public class JiraTrackerTest {
 			                     + "class=\"error\">&#91;ends-with(@Image, &#39;&quot;&#39;)&#93;</span></p>",
 			             report.getDescription());
 			
-			History history = report.getHistory();
+			final History history = report.getHistory();
 			assertEquals(0, history.size());
 			
 			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
@@ -323,16 +320,16 @@ public class JiraTrackerTest {
 			assertEquals("Expression.getText() returns invalid XPath query strings", report.getSummary());
 			assertEquals(Type.BUG, report.getType());
 			assertEquals("1.1", report.getVersion());
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -340,13 +337,13 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testParseHistory() {
-		Report report = new Report(9551);
-		URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
+		final Report report = new Report(9551);
+		final URL url = JiraTrackerTest.class.getResource(FileUtils.fileSeparator + "JIRA-9551_history.html");
 		try {
 			JiraXMLParser.handleHistory(url.toURI(), report);
-			History history = report.getHistory();
+			final History history = report.getHistory();
 			assertEquals(1, history.size());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -354,24 +351,24 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testParseLinks() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		
 		try {
 			
 			tracker.setup(new URI(baseDirURL), null, pattern, null, null, new Long(1l), new Long(10000l), null);
 			
-			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(9551l));
-			XmlReport xmlReport = tracker.createDocument(rawReport);
-			Report report = tracker.parse(xmlReport);
+			final RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(9551l));
+			final XmlReport xmlReport = tracker.createDocument(rawReport);
+			final Report report = tracker.parse(xmlReport);
 			
 			assertEquals(9551, report.getId());
 			assertEquals(null, report.getAssignedTo());
 			assertEquals(null, report.getCategory());
-			SortedSet<Comment> comments = report.getComments();
+			final SortedSet<Comment> comments = report.getComments();
 			assertEquals(12, comments.size());
 			assertEquals(2, report.getSiblings().size());
 			
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -379,24 +376,24 @@ public class JiraTrackerTest {
 	
 	@Test
 	public void testXStream42() {
-		JiraTracker tracker = new JiraTracker();
+		final JiraTracker tracker = new JiraTracker();
 		try {
 			tracker.setup(new URI("http://jira.codehaus.org/si/jira.issueviews:issue-xml/"), null,
 			              "XSTR-<BUGID>/XSTR-<BUGID>.xml", null, null, 42l, 42l, null);
-			RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(42l));
-			XmlReport xmlReport = tracker.createDocument(rawReport);
+			final RawReport rawReport = tracker.fetchSource(tracker.getLinkFromId(42l));
+			final XmlReport xmlReport = tracker.createDocument(rawReport);
 			tracker.checkXML(xmlReport);
 			tracker.parse(xmlReport);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}

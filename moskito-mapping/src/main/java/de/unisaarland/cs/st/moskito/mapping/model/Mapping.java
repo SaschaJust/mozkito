@@ -30,20 +30,17 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.ClassLoadingError;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.mapping.elements.MapId;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -159,39 +156,17 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	/**
 	 * @return
 	 */
-	@Transient
+	@OneToMany (fetch = FetchType.EAGER)
 	public MappableEntity getElement1() {
-		if (this.element1 != null) {
-			return this.element1;
-		} else {
-			try {
-				final Class<?> clazz = Class.forName(getClass1());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getFromId(), clazz);
-			} catch (final ClassNotFoundException e) {
-				throw new ClassLoadingError(e, getClass1());
-			} catch (final UninitializedDatabaseException e) {
-				throw new UnrecoverableError(e);
-			}
-		}
+		return this.element1;
 	}
 	
 	/**
 	 * @return
 	 */
-	@Transient
+	@OneToMany (fetch = FetchType.EAGER)
 	public MappableEntity getElement2() {
-		if (this.element2 != null) {
-			return this.element2;
-		} else {
-			try {
-				final Class<?> clazz = Class.forName(getClass2());
-				return (MappableEntity) PersistenceManager.getUtil().loadById(getToId(), clazz);
-			} catch (final ClassNotFoundException e) {
-				throw new ClassLoadingError(e, getClass2());
-			} catch (final UninitializedDatabaseException e) {
-				throw new UnrecoverableError(e);
-			}
-		}
+		return this.element2;
 	}
 	
 	/**

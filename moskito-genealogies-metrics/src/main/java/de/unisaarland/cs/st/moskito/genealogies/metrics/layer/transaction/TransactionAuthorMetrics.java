@@ -14,8 +14,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionAuthorMetrics extends GenealogyTransactionMetric{
 	
-	public static String    numDepAuthors    = "changeSize";
-	public static String    numParentAuthors = "avgDepChangeSize";
+	private static final String    numDepAuthors    = "changeSize";
+	private static final String    numParentAuthors = "avgDepChangeSize";
 	
 	public TransactionAuthorMetrics(TransactionChangeGenealogy genealogy) {
 		super(genealogy);

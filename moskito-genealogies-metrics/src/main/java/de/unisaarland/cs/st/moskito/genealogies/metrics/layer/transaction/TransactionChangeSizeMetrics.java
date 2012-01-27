@@ -16,13 +16,13 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
 	
-	public static String changeSize = "changeSize";
-	public static String avgDepChangeSize = "avgDepChangeSize";
-	public static String maxDepChangeSize = "maxDepChangeSize";
-	public static String sumDepChangeSize = "sumDepChangeSize";
-	public static String avgParentChangeSize = "avgParentChangeSize";
-	public static String maxParentChangeSize = "maxParentChangeSize";
-	public static String sumParentChangeSize = "sumParentChangeSize";
+	private static final String changeSize = "changeSize";
+	private static final String avgDepChangeSize = "avgDepChangeSize";
+	private static final String maxDepChangeSize = "maxDepChangeSize";
+	private static final String sumDepChangeSize = "sumDepChangeSize";
+	private static final String avgParentChangeSize = "avgParentChangeSize";
+	private static final String maxParentChangeSize = "maxParentChangeSize";
+	private static final String sumParentChangeSize = "sumParentChangeSize";
 	private PersistenceUtil persistenceUtil;
 	
 	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy, PersistenceUtil peristenceUtil) {

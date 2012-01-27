@@ -36,24 +36,18 @@ public final class MoskitoTestBuilder {
 		
 		final ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath + ":src/main/java", className);
 		
+		if (System.getProperty("test.debug") != null) {
+			System.err.println("Launching test");
+		}
 		final Process process = builder.start();
 		process.waitFor();
+		if (System.getProperty("test.debug") != null) {
+			System.err.println("Test finished.");
+		}
 		final StringWriter writer = new StringWriter();
 		IOUtils.copy(process.getErrorStream(), writer);
 		final String theString = writer.toString();
 		return new Tuple<Integer, String>(process.exitValue(), theString);
-	}
-	
-	public static void main(final String[] args) throws Throwable {
-		try {
-			final Class<?> c = Class.forName("de.unisaarland.cs.st.moskito.testing.MoskitoDerivationTest");
-			final java.lang.reflect.Method m = c.getMethod("testFail", new Class<?>[0]);
-			final Object o = c.newInstance();
-			m.invoke(o, new Object[0]);
-		} catch (final Throwable t) {
-			t.getCause().printStackTrace();
-			throw t.getCause();
-		}
 	}
 	
 	public static Class<?> prepareTest(final MoskitoSuite.MoskitoTestRun testRun,
@@ -125,9 +119,14 @@ public final class MoskitoTestBuilder {
 		final CtMethod cm = CtNewMethod.make(Modifier.STATIC | Modifier.PUBLIC, CtClass.voidType, "main",
 		                                     new CtClass[] { pool.get("java.lang.String[]") },
 		                                     new CtClass[] { pool.get("java.lang.Throwable") }, body.toString(), cc);
-		
+		if (System.getProperty("test.debug") != null) {
+			System.err.println("created method");
+		}
 		cc.addMethod(cm);
 		try {
+			if (System.getProperty("test.debug") != null) {
+				System.err.println("compiling file");
+			}
 			cc.writeFile("src/main/java");
 			final String relativePath = "src/main/java" + File.separator + fqName.replaceAll("\\.", File.separator)
 			        + ".class";

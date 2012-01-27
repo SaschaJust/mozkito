@@ -14,13 +14,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	
-	public static String changeSize = "changeSize";
-	public static String avgDepChangeSize = "avgDepChangeSize";
-	public static String maxDepChangeSize = "maxDepChangeSize";
-	public static String sumDepChangeSize = "sumDepChangeSize";
-	public static String avgParentChangeSize = "avgParentChangeSize";
-	public static String maxParentChangeSize = "maxParentChangeSize";
-	public static String sumParentChangeSize = "sumParentChangeSize";
+	private static final String changeSize = "changeSize";
+	private static final String avgDepChangeSize = "avgDepChangeSize";
+	private static final String maxDepChangeSize = "maxDepChangeSize";
+	private static final String sumDepChangeSize = "sumDepChangeSize";
+	private static final String avgParentChangeSize = "avgParentChangeSize";
+	private static final String maxParentChangeSize = "maxParentChangeSize";
+	private static final String sumParentChangeSize = "sumParentChangeSize";
 	
 	public PartitionChangeSizeMetrics(PartitionChangeGenealogy genealogy) {
 		super(genealogy);

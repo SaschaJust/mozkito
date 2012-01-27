@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
@@ -51,7 +51,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.History;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 public class SourceforgeTrackerTest {
@@ -61,7 +60,7 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testAtIdRegex() {
-		Regex atIdRegex = new Regex(SourceforgeTracker.atIdPattern);
+		final Regex atIdRegex = new Regex(SourceforgeTracker.atIdPattern);
 		atIdRegex.find(url1);
 		assertEquals(new Integer(1), atIdRegex.getGroupCount());
 		assertEquals("617889", atIdRegex.getGroup("atid"));
@@ -70,7 +69,7 @@ public class SourceforgeTrackerTest {
 		assertEquals(new Integer(1), atIdRegex.getGroupCount());
 		assertEquals("617889", atIdRegex.getGroup("atid"));
 		
-		String newUrl = atIdRegex.replaceAll(url1, "atid=123456");
+		final String newUrl = atIdRegex.replaceAll(url1, "atid=123456");
 		atIdRegex.find(newUrl);
 		assertEquals(new Integer(1), atIdRegex.getGroupCount());
 		assertEquals("123456", atIdRegex.getGroup("atid"));
@@ -78,8 +77,8 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testAttachmentIdRegex() {
-		String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
-		List<RegexGroup> find = new Regex(SourceforgeTracker.fileIdPattern).find(link);
+		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
+		final List<RegexGroup> find = new Regex(SourceforgeTracker.fileIdPattern).find(link);
 		assertTrue(find != null);
 		assertEquals(2, find.size());
 		assertEquals("336228", find.get(1).getMatch());
@@ -87,7 +86,7 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testGroupIdRegex() {
-		Regex groupIdRegex = new Regex(SourceforgeTracker.groupIdPattern);
+		final Regex groupIdRegex = new Regex(SourceforgeTracker.groupIdPattern);
 		groupIdRegex.find(url1);
 		assertEquals(new Integer(1), groupIdRegex.getGroupCount());
 		assertEquals("97367", groupIdRegex.getGroup("group_id"));
@@ -99,8 +98,9 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testHTMLCommentRegex() {
-		String s = "<!-- google_ad_section_start -->\n\"JodaTest.java\"<!-- google_ad_section_end -->";
-		Regex htmlCommentRegex = new Regex(SourceforgeTracker.htmlCommentPattern, Pattern.MULTILINE | Pattern.DOTALL);
+		final String s = "<!-- google_ad_section_start -->\n\"JodaTest.java\"<!-- google_ad_section_end -->";
+		final Regex htmlCommentRegex = new Regex(SourceforgeTracker.htmlCommentPattern, Pattern.MULTILINE
+		        | Pattern.DOTALL);
 		String result = htmlCommentRegex.removeAll(s);
 		result = result.replaceAll("\"", "");
 		assertEquals("JodaTest.java", result.trim());
@@ -108,38 +108,38 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testIssueHistory() {
-		SourceforgeTracker tracker = new SourceforgeTracker();
+		final SourceforgeTracker tracker = new SourceforgeTracker();
 		String url = SourceforgeTrackerTest.class.getResource(FileUtils.fileSeparator
 		                                                              + "sourceforge_issue_3107411.html").toString();
 		url = url.substring(0, url.lastIndexOf("sourceforge_issue_3107411.html"));
-		String pattern = "sourceforge_issue_" + Tracker.bugIdPlaceholder + ".html";
+		final String pattern = "sourceforge_issue_" + Tracker.getBugidplaceholder() + ".html";
 		
 		try {
 			tracker.setup(new URI(url), null, pattern, null, null, 3107411l, 3107411l, null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
 		RawReport rawReport = null;
 		try {
 			rawReport = tracker.fetchSource(tracker.getLinkFromId(3107411l));
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		}
-		XmlReport xmlReport = tracker.createDocument(rawReport);
-		Report report = tracker.parse(xmlReport);
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Report report = tracker.parse(xmlReport);
 		
-		History history = report.getHistory();
+		final History history = report.getHistory();
 		assertEquals(8, history.size());
 		
-		Iterator<HistoryElement> hElemIter = history.getElements().iterator();
+		final Iterator<HistoryElement> hElemIter = history.getElements().iterator();
 		
 		assertTrue(hElemIter.hasNext());
 		HistoryElement hElem = hElemIter.next();
@@ -257,58 +257,58 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testIssueParser() {
-		SourceforgeTracker tracker = new SourceforgeTracker();
+		final SourceforgeTracker tracker = new SourceforgeTracker();
 		String url = SourceforgeTrackerTest.class.getResource(FileUtils.fileSeparator
 		                                                              + "sourceforge_issue_1887104.html").toString();
 		url = url.substring(0, url.lastIndexOf("sourceforge_issue_1887104.html"));
-		String pattern = "sourceforge_issue_" + Tracker.bugIdPlaceholder + ".html";
+		final String pattern = "sourceforge_issue_" + Tracker.getBugidplaceholder() + ".html";
 		
 		try {
 			tracker.setup(new URI(url), null, pattern, null, null, 1887104l, 1887104l, null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
 		RawReport rawReport = null;
 		try {
 			rawReport = tracker.fetchSource(tracker.getLinkFromId(1887104l));
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		}
-		XmlReport xmlReport = tracker.createDocument(rawReport);
-		Report report = tracker.parse(xmlReport);
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Report report = tracker.parse(xmlReport);
 		
 		assertEquals(null, report.getAssignedTo());
 		assertEquals("None", report.getCategory());
 		
 		assertEquals(6, report.getComments().size());
-		Iterator<Comment> iterator = report.getComments().iterator();
-		Comment c1 = iterator.next();
+		final Iterator<Comment> iterator = report.getComments().iterator();
+		final Comment c1 = iterator.next();
 		assertEquals(2658599, c1.getId());
-		Person daliboz = c1.getAuthor();
+		final Person daliboz = c1.getAuthor();
 		assertTrue(daliboz != null);
 		assertEquals(report, c1.getBugReport());
 		assertTrue(c1.getMessage().startsWith("bumping up priority."));
 		DateTime dt = DateTimeUtils.parseDate("2008-02-05 16:52:57 UTC");
 		assertTrue(dt.isEqual(c1.getTimestamp()));
 		
-		Comment c2 = iterator.next();
+		final Comment c2 = iterator.next();
 		assertEquals(2658950, c2.getId());
-		Person scolebourne = c2.getAuthor();
+		final Person scolebourne = c2.getAuthor();
 		assertTrue(scolebourne != null);
 		assertEquals(report, c2.getBugReport());
 		assertTrue(c2.getMessage().startsWith("Are you using v1.5.2?"));
 		dt = DateTimeUtils.parseDate("2008-02-05 22:37:45 UTC");
 		assertTrue(dt.isEqual(c2.getTimestamp()));
 		
-		Comment c3 = iterator.next();
+		final Comment c3 = iterator.next();
 		assertEquals(2659081, c3.getId());
 		assertEquals(daliboz, c3.getAuthor());
 		assertEquals(report, c3.getBugReport());
@@ -316,7 +316,7 @@ public class SourceforgeTrackerTest {
 		dt = DateTimeUtils.parseDate("2008-02-06 00:04:30 UTC");
 		assertTrue(dt.isEqual(c3.getTimestamp()));
 		
-		Comment c4 = iterator.next();
+		final Comment c4 = iterator.next();
 		assertEquals(2661926, c4.getId());
 		assertEquals(scolebourne, c4.getAuthor());
 		assertEquals(report, c4.getBugReport());
@@ -324,7 +324,7 @@ public class SourceforgeTrackerTest {
 		dt = DateTimeUtils.parseDate("2008-02-08 00:13:32 UTC");
 		assertTrue(dt.isEqual(c4.getTimestamp()));
 		
-		Comment c5 = iterator.next();
+		final Comment c5 = iterator.next();
 		assertEquals(2670573, c5.getId());
 		assertEquals(daliboz, c5.getAuthor());
 		assertEquals(report, c5.getBugReport());
@@ -332,12 +332,12 @@ public class SourceforgeTrackerTest {
 		dt = DateTimeUtils.parseDate("2008-02-11 19:26:23 UTC");
 		assertTrue(dt.isEqual(c5.getTimestamp()));
 		
-		Comment c6 = iterator.next();
+		final Comment c6 = iterator.next();
 		assertEquals(2670632, c6.getId());
 		assertEquals(daliboz, c6.getAuthor());
 		assertEquals(report, c6.getBugReport());
 		assertTrue(c6.getMessage().startsWith("Just noticed a difference for the Spring adjustment - though"));
-		DateTime c6Dt = DateTimeUtils.parseDate("2008-02-11 20:13:00 UTC");
+		final DateTime c6Dt = DateTimeUtils.parseDate("2008-02-11 20:13:00 UTC");
 		assertTrue(c6Dt.isEqual(c6.getTimestamp()));
 		
 		assertEquals("None", report.getComponent());
@@ -362,9 +362,9 @@ public class SourceforgeTrackerTest {
 		assertEquals(Type.BUG, report.getType());
 		assertEquals(null, report.getVersion());
 		
-		List<AttachmentEntry> attachmentEntries = report.getAttachmentEntries();
+		final List<AttachmentEntry> attachmentEntries = report.getAttachmentEntries();
 		assertEquals(1, attachmentEntries.size());
-		AttachmentEntry attachment = attachmentEntries.get(0);
+		final AttachmentEntry attachment = attachmentEntries.get(0);
 		assertEquals("265142", attachment.getId());
 		assertTrue(attachment.getAuthor().getUsernames().contains("daliboz"));
 		assertEquals(null, attachment.getDeltaTS());
@@ -379,11 +379,11 @@ public class SourceforgeTrackerTest {
 	
 	@Test
 	public void testLiveOverview() {
-		String liveUrl = "http://sourceforge.net/tracker/?group_id=97367&atid=617889";
+		final String liveUrl = "http://sourceforge.net/tracker/?group_id=97367&atid=617889";
 		
-		SourceforgeTracker tracker = new SourceforgeTracker();
+		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {
-			Set<Long> ids = tracker.getIdsFromHTTPUri(new URI(liveUrl));
+			final Set<Long> ids = tracker.getIdsFromHTTPUri(new URI(liveUrl));
 			assertTrue(ids.size() >= 111);
 			
 			assertTrue(ids.contains(3192457l));
@@ -498,13 +498,13 @@ public class SourceforgeTrackerTest {
 			assertTrue(ids.contains(949267l));
 			assertTrue(ids.contains(943071l));
 			
-		} catch (SAXException e) {
+		} catch (final SAXException e) {
 			e.printStackTrace();
 			fail();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}

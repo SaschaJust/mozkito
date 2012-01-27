@@ -1,20 +1,19 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.issuezilla;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -46,8 +45,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
-import de.unisaarland.cs.st.moskito.bugs.tracker.issuezilla.IssuezillaTracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.issuezilla.IssuezillaXMLParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
@@ -66,69 +63,69 @@ public class IssuezillaTrackerTest {
 	}
 	
 	@Test
-	public void testFetch(){
-		IssuezillaTracker tracker = new IssuezillaTracker();
-		File randomDir = FileUtils.createRandomDir(new File("/tmp/"), "test", "reposuite", FileShutdownAction.DELETE);
+	public void testFetch() {
+		final IssuezillaTracker tracker = new IssuezillaTracker();
+		final File randomDir = FileUtils.createRandomDir(new File("/tmp/"), "test", "reposuite",
+		                                                 FileShutdownAction.DELETE);
 		try {
 			tracker.setup(new URI("http://argouml.tigris.org/issues/"), null, "xml.cgi?id=<BUGID>", null, null, 6297l,
 			              6297l, randomDir.getAbsolutePath());
-			URI uri = tracker.getLinkFromId(6297l);
+			final URI uri = tracker.getLinkFromId(6297l);
 			assertEquals("http://argouml.tigris.org/issues/xml.cgi?id=6297", uri.toString());
-			RawReport rawReport = tracker.fetchSource(uri);
+			final RawReport rawReport = tracker.fetchSource(uri);
 			assertTrue(rawReport != null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		} finally {
 			try {
 				FileUtils.deleteDirectory(randomDir);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 				fail();
 			}
 		}
 		
-		
 	}
 	
 	@Test
 	public void testParse() {
-		IssuezillaTracker tracker = new IssuezillaTracker();
+		final IssuezillaTracker tracker = new IssuezillaTracker();
 		String url = IssuezillaTrackerTest.class.getResource(FileUtils.fileSeparator + "issuezilla-argouml-5818.xml")
-		.toString();
+		                                        .toString();
 		url = url.substring(0, url.lastIndexOf("issuezilla-argouml-5818.xml"));
-		String pattern = "issuezilla-argouml-" + Tracker.bugIdPlaceholder + ".xml";
+		final String pattern = "issuezilla-argouml-" + Tracker.getBugidplaceholder() + ".xml";
 		
 		try {
 			tracker.setup(new URI(url), null, pattern, null, null, 5818l, 5818l, null);
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
 		RawReport rawReport = null;
 		try {
 			rawReport = tracker.fetchSource(tracker.getLinkFromId(5818l));
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		}
-		XmlReport xmlReport = tracker.createDocument(rawReport);
-		Report report = tracker.parse(xmlReport);
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Report report = tracker.parse(xmlReport);
 		
 		assertTrue(report != null);
 		assertTrue(report.getAssignedTo() != null);
@@ -160,16 +157,16 @@ public class IssuezillaTrackerTest {
 		
 		// checking comments
 		assertEquals(11, report.getComments().size());
-		Iterator<Comment> commentIter = report.getComments().iterator();
+		final Iterator<Comment> commentIter = report.getComments().iterator();
 		int counter = 0;
-		while(commentIter.hasNext()){
+		while (commentIter.hasNext()) {
 			++counter;
-			Comment comment = commentIter.next();
+			final Comment comment = commentIter.next();
 			assertTrue(comment.getAuthor() != null);
-			assertEquals(report,comment.getBugReport());
-			assertEquals(counter,comment.getId());
+			assertEquals(report, comment.getBugReport());
+			assertEquals(counter, comment.getId());
 			
-			switch(counter){
+			switch (counter) {
 				case 1:
 					assertTrue(comment.getAuthor().getUsernames().contains("rdi"));
 					assertTrue(comment.getMessage().startsWith("Created an attachment (id=1957)"));
@@ -186,7 +183,7 @@ public class IssuezillaTrackerTest {
 					assertTrue(comment.getAuthor().getUsernames().contains("rdi"));
 					assertTrue(comment.getMessage().startsWith("Well, this is not the behavior I meant."));
 					assertTrue(comment.getMessage()
-					           .endsWith("embedding     |\n  | component.                    |\n  |_______________________________|"));
+					                  .endsWith("embedding     |\n  | component.                    |\n  |_______________________________|"));
 					assertEquals(DateTimeUtils.parseDate("2009-06-26 00:13:37"), comment.getTimestamp());
 					break;
 				case 4:
@@ -198,9 +195,9 @@ public class IssuezillaTrackerTest {
 				case 5:
 					assertTrue(comment.getAuthor().getUsernames().contains("rdi"));
 					assertTrue(comment.getMessage()
-					           .startsWith("Well, I think we talk about different points in the line,"));
+					                  .startsWith("Well, I think we talk about different points in the line,"));
 					assertTrue(comment.getMessage()
-					           .endsWith("|             b--->(c) Class B| |\n  |                   |_________| |"));
+					                  .endsWith("|             b--->(c) Class B| |\n  |                   |_________| |"));
 					assertEquals(DateTimeUtils.parseDate("2009-06-26 04:56:21"), comment.getTimestamp());
 					break;
 				case 6:
@@ -243,14 +240,13 @@ public class IssuezillaTrackerTest {
 			}
 		}
 		
-		
 		// checking history
 		assertEquals(5, report.getHistory().size());
-		Iterator<HistoryElement> historyIter = report.getHistory().iterator();
+		final Iterator<HistoryElement> historyIter = report.getHistory().iterator();
 		counter = 0;
 		while (historyIter.hasNext()) {
 			++counter;
-			HistoryElement historyElement = historyIter.next();
+			final HistoryElement historyElement = historyIter.next();
 			assertEquals(report.getId(), historyElement.getBugId());
 			assertTrue(historyElement.getAuthor() != null);
 			assertTrue(historyElement.getText() == null);

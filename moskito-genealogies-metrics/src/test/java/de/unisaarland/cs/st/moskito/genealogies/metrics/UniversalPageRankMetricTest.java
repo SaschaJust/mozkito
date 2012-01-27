@@ -16,19 +16,19 @@ public class UniversalPageRankMetricTest extends TestEnvironment {
 	@Test
 	public void test() {
 		setup();
-		UniversalTestPageRankMetric metric = new UniversalTestPageRankMetric(genealogy);
-		Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
+		final UniversalTestPageRankMetric metric = new UniversalTestPageRankMetric(genealogy);
+		final Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
 		
-		Iterator<String> itemIter = genealogy.vertexSet().iterator();
+		final Iterator<String> itemIter = genealogy.vertexSet().iterator();
 		while (itemIter.hasNext()) {
-			String item = itemIter.next();
+			final String item = itemIter.next();
 			metricValues.addAll(metric.handle(item, !itemIter.hasNext()));
 		}
 		
 		assertEquals(14, metricValues.size());
 		
-		for (GenealogyMetricValue mValue : metricValues) {
-			assertEquals(UniversalPageRankMetric.pageRank, mValue.getMetricId());
+		for (final GenealogyMetricValue mValue : metricValues) {
+			assertEquals(UniversalPageRankMetric.getPagerank(), mValue.getMetricId());
 			if (mValue.getNodeId().equals("1")) {
 				assertEquals(.1, mValue.getValue(), 0);
 			} else if (mValue.getNodeId().equals("2")) {

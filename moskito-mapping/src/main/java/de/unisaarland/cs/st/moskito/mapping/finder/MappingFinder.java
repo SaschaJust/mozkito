@@ -53,6 +53,10 @@ public class MappingFinder {
 	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
 	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
 	
+	public MappingFinder() {
+		
+	}
+	
 	/**
 	 * @param engine
 	 */
@@ -259,13 +263,14 @@ public class MappingFinder {
 	/**
 	 * @return
 	 */
-	public List<Annotated> split(final FilteredMapping data) {
+	public List<Annotated> split(final FilteredMapping data,
+	                             final PersistenceUtil util) {
 		final LinkedList<Annotated> list = new LinkedList<Annotated>();
 		
 		for (final Class<? extends MappingSplitter> key : this.splitters.keySet()) {
 			final MappingSplitter splitter = this.splitters.get(key);
 			
-			list.addAll(splitter.process());
+			list.addAll(splitter.process(util));
 		}
 		return list;
 	}

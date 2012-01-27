@@ -58,11 +58,11 @@ public class ScoringSplitter extends AndamaSink<FilteredMapping> {
 					Logger.debug("Split analyzing " + getInputData());
 				}
 				
-				FilteredMapping data = getInputData();
+				final FilteredMapping data = getInputData();
 				
-				this.list.addAll(finder.split(data));
+				this.list.addAll(finder.split(data, persistenceUtil));
 				
-				for (Annotated annotated : this.list) {
+				for (final Annotated annotated : this.list) {
 					
 					if ((++this.i % 50) == 0) {
 						persistenceUtil.commitTransaction();
