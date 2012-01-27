@@ -28,16 +28,36 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public class JavaElementFactory {
 	
 	/** The class definitions by name. */
-	public static Map<String, JavaClassDefinition>  classDefs   = new HashMap<String, JavaClassDefinition>();
+	private final Map<String, JavaClassDefinition>  classDefs   = new HashMap<String, JavaClassDefinition>();
 	
 	/** The method definitions by name. */
-	public static Map<String, JavaMethodDefinition> methodDefs  = new HashMap<String, JavaMethodDefinition>();
+	private final Map<String, JavaMethodDefinition> methodDefs  = new HashMap<String, JavaMethodDefinition>();
 	
 	/** The method calls by name. */
-	public static Map<String, JavaMethodCall>       methodCalls = new HashMap<String, JavaMethodCall>();
+	private final Map<String, JavaMethodCall>       methodCalls = new HashMap<String, JavaMethodCall>();
 	
-	private static boolean                          isInit      = false;
+	public JavaElementFactory() {
+		
+	}
 	
+	public JavaElementFactory(final PersistenceUtil persistenceUtil) {
+		Criteria<JavaClassDefinition> criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
+		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
+		for (JavaClassDefinition def : defs) {
+			classDefs.put(def.getFullQualifiedName(), def);
+		}
+		Criteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
+		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria2);
+		for (JavaMethodDefinition def : mDefs) {
+			methodDefs.put(def.getFullQualifiedName(), def);
+		}
+		Criteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
+		List<JavaMethodCall> calls = persistenceUtil.load(criteria3);
+		for (JavaMethodCall call : calls) {
+			methodCalls.put(call.getFullQualifiedName(), call);
+		}
+	}
+
 	/**
 	 * Gets the class definition.
 	 * 
@@ -59,10 +79,8 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public static JavaClassDefinition getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
-	                                                              @NotNull final String fullQualifiedName) {
-		
-		Condition.check(isInit, "You must call init() before accessing the factory!");
+	public JavaClassDefinition getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
+			@NotNull final String fullQualifiedName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -95,10 +113,7 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public static JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName,
-	                                                     @NotNull final String file) {
-		
-		Condition.check(isInit, "You must call init() before accessing the factory!");
+	public JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName, @NotNull final String file) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -129,16 +144,12 @@ public class JavaElementFactory {
 	 *            the position
 	 * @return the method call
 	 */
-	public static JavaMethodCall getMethodCall(@NotNull final String objectName,
-	                                           @NotNull final String methodName,
-	                                           @NotNull final List<String> signature,
-	                                           @NotNull final JavaElement parent) {
-		
-		Condition.check(isInit, "You must call init() before accessing the factory!");
+	public JavaMethodCall getMethodCall(@NotNull final String objectName, @NotNull final String methodName,
+			@NotNull final List<String> signature, @NotNull final JavaElement parent) {
 		
 		boolean parentPass = ((parent instanceof JavaClassDefinition) || (parent instanceof JavaMethodDefinition));
 		Condition.check(parentPass,
-		                "The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
+				"The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
 		if (!parentPass) {
 			if (Logger.logError()) {
 				Logger.error("The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
@@ -177,11 +188,8 @@ public class JavaElementFactory {
 	 *            the body start line
 	 * @return the method definition
 	 */
-	public static JavaMethodDefinition getMethodDefinition(@NotNull final String objectName,
-	                                                       @NotNull final String methodName,
-	                                                       @NotNull final List<String> signature) {
-		
-		Condition.check(isInit, "You must call init() before accessing the factory!");
+	public JavaMethodDefinition getMethodDefinition(@NotNull final String objectName, @NotNull final String methodName,
+			@NotNull final List<String> signature) {
 		
 		JavaMethodDefinition def = null;
 		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
@@ -193,28 +201,5 @@ public class JavaElementFactory {
 			def = methodDefs.get(cacheName);
 		}
 		return def;
-	}
-	
-	@SuppressWarnings ({ "rawtypes", "unchecked" })
-	public static void init(final PersistenceUtil persistenceUtil) {
-		if (isInit) {
-			return;
-		}
-		Criteria criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
-		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
-		for (JavaClassDefinition def : defs) {
-			classDefs.put(def.getFullQualifiedName(), def);
-		}
-		criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
-		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria);
-		for (JavaMethodDefinition def : mDefs) {
-			methodDefs.put(def.getFullQualifiedName(), def);
-		}
-		criteria = persistenceUtil.createCriteria(JavaMethodCall.class);
-		List<JavaMethodCall> calls = persistenceUtil.load(criteria);
-		for (JavaMethodCall call : calls) {
-			methodCalls.put(call.getFullQualifiedName(), call);
-		}
-		isInit = true;
 	}
 }

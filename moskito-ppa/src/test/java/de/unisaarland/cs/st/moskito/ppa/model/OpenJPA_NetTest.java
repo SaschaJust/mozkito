@@ -23,11 +23,10 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -39,26 +38,26 @@ public class OpenJPA_NetTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "ppa")
 	public void test() {
-		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		
-		persistenceUtil.beginTransaction();
-		final JavaElementLocationSet cache = new JavaElementLocationSet();
+		getPersistenceUtil().beginTransaction();
+		JavaElementFactory elementFactory = new JavaElementFactory();
+		final JavaElementLocationSet cache = new JavaElementLocationSet(elementFactory);
 		final JavaElementLocation classDefinition = cache.addClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 		final DateTime now = new DateTime();
 		
 		final Person p = new Person("kim", "", "");
-		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1", persistenceUtil);
-		transaction.setBranch(new RCSBranch("master"));
+		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1", getPersistenceUtil());
+		transaction.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
 		final RCSFile file = new RCSFileManager().createFile("a.java", transaction);
 		final RCSRevision rev = new RCSRevision(transaction, file, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-		persistenceUtil.save(transaction);
-		persistenceUtil.save(op);
-		persistenceUtil.commitTransaction();
-		persistenceUtil.beginTransaction();
+		getPersistenceUtil().save(transaction);
+		getPersistenceUtil().save(op);
+		getPersistenceUtil().commitTransaction();
+		getPersistenceUtil().beginTransaction();
 		
-		final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-		final List<JavaChangeOperation> list = persistenceUtil.load(criteria);
+		final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
+		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
 		assertEquals(1, list.size());
 		
 	}
