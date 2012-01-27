@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
-import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
  * @author just
@@ -28,7 +28,7 @@ public @interface DatabaseSettings {
 	
 	String hostname() default "grid1.st.cs.uni-saarland.de";
 	
-	ConnectOptions options() default ConnectOptions.DROPIFEXISTS;
+	ConnectOptions options() default de.unisaarland.cs.st.moskito.persistence.ConnectOptions.DROPIFEXISTS;
 	
 	String password() default "miner";
 	
@@ -38,5 +38,5 @@ public @interface DatabaseSettings {
 	
 	String username() default "miner";
 	
-	Class<?> util() default OpenJPAUtil.class;
+	Class<? extends PersistenceUtil> util() default de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil.class;
 }
