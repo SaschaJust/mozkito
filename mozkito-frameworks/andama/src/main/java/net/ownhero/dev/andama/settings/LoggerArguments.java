@@ -42,7 +42,8 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 				argEnums);
 		new EnumArgument(settings, "log.file.level", "determines the log level for the oevrall log file", "INFO",
 				false, argEnums);
-		new OutputFileArgument(settings, "log.file", "specifies the path to a file the file log shall be written to.",
+		new LoggerOutputFileArgument(settings, "log.file",
+		        "specifies the path to a file the file log shall be written to.",
 				"./.log", false, true);
 		new StringArgument(
 				settings,

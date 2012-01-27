@@ -60,6 +60,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -69,6 +70,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -129,24 +131,23 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	}
 	
 	public final T getValue() {
-		if(!init){
-			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName()
-					+ " before calling init() is not allowed! Please fix your code.");
+		if (!init) {
+			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
+					+ getName() + " before calling init() is not allowed! Please fix your code.");
 		}
 		return this.getCachedValue();
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.name == null)
-				? 0
-						: this.name.hashCode());
+		result = (prime * result) + ((this.name == null) ? 0 : this.name.hashCode());
 		return result;
 	}
 	
@@ -185,13 +186,13 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + " [required=" + this.isRequired + ", name=" + this.name + ", default="
-				+ this.defaultValue
-				+ ", value=" + this.stringValue + ", description=" + this.description + "]";
+				+ this.defaultValue + ", value=" + this.stringValue + ", description=" + this.description + "]";
 	}
 	
 	/**
