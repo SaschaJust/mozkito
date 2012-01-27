@@ -64,7 +64,12 @@ public class OutputFileArgument extends AndamaArgument<File> {
 		// FIXME separate input and output files. Fix the mustExist and overwrite
 		// combinations!
 		if (this.stringValue == null) {
-			return false;
+			setCachedValue(null);
+			if (isRequired()) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 		File file = new File(this.stringValue.trim());
 		

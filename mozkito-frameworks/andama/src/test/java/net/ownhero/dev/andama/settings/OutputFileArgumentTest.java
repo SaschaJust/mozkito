@@ -32,6 +32,18 @@ public class OutputFileArgumentTest {
 	private static String name = "outputFile";
 	
 	@Test
+	public void blaTest(){
+		AndamaSettings settings = new AndamaSettings();
+		OutputFileArgument arg = new OutputFileArgument(settings, "output.xml",
+				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
+				null, false, true);
+		settings.parseArguments();
+		File value = arg.getValue();
+		assertEquals(null,value);
+		
+	}
+	
+	@Test
 	public void testNotRequiredExistsNoOverwrite() {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		AndamaSettings settings = new AndamaSettings();
@@ -52,6 +64,26 @@ public class OutputFileArgumentTest {
 		File value = arg.getValue();
 		assertTrue(value != null);
 		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
+	}
+	
+	@Test
+	public void testNotRequiredNotExistsNoOverwrite() {
+		AndamaSettings settings = new AndamaSettings();
+		OutputFileArgument arg = new OutputFileArgument(settings, name, "test argument", "/tmp/fhdjkshfjksdhfjk.kim", false,
+				false);
+		settings.parseArguments();
+		File value = arg.getValue();
+		assertEquals(null, value);
+	}
+	
+	@Test
+	public void testNotRequiredNotExistsOverwrite() {
+		AndamaSettings settings = new AndamaSettings();
+		OutputFileArgument arg = new OutputFileArgument(settings, name, "test argument", "/tmp/fhdjkshfjksdhfjk.kim", false,
+				true);
+		settings.parseArguments();
+		File value = arg.getValue();
+		assertTrue(value != null);
 	}
 	
 	@Test
