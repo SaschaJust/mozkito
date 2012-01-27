@@ -9,6 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 
 /**
@@ -25,9 +26,9 @@ public @interface DatabaseSettings {
 	
 	String driver() default "org.postgresql.Driver";
 	
-	boolean dropContents() default true;
-	
 	String hostname() default "grid1.st.cs.uni-saarland.de";
+	
+	ConnectOptions options() default ConnectOptions.DROPIFEXISTS;
 	
 	String password() default "miner";
 	
