@@ -18,6 +18,7 @@
  */
 package de.unisaarland.cs.st.moskito.persistence;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -37,6 +38,8 @@ public interface PersistenceUtil {
 	
 	public <T> Criteria<T> createCriteria(final Class<T> clazz);
 	
+	public void createDatabase() throws SQLException;
+	
 	public <T> Query createNativeQuery(String query,
 	                                   Class<T> clazz);
 	
@@ -54,6 +57,8 @@ public interface PersistenceUtil {
 	                                 final ConnectOptions options);
 	
 	public void delete(final Annotated object);
+	
+	public void dropDatabase() throws SQLException;
 	
 	public void executeNativeQuery(final String query);
 	

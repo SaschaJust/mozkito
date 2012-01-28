@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
@@ -67,10 +68,10 @@ public abstract class MoskitoTest {
 	/**
 	 * @return the persistenceUtil for this test
 	 */
-	public static PersistenceUtil getPersistenceUtil() {
+	public static PersistenceUtil getPersistenceUtil() throws TestSettingsError {
 		if (persistenceUtil == null) {
 			testLog("Calling getPersistenceUtil() without having database arguments set.");
-			throw new RuntimeException("Calling getPersistenceUtil() without having database arguments set.");
+			throw new TestSettingsError("Calling getPersistenceUtil() without having database arguments set.");
 		}
 		
 		return persistenceUtil;
@@ -110,6 +111,7 @@ public abstract class MoskitoTest {
 	
 	public static void main(final String[] args) throws Throwable {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+		boolean failure = false;
 		if (args.length < 4) {
 			// ERROR
 		}
@@ -151,96 +153,130 @@ public abstract class MoskitoTest {
 		Method m = null;
 		Object o = null;
 		
+		testLog("Loading test class: " + fqcName);
+		c = Class.forName(fqcName);
+		testLog("Getting test: " + testName);
+		m = c.getMethod(testName, new Class[0]);
+		
 		try {
-			testLog("Loading test class: " + fqcName);
-			c = Class.forName(fqcName);
-			testLog("Getting test: " + testName);
-			m = c.getMethod(testName, new Class[0]);
+			testLog("Setting up test environment.");
+			classAnnotations = c.getAnnotations();
+			methodAnnotations = m.getAnnotations();
+			annotationMap = new HashMap<String, Annotation>();
 			
-			try {
-				testLog("Setting up test environment.");
-				classAnnotations = c.getAnnotations();
-				methodAnnotations = m.getAnnotations();
-				annotationMap = new HashMap<String, Annotation>();
-				
-				for (final Annotation annotation : classAnnotations) {
-					annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
-				}
-				
-				for (final Annotation annotation : methodAnnotations) {
-					annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
-				}
-				MoskitoTest.setUpBeforeClass(annotationMap);
-			} catch (final ArgumentException e) {
-				testLog("Database connection failed.", e);
-			} catch (final Throwable t) {
-				testLog("Test setup failed", t);
-				throw t;
+			for (final Annotation annotation : classAnnotations) {
+				annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
 			}
 			
-			testLog("Looking up setup/tearDown methods.");
-			lookupEnvMethods(c);
-			
-			if (!beforeClassMethods.isEmpty()) {
-				testLog("@BeforeClass: ");
-				for (final Method method : beforeClassMethods) {
-					testLog(" * " + method.getName());
+			for (final Annotation annotation : methodAnnotations) {
+				annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
+			}
+			MoskitoTest.setUpBeforeClass(annotationMap);
+		} catch (final ArgumentException e) {
+			testLog("Database connection failed.", e);
+		} catch (final Throwable t) {
+			testLog("Test setup failed", t);
+			throw t;
+		}
+		
+		testLog("Looking up setup/tearDown methods.");
+		lookupEnvMethods(c);
+		
+		if (!beforeClassMethods.isEmpty()) {
+			testLog("@BeforeClass: ");
+			for (final Method method : beforeClassMethods) {
+				testLog(" * " + method.getName());
+				try {
 					method.invoke(null, new Object[0]);
+				} catch (final TestSettingsError e) {
+					failure = true;
+					testLog("@BeforeClass failed in: " + method.getName(), e);
+				} catch (final Throwable t) {
+					failure = true;
+					testLog("@BeforeClass failed in: " + method.getName(), t);
 				}
 			}
-			
-			testLog("Creating test instance: " + c.getSimpleName());
+		}
+		
+		testLog("Creating test instance: " + c.getSimpleName());
+		try {
 			o = c.newInstance();
-			
-			if (!beforeMethods.isEmpty()) {
-				testLog("@Before: ");
-				for (final Method method : beforeMethods) {
-					testLog(" * " + method.getName());
+		} catch (final InstantiationException e) {
+			failure = true;
+			testLog("Creating test instance failed", e);
+		}
+		
+		if (!beforeMethods.isEmpty()) {
+			testLog("@Before: ");
+			for (final Method method : beforeMethods) {
+				testLog(" * " + method.getName());
+				try {
 					method.invoke(o, new Object[0]);
+				} catch (final Throwable t) {
+					failure = true;
+					testLog("@Before failed in: " + method.getName(), t);
 				}
 			}
-			
-			testLog("Running test instance: " + m.getName());
+		}
+		
+		testLog("Running test instance: " + m.getName());
+		try {
 			m.invoke(o, new Object[0]);
 		} catch (final Throwable t) {
+			failure = true;
 			if (t.getCause() != null) {
 				throw t.getCause();
 			} else {
 				throw t;
 			}
-		} finally {
-			if (o != null) {
-				if (!afterMethods.isEmpty()) {
-					testLog("@After: ");
-					for (final Method method : afterMethods) {
-						testLog(" * " + method.getName());
+		}
+		
+		if (o != null) {
+			if (!afterMethods.isEmpty()) {
+				testLog("@After: ");
+				for (final Method method : afterMethods) {
+					testLog(" * " + method.getName());
+					try {
 						method.invoke(o, new Object[0]);
+					} catch (final Throwable t) {
+						failure = true;
+						testLog("@After failed in: " + method.getName(), t);
 					}
 				}
 			}
-			if (c != null) {
-				if (!afterClassMethods.isEmpty()) {
-					testLog("@AfterClass: ");
-					for (final Method method : afterClassMethods) {
-						testLog(" * " + method.getName());
+		}
+		
+		if (c != null) {
+			if (!afterClassMethods.isEmpty()) {
+				testLog("@AfterClass: ");
+				for (final Method method : afterClassMethods) {
+					testLog(" * " + method.getName());
+					try {
 						method.invoke(null, new Object[0]);
+					} catch (final Throwable t) {
+						failure = true;
+						testLog("@AfterClass failed in: " + method.getName(), t);
 					}
 				}
 			}
-			
-			try {
-				testLog("Shutting down test environment.");
-				MoskitoTest.tearDownAfterClass(annotationMap);
-			} catch (final Exception e) {
-				testLog("Shutdown failed.", e);
-			}
-			
-			System.setErr(stdErr);
-			System.setOut(stdOut);
-			outStream.flush();
-			errStream.close();
-			outStream.close();
-			System.out.print(testWriter.toString());
+		}
+		
+		try {
+			testLog("Shutting down test environment.");
+			MoskitoTest.tearDownAfterClass(annotationMap);
+		} catch (final Throwable t) {
+			testLog("Shutdown failed.", t);
+		}
+		
+		System.setErr(stdErr);
+		System.setOut(stdOut);
+		outStream.flush();
+		errStream.close();
+		outStream.close();
+		System.out.print(testWriter.toString());
+		
+		if (failure) {
+			System.exit(1);
 		}
 		
 	}

@@ -201,6 +201,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		final Result result = new Result();
 		
 		runNotifier.addFirstListener(result.createListener());
+		final String suiteTag = "[" + getDescription().getTestClass().getSimpleName() + "] ";
 		
 		try {
 			this.fTestClass.getOnlyConstructor().newInstance();
@@ -208,48 +209,35 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 			// throw new InitializationError(t);
 		}
 		
+		final List<MoskitoTestBuilder> builders = new LinkedList<MoskitoTestBuilder>();
+		
 		runNotifier.fireTestRunStarted(getDescription());
-		System.err.println("Running test suite: " + getDescription().toString());
+		final DateTime startTime = new DateTime();
+		System.err.println(suiteTag + ">>>>> Running suite. >>>>>");
+		
 		for (int i = 0; i < this.fTestMethods.size(); i++) {
-			Failure failure = null;
-			final TestRun testRun = this.fTestMethods.get(i);
-			runNotifier.fireTestStarted(testRun.getDescription());
-			try {
-				final String testTag = "[" + testRun.getDescription().getMethodName() + "] ";
-				System.err.println(testTag + "Running test.");
-				final DateTime start = new DateTime();
-				final TestResult testResult = MoskitoTestBuilder.exec(testRun);
-				final DateTime end = new DateTime();
-				System.err.println(testTag + "Test " + (testResult.getReturnValue() != 0
-				                                                                        ? "failed"
-				                                                                        : "succeeded") + " after "
-				        + new Period(start, end).toString(PeriodFormat.getDefault()) + ".");
-				if (testResult.getReturnValue() != 0) {
-					System.err.println(testTag + "========== STRACKTRACE ==========");
-					System.err.print(testResult.getTestError());
-					System.err.println(testTag + "========== Moskito-LOG ==========");
-					System.err.print(testResult.getTestLog());
-					System.err.println(testTag + "========== TEST-STDOUT ==========");
-					System.err.print(testResult.getTestStdOut());
-					System.err.println(testTag + "========== TEST-STDERR ==========");
-					System.err.print(testResult.getTestStdErr());
-					throw new AssertionError(testResult.getTestError());
-				}
-			} catch (final AssertionError e) {
-				failure = new Failure(testRun.getDescription(), e);
-				testRun.setFailure(failure);
-				
-				runNotifier.fireTestFailure(failure);
-				continue;
-			}
-			runNotifier.fireTestFinished(testRun.getDescription());
+			final MoskitoTestBuilder builder = new MoskitoTestBuilder(this.fTestMethods.get(i), runNotifier);
+			builders.add(builder);
+			builder.start();
 		}
 		
 		for (int i = 0; i < this.fIgnoreMethods.size(); i++) {
 			final TestRun testIgnore = this.fIgnoreMethods.get(i);
+			System.err.println("[" + testIgnore.getDescription().getMethodName() + "] Test ignored.");
 			runNotifier.fireTestIgnored(testIgnore.getDescription());
 		}
 		
+		for (final MoskitoTestBuilder builder : builders) {
+			try {
+				builder.join();
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		final DateTime endTime = new DateTime();
 		runNotifier.fireTestRunFinished(result);
+		System.err.println(suiteTag + "<<<<< Suite finished ("
+		        + new Period(startTime, endTime).toString(PeriodFormat.getDefault()) + "). <<<<<");
 	}
 }

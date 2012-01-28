@@ -43,8 +43,11 @@ import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
+import org.apache.openjpa.jdbc.conf.JDBCConfiguration;
+import org.apache.openjpa.jdbc.schema.SchemaTool;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
@@ -115,6 +118,16 @@ public class OpenJPAUtil implements PersistenceUtil {
 		final Root<T> root = query.from(clazz);
 		final Criteria<T> criteria = new Criteria<T>(root, builder, query);
 		return criteria;
+	}
+	
+	/**
+	 * @throws SQLException
+	 */
+	@Override
+	public synchronized void createDatabase() throws SQLException {
+		final JDBCConfiguration conf = (JDBCConfiguration) ((OpenJPAEntityManagerSPI) this.entityManager).getConfiguration();
+		final SchemaTool tool = new SchemaTool(conf, SchemaTool.ACTION_CREATEDB);
+		tool.run();
 	}
 	
 	/*
@@ -192,26 +205,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
-			// FIXME
-			// try {
-			// Collection<Class<?>> annotatedClasses =
-			// ClassFinder.getClassesOfInterface(Core.class.getPackage(),
-			// Annotated.class);
-			//
-			// if (Logger.logInfo()) {
-			// for (Class<?> c : annotatedClasses) {
-			// Logger.info("Registering persistence entity: " +
-			// c.getCanonicalName());
-			// }
-			// }
-			// ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(),
-			// annotatedClasses, null);
-			// } catch (Exception e) {
-			// if (Logger.logError()) {
-			// Logger.error(e.getMessage(), e);
-			// }
-			// throw new RuntimeException(e);
-			// }
 			
 			if (this.factory == null) {
 				throw new Shutdown("Could not initialize persistence-unit: " + unit);
@@ -281,8 +274,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 		this.entityManager.remove(object);
 	}
 	
-	public synchronized void dropTables() {
-		
+	/**
+	 * @throws SQLException
+	 */
+	@Override
+	public synchronized void dropDatabase() throws SQLException {
+		final JDBCConfiguration conf = (JDBCConfiguration) ((OpenJPAEntityManagerSPI) this.entityManager).getConfiguration();
+		final SchemaTool tool = new SchemaTool(conf, SchemaTool.ACTION_DROPDB);
+		tool.run();
 	}
 	
 	/*

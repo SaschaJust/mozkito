@@ -1,7 +1,9 @@
 package de.unisaarland.cs.st.moskito.testing.annotation.processors;
 
 import java.lang.annotation.Annotation;
+import java.lang.management.ManagementFactory;
 
+import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
@@ -15,9 +17,9 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void setup(final Annotation annotation) throws Exception {
+	public void setup(final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
-		
+		ManagementFactory.getRuntimeMXBean().getName();
 		final PersistenceUtil util = PersistenceManager.createUtil(settings.hostname(), settings.database(),
 		                                                           settings.username(), settings.password(),
 		                                                           settings.type(), settings.driver(), settings.unit(),
@@ -31,7 +33,7 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#tearDown(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void tearDown(final Annotation annotation) throws Exception {
+	public void tearDown(final Annotation annotation) throws TestSettingsError {
 		MoskitoTest.getPersistenceUtil().shutdown();
 	}
 	
