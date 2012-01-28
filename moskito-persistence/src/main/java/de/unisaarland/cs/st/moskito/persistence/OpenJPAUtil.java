@@ -281,6 +281,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 		this.entityManager.remove(object);
 	}
 	
+	public synchronized void dropTables() {
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see

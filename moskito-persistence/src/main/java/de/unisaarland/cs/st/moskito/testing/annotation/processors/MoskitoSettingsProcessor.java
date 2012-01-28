@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 
 public interface MoskitoSettingsProcessor {
 	
-	void evaluate(Annotation annotation) throws Exception;
+	void setup(Annotation annotation) throws Exception;
+	
+	void tearDown(Annotation annotation) throws Exception;
 	
 }

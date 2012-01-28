@@ -6,9 +6,11 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
@@ -28,14 +29,53 @@ import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
 
 public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	
-	class MoskitoTestRun {
+	static class TestResult {
+		
+		private final int    returnValue;
+		private final String testLog;
+		private final String testError;
+		private final String testStdOut;
+		
+		private final String testStdErr;
+		
+		public TestResult(final int returnValue, final String testLog, final String testError, final String testStdOut,
+		        final String testStdErr) {
+			this.returnValue = returnValue;
+			this.testLog = testLog;
+			this.testError = testError;
+			this.testStdOut = testStdOut;
+			this.testStdErr = testStdErr;
+		}
+		
+		public int getReturnValue() {
+			return this.returnValue;
+		}
+		
+		public String getTestError() {
+			return this.testError;
+		}
+		
+		public String getTestLog() {
+			return this.testLog;
+		}
+		
+		public String getTestStdErr() {
+			return this.testStdErr;
+		}
+		
+		public String getTestStdOut() {
+			return this.testStdOut;
+		}
+	}
+	
+	static class TestRun {
 		
 		private final Method           method;
 		private final Description      description;
 		private Failure                failure;
 		private final List<Annotation> settings;
 		
-		public MoskitoTestRun(final Method method, final Description description, final List<Annotation> settings) {
+		public TestRun(final Method method, final Description description, final List<Annotation> settings) {
 			this.method = method;
 			this.description = description;
 			this.settings = settings;
@@ -63,16 +103,16 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		
 	}
 	
-	private final List<MoskitoTestRun> fTestMethods    = new LinkedList<MoskitoTestRun>();
-	private final List<MoskitoTestRun> fIgnoreMethods  = new LinkedList<MoskitoTestRun>();
-	private final List<Method>         setupMethods    = new LinkedList<Method>();
-	private final List<Method>         tearDownMethods = new LinkedList<Method>();
+	private final List<TestRun> fTestMethods    = new LinkedList<TestRun>();
+	private final List<TestRun> fIgnoreMethods  = new LinkedList<TestRun>();
+	private final List<Method>  setupMethods    = new LinkedList<Method>();
+	private final List<Method>  tearDownMethods = new LinkedList<Method>();
 	
-	private final TestClass            fTestClass;
+	private final TestClass     fTestClass;
 	
-	private final Description          description;
-	private final List<Method>         bootMethods     = new LinkedList<Method>();
-	private final List<Method>         shutdownMethods = new LinkedList<Method>();
+	private final Description   description;
+	private final List<Method>  bootMethods     = new LinkedList<Method>();
+	private final List<Method>  shutdownMethods = new LinkedList<Method>();
 	
 	/**
 	 * @param aClass
@@ -118,21 +158,21 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 								annotationList.add(annotation);
 							}
 						}
-						final MoskitoTestRun testRun = new MoskitoTestRun(
-						                                                  classMethod,
-						                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-						                                                                                    classMethod.getName()),
-						                                                  annotationList);
+						final TestRun testRun = new TestRun(
+						                                    classMethod,
+						                                    Description.createTestDescription(this.fTestClass.getJavaClass(),
+						                                                                      classMethod.getName()),
+						                                    annotationList);
 						getDescription().addChild(testRun.getDescription());
 						this.fTestMethods.add(testRun);
 					}
 				} else {
 					if (classMethod.getAnnotation(Test.class) != null) {
-						final MoskitoTestRun testRun = new MoskitoTestRun(
-						                                                  classMethod,
-						                                                  Description.createTestDescription(this.fTestClass.getJavaClass(),
-						                                                                                    classMethod.getName()),
-						                                                  new LinkedList<Annotation>());
+						final TestRun testRun = new TestRun(
+						                                    classMethod,
+						                                    Description.createTestDescription(this.fTestClass.getJavaClass(),
+						                                                                      classMethod.getName()),
+						                                    new LinkedList<Annotation>());
 						getDescription().addChild(testRun.getDescription());
 						this.fIgnoreMethods.add(testRun);
 					}
@@ -159,9 +199,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	@Override
 	public void run(final RunNotifier runNotifier) {
 		final Result result = new Result();
-		final RunListener listener = new MoskitoListener();
 		
-		runNotifier.addListener(listener);
 		runNotifier.addFirstListener(result.createListener());
 		
 		try {
@@ -171,23 +209,34 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		}
 		
 		runNotifier.fireTestRunStarted(getDescription());
-		
+		System.err.println("Running test suite: " + getDescription().toString());
 		for (int i = 0; i < this.fTestMethods.size(); i++) {
 			Failure failure = null;
-			final MoskitoTestRun testRun = this.fTestMethods.get(i);
+			final TestRun testRun = this.fTestMethods.get(i);
 			runNotifier.fireTestStarted(testRun.getDescription());
 			try {
-				final Class<?> preparedTest = MoskitoTestBuilder.prepareTest(testRun, this.bootMethods,
-				                                                             this.setupMethods, this.tearDownMethods,
-				                                                             this.shutdownMethods);
-				final Tuple<Integer, String> tuple = MoskitoTestBuilder.exec(preparedTest);
-				if (tuple.getFirst() != 0) {
-					System.err.println("Return code: " + tuple.getFirst());
-					System.err.println("Stack trace: " + tuple.getSecond());
-					throw new AssertionError(tuple.getSecond());
+				final String testTag = "[" + testRun.getDescription().getMethodName() + "] ";
+				System.err.println(testTag + "Running test.");
+				final DateTime start = new DateTime();
+				final TestResult testResult = MoskitoTestBuilder.exec(testRun);
+				final DateTime end = new DateTime();
+				System.err.println(testTag + "Test " + (testResult.getReturnValue() != 0
+				                                                                        ? "failed"
+				                                                                        : "succeeded") + " after "
+				        + new Period(start, end).toString(PeriodFormat.getDefault()) + ".");
+				if (testResult.getReturnValue() != 0) {
+					System.err.println(testTag + "========== STRACKTRACE ==========");
+					System.err.print(testResult.getTestError());
+					System.err.println(testTag + "========== Moskito-LOG ==========");
+					System.err.print(testResult.getTestLog());
+					System.err.println(testTag + "========== TEST-STDOUT ==========");
+					System.err.print(testResult.getTestStdOut());
+					System.err.println(testTag + "========== TEST-STDERR ==========");
+					System.err.print(testResult.getTestStdErr());
+					throw new AssertionError(testResult.getTestError());
 				}
-			} catch (final Throwable t) {
-				failure = new Failure(testRun.getDescription(), t);
+			} catch (final AssertionError e) {
+				failure = new Failure(testRun.getDescription(), e);
 				testRun.setFailure(failure);
 				
 				runNotifier.fireTestFailure(failure);
@@ -197,7 +246,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		}
 		
 		for (int i = 0; i < this.fIgnoreMethods.size(); i++) {
-			final MoskitoTestRun testIgnore = this.fIgnoreMethods.get(i);
+			final TestRun testIgnore = this.fIgnoreMethods.get(i);
 			runNotifier.fireTestIgnored(testIgnore.getDescription());
 		}
 		

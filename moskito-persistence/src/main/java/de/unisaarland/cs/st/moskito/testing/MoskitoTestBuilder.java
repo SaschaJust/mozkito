@@ -3,8 +3,11 @@
  */
 package de.unisaarland.cs.st.moskito.testing;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -18,9 +21,14 @@ import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import net.ownhero.dev.andama.utils.AndamaUtils;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.apache.commons.io.IOUtils;
+
+import de.unisaarland.cs.st.moskito.testing.MoskitoSuite.TestResult;
+import de.unisaarland.cs.st.moskito.testing.MoskitoSuite.TestRun;
 
 /**
  * @author just
@@ -28,29 +36,117 @@ import org.apache.commons.io.IOUtils;
  */
 public final class MoskitoTestBuilder {
 	
-	public static Tuple<Integer, String> exec(final Class<?> klass) throws IOException, InterruptedException {
+	@NoneNull
+	public static TestResult exec(final TestRun run) {
 		final String javaHome = System.getProperty("java.home");
 		final String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
 		final String classpath = System.getProperty("java.class.path");
-		final String className = klass.getCanonicalName();
+		String testStdOut = null;
+		String testStdErr = null;
+		final String testTag = "[" + run.getDescription().getMethodName() + "] ";
 		
-		final ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath + ":src/main/java", className);
+		final File stdOutFile = FileUtils.createRandomFile(FileShutdownAction.KEEP);
+		String stdOutPath = null;
+		try {
+			FileUtils.ensureFilePermissions(stdOutFile, FileUtils.WRITABLE_FILE);
+			stdOutPath = stdOutFile.getCanonicalPath();
+		} catch (final FilePermissionException e) {
+			// TODO: handle exception
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		final File stdErrFile = FileUtils.createRandomFile(FileShutdownAction.KEEP);
+		String stdErrPath = null;
+		try {
+			FileUtils.ensureFilePermissions(stdErrFile, FileUtils.WRITABLE_FILE);
+			stdErrPath = stdErrFile.getCanonicalPath();
+		} catch (final FilePermissionException e) {
+			// TODO: handle exception
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		final ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath + ":src/main/java",
+		                                                  MoskitoTest.class.getCanonicalName(), run.getDescription()
+		                                                                                           .getTestClass()
+		                                                                                           .getCanonicalName(),
+		                                                  run.getDescription().getMethodName(), stdOutPath, stdErrPath);
 		
 		if (System.getProperty("test.debug") != null) {
-			System.err.println("Launching test");
+			System.err.println("Launching test: " + run.getDescription().getTestClass().getCanonicalName() + "#"
+			        + run.getDescription().getMethodName());
 		}
-		final Process process = builder.start();
-		process.waitFor();
-		if (System.getProperty("test.debug") != null) {
-			System.err.println("Test finished.");
+		
+		Process process;
+		int exitValue = -1;
+		String theError = null;
+		String theLog = null;
+		try {
+			process = builder.start();
+			process.waitFor();
+			if (System.getProperty("test.debug") != null) {
+				System.err.println("Test finished.");
+			}
+			exitValue = process.exitValue();
+			final StringWriter testErrorWriter = new StringWriter();
+			IOUtils.copy(process.getErrorStream(), testErrorWriter);
+			theError = testErrorWriter.toString();
+			
+			final StringWriter testOutWriter = new StringWriter();
+			IOUtils.copy(process.getInputStream(), testOutWriter);
+			theLog = testOutWriter.toString();
+		} catch (final IOException e) {
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
+			pw.println(e.getMessage());
+			pw.println(AndamaUtils.lineSeparator);
+			e.printStackTrace(pw);
+			pw.println(AndamaUtils.lineSeparator);
+			theError = sw.toString();
+		} catch (final InterruptedException e) {
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
+			pw.println(e.getMessage());
+			pw.println(AndamaUtils.lineSeparator);
+			e.printStackTrace(pw);
+			pw.println(AndamaUtils.lineSeparator);
+			theError = sw.toString();
 		}
-		final StringWriter writer = new StringWriter();
-		IOUtils.copy(process.getErrorStream(), writer);
-		final String theString = writer.toString();
-		return new Tuple<Integer, String>(process.exitValue(), theString);
+		
+		try {
+			final BufferedReader reader = new BufferedReader(new FileReader(stdErrFile));
+			String line;
+			final StringBuilder sb = new StringBuilder();
+			while ((line = reader.readLine()) != null) {
+				sb.append(testTag).append(line).append(AndamaUtils.lineSeparator);
+			}
+			testStdErr = sb.toString();
+			stdErrFile.delete();
+		} catch (final IOException e) {
+			// TODO: handle exception
+		}
+		
+		try {
+			final BufferedReader reader = new BufferedReader(new FileReader(stdOutFile));
+			String line;
+			final StringBuilder sb = new StringBuilder();
+			while ((line = reader.readLine()) != null) {
+				sb.append(testTag).append(line).append(AndamaUtils.lineSeparator);
+			}
+			testStdOut = sb.toString();
+			stdOutFile.delete();
+		} catch (final IOException e) {
+			// TODO: handle exception
+		}
+		
+		return new MoskitoSuite.TestResult(exitValue, theLog, theError, testStdOut, testStdErr);
 	}
 	
-	public static Class<?> prepareTest(final MoskitoSuite.MoskitoTestRun testRun,
+	@Deprecated
+	public static Class<?> prepareTest(final MoskitoSuite.TestRun testRun,
 	                                   final List<Method> bootMethods,
 	                                   final List<Method> setupMethods,
 	                                   final List<Method> tearDownMethods,

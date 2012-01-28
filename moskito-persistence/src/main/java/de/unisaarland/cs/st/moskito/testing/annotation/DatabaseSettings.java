@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.testing.annotation.processors.DatabaseSettingsProcessor;
 
 /**
  * @author just
@@ -18,8 +19,8 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@MoskitoTestingAnnotation
-@Target (value = { ElementType.METHOD })
+@MoskitoTestingAnnotation (DatabaseSettingsProcessor.class)
+@Target (value = { ElementType.METHOD, ElementType.TYPE })
 public @interface DatabaseSettings {
 	
 	String database() default "moskito_junit";

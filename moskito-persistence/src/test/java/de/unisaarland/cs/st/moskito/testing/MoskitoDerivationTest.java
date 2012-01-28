@@ -21,22 +21,22 @@ public class MoskitoDerivationTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		System.err.println("setUpBeforClass()");
+		System.out.println("setUpBeforClass()");
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.err.println("tearDownAfterClass()");
+		System.out.println("tearDownAfterClass()");
 	}
 	
 	@Before
 	public void setUp() throws Exception {
-		System.err.println("setUp()");
+		System.out.println("setUp()");
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		System.err.println("tearDown()");
+		System.out.println("tearDown()");
 	}
 	
 	@Test
