@@ -125,7 +125,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerStringOption(settings, arguments, "pattern", "Pattern of transaction ids to scan for.", "(\\d{2,})",
 		                     true);

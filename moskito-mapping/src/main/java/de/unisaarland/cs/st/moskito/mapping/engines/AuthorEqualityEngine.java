@@ -73,7 +73,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Score for equal authors in transaction and report comments.", this.scoreAuthorEquality

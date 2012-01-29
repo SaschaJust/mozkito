@@ -84,7 +84,7 @@ public class ReportTypeEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Confidence that is used if the report isn't of the specified type.", "-1", true);

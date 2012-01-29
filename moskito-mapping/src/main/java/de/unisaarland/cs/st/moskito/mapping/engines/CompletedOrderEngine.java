@@ -79,7 +79,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Score in case the report was resolved before the transaction.",

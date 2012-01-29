@@ -44,27 +44,26 @@ public class File2Bugs implements Annotated {
 	/**
 	 * 
 	 */
-	private static final long         serialVersionUID = -5780165055568852588L;
+	private static final long serialVersionUID = -5780165055568852588L;
 	
-	private static PersistenceManager manager          = new PersistenceManager();
 	static {
-		manager.registerNativeQuery("postgresql",
-		                            "files2bugsarray",
-		                            "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
-		                                    + "FROM (                                                                                "
-		                                    + "SELECT changedfile_id, ARRAY(                                                         "
-		                                    + "	SELECT reportid                                                                     "
-		                                    + "	FROM rcsrevision AS revisions                                                       "
-		                                    + "	INNER JOIN rcsbugmapping AS mapping                                                 "
-		                                    + "		ON (revisions.transaction_id = mapping.transactionid)                           "
-		                                    + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
-		                                    + ") AS bugs                                                                             "
-		                                    + "FROM rcsrevision AS A                                                                 "
-		                                    + "ORDER BY changedfile_id                                                               "
-		                                    + ") innerquery                                                                          "
-		                                    + "WHERE array_length(bugs, 1) > 0                                                       "
-		                                    + "GROUP BY file_id, bugs;                                                               ");
-		manager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
+		PersistenceManager.registerNativeQuery("postgresql",
+		                                       "files2bugsarray",
+		                                       "SELECT changedfile_id AS file_id, array_length(bugs, 1) AS bug_count, bugs AS bug_ids           "
+		                                               + "FROM (                                                                                "
+		                                               + "SELECT changedfile_id, ARRAY(                                                         "
+		                                               + "	SELECT reportid                                                                     "
+		                                               + "	FROM rcsrevision AS revisions                                                       "
+		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 "
+		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           "
+		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
+		                                               + ") AS bugs                                                                             "
+		                                               + "FROM rcsrevision AS A                                                                 "
+		                                               + "ORDER BY changedfile_id                                                               "
+		                                               + ") innerquery                                                                          "
+		                                               + "WHERE array_length(bugs, 1) > 0                                                       "
+		                                               + "GROUP BY file_id, bugs;                                                               ");
+		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
 		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
 		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
 	}
@@ -76,7 +75,8 @@ public class File2Bugs implements Annotated {
 		final List<File2Bugs> ret = new LinkedList<File2Bugs>();
 		
 		@SuppressWarnings ("unchecked")
-		final List<Object[]> result = util.executeNativeSelectQuery(manager.getNativeQuery(util, "files2bugs"));
+		final List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util,
+		                                                                                              "files2bugs"));
 		Criteria<RCSFile> fileCriteria;
 		Criteria<Report> reportCriteria;
 		long fileid = -1, tmp = -1, bugid = -1;

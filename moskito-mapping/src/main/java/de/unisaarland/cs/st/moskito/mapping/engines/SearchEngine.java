@@ -132,7 +132,7 @@ public abstract class SearchEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
 		                   true);

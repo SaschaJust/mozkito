@@ -138,7 +138,7 @@ public class TimestampEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerListOption(settings,
 		                   arguments,

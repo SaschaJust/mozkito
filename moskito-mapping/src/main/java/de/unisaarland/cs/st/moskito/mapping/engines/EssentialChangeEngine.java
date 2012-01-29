@@ -69,7 +69,7 @@ public class EssentialChangeEngine extends MappingEngine {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		// TODO register further config options if you need some
 		registerDoubleOption(settings, arguments, "confidence",

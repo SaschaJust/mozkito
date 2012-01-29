@@ -122,7 +122,7 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		super.register(settings, arguments);
 		registerStringOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
 		                     true);
