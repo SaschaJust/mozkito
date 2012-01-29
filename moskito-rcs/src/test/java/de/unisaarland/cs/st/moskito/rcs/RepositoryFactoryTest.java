@@ -25,13 +25,10 @@ import de.unisaarland.cs.st.moskito.rcs.cvs.CVSRepository;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.moskito.rcs.subversion.SubversionRepository;
-import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
-import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class RepositoryFactoryTest extends MoskitoTest {
+public class RepositoryFactoryTest {
 	
 	@Test
-	@DatabaseSettings (unit = "rcs")
 	public void testRegistration() {
 		try {
 			Class<? extends Repository> repositoryHandler = RepositoryFactory.getRepositoryHandler(RepositoryType.SUBVERSION);

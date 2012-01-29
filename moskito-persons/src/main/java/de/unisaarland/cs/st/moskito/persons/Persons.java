@@ -37,10 +37,11 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class Persons extends AndamaChain {
 	
-	private final AndamaPool        threadPool;
-	private final DatabaseArguments databaseArguments;
-	private final LoggerArguments   logSettings;
-	private final PersonsArguments  personsArguments;
+	private final AndamaPool       threadPool;
+	private DatabaseArguments      databaseArguments;
+	private final LoggerArguments  logSettings;
+	private final PersonsArguments personsArguments;
+	private PersistenceUtil        persistenceUtil;
 	
 	/**
 	 * 
@@ -55,6 +56,15 @@ public class Persons extends AndamaChain {
 		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(true);
 		
 		settings.parseArguments();
+	}
+	
+	Persons(final PersistenceUtil util) {
+		super(new PersonsSettings());
+		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
+		final AndamaSettings settings = getSettings();
+		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(false);
+		this.logSettings = settings.setLoggerArg(true);
+		this.persistenceUtil = util;
 	}
 	
 	/*
@@ -78,9 +88,10 @@ public class Persons extends AndamaChain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
-		
-		if (persistenceUtil == null) {
+		if ((this.persistenceUtil == null) && (this.databaseArguments != null)) {
+			this.persistenceUtil = this.databaseArguments.getValue();
+		}
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Database arguments are not set (required when merging persons).");
 			}
@@ -88,10 +99,10 @@ public class Persons extends AndamaChain {
 		}
 		
 		final MergingProcessor processor = this.personsArguments.getValue();
-		processor.providePersistenceUtil(persistenceUtil);
+		processor.providePersistenceUtil(this.persistenceUtil);
 		
-		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, processor);
+		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil, processor);
 	}
 	
 	/*

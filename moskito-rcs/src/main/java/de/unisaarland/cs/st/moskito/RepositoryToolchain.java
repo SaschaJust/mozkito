@@ -31,7 +31,8 @@ import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
+ * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to
+ * mine a repository.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -50,15 +51,15 @@ public class RepositoryToolchain extends AndamaChain {
 		super(new RepositorySettings());
 		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
-		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");
+		this.repoSettings = settings.setRepositoryArg(true);
 		this.logSettings = settings.setLoggerArg(true);
 		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-				false);
+		                    false);
 		new LongArgument(settings, "cache.size",
-				"determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
 		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-				false);
+		                    false);
 		
 		settings.parseArguments();
 	}
@@ -180,11 +181,11 @@ public class RepositoryToolchain extends AndamaChain {
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository,
-		        persistenceUtil);
+		                     this.persistenceUtil);
 		
 		if (this.persistenceUtil != null) {
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-					this.persistenceUtil);
+			                        this.persistenceUtil);
 		} else {
 			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
 		}

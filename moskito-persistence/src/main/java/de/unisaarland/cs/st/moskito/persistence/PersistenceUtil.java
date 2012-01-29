@@ -18,6 +18,7 @@
  */
 package de.unisaarland.cs.st.moskito.persistence;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 

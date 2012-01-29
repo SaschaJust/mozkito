@@ -1,20 +1,19 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.git;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,7 +38,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-
+@DatabaseSettings (unit = "rcs")
 public class GitRevDependencyIteratorTest extends MoskitoTest {
 	
 	private static GitRepository repo;
@@ -47,14 +46,15 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			URL zipURL = GitRevDependencyIteratorTest.class.getResource(FileUtils.fileSeparator
-					+ "testGit.zip");
+			URL zipURL = GitRevDependencyIteratorTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
 			if (zipURL == null) {
 				fail();
 			}
 			
-			File bareDir = new File((new URL(zipURL.toString().substring(0,
-					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+			File bareDir = new File(
+			                        (new URL(zipURL.toString().substring(0,
+			                                                             zipURL.toString()
+			                                                                   .lastIndexOf(FileUtils.fileSeparator)))).toURI());
 			FileUtils.unzip(new File(zipURL.toURI()), bareDir);
 			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
 				fail();
@@ -62,18 +62,17 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 			
 			repo = new GitRepository();
 			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
-					null, getPersistenceUtil());
+			           null, getPersistenceUtil());
 		} catch (Exception e) {
 			fail();
 		}
 	}
 	
-	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testIter() {
 		GitRevDependencyIterator iter = new GitRevDependencyIterator(repo.getWokingCopyLocation(),
-				"67635fe9efeb2fd3751df9ea67650c71e59e3df1", getPersistenceUtil());
+		                                                             "67635fe9efeb2fd3751df9ea67650c71e59e3df1",
+		                                                             getPersistenceUtil());
 		
 		assertTrue(iter.hasNext());
 		RevDependency dep = iter.next();
@@ -143,7 +142,6 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		assertEquals(1, parents.size());
 		assertTrue(parents.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
 		assertFalse(dep.isMerge());
-		
 		
 		assertTrue(iter.hasNext());
 		dep = iter.next();
@@ -272,8 +270,7 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		
 		assertFalse(iter.hasNext());
 		
-		
-		//check braches and branch hierarchy
+		// check braches and branch hierarchy
 		assertFalse(branch_e52.hasParent());
 		assertEquals(BranchFactory.getMasterBranch(getPersistenceUtil()), branch_e52);
 		assertTrue(branch_e52.getMergedIn().isEmpty());
@@ -343,11 +340,10 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 		assertFalse(branch_676.hasParent());
 		assertEquals(branch_1ac, branch_676);
 		
-		
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
+	@DatabaseSettings (unit = "rcs")
 	public void testRegEx() {
 		String line1 = "0cc858f14daa9750596051cb5b92c317ed17c401  (hudson-whatever)";
 		String line2 = "ba4fb16f3057524353e5159e505b2f8d8405f38a  (HEAD, origin/master, origin/HEAD, master)";

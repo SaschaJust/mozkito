@@ -1,5 +1,5 @@
 package de.unisaarland.cs.st.moskito.persistence;
 
 public enum ConnectOptions {
-	VALIDATE, DROPIFEXISTS, CREATE;
+	VALIDATE, CREATE, DB_DROP_CREATE;
 }

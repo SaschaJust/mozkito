@@ -27,10 +27,10 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
+@DatabaseSettings (unit = "persistence")
 public class OpenJPA_Persistence_NetTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings (unit = "persistence")
 	public void testPerson() {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		final Person person = new Person("username", "fullname", "em@i.l");
@@ -47,7 +47,6 @@ public class OpenJPA_Persistence_NetTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings (unit = "persistence")
 	public void testPersonContainer() {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		

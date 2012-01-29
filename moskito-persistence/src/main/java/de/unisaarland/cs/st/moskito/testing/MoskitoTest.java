@@ -22,13 +22,15 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
-import org.apache.openjpa.persistence.ArgumentException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
+import de.unisaarland.cs.st.moskito.exceptions.TestSetupException;
+import de.unisaarland.cs.st.moskito.exceptions.TestTearDownException;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
@@ -56,21 +58,22 @@ public abstract class MoskitoTest {
 	private static StringWriter            testWriter         = new StringWriter();
 	private static PrintWriter             testPrinter        = new PrintWriter(testWriter);
 	
-	private static Annotation[]            classAnnotations;
+	private static Annotation[]            classAnnotations   = new Annotation[0];
+	private static Annotation[]            methodAnnotations  = new Annotation[0];
 	
-	private static Annotation[]            methodAnnotations;
+	private static Map<String, Annotation> annotationMap      = new HashMap<String, Annotation>();
 	
-	private static Map<String, Annotation> annotationMap;
+	private static String                  testTag            = "";
 	
-	private static String                  testTag;
+	private static List<Throwable>         failureCauses      = new LinkedList<Throwable>();
 	
 	/**
 	 * @return the persistenceUtil for this test
 	 */
-	public static PersistenceUtil getPersistenceUtil() {
+	public static PersistenceUtil getPersistenceUtil() throws TestSettingsError {
 		if (persistenceUtil == null) {
 			testLog("Calling getPersistenceUtil() without having database arguments set.");
-			throw new RuntimeException("Calling getPersistenceUtil() without having database arguments set.");
+			throw new TestSettingsError("Calling getPersistenceUtil() without having database arguments set.");
 		}
 		
 		return persistenceUtil;
@@ -110,8 +113,10 @@ public abstract class MoskitoTest {
 	
 	public static void main(final String[] args) throws Throwable {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+		
 		if (args.length < 4) {
-			// ERROR
+			System.err.println(MoskitoTest.class.getSimpleName() + "#main called with wrong arguments.");
+			System.exit(11);
 		}
 		
 		final String fqcName = args[0];
@@ -153,9 +158,23 @@ public abstract class MoskitoTest {
 		
 		try {
 			testLog("Loading test class: " + fqcName);
-			c = Class.forName(fqcName);
+			try {
+				c = Class.forName(fqcName);
+			} catch (ClassNotFoundException e) {
+				testLog("Could not load class under test: " + fqcName, e);
+				throw e;
+			}
+			
 			testLog("Getting test: " + testName);
-			m = c.getMethod(testName, new Class[0]);
+			try {
+				m = c.getMethod(testName, new Class[0]);
+			} catch (SecurityException e) {
+				testLog("Getting test method '" + testName + "' failed.", e);
+				throw e;
+			} catch (NoSuchMethodException e) {
+				testLog("Getting test method '" + testName + "' failed.", e);
+				throw e;
+			}
 			
 			try {
 				testLog("Setting up test environment.");
@@ -171,11 +190,8 @@ public abstract class MoskitoTest {
 					annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
 				}
 				MoskitoTest.setUpBeforeClass(annotationMap);
-			} catch (final ArgumentException e) {
-				testLog("Database connection failed.", e);
-			} catch (final Throwable t) {
-				testLog("Test setup failed", t);
-				throw t;
+			} catch (final TestSetupException e) {
+				throw e;
 			}
 			
 			testLog("Looking up setup/tearDown methods.");
@@ -185,54 +201,93 @@ public abstract class MoskitoTest {
 				testLog("@BeforeClass: ");
 				for (final Method method : beforeClassMethods) {
 					testLog(" * " + method.getName());
-					method.invoke(null, new Object[0]);
+					try {
+						method.invoke(null, new Object[0]);
+					} catch (final TestSettingsError e) {
+						testLog("@BeforeClass failed in: " + method.getName(), e);
+						throw e;
+					} catch (final Throwable t) {
+						testLog("@BeforeClass failed in: " + method.getName(), t);
+						throw t;
+					}
 				}
 			}
 			
 			testLog("Creating test instance: " + c.getSimpleName());
-			o = c.newInstance();
+			try {
+				o = c.newInstance();
+			} catch (final InstantiationException e) {
+				testLog("Creating test instance failed", e);
+				throw e;
+			} catch (IllegalAccessException e) {
+				testLog("Creating test instance failed", e);
+				throw e;
+			}
 			
 			if (!beforeMethods.isEmpty()) {
 				testLog("@Before: ");
 				for (final Method method : beforeMethods) {
 					testLog(" * " + method.getName());
-					method.invoke(o, new Object[0]);
+					try {
+						method.invoke(o, new Object[0]);
+					} catch (final Throwable t) {
+						testLog("@Before failed in: " + method.getName(), t);
+						throw t;
+					}
 				}
 			}
 			
 			testLog("Running test instance: " + m.getName());
-			m.invoke(o, new Object[0]);
-		} catch (final Throwable t) {
-			if (t.getCause() != null) {
-				throw t.getCause();
-			} else {
-				throw t;
+			try {
+				m.invoke(o, new Object[0]);
+			} catch (final Throwable t) {
+				testLog("Test failed.");
+				if (t.getCause() != null) {
+					throw t.getCause();
+				} else {
+					throw t;
+				}
 			}
-		} finally {
+			
 			if (o != null) {
 				if (!afterMethods.isEmpty()) {
 					testLog("@After: ");
 					for (final Method method : afterMethods) {
 						testLog(" * " + method.getName());
-						method.invoke(o, new Object[0]);
+						try {
+							method.invoke(o, new Object[0]);
+						} catch (final Throwable t) {
+							testLog("@After failed in: " + method.getName(), t);
+							throw t;
+						}
 					}
 				}
 			}
+			
 			if (c != null) {
 				if (!afterClassMethods.isEmpty()) {
 					testLog("@AfterClass: ");
 					for (final Method method : afterClassMethods) {
 						testLog(" * " + method.getName());
-						method.invoke(null, new Object[0]);
+						try {
+							method.invoke(null, new Object[0]);
+						} catch (final Throwable t) {
+							testLog("@AfterClass failed in: " + method.getName(), t);
+							throw t;
+						}
 					}
 				}
 			}
+		} catch (Throwable t) {
+			failureCauses.add(t);
+		} finally {
 			
 			try {
 				testLog("Shutting down test environment.");
 				MoskitoTest.tearDownAfterClass(annotationMap);
-			} catch (final Exception e) {
+			} catch (final TestTearDownException e) {
 				testLog("Shutdown failed.", e);
+				failureCauses.add(e);
 			}
 			
 			System.setErr(stdErr);
@@ -241,8 +296,21 @@ public abstract class MoskitoTest {
 			errStream.close();
 			outStream.close();
 			System.out.print(testWriter.toString());
+			System.out.flush();
+			
+			if (!failureCauses.isEmpty()) {
+				int i = 1;
+				if (failureCauses.size() > 1) {
+					System.err.println("There are multiple failure causes. These failures might depend on the first (#1) failure cause. ");
+				}
+				for (Throwable failureCause : failureCauses) {
+					System.err.println("Error number #" + i++);
+					failureCause.printStackTrace();
+				}
+				System.exit(1);
+				
+			}
 		}
-		
 	}
 	
 	/**
@@ -253,9 +321,10 @@ public abstract class MoskitoTest {
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * @param annotationMap
+	 * @throws TestSetupException
 	 */
-	public static void setUpBeforeClass(final Map<String, Annotation> annotationMap) {
+	public static void setUpBeforeClass(final Map<String, Annotation> annotationMap) throws TestSetupException {
 		for (final Annotation annotation : annotationMap.values()) {
 			final MoskitoTestingAnnotation metaAnnotation = annotation.annotationType()
 			                                                          .getAnnotation(MoskitoTestingAnnotation.class);
@@ -267,21 +336,27 @@ public abstract class MoskitoTest {
 					processor.setup(annotation);
 				} catch (final InstantiationException e) {
 					testLog("Can't spawn processor: " + processorClass.getCanonicalName(), e);
+					throw new TestSetupException("Can't spawn processor: " + processorClass.getCanonicalName(), e);
 				} catch (final IllegalAccessException e) {
 					testLog(e.getClass().getCanonicalName() + " when processing annotation: " + annotation.toString(),
 					        e);
-				} catch (final Exception e) {
+					throw new TestSetupException(e.getClass().getCanonicalName() + " when processing annotation: "
+					        + annotation.toString(), e);
+				} catch (final Throwable e) {
 					testLog(e.getClass().getCanonicalName() + " when processing annotation: " + annotation.toString(),
 					        e);
+					throw new TestSetupException(e.getClass().getCanonicalName() + " when processing annotation: "
+					        + annotation.toString(), e);
 				}
 			}
 		}
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * @param annotationMap
+	 * @throws Exception
 	 */
-	public static void tearDownAfterClass(final Map<String, Annotation> annotationMap) throws Exception {
+	public static void tearDownAfterClass(final Map<String, Annotation> annotationMap) throws TestTearDownException {
 		for (final Annotation annotation : annotationMap.values()) {
 			final MoskitoTestingAnnotation metaAnnotation = annotation.annotationType()
 			                                                          .getAnnotation(MoskitoTestingAnnotation.class);
@@ -293,12 +368,17 @@ public abstract class MoskitoTest {
 					processor.tearDown(annotation);
 				} catch (final InstantiationException e) {
 					testLog("Can't spawn processor: " + processorClass.getCanonicalName(), e);
+					throw new TestTearDownException("Can't spawn processor: " + processorClass.getCanonicalName(), e);
 				} catch (final IllegalAccessException e) {
 					testLog(e.getClass().getCanonicalName() + " when processing annotation: " + annotation.toString(),
 					        e);
-				} catch (final Exception e) {
+					throw new TestTearDownException(e.getClass().getCanonicalName() + " when processing annotation: "
+					        + annotation.toString(), e);
+				} catch (final Throwable e) {
 					testLog(e.getClass().getCanonicalName() + " when processing annotation: " + annotation.toString(),
 					        e);
+					throw new TestTearDownException(e.getClass().getCanonicalName() + " when processing annotation: "
+					        + annotation.toString(), e);
 				}
 			}
 		}

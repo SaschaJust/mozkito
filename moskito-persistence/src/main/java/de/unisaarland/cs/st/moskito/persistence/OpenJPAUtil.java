@@ -192,26 +192,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
-			// FIXME
-			// try {
-			// Collection<Class<?>> annotatedClasses =
-			// ClassFinder.getClassesOfInterface(Core.class.getPackage(),
-			// Annotated.class);
-			//
-			// if (Logger.logInfo()) {
-			// for (Class<?> c : annotatedClasses) {
-			// Logger.info("Registering persistence entity: " +
-			// c.getCanonicalName());
-			// }
-			// }
-			// ManagedClassSubclasser.prepareUnenhancedClasses(factory.getConfiguration(),
-			// annotatedClasses, null);
-			// } catch (Exception e) {
-			// if (Logger.logError()) {
-			// Logger.error(e.getMessage(), e);
-			// }
-			// throw new RuntimeException(e);
-			// }
 			
 			if (this.factory == null) {
 				throw new Shutdown("Could not initialize persistence-unit: " + unit);
@@ -253,9 +233,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 			case CREATE:
 				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
 				break;
-			case DROPIFEXISTS:
-				properties.put("openjpa.jdbc.SynchronizeMappings",
-				               "buildSchema(SchemaAction='add,deleteTableContents')");
+			case DB_DROP_CREATE:
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				// "buildSchema(SchemaAction='add,deleteTableContents')");
 				break;
 			default:
 				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
@@ -279,10 +259,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public synchronized void delete(final Annotated object) {
 		this.entityManager.remove(object);
-	}
-	
-	public synchronized void dropTables() {
-		
 	}
 	
 	/*

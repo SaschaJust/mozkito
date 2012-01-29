@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -37,6 +37,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -53,11 +54,11 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
-import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 import difflib.Delta;
 
-public class RepositoryTest extends MoskitoTest {
+@DatabaseSettings (unit = "rcs")
+public class RepositoryTest {
 	
 	// [scheme:][//authority][path][?query][#fragment]
 	// [user-info@]host[:port]
@@ -164,28 +165,19 @@ public class RepositoryTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		
+		Map<RepositoryType, URI> repoMap = new HashMap<RepositoryType, URI>();
 		// UNZIP mercurial repo
 		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 		if (zipURL == null) {
 			fail();
 		}
-		File baseDir = null;
+		File mercurialBaseDir = FileUtils.createRandomDir("repotest_mercurial", null, FileShutdownAction.DELETE);
 		try {
-			baseDir = new File(
-					(new URL(zipURL.toString().substring(0,
-							zipURL.toString()
-							.lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-			fail();
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
+			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
+		} catch (FilePermissionException e2) {
 			fail();
 		}
-		if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
-			fail();
-		}
+		
 		File zipFile = null;
 		try {
 			zipFile = new File(zipURL.toURI());
@@ -194,26 +186,32 @@ public class RepositoryTest extends MoskitoTest {
 			fail();
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + mercurialBaseDir.getAbsolutePath());
 		}
-		FileUtils.unzip(zipFile, baseDir);
+		FileUtils.unzip(zipFile, mercurialBaseDir);
 		// UNZIP END
+		
+		try {
+			repoMap.put(RepositoryType.MERCURIAL, new URI("file://" + mercurialBaseDir + File.separator + "repotest."
+			        + RepositoryType.MERCURIAL.name().toLowerCase()));
+		} catch (URISyntaxException e3) {
+			fail();
+		}
 		
 		// UNZIP git repo
 		zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
 		if (zipURL == null) {
 			fail();
 		}
+		
+		File gitBaseDir = FileUtils.createRandomDir("repotest_git", null, FileShutdownAction.DELETE);
 		try {
-			baseDir = new File((new URL(zipURL.toString().substring(0,
-					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
+		} catch (FilePermissionException e2) {
 			fail();
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
+			
 		}
+		
 		try {
 			zipFile = new File(zipURL.toURI());
 		} catch (URISyntaxException e1) {
@@ -221,10 +219,25 @@ public class RepositoryTest extends MoskitoTest {
 			fail();
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + gitBaseDir.getAbsolutePath());
 		}
-		FileUtils.unzip(zipFile, baseDir);
+		FileUtils.unzip(zipFile, gitBaseDir);
 		// UNZIP END
+		
+		try {
+			repoMap.put(RepositoryType.GIT, new URI("file://" + gitBaseDir + File.separator + "repotest."
+			        + RepositoryType.GIT.name().toLowerCase()));
+		} catch (URISyntaxException e2) {
+			fail();
+		}
+		try {
+			repoMap.put(RepositoryType.SUBVERSION,
+			            RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
+			                                                     + RepositoryType.SUBVERSION.name().toLowerCase())
+			                                .toURI());
+		} catch (URISyntaxException e2) {
+			fail();
+		}
 		
 		for (RepositoryType type : RepositoryType.values()) {
 			if (type.equals(RepositoryType.CVS)) {
@@ -244,15 +257,8 @@ public class RepositoryTest extends MoskitoTest {
 				fail();
 			}
 			repositories.add(repository);
-			URL url = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
-					+ type.toString().toLowerCase());
-			File urlFile = null;
-			try {
-				urlFile = new File(url.toURI());
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-				fail();
-			}
+			
+			File urlFile = new File(repoMap.get(type));
 			
 			if (type.equals(RepositoryType.SUBVERSION)) {
 				tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "", FileShutdownAction.DELETE);
@@ -260,15 +266,15 @@ public class RepositoryTest extends MoskitoTest {
 					Integer returnValue = 0;
 					if (Logger.logDebug()) {
 						Logger.debug("Creating " + type.toString() + " repository at: "
-								+ tmpDirectory.getAbsolutePath());
+						        + tmpDirectory.getAbsolutePath());
 					}
 					Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin", new String[] { "create",
-							"--config-dir", System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
-							tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
+					        "--config-dir", System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
+					        tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
 					returnValue += execute.getFirst();
 					execute = CommandExecutor.execute("svnadmin",
-							new String[] { "load", tmpDirectory.getAbsolutePath() },
-							tmpDirectory, url.openStream(), null);
+					                                  new String[] { "load", tmpDirectory.getAbsolutePath() },
+					                                  tmpDirectory, repoMap.get(type).toURL().openStream(), null);
 					returnValue += execute.getFirst();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -278,7 +284,7 @@ public class RepositoryTest extends MoskitoTest {
 			}
 			
 			try {
-				repository.setup(urlFile.toURI(), null, null, getPersistenceUtil());
+				repository.setup(urlFile.toURI(), null, null, null);
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}
@@ -292,7 +298,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testAnnotate() {
 		for (Repository repository : repositories) {
 			List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
@@ -311,11 +316,11 @@ public class RepositoryTest extends MoskitoTest {
 			assertEquals("test", annotation.get(1).getLine());
 			
 			assertEquals(getDateFromString("2010-10-22 14:35:15 +0000").getMillis(),
-					annotation.get(0).getTimestamp()
-					.minusMillis(annotation.get(0).getTimestamp().getMillisOfSecond()).getMillis());
+			             annotation.get(0).getTimestamp()
+			                       .minusMillis(annotation.get(0).getTimestamp().getMillisOfSecond()).getMillis());
 			assertEquals(getDateFromString("2010-10-22 14:53:06 +0000").getMillis(),
-					annotation.get(1).getTimestamp()
-					.minusMillis(annotation.get(1).getTimestamp().getMillisOfSecond()).getMillis());
+			             annotation.get(1).getTimestamp()
+			                       .minusMillis(annotation.get(1).getTimestamp().getMillisOfSecond()).getMillis());
 			
 			assertEquals("just", annotation.get(0).getUsername());
 			assertEquals("just", annotation.get(1).getUsername());
@@ -337,7 +342,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testCheckout() {
 		for (Repository repository : repositories) {
 			File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
@@ -365,7 +369,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testCheckoutDir() {
 		for (Repository repository : repositories) {
 			File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
@@ -388,7 +391,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testCheckoutFile() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
@@ -400,7 +402,7 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
+	@DatabaseSettings (unit = "rcs")
 	public void testDiff() {
 		for (Repository repository : repositories) {
 			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);
@@ -414,7 +416,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testDiffMove() {
 		for (Repository repository : repositories) {
 			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
@@ -428,7 +429,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testGetChangedPaths() {
 		for (Repository repository : repositories) {
 			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
@@ -445,7 +445,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testGetFirstRevisionID() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
@@ -461,18 +460,16 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testGetFormerPathName() {
 		for (Repository repository : repositories) {
 			String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-					3),
-					"dir_b/file_2_dir_a");
+			                                                                                         3),
+			                                                     "dir_b/file_2_dir_a");
 			assertEquals("dir_a/file_2_dir_a", formerPathName);
 		}
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testGetLastRevisionID() {
 		for (Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
@@ -489,7 +486,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testGetRelativeTransactionId() {
 		for (Repository repository : repositories) {
 			String endRevision = repository.getEndRevision();
@@ -498,7 +494,6 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testLog() {
 		for (Repository repository : repositories) {
 			List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
@@ -507,7 +502,7 @@ public class RepositoryTest extends MoskitoTest {
 			LogEntry entry = log.get(0);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:33:44 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("7b5b41fffc13fba4f2dbca350becc9bc27d2d311", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -522,7 +517,7 @@ public class RepositoryTest extends MoskitoTest {
 			entry = log.get(1);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:35:15 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("7f1d2e6e6cffca9a8360af777254d05d9a26bc11", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -531,13 +526,13 @@ public class RepositoryTest extends MoskitoTest {
 				assertEquals("2", entry.getRevision());
 			}
 			assertEquals("adding file_2" + FileUtils.lineSeparator + "adding file_3" + FileUtils.lineSeparator
-					+ "setting content of file_* to: file_* content", entry.getMessage().trim());
+			        + "setting content of file_* to: file_* content", entry.getMessage().trim());
 			
 			// -- Rev 3 -- //
 			entry = log.get(2);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:36:05 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("d0b5c4888aabfdcc524c10967e5fdea92dd33081", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -551,7 +546,7 @@ public class RepositoryTest extends MoskitoTest {
 			entry = log.get(3);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:36:46 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("63cddef94239aae861c474480a834c95df719c65", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -565,7 +560,7 @@ public class RepositoryTest extends MoskitoTest {
 			entry = log.get(4);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:37:07 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("ea6878a36dc3b644f45ac93b095896bf6d68597d", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -579,7 +574,7 @@ public class RepositoryTest extends MoskitoTest {
 			entry = log.get(5);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:40:19 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("a4769ec81d251b333ab668c013a30df8a6d92bdc", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -588,7 +583,7 @@ public class RepositoryTest extends MoskitoTest {
 				assertEquals("6", entry.getRevision());
 			}
 			assertEquals("moving file_3 to dir_a/file_3_dir_a" + FileUtils.lineSeparator
-					+ "changing content of dir_a/file_3_dir_a to file_3 content changed", entry.getMessage().trim());
+			        + "changing content of dir_a/file_3_dir_a to file_3 content changed", entry.getMessage().trim());
 			
 			// ............ //
 			
@@ -596,7 +591,7 @@ public class RepositoryTest extends MoskitoTest {
 			entry = log.get(16);
 			assertEquals("just", entry.getAuthor().getUsernames().iterator().next());
 			assertEquals(getDateFromString("2010-10-22 16:53:06 +0200").getMillis(),
-					entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
+			             entry.getDateTime().minusMillis(entry.getDateTime().getMillisOfSecond()).getMillis());
 			if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("a19f0b6e729adbf26b70a0e17f32453835fb50eb", entry.getRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
@@ -609,11 +604,10 @@ public class RepositoryTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testMoveEdit() {
 		for (Repository repository : repositories) {
 			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-					3));
+			                                                                                                      3));
 			assertEquals(2, changedPaths.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertTrue(changedPaths.containsKey("/dir_a"));
