@@ -58,13 +58,12 @@ public abstract class MoskitoTest {
 	private static StringWriter            testWriter         = new StringWriter();
 	private static PrintWriter             testPrinter        = new PrintWriter(testWriter);
 	
-	private static Annotation[]            classAnnotations;
+	private static Annotation[]            classAnnotations   = new Annotation[0];
+	private static Annotation[]            methodAnnotations  = new Annotation[0];
 	
-	private static Annotation[]            methodAnnotations;
+	private static Map<String, Annotation> annotationMap      = new HashMap<String, Annotation>();
 	
-	private static Map<String, Annotation> annotationMap;
-	
-	private static String                  testTag;
+	private static String                  testTag            = "";
 	
 	private static Throwable               failureCause       = null;
 	

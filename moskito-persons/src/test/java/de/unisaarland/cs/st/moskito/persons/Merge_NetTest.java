@@ -53,13 +53,14 @@ public class Merge_NetTest extends MoskitoTest {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		
 		Criteria<Person> criteria = persistenceUtil.createCriteria(Person.class);
-		final List<Person> list = persistenceUtil.load(criteria);
-		final int personCount = list.size();
+		List<Person> list = persistenceUtil.load(criteria);
+		list.size();
 		
 		final Person[] persons = new Person[] { new Person("just", null, null),
 		        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
 		        new Person("just", "Sascha Just", null),
-		        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de") };
+		        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de"),
+		        new Person("just", null, "sascha.just@st.cs.uni-saarland.de") };
 		
 		RCSTransaction rcsTransaction = null;
 		
@@ -74,11 +75,11 @@ public class Merge_NetTest extends MoskitoTest {
 		
 		persistenceUtil.commitTransaction();
 		
-		final Persons personsMerger = new Persons();
+		final Persons personsMerger = new Persons(persistenceUtil);
 		personsMerger.run();
 		
 		criteria = persistenceUtil.createCriteria(Person.class);
-		
+		list = persistenceUtil.load(criteria);
 		final Person person = (Person) CollectionUtils.find(list, new Predicate() {
 			
 			@Override
@@ -89,7 +90,7 @@ public class Merge_NetTest extends MoskitoTest {
 		});
 		
 		assertTrue(!list.isEmpty());
-		assertEquals(personCount + 1, list.size());
+		assertEquals(1, list.size());
 		assertEquals(1, person.getUsernames().size());
 		assertEquals("just", person.getUsernames().iterator().next());
 		assertEquals(1, person.getEmailAddresses().size());
