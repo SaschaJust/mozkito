@@ -91,9 +91,9 @@ public class IOUtils {
 			} else {
 				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
 			}
-		} catch (ClientProtocolException e) {
+		} catch (final ClientProtocolException e) {
 			throw new FetchException(e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new FetchException(e.getMessage(), e);
 		}
 	}
@@ -108,7 +108,7 @@ public class IOUtils {
 		FileInputStream inputStream = null;
 		
 		inputStream = new FileInputStream(uri.getPath());
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		copyInputStream(inputStream, outputStream);
 		inputStream.close();
 		outputStream.close();
@@ -122,12 +122,12 @@ public class IOUtils {
 	 */
 	private static byte[] binaryfetchHttp(final URI uri) throws FetchException {
 		try {
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet request = new HttpGet(uri);
-			HttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
+			final HttpClient httpClient = new DefaultHttpClient();
+			final HttpGet request = new HttpGet(uri);
+			final HttpResponse response = httpClient.execute(request);
+			final HttpEntity entity = response.getEntity();
 			return readbinaryData(entity);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FetchException("Providing the binary data of `" + uri.toString() + "` failed.", e);
 		}
 	}
@@ -143,15 +143,15 @@ public class IOUtils {
 	private static byte[] binaryfetchHttp(final URI uri,
 	                                      final String username,
 	                                      final String password) throws ClientProtocolException, IOException {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		final DefaultHttpClient httpClient = new DefaultHttpClient();
+		final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
 		                             new UsernamePasswordCredentials(username, password));
 		httpClient.setCredentialsProvider(credsProvider);
 		
-		HttpGet request = new HttpGet(uri);
-		HttpResponse response = httpClient.execute(request);
-		HttpEntity entity = response.getEntity();
+		final HttpGet request = new HttpGet(uri);
+		final HttpResponse response = httpClient.execute(request);
+		final HttpEntity entity = response.getEntity();
 		return readbinaryData(entity);
 	}
 	
@@ -177,7 +177,7 @@ public class IOUtils {
 	 */
 	public static final void copyInputStream(final InputStream in,
 	                                         final OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
+		final byte[] buffer = new byte[1024];
 		int len;
 		
 		while ((len = in.read(buffer)) >= 0) {
@@ -235,13 +235,13 @@ public class IOUtils {
 	 */
 	public static RawContent fetchFile(final URI uri) throws FetchException {
 		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			StringBuilder builder = new StringBuilder();
-			File file = new File(uri.getPath());
+			final MessageDigest md = MessageDigest.getInstance("MD5");
+			final StringBuilder builder = new StringBuilder();
+			final File file = new File(uri.getPath());
 			
 			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
 			
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			final BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			
 			while ((line = reader.readLine()) != null) {
@@ -254,7 +254,7 @@ public class IOUtils {
 			return new RawContent(uri, md.digest(builder.toString().getBytes()), new DateTime(file.lastModified()),
 			                      "xhtml", builder.toString());
 			
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
 		}
@@ -270,24 +270,24 @@ public class IOUtils {
 		try {
 			md = MessageDigest.getInstance("MD5");
 			
-			StringBuilder content = new StringBuilder();
+			final StringBuilder content = new StringBuilder();
 			
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet request = new HttpGet(uri);
-			HttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+			final HttpClient httpClient = new DefaultHttpClient();
+			final HttpGet request = new HttpGet(uri);
+			final HttpResponse response = httpClient.execute(request);
+			final HttpEntity entity = response.getEntity();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
 			String line;
 			
 			while ((line = reader.readLine()) != null) {
 				content.append(line);
 			}
 			
-			Header contentType = entity.getContentType();
+			final Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
 			                      contentType.getValue(), content.toString());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
 		}
@@ -307,30 +307,30 @@ public class IOUtils {
 		try {
 			md = MessageDigest.getInstance("MD5");
 			
-			StringBuilder content = new StringBuilder();
+			final StringBuilder content = new StringBuilder();
 			
-			DefaultHttpClient httpClient = new DefaultHttpClient();
-			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			final DefaultHttpClient httpClient = new DefaultHttpClient();
+			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
 			                             new UsernamePasswordCredentials(username, password));
 			httpClient.setCredentialsProvider(credsProvider);
 			
-			HttpGet request = new HttpGet(uri);
-			HttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
+			final HttpGet request = new HttpGet(uri);
+			final HttpResponse response = httpClient.execute(request);
+			final HttpEntity entity = response.getEntity();
 			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
 			String line;
 			
 			while ((line = reader.readLine()) != null) {
 				content.append(line);
 			}
 			
-			Header contentType = entity.getContentType();
+			final Header contentType = entity.getContentType();
 			
 			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
 			                      contentType.getValue(), content.toString());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
 		}
@@ -358,16 +358,11 @@ public class IOUtils {
 		return fetchHttp(uri, username, password);
 	}
 	
-	/**
-	 * @param uri
-	 * @return
-	 * @throws IOException
-	 */
-	public static File getTemporaryCopyOfFile(final URI uri) throws IOException {
-		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+	public static File getTemporaryCopyOfFile(final File file,
+	                                          final URI uri) throws IOException {
 		try {
 			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
-		} catch (FilePermissionException e1) {
+		} catch (final FilePermissionException e1) {
 			throw new IOException(e1);
 		}
 		
@@ -383,15 +378,15 @@ public class IOUtils {
 				data = binaryfetchHttps(uri);
 			} else if (uri.getScheme().equals("file")) {
 				if (uri.getPath().contains(".jar!" + FileUtils.fileSeparator) && !new File(uri).exists()) {
-					String jarFilePath = uri.getPath().substring(0,
-					                                             uri.getPath()
-					                                                .indexOf(".jar!" + FileUtils.fileSeparator) + 4);
-					File plainJarFile = new File(jarFilePath);
+					final String jarFilePath = uri.getPath()
+					                              .substring(0,
+					                                         uri.getPath().indexOf(".jar!" + FileUtils.fileSeparator) + 4);
+					final File plainJarFile = new File(jarFilePath);
 					
 					if (plainJarFile.exists()) {
-						ZipFile jarFile = new ZipFile(plainJarFile);
-						String entryName = uri.getPath().substring(jarFilePath.length());
-						ZipEntry entry = jarFile.getEntry(entryName);
+						final ZipFile jarFile = new ZipFile(plainJarFile);
+						final String entryName = uri.getPath().substring(jarFilePath.length());
+						final ZipEntry entry = jarFile.getEntry(entryName);
 						copyInputStream(jarFile.getInputStream(entry), outputStream);
 						outputStream.close();
 						return file;
@@ -407,9 +402,9 @@ public class IOUtils {
 			
 			outputStream.write(data);
 			outputStream.close();
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			throw new IOException(e);
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			throw new IOException(e);
 		} finally {
 			try {
@@ -417,12 +412,29 @@ public class IOUtils {
 					outputStream.flush();
 					outputStream.close();
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new IOException(e);
 			}
 		}
 		
 		return file;
+	}
+	
+	public static File getTemporaryCopyOfFile(final String prefix,
+	                                          final String suffix,
+	                                          final URI uri) throws IOException {
+		final File file = FileUtils.createRandomFile(prefix, suffix, FileShutdownAction.DELETE);
+		return getTemporaryCopyOfFile(file, uri);
+	}
+	
+	/**
+	 * @param uri
+	 * @return
+	 * @throws IOException
+	 */
+	public static File getTemporaryCopyOfFile(final URI uri) throws IOException {
+		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		return getTemporaryCopyOfFile(file, uri);
 	}
 	
 	/**
@@ -444,13 +456,13 @@ public class IOUtils {
 			ois = new ObjectInputStream(fin);
 			object = (Storable) ois.readObject();
 			object.setCached(file.getAbsolutePath());
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new LoadingException("File `" + file.getAbsolutePath()
 			        + "` could not be found when trying to load object.");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new LoadingException(e.getClass().getName() + " occurred when reading from file: `"
 			        + file.getAbsolutePath() + "`.", e);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new LoadingException("Corresponding class was not found when loading object from file: `"
 			        + file.getAbsolutePath() + "`.", e);
 		} finally {
@@ -459,7 +471,7 @@ public class IOUtils {
 					ois.close();
 				}
 				
-			} catch (IOException e) {
+			} catch (final IOException e) {
 			}
 		}
 		return object;
@@ -472,11 +484,11 @@ public class IOUtils {
 	 * @throws IOException
 	 */
 	private static byte[] readbinaryData(final HttpEntity entity) throws IllegalStateException, IOException {
-		InputStream stream = entity.getContent();
+		final InputStream stream = entity.getContent();
 		
-		byte[] buffer = new byte[1024];
+		final byte[] buffer = new byte[1024];
 		int length = 0;
-		LinkedList<byte[]> list = new LinkedList<byte[]>();
+		final LinkedList<byte[]> list = new LinkedList<byte[]>();
 		int i;
 		
 		while ((i = stream.read(buffer)) != 0) {
@@ -484,10 +496,10 @@ public class IOUtils {
 			list.add(buffer);
 		}
 		
-		byte[] data = new byte[length];
+		final byte[] data = new byte[length];
 		i = 0;
-		for (byte[] chunk : list) {
-			for (byte b : chunk) {
+		for (final byte[] chunk : list) {
+			for (final byte b : chunk) {
 				data[i] = b;
 				++i;
 			}
@@ -510,8 +522,8 @@ public class IOUtils {
 	                         final boolean overwrite) throws StoringException, FilePermissionException {
 		FileUtils.ensureFilePermissions(directory, FileUtils.ACCESSIBLE_DIR | FileUtils.WRITABLE);
 		
-		String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
-		File file = new File(path);
+		final String path = directory.getAbsolutePath() + FileUtils.fileSeparator + fileName;
+		final File file = new File(path);
 		
 		FileUtils.ensureFilePermissions(file, FileUtils.WRITABLE_FILE);
 		
@@ -530,16 +542,16 @@ public class IOUtils {
 			object.setCached(file.getAbsolutePath());
 			oos.writeObject(object);
 			oos.close();
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new StoringException("Could not create file `" + fileName + "`.", e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new StoringException(e.getClass().getSimpleName() + " occurred when trying to write `" + fileName
 			        + "`.", e);
 		} finally {
 			if (oos != null) {
 				try {
 					oos.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 				}
 			}
 		}

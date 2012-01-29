@@ -47,6 +47,10 @@ public class FileUtils {
 		KEEP, DELETE
 	}
 	
+	public static enum SupportedPackers {
+		ZIP, JAR, LZMA, GZ, GZIP, BZIP, BZIP2, BZ, BZ2, XZ, XZIP;
+	}
+	
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			
@@ -382,6 +386,27 @@ public class FileUtils {
 	public static File createRandomFile(final FileShutdownAction shutdownAction) {
 		try {
 			final File file = File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
+			addToFileManager(file, shutdownAction);
+			return file;
+		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return null;
+		}
+	}
+	
+	/**
+	 * @param prefix
+	 * @param suffix
+	 * @param shutdownAction
+	 * @return
+	 */
+	public static File createRandomFile(final String prefix,
+	                                    final String suffix,
+	                                    final FileShutdownAction shutdownAction) {
+		try {
+			final File file = File.createTempFile(prefix, suffix);
 			addToFileManager(file, shutdownAction);
 			return file;
 		} catch (final IOException e) {
@@ -845,6 +870,70 @@ public class FileUtils {
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean unpack(final File packedFile,
+	                             final File directory) {
+		boolean success = false;
+		String[] split;
+		try {
+			final String path = packedFile.getCanonicalPath();
+			split = path.split("\\.");
+			String format = null;
+			if (split.length > 0) {
+				format = split[split.length - 1];
+			} else {
+				return false;
+			}
+			if (format.equalsIgnoreCase("ZIP") || format.equalsIgnoreCase("JAR")) {
+				return unzip(packedFile, directory);
+			} else if (format.equalsIgnoreCase("XZ") || format.equalsIgnoreCase("LZMA")
+			        || format.equalsIgnoreCase("XZIP")) {
+				success = unlzma(packedFile, directory);
+				if (success) {
+					if (split.length > 1) {
+						format = split[split.length - 2];
+						if (format.equalsIgnoreCase("TAR")) {
+							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
+							                     - 1)), directory);
+						}
+					}
+				} else {
+					return false;
+				}
+			} else if (format.equalsIgnoreCase("GZ") || format.equalsIgnoreCase("GZIP")) {
+				success = gunzip(packedFile, directory);
+				if (success) {
+					if (split.length > 1) {
+						format = split[split.length - 2];
+						if (format.equalsIgnoreCase("TAR")) {
+							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
+							                     - 1)), directory);
+						}
+					}
+				} else {
+					return false;
+				}
+			} else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP")
+			        || format.equalsIgnoreCase("BZIP2") || format.equalsIgnoreCase("BZ2")) {
+				success = bunzip2(packedFile, directory);
+				if (success) {
+					if (split.length > 1) {
+						format = split[split.length - 2];
+						if (format.equalsIgnoreCase("TAR")) {
+							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
+							                     - 1)), directory);
+						}
+					}
+				} else {
+					return false;
+				}
+			}
+		} catch (final IOException e) {
+			return false;
+		}
+		return success;
+		
 	}
 	
 	/**
