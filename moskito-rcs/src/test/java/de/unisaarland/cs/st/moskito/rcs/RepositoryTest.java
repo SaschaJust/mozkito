@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -37,6 +37,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -53,12 +54,11 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
-import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 import difflib.Delta;
 
 @DatabaseSettings (unit = "rcs")
-public class RepositoryTest extends MoskitoTest {
+public class RepositoryTest {
 	
 	// [scheme:][//authority][path][?query][#fragment]
 	// [user-info@]host[:port]
@@ -165,28 +165,19 @@ public class RepositoryTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		
+		Map<RepositoryType, URI> repoMap = new HashMap<RepositoryType, URI>();
 		// UNZIP mercurial repo
 		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 		if (zipURL == null) {
 			fail();
 		}
-		File baseDir = null;
+		File mercurialBaseDir = FileUtils.createRandomDir("repotest_mercurial", null, FileShutdownAction.DELETE);
 		try {
-			baseDir = new File(
-			                   (new URL(zipURL.toString().substring(0,
-			                                                        zipURL.toString()
-			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-			fail();
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
+			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
+		} catch (FilePermissionException e2) {
 			fail();
 		}
-		if ((!baseDir.exists()) || (!baseDir.isDirectory())) {
-			fail();
-		}
+		
 		File zipFile = null;
 		try {
 			zipFile = new File(zipURL.toURI());
@@ -195,28 +186,32 @@ public class RepositoryTest extends MoskitoTest {
 			fail();
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + mercurialBaseDir.getAbsolutePath());
 		}
-		FileUtils.unzip(zipFile, baseDir);
+		FileUtils.unzip(zipFile, mercurialBaseDir);
 		// UNZIP END
+		
+		try {
+			repoMap.put(RepositoryType.MERCURIAL, new URI("file://" + mercurialBaseDir + File.separator + "repotest."
+			        + RepositoryType.MERCURIAL.name().toLowerCase()));
+		} catch (URISyntaxException e3) {
+			fail();
+		}
 		
 		// UNZIP git repo
 		zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
 		if (zipURL == null) {
 			fail();
 		}
+		
+		File gitBaseDir = FileUtils.createRandomDir("repotest_git", null, FileShutdownAction.DELETE);
 		try {
-			baseDir = new File(
-			                   (new URL(zipURL.toString().substring(0,
-			                                                        zipURL.toString()
-			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
+		} catch (FilePermissionException e2) {
 			fail();
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
+			
 		}
+		
 		try {
 			zipFile = new File(zipURL.toURI());
 		} catch (URISyntaxException e1) {
@@ -224,10 +219,25 @@ public class RepositoryTest extends MoskitoTest {
 			fail();
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + gitBaseDir.getAbsolutePath());
 		}
-		FileUtils.unzip(zipFile, baseDir);
+		FileUtils.unzip(zipFile, gitBaseDir);
 		// UNZIP END
+		
+		try {
+			repoMap.put(RepositoryType.GIT, new URI("file://" + gitBaseDir + File.separator + "repotest."
+			        + RepositoryType.GIT.name().toLowerCase()));
+		} catch (URISyntaxException e2) {
+			fail();
+		}
+		try {
+			repoMap.put(RepositoryType.SUBVERSION,
+			            RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
+			                                                     + RepositoryType.SUBVERSION.name().toLowerCase())
+			                                .toURI());
+		} catch (URISyntaxException e2) {
+			fail();
+		}
 		
 		for (RepositoryType type : RepositoryType.values()) {
 			if (type.equals(RepositoryType.CVS)) {
@@ -247,15 +257,8 @@ public class RepositoryTest extends MoskitoTest {
 				fail();
 			}
 			repositories.add(repository);
-			URL url = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
-			        + type.toString().toLowerCase());
-			File urlFile = null;
-			try {
-				urlFile = new File(url.toURI());
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-				fail();
-			}
+			
+			File urlFile = new File(repoMap.get(type));
 			
 			if (type.equals(RepositoryType.SUBVERSION)) {
 				tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "", FileShutdownAction.DELETE);
@@ -271,7 +274,7 @@ public class RepositoryTest extends MoskitoTest {
 					returnValue += execute.getFirst();
 					execute = CommandExecutor.execute("svnadmin",
 					                                  new String[] { "load", tmpDirectory.getAbsolutePath() },
-					                                  tmpDirectory, url.openStream(), null);
+					                                  tmpDirectory, repoMap.get(type).toURL().openStream(), null);
 					returnValue += execute.getFirst();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -281,7 +284,7 @@ public class RepositoryTest extends MoskitoTest {
 			}
 			
 			try {
-				repository.setup(urlFile.toURI(), null, null, getPersistenceUtil());
+				repository.setup(urlFile.toURI(), null, null, null);
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}

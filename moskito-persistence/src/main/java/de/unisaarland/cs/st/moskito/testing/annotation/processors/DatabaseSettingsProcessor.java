@@ -13,8 +13,6 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	
-	private String dbName;
-	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.testing.annotation.processors.
@@ -28,23 +26,23 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
 			tag = tag.replaceAll("\\W", "_");
-			this.dbName = settings.database() + '_' + tag;
+			String dbName = settings.database() + '_' + tag;
 			
 			try {
-				PersistenceManager.dropDatabase(settings.hostname(), this.dbName, settings.username(),
-				                                settings.password(), settings.type(), settings.driver());
+				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
+				                                settings.type(), settings.driver());
 			} catch (SQLException e) {
 			}
 			try {
-				PersistenceManager.createDatabase(settings.hostname(), this.dbName, settings.username(),
+				PersistenceManager.createDatabase(settings.hostname(), dbName, settings.username(),
 				                                  settings.password(), settings.type(), settings.driver());
 			} catch (SQLException e) {
 				throw new TestSettingsError("Could not create database " + settings.database(), e);
 			}
 			
-			util = PersistenceManager.createUtil(settings.hostname(), this.dbName, settings.username(),
-			                                     settings.password(), settings.type(), settings.driver(),
-			                                     settings.unit(), settings.options(), settings.util());
+			util = PersistenceManager.createUtil(settings.hostname(), dbName, settings.username(), settings.password(),
+			                                     settings.type(), settings.driver(), settings.unit(),
+			                                     settings.options(), settings.util());
 		} else {
 			util = PersistenceManager.createUtil(settings.hostname(), settings.database(), settings.username(),
 			                                     settings.password(), settings.type(), settings.driver(),
@@ -64,11 +62,13 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		MoskitoTest.getPersistenceUtil().shutdown();
 		
-		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE) && (this.dbName != null)
-		        && (this.dbName != settings.database())) {
+		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
+			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
+			tag = tag.replaceAll("\\W", "_");
+			String dbName = settings.database() + '_' + tag;
 			try {
-				PersistenceManager.dropDatabase(settings.hostname(), this.dbName, settings.username(),
-				                                settings.password(), settings.type(), settings.driver());
+				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
+				                                settings.type(), settings.driver());
 			} catch (SQLException e) {
 				throw new TestSettingsError("Could not create database " + settings.database(), e);
 			}
