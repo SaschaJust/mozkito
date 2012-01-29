@@ -304,7 +304,7 @@ public abstract class MoskitoTest {
 					System.err.println("There are multiple failure causes. These failures might depend on the first (#1) failure cause. ");
 				}
 				for (Throwable failureCause : failureCauses) {
-					System.err.println("Error number #" + i);
+					System.err.println("Error number #" + i++);
 					failureCause.printStackTrace();
 				}
 				System.exit(1);

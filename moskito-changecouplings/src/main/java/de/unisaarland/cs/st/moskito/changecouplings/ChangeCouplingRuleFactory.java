@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings;
 
@@ -63,9 +63,9 @@ public class ChangeCouplingRuleFactory {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction transaction,
-			@Positive final int minSupport,
-			@LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
-			final PersistenceUtil persistenceUtil) {
+	                                                                    @Positive final int minSupport,
+	                                                                    final double minConfidence,
+	                                                                    final PersistenceUtil persistenceUtil) {
 		
 		updateProcedures(persistenceUtil);
 		
@@ -73,7 +73,7 @@ public class ChangeCouplingRuleFactory {
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-					+ persistenceUtil.getType() + ").");
+			        + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
@@ -81,9 +81,9 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.commitTransaction();
 		
 		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
-				+ tablename + "')");
+		        + tablename + "')");
 		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-				+ tablename);
+		        + tablename);
 		if (list == null) {
 			return null;
 		}
@@ -123,17 +123,17 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@NoneNull
 	public static LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
-			@Positive final int minSupport,
-			@LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
-			final Set<String> relevantMethodNames,
-			final PersistenceUtil persistenceUtil) {
+	                                                                        @Positive final int minSupport,
+	                                                                        @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
+	                                                                        final Set<String> relevantMethodNames,
+	                                                                        final PersistenceUtil persistenceUtil) {
 		updateProcedures(persistenceUtil);
 		
 		LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-					+ persistenceUtil.getType() + ").");
+			        + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
@@ -157,7 +157,7 @@ public class ChangeCouplingRuleFactory {
 		
 		@SuppressWarnings ("unchecked")
 		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-				+ tablename);
+		        + tablename);
 		if (list == null) {
 			return null;
 		}
@@ -183,9 +183,9 @@ public class ChangeCouplingRuleFactory {
 		if (!updatedQueries) {
 			try {
 				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(
-								ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
-										+ "change_file_couplings.psql")));
+				                                           new InputStreamReader(
+				                                                                 ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                                         + "change_file_couplings.psql")));
 				
 				StringBuilder query = new StringBuilder();
 				String line = "";
@@ -198,9 +198,9 @@ public class ChangeCouplingRuleFactory {
 				persistenceUtil.executeNativeQuery(query.toString());
 				
 				reader = new BufferedReader(
-						new InputStreamReader(
-								ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
-										+ "change_method_couplings.psql")));
+				                            new InputStreamReader(
+				                                                  ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                          + "change_method_couplings.psql")));
 				query = new StringBuilder();
 				line = "";
 				while ((line = reader.readLine()) != null) {
@@ -212,7 +212,7 @@ public class ChangeCouplingRuleFactory {
 			} catch (IOException e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
-							+ e.getMessage());
+					        + e.getMessage());
 				}
 			}
 			updatedQueries = true;
