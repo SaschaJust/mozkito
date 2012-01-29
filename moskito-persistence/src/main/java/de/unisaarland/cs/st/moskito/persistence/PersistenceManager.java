@@ -20,6 +20,10 @@ package de.unisaarland.cs.st.moskito.persistence;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +41,52 @@ public class PersistenceManager {
 	
 	private static final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
 	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @throws SQLException
+	 */
+	public static void createDatabase(final String host,
+	                                  final String database,
+	                                  final String user,
+	                                  final String password,
+	                                  final String type,
+	                                  final String driver) throws SQLException {
+		try {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
+			throw new SQLException("Could not load JDBC driver " + driver, e);
+		}
+		
+		// FIXME determine default database other than postgres
+		Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, password);
+		if (connection != null) {
+			Statement statement = connection.createStatement();
+			if (statement != null) {
+				statement.executeUpdate("CREATE DATABASE " + database + ";");
+				statement.close();
+			}
+			connection.close();
+		}
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @param unit
+	 * @param dropContents
+	 * @param middleware
+	 * @return
+	 * @throws UnrecoverableError
+	 */
 	public static PersistenceUtil createUtil(final String host,
 	                                         final String database,
 	                                         final String user,
@@ -93,6 +143,39 @@ public class PersistenceManager {
 			throw new ClassLoadingError(e, className);
 		}
 		
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @throws SQLException
+	 */
+	public static void dropDatabase(final String host,
+	                                final String database,
+	                                final String user,
+	                                final String password,
+	                                final String type,
+	                                final String driver) throws SQLException {
+		
+		try {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
+			throw new SQLException("Could not load JDBC driver " + driver, e);
+		}
+		
+		Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, password);
+		if (connection != null) {
+			Statement statement = connection.createStatement();
+			if (statement != null) {
+				statement.executeUpdate("DROP DATABASE " + database + ";");
+				statement.close();
+			}
+			connection.close();
+		}
 	}
 	
 	/**

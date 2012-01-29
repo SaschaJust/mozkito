@@ -35,26 +35,27 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class OpenJPA_RCS_NetTest extends MoskitoTest{
+@DatabaseSettings (unit = "rcs")
+public class OpenJPA_RCS_NetTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testRCSBranch() {
 		
 		final RCSBranch branch = new RCSBranch("testBranch");
 		branch.addMergedIn("0123456789abcde");
 		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
-				"committed begin",
-				new DateTime(),
-				new Person("just", "Sascha Just",
-						"sascha.just@st.cs.uni-saarland.de"),
-						"000000000000000", getPersistenceUtil());
+		                                                                         "committed begin",
+		                                                                         new DateTime(),
+		                                                                         new Person("just", "Sascha Just",
+		                                                                                    "sascha.just@st.cs.uni-saarland.de"),
+		                                                                         "000000000000000",
+		                                                                         getPersistenceUtil());
 		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
-				"committed end",
-				new DateTime(),
-				new Person("just", "Sascha Just",
-						"sascha.just@st.cs.uni-saarland.de"),
-						"0123456789abcde", getPersistenceUtil());
+		                                                                       "committed end",
+		                                                                       new DateTime(),
+		                                                                       new Person("just", "Sascha Just",
+		                                                                                  "sascha.just@st.cs.uni-saarland.de"),
+		                                                                       "0123456789abcde", getPersistenceUtil());
 		
 		beginTransaction.setBranch(branch);
 		endTransaction.setBranch(branch);
@@ -76,10 +77,10 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testRCSRevision() {
 		final Person person = new Person("just", null, null);
-		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",getPersistenceUtil());
+		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
+		                                                                    getPersistenceUtil());
 		final RCSFile file = new RCSFileManager().createFile("test.java", transaction);
 		final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 		
@@ -123,8 +124,7 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		assertTrue(personList.get(0).getFullnames().isEmpty());
 		
 		// transaction
-		final List<RCSTransaction> transactionList = getPersistenceUtil().load(
-				getPersistenceUtil().createCriteria(RCSTransaction.class));
+		final List<RCSTransaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSTransaction.class));
 		assertFalse(transactionList.isEmpty());
 		assertEquals(1, transactionList.size());
 		assertEquals(transaction, transactionList.get(0));
@@ -134,11 +134,11 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testSaveRCSFile() {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",getPersistenceUtil());
+		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
+		                                                                       getPersistenceUtil());
 		
 		final RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 		file.assignTransaction(rcsTransaction, "formerTest.java");
@@ -156,13 +156,11 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest{
 		assertFalse(personList.isEmpty());
 		assertTrue(personList.contains(person));
 		
-		final List<RCSRevision> revisionList = getPersistenceUtil().load(
-				getPersistenceUtil().createCriteria(RCSRevision.class));
+		final List<RCSRevision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSRevision.class));
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
 		
-		final List<RCSTransaction> transactionList = getPersistenceUtil().load(
-				getPersistenceUtil().createCriteria(RCSTransaction.class));
+		final List<RCSTransaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSTransaction.class));
 		assertFalse(transactionList.isEmpty());
 		assertTrue(transactionList.contains(rcsTransaction));
 	}

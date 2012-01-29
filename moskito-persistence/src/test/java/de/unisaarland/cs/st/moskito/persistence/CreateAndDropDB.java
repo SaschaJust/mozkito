@@ -12,12 +12,12 @@ public class CreateAndDropDB extends MoskitoTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		getPersistenceUtil().createDatabase();
+		System.out.println("before class");
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		
+		System.out.println("after class");
 	}
 	
 	@Test

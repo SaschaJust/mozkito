@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.git;
 
@@ -26,12 +26,10 @@ import net.ownhero.dev.regex.RegexGroup;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
-import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 public class GitLogParserTest {
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testAuthorRegExp() {
 		String author1 = "Author: Carsten Nielsen <heycarsten@gmail.com>";
 		
@@ -101,7 +99,6 @@ public class GitLogParserTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testEmailRegex() {
 		String message = "hjkkjdskj ksdjfkljf;lsjdfkldsj f@lkdsaf elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5 fhdsjfjkshdfjklhsa fjsadfh jkldsahfl";
 		
@@ -123,7 +120,6 @@ public class GitLogParserTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testOriginalIdRegex() {
 		String s = "git-svn-id: http://svn.codehaus.org/jruby/trunk/jruby@7896 961051c9-f516-0410-bf72-c9f7e237a7b7";
 		GitLogParser.originalIdRegex.find(s);
@@ -132,7 +128,6 @@ public class GitLogParserTest {
 	}
 	
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void testRegressionBug169() {
 		String message = "Author: jvanzyl <jvanzyl>\nDate:   Tue Jan 13 22:54:37 2004 +0000\n o http://jira.codehaus.org/secure/ViewIssue.jspa?key=XSTR-17\n\ngit-svn-id: file:///scratch/kim/miner_repos/xstream/svn_repo_09_03_2011/trunk@61 f887afa5-a9cb-4ae6-b411-6339e5819859";
 		List<RegexGroup> groups = GitLogParser.gitLogDateFormatRegex.find(message);

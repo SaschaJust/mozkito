@@ -29,7 +29,7 @@ public @interface DatabaseSettings {
 	
 	String hostname() default "grid1.st.cs.uni-saarland.de";
 	
-	ConnectOptions options() default de.unisaarland.cs.st.moskito.persistence.ConnectOptions.DROPIFEXISTS;
+	ConnectOptions options() default de.unisaarland.cs.st.moskito.persistence.ConnectOptions.DB_DROP_CREATE;
 	
 	String password() default "miner";
 	

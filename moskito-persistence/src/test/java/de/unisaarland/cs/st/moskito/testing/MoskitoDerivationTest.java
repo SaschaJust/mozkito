@@ -17,6 +17,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
  * @author just
  * 
  */
+@DatabaseSettings (unit = "rcs")
 public class MoskitoDerivationTest extends MoskitoTest {
 	
 	@BeforeClass
@@ -47,13 +48,13 @@ public class MoskitoDerivationTest extends MoskitoTest {
 	}
 	
 	@Test
-	@DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011")
+	// @DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011",
+	// options = ConnectOptions.VALIDATE)
 	public void testNoFail() {
 		// fail();
 	}
 	
 	@Test
-	@DatabaseSettings (unit = "rcs")
 	public void testPass() {
 		// fail();
 	}

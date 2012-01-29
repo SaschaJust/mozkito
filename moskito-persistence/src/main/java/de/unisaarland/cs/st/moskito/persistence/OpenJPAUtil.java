@@ -43,11 +43,8 @@ import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
-import org.apache.openjpa.jdbc.conf.JDBCConfiguration;
-import org.apache.openjpa.jdbc.schema.SchemaTool;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
@@ -118,16 +115,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 		final Root<T> root = query.from(clazz);
 		final Criteria<T> criteria = new Criteria<T>(root, builder, query);
 		return criteria;
-	}
-	
-	/**
-	 * @throws SQLException
-	 */
-	@Override
-	public synchronized void createDatabase() throws SQLException {
-		final JDBCConfiguration conf = (JDBCConfiguration) ((OpenJPAEntityManagerSPI) this.entityManager).getConfiguration();
-		final SchemaTool tool = new SchemaTool(conf, SchemaTool.ACTION_CREATEDB);
-		tool.run();
 	}
 	
 	/*
@@ -246,9 +233,9 @@ public class OpenJPAUtil implements PersistenceUtil {
 			case CREATE:
 				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
 				break;
-			case DROPIFEXISTS:
-				properties.put("openjpa.jdbc.SynchronizeMappings",
-				               "buildSchema(SchemaAction='add,deleteTableContents')");
+			case DB_DROP_CREATE:
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				// "buildSchema(SchemaAction='add,deleteTableContents')");
 				break;
 			default:
 				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
@@ -272,16 +259,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public synchronized void delete(final Annotated object) {
 		this.entityManager.remove(object);
-	}
-	
-	/**
-	 * @throws SQLException
-	 */
-	@Override
-	public synchronized void dropDatabase() throws SQLException {
-		final JDBCConfiguration conf = (JDBCConfiguration) ((OpenJPAEntityManagerSPI) this.entityManager).getConfiguration();
-		final SchemaTool tool = new SchemaTool(conf, SchemaTool.ACTION_DROPDB);
-		tool.run();
 	}
 	
 	/*

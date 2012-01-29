@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.elements;
 
@@ -32,6 +32,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
+@DatabaseSettings (unit = "rcs")
 public class PreviousTransactionIteratorTest extends MoskitoTest {
 	
 	private Person         person1;
@@ -52,7 +53,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void complexTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
@@ -233,7 +233,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void crossBranchTest() {
 		
 		this.master.setBegin(this.x);
@@ -343,7 +342,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator2Test() {
 		
 		this.master.setBegin(this.x);
@@ -419,7 +417,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator3Test() {
 		
 		this.master.setBegin(this.x);
@@ -495,7 +492,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIterator4Test() {
 		
 		this.master.setBegin(this.x);
@@ -580,7 +576,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void doubleBranchIteratorTest() {
 		
 		this.master.setBegin(this.x);
@@ -652,7 +647,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 * 
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void patchTest1() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
@@ -710,7 +704,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 * 
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void patchTest2() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
@@ -782,7 +775,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void simpleIteratorTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
@@ -813,7 +805,6 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	 *                Simple merge iterator test.
 	 */
 	@Test
-	@DatabaseSettings(unit = "rcs")
 	public void simpleMergeIteratorTest() {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
