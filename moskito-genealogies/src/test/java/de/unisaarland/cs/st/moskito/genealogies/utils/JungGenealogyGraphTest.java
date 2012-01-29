@@ -15,6 +15,7 @@ import org.junit.Test;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.JungGenealogyGraph.Edge;
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
@@ -22,7 +23,9 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class JungGenealogyGraphTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings (unit = "ppa")
+	@DatabaseSettings (unit = "ppa",
+	                   database = "moskito_genealogies_test_environment",
+	                   options = ConnectOptions.VALIDATE)
 	public void testCoreLayer() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);
