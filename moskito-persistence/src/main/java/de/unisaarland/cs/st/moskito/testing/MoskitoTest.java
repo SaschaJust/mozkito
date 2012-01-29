@@ -65,7 +65,7 @@ public abstract class MoskitoTest {
 	
 	private static String                  testTag            = "";
 	
-	private static Throwable               failureCause       = null;
+	private static List<Throwable>         failureCauses      = new LinkedList<Throwable>();
 	
 	/**
 	 * @return the persistenceUtil for this test
@@ -279,7 +279,7 @@ public abstract class MoskitoTest {
 				}
 			}
 		} catch (Throwable t) {
-			failureCause = t;
+			failureCauses.add(t);
 		} finally {
 			
 			try {
@@ -287,7 +287,7 @@ public abstract class MoskitoTest {
 				MoskitoTest.tearDownAfterClass(annotationMap);
 			} catch (final TestTearDownException e) {
 				testLog("Shutdown failed.", e);
-				failureCause = e;
+				failureCauses.add(e);
 			}
 			
 			System.setErr(stdErr);
@@ -298,8 +298,15 @@ public abstract class MoskitoTest {
 			System.out.print(testWriter.toString());
 			System.out.flush();
 			
-			if (failureCause != null) {
-				failureCause.printStackTrace();
+			if (!failureCauses.isEmpty()) {
+				int i = 1;
+				if (failureCauses.size() > 1) {
+					System.err.println("There are multiple failure causes. These failures might depend on the first (#1) failure cause. ");
+				}
+				for (Throwable failureCause : failureCauses) {
+					System.err.println("Error number #" + i);
+					failureCause.printStackTrace();
+				}
 				System.exit(1);
 				
 			}
