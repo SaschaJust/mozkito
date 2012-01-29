@@ -123,9 +123,11 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 			final Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
 			final Repository repository = repositoryClass.newInstance();
 			
-			if (Logger.logWarn()) {
-				Logger.warn("PersistenceUtil is null, but should be set prior to calling getValue in "
-				        + this.getClass().getSimpleName() + ".");
+			if (this.persistenceUtil == null) {
+				if (Logger.logWarn()) {
+					Logger.warn("PersistenceUtil is null, but should be set prior to calling getValue in "
+					        + this.getClass().getSimpleName() + ".");
+				}
 			}
 			
 			if ((username == null) && (password == null)) {
