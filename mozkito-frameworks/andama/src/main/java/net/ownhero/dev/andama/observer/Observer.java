@@ -42,19 +42,23 @@ public class Observer {
 		return new LinkedList<AndamaThreadable<?, ?>>();
 	}
 	
+	@SuppressWarnings ("unused")
 	private Properties loadSettings(final File file) {
 		return null;
 	}
 	
+	@SuppressWarnings ("unused")
 	private void registerChain(final AndamaChain chain) {
 		
 	}
 	
+	@SuppressWarnings ("unused")
 	private void spawnChain(final Class<? extends AndamaChain> clazz,
 	                        final Properties settings) {
 		
 	}
 	
+	@SuppressWarnings ("unused")
 	private void unregisterChain(final AndamaChain chain) {
 		
 	}

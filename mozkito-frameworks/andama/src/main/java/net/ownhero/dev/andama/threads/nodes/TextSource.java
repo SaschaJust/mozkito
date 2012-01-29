@@ -57,6 +57,7 @@ public class TextSource extends AndamaSource<String> {
 	 * @param url
 	 * @return
 	 */
+	@SuppressWarnings ("unused")
 	private boolean checkAvailability(final URL url) {
 		return true;
 	}

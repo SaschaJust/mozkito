@@ -142,6 +142,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 			body.append(getSystemInformation());
 			body.append(getClassLoadingInformation());
 			body.append(getRuntimeInformation());
+			body.append(getJavaInformation());
 			body.append(AndamaUtils.lineSeparator);
 			body.append("<<< System Information <<<");
 			body.append(AndamaUtils.lineSeparator);
@@ -188,6 +189,26 @@ public class AndamaCrashHandler extends ThreadGroup {
 		}
 		
 		return body.toString();
+	}
+	
+	/**
+	 * @return
+	 */
+	private String getJavaInformation() {
+		final StringBuilder builder = new StringBuilder();
+		
+		builder.append("Java class path: ").append(System.getProperty("java.class.path"));
+		builder.append("Java class version: ").append(System.getProperty("java.class.version"));
+		builder.append("Java compiler: ").append(System.getProperty("java.compiler"));
+		builder.append("Java home: ").append(System.getProperty("java.home"));
+		builder.append("Java tempdir: ").append(System.getProperty("java.io.tmpdir"));
+		builder.append("Java version: ").append(System.getProperty("java.version"));
+		builder.append("Java vendor: ").append(System.getProperty("java.vendor"));
+		builder.append("OS name: ").append(System.getProperty("os.name"));
+		builder.append("OS architecture: ").append(System.getProperty("os.arch"));
+		builder.append("OS version: ").append(System.getProperty("os.version"));
+		
+		return builder.toString();
 	}
 	
 	/**

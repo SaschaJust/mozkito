@@ -136,7 +136,7 @@ public abstract class Registered {
 	
 	public static Set<? extends Registered> handleRegistered(final AndamaChain chain,
 	                                                         final AndamaSettings settings,
-	                                                         final AndamaArgumentSet arguments,
+	                                                         final AndamaArgumentSet<?> arguments,
 	                                                         final String argumentName,
 	                                                         final Class<? extends Registered> superClass,
 	                                                         final boolean isRequired) {
@@ -412,7 +412,7 @@ public abstract class Registered {
 	 */
 	@NoneNull
 	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
+	                     final AndamaArgumentSet<?> arguments) {
 		setSettings(settings);
 		setRegistered(true);
 	}
@@ -427,7 +427,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerBooleanOption(@NotNull final AndamaSettings settings,
-	                                        @NotNull final AndamaArgumentSet arguments,
+	                                        @NotNull final AndamaArgumentSet<?> arguments,
 	                                        @NotNull final String name,
 	                                        @NotNull final String description,
 	                                        final String defaultValue,
@@ -449,7 +449,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerDirectoryOption(@NotNull final AndamaSettings settings,
-	                                          @NotNull final AndamaArgumentSet arguments,
+	                                          @NotNull final AndamaArgumentSet<?> arguments,
 	                                          @NotNull final String name,
 	                                          @NotNull final String description,
 	                                          final String defaultValue,
@@ -472,7 +472,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerDoubleOption(@NotNull final AndamaSettings settings,
-	                                       @NotNull final AndamaArgumentSet arguments,
+	                                       @NotNull final AndamaArgumentSet<?> arguments,
 	                                       @NotNull final String name,
 	                                       @NotNull final String description,
 	                                       final String defaultValue,
@@ -495,7 +495,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerEnumOption(final AndamaSettings settings,
-	                                     final AndamaArgumentSet arguments,
+	                                     final AndamaArgumentSet<?> arguments,
 	                                     final String name,
 	                                     final String description,
 	                                     final String defaultValue,
@@ -525,7 +525,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerInputFileOption(@NotNull final AndamaSettings settings,
-	                                          @NotNull final AndamaArgumentSet arguments,
+	                                          @NotNull final AndamaArgumentSet<?> arguments,
 	                                          @NotNull final String name,
 	                                          @NotNull final String description,
 	                                          final String defaultValue,
@@ -548,7 +548,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerListOption(@NotNull final AndamaSettings settings,
-	                                     @NotNull final AndamaArgumentSet arguments,
+	                                     @NotNull final AndamaArgumentSet<?> arguments,
 	                                     @NotNull final String name,
 	                                     @NotNull final String description,
 	                                     final String defaultValue,
@@ -570,7 +570,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerLongOption(@NotNull final AndamaSettings settings,
-	                                     @NotNull final AndamaArgumentSet arguments,
+	                                     @NotNull final AndamaArgumentSet<?> arguments,
 	                                     @NotNull final String name,
 	                                     @NotNull final String description,
 	                                     final String defaultValue,
@@ -592,7 +592,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerMaskedStringOption(@NotNull final AndamaSettings settings,
-	                                             @NotNull final AndamaArgumentSet arguments,
+	                                             @NotNull final AndamaArgumentSet<?> arguments,
 	                                             @NotNull final String name,
 	                                             @NotNull final String description,
 	                                             final String defaultValue,
@@ -614,7 +614,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerOutputFileOption(@NotNull final AndamaSettings settings,
-	                                           @NotNull final AndamaArgumentSet arguments,
+	                                           @NotNull final AndamaArgumentSet<?> arguments,
 	                                           @NotNull final String name,
 	                                           @NotNull final String description,
 	                                           final String defaultValue,
@@ -637,7 +637,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerStringOption(@NotNull final AndamaSettings settings,
-	                                       @NotNull final AndamaArgumentSet arguments,
+	                                       @NotNull final AndamaArgumentSet<?> arguments,
 	                                       @NotNull final String name,
 	                                       @NotNull final String description,
 	                                       final String defaultValue,
@@ -659,7 +659,7 @@ public abstract class Registered {
 	 * @return
 	 */
 	protected boolean registerURIOption(@NotNull final AndamaSettings settings,
-	                                    @NotNull final AndamaArgumentSet arguments,
+	                                    @NotNull final AndamaArgumentSet<?> arguments,
 	                                    @NotNull final String name,
 	                                    @NotNull final String description,
 	                                    final String defaultValue,
@@ -670,40 +670,6 @@ public abstract class Registered {
 		addOption(name, configString, argument);
 		return arguments.addArgument(argument);
 	}
-	
-	// protected boolean registerOption(final AndamaSettings settings,
-	// final AndamaArgumentSet arguments,
-	// final String name,
-	// final String description,
-	// final String defaultValue,
-	// final boolean required,
-	// final Class<EnumArgument> type) {
-	// final Constructor<?>[] constructors = type.getConstructors();
-	// final LinkedList<Constructor<?>> validConstructors = new
-	// LinkedList<Constructor<?>>();
-	// for (final Constructor<?> constructor : constructors) {
-	// if (constructor.getParameterTypes().length >= 5) {
-	// validConstructors.add(constructor);
-	// }
-	// }
-	//
-	// final String configString = getOptionName(name);
-	// final Object[] initargs = new Object[] { settings, configString,
-	// description, defaultValue,
-	// required && isEnabled() };
-	// for (final Constructor<?> constructor : validConstructors) {
-	// try {
-	// final AndamaArgument<?> argument = (AndamaArgument<?>)
-	// constructor.newInstance(initargs);
-	// addOption(name, configString, argument);
-	// return arguments.addArgument(argument);
-	// } catch (final Exception e) {
-	// throw new UnrecoverableError(e);
-	// }
-	// }
-	//
-	// return false;
-	// }
 	
 	/**
 	 * @param initialized
