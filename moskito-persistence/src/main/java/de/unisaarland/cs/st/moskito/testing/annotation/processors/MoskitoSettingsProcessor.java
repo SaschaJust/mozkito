@@ -6,8 +6,10 @@ import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 
 public interface MoskitoSettingsProcessor {
 	
-	void setup(Annotation annotation) throws TestSettingsError;
+	void setup(Class<?> aClass,
+	           Annotation annotation) throws TestSettingsError;
 	
-	void tearDown(Annotation annotation) throws TestSettingsError;
+	void tearDown(Class<?> aClass,
+	              Annotation annotation) throws TestSettingsError;
 	
 }

@@ -18,7 +18,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSetting
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
 @Target (value = { ElementType.ANNOTATION_TYPE })
-public @interface MoskitoTestingAnnotation {
+public @interface MoskitoTestAnnotation {
 	
 	Class<? extends MoskitoSettingsProcessor> value();
 }

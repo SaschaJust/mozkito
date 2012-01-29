@@ -55,9 +55,14 @@ import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
+import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySetting;
+import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
 import difflib.Delta;
 
 @DatabaseSettings (unit = "rcs")
+@RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
+        @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
+        @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
 public class RepositoryTest {
 	
 	// [scheme:][//authority][path][?query][#fragment]
@@ -72,12 +77,12 @@ public class RepositoryTest {
 		URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
 		if (repoURL != null) {
 			try {
-				File toDelete = new File(repoURL.toURI());
+				final File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
-			} catch (URISyntaxException e) {
+			} catch (final URISyntaxException e) {
 				e.printStackTrace();
 				fail();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 				fail();
 			}
@@ -87,12 +92,12 @@ public class RepositoryTest {
 		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
 		if (repoURL != null) {
 			try {
-				File toDelete = new File(repoURL.toURI());
+				final File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
-			} catch (URISyntaxException e) {
+			} catch (final URISyntaxException e) {
 				e.printStackTrace();
 				fail();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 				fail();
 			}
@@ -101,43 +106,43 @@ public class RepositoryTest {
 		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
 		if (repoURL != null) {
 			try {
-				File toDelete = new File(repoURL.toURI());
+				final File toDelete = new File(repoURL.toURI());
 				FileUtils.deleteDirectory(toDelete);
-			} catch (URISyntaxException e) {
+			} catch (final URISyntaxException e) {
 				e.printStackTrace();
 				fail();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 				fail();
 			}
 		}
 		
-		for (Repository repository : repositories) {
+		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
 				continue;
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				try {
 					FileUtils.deleteDirectory(tmpDirectory);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 					fail();
 				}
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
-				GitRepository gitRepo = (GitRepository) repository;
+				final GitRepository gitRepo = (GitRepository) repository;
 				if (gitRepo.getWokingCopyLocation() != null) {
 					try {
 						FileUtils.deleteDirectory(gitRepo.getWokingCopyLocation());
-					} catch (IOException e) {
+					} catch (final IOException e) {
 						e.printStackTrace();
 						fail();
 					}
 				}
 			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
-				MercurialRepository hgRepo = (MercurialRepository) repository;
+				final MercurialRepository hgRepo = (MercurialRepository) repository;
 				if (hgRepo.getWokingCopyLocation() != null) {
 					try {
 						FileUtils.deleteDirectory(hgRepo.getWokingCopyLocation());
-					} catch (IOException e) {
+					} catch (final IOException e) {
 						e.printStackTrace();
 						fail();
 					}
@@ -146,17 +151,17 @@ public class RepositoryTest {
 		}
 		
 		// delete all reposuite directories and files
-		Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
-		Set<File> set = openFiles.get(FileShutdownAction.DELETE);
+		final Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
+		final Set<File> set = openFiles.get(FileShutdownAction.DELETE);
 		if (set != null) {
-			for (File f : set) {
+			for (final File f : set) {
 				try {
 					if (f.isFile()) {
 						FileUtils.forceDelete(f);
 					} else {
 						FileUtils.deleteDirectory(f);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -165,23 +170,23 @@ public class RepositoryTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		Map<RepositoryType, URI> repoMap = new HashMap<RepositoryType, URI>();
+		final Map<RepositoryType, URI> repoMap = new HashMap<RepositoryType, URI>();
 		// UNZIP mercurial repo
 		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
 		if (zipURL == null) {
 			fail();
 		}
-		File mercurialBaseDir = FileUtils.createRandomDir("repotest_mercurial", null, FileShutdownAction.DELETE);
+		final File mercurialBaseDir = FileUtils.createRandomDir("repotest_mercurial", null, FileShutdownAction.DELETE);
 		try {
 			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
-		} catch (FilePermissionException e2) {
+		} catch (final FilePermissionException e2) {
 			fail();
 		}
 		
 		File zipFile = null;
 		try {
 			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
+		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
 			fail();
 		}
@@ -194,7 +199,7 @@ public class RepositoryTest {
 		try {
 			repoMap.put(RepositoryType.MERCURIAL, new URI("file://" + mercurialBaseDir + File.separator + "repotest."
 			        + RepositoryType.MERCURIAL.name().toLowerCase()));
-		} catch (URISyntaxException e3) {
+		} catch (final URISyntaxException e3) {
 			fail();
 		}
 		
@@ -204,17 +209,17 @@ public class RepositoryTest {
 			fail();
 		}
 		
-		File gitBaseDir = FileUtils.createRandomDir("repotest_git", null, FileShutdownAction.DELETE);
+		final File gitBaseDir = FileUtils.createRandomDir("repotest_git", null, FileShutdownAction.DELETE);
 		try {
 			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
-		} catch (FilePermissionException e2) {
+		} catch (final FilePermissionException e2) {
 			fail();
 			
 		}
 		
 		try {
 			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
+		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
 			fail();
 		}
@@ -227,7 +232,7 @@ public class RepositoryTest {
 		try {
 			repoMap.put(RepositoryType.GIT, new URI("file://" + gitBaseDir + File.separator + "repotest."
 			        + RepositoryType.GIT.name().toLowerCase()));
-		} catch (URISyntaxException e2) {
+		} catch (final URISyntaxException e2) {
 			fail();
 		}
 		try {
@@ -235,24 +240,24 @@ public class RepositoryTest {
 			            RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
 			                                                     + RepositoryType.SUBVERSION.name().toLowerCase())
 			                                .toURI());
-		} catch (URISyntaxException e2) {
+		} catch (final URISyntaxException e2) {
 			fail();
 		}
 		
-		for (RepositoryType type : RepositoryType.values()) {
+		for (final RepositoryType type : RepositoryType.values()) {
 			if (type.equals(RepositoryType.CVS)) {
 				continue;
 			}
 			Repository repository = null;
 			try {
 				repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
-			} catch (InstantiationException e1) {
+			} catch (final InstantiationException e1) {
 				e1.printStackTrace();
 				fail();
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
 				fail();
-			} catch (UnregisteredRepositoryTypeException e1) {
+			} catch (final UnregisteredRepositoryTypeException e1) {
 				e1.printStackTrace();
 				fail();
 			}
@@ -276,7 +281,7 @@ public class RepositoryTest {
 					                                  new String[] { "load", tmpDirectory.getAbsolutePath() },
 					                                  tmpDirectory, repoMap.get(type).toURL().openStream(), null);
 					returnValue += execute.getFirst();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 					fail(e.getMessage());
 				}
@@ -285,7 +290,7 @@ public class RepositoryTest {
 			
 			try {
 				repository.setup(urlFile.toURI(), null, null, null);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 		}
@@ -293,14 +298,14 @@ public class RepositoryTest {
 	}
 	
 	private static DateTime getDateFromString(final String timestamp) {
-		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+		final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 		return dtf.parseDateTime(timestamp);
 	}
 	
 	@Test
 	public void testAnnotate() {
-		for (Repository repository : repositories) {
-			List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
+		for (final Repository repository : repositories) {
+			final List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
 			assertEquals(2, annotation.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("2", annotation.get(0).getRevision());
@@ -343,14 +348,14 @@ public class RepositoryTest {
 	
 	@Test
 	public void testCheckout() {
-		for (Repository repository : repositories) {
-			File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
-			File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
-			File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
-			File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
+		for (final Repository repository : repositories) {
+			final File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
+			final File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
+			final File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
+			final File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
 			
-			File dir_a_file_3 = new File(dir_a.getAbsolutePath() + FileUtils.fileSeparator + "file_3_dir_a");
-			File dir_b_file_2 = new File(dir_b.getAbsolutePath() + FileUtils.fileSeparator + "file_2_dir_a");
+			final File dir_a_file_3 = new File(dir_a.getAbsolutePath() + FileUtils.fileSeparator + "file_3_dir_a");
+			final File dir_b_file_2 = new File(dir_b.getAbsolutePath() + FileUtils.fileSeparator + "file_2_dir_a");
 			
 			assertTrue(dir_a.exists());
 			assertTrue(dir_b.exists());
@@ -370,16 +375,17 @@ public class RepositoryTest {
 	
 	@Test
 	public void testCheckoutDir() {
-		for (Repository repository : repositories) {
-			File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
+		for (final Repository repository : repositories) {
+			final File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
 			if (Logger.logDebug()) {
 				Logger.debug("Child entries of checkout path: " + JavaUtils.arrayToString(checkoutPath.list()));
 			}
 			
-			File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
-			File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
-			File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
-			File dir_a_file_3 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_3_dir_a");
+			final File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
+			final File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
+			final File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
+			final File dir_a_file_3 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator
+			        + "file_3_dir_a");
 			
 			assertFalse(dir_a.exists());
 			assertFalse(dir_b.exists());
@@ -392,7 +398,7 @@ public class RepositoryTest {
 	
 	@Test
 	public void testCheckoutFile() {
-		for (Repository repository : repositories) {
+		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertFalse(repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD()) != null);
 			} else {
@@ -404,12 +410,12 @@ public class RepositoryTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testDiff() {
-		for (Repository repository : repositories) {
-			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);
-			String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 10);
-			Collection<Delta> diff = repository.diff("file_1", parent, id);
+		for (final Repository repository : repositories) {
+			final String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);
+			final String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 10);
+			final Collection<Delta> diff = repository.diff("file_1", parent, id);
 			assertEquals(1, diff.size());
-			Delta[] deltas = diff.toArray(new Delta[1]);
+			final Delta[] deltas = diff.toArray(new Delta[1]);
 			assertEquals(0, deltas[0].getOriginal().getLines().size());
 			assertEquals(9, deltas[0].getRevised().getLines().size());
 		}
@@ -417,12 +423,12 @@ public class RepositoryTest {
 	
 	@Test
 	public void testDiffMove() {
-		for (Repository repository : repositories) {
-			String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
-			String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 2);
-			Collection<Delta> diff = repository.diff("dir_a/file_2_dir_a", parent, id);
+		for (final Repository repository : repositories) {
+			final String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
+			final String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 2);
+			final Collection<Delta> diff = repository.diff("dir_a/file_2_dir_a", parent, id);
 			assertEquals(1, diff.size());
-			Delta[] deltas = diff.toArray(new Delta[1]);
+			final Delta[] deltas = diff.toArray(new Delta[1]);
 			assertEquals(1, deltas[0].getOriginal().getLines().size());
 			assertEquals(0, deltas[0].getRevised().getLines().size());
 		}
@@ -430,15 +436,15 @@ public class RepositoryTest {
 	
 	@Test
 	public void testGetChangedPaths() {
-		for (Repository repository : repositories) {
-			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
-			Map<String, ChangeType> paths = new HashMap<String, ChangeType>();
+		for (final Repository repository : repositories) {
+			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
+			final Map<String, ChangeType> paths = new HashMap<String, ChangeType>();
 			paths.put("/dir_b/file_2_dir_a", ChangeType.Modified);
 			paths.put("/file_1", ChangeType.Added);
 			
 			assertEquals(paths.keySet().size(), changedPaths.keySet().size());
 			assertTrue(CollectionUtils.isEqualCollection(paths.keySet(), changedPaths.keySet()));
-			for (String key : changedPaths.keySet()) {
+			for (final String key : changedPaths.keySet()) {
 				assertEquals(paths.get(key), changedPaths.get(key));
 			}
 		}
@@ -446,7 +452,7 @@ public class RepositoryTest {
 	
 	@Test
 	public void testGetFirstRevisionID() {
-		for (Repository repository : repositories) {
+		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
 				
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
@@ -461,17 +467,17 @@ public class RepositoryTest {
 	
 	@Test
 	public void testGetFormerPathName() {
-		for (Repository repository : repositories) {
-			String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-			                                                                                         3),
-			                                                     "dir_b/file_2_dir_a");
+		for (final Repository repository : repositories) {
+			final String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
+			                                                                                               3),
+			                                                           "dir_b/file_2_dir_a");
 			assertEquals("dir_a/file_2_dir_a", formerPathName);
 		}
 	}
 	
 	@Test
 	public void testGetLastRevisionID() {
-		for (Repository repository : repositories) {
+		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
 				
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
@@ -487,16 +493,16 @@ public class RepositoryTest {
 	
 	@Test
 	public void testGetRelativeTransactionId() {
-		for (Repository repository : repositories) {
-			String endRevision = repository.getEndRevision();
+		for (final Repository repository : repositories) {
+			final String endRevision = repository.getEndRevision();
 			assertEquals(endRevision, repository.getRelativeTransactionId(endRevision, 10));
 		}
 	}
 	
 	@Test
 	public void testLog() {
-		for (Repository repository : repositories) {
-			List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
+		for (final Repository repository : repositories) {
+			final List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
 			
 			// -- Rev 1 -- //
 			LogEntry entry = log.get(0);
@@ -605,9 +611,9 @@ public class RepositoryTest {
 	
 	@Test
 	public void testMoveEdit() {
-		for (Repository repository : repositories) {
-			Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-			                                                                                                      3));
+		for (final Repository repository : repositories) {
+			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
+			                                                                                                            3));
 			assertEquals(2, changedPaths.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertTrue(changedPaths.containsKey("/dir_a"));

@@ -25,7 +25,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 
-import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
+import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestAnnotation;
 
 public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	
@@ -154,7 +154,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 					if (classMethod.getAnnotation(Test.class) != null) {
 						final List<Annotation> annotationList = new LinkedList<Annotation>();
 						for (final Annotation annotation : classMethod.getAnnotations()) {
-							if (annotation.annotationType().getAnnotation(MoskitoTestingAnnotation.class) != null) {
+							if (annotation.annotationType().getAnnotation(MoskitoTestAnnotation.class) != null) {
 								annotationList.add(annotation);
 							}
 						}

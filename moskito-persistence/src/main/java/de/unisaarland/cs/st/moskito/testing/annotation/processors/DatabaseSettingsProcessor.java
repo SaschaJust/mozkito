@@ -19,24 +19,25 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void setup(final Annotation annotation) throws TestSettingsError {
+	public void setup(final Class<?> aClass,
+	                  final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		PersistenceUtil util;
 		
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
 			tag = tag.replaceAll("\\W", "_");
-			String dbName = settings.database() + '_' + tag;
+			final String dbName = settings.database() + '_' + tag;
 			
 			try {
 				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
 				                                settings.type(), settings.driver());
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 			}
 			try {
 				PersistenceManager.createDatabase(settings.hostname(), dbName, settings.username(),
 				                                  settings.password(), settings.type(), settings.driver());
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				throw new TestSettingsError("Could not create database " + settings.database(), e);
 			}
 			
@@ -58,18 +59,19 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#tearDown(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void tearDown(final Annotation annotation) throws TestSettingsError {
+	public void tearDown(final Class<?> aClass,
+	                     final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		MoskitoTest.getPersistenceUtil().shutdown();
 		
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
 			tag = tag.replaceAll("\\W", "_");
-			String dbName = settings.database() + '_' + tag;
+			final String dbName = settings.database() + '_' + tag;
 			try {
 				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
 				                                settings.type(), settings.driver());
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				throw new TestSettingsError("Could not create database " + settings.database(), e);
 			}
 		}

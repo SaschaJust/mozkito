@@ -19,7 +19,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.processors.DatabaseSettin
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@MoskitoTestingAnnotation (DatabaseSettingsProcessor.class)
+@MoskitoTestAnnotation (DatabaseSettingsProcessor.class)
 @Target (value = { ElementType.METHOD, ElementType.TYPE })
 public @interface DatabaseSettings {
 	

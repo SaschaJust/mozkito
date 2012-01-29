@@ -32,7 +32,7 @@ import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 import de.unisaarland.cs.st.moskito.exceptions.TestSetupException;
 import de.unisaarland.cs.st.moskito.exceptions.TestTearDownException;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestingAnnotation;
+import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
 
 /**
@@ -160,7 +160,7 @@ public abstract class MoskitoTest {
 			testLog("Loading test class: " + fqcName);
 			try {
 				c = Class.forName(fqcName);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				testLog("Could not load class under test: " + fqcName, e);
 				throw e;
 			}
@@ -168,10 +168,10 @@ public abstract class MoskitoTest {
 			testLog("Getting test: " + testName);
 			try {
 				m = c.getMethod(testName, new Class[0]);
-			} catch (SecurityException e) {
+			} catch (final SecurityException e) {
 				testLog("Getting test method '" + testName + "' failed.", e);
 				throw e;
-			} catch (NoSuchMethodException e) {
+			} catch (final NoSuchMethodException e) {
 				testLog("Getting test method '" + testName + "' failed.", e);
 				throw e;
 			}
@@ -189,7 +189,7 @@ public abstract class MoskitoTest {
 				for (final Annotation annotation : methodAnnotations) {
 					annotationMap.put(annotation.annotationType().getCanonicalName(), annotation);
 				}
-				MoskitoTest.setUpBeforeClass(annotationMap);
+				MoskitoTest.setUpBeforeClass(c, annotationMap);
 			} catch (final TestSetupException e) {
 				throw e;
 			}
@@ -219,7 +219,7 @@ public abstract class MoskitoTest {
 			} catch (final InstantiationException e) {
 				testLog("Creating test instance failed", e);
 				throw e;
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				testLog("Creating test instance failed", e);
 				throw e;
 			}
@@ -278,13 +278,13 @@ public abstract class MoskitoTest {
 					}
 				}
 			}
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			failureCauses.add(t);
 		} finally {
 			
 			try {
 				testLog("Shutting down test environment.");
-				MoskitoTest.tearDownAfterClass(annotationMap);
+				MoskitoTest.tearDownAfterClass(c, annotationMap);
 			} catch (final TestTearDownException e) {
 				testLog("Shutdown failed.", e);
 				failureCauses.add(e);
@@ -303,7 +303,7 @@ public abstract class MoskitoTest {
 				if (failureCauses.size() > 1) {
 					System.err.println("There are multiple failure causes. These failures might depend on the first (#1) failure cause. ");
 				}
-				for (Throwable failureCause : failureCauses) {
+				for (final Throwable failureCause : failureCauses) {
 					System.err.println("Error number #" + i++);
 					failureCause.printStackTrace();
 				}
@@ -324,16 +324,17 @@ public abstract class MoskitoTest {
 	 * @param annotationMap
 	 * @throws TestSetupException
 	 */
-	public static void setUpBeforeClass(final Map<String, Annotation> annotationMap) throws TestSetupException {
+	public static void setUpBeforeClass(final Class<?> aClass,
+	                                    final Map<String, Annotation> annotationMap) throws TestSetupException {
 		for (final Annotation annotation : annotationMap.values()) {
-			final MoskitoTestingAnnotation metaAnnotation = annotation.annotationType()
-			                                                          .getAnnotation(MoskitoTestingAnnotation.class);
+			final MoskitoTestAnnotation metaAnnotation = annotation.annotationType()
+			                                                       .getAnnotation(MoskitoTestAnnotation.class);
 			if (metaAnnotation != null) {
 				final Class<? extends MoskitoSettingsProcessor> processorClass = metaAnnotation.value();
 				MoskitoSettingsProcessor processor;
 				try {
 					processor = processorClass.newInstance();
-					processor.setup(annotation);
+					processor.setup(aClass, annotation);
 				} catch (final InstantiationException e) {
 					testLog("Can't spawn processor: " + processorClass.getCanonicalName(), e);
 					throw new TestSetupException("Can't spawn processor: " + processorClass.getCanonicalName(), e);
@@ -356,16 +357,17 @@ public abstract class MoskitoTest {
 	 * @param annotationMap
 	 * @throws Exception
 	 */
-	public static void tearDownAfterClass(final Map<String, Annotation> annotationMap) throws TestTearDownException {
+	public static void tearDownAfterClass(final Class<?> aClass,
+	                                      final Map<String, Annotation> annotationMap) throws TestTearDownException {
 		for (final Annotation annotation : annotationMap.values()) {
-			final MoskitoTestingAnnotation metaAnnotation = annotation.annotationType()
-			                                                          .getAnnotation(MoskitoTestingAnnotation.class);
+			final MoskitoTestAnnotation metaAnnotation = annotation.annotationType()
+			                                                       .getAnnotation(MoskitoTestAnnotation.class);
 			if (metaAnnotation != null) {
 				final Class<? extends MoskitoSettingsProcessor> processorClass = metaAnnotation.value();
 				MoskitoSettingsProcessor processor;
 				try {
 					processor = processorClass.newInstance();
-					processor.tearDown(annotation);
+					processor.tearDown(aClass, annotation);
 				} catch (final InstantiationException e) {
 					testLog("Can't spawn processor: " + processorClass.getCanonicalName(), e);
 					throw new TestTearDownException("Can't spawn processor: " + processorClass.getCanonicalName(), e);
