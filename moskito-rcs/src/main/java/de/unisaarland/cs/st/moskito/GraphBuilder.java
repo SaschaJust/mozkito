@@ -55,8 +55,8 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 					Logger.info("Fetching reverse dependencies. This could take a while...");
 				}
 				
-				for (RevDependencyIterator revdep = repository.getRevDependencyIterator(); revdep.hasNext();) {
-					RevDependency rd = revdep.next();
+				for (final RevDependencyIterator revdep = repository.getRevDependencyIterator(); revdep.hasNext();) {
+					final RevDependency rd = revdep.next();
 					reverseDependencies.put(rd.getId(), rd);
 				}
 				
@@ -76,18 +76,18 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 					Logger.debug("Updating graph for " + getInputData());
 				}
 				
-				RCSTransaction rcsTransaction = getInputData();
+				final RCSTransaction rcsTransaction = getInputData();
 				
-				RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
-				RCSBranch rcsBranch = revdep.getCommitBranch();
+				final RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
+				final RCSBranch rcsBranch = revdep.getCommitBranch();
 				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
-				for (String parent : revdep.getParents()) {
+				for (final String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
 					if (!cached.containsKey(parent)) {
 						try {
 							parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
-						} catch (ArrayIndexOutOfBoundsException e) {
+						} catch (final ArrayIndexOutOfBoundsException e) {
 							throw new UnrecoverableError(
 							                             "Got child of parent that is not cached an cannot be loaded anymore.",
 							                             e);
@@ -114,10 +114,15 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 				// detect new branch
 				if (rcsTransaction.getParents().isEmpty()) {
 					rcsTransaction.getBranch().setBegin(rcsTransaction);
+					if (Logger.logDebug()) {
+						Logger.debug("Setting transaction " + rcsTransaction.getId()
+						        + " as begin transaction of branch " + rcsTransaction.getBranch().getName());
+						persistenceUtil.saveOrUpdate(rcsTransaction.getBranch());
+					}
 				} else {
-					RCSBranch branch = rcsTransaction.getBranch();
+					final RCSBranch branch = rcsTransaction.getBranch();
 					boolean foundParentInBranch = false;
-					for (RCSTransaction parent : rcsTransaction.getParents()) {
+					for (final RCSTransaction parent : rcsTransaction.getParents()) {
 						if (parent.getBranch().equals(branch)) {
 							foundParentInBranch = true;
 							break;
@@ -125,13 +130,18 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 					}
 					if (!foundParentInBranch) {
 						branch.setBegin(rcsTransaction);
+						if (Logger.logDebug()) {
+							Logger.debug("Setting transaction " + rcsTransaction.getId()
+							        + " as begin transaction of branch " + rcsTransaction.getBranch().getName());
+						}
+						persistenceUtil.saveOrUpdate(rcsTransaction.getBranch());
 					}
 				}
 				
 				// detect branch merge
 				if (revdep.getParents().size() > 1) {
-					for (String parent : revdep.getParents()) {
-						RCSTransaction parentTransaction = cached.get(parent);
+					for (final String parent : revdep.getParents()) {
+						final RCSTransaction parentTransaction = cached.get(parent);
 						
 						if (!parentTransaction.getBranch().getName().equals(rcsTransaction.getBranch().getName())) {
 							// closed branch
@@ -147,6 +157,7 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 							latest.remove(parentTransaction.getBranch().getName());
 							
 							parentTransaction.getBranch().setEnd(parentTransaction);
+							persistenceUtil.saveOrUpdate(parentTransaction.getBranch());
 						}
 					}
 				}
