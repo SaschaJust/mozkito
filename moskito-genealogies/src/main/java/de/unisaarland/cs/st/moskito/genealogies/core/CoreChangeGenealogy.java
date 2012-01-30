@@ -86,8 +86,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *            the GenealogyEdgeType of the edge to be added
 	 * @return true, if successful
 	 */
-	public boolean addEdge(@NotEmpty final JavaChangeOperation dependent,
-			@NotEmpty final JavaChangeOperation target, final GenealogyEdgeType edgeType) {
+	@NoneNull
+	public boolean addEdge(final JavaChangeOperation dependent,final JavaChangeOperation target, final GenealogyEdgeType edgeType) {
 		
 		ChangeType depChangeType = dependent.getChangeType();
 		JavaElement depElement = dependent.getChangedElementLocation().getElement();
