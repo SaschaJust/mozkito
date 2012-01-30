@@ -56,6 +56,19 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			final LineIterator revListFileIterator = FileUtils.getLineIterator(getRevListFile());
 			final LineIterator decorateListIterator = FileUtils.getLineIterator(getDecorateListFile());
 			
+			final LineIterator lsRemoteListIterator = FileUtils.getLineIterator(getLsRemoteFile());
+			while (lsRemoteListIterator.hasNext()) {
+				final String[] lsRemote = lsRemoteListIterator.next().split("\\t");
+				String branchName = lsRemote[1];
+				if (branchName.endsWith("^{}")) {
+					continue;
+				}
+				if (branchName.startsWith("refs/heads/")) {
+					branchName = branchName.substring(11);
+					this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
+				}
+			}
+			
 			final List<String> mergeTransactions = getMerges();
 			
 			final List<RevDependency> depList = new LinkedList<RevDependency>();
@@ -130,18 +143,18 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				for (int i = 1; i < parents.size(); ++i) {
 					final String parent = parents.get(i);
-					final RCSBranch newBranch = branchFactory.getBranch(parent + "Branch");
-					if (newBranch.getParent() == null) {
-						newBranch.setParent(commitBranch);
-					}
+					
 					if (!this.branches.containsKey(parent)) {
-						// there is no later transaction within this new branch
-						// . Otherwise we would have seen the parent already
+						final RCSBranch newBranch = branchFactory.getBranch(parent + "Branch");
+						if (newBranch.getParent() == null) {
+							newBranch.setParent(commitBranch);
+						}
 						this.branches.put(parent, newBranch);
 					}
+					
 					// set transaction to be merge transaction for new
 					// branch
-					newBranch.addMergedIn(revId);
+					this.branches.get(parent).addMergedIn(revId);
 				}
 				
 				// if transaction is a merge, mark it as a merge
@@ -183,6 +196,25 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		}
 		decorateListWriter.close();
 		return decorateListFile;
+	}
+	
+	private File getLsRemoteFile() throws IOException {
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "ls-remote", "." },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError(
+			                             "Could not initialize DependencyIterator for Git repo: could not get ls-remote.");
+		}
+		final File revListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		final BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));
+		for (final String line : response.getSecond()) {
+			revListWriter.write(line);
+			revListWriter.write(FileUtils.lineSeparator);
+		}
+		revListWriter.close();
+		return revListFile;
 	}
 	
 	private List<String> getMerges() {
