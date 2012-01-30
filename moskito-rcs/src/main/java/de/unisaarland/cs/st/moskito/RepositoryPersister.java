@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * 
  */
 public class RepositoryPersister extends AndamaSink<RCSTransaction> {
-	
+
 	Integer                 i = 0;
 	/**
 	 * @see RepoSuiteSinkThread
@@ -45,37 +45,38 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	 * @param persistenceUtil
 	 */
 	public RepositoryPersister(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final PersistenceUtil persistenceUtil) {
+			final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		
+
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
-			
+
 			@Override
 			public void preExecution() {
 				persistenceUtil.beginTransaction();
 			}
 		};
-		
+
 		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
-			
+
 			@Override
 			public void process() {
 				final RCSTransaction data = getInputData();
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
-				
+
 				if (((RepositoryPersister.this.i = RepositoryPersister.this.i + 1) % 100) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}
-				
+
 				persistenceUtil.save(data);
+				persistenceUtil.saveOrUpdate(data.getBranch());
 			}
 		};
-		
+
 		new PostExecutionHook<RCSTransaction, RCSTransaction>(this) {
-			
+
 			@Override
 			public void postExecution() {
 				persistenceUtil.commitTransaction();
