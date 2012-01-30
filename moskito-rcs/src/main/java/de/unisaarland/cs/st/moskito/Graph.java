@@ -85,6 +85,7 @@ public class Graph extends AndamaChain {
 			shutdown();
 		}
 		
+		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
 		final Repository repository = this.repoSettings.getValue();
 		
 		new GraphReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.persistenceUtil);
