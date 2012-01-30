@@ -587,7 +587,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 * @param branch
 	 *            the branch to set
 	 */
-	public void setBranch(@NotNull("You cannot set the branch of a transaction to NULL") final RCSBranch branch) {
+	public void setBranch(final RCSBranch branch) {
 		this.branch = branch;
 	}
 	
