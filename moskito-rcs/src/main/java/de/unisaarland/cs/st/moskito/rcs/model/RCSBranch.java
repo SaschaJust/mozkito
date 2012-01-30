@@ -67,7 +67,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 *            the name
 	 */
 	public RCSBranch(final String name) {
-		this.setName(name);
+		setName(name);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public void addMergedIn(final String mergedIn) {
-		this.getMergedIn().add(mergedIn);
+		getMergedIn().add(mergedIn);
 	}
 	
 	/*
@@ -84,13 +84,13 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Override
 	public int compareTo(final RCSBranch other) {
-		RCSBranch p = this.getParent();
-		if (this.equals(other)) {
+		RCSBranch p = getParent();
+		if (equals(other)) {
 			return 0;
 		}
 		if (other.isMasterBranch()) {
 			return 1;
-		} else if (this.isMasterBranch()) {
+		} else if (isMasterBranch()) {
 			return -1;
 		}
 		while ((p != null) && (!p.isMasterBranch())) {
@@ -118,9 +118,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
-		TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
-		for (String id : tIds) {
-			RCSTransaction t = this.containsTransaction(id);
+		final TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
+		for (final String id : tIds) {
+			final RCSTransaction t = containsTransaction(id);
 			if (t != null) {
 				result.add(t);
 			}
@@ -138,12 +138,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public RCSTransaction containsTransaction(final String tId) {
-		if (this.getBegin().getId().equals(tId)) {
-			return this.getBegin();
+		if (getBegin().getId().equals(tId)) {
+			return getBegin();
 		}
 		
-		RCSTransaction current = this.getEnd();
-		while ((current != null) && (!current.equals(this.getBegin()))) {
+		RCSTransaction current = getEnd();
+		while ((current != null) && (!current.equals(getBegin()))) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
@@ -163,12 +163,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		RCSBranch other = (RCSBranch) obj;
-		if (this.getName() == null) {
+		final RCSBranch other = (RCSBranch) obj;
+		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;
 			}
-		} else if (!this.getName().equals(other.getName())) {
+		} else if (!getName().equals(other.getName())) {
 			return false;
 		}
 		return true;
@@ -238,9 +238,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getName() == null)
-		                                                     ? 0
-		                                                     : this.getName().hashCode());
+		result = (prime * result) + ((getName() == null)
+		                                                ? 0
+		                                                : getName().hashCode());
 		return result;
 	}
 	
@@ -249,7 +249,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean hasParent() {
-		return this.getParent() != null;
+		return getParent() != null;
 	}
 	
 	@Transient
@@ -262,7 +262,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean isOpen() {
-		return this.getEnd() == null;
+		return getEnd() == null;
 	}
 	
 	/**
@@ -318,23 +318,23 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("RCSBranch [name=");
-		sb.append(this.getName());
+		sb.append(getName());
 		sb.append(", parent=");
-		if (this.getParent() != null) {
-			sb.append(this.getParent());
+		if (getParent() != null) {
+			sb.append(getParent());
 		} else {
 			sb.append("null");
 		}
 		sb.append(", end=");
-		if (this.getEnd() != null) {
-			sb.append(this.getEnd().getId());
+		if (getEnd() != null) {
+			sb.append(getEnd().getId());
 		} else {
 			sb.append("null");
 		}
 		sb.append(", mergedIn=");
-		sb.append(this.getMergedIn());
+		sb.append(getMergedIn());
 		sb.append("]");
 		return sb.toString();
 	}

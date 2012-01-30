@@ -56,9 +56,9 @@ public class BranchFactory {
 					// We could not load a persisted MASTER_BRANCH. So, create a
 					// new one and return.
 					if (Logger.logDebug()) {
-						Logger.debug("Attempt to lead persisted RCSBranch with name " + name
-						        + " from existing database connection failed. " + "No persisted master branch found. "
-						        + "Returning new RCSBranch.MASTER_BRANCH.");
+						Logger.debug("Attempt to load persisted RCSBranch with name " + name
+						        + " from existing database connection failed: "
+						        + this.persistenceUtil.getToolInformation() + " using criteria " + criteria.toString());
 					}
 					final RCSBranch newBranch = new RCSBranch(name);
 					if (Logger.logDebug()) {
