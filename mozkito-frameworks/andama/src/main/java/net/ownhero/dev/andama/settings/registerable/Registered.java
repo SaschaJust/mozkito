@@ -1,19 +1,17 @@
+package net.ownhero.dev.andama.settings.registerable;
+
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.settings.registerable;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -49,9 +47,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * Classes extending {@link Registered} can dynamically register config options
- * to the tool chain. Additionally there is support to automatically generate
- * config option names following the standard naming convention.
+ * Classes extending {@link Registered} can dynamically register config options to the tool chain. Additionally there is
+ * support to automatically generate config option names following the standard naming convention.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -81,8 +78,8 @@ public abstract class Registered {
 	/**
 	 * @param clazz
 	 *            the base class extending {@link Registered}
-	 * @return the lowercase part of the name specifies the category of the
-	 *         registered class, e.g. "engine" for MappingEngine.
+	 * @return the lowercase part of the name specifies the category of the registered class, e.g. "engine" for
+	 *         MappingEngine.
 	 */
 	private static final String findRegisteredSuper(final Class<? extends Registered> clazz,
 	                                                final Set<String> superTags) {
@@ -186,6 +183,8 @@ public abstract class Registered {
 					try {
 						final Registered instance = klass.newInstance();
 						instance.register(settings, arguments);
+						instance.setSettings(settings);
+						instance.setRegistered(true);
 						registereds.add(instance);
 					} catch (final Exception e) {
 						
@@ -211,6 +210,9 @@ public abstract class Registered {
 	public static void initRegistereds(final Set<Registered> registereds) {
 		for (final Registered registered : registereds) {
 			registered.init();
+			Condition.check(registered.isRegistered(), "The " + registered.getClass().getSuperclass().getSimpleName()
+			        + " has to be registered before it is initialized: %s", registered.getClass().getSimpleName());
+			registered.setInitialized(true);
 		}
 	}
 	
@@ -223,21 +225,14 @@ public abstract class Registered {
 	private AndamaSettings                                      settings;
 	
 	/**
-	 * 
-	 */
-	public Registered() {
-		super();
-	}
-	
-	/**
 	 * @param optionName
 	 * @param configString
 	 * @param argument
 	 * @return
 	 */
-	private boolean addOption(final String optionName,
-	                          final String configString,
-	                          final AndamaArgument<?> argument) {
+	private final boolean addOption(final String optionName,
+	                                final String configString,
+	                                final AndamaArgument<?> argument) {
 		if (!this.registeredOptions.containsKey(optionName)) {
 			this.registeredOptions.put(optionName, new Tuple<String, AndamaArgument<?>>(configString, argument));
 			return true;
@@ -246,6 +241,12 @@ public abstract class Registered {
 		}
 	}
 	
+	/**
+	 * @param settingsClass
+	 * @param tokens
+	 * @param result
+	 * @return
+	 */
 	final String deriveSettingsClassificationString(final Class<? extends AndamaSettings> settingsClass,
 	                                                final Set<String> tokens,
 	                                                final StringBuilder result) {
@@ -328,7 +329,7 @@ public abstract class Registered {
 	 * @param optionName
 	 * @return
 	 */
-	protected Tuple<String, AndamaArgument<?>> getOption(final String optionName) {
+	protected final Tuple<String, AndamaArgument<?>> getOption(@NotNull final String optionName) {
 		return this.registeredOptions.get(optionName);
 	}
 	
@@ -366,11 +367,7 @@ public abstract class Registered {
 	/**
 	 * 
 	 */
-	public void init() {
-		Condition.check(isRegistered(), "The " + this.getClass().getSuperclass().getSimpleName()
-		        + " has to be registered before it is initialized: %s", this.getClass().getSimpleName());
-		setInitialized(true);
-	}
+	public abstract void init();
 	
 	/**
 	 * @return true, if the {@link Registered} object is enabled
@@ -384,10 +381,18 @@ public abstract class Registered {
 	public final boolean isEnabled(final String listSetting,
 	                               final String registered) {
 		if (getSettings() != null) {
-			final ListArgument setting = (ListArgument) getSettings().getSetting(listSetting);
-			return (setting != null) && (setting.getValue() != null) && setting.getValue().contains(registered);
+			// FIXME: registering dynamic options with proper enabled handling would require major redesign of
+			// AndamaSettings
+			final String string = System.getProperty(listSetting);
+			final String[] split = string.split(",");
+			for (final String entry : split) {
+				if (entry.trim().toUpperCase().equals(registered.trim().toUpperCase())) {
+					return true;
+				}
+			}
+			return false;
 		} else {
-			return true;
+			return false;
 		}
 	}
 	
@@ -411,11 +416,8 @@ public abstract class Registered {
 	 * @param isRequired
 	 */
 	@NoneNull
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		setSettings(settings);
-		setRegistered(true);
-	}
+	public abstract void register(final AndamaSettings settings,
+	                              final AndamaArgumentSet<?> arguments);
 	
 	/**
 	 * @param settings
@@ -426,12 +428,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerBooleanOption(@NotNull final AndamaSettings settings,
-	                                        @NotNull final AndamaArgumentSet<?> arguments,
-	                                        @NotNull final String name,
-	                                        @NotNull final String description,
-	                                        final String defaultValue,
-	                                        @NotNull final boolean required) {
+	protected final boolean registerBooleanOption(@NotNull final AndamaSettings settings,
+	                                              @NotNull final AndamaArgumentSet<?> arguments,
+	                                              @NotNull final String name,
+	                                              @NotNull final String description,
+	                                              final String defaultValue,
+	                                              @NotNull final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new BooleanArgument(settings, configString, description, defaultValue,
 		                                                       required && isEnabled());
@@ -448,13 +450,13 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerDirectoryOption(@NotNull final AndamaSettings settings,
-	                                          @NotNull final AndamaArgumentSet<?> arguments,
-	                                          @NotNull final String name,
-	                                          @NotNull final String description,
-	                                          final String defaultValue,
-	                                          final boolean required,
-	                                          final boolean create) {
+	protected final boolean registerDirectoryOption(@NotNull final AndamaSettings settings,
+	                                                @NotNull final AndamaArgumentSet<?> arguments,
+	                                                @NotNull final String name,
+	                                                @NotNull final String description,
+	                                                final String defaultValue,
+	                                                final boolean required,
+	                                                final boolean create) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new DirectoryArgument(settings, configString, description, defaultValue,
 		                                                         required && isEnabled(), create);
@@ -471,12 +473,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerDoubleOption(@NotNull final AndamaSettings settings,
-	                                       @NotNull final AndamaArgumentSet<?> arguments,
-	                                       @NotNull final String name,
-	                                       @NotNull final String description,
-	                                       final String defaultValue,
-	                                       final boolean required) {
+	protected final boolean registerDoubleOption(@NotNull final AndamaSettings settings,
+	                                             @NotNull final AndamaArgumentSet<?> arguments,
+	                                             @NotNull final String name,
+	                                             @NotNull final String description,
+	                                             final String defaultValue,
+	                                             final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new DoubleArgument(settings, configString, description, defaultValue,
 		                                                      required && isEnabled());
@@ -494,13 +496,13 @@ public abstract class Registered {
 	 * @param type
 	 * @return
 	 */
-	protected boolean registerEnumOption(final AndamaSettings settings,
-	                                     final AndamaArgumentSet<?> arguments,
-	                                     final String name,
-	                                     final String description,
-	                                     final String defaultValue,
-	                                     final boolean required,
-	                                     final String[] validValues) {
+	protected final boolean registerEnumOption(final AndamaSettings settings,
+	                                           final AndamaArgumentSet<?> arguments,
+	                                           final String name,
+	                                           final String description,
+	                                           final String defaultValue,
+	                                           final boolean required,
+	                                           final String[] validValues) {
 		if (defaultValue != null) {
 			ArrayCondition.contains(validValues, defaultValue,
 			                        "Default value '%s' has to be contained in valid values array: ", defaultValue,
@@ -524,12 +526,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerInputFileOption(@NotNull final AndamaSettings settings,
-	                                          @NotNull final AndamaArgumentSet<?> arguments,
-	                                          @NotNull final String name,
-	                                          @NotNull final String description,
-	                                          final String defaultValue,
-	                                          final boolean required) {
+	protected final boolean registerInputFileOption(@NotNull final AndamaSettings settings,
+	                                                @NotNull final AndamaArgumentSet<?> arguments,
+	                                                @NotNull final String name,
+	                                                @NotNull final String description,
+	                                                final String defaultValue,
+	                                                final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new InputFileArgument(settings, configString, description, defaultValue,
 		                                                         required && isEnabled());
@@ -547,12 +549,12 @@ public abstract class Registered {
 	 * @param create
 	 * @return
 	 */
-	protected boolean registerListOption(@NotNull final AndamaSettings settings,
-	                                     @NotNull final AndamaArgumentSet<?> arguments,
-	                                     @NotNull final String name,
-	                                     @NotNull final String description,
-	                                     final String defaultValue,
-	                                     final boolean required) {
+	protected final boolean registerListOption(@NotNull final AndamaSettings settings,
+	                                           @NotNull final AndamaArgumentSet<?> arguments,
+	                                           @NotNull final String name,
+	                                           @NotNull final String description,
+	                                           final String defaultValue,
+	                                           final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new ListArgument(settings, configString, description, defaultValue, required
 		        && isEnabled());
@@ -569,12 +571,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerLongOption(@NotNull final AndamaSettings settings,
-	                                     @NotNull final AndamaArgumentSet<?> arguments,
-	                                     @NotNull final String name,
-	                                     @NotNull final String description,
-	                                     final String defaultValue,
-	                                     final boolean required) {
+	protected final boolean registerLongOption(@NotNull final AndamaSettings settings,
+	                                           @NotNull final AndamaArgumentSet<?> arguments,
+	                                           @NotNull final String name,
+	                                           @NotNull final String description,
+	                                           final String defaultValue,
+	                                           final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new LongArgument(settings, configString, description, defaultValue, required
 		        && isEnabled());
@@ -591,12 +593,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerMaskedStringOption(@NotNull final AndamaSettings settings,
-	                                             @NotNull final AndamaArgumentSet<?> arguments,
-	                                             @NotNull final String name,
-	                                             @NotNull final String description,
-	                                             final String defaultValue,
-	                                             final boolean required) {
+	protected final boolean registerMaskedStringOption(@NotNull final AndamaSettings settings,
+	                                                   @NotNull final AndamaArgumentSet<?> arguments,
+	                                                   @NotNull final String name,
+	                                                   @NotNull final String description,
+	                                                   final String defaultValue,
+	                                                   final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new MaskedStringArgument(settings, configString, description, defaultValue,
 		                                                            required && isEnabled());
@@ -613,13 +615,13 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerOutputFileOption(@NotNull final AndamaSettings settings,
-	                                           @NotNull final AndamaArgumentSet<?> arguments,
-	                                           @NotNull final String name,
-	                                           @NotNull final String description,
-	                                           final String defaultValue,
-	                                           final boolean required,
-	                                           final boolean create) {
+	protected final boolean registerOutputFileOption(@NotNull final AndamaSettings settings,
+	                                                 @NotNull final AndamaArgumentSet<?> arguments,
+	                                                 @NotNull final String name,
+	                                                 @NotNull final String description,
+	                                                 final String defaultValue,
+	                                                 final boolean required,
+	                                                 final boolean create) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new OutputFileArgument(settings, configString, description, defaultValue,
 		                                                          required && isEnabled(), create);
@@ -636,12 +638,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerStringOption(@NotNull final AndamaSettings settings,
-	                                       @NotNull final AndamaArgumentSet<?> arguments,
-	                                       @NotNull final String name,
-	                                       @NotNull final String description,
-	                                       final String defaultValue,
-	                                       final boolean required) {
+	protected final boolean registerStringOption(@NotNull final AndamaSettings settings,
+	                                             @NotNull final AndamaArgumentSet<?> arguments,
+	                                             @NotNull final String name,
+	                                             @NotNull final String description,
+	                                             final String defaultValue,
+	                                             final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new StringArgument(settings, configString, description, defaultValue,
 		                                                      required && isEnabled());
@@ -658,12 +660,12 @@ public abstract class Registered {
 	 * @param required
 	 * @return
 	 */
-	protected boolean registerURIOption(@NotNull final AndamaSettings settings,
-	                                    @NotNull final AndamaArgumentSet<?> arguments,
-	                                    @NotNull final String name,
-	                                    @NotNull final String description,
-	                                    final String defaultValue,
-	                                    final boolean required) {
+	protected final boolean registerURIOption(@NotNull final AndamaSettings settings,
+	                                          @NotNull final AndamaArgumentSet<?> arguments,
+	                                          @NotNull final String name,
+	                                          @NotNull final String description,
+	                                          final String defaultValue,
+	                                          final boolean required) {
 		final String configString = getOptionName(name);
 		final AndamaArgument<?> argument = new URIArgument(settings, configString, description, defaultValue, required
 		        && isEnabled());
@@ -675,7 +677,7 @@ public abstract class Registered {
 	 * @param initialized
 	 *            the initialized to set
 	 */
-	final void setInitialized(final boolean initialized) {
+	private final void setInitialized(final boolean initialized) {
 		this.initialized = initialized;
 	}
 	
@@ -683,7 +685,7 @@ public abstract class Registered {
 	 * @param registered
 	 *            the registered to set
 	 */
-	final void setRegistered(final boolean registered) {
+	private final void setRegistered(final boolean registered) {
 		this.registered = registered;
 	}
 	
@@ -691,7 +693,7 @@ public abstract class Registered {
 	 * @param settings
 	 *            the settings to set
 	 */
-	final public void setSettings(final AndamaSettings settings) {
+	public final void setSettings(final AndamaSettings settings) {
 		this.settings = settings;
 	}
 	
@@ -710,17 +712,6 @@ public abstract class Registered {
 		builder.append(this.initialized);
 		builder.append("]");
 		return builder.toString();
-	}
-	
-	/**
-	 * @param string
-	 * @return
-	 */
-	protected final String truncate(final String string) {
-		return (string != null)
-		                       ? string.substring(0, Math.min(string.length(), 254))
-		                       : "";
-		
 	}
 	
 }

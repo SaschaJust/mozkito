@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -27,9 +24,8 @@ import net.ownhero.dev.kisa.Logger;
 public class InputFileArgument extends AndamaArgument<File> {
 	
 	/**
-	 * Constructor for FileArgument. Besides the obvious and general
-	 * RepoSuiteArgument parameters, FileArguments can be configures using two
-	 * special parameters: <code>overwrite</code> and <code>mustExist</code>.
+	 * Constructor for FileArgument. Besides the obvious and general RepoSuiteArgument parameters, FileArguments can be
+	 * configures using two special parameters: <code>overwrite</code> and <code>mustExist</code>.
 	 * 
 	 * @param settings
 	 *            The RepoSuiteSetting instance this argument will register for
@@ -42,15 +38,13 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 * @param isRequired
 	 *            Set to <code>true</code> if this argument will be required
 	 * @param overwrite
-	 *            Set to <code>true</code> if you want the RepoSuite tool to
-	 *            attempt overwriting the file located at given path if
-	 *            possible.
+	 *            Set to <code>true</code> if you want the RepoSuite tool to attempt overwriting the file located at
+	 *            given path if possible.
 	 * @param mustExist
-	 *            Set to true if you want to ensure that the file at given
-	 *            location must already exist.
+	 *            Set to true if you want to ensure that the file at given location must already exist.
 	 */
 	public InputFileArgument(final AndamaSettings settings, final String name, final String description,
-			final String defaultValue, final boolean isRequired) {
+	        final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 	}
 	
@@ -59,39 +53,39 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	protected boolean init() {
+	protected final boolean init() {
 		if (this.stringValue == null) {
-			this.setCachedValue(null);
+			setCachedValue(null);
 			return true;
 		}
 		
-		File file = new File(this.stringValue.trim());
+		final File file = new File(this.stringValue.trim());
 		
 		if (file.isDirectory()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-						+ "` is a directory. Expected file. Abort.");
+				        + "` is a directory. Expected file. Abort.");
 			}
 			return false;
 		}
 		
-		if (!file.exists() && this.isRequired()) {
+		if (!file.exists() && isRequired()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
-						+ "` does not exists but is required!");
+				        + "` does not exists but is required!");
 			}
 			return false;
 		}
 		
-		if (!file.exists() && !this.isRequired()) {
+		if (!file.exists() && !isRequired()) {
 			if (Logger.logWarn()) {
 				Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
-						+ "` does not exists and is not required! Ignoring file argument!");
+				        + "` does not exists and is not required! Ignoring file argument!");
 			}
 			return false;
 		}
 		
-		this.setCachedValue(file);
+		setCachedValue(file);
 		return true;
 	}
 }

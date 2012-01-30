@@ -34,7 +34,7 @@ public class Shutdown extends Error {
 	}
 	
 	/**
-	 * @param arg0 
+	 * @param arg0
 	 */
 	public Shutdown(final Throwable arg0) {
 		super(arg0);

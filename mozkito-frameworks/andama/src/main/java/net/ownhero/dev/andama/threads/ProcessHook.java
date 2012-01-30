@@ -20,7 +20,6 @@ public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see net.ownhero.dev.andama.threads.Hook#execute()
 	 */
 	@Override
@@ -57,7 +56,8 @@ public abstract class ProcessHook<K, V> extends AndamaHook<K, V> {
 	 * @param data
 	 * @param fetchNext
 	 */
-	public final void provideOutputData(final V data, final boolean fetchNext) {
+	public final void provideOutputData(final V data,
+	                                    final boolean fetchNext) {
 		if (fetchNext) {
 			getThread().setOutputData(data);
 			setCompleted();

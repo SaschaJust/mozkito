@@ -5,7 +5,7 @@ package net.ownhero.dev.andama.model;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class AndamaStack {
 	

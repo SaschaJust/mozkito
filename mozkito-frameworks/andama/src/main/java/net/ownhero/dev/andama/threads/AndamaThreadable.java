@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.threads;
 
@@ -32,8 +29,8 @@ import net.ownhero.dev.andama.storages.AndamaDataStorage;
 public interface AndamaThreadable<K, V> extends Runnable {
 	
 	/**
-	 * Adds a new {@link InputHook} to the {@link AndamaThreadable} object.
-	 * Default hooks should be replaced, if present.
+	 * Adds a new {@link InputHook} to the {@link AndamaThreadable} object. Default hooks should be replaced, if
+	 * present.
 	 * 
 	 * @param hook
 	 *            the {@link InputHook} to be added.
@@ -41,8 +38,8 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public void addInputHook(InputHook<K, V> hook);
 	
 	/**
-	 * Adds a new {@link OutputHook} to the {@link AndamaThreadable} object.
-	 * Default hooks should be replaced, if present.
+	 * Adds a new {@link OutputHook} to the {@link AndamaThreadable} object. Default hooks should be replaced, if
+	 * present.
 	 * 
 	 * @param hook
 	 *            the {@link OutputHook} to be added.
@@ -50,8 +47,8 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public void addOutputHook(OutputHook<K, V> hook);
 	
 	/**
-	 * Adds a new {@link PostExecutionHook} to the {@link AndamaThreadable}
-	 * object. Default hooks should be replaced, if present.
+	 * Adds a new {@link PostExecutionHook} to the {@link AndamaThreadable} object. Default hooks should be replaced, if
+	 * present.
 	 * 
 	 * @param hook
 	 *            the {@link PostExecutionHook} to be added.
@@ -135,8 +132,7 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public void disconnectOutput(AndamaThreadable<V, ?> thread);
 	
 	/**
-	 * this method does the same as shutdown, but does not shutdown the other
-	 * threads in the chain.
+	 * this method does the same as shutdown, but does not shutdown the other threads in the chain.
 	 */
 	public void finish();
 	
@@ -197,34 +193,30 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public boolean hasOutputConnector();
 	
 	/**
-	 * @return true if there are any writer threads connected to the input
-	 *         source of this object. Will also be true if the object doesn't
-	 *         have any input connectors.
+	 * @return true if there are any writer threads connected to the input source of this object. Will also be true if
+	 *         the object doesn't have any input connectors.
 	 */
 	public boolean isInputConnected();
 	
 	/**
 	 * @param thread
 	 *            may not be null
-	 * @return true if the object is connected to the given thread. This will
-	 *         explicitly return false if there are no input connectors on this
-	 *         object.
+	 * @return true if the object is connected to the given thread. This will explicitly return false if there are no
+	 *         input connectors on this object.
 	 */
 	public boolean isInputConnected(AndamaThreadable<?, K> thread);
 	
 	/**
-	 * @return true if there are any reader threads connected to the output sink
-	 *         of this object. Will also be true if the object doens't have any
-	 *         output connectors.
+	 * @return true if there are any reader threads connected to the output sink of this object. Will also be true if
+	 *         the object doens't have any output connectors.
 	 */
 	public boolean isOutputConnected();
 	
 	/**
 	 * @param thread
 	 *            may not be null
-	 * @return true, if the object is connected to the given thread-false
-	 *         otherwise. This will explicitly return false if there are no
-	 *         output connectors in this object.
+	 * @return true, if the object is connected to the given thread-false otherwise. This will explicitly return false
+	 *         if there are no output connectors in this object.
 	 */
 	public boolean isOutputConnected(AndamaThreadable<V, ?> thread);
 	
@@ -232,9 +224,8 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public abstract void run();
 	
 	/**
-	 * Sets the input storage of the object. In case
-	 * {@link AndamaThreadable#hasInputConnector()} returns false, this method
-	 * won't do anything.
+	 * Sets the input storage of the object. In case {@link AndamaThreadable#hasInputConnector()} returns false, this
+	 * method won't do anything.
 	 * 
 	 * @param storage
 	 *            may not be null

@@ -22,8 +22,7 @@ public abstract class AndamaDecomposer<K, V> extends AndamaThread<K, V> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
 	 */
 	@Override
 	public final boolean hasInputConnector() {
@@ -32,9 +31,7 @@ public abstract class AndamaDecomposer<K, V> extends AndamaThread<K, V> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasOutputConnector
-	 * ()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasOutputConnector ()
 	 */
 	@Override
 	public final boolean hasOutputConnector() {

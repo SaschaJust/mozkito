@@ -5,7 +5,7 @@ package net.ownhero.dev.andama.exceptions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class UnsupportedThreadTypeException extends Exception {
 	

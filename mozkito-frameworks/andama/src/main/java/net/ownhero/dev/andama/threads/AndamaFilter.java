@@ -11,8 +11,7 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
  * <li>filtering elements out in a tool chain</li>
  * <li>analyzing elements in a tool chain (equals null filtering)</li>
  * </ol>
- * Implementations of {@link AndamaFilter}s must have as well input as output
- * connectors.
+ * Implementations of {@link AndamaFilter}s must have as well input as output connectors.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -30,8 +29,7 @@ public abstract class AndamaFilter<T> extends AndamaThread<T, T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
 	 */
 	@Override
 	public final boolean hasInputConnector() {
@@ -40,9 +38,7 @@ public abstract class AndamaFilter<T> extends AndamaThread<T, T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasOutputConnector
-	 * ()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasOutputConnector ()
 	 */
 	@Override
 	public final boolean hasOutputConnector() {

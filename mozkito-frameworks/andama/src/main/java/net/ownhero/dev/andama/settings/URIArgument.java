@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -43,7 +40,7 @@ public class URIArgument extends AndamaArgument<URI> {
 	 * @throws DuplicateArgumentException
 	 */
 	public URIArgument(final AndamaSettings settings, final String name, final String description,
-			final String defaultValue, final boolean isRequired) {
+	        final String defaultValue, final boolean isRequired) {
 		super(settings, name, description, defaultValue, isRequired);
 		
 	}
@@ -53,7 +50,7 @@ public class URIArgument extends AndamaArgument<URI> {
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
 	@Override
-	public boolean init() {
+	protected final boolean init() {
 		if (this.stringValue == null) {
 			setCachedValue(null);
 			return true;
@@ -98,8 +95,8 @@ public class URIArgument extends AndamaArgument<URI> {
 		// );
 		
 		String err = null;
-		Regex uriRegex = new Regex(
-				"^(({scheme}[^:/?#]+):)?(//({authority}[^/?#]*))?({path}[^?#]*)(\\?({query}[^#]*))?(#({fragment}.*))?");
+		final Regex uriRegex = new Regex(
+		                                 "^(({scheme}[^:/?#]+):)?(//({authority}[^/?#]*))?({path}[^?#]*)(\\?({query}[^#]*))?(#({fragment}.*))?");
 		try {
 			if (uriRegex.find(this.stringValue) == null) {
 				err = "URI does not match regex: " + uriRegex.getPattern();
@@ -113,19 +110,19 @@ public class URIArgument extends AndamaArgument<URI> {
 					if (uriRegex.getGroup("authority") == null) {
 						if (uriRegex.getGroup("path") != null) {
 							// guess file
-							File file = new File(uriRegex.getGroup("path"));
+							final File file = new File(uriRegex.getGroup("path"));
 							if (file.exists() && file.canRead()) {
 								
 								if (Logger.logInfo()) {
 									Logger.info("Found readable " + (file.isDirectory()
-											? "directory"
-													: "file") + " at location: "
-													+ file.getAbsolutePath());
+									                                                   ? "directory"
+									                                                   : "file") + " at location: "
+									        + file.getAbsolutePath());
 								}
 								uri = new URI("file", null, file.getAbsolutePath(), null);
 							} else {
 								err = "Local path does not reference an existing, readable file/dir: "
-										+ file.getAbsolutePath();
+								        + file.getAbsolutePath();
 							}
 						} else {
 							err = "`path` part of the URI is not set: " + this.stringValue;
@@ -140,21 +137,21 @@ public class URIArgument extends AndamaArgument<URI> {
 			
 			if (err != null) {
 				if (Logger.logError()) {
-					Logger.error("When parsing URI string `" + this.stringValue + "` for argument `"
-							+ getName() + "`, the following error occurred: " + err);
+					Logger.error("When parsing URI string `" + this.stringValue + "` for argument `" + getName()
+					        + "`, the following error occurred: " + err);
 				}
 				return false;
 			} else {
-				this.setCachedValue(uri);
+				setCachedValue(uri);
 			}
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `"
-						+ getName() + "`, the following error occurred: " + e.getMessage());
+				Logger.error("When parsing URI string `" + this.stringValue + "` for argument `" + getName()
+				        + "`, the following error occurred: " + e.getMessage());
 			}
 			return false;
 		}
-		this.setCachedValue(uri);
+		setCachedValue(uri);
 		return true;
 	}
 }

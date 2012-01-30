@@ -197,16 +197,18 @@ public class AndamaCrashHandler extends ThreadGroup {
 	private String getJavaInformation() {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append("Java class path: ").append(System.getProperty("java.class.path"));
-		builder.append("Java class version: ").append(System.getProperty("java.class.version"));
-		builder.append("Java compiler: ").append(System.getProperty("java.compiler"));
-		builder.append("Java home: ").append(System.getProperty("java.home"));
-		builder.append("Java tempdir: ").append(System.getProperty("java.io.tmpdir"));
-		builder.append("Java version: ").append(System.getProperty("java.version"));
-		builder.append("Java vendor: ").append(System.getProperty("java.vendor"));
-		builder.append("OS name: ").append(System.getProperty("os.name"));
-		builder.append("OS architecture: ").append(System.getProperty("os.arch"));
-		builder.append("OS version: ").append(System.getProperty("os.version"));
+		builder.append("Java class path: ").append(System.getProperty("java.class.path"))
+		       .append(AndamaUtils.lineSeparator);
+		builder.append("Java class version: ").append(System.getProperty("java.class.version"))
+		       .append(AndamaUtils.lineSeparator);
+		builder.append("Java compiler: ").append(System.getProperty("java.compiler")).append(AndamaUtils.lineSeparator);
+		builder.append("Java home: ").append(System.getProperty("java.home")).append(AndamaUtils.lineSeparator);
+		builder.append("Java tempdir: ").append(System.getProperty("java.io.tmpdir")).append(AndamaUtils.lineSeparator);
+		builder.append("Java version: ").append(System.getProperty("java.version")).append(AndamaUtils.lineSeparator);
+		builder.append("Java vendor: ").append(System.getProperty("java.vendor")).append(AndamaUtils.lineSeparator);
+		builder.append("OS name: ").append(System.getProperty("os.name")).append(AndamaUtils.lineSeparator);
+		builder.append("OS architecture: ").append(System.getProperty("os.arch")).append(AndamaUtils.lineSeparator);
+		builder.append("OS version: ").append(System.getProperty("os.version")).append(AndamaUtils.lineSeparator);
 		
 		return builder.toString();
 	}
@@ -271,8 +273,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Sends the given report to the email address using the mail settings in
-	 * mailProps
+	 * Sends the given report to the email address using the mail settings in mailProps
 	 * 
 	 * @param report
 	 *            the report to be send
@@ -313,9 +314,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang
-	 * .Thread, java.lang.Throwable)
+	 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang .Thread, java.lang.Throwable)
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0,
@@ -361,8 +360,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Used by {@link #getThreadInformation()} for a traversal search of
-	 * {@link Thread}s/{@link ThreadGroup}s
+	 * Used by {@link #getThreadInformation()} for a traversal search of {@link Thread}s/{@link ThreadGroup}s
 	 * 
 	 * @param group
 	 * @param level

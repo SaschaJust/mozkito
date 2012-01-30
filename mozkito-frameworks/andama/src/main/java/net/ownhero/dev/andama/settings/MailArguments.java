@@ -22,25 +22,25 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 		this.settings = settings;
 		
 		addArgument(new StringArgument(settings, "mail.host", "The hostname of the mail server",
-				"mail.st.cs.uni-saarland.de", isRequired));
+		                               "mail.st.cs.uni-saarland.de", isRequired));
 		addArgument(new StringArgument(settings, "mail.to", "The recipient of the crash mail",
-				"project_reposuite@st.cs.uni-saarland.de", isRequired));
+		                               "project_reposuite@st.cs.uni-saarland.de", isRequired));
 		addArgument(new StringArgument(settings, "mail.subject", "The subject of the crash mail",
-				"Application Crash Report", isRequired));
+		                               "Application Crash Report", isRequired));
 		addArgument(new StringArgument(settings, "mail.sender.name", "The name of the sender of the crash mail",
-				"Andama Application", isRequired));
+		                               "Andama Application", isRequired));
 		addArgument(new StringArgument(settings, "mail.sender.address", "The address of the sender of the crash mail",
-				"andama-crasher@st.cs.uni-saarland.de", isRequired));
+		                               "andama-crasher@st.cs.uni-saarland.de", isRequired));
 		addArgument(new StringArgument(settings, "mail.username", "The smtp login username", null,
-				settings.getSetting("mail.password") != null));
+		                               settings.getSetting("mail.password") != null));
 		addArgument(new MaskedStringArgument(settings, "mail.password", "The smtp login password", null, false));
 		
 		try {
 			addArgument(new StringArgument(settings, "mail.sender.host", "The hostname the crash mail is sent from",
-					InetAddress.getLocalHost().getHostName(), isRequired));
-		} catch (UnknownHostException e) {
+			                               InetAddress.getLocalHost().getHostName(), isRequired));
+		} catch (final UnknownHostException e) {
 			addArgument(new StringArgument(settings, "mail.sender.host", "The hostname the crash mail is sent from",
-					"localhost", isRequired));
+			                               "localhost", isRequired));
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#getValue()
 	 */
 	@Override
-	public Properties getValue() {
+	public final Properties getValue() {
 		return new Properties() {
 			
 			private static final long serialVersionUID = -4075576523389682827L;

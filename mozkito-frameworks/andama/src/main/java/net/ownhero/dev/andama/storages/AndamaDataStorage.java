@@ -20,8 +20,7 @@ import net.ownhero.dev.kisa.Logger;
  * The {@link AndamaDataStorage} elements are the node of a.
  * 
  * @param <E>
- *            the element type {@link AndamaChain} and used for the
- *            communication between the threads.
+ *            the element type {@link AndamaChain} and used for the communication between the threads.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class AndamaDataStorage<E> {
@@ -67,9 +66,8 @@ public class AndamaDataStorage<E> {
 	/**
 	 * Read.
 	 * 
-	 * @return the next chunk of data in the queue. Can be null if no more data
-	 *         is available and there aren't any writers attached to this source
-	 *         anymore.
+	 * @return the next chunk of data in the queue. Can be null if no more data is available and there aren't any
+	 *         writers attached to this source anymore.
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
@@ -151,9 +149,8 @@ public class AndamaDataStorage<E> {
 	}
 	
 	/**
-	 * Unregisters a writer thread from the queue. This happens when the writer
-	 * finished its job. This method won't do anything if the writer thread is
-	 * not known to the underlying data structure.
+	 * Unregisters a writer thread from the queue. This happens when the writer finished its job. This method won't do
+	 * anything if the writer thread is not known to the underlying data structure.
 	 * 
 	 * @param writerThread
 	 *            may not be null
@@ -179,9 +176,8 @@ public class AndamaDataStorage<E> {
 	}
 	
 	/**
-	 * Unregisters a reader thread from the queue. This happens when the reader
-	 * finished its job. This method won't do anything if the reader thread is
-	 * not known to the underlying data structure.
+	 * Unregisters a reader thread from the queue. This happens when the reader finished its job. This method won't do
+	 * anything if the reader thread is not known to the underlying data structure.
 	 * 
 	 * @param readerThread
 	 *            may not be null

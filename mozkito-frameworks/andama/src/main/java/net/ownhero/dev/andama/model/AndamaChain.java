@@ -6,9 +6,8 @@ package net.ownhero.dev.andama.model;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
- * The {@link AndamaChain} is a wrapper to a tool chain consisting of
- * {@link AndamaThread}s. It is used to extend {@link Thread}s for parallel
- * tasks.
+ * The {@link AndamaChain} is a wrapper to a tool chain consisting of {@link AndamaThread}s. It is used to extend
+ * {@link Thread}s for parallel tasks.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -49,8 +48,7 @@ public abstract class AndamaChain extends Thread {
 	}
 	
 	/**
-	 * Setup the environment. Configure the settings/arguments and instantiate
-	 * base entities.
+	 * Setup the environment. Configure the settings/arguments and instantiate base entities.
 	 */
 	public abstract void setup();
 	

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.threads;
 
@@ -47,8 +44,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * {@link AndamaThread}s are the edges of a {@link AndamaChain} graph,
- * connecting the {@link AndamaDataStorage} nodes.
+ * {@link AndamaThread}s are the edges of a {@link AndamaChain} graph, connecting the {@link AndamaDataStorage} nodes.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -58,8 +54,7 @@ import net.ownhero.dev.kisa.Logger;
 abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, V>, Comparable<AndamaThread<?, ?>> {
 	
 	/**
-	 * Get the underlying class for a type, or null if the type is a variable
-	 * type.
+	 * Get the underlying class for a type, or null if the type is a variable type.
 	 * 
 	 * @param type
 	 *            the type
@@ -85,8 +80,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * Get the actual type arguments a child class has used to extend a generic
-	 * base class.
+	 * Get the actual type arguments a child class has used to extend a generic base class.
 	 * 
 	 * @param baseClass
 	 *            the base class
@@ -203,14 +197,12 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	private boolean                                                               warningSameInputdata = false;
 	
 	/**
-	 * The constructor of the {@link AndamaThread}. This should be called from
-	 * all extending classes.
+	 * The constructor of the {@link AndamaThread}. This should be called from all extending classes.
 	 * 
 	 * @param threadGroup
 	 *            the {@link AndamaGroup}. See {@link AndamaGroup} for details.
 	 * @param name
-	 *            the name of the {@link AndamaGroup}. See {@link AndamaGroup}
-	 *            for details.
+	 *            the name of the {@link AndamaGroup}. See {@link AndamaGroup} for details.
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
 	 */
@@ -249,9 +241,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addInputHook(net.ownhero
-	 * .dev.andama.threads.InputHook)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addInputHook(net.ownhero .dev.andama.threads.InputHook)
 	 */
 	@Override
 	public final void addInputHook(final InputHook<K, V> hook) {
@@ -260,9 +250,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addOutputHook(net.ownhero
-	 * .dev.andama.threads.OutputHook)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addOutputHook(net.ownhero .dev.andama.threads.OutputHook)
 	 */
 	@Override
 	public final void addOutputHook(final OutputHook<K, V> hook) {
@@ -271,8 +259,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostExecutionHook(
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostExecutionHook(
 	 * net.ownhero.dev.andama.threads.PostExecutionHook)
 	 */
 	@Override
@@ -282,8 +269,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostInputHook(net.
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostInputHook(net.
 	 * ownhero.dev.andama.threads.PostInputHook)
 	 */
 	@Override
@@ -293,8 +279,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostOutputHook(net
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostOutputHook(net
 	 * .ownhero.dev.andama.threads.PostOutputHook)
 	 */
 	@Override
@@ -304,8 +289,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPostProcessHook(net
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostProcessHook(net
 	 * .ownhero.dev.andama.threads.PostProcessHook)
 	 */
 	@Override
@@ -315,8 +299,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreExecutionHook(net
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreExecutionHook(net
 	 * .ownhero.dev.andama.threads.PreExecutionHook)
 	 */
 	@Override
@@ -326,8 +309,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreInputHook(net.ownhero
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreInputHook(net.ownhero
 	 * .dev.andama.threads.PreInputHook)
 	 */
 	@Override
@@ -337,8 +319,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreOutputHook(net.
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreOutputHook(net.
 	 * ownhero.dev.andama.threads.PreOutputHook)
 	 */
 	@Override
@@ -348,8 +329,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addPreProcessHook(net
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreProcessHook(net
 	 * .ownhero.dev.andama.threads.PreProcessHook)
 	 */
 	@Override
@@ -359,9 +339,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#addProcessHook(net.ownhero
-	 * .dev.andama.threads.ProcessHook)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addProcessHook(net.ownhero .dev.andama.threads.ProcessHook)
 	 */
 	@Override
 	public final void addProcessHook(final ProcessHook<K, V> hook) {
@@ -455,8 +433,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectInput(de
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectInput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -481,8 +458,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectOutput(de
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectOutput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -529,8 +505,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectInput
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectInput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -554,8 +529,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectOutput
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectOutput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -712,8 +686,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getInputStorage()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getInputStorage()
 	 */
 	@Override
 	public final AndamaDataStorage<K> getInputStorage() {
@@ -920,9 +893,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * Requests the current size of the input storage. Make sure there is a
-	 * valid input storage, i.e. you are using an implementation where
-	 * {@link AndamaThread#hasInputConnector()} is true.
+	 * Requests the current size of the input storage. Make sure there is a valid input storage, i.e. you are using an
+	 * implementation where {@link AndamaThread#hasInputConnector()} is true.
 	 * 
 	 * @return the size of the input storage
 	 */
@@ -945,8 +917,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected()
 	 */
 	@Override
 	public final boolean isInputConnected() {
@@ -955,8 +926,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -975,8 +945,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected()
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected()
 	 */
 	@Override
 	public final boolean isOutputConnected() {
@@ -985,8 +954,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
 	@Override
@@ -1002,9 +970,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * @return true if {@link AndamaThreadable#shutdown()} has already been
-	 *         called on this object; false otherwise. The shutdown method can
-	 *         also be called internally, after an error occurred.
+	 * @return true if {@link AndamaThreadable#shutdown()} has already been called on this object; false otherwise. The
+	 *         shutdown method can also be called internally, after an error occurred.
 	 */
 	boolean isShutdown() {
 		return this.shutdown;
@@ -1032,9 +999,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * @return the next chunk from the inputStorage. Will be null if there isn't
-	 *         any input left and no writers are attached to the storage
-	 *         anymore.
+	 * @return the next chunk from the inputStorage. Will be null if there isn't any input left and no writers are
+	 *         attached to the storage anymore.
 	 * @throws InterruptedException
 	 */
 	private final Tuple<K, CountDownLatch> readLatch() throws InterruptedException {
@@ -1468,8 +1434,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setInputStorage
+	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setInputStorage
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
 	 */
 	@Override
@@ -1489,8 +1454,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * Set the current shutdown status. This method only sets the variable. Call
-	 * {@link AndamaThread#shutdown()} to initiate a proper shutdown.
+	 * Set the current shutdown status. This method only sets the variable. Call {@link AndamaThread#shutdown()} to
+	 * initiate a proper shutdown.
 	 * 
 	 * @param shutdown
 	 */
@@ -1512,8 +1477,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Thread#setUncaughtExceptionHandler(java.lang.Thread.
-	 * UncaughtExceptionHandler)
+	 * @see java.lang.Thread#setUncaughtExceptionHandler(java.lang.Thread. UncaughtExceptionHandler)
 	 */
 	@Override
 	final public void setUncaughtExceptionHandler(final UncaughtExceptionHandler eh) {
@@ -1621,9 +1585,7 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev
-	 * .andama.threads.AndamaThread)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev .andama.threads.AndamaThread)
 	 */
 	@Override
 	public void waitFor(final AndamaThread<?, ?> thread) {
@@ -1631,8 +1593,8 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 	}
 	
 	/**
-	 * Writes a chunk to the output storage. Make sure to call this only if
-	 * {@link AndamaThread#hasOutputConnector()} is true.
+	 * Writes a chunk to the output storage. Make sure to call this only if {@link AndamaThread#hasOutputConnector()} is
+	 * true.
 	 * 
 	 * @param data
 	 *            a chunk of data, not null

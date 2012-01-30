@@ -23,8 +23,8 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 * Source < Multiplexer < Filter < Transformer < Demultiplexer < Sink
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object) Source < Multiplexer < Filter < Transformer
+	 * < Demultiplexer < Sink
 	 */
 	@Override
 	public int compare(final AndamaThreadable arg0,

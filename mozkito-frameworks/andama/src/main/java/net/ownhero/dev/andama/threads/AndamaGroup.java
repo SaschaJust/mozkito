@@ -13,9 +13,8 @@ import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * The {@link AndamaGroup} is an extension of the {@link ThreadGroup} and takes
- * care on the internal management of {@link AndamaThread}s. The primary reasons
- * for this class are the internal managed thread list and the uncaught
+ * The {@link AndamaGroup} is an extension of the {@link ThreadGroup} and takes care on the internal management of
+ * {@link AndamaThread}s. The primary reasons for this class are the internal managed thread list and the uncaught
  * exception handling.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -31,8 +30,8 @@ public class AndamaGroup extends ThreadGroup {
 	 * The only valid constructor of {@link AndamaGroup}
 	 * 
 	 * @param name
-	 *            the name of the thread group. In general, this should be the
-	 *            simple class name of the calling tool chain.
+	 *            the name of the thread group. In general, this should be the simple class name of the calling tool
+	 *            chain.
 	 */
 	public AndamaGroup(final String name, final AndamaChain toolchain) {
 		super(name);
@@ -97,8 +96,7 @@ public class AndamaGroup extends ThreadGroup {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread,
-	 * java.lang.Throwable)
+	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread, java.lang.Throwable)
 	 */
 	@Override
 	public void uncaughtException(final Thread t,

@@ -10,12 +10,10 @@ import net.ownhero.dev.andama.threads.AndamaThreadable;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * The thread pool manages all threads of the tool chain. Since all
- * {@link AndamaThread}s have to register themselves in the {@link AndamaGroup}
- * which is owned by the {@link AndamaPool}, the thread pool has control over
- * all threads of the tool chain. Additionally, this class automatically
- * generates a connected graph for the registered threads. See the corresponding
- * methods for details.
+ * The thread pool manages all threads of the tool chain. Since all {@link AndamaThread}s have to register themselves in
+ * the {@link AndamaGroup} which is owned by the {@link AndamaPool}, the thread pool has control over all threads of the
+ * tool chain. Additionally, this class automatically generates a connected graph for the registered threads. See the
+ * corresponding methods for details.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -43,8 +41,8 @@ public class AndamaPool {
 	}
 	
 	/**
-	 * this method invokes the graph builder (which builds the graph and
-	 * connects the threads) and starts all threads afterwards.
+	 * this method invokes the graph builder (which builds the graph and connects the threads) and starts all threads
+	 * afterwards.
 	 */
 	public void execute() {
 		connectThreads();

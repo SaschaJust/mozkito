@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -45,7 +42,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 *            Set to <code>true</code> if this argument will be required
 	 */
 	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
-			final String defaultValue, final boolean isRequired) {
+	        final String defaultValue, final boolean isRequired) {
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
@@ -60,7 +57,6 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -70,7 +66,6 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -133,21 +128,22 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	public final T getValue() {
 		if (!init) {
 			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
-					+ getName() + " before calling init() is not allowed! Please fix your code.");
+			        + getName() + " before calling init() is not allowed! Please fix your code.");
 		}
 		return this.getCachedValue();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.name == null) ? 0 : this.name.hashCode());
+		result = (prime * result) + ((this.name == null)
+		                                                ? 0
+		                                                : this.name.hashCode());
 		return result;
 	}
 	
@@ -186,13 +182,12 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + " [required=" + this.isRequired + ", name=" + this.name + ", default="
-				+ this.defaultValue + ", value=" + this.stringValue + ", description=" + this.description + "]";
+		        + this.defaultValue + ", value=" + this.stringValue + ", description=" + this.description + "]";
 	}
 	
 	/**

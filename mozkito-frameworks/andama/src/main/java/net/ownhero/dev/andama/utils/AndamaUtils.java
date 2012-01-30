@@ -12,7 +12,7 @@ import org.apache.commons.collections.Predicate;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class AndamaUtils {
 	
