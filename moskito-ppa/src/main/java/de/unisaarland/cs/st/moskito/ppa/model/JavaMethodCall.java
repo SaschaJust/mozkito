@@ -58,8 +58,15 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	@NoneNull
 	public static String composeFullQualifiedName(final String objectName, final String methodName,
 			final List<String> signature) {
-		StringBuilder sb = new StringBuilder();
+		
 		String localParentName = objectName;
+		
+		if(objectName.startsWith("src.")){
+			localParentName = localParentName.substring(4);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		
 		while (localParentName.endsWith(".")) {
 			localParentName = localParentName.substring(0, localParentName.length() - 1);
 		}
