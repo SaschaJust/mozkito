@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package net.ownhero.dev.ioda;
 
 import java.io.File;
@@ -26,8 +39,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * Searches for classes matching certain criteria in the classpath or the
- * current jar file.
+ * Searches for classes matching certain criteria in the classpath or the current jar file.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -69,9 +81,8 @@ public class ClassFinder {
 	/**
 	 * @param pakkage
 	 * @param modifiers
-	 *            an Integer value representing properties the class shall not
-	 *            have (e.g. private, interface, abstract). See {@link Modifier}
-	 *            for details.
+	 *            an Integer value representing properties the class shall not have (e.g. private, interface, abstract).
+	 *            See {@link Modifier} for details.
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
@@ -154,9 +165,7 @@ public class ClassFinder {
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
 	 * @throws IOException
-	 * @Deprecated use
-	 *             {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)}
-	 *             instead
+	 * @Deprecated use {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)} instead
 	 */
 	@Deprecated
 	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
@@ -167,20 +176,17 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * This class loads all classes in the specified package that can be found
-	 * in the classpath and checks if they are derived from the supplied super
-	 * class. If this is the case, they are added to a collection which will be
-	 * returned at the end of the method.
+	 * This class loads all classes in the specified package that can be found in the classpath and checks if they are
+	 * derived from the supplied super class. If this is the case, they are added to a collection which will be returned
+	 * at the end of the method.
 	 * 
 	 * @param pakkage
-	 *            the package where the traversal search takes place
-	 *            (recursive), not null
+	 *            the package where the traversal search takes place (recursive), not null
 	 * @param superClass
 	 *            the class all returned classes have to be derived from
 	 * @param modifiers
-	 *            an Integer value representing properties the class shall not
-	 *            have (e.g. private, interface, abstract). See {@link Modifier}
-	 *            for details.
+	 *            an Integer value representing properties the class shall not have (e.g. private, interface, abstract).
+	 *            See {@link Modifier} for details.
 	 * @return a collection of classes matching the above conditions
 	 * @throws ClassNotFoundException
 	 * @throws WrongClassSearchMethodException
@@ -234,8 +240,8 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * Finds all classes in the current classpath that are contained in the
-	 * given package (from packageName). Only .class files are inspected!
+	 * Finds all classes in the current classpath that are contained in the given package (from packageName). Only
+	 * .class files are inspected!
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
@@ -335,8 +341,7 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * Scans through the given JAR file and finds all class objects for a given
-	 * package name
+	 * Scans through the given JAR file and finds all class objects for a given package name
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
@@ -363,9 +368,8 @@ public class ClassFinder {
 			final JarFile currentFile = new JarFile(filePath);
 			
 			/*
-			 * step through all elements in the jar file and check if there
-			 * exists a class file in given package. If so, load it and add it
-			 * to the collection.
+			 * step through all elements in the jar file and check if there exists a class file in given package. If so,
+			 * load it and add it to the collection.
 			 */
 			for (final Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
 				final JarEntry current = e.nextElement();
@@ -547,9 +551,8 @@ public class ClassFinder {
 			final JarFile currentFile = new JarFile(filePath);
 			
 			/*
-			 * step through all elements in the jar file and check if there
-			 * exists a class file in given package. If so, load it and add it
-			 * to the collection.
+			 * step through all elements in the jar file and check if there exists a class file in given package. If so,
+			 * load it and add it to the collection.
 			 */
 			for (final Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
 				final JarEntry current = e.nextElement();

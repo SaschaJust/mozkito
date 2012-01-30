@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package net.ownhero.dev.ioda;
 
 import java.io.BufferedInputStream;
@@ -31,6 +44,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import ucar.unidata.io.bzip2.CBZip2InputStream;
@@ -48,8 +62,18 @@ public class FileUtils {
 	}
 	
 	public static enum SupportedPackers {
-		ZIP, JAR, LZMA, GZ, GZIP, BZIP, BZIP2, BZ, BZ2, XZ, XZIP;
+		ZIP, JAR, LZMA, GZ, GZIP, BZIP, BZIP2, BZ, BZ2, XZ, XZIP, TAR;
+		
+		public static Set<String> getStringValues() {
+			final Set<String> result = new HashSet<String>();
+			for (final SupportedPackers value : SupportedPackers.values()) {
+				result.add(value.name());
+			}
+			return result;
+		}
 	}
+	
+	public static final Set<String>                   supportedPackers  = SupportedPackers.getStringValues();
 	
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -101,13 +125,14 @@ public class FileUtils {
 	}
 	
 	public static final String                        fileSeparator     = System.getProperty("file.separator");
+	
 	public static final String                        lineSeparator     = System.getProperty("line.separator");
 	public static final String                        pathSeparator     = System.getProperty("path.separator");
 	public static final File                          tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
-	
 	private static int                                MAX_PERM          = 0;
 	
 	public static final int                           EXECUTABLE        = (int) Math.pow(2, MAX_PERM++);
+	
 	public static final int                           WRITABLE          = (int) Math.pow(2, MAX_PERM++);
 	public static final int                           READABLE          = (int) Math.pow(2, MAX_PERM++);
 	public static final int                           FILE              = (int) Math.pow(2, MAX_PERM++);
@@ -119,7 +144,6 @@ public class FileUtils {
 	public static final int                           WRITABLE_FILE     = FILE | WRITABLE;
 	public static final int                           OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
 	public static final int                           EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
-	
 	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
 	
 	public static void addToFileManager(final File file,
@@ -180,8 +204,8 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Checks if the command maps to a valid accessible, executable file. If the
-	 * command is not absolute, a PATH traversal search for the command is done.
+	 * Checks if the command maps to a valid accessible, executable file. If the command is not absolute, a PATH
+	 * traversal search for the command is done.
 	 * 
 	 * @param command
 	 *            the command string that shall be analyzed
@@ -263,16 +287,15 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Created a directory in parent directory with given name. If the directory
-	 * exists before, the file handle to the existing directory will be returned
-	 * and a warning message logged.
+	 * Created a directory in parent directory with given name. If the directory exists before, the file handle to the
+	 * existing directory will be returned and a warning message logged.
 	 * 
 	 * @param parentDir
 	 *            the parent directory
 	 * @param name
 	 *            the name of the new directory to be created
-	 * @return the file handle corresponding to the requested new directory if
-	 *         existed or created. <code>null</code> otherwise.
+	 * @return the file handle corresponding to the requested new directory if existed or created. <code>null</code>
+	 *         otherwise.
 	 */
 	public static File createDir(final File parentDir,
 	                             final String name,
@@ -594,9 +617,8 @@ public class FileUtils {
 	}
 	
 	/**
-	 * @deprecated Does not work anyway. Reposuite now uses a file manager that
-	 *             deleted open file handles (marked to be deleted) at
-	 *             termination anyway. Usage is implicit when using ToolChain.
+	 * @deprecated Does not work anyway. Reposuite now uses a file manager that deleted open file handles (marked to be
+	 *             deleted) at termination anyway. Usage is implicit when using ToolChain.
 	 * 
 	 *             Force delete on exit.
 	 * 
@@ -681,12 +703,10 @@ public class FileUtils {
 	
 	/**
 	 * 
-	 * This method returns an file iterator the iterates over sub-directories
-	 * only.
+	 * This method returns an file iterator the iterates over sub-directories only.
 	 * 
 	 * @param topLevelDir
-	 * @return An valid file iterator if given top level directory exists and is
-	 *         a directory. Null otherwise.
+	 * @return An valid file iterator if given top level directory exists and is a directory. Null otherwise.
 	 */
 	@NoneNull
 	public static Iterator<File> getSubDirectoryIterator(final File topLevelDir) {
@@ -719,6 +739,26 @@ public class FileUtils {
 			}
 			
 		});
+	}
+	
+	/**
+	 * @param file
+	 * @return
+	 */
+	public static String getUnpackedName(final File file) {
+		final String[] split = file.getName().split("\\.");
+		
+		int i = split.length - 1;
+		
+		while (i > 0) {
+			if (supportedPackers.contains(split[i].toUpperCase())) {
+				--i;
+			} else {
+				break;
+			}
+		}
+		
+		return StringUtils.join(split, '.', 0, i + 1);
 	}
 	
 	/**
@@ -778,8 +818,7 @@ public class FileUtils {
 	 *            the extensions
 	 * @param recursive
 	 *            the recursive
-	 * @return the collection
-	 *         {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
+	 * @return the collection {@link org.apache.commons.io.FileUtils#listFiles(File, String[], boolean)}
 	 */
 	public static Collection<File> listFiles(final File directory,
 	                                         final String[] extensions,

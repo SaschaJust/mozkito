@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package net.ownhero.dev.ioda;
 
 import java.io.BufferedReader;
@@ -44,23 +57,21 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
-	 * Executes a command with the given arguments in the specified directory.
-	 * Input to the program is piped from `input` if present.
+	 * Executes a command with the given arguments in the specified directory. Input to the program is piped from
+	 * `input` if present.
 	 * 
 	 * @param command
 	 *            the executable
 	 * @param arguments
 	 *            optional arguments to the program
 	 * @param dir
-	 *            optional working directory. If unspecified the temporary
-	 *            directory from {@link FileUtils.tmpDir} is used.
+	 *            optional working directory. If unspecified the temporary directory from {@link FileUtils.tmpDir} is
+	 *            used.
 	 * @param input
 	 *            optional {@link InputStream} that is piped to
 	 * @param environment
-	 *            additional changes to the process environment. This is null in
-	 *            most scenarios.
-	 * @return a tuple with the program's exit code and a list of lines
-	 *         representing the output of the program
+	 *            additional changes to the process environment. This is null in most scenarios.
+	 * @return a tuple with the program's exit code and a list of lines representing the output of the program
 	 */
 	public static Tuple<Integer, List<String>> execute(@NotNull String command,
 	                                                   final String[] arguments,
@@ -91,15 +102,14 @@ public class CommandExecutor extends Thread {
 		ProcessBuilder processBuilder = new ProcessBuilder(lineElements);
 		
 		/*
-		 * Set the working directory to `dir`. If `dir` is null, the subsequent
-		 * processes will use the current working directory of the executing
-		 * java process.
+		 * Set the working directory to `dir`. If `dir` is null, the subsequent processes will use the current working
+		 * directory of the executing java process.
 		 */
 		processBuilder.directory(dir);
 		
 		/*
-		 * If a environment map has been supplied, manipulate the subprocesses
-		 * environment with the corresponding mappings.
+		 * If a environment map has been supplied, manipulate the subprocesses environment with the corresponding
+		 * mappings.
 		 */
 		if ((environment != null) && (environment.keySet().size() > 0)) {
 			Map<String, String> actualEnvironment = processBuilder.environment();
@@ -276,8 +286,7 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
-	 * in case of an error, this method can be called to log the already
-	 * processed lines
+	 * in case of an error, this method can be called to log the already processed lines
 	 */
 	private void logLinesOnError() {
 		if (Logger.logError()) {

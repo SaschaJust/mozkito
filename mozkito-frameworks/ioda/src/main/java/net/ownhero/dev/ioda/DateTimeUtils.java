@@ -33,9 +33,8 @@ public class DateTimeUtils {
 	}
 	
 	/**
-	 * @see <a
-	 *      href=http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations>
-	 *      Wikipedia:List of time zone abbreviations</a>
+	 * @see <a href=http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations> Wikipedia:List of time zone
+	 *      abbreviations</a>
 	 */
 	private static final Map<String, String> timezones      = new HashMap<String, String>() {
 		                                                        
@@ -174,8 +173,8 @@ public class DateTimeUtils {
 	}
 	
 	/**
-	 * Parses the date in form `yyyy-MM-dd HH:mm:ss Z` where Z can also be
-	 * represented as non-offset. Z and :ss do not have to be present.
+	 * Parses the date in form `yyyy-MM-dd HH:mm:ss Z` where Z can also be represented as non-offset. Z and :ss do not
+	 * have to be present.
 	 * 
 	 * @param dateTimeString
 	 *            the datetime string, not null
@@ -231,8 +230,7 @@ public class DateTimeUtils {
 	}
 	
 	/**
-	 * Takes a time zone abbreviation and returns the corresponding offset
-	 * relative to UTC
+	 * Takes a time zone abbreviation and returns the corresponding offset relative to UTC
 	 * 
 	 * @param timezone
 	 *            the abbreviation

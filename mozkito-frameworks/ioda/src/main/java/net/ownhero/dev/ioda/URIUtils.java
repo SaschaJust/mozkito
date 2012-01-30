@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package net.ownhero.dev.ioda;
 
 import java.net.URI;
@@ -8,16 +21,14 @@ import net.ownhero.dev.kisa.Logger;
 public class URIUtils {
 	
 	/**
-	 * Check if in the given URI the user name is set to the
-	 * <code>username</code> argument. If this is not the case, try to replace
-	 * the user name info in the authority part with the specified user name.
+	 * Check if in the given URI the user name is set to the <code>username</code> argument. If this is not the case,
+	 * try to replace the user name info in the authority part with the specified user name.
 	 * 
 	 * @param address
 	 *            The original URI to be checked and modified if necessary
 	 * @param username
 	 *            the user name to be encoded into the URI
-	 * @return the URI with encoded user name. If the encoding fails, the
-	 *         original URI will be returned.
+	 * @return the URI with encoded user name. If the encoding fails, the original URI will be returned.
 	 */
 	public static URI encodeUsername(final URI address,
 	                                 final String username) {
@@ -68,8 +79,7 @@ public class URIUtils {
 	}
 	
 	/**
-	 * Uri2 string converts a URI to a string that conforms RFC 1738. Java
-	 * refuses to implement this (see
+	 * Uri2 string converts a URI to a string that conforms RFC 1738. Java refuses to implement this (see
 	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6351751)
 	 * 
 	 * @return the string

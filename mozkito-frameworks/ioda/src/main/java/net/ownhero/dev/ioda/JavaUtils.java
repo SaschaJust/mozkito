@@ -38,17 +38,14 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * Returns a string representing the array with its contents. The
-	 * representation starts with a '[' followed by a comma separated list of
-	 * entries, followed by a ']'. Internally, the array is converted to a list
-	 * and processed by {@link JavaUtils#collectionToString(Collection)}.
+	 * Returns a string representing the array with its contents. The representation starts with a '[' followed by a
+	 * comma separated list of entries, followed by a ']'. Internally, the array is converted to a list and processed by
+	 * {@link JavaUtils#collectionToString(Collection)}.
 	 * 
-	 * Note that this method may be called recursively, if the entries are or
-	 * contain arrays as well. If an entry is a <code>Collection</code>, a
-	 * <code>Map</code> or an <code>Array</code>, the according
-	 * <code>collectionToString()</code>, <code>mapToString()</code> or
-	 * <code>arrayToString()</code> method is called. Otherwise, we call the
-	 * <code>toString()</code> method of the object.
+	 * Note that this method may be called recursively, if the entries are or contain arrays as well. If an entry is a
+	 * <code>Collection</code>, a <code>Map</code> or an <code>Array</code>, the according
+	 * <code>collectionToString()</code>, <code>mapToString()</code> or <code>arrayToString()</code> method is called.
+	 * Otherwise, we call the <code>toString()</code> method of the object.
 	 * 
 	 * @param array
 	 *            the array you request the string representation for
@@ -59,13 +56,11 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * This method converts a <code>byte</code> array to the hexadecimal
-	 * representation in an ASCII encoded string.
+	 * This method converts a <code>byte</code> array to the hexadecimal representation in an ASCII encoded string.
 	 * 
 	 * @param raw
 	 *            the byte[] array that shall be converted
-	 * @return an ASCII string containing the hex representation of the byte
-	 *         array
+	 * @return an ASCII string containing the hex representation of the byte array
 	 * @throws UnsupportedEncodingException
 	 *             If the 'ASCII' charset is not supported
 	 */
@@ -83,12 +78,9 @@ public class JavaUtils {
 	
 	/**
 	 * Internal method used by {@link JavaUtils#collectionToString(Collection)},
-	 * {@link JavaUtils#arrayToString(Object[])} and
-	 * {@link JavaUtils#mapToString(Map)}. Checks the entries to implement
-	 * {@link Collection} or {@link Map} or be of type array. In this case the
-	 * according methods in {@link JavaUtils} are called to get their String
-	 * representations. Otherwise, the objects <code>toString()</code> method is
-	 * called.
+	 * {@link JavaUtils#arrayToString(Object[])} and {@link JavaUtils#mapToString(Map)}. Checks the entries to implement
+	 * {@link Collection} or {@link Map} or be of type array. In this case the according methods in {@link JavaUtils}
+	 * are called to get their String representations. Otherwise, the objects <code>toString()</code> method is called.
 	 * 
 	 * @param object
 	 *            the object that shall be represented as a String
@@ -124,16 +116,13 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * Returns a string representing the collection with its contents. The
-	 * representation starts with a '[' followed by a comma separated list of
-	 * entries, followed by a ']'.
+	 * Returns a string representing the collection with its contents. The representation starts with a '[' followed by
+	 * a comma separated list of entries, followed by a ']'.
 	 * 
-	 * Note that this method may be called recursively, if the entries are or
-	 * contain collections as well. If an entry is a <code>Collection</code>, a
-	 * <code>Map</code> or an <code>Array</code>, the according
-	 * <code>collectionToString()</code>, <code>mapToString()</code> or
-	 * <code>arrayToString()</code> method is called. Otherwise, we call the
-	 * <code>toString()</code> method of the object.
+	 * Note that this method may be called recursively, if the entries are or contain collections as well. If an entry
+	 * is a <code>Collection</code>, a <code>Map</code> or an <code>Array</code>, the according
+	 * <code>collectionToString()</code>, <code>mapToString()</code> or <code>arrayToString()</code> method is called.
+	 * Otherwise, we call the <code>toString()</code> method of the object.
 	 * 
 	 * @param collection
 	 *            the collection you request the string representation of
