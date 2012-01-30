@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -117,6 +119,14 @@ public class LuceneStorage extends MappingStorage {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
+	 */
+	@Override
+	public void init() {
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage#loadData
 	 * (de.unisaarland.cs.st.moskito.persistence.PersistenceUtil)
 	 */
@@ -138,6 +148,17 @@ public class LuceneStorage extends MappingStorage {
 				throw new UnrecoverableError(e);
 			}
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
+	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
+	 */
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
 	}
 	
 	/**

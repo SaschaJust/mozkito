@@ -14,6 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import java.util.Queue;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -30,6 +32,15 @@ public class LoneWarriorStrategy extends MappingStrategy {
 	@Override
 	public String getDescription() {
 		return "Maps as soon as a single engine agrees on the mapping";
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
+	 */
+	@Override
+	public void init() {
+		
 	}
 	
 	/*
@@ -51,6 +62,18 @@ public class LoneWarriorStrategy extends MappingStrategy {
 		mapping.addStrategy(getHandle(), valid);
 		
 		return mapping;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
+	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
+	 */
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		
 	}
 	
 }

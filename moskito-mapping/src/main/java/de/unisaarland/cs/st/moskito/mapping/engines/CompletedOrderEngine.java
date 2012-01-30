@@ -62,7 +62,6 @@ public class CompletedOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		super.init();
 		setScoreReportResolvedBeforeTransaction((Double) getOption("confidence").getSecond().getValue());
 	}
 	
@@ -75,7 +74,6 @@ public class CompletedOrderEngine extends MappingEngine {
 	@Override
 	public void register(final AndamaSettings settings,
 	                     final AndamaArgumentSet<?> arguments) {
-		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Score in case the report was resolved before the transaction.",
 		                     this.scoreReportResolvedBeforeTransaction + "", true);

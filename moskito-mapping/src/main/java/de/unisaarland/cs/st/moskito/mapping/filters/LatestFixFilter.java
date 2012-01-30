@@ -14,6 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -41,6 +43,19 @@ public class LatestFixFilter extends MappingFilter {
 	@Override
 	public String getDescription() {
 		return "Filters a mapping if the fix in the transaction wasn't the final fix (e.g. partial fix, reverted change, etc...)";
+	}
+	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

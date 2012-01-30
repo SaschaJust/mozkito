@@ -3,6 +3,8 @@
  */
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -25,6 +27,25 @@ public class StacktraceParserEngine extends MappingEngine {
 		// TODO this requires PPA
 		return "Analyzes stacktraces with one of the entities to contain JavaElements, that have been touched in the transaction under suspect. "
 		        + "Additionally, the change made to the JavaElement has to be a fix.";
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
+	 */
+	@Override
+	public void init() {
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
+	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
+	 */
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
 	}
 	
 	/*

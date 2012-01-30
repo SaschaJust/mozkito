@@ -12,6 +12,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import static net.ownhero.dev.ioda.StringUtils.truncate;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 public abstract class SearchEngine extends MappingEngine {
 	
 	private LuceneStorage storage;
+	private String        language;
+	private long          minTokens;
 	
 	/**
 	 * @param queryString
@@ -73,10 +77,30 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return this.language;
+	}
+	
+	/**
+	 * @return the minTokens
+	 */
+	public long getMinTokens() {
+		return this.minTokens;
+	}
+	
+	/**
 	 * @return
 	 */
 	public LuceneStorage getStorage() {
 		return this.storage;
+	}
+	
+	@Override
+	public void init() {
+		this.minTokens = (Long) getOption("minTokens").getSecond().getValue();
+		this.language = (String) getOption("language").getSecond().getValue();
 	}
 	
 	/*
@@ -129,7 +153,6 @@ public abstract class SearchEngine extends MappingEngine {
 	@Override
 	public void register(final AndamaSettings settings,
 	                     final AndamaArgumentSet<?> arguments) {
-		super.register(settings, arguments);
 		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
 		                   true);
 		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);

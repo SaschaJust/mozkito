@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import static net.ownhero.dev.ioda.StringUtils.truncate;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -42,13 +43,38 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
  */
 public abstract class MappingEngine extends Node {
 	
-	public static final String defaultNegative = "-1";
-	public static final String defaultPositive = "1";
-	public static final String unknown         = "(unknown)";
-	public static final String unused          = "(unused)";
+	private static final String defaultNegative = "-1";
+	private static final String defaultPositive = "1";
+	private static final String unknown         = "(unknown)";
+	private static final String unused          = "(unused)";
 	
-	private final boolean      initialized     = false;
-	private final boolean      registered      = false;
+	/**
+	 * @return the defaultNegative
+	 */
+	public static String getDefaultNegative() {
+		return defaultNegative;
+	}
+	
+	/**
+	 * @return the defaultPositive
+	 */
+	public static String getDefaultPositive() {
+		return defaultPositive;
+	}
+	
+	/**
+	 * @return the unknown
+	 */
+	public static String getUnknown() {
+		return unknown;
+	}
+	
+	/**
+	 * @return the unused
+	 */
+	public static String getUnused() {
+		return unused;
+	}
 	
 	/**
 	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
@@ -140,11 +166,11 @@ public abstract class MappingEngine extends Node {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngine [class=");
-		builder.append(this.getClass().getSimpleName());
+		builder.append(getClass().getSimpleName());
 		builder.append("registered=");
-		builder.append(this.registered);
+		builder.append(isRegistered());
 		builder.append(", initialized=");
-		builder.append(this.initialized);
+		builder.append(isInitialized());
 		builder.append("]");
 		return builder.toString();
 	}

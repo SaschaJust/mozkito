@@ -65,8 +65,6 @@ public class ReportTypeEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		super.init();
-		
 		setConfidence((Double) getOption("confidence").getSecond().getValue());
 		setType(Type.valueOf((String) getOption("type").getSecond().getValue()));
 	}
@@ -80,7 +78,6 @@ public class ReportTypeEngine extends MappingEngine {
 	@Override
 	public void register(final AndamaSettings settings,
 	                     final AndamaArgumentSet<?> arguments) {
-		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Confidence that is used if the report isn't of the specified type.", "-1", true);
 		registerEnumOption(settings, arguments, "type", "Type the report has to match, e.g. BUG.", null, true,
@@ -100,18 +97,20 @@ public class ReportTypeEngine extends MappingEngine {
 		if (element1 instanceof MappableReport) {
 			if (element1.get(FieldKey.TYPE) != getType()) {
 				score.addFeature(getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				                 element1.get(FieldKey.TYPE).toString(), unused, unknown, unknown, this.getClass());
+				                 element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown(),
+				                 this.getClass());
 			}
 		} else
 		
 		if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), unused, unknown, unknown, FieldKey.TYPE.name(),
+				score.addFeature(getConfidence(), getUnused(), getUnknown(), getUnknown(), FieldKey.TYPE.name(),
 				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
 				                 this.getClass());
 			}
 		} else {
-			score.addFeature(0, unused, unknown, unknown, unused, unknown, unknown, this.getClass());
+			score.addFeature(0, getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(), getUnknown(),
+			                 this.getClass());
 		}
 		
 	}

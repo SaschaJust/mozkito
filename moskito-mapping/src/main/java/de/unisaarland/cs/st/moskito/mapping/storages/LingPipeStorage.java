@@ -12,6 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.storages;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -32,6 +35,19 @@ public class LingPipeStorage extends MappingStorage {
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

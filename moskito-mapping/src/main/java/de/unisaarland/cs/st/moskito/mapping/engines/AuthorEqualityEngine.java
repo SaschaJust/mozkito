@@ -56,7 +56,6 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		super.init();
 		setScoreAuthorEquality((Double) getOption("confidence").getSecond().getValue());
 	}
 	
@@ -69,7 +68,6 @@ public class AuthorEqualityEngine extends MappingEngine {
 	@Override
 	public void register(final AndamaSettings settings,
 	                     final AndamaArgumentSet<?> arguments) {
-		super.register(settings, arguments);
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Score for equal authors in transaction and report comments.", this.scoreAuthorEquality
 		                             + "", true);

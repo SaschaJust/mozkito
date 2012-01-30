@@ -14,6 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -42,6 +44,19 @@ public class AuthorCorrelationFilter extends MappingFilter {
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

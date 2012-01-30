@@ -24,6 +24,8 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -51,7 +53,7 @@ public class SVMTrainer extends MappingTrainer {
 	                                                  };
 	
 	private static double atof(final String s) {
-		double d = Double.valueOf(s).doubleValue();
+		final double d = Double.valueOf(s).doubleValue();
 		if (Double.isNaN(d) || Double.isInfinite(d)) {
 			System.err.print("NaN or Infinity in input\n");
 			System.exit(1);
@@ -98,13 +100,13 @@ public class SVMTrainer extends MappingTrainer {
 		int total_correct = 0;
 		double total_error = 0;
 		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
-		double[] target = new double[this.prob.l];
+		final double[] target = new double[this.prob.l];
 		
 		svm.svm_cross_validation(this.prob, this.param, this.nr_fold, target);
 		if ((this.param.svm_type == svm_parameter.EPSILON_SVR) || (this.param.svm_type == svm_parameter.NU_SVR)) {
 			for (i = 0; i < this.prob.l; i++) {
-				double y = this.prob.y[i];
-				double v = target[i];
+				final double y = this.prob.y[i];
+				final double v = target[i];
 				total_error += (v - y) * (v - y);
 				sumv += v;
 				sumy += y;
@@ -131,6 +133,13 @@ public class SVMTrainer extends MappingTrainer {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void init() {
+		
+	}
+	
+	// read in a problem (in svmlight format)
 	
 	private void parse_command_line(final String argv[]) {
 		int i;
@@ -215,13 +224,13 @@ public class SVMTrainer extends MappingTrainer {
 				case 'w':
 					++this.param.nr_weight;
 					{
-						int[] old = this.param.weight_label;
+						final int[] old = this.param.weight_label;
 						this.param.weight_label = new int[this.param.nr_weight];
 						System.arraycopy(old, 0, this.param.weight_label, 0, this.param.nr_weight - 1);
 					}
 					
 					{
-						double[] old = this.param.weight;
+						final double[] old = this.param.weight;
 						this.param.weight = new double[this.param.nr_weight];
 						System.arraycopy(old, 0, this.param.weight, 0, this.param.nr_weight - 1);
 					}
@@ -254,25 +263,23 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
-	// read in a problem (in svmlight format)
-	
 	private void read_problem() throws IOException {
-		BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
-		Vector<Double> vy = new Vector<Double>();
-		Vector<svm_node[]> vx = new Vector<svm_node[]>();
+		final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
+		final Vector<Double> vy = new Vector<Double>();
+		final Vector<svm_node[]> vx = new Vector<svm_node[]>();
 		int max_index = 0;
 		
 		while (true) {
-			String line = fp.readLine();
+			final String line = fp.readLine();
 			if (line == null) {
 				break;
 			}
 			
-			StringTokenizer st = new StringTokenizer(line, " \t\n\r\f:");
+			final StringTokenizer st = new StringTokenizer(line, " \t\n\r\f:");
 			
 			vy.addElement(atof(st.nextToken()));
-			int m = st.countTokens() / 2;
-			svm_node[] x = new svm_node[m];
+			final int m = st.countTokens() / 2;
+			final svm_node[] x = new svm_node[m];
 			for (int j = 0; j < m; j++) {
 				x[j] = new svm_node();
 				x[j].index = atoi(st.nextToken());
@@ -313,6 +320,12 @@ public class SVMTrainer extends MappingTrainer {
 		}
 		
 		fp.close();
+	}
+	
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		
 	}
 	
 	@SuppressWarnings ("unused")

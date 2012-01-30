@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.AndamaSettings;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -38,6 +40,12 @@ public class Files2BugsSplitter extends MappingSplitter {
 	@Override
 	public String getDescription() {
 		return "Creates a table that puts files into relation to their bugs.";
+	}
+	
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/*
@@ -82,6 +90,13 @@ public class Files2BugsSplitter extends MappingSplitter {
 		}
 		
 		return ret;
+	}
+	
+	@Override
+	public void register(final AndamaSettings settings,
+	                     final AndamaArgumentSet<?> arguments) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

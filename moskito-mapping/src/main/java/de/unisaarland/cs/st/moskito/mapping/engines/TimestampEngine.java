@@ -68,7 +68,6 @@ public class TimestampEngine extends MappingEngine {
 	 */
 	@Override
 	public void init() {
-		super.init();
 		@SuppressWarnings ("unchecked")
 		final List<String> list = new LinkedList<String>((Set<String>) getOption("confidence").getSecond().getValue());
 		CollectionCheck.minSize(list,
@@ -136,7 +135,6 @@ public class TimestampEngine extends MappingEngine {
 	@Override
 	public void register(final AndamaSettings settings,
 	                     final AndamaArgumentSet<?> arguments) {
-		super.register(settings, arguments);
 		registerListOption(settings,
 		                   arguments,
 		                   "confidence",

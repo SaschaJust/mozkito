@@ -257,9 +257,8 @@ public class UntanglingArguments extends AndamaArgumentSet<Boolean> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#getValue()
 	 */
 	@Override
-	protected Boolean getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean getValue() {
+		return true;
 	}
 	
 }
