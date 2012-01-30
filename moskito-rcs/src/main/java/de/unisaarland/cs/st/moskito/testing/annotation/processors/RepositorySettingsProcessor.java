@@ -12,9 +12,12 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySetting;
@@ -32,19 +35,42 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 	 * @return
 	 */
 	public static String getPathName(final Class<?> aClass,
-	                                 final RepositorySetting setting) {
-		
-		final RepositoryType type = setting.type();
-		String baseDir = setting.baseDir();
-		if ((baseDir.length() == 0) || baseDir.equals("TEMP")) {
-			baseDir = System.getProperty("java.io.tmpdir");
+	                                 final RepositoryType type) {
+		RepositorySetting setting = null;
+		Annotation annotation = aClass.getAnnotation(RepositorySettings.class);
+		if (annotation != null) {
+			final RepositorySettings repositorySettings = (RepositorySettings) annotation;
+			for (final RepositorySetting repositorySetting : repositorySettings.value()) {
+				if (repositorySetting.type().equals(type)) {
+					setting = repositorySetting;
+					break;
+				}
+			}
+			
+		} else {
+			annotation = aClass.getAnnotation(RepositorySetting.class);
+			if (annotation != null) {
+				final RepositorySetting repositorySetting = (RepositorySetting) annotation;
+				if (repositorySetting.type().equals(type)) {
+					setting = repositorySetting;
+				}
+			}
 		}
 		
-		// String uri = setting.uri();
-		
-		final String string = baseDir + File.separator + type.name().toLowerCase() + "_" + aClass.getSimpleName();
-		
-		return string;
+		if (setting != null) {
+			String baseDir = setting.baseDir();
+			if ((baseDir.length() == 0) || baseDir.equals("TEMP")) {
+				baseDir = System.getProperty("java.io.tmpdir");
+			}
+			
+			// String uri = setting.uri();
+			
+			final String string = baseDir + File.separator + type.name().toLowerCase() + "_" + aClass.getSimpleName();
+			
+			return string;
+		} else {
+			return null;
+		}
 	}
 	
 	/*
@@ -94,8 +120,17 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 			if (sourceURL != null) {
 				final String[] split = sourceURL.getPath().split("/|" + File.pathSeparator);
 				
-				final String repoDir = getPathName(aClass, repositorySetting);
-				FileUtils.createDir(new File(repoDir), FileShutdownAction.DELETE);
+				final String repoPath = getPathName(aClass, repositorySetting.type());
+				File repoDir;
+				try {
+					FileUtils.createDir(new File(repoPath), FileShutdownAction.DELETE);
+					repoDir = FileUtils.createDir(new File(repoPath + File.separator
+					                                      + FileUtils.getUnpackedName(new File(sourceURL.toURI()))),
+					                              FileShutdownAction.DELETE);
+				} catch (final URISyntaxException e2) {
+					throw new TestSettingsError(e2);
+					
+				}
 				final String fileSuffix = split.length > 0
 				                                          ? split[split.length - 1]
 				                                          : sourceURL.getPath();
@@ -104,11 +139,36 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 					                                                 sourceURL.toURI());
 					try {
 						FileUtils.SupportedPackers.valueOf(fileSuffix.replaceFirst(".*\\.", "").toUpperCase());
-						if (!FileUtils.unpack(file, new File(repoDir))) {
+						if (!FileUtils.unpack(file, new File(repoPath))) {
 							throw new TestSettingsError("Could not create repository.");
 						}
 					} catch (final IllegalArgumentException e) {
-						
+						if (type.equals(RepositoryType.SUBVERSION)) {
+							try {
+								Integer returnValue = 0;
+								if (Logger.logDebug()) {
+									Logger.debug("Creating " + type.toString() + " repository at: "
+									        + repoDir.getAbsolutePath());
+								}
+								Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin",
+								                                                               new String[] {
+								                                                                       "create",
+								                                                                       "--config-dir",
+								                                                                       System.getProperty("user.home")
+								                                                                               + FileUtils.fileSeparator
+								                                                                               + ".subversion",
+								                                                                       repoDir.getAbsolutePath() },
+								                                                               repoDir, null, null);
+								returnValue += execute.getFirst();
+								execute = CommandExecutor.execute("svnadmin",
+								                                  new String[] { "load", repoDir.getAbsolutePath() },
+								                                  repoDir, file.toURI().toURL().openStream(), null);
+								returnValue += execute.getFirst();
+							} catch (final IOException e1) {
+								throw new TestSettingsError(e);
+							}
+							
+						}
 					}
 					
 				} catch (final IOException e) {
