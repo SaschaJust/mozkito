@@ -39,7 +39,6 @@ public class Main {
 			rCS.setName(rCS.getClass().getSimpleName());
 			rCS.start();
 			rCS.join();
-			System.exit(0);
 			final Graph graph = new Graph();
 			graph.setName(graph.getClass().getSimpleName());
 			graph.start();
