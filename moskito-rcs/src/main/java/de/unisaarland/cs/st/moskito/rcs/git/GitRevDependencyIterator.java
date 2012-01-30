@@ -29,6 +29,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -66,6 +67,10 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				if (branchName.startsWith("refs/heads/")) {
 					branchName = branchName.substring(11);
 					this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
+					if (Logger.logDebug()) {
+						Logger.debug("Stroing branch reference " + branchName + " along with associated commit id "
+						        + lsRemote[0]);
+					}
 				}
 			}
 			
