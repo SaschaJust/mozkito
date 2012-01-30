@@ -54,17 +54,17 @@ public class UniversalChildrenMetrics<T> {
 		
 		String nodeId = genealogy.getNodeId(node);
 		
-		result.add(new GenealogyMetricValue(numChildrenChildren, nodeId, childrenChildren.getSum()));
-		result.add(new GenealogyMetricValue(avgChildrenChildren, nodeId, childrenChildren.getMean()));
+		result.add(new GenealogyMetricValue(numChildrenChildren, nodeId, (childrenChildren.getN() < 1) ? 0 : childrenChildren.getSum()));
+		result.add(new GenealogyMetricValue(avgChildrenChildren, nodeId, (childrenChildren.getN() < 1) ? 0 : childrenChildren.getMean()));
 		
-		result.add(new GenealogyMetricValue(numChildrenOut, nodeId, childrenOut.getSum()));
-		result.add(new GenealogyMetricValue(avgChildrenOut, nodeId, childrenOut.getMean()));
+		result.add(new GenealogyMetricValue(numChildrenOut, nodeId, (childrenOut.getN() < 1) ? 0 : childrenOut.getSum()));
+		result.add(new GenealogyMetricValue(avgChildrenOut, nodeId, (childrenOut.getN() < 1) ? 0 : childrenOut.getMean()));
 		
-		result.add(new GenealogyMetricValue(numChildrenParents, nodeId, childrenParents.getSum()));
-		result.add(new GenealogyMetricValue(avgChildrenParents, nodeId, childrenParents.getMean()));
+		result.add(new GenealogyMetricValue(numChildrenParents, nodeId, (childrenParents.getN() < 1) ? 0 : childrenParents.getSum()));
+		result.add(new GenealogyMetricValue(avgChildrenParents, nodeId, (childrenParents.getN() < 1) ? 0 : childrenParents.getMean()));
 		
-		result.add(new GenealogyMetricValue(numChildrenIn, nodeId, childrenIn.getSum()));
-		result.add(new GenealogyMetricValue(avgChildrenIn, nodeId, childrenIn.getMean()));
+		result.add(new GenealogyMetricValue(numChildrenIn, nodeId, (childrenIn.getN() < 1) ? 0 : childrenIn.getSum()));
+		result.add(new GenealogyMetricValue(avgChildrenIn, nodeId, (childrenIn.getN() < 1) ? 0 : childrenIn.getMean()));
 		
 		return result;
 	}
