@@ -16,9 +16,9 @@
 package rcs;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.Graph;
 import de.unisaarland.cs.st.moskito.RepositoryToolchain;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -35,11 +35,12 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			RepositoryToolchain rCS = new RepositoryToolchain();
+			final RepositoryToolchain rCS = new RepositoryToolchain();
 			rCS.setName(rCS.getClass().getSimpleName());
 			rCS.start();
 			rCS.join();
-			Graph graph = new Graph();
+			System.exit(0);
+			final Graph graph = new Graph();
 			graph.setName(graph.getClass().getSimpleName());
 			graph.start();
 			graph.join();
@@ -47,7 +48,7 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("RCS.Main: All done. cerio!");
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
