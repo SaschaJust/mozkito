@@ -238,7 +238,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 				// "buildSchema(SchemaAction='add,deleteTableContents')");
 				break;
 			default:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
 				break;
 		}
 		

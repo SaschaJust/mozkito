@@ -15,12 +15,15 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.settings;
 
+import java.sql.SQLException;
+
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.MaskedStringArgument;
 import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.DatabaseType;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -75,7 +78,7 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		                                       unit, true);
 		addArgument(this.databaseUnit);
 		this.databaseOptions = new EnumArgument(settings, "database.options", "Connection options. Valid values: "
-		        + JavaUtils.enumToString(ConnectOptions.CREATE), ConnectOptions.VALIDATE.name(), true,
+		        + JavaUtils.enumToString(ConnectOptions.CREATE), ConnectOptions.CREATE.name(), true,
 		                                        JavaUtils.enumToArray(ConnectOptions.CREATE));
 		addArgument(this.databaseOptions);
 	}
@@ -94,6 +97,23 @@ public class DatabaseArguments extends AndamaArgumentSet<PersistenceUtil> {
 		                      this.databaseOptions.getValue(), this.databaseMiddleware.getValue())) {
 			// FIXME this should cause an unrecoverable error
 			return null;
+		}
+		
+		if (this.databaseOptions.equals(ConnectOptions.DB_DROP_CREATE)) {
+			try {
+				PersistenceManager.dropDatabase(this.databaseHost.getValue(), this.databaseName.getValue(),
+				                                this.databaseUser.getValue(), this.databasePassword.getValue(),
+				                                this.databaseType.getValue(), this.databaseDriver.getValue());
+				PersistenceManager.createDatabase(this.databaseHost.getValue(), this.databaseName.getValue(),
+				                                  this.databaseUser.getValue(), this.databasePassword.getValue(),
+				                                  this.databaseType.getValue(), this.databaseDriver.getValue());
+			} catch (final SQLException e) {
+				if (Logger.logError()) {
+					Logger.error("Could not re-create database.");
+				}
+				return null;
+			}
+			
 		}
 		
 		final PersistenceUtil util = PersistenceManager.createUtil(this.databaseHost.getValue(),
