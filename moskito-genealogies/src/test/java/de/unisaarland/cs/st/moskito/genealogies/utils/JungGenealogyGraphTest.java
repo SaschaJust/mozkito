@@ -25,7 +25,7 @@ public class JungGenealogyGraphTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "ppa",
 	                   database = "moskito_genealogies_test_environment",
-	                   options = ConnectOptions.VALIDATE)
+	                   options = ConnectOptions.CREATE)
 	public void testCoreLayer() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);
