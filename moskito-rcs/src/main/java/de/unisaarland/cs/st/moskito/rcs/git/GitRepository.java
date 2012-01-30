@@ -81,6 +81,7 @@ public class GitRepository extends Repository {
 	private List<String>                    transactionIDs  = new LinkedList<String>();
 	
 	private final HashMap<String, LogEntry> logCache        = new HashMap<String, LogEntry>();
+	private BranchFactory                   branchFactory;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -454,6 +455,9 @@ public class GitRepository extends Repository {
 	
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
+		if (this.revDepIter == null) {
+			this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision(), this.branchFactory);
+		}
 		return this.revDepIter;
 	}
 	
@@ -592,6 +596,7 @@ public class GitRepository extends Repository {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setUri(address);
+		this.branchFactory = branchFactory;
 		
 		final String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_git_clone_"
 		        + DateTimeUtils.currentTimeMillis();
@@ -618,8 +623,6 @@ public class GitRepository extends Repository {
 		} else {
 			setEndRevision(endRevision);
 		}
-		
-		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision(), branchFactory);
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		                                                                              "--pretty=format:%H",

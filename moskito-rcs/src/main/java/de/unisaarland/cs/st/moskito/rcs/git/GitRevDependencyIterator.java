@@ -113,10 +113,10 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				final RCSBranch commitBranch = this.branches.get(revId);
 				this.branches.remove(revId);
 				
-				// if this is a named branch change name of branch
-				if ((branchName != null) && (!commitBranch.isMasterBranch())) {
-					commitBranch.setName(branchName);
-				}
+				// // if this is a named branch change name of branch
+				// if ((branchName != null) && (!commitBranch.isMasterBranch())) {
+				// commitBranch.setName(branchName);
+				// }
 				
 				if (parents.size() > 0) {
 					final String parent = parents.get(0);
@@ -151,8 +151,10 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				depList.add(0, new RevDependency(revId, commitBranch, new HashSet<String>(parents), tagNames, isMerge));
 			}
-			if ((revListFileIterator.hasNext()) || (decorateListIterator.hasNext())) { throw new UnrecoverableError(
-			                                                                                                        "Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length"); }
+			if ((revListFileIterator.hasNext()) || (decorateListIterator.hasNext())) {
+				throw new UnrecoverableError(
+				                             "Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
+			}
 			this.depIter = depList.iterator();
 		} catch (final Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
@@ -169,8 +171,10 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		                                                                      this.cloneDir, null,
 		                                                                      new HashMap<String, String>(),
 		                                                                      GitRepository.charset);
-		if (response.getFirst() != 0) { throw new UnrecoverableError(
-		                                                             "Could not initialize DependencyIterator for Git repo. Could not get decorateList"); }
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError(
+			                             "Could not initialize DependencyIterator for Git repo. Could not get decorateList");
+		}
 		final File decorateListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final BufferedWriter decorateListWriter = new BufferedWriter(new FileWriter(decorateListFile));
 		for (final String line : response.getSecond()) {
@@ -195,8 +199,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		                                                                      this.cloneDir, null,
 		                                                                      new HashMap<String, String>(),
 		                                                                      GitRepository.charset);
-		if (response.getFirst() != 0) { throw new UnrecoverableError(
-		                                                             "Could not fetch list of transactions merging branches."); }
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not fetch list of transactions merging branches.");
+		}
 		return response.getSecond();
 	}
 	
@@ -208,9 +213,11 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		                                                                      this.cloneDir, null,
 		                                                                      new HashMap<String, String>(),
 		                                                                      GitRepository.charset);
-		if (response.getFirst() != 0) { throw new UnrecoverableError(
-		                                                             "Could not initialize DependencyIterator for Git repo: could not get revList using revision"
-		                                                                     + this.revision + "."); }
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError(
+			                             "Could not initialize DependencyIterator for Git repo: could not get revList using revision"
+			                                     + this.revision + ".");
+		}
 		final File revListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));
 		for (final String line : response.getSecond()) {
@@ -228,7 +235,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	@Override
 	public RevDependency next() {
-		if (!hasNext()) { return null; }
+		if (!hasNext()) {
+			return null;
+		}
 		return this.depIter.next();
 	}
 	
