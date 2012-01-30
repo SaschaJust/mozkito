@@ -3,9 +3,12 @@ package de.unisaarland.cs.st.moskito.testing;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.joda.time.DateTime;
@@ -25,7 +28,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 
+import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoSuiteAnnotation;
 import de.unisaarland.cs.st.moskito.testing.annotation.MoskitoTestAnnotation;
+import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSettingsProcessor;
 
 public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	
@@ -103,16 +108,17 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		
 	}
 	
-	private final List<TestRun> fTestMethods    = new LinkedList<TestRun>();
-	private final List<TestRun> fIgnoreMethods  = new LinkedList<TestRun>();
-	private final List<Method>  setupMethods    = new LinkedList<Method>();
-	private final List<Method>  tearDownMethods = new LinkedList<Method>();
+	private final List<TestRun>                                              fTestMethods     = new LinkedList<TestRun>();
+	private final List<TestRun>                                              fIgnoreMethods   = new LinkedList<TestRun>();
+	private final List<Method>                                               setupMethods     = new LinkedList<Method>();
+	private final List<Method>                                               tearDownMethods  = new LinkedList<Method>();
 	
-	private final TestClass     fTestClass;
+	private final TestClass                                                  fTestClass;
 	
-	private final Description   description;
-	private final List<Method>  bootMethods     = new LinkedList<Method>();
-	private final List<Method>  shutdownMethods = new LinkedList<Method>();
+	private final Description                                                description;
+	private final List<Method>                                               bootMethods      = new LinkedList<Method>();
+	private final List<Method>                                               shutdownMethods  = new LinkedList<Method>();
+	private final Map<Annotation, Class<? extends MoskitoSettingsProcessor>> suiteAnnotations = new HashMap<Annotation, Class<? extends MoskitoSettingsProcessor>>();
 	
 	/**
 	 * @param aClass
@@ -179,6 +185,14 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 				}
 			}
 		}
+		
+		for (final Annotation annotation : aClass.getAnnotations()) {
+			if (annotation.annotationType().getAnnotation(MoskitoSuiteAnnotation.class) != null) {
+				this.suiteAnnotations.put(annotation,
+				                          annotation.annotationType().getAnnotation(MoskitoSuiteAnnotation.class)
+				                                    .value());
+			}
+		}
 	}
 	
 	/*
@@ -215,6 +229,17 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		final DateTime startTime = new DateTime();
 		System.err.println(suiteTag + ">>>>> Running suite. >>>>>");
 		
+		for (final Annotation annotation : this.suiteAnnotations.keySet()) {
+			try {
+				final MoskitoSettingsProcessor processor = this.suiteAnnotations.get(annotation).newInstance();
+				processor.setup(this.fTestClass.getJavaClass(), annotation);
+			} catch (final InstantiationException e) {
+				throw new UnrecoverableError("Could not initialize processor of " + annotation.toString(), e);
+			} catch (final IllegalAccessException e) {
+				throw new UnrecoverableError("Could not initialize processor of " + annotation.toString(), e);
+			}
+		}
+		
 		for (int i = 0; i < this.fTestMethods.size(); i++) {
 			final MoskitoTestBuilder builder = new MoskitoTestBuilder(this.fTestMethods.get(i), runNotifier);
 			builders.add(builder);
@@ -232,6 +257,17 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 				builder.join();
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+		
+		for (final Annotation annotation : this.suiteAnnotations.keySet()) {
+			try {
+				final MoskitoSettingsProcessor processor = this.suiteAnnotations.get(annotation).newInstance();
+				processor.tearDown(this.fTestClass.getJavaClass(), annotation);
+			} catch (final InstantiationException e) {
+				throw new UnrecoverableError("Could not initialize processor of " + annotation.toString(), e);
+			} catch (final IllegalAccessException e) {
+				throw new UnrecoverableError("Could not initialize processor of " + annotation.toString(), e);
 			}
 		}
 		

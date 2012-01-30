@@ -21,30 +21,22 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -52,202 +44,42 @@ import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeExcepti
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
-import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySetting;
 import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
+import de.unisaarland.cs.st.moskito.testing.annotation.processors.RepositorySettingsProcessor;
 import difflib.Delta;
 
-@DatabaseSettings (unit = "rcs")
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
-public class RepositoryTest {
+public class RepositoryTest extends MoskitoTest {
 	
-	// [scheme:][//authority][path][?query][#fragment]
-	// [user-info@]host[:port]
-	
-	private static File             tmpDirectory;
-	private static List<Repository> repositories = new LinkedList<Repository>();
-	
-	@AfterClass
-	public static void afterClass() {
-		
-		URL repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial");
-		if (repoURL != null) {
-			try {
-				final File toDelete = new File(repoURL.toURI());
-				FileUtils.deleteDirectory(toDelete);
-			} catch (final URISyntaxException e) {
-				e.printStackTrace();
-				fail();
-			} catch (final IOException e) {
-				e.printStackTrace();
-				fail();
-			}
-			
-		}
-		
-		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git");
-		if (repoURL != null) {
-			try {
-				final File toDelete = new File(repoURL.toURI());
-				FileUtils.deleteDirectory(toDelete);
-			} catch (final URISyntaxException e) {
-				e.printStackTrace();
-				fail();
-			} catch (final IOException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-		
-		repoURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit");
-		if (repoURL != null) {
-			try {
-				final File toDelete = new File(repoURL.toURI());
-				FileUtils.deleteDirectory(toDelete);
-			} catch (final URISyntaxException e) {
-				e.printStackTrace();
-				fail();
-			} catch (final IOException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-		
-		for (final Repository repository : repositories) {
-			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				continue;
-			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
-				try {
-					FileUtils.deleteDirectory(tmpDirectory);
-				} catch (final IOException e) {
-					e.printStackTrace();
-					fail();
-				}
-			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
-				final GitRepository gitRepo = (GitRepository) repository;
-				if (gitRepo.getWokingCopyLocation() != null) {
-					try {
-						FileUtils.deleteDirectory(gitRepo.getWokingCopyLocation());
-					} catch (final IOException e) {
-						e.printStackTrace();
-						fail();
-					}
-				}
-			} else if (repository.getRepositoryType().equals(RepositoryType.MERCURIAL)) {
-				final MercurialRepository hgRepo = (MercurialRepository) repository;
-				if (hgRepo.getWokingCopyLocation() != null) {
-					try {
-						FileUtils.deleteDirectory(hgRepo.getWokingCopyLocation());
-					} catch (final IOException e) {
-						e.printStackTrace();
-						fail();
-					}
-				}
-			}
-		}
-		
-		// delete all reposuite directories and files
-		final Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
-		final Set<File> set = openFiles.get(FileShutdownAction.DELETE);
-		if (set != null) {
-			for (final File f : set) {
-				try {
-					if (f.isFile()) {
-						FileUtils.forceDelete(f);
-					} else {
-						FileUtils.deleteDirectory(f);
-					}
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+	private static List<Repository>         repositories = new LinkedList<Repository>();
+	private static Map<RepositoryType, URI> repoMap;
 	
 	@BeforeClass
 	public static void beforeClass() {
-		final Map<RepositoryType, URI> repoMap = new HashMap<RepositoryType, URI>();
-		// UNZIP mercurial repo
-		URL zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.mercurial.zip");
-		if (zipURL == null) {
-			fail();
-		}
-		final File mercurialBaseDir = FileUtils.createRandomDir("repotest_mercurial", null, FileShutdownAction.DELETE);
-		try {
-			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
-		} catch (final FilePermissionException e2) {
-			fail();
-		}
-		
-		File zipFile = null;
-		try {
-			zipFile = new File(zipURL.toURI());
-		} catch (final URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + mercurialBaseDir.getAbsolutePath());
-		}
-		FileUtils.unzip(zipFile, mercurialBaseDir);
-		// UNZIP END
-		
-		try {
-			repoMap.put(RepositoryType.MERCURIAL, new URI("file://" + mercurialBaseDir + File.separator + "repotest."
-			        + RepositoryType.MERCURIAL.name().toLowerCase()));
-		} catch (final URISyntaxException e3) {
-			fail();
-		}
-		
-		// UNZIP git repo
-		zipURL = RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest.git.zip");
-		if (zipURL == null) {
-			fail();
-		}
-		
-		final File gitBaseDir = FileUtils.createRandomDir("repotest_git", null, FileShutdownAction.DELETE);
-		try {
-			FileUtils.ensureFilePermissions(mercurialBaseDir, FileUtils.WRITABLE_DIR | FileUtils.ACCESSIBLE_DIR);
-		} catch (final FilePermissionException e2) {
-			fail();
-			
-		}
-		
-		try {
-			zipFile = new File(zipURL.toURI());
-		} catch (final URISyntaxException e1) {
-			e1.printStackTrace();
-			fail();
-		}
-		if (Logger.logInfo()) {
-			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + gitBaseDir.getAbsolutePath());
-		}
-		FileUtils.unzip(zipFile, gitBaseDir);
-		// UNZIP END
-		
-		try {
-			repoMap.put(RepositoryType.GIT, new URI("file://" + gitBaseDir + File.separator + "repotest."
-			        + RepositoryType.GIT.name().toLowerCase()));
-		} catch (final URISyntaxException e2) {
-			fail();
-		}
-		try {
-			repoMap.put(RepositoryType.SUBVERSION,
-			            RepositoryTest.class.getResource(FileUtils.fileSeparator + "repotest."
-			                                                     + RepositoryType.SUBVERSION.name().toLowerCase())
-			                                .toURI());
-		} catch (final URISyntaxException e2) {
-			fail();
-		}
+		repoMap = new HashMap<RepositoryType, URI>();
 		
 		for (final RepositoryType type : RepositoryType.values()) {
 			if (type.equals(RepositoryType.CVS)) {
 				continue;
 			}
+			
+			final String pathName = RepositorySettingsProcessor.getPathName(RepositoryTest.class, type);
+			if (pathName != null) {
+				try {
+					repoMap.put(type, new URI("file://" + pathName + File.separator + "repotest."
+					        + type.name().toLowerCase()));
+				} catch (final URISyntaxException e) {
+					fail(e.getMessage());
+				}
+			} else {
+				fail();
+			}
+			
 			Repository repository = null;
 			try {
 				repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
@@ -263,30 +95,7 @@ public class RepositoryTest {
 			}
 			repositories.add(repository);
 			
-			File urlFile = new File(repoMap.get(type));
-			
-			if (type.equals(RepositoryType.SUBVERSION)) {
-				tmpDirectory = FileUtils.createRandomDir("repotest_" + type.toString(), "", FileShutdownAction.DELETE);
-				try {
-					Integer returnValue = 0;
-					if (Logger.logDebug()) {
-						Logger.debug("Creating " + type.toString() + " repository at: "
-						        + tmpDirectory.getAbsolutePath());
-					}
-					Tuple<Integer, List<String>> execute = CommandExecutor.execute("svnadmin", new String[] { "create",
-					        "--config-dir", System.getProperty("user.home") + FileUtils.fileSeparator + ".subversion",
-					        tmpDirectory.getAbsolutePath() }, tmpDirectory, null, null);
-					returnValue += execute.getFirst();
-					execute = CommandExecutor.execute("svnadmin",
-					                                  new String[] { "load", tmpDirectory.getAbsolutePath() },
-					                                  tmpDirectory, repoMap.get(type).toURL().openStream(), null);
-					returnValue += execute.getFirst();
-				} catch (final IOException e) {
-					e.printStackTrace();
-					fail(e.getMessage());
-				}
-				urlFile = tmpDirectory;
-			}
+			final File urlFile = new File(repoMap.get(type));
 			
 			try {
 				repository.setup(urlFile.toURI(), null, null, null);

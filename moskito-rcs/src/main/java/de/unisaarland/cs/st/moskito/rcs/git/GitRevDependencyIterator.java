@@ -31,7 +31,6 @@ import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -53,7 +52,6 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private final Map<String, RCSBranch> branches = new HashMap<String, RCSBranch>();
 	
-	@NoneNull
 	public GitRevDependencyIterator(final File cloneDir, final String revision, final PersistenceUtil persistenceUtil) {
 		
 		this.cloneDir = cloneDir;
@@ -76,7 +74,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				
 				Condition.check(revFields.length > 0, "The fileds in the temporary csv filed should never be empty");
 				Condition.check(revFields[0].trim().equals(decoId),
-						"the first field in the current temp csv line must equal the current tranaction id");
+				                "the first field in the current temp csv line must equal the current tranaction id");
 				
 				// if decoration starts with "ref/remotes/" then it's a branch
 				// name. Set branchName of current branch.
@@ -114,7 +112,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				
 				Condition.check(this.branches.containsKey(revId),
-						"The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
+				                "The current transaction id must be known and the branch it belongs to must be known too. If this is not the case somethig goes horribly wrong.");
 				
 				final RCSBranch commitBranch = this.branches.get(revId);
 				this.branches.remove(revId);
@@ -150,7 +148,6 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					newBranch.addMergedIn(revId);
 				}
 				
-				
 				// if transaction is a merge, mark it as a merge
 				boolean isMerge = false;
 				if (mergeTransactions.contains(revId)) {
@@ -160,27 +157,27 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			}
 			if ((revListFileIterator.hasNext()) || (decorateListIterator.hasNext())) {
 				throw new UnrecoverableError(
-						"Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
+				                             "Could not initialize DependencyIterator for Git repo: revlist and taglist should have same length");
 			}
 			this.depIter = depList.iterator();
 		} catch (final Exception e) {
 			throw new UnrecoverableError("Could not initialize DependencyIterator for Git repo."
-					+ FileUtils.lineSeparator + e.getMessage(), e);
+			        + FileUtils.lineSeparator + e.getMessage(), e);
 		}
 	}
 	
 	private File getDecorateListFile() throws IOException {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--branches", "--decorate=full",
-				"--remotes", "--encoding=UTF-8",
-				"--pretty=format:%H %d",
-				"--topo-order", this.revision },
-				this.cloneDir, null,
-				new HashMap<String, String>(),
-				GitRepository.charset);
+		                                                                              "--branches", "--decorate=full",
+		                                                                              "--remotes", "--encoding=UTF-8",
+		                                                                              "--pretty=format:%H %d",
+		                                                                              "--topo-order", this.revision },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
-					"Could not initialize DependencyIterator for Git repo. Could not get decorateList");
+			                             "Could not initialize DependencyIterator for Git repo. Could not get decorateList");
 		}
 		final File decorateListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final BufferedWriter decorateListWriter = new BufferedWriter(new FileWriter(decorateListFile));
@@ -200,13 +197,13 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		 * closed at all (see above).
 		 */
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-				"--branches", "--decorate=full",
-				"--remotes", "--encoding=UTF-8",
-				"--pretty=format:%H", "--merges",
-				"--topo-order", this.revision },
-				this.cloneDir, null,
-				new HashMap<String, String>(),
-				GitRepository.charset);
+		                                                                              "--branches", "--decorate=full",
+		                                                                              "--remotes", "--encoding=UTF-8",
+		                                                                              "--pretty=format:%H", "--merges",
+		                                                                              "--topo-order", this.revision },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not fetch list of transactions merging branches.");
 		}
@@ -215,16 +212,16 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 	
 	private File getRevListFile() throws IOException {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-				"--encoding=UTF-8", "--parents",
-				"--branches", "--remotes",
-				"--topo-order", this.revision },
-				this.cloneDir, null,
-				new HashMap<String, String>(),
-				GitRepository.charset);
+		                                                                              "--encoding=UTF-8", "--parents",
+		                                                                              "--branches", "--remotes",
+		                                                                              "--topo-order", this.revision },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError(
-					"Could not initialize DependencyIterator for Git repo: could not get revList using revision"
-							+ this.revision + ".");
+			                             "Could not initialize DependencyIterator for Git repo: could not get revList using revision"
+			                                     + this.revision + ".");
 		}
 		final File revListFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final BufferedWriter revListWriter = new BufferedWriter(new FileWriter(revListFile));

@@ -597,7 +597,7 @@ public class GitRepository extends Repository {
 		        + DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {
-			throw new UnrecoverableError("Failed to clone git repository!");
+			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
 		}
 		
 		final String innerPath = ((getUri().getFragment()) != null)
