@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package net.ownhero.dev.regex;
 
 import java.util.ArrayList;
@@ -25,8 +38,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 /**
- * This class provides regular expression support and as well interfaces as
- * extends JRegex.
+ * This class provides regular expression support and as well interfaces as extends JRegex.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -203,9 +215,8 @@ public class Regex {
 	}
 	
 	/**
-	 * Reduces the pattern to find the longest substring of the pattern
-	 * (starting at the beginning that matches the text). If the specified
-	 * pattern already matches the text, the pattern is returned.
+	 * Reduces the pattern to find the longest substring of the pattern (starting at the beginning that matches the
+	 * text). If the specified pattern already matches the text, the pattern is returned.
 	 * 
 	 * @param text
 	 *            to be checked against
@@ -372,9 +383,8 @@ public class Regex {
 	}
 	
 	/**
-	 * This uses non-breaking search to find all possible occurrences of the
-	 * pattern, including those that are intersecting or nested. This is
-	 * achieved by using the Matcher's method proceed() instead of find().
+	 * This uses non-breaking search to find all possible occurrences of the pattern, including those that are
+	 * intersecting or nested. This is achieved by using the Matcher's method proceed() instead of find().
 	 * 
 	 * @param text
 	 *            the text to be scanned
@@ -499,10 +509,9 @@ public class Regex {
 	}
 	
 	/**
-	 * This feature allows to find out whether the string could match by
-	 * examining only its beginning part. For example, the string is being typed
-	 * into a text field, and you want to reject the rest characters after the
-	 * first few ones appear incorrect.
+	 * This feature allows to find out whether the string could match by examining only its beginning part. For example,
+	 * the string is being typed into a text field, and you want to reject the rest characters after the first few ones
+	 * appear incorrect.
 	 * 
 	 * @param text
 	 *            the text to be analyzed
@@ -534,8 +543,7 @@ public class Regex {
 	}
 	
 	/**
-	 * Replaces all occurrences of the pattern in the text with the given
-	 * string.
+	 * Replaces all occurrences of the pattern in the text with the given string.
 	 * 
 	 * @param text
 	 * @param replacement
@@ -590,12 +598,10 @@ public class Regex {
 	}
 	
 	/**
-	 * String tokenizing is pretty similar to using a standard StringTokenizer
-	 * class. The only difference is that this one uses a pattern occurrence as
-	 * a token delimiter. You can refine your search criteria by adding
-	 * backward/forward scanning, e.g. when using a <code>"---"</code> delimiter
-	 * you can use the pattern <code>"(?<!\")---(?!\")"</code>. This makes sure
-	 * the hyphens are not enclosed by quote marks.
+	 * String tokenizing is pretty similar to using a standard StringTokenizer class. The only difference is that this
+	 * one uses a pattern occurrence as a token delimiter. You can refine your search criteria by adding
+	 * backward/forward scanning, e.g. when using a <code>"---"</code> delimiter you can use the pattern
+	 * <code>"(?<!\")---(?!\")"</code>. This makes sure the hyphens are not enclosed by quote marks.
 	 * 
 	 * @param text
 	 *            to be split using the pattern
