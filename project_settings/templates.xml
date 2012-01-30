@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates>
+<template autoinsert="true" context="java" deleted="false" description="Moskito trace logging" enabled="true" name="rstrace">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logTrace()) {
+        Logger.trace(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito trace logging" enabled="true" name="mktrace">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logTrace()) {
+        Logger.trace(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito debug logging" enabled="true" name="rsdebug">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logDebug()) {
+        Logger.debug(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito debug logging" enabled="true" name="mkdebug">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logDebug()) {
+        Logger.debug(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito info logging" enabled="true" name="rsinfo">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logInfo()) {
+        Logger.info(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito info logging" enabled="true" name="mkinfo">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logInfo()) {
+        Logger.info(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito warn logging" enabled="true" name="rswarn">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logWarn()) {
+        Logger.warn(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito warn logging" enabled="true" name="mkwarn">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logWarn()) {
+        Logger.warn(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito error logging" enabled="true" name="rserror">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logError()) {
+        Logger.error(${word_selection}${cursor});
+}</template>
+<template autoinsert="true" context="java" deleted="false" description="Moskito error logging" enabled="true" name="mkerror">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logError()) {
+        Logger.error(${word_selection}${cursor});
+}</template>
+</templates>
