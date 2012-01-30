@@ -238,11 +238,10 @@ public class ChangeGenealogyUtils {
 		Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
 		Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 		
-		persistenceUtil.beginTransaction();
-		
 		//read all transactions and JavaChangeOperations
 		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
 		List<RCSTransaction> transactionList = persistenceUtil.load(transactionCriteria);
+		
 		for (RCSTransaction transaction : transactionList) {
 			if (transaction.getId().equals("a64df287a21f8a7b0690d13c1561171cbf48a0e1")) {
 				environmentTransactions.put(1, transaction);
@@ -337,12 +336,11 @@ public class ChangeGenealogyUtils {
 		}
 		
 		if (transactionMap.size() != 10) {
-			System.err.println("The imported database dump must contain exactly 10 transaction entries.");
+			System.err.println("The imported database dump must contain exactly 10 transaction entries but was "+transactionMap.size());
+			
 			return null;
 		}
 		
-		//done everything is set.
-		persistenceUtil.commitTransaction();
 		
 		CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		
@@ -358,6 +356,7 @@ public class ChangeGenealogyUtils {
 				changeGenealogy.addVertex(operation);
 			}
 		}
+		
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
 				environmentOperations.get(TestEnvironmentOperation.T1F1),

@@ -22,6 +22,7 @@ import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionPartitioner;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
@@ -30,7 +31,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class TransactionChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "ppa")
+	@DatabaseSettings(unit = "ppa", database="moskito_genealogies_test_environment", options=ConnectOptions.CREATE)
 	public void test() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
