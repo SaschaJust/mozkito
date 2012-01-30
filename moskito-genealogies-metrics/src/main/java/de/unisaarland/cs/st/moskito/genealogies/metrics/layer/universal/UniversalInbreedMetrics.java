@@ -11,12 +11,12 @@ import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalInbreedMetrics<T> {
-	
+
 	private static String      numInbreedChildren = "NumInbreedChildren";
 	private static String      numInbreedParents  = "NumInbreedParents";
 	private static String      avgInbreedChildren = "AvgInbreedChildren";
 	private static String      avgInbreedParents  = "AvgInbreedParents";
-	
+
 	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(numInbreedChildren);
@@ -25,26 +25,26 @@ public class UniversalInbreedMetrics<T> {
 		result.add(avgInbreedParents);
 		return result;
 	}
-	
-	private ChangeGenealogy<T> genealogy;
-	
+
+	private final ChangeGenealogy<T> genealogy;
+
 	public UniversalInbreedMetrics(ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
-		
+
 		Collection<T> vertexParents = genealogy.getAllDependants(node);
 		Collection<T> vertexChildren = genealogy.getAllDependants(node);
-		
+
 		DescriptiveStatistics inbreedChildrenStat = new DescriptiveStatistics();
 		DescriptiveStatistics inbreedParentsStat = new DescriptiveStatistics();
-		
+
 		Collection<T> inbreedChildren = new HashSet<T>();
 		Collection<T> inbreedParents = new HashSet<T>();
-		
+
 		for (T child : genealogy.getAllDependants(node)) {
 			Collection<T> grandChildren = genealogy.getAllDependants(child);
 			@SuppressWarnings("rawtypes") Collection intersection = CollectionUtils.intersection(vertexChildren,
@@ -52,7 +52,7 @@ public class UniversalInbreedMetrics<T> {
 			inbreedChildren.addAll(intersection);
 			inbreedChildrenStat.addValue(intersection.size());
 		}
-		
+
 		for (T parent : genealogy.getAllParents(node)) {
 			Collection<T> grandParents = genealogy.getAllParents(parent);
 			@SuppressWarnings("rawtypes") Collection intersection = CollectionUtils.intersection(vertexParents,
@@ -60,15 +60,19 @@ public class UniversalInbreedMetrics<T> {
 			inbreedParents.addAll(intersection);
 			inbreedParentsStat.addValue(intersection.size());
 		}
-		
+
 		String nodeId = genealogy.getNodeId(node);
-		
+
 		result.add(new GenealogyMetricValue(numInbreedChildren, nodeId, inbreedChildren.size()));
 		result.add(new GenealogyMetricValue(numInbreedParents, nodeId, inbreedParents.size()));
-		
-		result.add(new GenealogyMetricValue(avgInbreedChildren, nodeId, inbreedChildrenStat.getMean()));
-		result.add(new GenealogyMetricValue(avgInbreedParents, nodeId, inbreedParentsStat.getMean()));
-		
+
+		result.add(new GenealogyMetricValue(avgInbreedChildren, nodeId,
+				(inbreedChildrenStat.getN() < 1) ? 0 : inbreedChildrenStat
+						.getMean()));
+		result.add(new GenealogyMetricValue(avgInbreedParents, nodeId,
+				(inbreedParentsStat.getN() < 1) ? 0 : inbreedParentsStat
+						.getMean()));
+
 		return result;
 	}
 }

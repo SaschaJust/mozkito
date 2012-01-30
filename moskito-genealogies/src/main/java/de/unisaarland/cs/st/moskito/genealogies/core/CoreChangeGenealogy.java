@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -309,7 +308,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *         (this may include that the vertex existed already).
 	 */
 	@NoneNull
-	public boolean addVertex(@NotEmpty final JavaChangeOperation v) {
+	public boolean addVertex(@NotNull final JavaChangeOperation v) {
 		if (this.hasVertex(v)) {
 			if (Logger.logWarn()) {
 				Logger.warn("JavaChangeOperations with id `" + v.getId() + "` already exists");

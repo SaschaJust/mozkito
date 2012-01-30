@@ -46,7 +46,7 @@ public class UniversalSiblingMetrics<T> {
 		String nodeId = genealogy.getNodeId(node);
 		
 		result.add(new GenealogyMetricValue(numSiblingChildren, nodeId, num));
-		result.add(new GenealogyMetricValue(avgSiblingChildren, nodeId, siblingChildren.getMean()));
+		result.add(new GenealogyMetricValue(avgSiblingChildren, nodeId, (siblingChildren.getN() < 1) ? 0 : siblingChildren.getMean()));
 		
 		
 		return result;

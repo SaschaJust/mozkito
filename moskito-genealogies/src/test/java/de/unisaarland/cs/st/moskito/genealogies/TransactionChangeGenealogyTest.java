@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings(unit = "ppa", database="moskito_genealogies_test_environment", options=ConnectOptions.CREATE)
 	public void test() {
-		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
+		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.DELETE);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
 		        getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
@@ -263,11 +262,5 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		assertTrue(vertices.containsAll(environmentTransactions.values()));
 		
 		tdg.close();
-		try {
-			FileUtils.deleteDirectory(tmpGraphDBFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
-	
 }

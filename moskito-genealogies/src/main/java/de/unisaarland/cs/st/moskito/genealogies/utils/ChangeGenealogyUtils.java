@@ -276,55 +276,55 @@ public class ChangeGenealogyUtils {
 				operations.addAll(changeOps);
 				for (JavaChangeOperation op : changeOps) {
 					switch ((int) op.getId()) {
-						case 252:
+						case 204:
 							environmentOperations.put(TestEnvironmentOperation.T1F2, op);
 							break;
-						case 253:
+						case 201:
 							environmentOperations.put(TestEnvironmentOperation.T1F1, op);
 							break;
-						case 255:
+						case 207:
 							environmentOperations.put(TestEnvironmentOperation.T2F3, op);
 							break;
-						case 260:
+						case 212:
 							environmentOperations.put(TestEnvironmentOperation.T3F1D, op);
 							break;
-						case 259:
+						case 213:
 							environmentOperations.put(TestEnvironmentOperation.T3F1A, op);
 							break;
-						case 261:
+						case 210:
 							environmentOperations.put(TestEnvironmentOperation.T3F2M, op);
 							break;
-						case 263:
+						case 209:
 							environmentOperations.put(TestEnvironmentOperation.T3F2, op);
 							break;
-						case 269:
+						case 217:
 							environmentOperations.put(TestEnvironmentOperation.T4F3D, op);
 							break;
-						case 268:
+						case 218:
 							environmentOperations.put(TestEnvironmentOperation.T4F3A, op);
 							break;
-						case 264:
+						case 215:
 							environmentOperations.put(TestEnvironmentOperation.T4F4, op);
 							break;
-						case 271:
+						case 221:
 							environmentOperations.put(TestEnvironmentOperation.T5F4, op);
 							break;
-						case 276:
+						case 224:
 							environmentOperations.put(TestEnvironmentOperation.T6F2, op);
 							break;
-						case 279:
+						case 227:
 							environmentOperations.put(TestEnvironmentOperation.T7F2, op);
 							break;
-						case 280:
+						case 230:
 							environmentOperations.put(TestEnvironmentOperation.T8F2, op);
 							break;
-						case 284:
+						case 234:
 							environmentOperations.put(TestEnvironmentOperation.T9F1, op);
 							break;
-						case 290:
+						case 235:
 							environmentOperations.put(TestEnvironmentOperation.T10F3, op);
 							break;
-						case 285:
+						case 240:
 							environmentOperations.put(TestEnvironmentOperation.T10F4, op);
 							break;
 						default:

@@ -253,7 +253,6 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * @param signature
 	 *            the new signature
 	 */
-	@NoneNull
 	protected void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}
