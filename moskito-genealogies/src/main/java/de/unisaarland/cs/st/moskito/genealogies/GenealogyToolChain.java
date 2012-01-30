@@ -20,20 +20,21 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 public class GenealogyToolChain extends AndamaChain {
 	
-	private AndamaPool         threadPool;
-	private GenealogyArguments genealogyArgs;
+	private final AndamaPool         threadPool;
+	private final GenealogyArguments genealogyArgs;
 	
 	public GenealogyToolChain() {
 		super(new GenealogySettings());
 		
 		this.threadPool = new AndamaPool(GenealogyToolChain.class.getSimpleName(), this);
-		GenealogySettings settings = (GenealogySettings) getSettings();
-		LoggerArguments loggerArg = settings.setLoggerArg(false);
+		final GenealogySettings settings = (GenealogySettings) getSettings();
+		final LoggerArguments loggerArg = settings.setLoggerArg(false);
 		loggerArg.getValue();
-		genealogyArgs = settings.setGenealogyArgs(true);
+		this.genealogyArgs = settings.setGenealogyArgs(true);
 		settings.parseArguments();
 	}
 	
@@ -50,8 +51,11 @@ public class GenealogyToolChain extends AndamaChain {
 	
 	@Override
 	public void setup() {
-		CoreChangeGenealogy genealogy = genealogyArgs.getValue();
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), genealogy.getPersistenceUtil());
+		final CoreChangeGenealogy genealogy = this.genealogyArgs.getValue();
+		
+		final BranchFactory branchFactory = new BranchFactory(genealogy.getPersistenceUtil());
+		
+		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory);
 		new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 		

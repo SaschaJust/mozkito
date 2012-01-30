@@ -41,6 +41,7 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.T
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
@@ -61,7 +62,7 @@ public class ChangeGenealogyUtils {
 			
 			@Override
 			public void run() {
-				for (CoreChangeGenealogy genealogy : genealogies.keySet()) {
+				for (final CoreChangeGenealogy genealogy : genealogies.keySet()) {
 					if (genealogies.get(genealogy).exists()) {
 						genealogy.close();
 					}
@@ -75,16 +76,16 @@ public class ChangeGenealogyUtils {
 	
 	private static void exportToDOT(final CoreChangeGenealogy genealogy,
 	                                final File dotFile) throws IOException {
-		BufferedWriter out = new BufferedWriter(new FileWriter(dotFile));
+		final BufferedWriter out = new BufferedWriter(new FileWriter(dotFile));
 		
 		out.write("digraph g {");
 		out.write(FileUtils.lineSeparator);
-		Iterator<JavaChangeOperation> vertexIterator = genealogy.vertexIterator();
+		final Iterator<JavaChangeOperation> vertexIterator = genealogy.vertexIterator();
 		while (vertexIterator.hasNext()) {
-			JavaChangeOperation op = vertexIterator.next();
-			String opId = genealogy.getNodeId(op);
-			for (JavaChangeOperation parent : genealogy.getAllParents(op)) {
-				String parentId = genealogy.getNodeId(parent);
+			final JavaChangeOperation op = vertexIterator.next();
+			final String opId = genealogy.getNodeId(op);
+			for (final JavaChangeOperation parent : genealogy.getAllParents(op)) {
+				final String parentId = genealogy.getNodeId(parent);
 				out.write(opId);
 				out.write(" -> ");
 				out.write(parentId);
@@ -98,14 +99,14 @@ public class ChangeGenealogyUtils {
 	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
 	                                   final File outFile) {
 		try {
-			FileOutputStream out = new FileOutputStream(outFile);
-			Graph g = new Neo4jGraph(genealogy.getGraphDBService());
+			final FileOutputStream out = new FileOutputStream(outFile);
+			final Graph g = new Neo4jGraph(genealogy.getGraphDBService());
 			GraphMLWriter.outputGraph(g, out);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getLocalizedMessage(), e);
 			}
-		} catch (XMLStreamException e) {
+		} catch (final XMLStreamException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getLocalizedMessage(), e);
 			}
@@ -113,7 +114,7 @@ public class ChangeGenealogyUtils {
 	}
 	
 	public static String getGenealogyStats(final CoreChangeGenealogy genealogy) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		
 		sb.append("#Vertices: ");
 		sb.append(genealogy.vertexSize());
@@ -124,7 +125,7 @@ public class ChangeGenealogyUtils {
 		sb.append(FileUtils.lineSeparator);
 		sb.append("Edge types used: ");
 		
-		for (GenealogyEdgeType t : genealogy.getExistingEdgeTypes()) {
+		for (final GenealogyEdgeType t : genealogy.getExistingEdgeTypes()) {
 			sb.append(t.toString());
 			sb.append(" ");
 		}
@@ -133,10 +134,10 @@ public class ChangeGenealogyUtils {
 	}
 	
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
-	                                                                   final PersistenceUtil persistenceUtil) {
+	                                                                   final BranchFactory branchFactory) {
 		
 		// UNZIP git repo
-		URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
+		final URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
 		if (zipURL == null) {
 			return null;
 		}
@@ -147,10 +148,10 @@ public class ChangeGenealogyUtils {
 			                   (new URL(zipURL.toString().substring(0,
 			                                                        zipURL.toString()
 			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-		} catch (MalformedURLException e1) {
+		} catch (final MalformedURLException e1) {
 			e1.printStackTrace();
 			return null;
-		} catch (URISyntaxException e1) {
+		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
 			return null;
 		}
@@ -158,7 +159,7 @@ public class ChangeGenealogyUtils {
 		File zipFile = null;
 		try {
 			zipFile = new File(zipURL.toURI());
-		} catch (URISyntaxException e1) {
+		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
 			return null;
 		}
@@ -171,29 +172,29 @@ public class ChangeGenealogyUtils {
 		Repository repository = null;
 		try {
 			repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
-		} catch (InstantiationException e1) {
+		} catch (final InstantiationException e1) {
 			e1.printStackTrace();
 			return null;
-		} catch (IllegalAccessException e1) {
+		} catch (final IllegalAccessException e1) {
 			e1.printStackTrace();
 			return null;
-		} catch (UnregisteredRepositoryTypeException e1) {
+		} catch (final UnregisteredRepositoryTypeException e1) {
 			e1.printStackTrace();
 			return null;
 		}
 		
-		URL url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
+		final URL url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
 		File urlFile = null;
 		try {
 			urlFile = new File(url.toURI());
-		} catch (URISyntaxException e1) {
+		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
 			return null;
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), null, null, persistenceUtil);
-		} catch (Exception e) {
+			repository.setup(urlFile.toURI(), null, null, branchFactory);
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
 			}
@@ -238,15 +239,15 @@ public class ChangeGenealogyUtils {
 		
 		// till here we loaded the database dump and extracted the repository.
 		
-		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
-		Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
-		Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
+		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
+		final Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
+		final Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 		
 		// read all transactions and JavaChangeOperations
-		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
-		List<RCSTransaction> transactionList = persistenceUtil.load(transactionCriteria);
-		
-		for (RCSTransaction transaction : transactionList) {
+		final Criteria<RCSTransaction> transactionCriteria = branchFactory.getPersistenceUtil()
+		                                                                  .createCriteria(RCSTransaction.class);
+		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
+		for (final RCSTransaction transaction : transactionList) {
 			if (transaction.getId().equals("a64df287a21f8a7b0690d13c1561171cbf48a0e1")) {
 				environmentTransactions.put(1, transaction);
 			} else if (transaction.getId().equals("a10344533c2b442235aa3bf3dc87dd0ac37cb0af")) {
@@ -271,13 +272,14 @@ public class ChangeGenealogyUtils {
 				throw new UnrecoverableError("Got unexpected RCSTransaction from database: " + transaction.getId());
 			}
 			
-			Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
-			for (RCSRevision revision : transaction.getRevisions()) {
-				Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
+			for (final RCSRevision revision : transaction.getRevisions()) {
+				final Criteria<JavaChangeOperation> operationCriteria = branchFactory.getPersistenceUtil()
+				                                                                     .createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
-				List<JavaChangeOperation> changeOps = persistenceUtil.load(operationCriteria);
+				final List<JavaChangeOperation> changeOps = branchFactory.getPersistenceUtil().load(operationCriteria);
 				operations.addAll(changeOps);
-				for (JavaChangeOperation op : changeOps) {
+				for (final JavaChangeOperation op : changeOps) {
 					switch ((int) op.getId()) {
 						case 204:
 							environmentOperations.put(TestEnvironmentOperation.T1F2, op);
@@ -345,7 +347,8 @@ public class ChangeGenealogyUtils {
 			return null;
 		}
 		
-		CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
+		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile,
+		                                                                            branchFactory.getPersistenceUtil());
 		
 		if (changeGenealogy == null) {
 			if (Logger.logError()) {
@@ -354,8 +357,8 @@ public class ChangeGenealogyUtils {
 			return null;
 		}
 		
-		for (Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
-			for (JavaChangeOperation operation : transactionEntry.getValue()) {
+		for (final Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
+			for (final JavaChangeOperation operation : transactionEntry.getValue()) {
 				changeGenealogy.addVertex(operation);
 			}
 		}
@@ -428,8 +431,9 @@ public class ChangeGenealogyUtils {
 		                        environmentOperations.get(TestEnvironmentOperation.T5F4),
 		                        GenealogyEdgeType.DeletedCallOnCall);
 		
-		return new GenealogyTestEnvironment(persistenceUtil, transactionMap, environmentTransactions,
-		                                    environmentOperations, repository, changeGenealogy, tmpGraphDBFile);
+		return new GenealogyTestEnvironment(branchFactory.getPersistenceUtil(), transactionMap,
+		                                    environmentTransactions, environmentOperations, repository,
+		                                    changeGenealogy, tmpGraphDBFile);
 	}
 	
 	/**
@@ -447,9 +451,9 @@ public class ChangeGenealogyUtils {
 	@NoneNull
 	public static CoreChangeGenealogy readFromDB(final File dbFile,
 	                                             final PersistenceUtil persistenceUtil) {
-		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
+		final GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		registerShutdownHook(graph);
-		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
+		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
 		genealogies.put(genealogy, dbFile);
 		return genealogy;
 	}
@@ -469,53 +473,54 @@ public class ChangeGenealogyUtils {
 	
 	public static void run() {
 		
-		RepositorySettings settings = new RepositorySettings();
+		final RepositorySettings settings = new RepositorySettings();
 		
-		DatabaseArguments persistenceArgs = new DatabaseArguments(settings, true, "ppa");
+		final DatabaseArguments persistenceArgs = new DatabaseArguments(settings, true, "ppa");
 		
-		DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
-		                                                     "Directory in which to load the GraphDB from.", null,
-		                                                     true, true);
+		final DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
+		                                                           "Directory in which to load the GraphDB from.",
+		                                                           null, true, true);
 		
-		BooleanArgument statsArg = new BooleanArgument(settings, "stats",
-		                                               "Print vertex/edge statistic for ChangeGenealogy", "false",
-		                                               false);
+		final BooleanArgument statsArg = new BooleanArgument(settings, "stats",
+		                                                     "Print vertex/edge statistic for ChangeGenealogy",
+		                                                     "false", false);
 		
-		OutputFileArgument graphmlArg = new OutputFileArgument(settings, "graphml.out",
-		                                                       "Export the graph as GraphML file into this file.",
-		                                                       null, false, false);
+		final OutputFileArgument graphmlArg = new OutputFileArgument(
+		                                                             settings,
+		                                                             "graphml.out",
+		                                                             "Export the graph as GraphML file into this file.",
+		                                                             null, false, false);
 		
-		OutputFileArgument dotArg = new OutputFileArgument(
-		                                                   settings,
-		                                                   "dot.out",
-		                                                   "Export the graph as DOT file (must be processed using graphviz).",
-		                                                   null, false, true);
+		final OutputFileArgument dotArg = new OutputFileArgument(
+		                                                         settings,
+		                                                         "dot.out",
+		                                                         "Export the graph as DOT file (must be processed using graphviz).",
+		                                                         null, false, true);
 		
 		settings.parseArguments();
 		
-		PersistenceUtil persistenceUtil = persistenceArgs.getValue();
+		final PersistenceUtil persistenceUtil = persistenceArgs.getValue();
 		
-		CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
+		final CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
 		
 		if (statsArg.getValue()) {
 			System.out.println(getGenealogyStats(genealogy));
 		}
 		
-		File graphmlFile = graphmlArg.getValue();
+		final File graphmlFile = graphmlArg.getValue();
 		if (graphmlFile != null) {
 			exportToGraphML(genealogy, graphmlFile);
 		}
 		
-		File dotFile = dotArg.getValue();
+		final File dotFile = dotArg.getValue();
 		if (dotFile != null) {
 			try {
 				exportToDOT(genealogy, dotFile);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new UnrecoverableError(e);
 			}
 		}
 		
 		genealogy.close();
 	}
-	
 }

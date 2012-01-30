@@ -30,6 +30,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
@@ -48,7 +49,7 @@ public class Merge_NetTest extends MoskitoTest {
 	public void testMergePerson() {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
-		
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		Criteria<Person> criteria = persistenceUtil.createCriteria(Person.class);
 		List<Person> list = persistenceUtil.load(criteria);
 		list.size();
@@ -66,7 +67,7 @@ public class Merge_NetTest extends MoskitoTest {
 		int i = 0;
 		for (final Person person : persons) {
 			rcsTransaction = RCSTransaction.createTransaction("" + ++i, "test", new DateTime(), person, "",
-			                                                  persistenceUtil);
+			                                                  branchFactory);
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 		}
 		

@@ -23,6 +23,7 @@ import net.ownhero.dev.andama.settings.URIArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
@@ -42,6 +43,7 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 	private final AndamaSettings settings;
 	
 	PersistenceUtil              persistenceUtil;
+	private BranchFactory        branchFactory;
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the repositories.
@@ -66,6 +68,13 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 		this.endRevision = new StringArgument(settings, "repository.transaction.stop", "Revision to stop at", "HEAD",
 		                                      false);
 		this.settings = settings;
+	}
+	
+	public BranchFactory getBranchFactory() {
+		if (this.branchFactory == null) {
+			this.branchFactory = new BranchFactory(this.persistenceUtil);
+		}
+		return this.branchFactory;
 	}
 	
 	public StringArgument getPassArg() {
@@ -100,9 +109,7 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 		final String startRevision = getStartRevision().getValue();
 		final String endRevision = this.endRevision.getValue();
 		
-		if (JavaUtils.AnyNull(repositoryURI, getRepoTypeArg().getValue())) {
-			return null;
-		}
+		if (JavaUtils.AnyNull(repositoryURI, getRepoTypeArg().getValue())) { return null; }
 		
 		final RepositoryType rcsType = RepositoryType.valueOf(getRepoTypeArg().getValue());
 		
@@ -126,9 +133,9 @@ public class RepositoryArguments extends AndamaArgumentSet<Repository> {
 			}
 			
 			if ((username == null) && (password == null)) {
-				repository.setup(repositoryURI, startRevision, endRevision, this.persistenceUtil);
+				repository.setup(repositoryURI, startRevision, endRevision, getBranchFactory());
 			} else {
-				repository.setup(repositoryURI, startRevision, endRevision, username, password, this.persistenceUtil);
+				repository.setup(repositoryURI, startRevision, endRevision, username, password, getBranchFactory());
 			}
 			
 			this.settings.addToolInformation(repository.getHandle(), repository.gatherToolInformation());

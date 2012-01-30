@@ -24,7 +24,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaTransformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -50,11 +50,11 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 	 * @param repository
 	 */
 	public RepositoryParser(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository, PersistenceUtil persistenceUtil) {
+	        final Repository repository, final BranchFactory bFactory) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();
-		final PersistenceUtil pUtil = persistenceUtil;
+		final BranchFactory branchFactory = bFactory;
 		
 		new ProcessHook<LogEntry, RCSTransaction>(this) {
 			
@@ -75,7 +75,8 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 				                                                                       data.getMessage(),
 				                                                                       data.getDateTime(),
 				                                                                       data.getAuthor(),
-				                                                                       data.getOriginalId(), pUtil);
+				                                                                       data.getOriginalId(),
+				                                                                       branchFactory);
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {

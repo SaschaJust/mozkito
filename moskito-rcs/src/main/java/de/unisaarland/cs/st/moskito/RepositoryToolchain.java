@@ -177,7 +177,7 @@ public class RepositoryToolchain extends AndamaChain {
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository,
-		                     this.persistenceUtil);
+		                     this.repoSettings.getBranchFactory());
 		
 		if (this.persistenceUtil != null) {
 			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),

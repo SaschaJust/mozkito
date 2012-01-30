@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.T
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
@@ -32,12 +33,16 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void testChangeGenealogy() {
-		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                            getPersistenceUtil());
+		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
+		                                                      FileShutdownAction.KEEP);
+		
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		
+		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		                                                                                                  branchFactory);
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
-		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
+		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
+		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
 		
 		changeGenealogy.close();
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
@@ -315,14 +320,14 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 		                                           GenealogyEdgeType.DeletedCallOnDeletedDefinition);
 		assertEquals(0, dependents.size());
 		
-		Set<GenealogyEdgeType> existingEdgeTypes = changeGenealogy.getExistingEdgeTypes();
+		final Set<GenealogyEdgeType> existingEdgeTypes = changeGenealogy.getExistingEdgeTypes();
 		assertEquals(6, existingEdgeTypes.size());
 		
 		int iterCounter = 0;
 		int hitCounter = 0;
-		Iterator<JavaChangeOperation> iterator = changeGenealogy.vertexIterator();
+		final Iterator<JavaChangeOperation> iterator = changeGenealogy.vertexIterator();
 		while (iterator.hasNext()) {
-			JavaChangeOperation tmp = iterator.next();
+			final JavaChangeOperation tmp = iterator.next();
 			assertTrue(tmp != null);
 			if (environmentOperations.containsValue(tmp)) {
 				++hitCounter;
@@ -333,7 +338,7 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 		assertEquals(17, hitCounter);
 		
 		// test roots
-		Collection<JavaChangeOperation> roots = changeGenealogy.getRoots();
+		final Collection<JavaChangeOperation> roots = changeGenealogy.getRoots();
 		assertTrue(roots.size() >= 7);
 		
 		assertTrue(roots.contains(environmentOperations.get(TestEnvironmentOperation.T10F3)));
@@ -358,7 +363,7 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 		changeGenealogy.close();
 		try {
 			FileUtils.deleteDirectory(tmpGraphDBFile);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}

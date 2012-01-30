@@ -48,7 +48,7 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
@@ -558,6 +558,20 @@ public class GitRepository extends Repository {
 		return result;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
+	 */
+	@Override
+	public void setup(final URI address,
+	                  final String startRevision,
+	                  final String endRevision,
+	                  final BranchFactory branchFactory) {
+		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
+		
+		setup(address, startRevision, endRevision, null, branchFactory);
+	}
+	
 	/**
 	 * main setup method.
 	 * 
@@ -574,7 +588,7 @@ public class GitRepository extends Repository {
 	                   final String startRevision,
 	                   final String endRevision,
 	                   final InputStream inputStream,
-	                   final PersistenceUtil persistenceUtil) {
+	                   final BranchFactory branchFactory) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setUri(address);
@@ -605,7 +619,7 @@ public class GitRepository extends Repository {
 			setEndRevision(endRevision);
 		}
 		
-		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision(), persistenceUtil);
+		this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision(), branchFactory);
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		                                                                              "--pretty=format:%H",
@@ -631,20 +645,6 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
-	 */
-	@Override
-	public void setup(final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
-	                  final PersistenceUtil persistenceUtil) {
-		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
-		
-		setup(address, startRevision, endRevision, null, persistenceUtil);
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -653,11 +653,11 @@ public class GitRepository extends Repository {
 	                  final String endRevision,
 	                  final String username,
 	                  final String password,
-	                  final PersistenceUtil persistenceUtil) {
+	                  final BranchFactory branchFactory) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
 		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), persistenceUtil);
+		      new ByteArrayInputStream(password.getBytes()), branchFactory);
 	}
 }

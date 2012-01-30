@@ -55,7 +55,6 @@ import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
@@ -97,9 +96,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	                                               final DateTime timestamp,
 	                                               final Person author,
 	                                               final String originalId,
-	                                               final PersistenceUtil persistenceUtil) {
-		RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
-		transaction.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
+	                                               final BranchFactory branchFactory) {
+		final RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
+		transaction.setBranch(branchFactory.getMasterBranch());
 		return transaction;
 	}
 	
@@ -167,7 +166,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Transient
 	public boolean addAllTags(final Collection<String> tagNames) {
 		boolean ret = false;
-		Set<String> tags = getTags();
+		final Set<String> tags = getTags();
 		ret = tags.addAll(tagNames);
 		setTags(tags);
 		return ret;
@@ -182,7 +181,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		boolean ret = false;
 		
 		if (!getChildren().contains(rcsTransaction)) {
-			Set<RCSTransaction> children = getChildren();
+			final Set<RCSTransaction> children = getChildren();
 			ret = children.add(rcsTransaction);
 			setChildren(children);
 		}
@@ -199,7 +198,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		boolean ret = false;
 		
 		if (!getParents().contains(parentTransaction)) {
-			Set<RCSTransaction> parents = getParents();
+			final Set<RCSTransaction> parents = getParents();
 			ret = parents.add(parentTransaction);
 			setParents(parents);
 		}
@@ -216,8 +215,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	protected boolean addRevision(@NotNull final RCSRevision revision) {
-		Collection<RCSRevision> revisions = getRevisions();
-		boolean ret = revisions.add(revision);
+		final Collection<RCSRevision> revisions = getRevisions();
+		final boolean ret = revisions.add(revision);
 		setRevisions(revisions);
 		return ret;
 	}
@@ -230,8 +229,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public boolean addTag(@NotNull final String tagName) {
-		boolean ret = false;
-		Set<String> tags = getTags();
+		final boolean ret = false;
+		final Set<String> tags = getTags();
 		tags.add(tagName);
 		setTags(tags);
 		return ret;
@@ -258,8 +257,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		if (equals(transaction)) {
 			return 0;
 		} else {
-			String id1 = getId();
-			String id2 = transaction.getId();
+			final String id1 = getId();
+			final String id2 = transaction.getId();
 			if ((comparisonCache.containsKey(id1)) && (comparisonCache.get(id1).containsKey(id2))) {
 				return comparisonCache.get(id1).get(id2);
 			} else if ((comparisonCache.containsKey(id2)) && (comparisonCache.get(id2).containsKey(id1))) {
@@ -268,7 +267,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			if (comparisonCache.size() > 10000) {
 				comparisonCache.clear();
 			}
-			int result = compareToTransaction(transaction);
+			final int result = compareToTransaction(transaction);
 			if (!comparisonCache.containsKey(id1)) {
 				comparisonCache.put(id1, new HashMap<String, Integer>());
 			}
@@ -305,7 +304,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 					// DEADCODE
 					throw new UnrecoverableError(
 					                             "Detected null parent of transaction that is not the begin of the current branch: "
-					                                     + this.toString());
+					                                     + toString());
 				}
 				while ((cache != null) && (!cache.equals(getBranch().getBegin()))) {
 					// as long as there are more parents to fetch from the current branch ...
@@ -329,7 +328,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
 				return -1;
 			}
-			int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+			final int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 			if (subresult >= 0) {
 				return 1;
 			} else {
@@ -339,7 +338,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			}
-			int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
+			final int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
 			if (sub_result <= 0) {
 				return -1;
 			} else {
@@ -352,8 +351,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
 				return 1;
 			} else {
-				int r = getBranch().getEnd().getChild(getBranch())
-				                   .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
+				final int r = getBranch().getEnd().getChild(getBranch())
+				                         .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
 				if (r != 0) {
 					return r;
 				} else {
@@ -394,8 +393,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public Collection<RCSFile> getChangedFiles() {
-		List<RCSFile> changedFiles = new LinkedList<RCSFile>();
-		for (RCSRevision revision : getRevisions()) {
+		final List<RCSFile> changedFiles = new LinkedList<RCSFile>();
+		for (final RCSRevision revision : getRevisions()) {
 			changedFiles.add(revision.getChangedFile());
 		}
 		return changedFiles;
@@ -416,7 +415,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				
 				@Override
 				public boolean evaluate(final Object object) {
-					RCSTransaction transaction = (RCSTransaction) object;
+					final RCSTransaction transaction = (RCSTransaction) object;
 					return transaction.getBranch().equals(branch);
 				}
 			});
@@ -493,7 +492,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 				
 				@Override
 				public boolean evaluate(final Object object) {
-					RCSTransaction transaction = (RCSTransaction) object;
+					final RCSTransaction transaction = (RCSTransaction) object;
 					if (transaction.getBranch() == null) {
 						return false;
 					}
@@ -534,7 +533,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	@Transient
 	public RCSRevision getRevisionForPath(final String path) {
-		for (RCSRevision revision : getRevisions()) {
+		for (final RCSRevision revision : getRevisions()) {
 			if (revision.getChangedFile().equals(path)) {
 				return revision;
 			}
@@ -692,7 +691,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@Override
 	public String toString() {
 		
-		StringBuilder string = new StringBuilder();
+		final StringBuilder string = new StringBuilder();
 		string.append("RCSTransaction [id=");
 		string.append(getId());
 		string.append(", message=");
@@ -707,9 +706,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		string.append(getAuthor());
 		string.append(", parents=");
 		string.append("[");
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (RCSTransaction transaction : getParents()) {
+		for (final RCSTransaction transaction : getParents()) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -720,9 +719,9 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		
 		string.append(", children=");
 		string.append("[");
-		StringBuilder builder2 = new StringBuilder();
+		final StringBuilder builder2 = new StringBuilder();
 		
-		for (RCSTransaction transaction : getChildren()) {
+		for (final RCSTransaction transaction : getChildren()) {
 			if (builder2.length() > 0) {
 				builder2.append(", ");
 			}

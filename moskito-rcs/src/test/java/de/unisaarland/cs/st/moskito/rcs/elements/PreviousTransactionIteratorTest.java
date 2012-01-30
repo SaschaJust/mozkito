@@ -38,6 +38,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	private RCSTransaction y;
 	private RCSTransaction z;
 	private RCSBranch      master;
+	private BranchFactory  branchFactory;
 	
 	/**
 	 * @formatter:off
@@ -54,42 +55,42 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-01T00:00:03.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction i = RCSTransaction.createTransaction("i", "", new DateTime("1999-04-01T00:00:10.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction j = RCSTransaction.createTransaction("j", "", new DateTime("1999-04-01T00:00:11.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction k = RCSTransaction.createTransaction("k", "", new DateTime("1999-04-01T00:00:12.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction l = RCSTransaction.createTransaction("l", "", new DateTime("1999-04-01T00:00:13.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction m = RCSTransaction.createTransaction("m", "", new DateTime("1999-04-01T00:00:14.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction n = RCSTransaction.createTransaction("n", "", new DateTime("1999-04-01T00:00:15.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction o = RCSTransaction.createTransaction("o", "", new DateTime("1999-04-01T00:00:16.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction p = RCSTransaction.createTransaction("p", "", new DateTime("1999-04-01T00:00:17.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-01T00:00:03.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction i = RCSTransaction.createTransaction("i", "", new DateTime("1999-04-01T00:00:10.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction j = RCSTransaction.createTransaction("j", "", new DateTime("1999-04-01T00:00:11.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction k = RCSTransaction.createTransaction("k", "", new DateTime("1999-04-01T00:00:12.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction l = RCSTransaction.createTransaction("l", "", new DateTime("1999-04-01T00:00:13.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction m = RCSTransaction.createTransaction("m", "", new DateTime("1999-04-01T00:00:14.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction n = RCSTransaction.createTransaction("n", "", new DateTime("1999-04-01T00:00:15.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction o = RCSTransaction.createTransaction("o", "", new DateTime("1999-04-01T00:00:16.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction p = RCSTransaction.createTransaction("p", "", new DateTime("1999-04-01T00:00:17.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
-		RCSBranch dBranch = new RCSBranch("dBranch");
+		final RCSBranch dBranch = new RCSBranch("dBranch");
 		dBranch.setBegin(d);
 		dBranch.setEnd(o);
 		
-		RCSBranch hBranch = new RCSBranch("hBranch");
+		final RCSBranch hBranch = new RCSBranch("hBranch");
 		hBranch.setBegin(h);
 		hBranch.setEnd(p);
 		
@@ -167,7 +168,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(p);
 		this.z.addParent(g);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(g, iterator.next());
 		
@@ -235,26 +236,26 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-01T00:00:02.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-01T00:00:04.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction e = RCSTransaction.createTransaction("e", "", new DateTime("1999-04-01T00:00:05.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction f = RCSTransaction.createTransaction("f", "", new DateTime("1999-04-01T00:00:06.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction g = RCSTransaction.createTransaction("g", "", new DateTime("1999-04-01T00:00:07.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction h = RCSTransaction.createTransaction("h", "", new DateTime("1999-04-01T00:00:09.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
-		RCSBranch yBranch = new RCSBranch("yBranch");
+		final RCSBranch yBranch = new RCSBranch("yBranch");
 		yBranch.setBegin(this.y);
 		yBranch.setEnd(h);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(g);
 		
@@ -300,7 +301,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.x.addChild(a);
 		this.x.addChild(this.y);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(e, iterator.next());
 		
@@ -344,23 +345,23 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
+		final RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
 		this.x.addChild(b);
 		this.x.addChild(c);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
-		RCSBranch cBranch = new RCSBranch("cBranch");
+		final RCSBranch cBranch = new RCSBranch("cBranch");
 		cBranch.setBegin(c);
 		cBranch.setEnd(c);
 		
@@ -386,7 +387,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(c);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -419,23 +420,23 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
+		final RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
 		this.x.addChild(b);
 		this.x.addChild(c);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
-		RCSBranch cBranch = new RCSBranch("cBranch");
+		final RCSBranch cBranch = new RCSBranch("cBranch");
 		cBranch.setBegin(c);
 		cBranch.setEnd(c);
 		
@@ -461,7 +462,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(c);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -494,25 +495,25 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
-		RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-03T00:00:00.500+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
+		final RCSTransaction d = RCSTransaction.createTransaction("d", "", new DateTime("1999-04-03T00:00:00.500+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
 		this.x.addChild(b);
 		this.x.addChild(c);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
-		RCSBranch cBranch = new RCSBranch("cBranch");
+		final RCSBranch cBranch = new RCSBranch("cBranch");
 		cBranch.setBegin(d);
 		cBranch.setEnd(c);
 		
@@ -542,7 +543,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(c);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -578,23 +579,23 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
-		RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
+		final RCSTransaction c = RCSTransaction.createTransaction("c", "", new DateTime("1999-04-03T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
 		this.x.setBranch(this.master);
 		this.x.addChild(a);
 		this.x.addChild(b);
 		this.x.addChild(c);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
-		RCSBranch cBranch = new RCSBranch("cBranch");
+		final RCSBranch cBranch = new RCSBranch("cBranch");
 		cBranch.setBegin(c);
 		cBranch.setEnd(c);
 		
@@ -619,7 +620,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(c);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -648,12 +649,12 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
@@ -679,7 +680,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(b);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -705,12 +706,12 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
-		RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
-				this.person2, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
+		final RCSTransaction b = RCSTransaction.createTransaction("b", "", new DateTime("1999-04-02T00:00:01.000+00:00"),
+				this.person2, "", this.branchFactory);
 		
-		RCSBranch bBranch = new RCSBranch("bBranch");
+		final RCSBranch bBranch = new RCSBranch("bBranch");
 		bBranch.setBegin(b);
 		bBranch.setEnd(b);
 		
@@ -736,7 +737,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.z.addParent(this.y);
 		this.z.addParent(b);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -755,15 +756,17 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 	
 	@Before
 	public void setUp() {
-		this.master = BranchFactory.getMasterBranch(getPersistenceUtil());
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
+		this.master = this.branchFactory.getMasterBranch();
 		this.person1 = new Person("kim", "", "");
 		this.person2 = new Person("just", "", "");
+		
 		this.x = RCSTransaction.createTransaction("x", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1,
-				"",getPersistenceUtil());
+				"",this.branchFactory);
 		this.y = RCSTransaction.createTransaction("y", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person2,
-				"",getPersistenceUtil());
+				"",this.branchFactory);
 		this.z = RCSTransaction.createTransaction("z", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1,
-				"",getPersistenceUtil());
+				"",this.branchFactory);
 	}
 	
 	/**
@@ -784,7 +787,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.y.addChild(this.z);
 		this.z.addParent(this.y);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		
@@ -806,8 +809,8 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.master.setBegin(this.x);
 		this.master.setEnd(this.z);
 		
-		RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
-				this.person1, "", getPersistenceUtil());
+		final RCSTransaction a = RCSTransaction.createTransaction("a", "", new DateTime("1999-04-01T00:00:01.000+00:00"),
+				this.person1, "", this.branchFactory);
 		
 		this.x.setBranch(this.master);
 		this.y.setBranch(this.master);
@@ -817,7 +820,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		this.y.addChild(this.z);
 		this.z.addParent(this.y);
 		
-		RCSBranch aBranch = new RCSBranch("aBranch");
+		final RCSBranch aBranch = new RCSBranch("aBranch");
 		aBranch.setBegin(a);
 		aBranch.addMergedIn(this.z.getId());
 		aBranch.setEnd(a);
@@ -827,7 +830,7 @@ public class PreviousTransactionIteratorTest extends MoskitoTest {
 		a.addChild(this.z);
 		this.z.addParent(a);
 		
-		Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
+		final Iterator<RCSTransaction> iterator = this.z.getPreviousTransactions();
 		assertTrue(iterator.hasNext());
 		assertEquals(this.y, iterator.next());
 		

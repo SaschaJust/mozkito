@@ -74,6 +74,9 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testChangeCouplings() {
+		
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		
 		persistenceUtil.beginTransaction();
 		
 		final RCSFileManager fileManager = new RCSFileManager();
@@ -82,9 +85,8 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		// ###transaction 1
 		
 		final DateTime now = new DateTime();
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "",
-		                                                                       persistenceUtil);
-		rcsTransaction.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
+		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "", branchFactory);
+		rcsTransaction.setBranch(branchFactory.getMasterBranch());
 		final RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
 		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
@@ -102,8 +104,8 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		// ### transaction 2
 		
 		final RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", now.plus(10000), person, "",
-		                                                                        persistenceUtil);
-		rcsTransaction2.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
+		                                                                        branchFactory);
+		rcsTransaction2.setBranch(branchFactory.getMasterBranch());
 		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
 		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
@@ -114,8 +116,8 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		// ### transaction 3
 		
 		final RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", now.plus(20000), person, "",
-		                                                                        persistenceUtil);
-		rcsTransaction3.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
+		                                                                        branchFactory);
+		rcsTransaction3.setBranch(branchFactory.getMasterBranch());
 		new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
 		
 		fileC.assignTransaction(rcsTransaction3, "C.java");
@@ -126,8 +128,8 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		// ### transaction 4
 		
 		final RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", now.plus(30000), person, "",
-		                                                                        persistenceUtil);
-		rcsTransaction4.setBranch(BranchFactory.getMasterBranch(persistenceUtil));
+		                                                                        branchFactory);
+		rcsTransaction4.setBranch(branchFactory.getMasterBranch());
 		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);

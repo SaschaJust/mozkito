@@ -17,6 +17,7 @@ import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 import de.unisaarland.cs.st.moskito.genealogies.utils.JungGenealogyGraph.Edge;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
@@ -28,8 +29,9 @@ public class JungGenealogyGraphTest extends MoskitoTest {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);
 		
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                                  getPersistenceUtil());
+		                                                                                                  branchFactory);
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		
 		final JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(

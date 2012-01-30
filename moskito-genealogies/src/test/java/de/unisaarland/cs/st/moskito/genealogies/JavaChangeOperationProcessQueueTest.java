@@ -19,6 +19,7 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
@@ -27,43 +28,46 @@ public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void test() {
-		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                            getPersistenceUtil());
-		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
+		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
+		                                                      FileShutdownAction.KEEP);
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		
+		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		                                                                                                  branchFactory);
+		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
 		
 		JavaChangeOperationProcessQueue queue = new JavaChangeOperationProcessQueue();
 		
-		for (JavaChangeOperation op : environmentOperations.values()) {
+		for (final JavaChangeOperation op : environmentOperations.values()) {
 			queue.add(op);
 		}
 		
 		int counter = 0;
 		
-		Set<JavaChangeOperation> deletedDefinitions = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> deletedDefinitions = new HashSet<JavaChangeOperation>();
 		deletedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T3F1D));
 		deletedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T9F1));
 		deletedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T6F2));
 		
-		Set<JavaChangeOperation> modifiedDefinitions = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> modifiedDefinitions = new HashSet<JavaChangeOperation>();
 		modifiedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T3F2M));
 		modifiedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T8F2));
 		
-		Set<JavaChangeOperation> addedDefinitions = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> addedDefinitions = new HashSet<JavaChangeOperation>();
 		addedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T1F1));
 		addedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T1F2));
 		addedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T3F1A));
 		addedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T7F2));
 		
-		Set<JavaChangeOperation> deletedCalls = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> deletedCalls = new HashSet<JavaChangeOperation>();
 		deletedCalls.add(environmentOperations.get(TestEnvironmentOperation.T4F3D));
 		deletedCalls.add(environmentOperations.get(TestEnvironmentOperation.T10F3));
 		deletedCalls.add(environmentOperations.get(TestEnvironmentOperation.T10F4));
 		
-		Set<JavaChangeOperation> modifiedCalls = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> modifiedCalls = new HashSet<JavaChangeOperation>();
 		
-		Set<JavaChangeOperation> addedCalls = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> addedCalls = new HashSet<JavaChangeOperation>();
 		addedCalls.add(environmentOperations.get(TestEnvironmentOperation.T2F3));
 		addedCalls.add(environmentOperations.get(TestEnvironmentOperation.T3F2));
 		addedCalls.add(environmentOperations.get(TestEnvironmentOperation.T4F3A));
@@ -71,7 +75,7 @@ public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 		addedCalls.add(environmentOperations.get(TestEnvironmentOperation.T5F4));
 		
 		while (queue.hasNext()) {
-			JavaChangeOperation next = queue.next();
+			final JavaChangeOperation next = queue.next();
 			assert (next != null);
 			assert (environmentOperations.values().contains(next));
 			++counter;
@@ -115,12 +119,12 @@ public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 		changeGenealogy.close();
 		
 		queue = new JavaChangeOperationProcessQueue();
-		for (JavaChangeOperation op : addedCalls) {
+		for (final JavaChangeOperation op : addedCalls) {
 			queue.add(op);
 		}
 		counter = 0;
 		while (queue.hasNext()) {
-			JavaChangeOperation next = queue.next();
+			final JavaChangeOperation next = queue.next();
 			assert (next != null);
 			assert (addedCalls.contains(next));
 			++counter;
@@ -129,7 +133,7 @@ public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 		changeGenealogy.close();
 		try {
 			FileUtils.deleteDirectory(tmpGraphDBFile);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}

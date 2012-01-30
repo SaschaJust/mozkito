@@ -30,6 +30,7 @@ public class RCSTransactionTest extends MoskitoTest {
 	private RCSTransaction x;
 	private RCSTransaction y;
 	private RCSTransaction z;
+	private BranchFactory  branchFactory;
 	
 	@Before
 	public void setUp() {
@@ -38,6 +39,7 @@ public class RCSTransactionTest extends MoskitoTest {
 		this.x = new RCSTransaction("x", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1, "");
 		this.y = new RCSTransaction("y", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person2, "");
 		this.z = new RCSTransaction("z", "", new DateTime("1999-01-01T00:00:01.000+00:00"), this.person1, "");
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
 	}
 	
 	@Test
@@ -68,43 +70,43 @@ public class RCSTransactionTest extends MoskitoTest {
 		 * Z
 		 */
 		
-		RCSTransaction a = new RCSTransaction("a", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction b = new RCSTransaction("b", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction c = new RCSTransaction("c", "", new DateTime("2000-01-03T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction d = new RCSTransaction("d", "", new DateTime("2000-01-04T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction e = new RCSTransaction("e", "", new DateTime("2000-01-05T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction f = new RCSTransaction("f", "", new DateTime("2000-01-06T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction g = new RCSTransaction("g", "", new DateTime("2000-01-07T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction h = new RCSTransaction("h", "", new DateTime("2000-01-08T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction i = new RCSTransaction("i", "", new DateTime("2000-01-09T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction j = new RCSTransaction("j", "", new DateTime("2000-01-10T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction k = new RCSTransaction("k", "", new DateTime("2000-01-11T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction l = new RCSTransaction("l", "", new DateTime("2000-01-12T00:00:01.000+00:00"), this.person1, "");
-		RCSTransaction m = new RCSTransaction("m", "", new DateTime("2000-01-13T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction a = new RCSTransaction("a", "", new DateTime("2000-01-01T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction b = new RCSTransaction("b", "", new DateTime("2000-01-02T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction c = new RCSTransaction("c", "", new DateTime("2000-01-03T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction d = new RCSTransaction("d", "", new DateTime("2000-01-04T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction e = new RCSTransaction("e", "", new DateTime("2000-01-05T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction f = new RCSTransaction("f", "", new DateTime("2000-01-06T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction g = new RCSTransaction("g", "", new DateTime("2000-01-07T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction h = new RCSTransaction("h", "", new DateTime("2000-01-08T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction i = new RCSTransaction("i", "", new DateTime("2000-01-09T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction j = new RCSTransaction("j", "", new DateTime("2000-01-10T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction k = new RCSTransaction("k", "", new DateTime("2000-01-11T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction l = new RCSTransaction("l", "", new DateTime("2000-01-12T00:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction m = new RCSTransaction("m", "", new DateTime("2000-01-13T00:00:01.000+00:00"), this.person1, "");
 		
-		RCSBranch branch_c = new RCSBranch("branch_a");
+		final RCSBranch branch_c = new RCSBranch("branch_a");
 		branch_c.setBegin(c);
 		branch_c.setEnd(j);
 		branch_c.addMergedIn(l.getId());
 		
-		RCSBranch branch_f = new RCSBranch("branch_c");
+		final RCSBranch branch_f = new RCSBranch("branch_c");
 		branch_f.setBegin(f);
 		branch_f.setEnd(k);
 		branch_f.addMergedIn(m.getId());
 		
-		RCSBranch branch_i = new RCSBranch("branch_f");
+		final RCSBranch branch_i = new RCSBranch("branch_f");
 		branch_i.setBegin(i);
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.z);
-		this.z.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		this.branchFactory.getMasterBranch().setBegin(this.z);
+		this.z.setBranch(this.branchFactory.getMasterBranch());
 		this.z.addChild(a);
 		
-		a.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		a.setBranch(this.branchFactory.getMasterBranch());
 		a.addParent(this.z);
 		a.addChild(b);
 		a.addChild(c);
 		
-		b.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		b.setBranch(this.branchFactory.getMasterBranch());
 		b.addParent(a);
 		b.addChild(e);
 		
@@ -117,7 +119,7 @@ public class RCSTransactionTest extends MoskitoTest {
 		d.addParent(c);
 		d.addChild(g);
 		
-		e.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		e.setBranch(this.branchFactory.getMasterBranch());
 		e.addParent(b);
 		e.addChild(l);
 		
@@ -147,12 +149,12 @@ public class RCSTransactionTest extends MoskitoTest {
 		k.addParent(h);
 		k.addChild(m);
 		
-		l.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		l.setBranch(this.branchFactory.getMasterBranch());
 		l.addParent(e);
 		l.addParent(j);
 		l.addChild(m);
 		
-		m.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		m.setBranch(this.branchFactory.getMasterBranch());
 		m.addParent(k);
 		m.addParent(l);
 		
@@ -351,15 +353,15 @@ public class RCSTransactionTest extends MoskitoTest {
 		 * Z
 		 */
 		
-		RCSTransaction t = new RCSTransaction("t", "", new DateTime("2000-01-01T08:00:01.000+00:00"), this.person1, "");
+		final RCSTransaction t = new RCSTransaction("t", "", new DateTime("2000-01-01T08:00:01.000+00:00"), this.person1, "");
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.z);
-		RCSBranch branch = new RCSBranch("branch");
+		this.branchFactory.getMasterBranch().setBegin(this.z);
+		final RCSBranch branch = new RCSBranch("branch");
 		
 		this.x.setBranch(branch);
-		this.y.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
-		this.z.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
-		t.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		this.y.setBranch(this.branchFactory.getMasterBranch());
+		this.z.setBranch(this.branchFactory.getMasterBranch());
+		t.setBranch(this.branchFactory.getMasterBranch());
 		
 		this.z.addChild(this.x);
 		this.x.addParent(this.z);
@@ -394,18 +396,18 @@ public class RCSTransactionTest extends MoskitoTest {
 		 * Z
 		 */
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(
+		this.branchFactory.getMasterBranch().setBegin(
 				new RCSTransaction("start", "", new DateTime("2008-01-01T00:00:01.000+00:00"),
 						this.person1, ""));
-		RCSBranch openBranch = new RCSBranch("openBranch");
+		final RCSBranch openBranch = new RCSBranch("openBranch");
 		this.z.addChild(this.x);
 		this.x.addParent(this.z);
 		
 		this.z.addChild(this.y);
 		this.y.addParent(this.z);
 		
-		this.z.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
-		this.x.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		this.z.setBranch(this.branchFactory.getMasterBranch());
+		this.x.setBranch(this.branchFactory.getMasterBranch());
 		this.y.setBranch(openBranch);
 		openBranch.setBegin(this.y);
 		
@@ -423,17 +425,17 @@ public class RCSTransactionTest extends MoskitoTest {
 		 * X
 		 */
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.x);
+		this.branchFactory.getMasterBranch().setBegin(this.x);
 		
-		this.x.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
-		this.y.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		this.x.setBranch(this.branchFactory.getMasterBranch());
+		this.y.setBranch(this.branchFactory.getMasterBranch());
 		this.x.addChild(this.y);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setBegin(this.x);
+		this.branchFactory.getMasterBranch().setBegin(this.x);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
-		BranchFactory.getMasterBranch(getPersistenceUtil()).setEnd(this.y);
+		this.branchFactory.getMasterBranch().setEnd(this.y);
 		assertTrue(this.x.compareTo(this.y) < 0);
 		
 	}

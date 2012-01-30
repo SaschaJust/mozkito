@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
@@ -35,6 +36,13 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 @DatabaseSettings (unit = "rcs")
 public class OpenJPA_RCS_NetTest extends MoskitoTest {
 	
+	private BranchFactory branchFactory;
+	
+	@Before
+	public void before() {
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
+	}
+	
 	@Test
 	public void testRCSBranch() {
 		
@@ -45,14 +53,13 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		                                                                         new DateTime(),
 		                                                                         new Person("just", "Sascha Just",
 		                                                                                    "sascha.just@st.cs.uni-saarland.de"),
-		                                                                         "000000000000000",
-		                                                                         getPersistenceUtil());
+		                                                                         "000000000000000", this.branchFactory);
 		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
 		                                                                       "committed end",
 		                                                                       new DateTime(),
 		                                                                       new Person("just", "Sascha Just",
 		                                                                                  "sascha.just@st.cs.uni-saarland.de"),
-		                                                                       "0123456789abcde", getPersistenceUtil());
+		                                                                       "0123456789abcde", this.branchFactory);
 		
 		beginTransaction.setBranch(branch);
 		endTransaction.setBranch(branch);
@@ -70,19 +77,19 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		assertFalse(list.isEmpty());
 		assertEquals(2, list.size());
 		assertTrue(list.contains(branch));
-		assertTrue(list.contains(BranchFactory.getMasterBranch(getPersistenceUtil())));
+		assertTrue(list.contains(this.branchFactory.getMasterBranch()));
 	}
 	
 	@Test
 	public void testRCSRevision() {
 		final Person person = new Person("just", null, null);
 		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
-		                                                                    getPersistenceUtil());
+		                                                                    this.branchFactory);
 		final RCSFile file = new RCSFileManager().createFile("test.java", transaction);
 		final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 		
 		assertTrue(transaction.getRevisions().contains(revision));
-		transaction.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		transaction.setBranch(this.branchFactory.getMasterBranch());
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(transaction);
 		getPersistenceUtil().commitTransaction();
@@ -135,13 +142,13 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
 		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
-		                                                                       getPersistenceUtil());
+		                                                                       this.branchFactory);
 		
 		final RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 		file.assignTransaction(rcsTransaction, "formerTest.java");
 		final RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 		getPersistenceUtil().beginTransaction();
-		rcsTransaction.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		rcsTransaction.setBranch(this.branchFactory.getMasterBranch());
 		getPersistenceUtil().saveOrUpdate(rcsTransaction);
 		getPersistenceUtil().commitTransaction();
 		

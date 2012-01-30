@@ -28,7 +28,7 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
@@ -175,10 +175,10 @@ public class CVSRepository extends Repository {
 	public void setup(final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                        InvalidProtocolType,
-	                                                        InvalidRepositoryURI,
-	                                                        UnsupportedProtocolType {
+	                  final BranchFactory branchFactory) throws MalformedURLException,
+	                                                    InvalidProtocolType,
+	                                                    InvalidRepositoryURI,
+	                                                    UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
 		}
@@ -192,10 +192,10 @@ public class CVSRepository extends Repository {
 	                  final String endRevision,
 	                  final String username,
 	                  final String password,
-	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                        InvalidProtocolType,
-	                                                        InvalidRepositoryURI,
-	                                                        UnsupportedProtocolType {
+	                  final BranchFactory branchFactory) throws MalformedURLException,
+	                                                    InvalidProtocolType,
+	                                                    InvalidRepositoryURI,
+	                                                    UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
 		}

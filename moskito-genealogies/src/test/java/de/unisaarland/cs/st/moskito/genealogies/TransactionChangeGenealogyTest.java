@@ -23,6 +23,7 @@ import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
@@ -32,16 +33,18 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void test() {
-		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.DELETE);
-		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                            getPersistenceUtil());
-		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
-		Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
+		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
+		                                                      FileShutdownAction.DELETE);
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		                                                                                                  branchFactory);
+		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
+		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, persistenceUtil,
-		                                                                         new TransactionPartitioner());
+		final TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, persistenceUtil,
+		                                                                               new TransactionPartitioner());
 		
 		assertEquals(16, tdg.edgeSize());
 		
@@ -253,8 +256,8 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
-		for (RCSTransaction v : tdg.vertexSet()) {
+		final Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
+		for (final RCSTransaction v : tdg.vertexSet()) {
 			vertices.add(v);
 		}
 		

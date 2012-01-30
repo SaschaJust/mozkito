@@ -38,7 +38,6 @@ import org.jfree.data.xy.DefaultXYDataset;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -507,10 +506,10 @@ public abstract class Repository {
 	public abstract void setup(URI address,
 	                           String startRevision,
 	                           String endRevision,
-	                           PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                           InvalidProtocolType,
-	                                                           InvalidRepositoryURI,
-	                                                           UnsupportedProtocolType;
+	                           BranchFactory branchFactory) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -539,10 +538,10 @@ public abstract class Repository {
 	                           String endRevision,
 	                           String username,
 	                           String password,
-	                           PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                           InvalidProtocolType,
-	                                                           InvalidRepositoryURI,
-	                                                           UnsupportedProtocolType;
+	                           BranchFactory branchFactory) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType;
 	
 	/**
 	 * @param uri

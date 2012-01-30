@@ -25,27 +25,33 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 
 public class BranchFactory {
 	
-	private static Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
+	private final Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
 	
-	public synchronized static RCSBranch getBranch(@NotNull final String name,
-	                                               final PersistenceUtil persistenceUtil) {
-		if (!branchCache.containsKey(name)) {
+	private final PersistenceUtil        persistenceUtil;
+	
+	public BranchFactory(final PersistenceUtil persistenceUtil) {
+		this.persistenceUtil = persistenceUtil;
+	}
+	
+	public synchronized RCSBranch getBranch(@NotNull final String name) {
+		if (!this.branchCache.containsKey(name)) {
 			
-			if (persistenceUtil == null) {
+			if (this.persistenceUtil == null) {
 				
 				// create new branch and cache
 				final RCSBranch newBranch = new RCSBranch(name);
 				if (Logger.logDebug()) {
 					Logger.debug("Creating new Branch " + newBranch.toString());
 				}
-				branchCache.put(name, newBranch);
+				this.branchCache.put(name, newBranch);
 			} else {
 				// We could get a valid persistence util.
 				// The existed no previous persistence util: try to load
 				// persisted
 				// MASTER_BRANCH
-				final Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class).eq("name", name);
-				final List<RCSBranch> loadedBranches = persistenceUtil.load(criteria);
+				final Criteria<RCSBranch> criteria = this.persistenceUtil.createCriteria(RCSBranch.class).eq("name",
+				                                                                                             name);
+				final List<RCSBranch> loadedBranches = this.persistenceUtil.load(criteria);
 				if (loadedBranches.isEmpty()) {
 					// We could not load a persisted MASTER_BRANCH. So, create a
 					// new one and return.
@@ -58,17 +64,21 @@ public class BranchFactory {
 					if (Logger.logDebug()) {
 						Logger.debug("Creating new Branch " + newBranch.toString());
 					}
-					persistenceUtil.save(newBranch);
-					branchCache.put(name, newBranch);
+					this.persistenceUtil.save(newBranch);
+					this.branchCache.put(name, newBranch);
 				} else {
-					branchCache.put(name, loadedBranches.get(0));
+					this.branchCache.put(name, loadedBranches.get(0));
 				}
 			}
 		}
-		return branchCache.get(name);
+		return this.branchCache.get(name);
 	}
 	
-	public static RCSBranch getMasterBranch(final PersistenceUtil persistenceUtil) {
-		return getBranch(RCSBranch.MASTER_BRANCH_NAME, persistenceUtil);
+	public RCSBranch getMasterBranch() {
+		return getBranch(RCSBranch.MASTER_BRANCH_NAME);
+	}
+	
+	public PersistenceUtil getPersistenceUtil() {
+		return this.persistenceUtil;
 	}
 }

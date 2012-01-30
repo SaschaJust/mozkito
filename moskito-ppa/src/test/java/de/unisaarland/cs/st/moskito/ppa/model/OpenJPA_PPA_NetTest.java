@@ -37,14 +37,16 @@ public class OpenJPA_PPA_NetTest extends MoskitoTest {
 	public void test() {
 		
 		getPersistenceUtil().beginTransaction();
-		JavaElementFactory elementFactory = new JavaElementFactory();
+		final JavaElementFactory elementFactory = new JavaElementFactory();
 		final JavaElementLocationSet cache = new JavaElementLocationSet(elementFactory);
 		final JavaElementLocation classDefinition = cache.addClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 		final DateTime now = new DateTime();
 		
 		final Person p = new Person("kim", "", "");
-		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1", getPersistenceUtil());
-		transaction.setBranch(BranchFactory.getMasterBranch(getPersistenceUtil()));
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		
+		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1", branchFactory);
+		transaction.setBranch(branchFactory.getMasterBranch());
 		final RCSFile file = new RCSFileManager().createFile("a.java", transaction);
 		final RCSRevision rev = new RCSRevision(transaction, file, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);

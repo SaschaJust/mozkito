@@ -64,8 +64,8 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.ProtocolType;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
@@ -273,9 +273,7 @@ public class SubversionRepository extends Repository {
 				return null;
 			}
 			final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
-			if (!checkedOutFile.exists()) {
-				return null;
-			}
+			if (!checkedOutFile.exists()) { return null; }
 			final List<String> lines = FileUtils.fileToLines(checkedOutFile);
 			final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
 			return patch.getDeltas();
@@ -565,11 +563,11 @@ public class SubversionRepository extends Repository {
 	public void setup(final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                        InvalidProtocolType,
-	                                                        InvalidRepositoryURI,
-	                                                        UnsupportedProtocolType {
-		setup(address, startRevision, endRevision, null, null, persistenceUtil);
+	                  final BranchFactory branchFactory) throws MalformedURLException,
+	                                                    InvalidProtocolType,
+	                                                    InvalidRepositoryURI,
+	                                                    UnsupportedProtocolType {
+		setup(address, startRevision, endRevision, null, null, branchFactory);
 	}
 	
 	/*
@@ -582,10 +580,10 @@ public class SubversionRepository extends Repository {
 	                  final String endRevision,
 	                  final String username,
 	                  final String password,
-	                  final PersistenceUtil persistenceUtil) throws MalformedURLException,
-	                                                        InvalidProtocolType,
-	                                                        InvalidRepositoryURI,
-	                                                        UnsupportedProtocolType {
+	                  final BranchFactory branchFactory) throws MalformedURLException,
+	                                                    InvalidProtocolType,
+	                                                    InvalidRepositoryURI,
+	                                                    UnsupportedProtocolType {
 		setUri(address);
 		this.username = username;
 		this.password = password;

@@ -27,7 +27,6 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.utils.OperationCollection;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -37,7 +36,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	        final BranchFactory branchFactory) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
@@ -45,13 +44,13 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			@Override
 			public void preExecution() {
 				
-				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class)
-				                                                         .eq("branch",
-				                                                             BranchFactory.getMasterBranch(persistenceUtil));
+				final Criteria<RCSTransaction> criteria = branchFactory.getPersistenceUtil()
+				                                                       .createCriteria(RCSTransaction.class)
+				                                                       .eq("branch", branchFactory.getMasterBranch());
 				
-				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
+				final TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				
-				List<RCSTransaction> masterTransactions = persistenceUtil.load(criteria);
+				final List<RCSTransaction> masterTransactions = branchFactory.getPersistenceUtil().load(criteria);
 				
 				list.addAll(masterTransactions);
 				
@@ -68,7 +67,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			public void process() {
 				if (ChangeOperationReader.this.iterator.hasNext()) {
 					final RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
-					final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+					final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(branchFactory.getPersistenceUtil(),
 					                                                                                               transaction);
 					
 					if (Logger.logDebug()) {

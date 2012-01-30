@@ -49,8 +49,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
@@ -711,6 +711,18 @@ public class MercurialRepository extends Repository {
 		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
+	 */
+	@Override
+	public void setup(@NotNull final URI address,
+	                  final String startRevision,
+	                  final String endRevision,
+	                  final BranchFactory branchFactory) {
+		setup(address, startRevision, endRevision, null, branchFactory);
+	}
+	
 	/**
 	 * main setup method.
 	 * 
@@ -727,7 +739,7 @@ public class MercurialRepository extends Repository {
 	                   final String startRevision,
 	                   final String endRevision,
 	                   final InputStream inputStream,
-	                   final PersistenceUtil persistenceUtil) {
+	                   final BranchFactory branchFactory) {
 		
 		setUri(address);
 		
@@ -758,18 +770,6 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
-	 */
-	@Override
-	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
-	                  final PersistenceUtil persistenceUtil) {
-		setup(address, startRevision, endRevision, null, persistenceUtil);
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -779,8 +779,8 @@ public class MercurialRepository extends Repository {
 	                  final String endRevision,
 	                  final String username,
 	                  final String password,
-	                  final PersistenceUtil persistenceUtil) {
+	                  final BranchFactory branchFactory) {
 		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), persistenceUtil);
+		      new ByteArrayInputStream(password.getBytes()), branchFactory);
 	}
 }
