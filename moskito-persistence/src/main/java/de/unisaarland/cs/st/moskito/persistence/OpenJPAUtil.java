@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -67,9 +64,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#activeTransaction
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#activeTransaction ()
 	 */
 	@Override
 	public synchronized boolean activeTransaction() {
@@ -78,9 +73,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#beginTransaction
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#beginTransaction ()
 	 */
 	@Override
 	public synchronized void beginTransaction() {
@@ -91,9 +84,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#commitTransaction
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#commitTransaction ()
 	 */
 	@Override
 	public synchronized void commitTransaction() {
@@ -104,9 +95,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createCriteria
-	 * (java.lang.Class)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createCriteria (java.lang.Class)
 	 */
 	@Override
 	public <T> Criteria<T> createCriteria(final Class<T> clazz) {
@@ -119,8 +108,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
-	 * (java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery (java.lang.String)
 	 */
 	@Override
 	public <T> Query createNativeQuery(final String query,
@@ -130,8 +118,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery
-	 * (java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#createQuery (java.lang.String)
 	 */
 	@Override
 	public Query createQuery(final String query) {
@@ -263,9 +250,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#executeNativeQuery
-	 * (java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#executeNativeQuery (java.lang.String)
 	 */
 	@Override
 	public void executeNativeQuery(final String queryString) {
@@ -296,9 +281,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#executeQuery
-	 * (java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#executeQuery (java.lang.String)
 	 */
 	@Override
 	public void executeQuery(final String queryString) {
@@ -328,9 +311,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#getToolInformation
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#getToolInformation ()
 	 */
 	@SuppressWarnings ("deprecation")
 	@Override
@@ -370,8 +351,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#load(javax
-	 * .persistence.criteria.CriteriaQuery)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#load(javax .persistence.criteria.CriteriaQuery)
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria) {
@@ -393,9 +373,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#loadById(java
-	 * .lang.Object, java.lang.Class)
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#loadById(java .lang.Object, java.lang.Class)
 	 */
 	@Override
 	public <T, I> T loadById(final I id,
@@ -431,9 +409,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#commitTransaction
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#commitTransaction ()
 	 */
 	@Override
 	public synchronized void rollbackTransaction() {
@@ -454,8 +430,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#saveOrUpdate
+	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#saveOrUpdate
 	 * (de.unisaarland.cs.st.moskito.persistence.Annotated)
 	 */
 	@Override

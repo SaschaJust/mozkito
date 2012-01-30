@@ -62,7 +62,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @param dbFile
 	 */
 	public CoreChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull File dbFile,
-			PersistenceUtil persistenceUtil) {
+	        PersistenceUtil persistenceUtil) {
 		this.graph = graph;
 		this.dbFile = dbFile;
 		this.persistenceUtil = persistenceUtil;
@@ -72,21 +72,21 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Adds a directed edge between target <--type-- dependent of type edgeType.
-	 * Adds missing vertices before adding edge, if necessary.
+	 * Adds a directed edge between target <--type-- dependent of type edgeType. Adds missing vertices before adding
+	 * edge, if necessary.
 	 * 
 	 * @param dependant
-	 *            The collection of JavaChangeOperations that represent the edge
-	 *            source vertex.
+	 *            The collection of JavaChangeOperations that represent the edge source vertex.
 	 * @param target
-	 *            The collection of JavaChangeOperations that represent the edge
-	 *            target vertex.
+	 *            The collection of JavaChangeOperations that represent the edge target vertex.
 	 * @param edgeType
 	 *            the GenealogyEdgeType of the edge to be added
 	 * @return true, if successful
 	 */
 	@NoneNull
-	public boolean addEdge(final JavaChangeOperation dependent,final JavaChangeOperation target, final GenealogyEdgeType edgeType) {
+	public boolean addEdge(final JavaChangeOperation dependent,
+	                       final JavaChangeOperation target,
+	                       final GenealogyEdgeType edgeType) {
 		
 		ChangeType depChangeType = dependent.getChangeType();
 		JavaElement depElement = dependent.getChangedElementLocation().getElement();
@@ -94,11 +94,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		ChangeType targetChangeType = target.getChangeType();
 		
 		if (dependent.getRevision().getTransaction().getTimestamp()
-				.isBefore(target.getRevision().getTransaction().getTimestamp())) {
+		             .isBefore(target.getRevision().getTransaction().getTimestamp())) {
 			if (Logger.logError()) {
 				Logger.error("Trying to add edge between dependent and target for which "
-						+ "the dependant occured before the target. THIS IS IMPOSSIBLE. "
-						+ "The future cannot influence the past: " + dependent + " --> " + target);
+				        + "the dependant occured before the target. THIS IS IMPOSSIBLE. "
+				        + "The future cannot influence the past: " + dependent + " --> " + target);
 			}
 			return false;
 		}
@@ -145,12 +145,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 					default:
 						if (Logger.logError()) {
 							Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
-									+ dependent.toString() + " target=" + target.toString());
+							        + dependent.toString() + " target=" + target.toString());
 						}
 						return false;
 				}
 				break;
-				
+			
 			case DeletedDefinitionOnDefinition:
 				if (!depChangeType.equals(ChangeType.Deleted)) {
 					if (Logger.logError()) {
@@ -254,12 +254,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			default:
 				if (Logger.logError()) {
 					Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
-							+ dependent.toString() + " target=" + target.toString());
+					        + dependent.toString() + " target=" + target.toString());
 				}
 				return false;
 		}
 		
-		//add both vertices
+		// add both vertices
 		if (!containsVertex(dependent)) {
 			addVertex(dependent);
 		}
@@ -267,7 +267,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			addVertex(target);
 		}
 		
-		//we know that they have to exist
+		// we know that they have to exist
 		Node from = this.getNodeForVertex(dependent);
 		Node to = this.getNodeForVertex(target);
 		
@@ -298,14 +298,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Adds a vertex to the genealogy that is associated with the specified
-	 * JavaChangeOperation. This method also checks if such a vertex exists
-	 * already.
+	 * Adds a vertex to the genealogy that is associated with the specified JavaChangeOperation. This method also checks
+	 * if such a vertex exists already.
 	 * 
 	 * @param v
 	 *            the JavaChangeOperation to add
-	 * @return true if the new vertex was successfully added. False otherwise
-	 *         (this may include that the vertex existed already).
+	 * @return true if the new vertex was successfully added. False otherwise (this may include that the vertex existed
+	 *         already).
 	 */
 	@NoneNull
 	public boolean addVertex(@NotNull final JavaChangeOperation v) {
@@ -335,9 +334,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Must be called to ensure the Graph DB to be shut down properly! This will
-	 * be taken care of by a separate ShutdownHook. So make sure to call this
-	 * method only when you are know what you are doing!
+	 * Must be called to ensure the Graph DB to be shut down properly! This will be taken care of by a separate
+	 * ShutdownHook. So make sure to call this method only when you are know what you are doing!
 	 */
 	@Override
 	public void close() {
@@ -345,18 +343,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Checks if there exists a directed dependency from <code>from</code> to
-	 * <code>to</code>.
+	 * Checks if there exists a directed dependency from <code>from</code> to <code>to</code>.
 	 * 
 	 * @param from
 	 *            the from
 	 * @param to
 	 *            the to
-	 * @return true, if an edge from <code>from</code> to <code>to</code>
-	 *         exists, false otherwise.
+	 * @return true, if an edge from <code>from</code> to <code>to</code> exists, false otherwise.
 	 */
 	@Override
-	public boolean containsEdge(JavaChangeOperation from, JavaChangeOperation to) {
+	public boolean containsEdge(JavaChangeOperation from,
+	                            JavaChangeOperation to) {
 		GenealogyEdgeType result = this.getEdge(from, to);
 		return result != null;
 	}
@@ -378,41 +375,41 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Returns a collection containing nodes that depend on node
-	 * <code>node</code> (incoming edges).
+	 * Returns a collection containing nodes that depend on node <code>node</code> (incoming edges).
 	 * 
 	 * @return all dependents
 	 */
 	@Override
 	public Collection<JavaChangeOperation> getAllDependants(JavaChangeOperation operation) {
 		return getDependants(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	/**
-	 * Returns a collection containing nodes that depend on node
-	 * <code>node</code> (incoming edges).
+	 * Returns a collection containing nodes that depend on node <code>node</code> (incoming edges).
 	 * 
 	 * @return all dependents
 	 */
 	private Collection<Node> getAllDependents(Node node) {
 		return getDependents(node, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	/**
-	 * Returns a collection containing nodes that are connected through an
-	 * outgoing edge.
+	 * Returns a collection containing nodes that are connected through an outgoing edge.
 	 * 
 	 * @return all dependents
 	 */
 	@Override
 	public Collection<JavaChangeOperation> getAllParents(JavaChangeOperation operation) {
 		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	@Override
@@ -421,16 +418,16 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Returns a collection containing nodes depending on node <code>node</code>
-	 * via an edge of a type is contained within the specified edge type array.
-	 * (incoming edges)
+	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
+	 * within the specified edge type array. (incoming edges)
 	 * 
 	 * @param types
 	 *            consider only edges of these types
 	 * @return the dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getDependants(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
+	public Collection<JavaChangeOperation> getDependants(JavaChangeOperation operation,
+	                                                     GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -446,18 +443,18 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return parentOperations;
 	}
 	
-	///////////////
+	// /////////////
 	
 	/**
-	 * Returns a collection containing nodes depending on node <code>node</code>
-	 * via an edge of a type is contained within the specified edge type array.
-	 * (incoming edges)
+	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
+	 * within the specified edge type array. (incoming edges)
 	 * 
 	 * @param types
 	 *            consider only edges of these types
 	 * @return the dependents
 	 */
-	private Collection<Node> getDependents(Node node, GenealogyEdgeType... edgeTypes) {
+	private Collection<Node> getDependents(Node node,
+	                                       GenealogyEdgeType... edgeTypes) {
 		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		Set<Node> parents = new HashSet<Node>();
 		for (Relationship rel : relationships) {
@@ -475,7 +472,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *            the to
 	 * @return the edge or <code>null</code> if no such edge exists.
 	 */
-	public GenealogyEdgeType getEdge(JavaChangeOperation from, JavaChangeOperation to) {
+	public GenealogyEdgeType getEdge(JavaChangeOperation from,
+	                                 JavaChangeOperation to) {
 		Node fromNode = getNodeForVertex(from);
 		Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -486,9 +484,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		
 		Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                                                                 GenealogyEdgeType.CallOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedCallOnCall,
+		                                                                 GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		for (Relationship rel : relationships) {
 			if (rel.getEndNode().equals(toNode)) {
@@ -500,7 +501,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(JavaChangeOperation from, JavaChangeOperation to) {
+	public Collection<GenealogyEdgeType> getEdges(JavaChangeOperation from,
+	                                              JavaChangeOperation to) {
 		Node fromNode = getNodeForVertex(from);
 		Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -511,9 +513,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		
 		Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                                                                 GenealogyEdgeType.CallOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedCallOnCall,
+		                                                                 GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		Collection<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
 		for (Relationship rel : relationships) {
@@ -584,7 +589,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return the dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getParents(JavaChangeOperation operation, GenealogyEdgeType... edgeTypes) {
+	public Collection<JavaChangeOperation> getParents(JavaChangeOperation operation,
+	                                                  GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -607,7 +613,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *            consider only edges of these types
 	 * @return the dependents
 	 */
-	private Collection<Node> getParents(Node node, GenealogyEdgeType... edgeTypes) {
+	private Collection<Node> getParents(Node node,
+	                                    GenealogyEdgeType... edgeTypes) {
 		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
 		Set<Node> parents = new HashSet<Node>();
 		for (Relationship rel : relationships) {
@@ -649,25 +656,29 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		Node node = getNodeForVertex(op);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, GenealogyEdgeType.values());
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;
 	}
 	
 	@Override
-	public int inDegree(JavaChangeOperation op, GenealogyEdgeType... edgeTypes) {
+	public int inDegree(JavaChangeOperation op,
+	                    GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(op);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;
 	}
 	
 	@Override
-	public JavaChangeOperation loadById(final long id, Class<? extends JavaChangeOperation> clazz) {
+	public JavaChangeOperation loadById(final long id,
+	                                    Class<? extends JavaChangeOperation> clazz) {
 		return persistenceUtil.loadById(id, clazz);
 	}
 	
@@ -685,18 +696,21 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		Node node = getNodeForVertex(op);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, GenealogyEdgeType.values());
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;
 	}
 	
 	@Override
-	public int outDegree(JavaChangeOperation op, GenealogyEdgeType... edgeTypes) {
+	public int outDegree(JavaChangeOperation op,
+	                     GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(op);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;
@@ -726,8 +740,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
-	 * Number of vertices. In most scenarios this number is exact. In some
-	 * scenarios this number will be close to accurate.
+	 * Number of vertices. In most scenarios this number is exact. In some scenarios this number will be close to
+	 * accurate.
 	 * 
 	 * @return the #vertices
 	 */

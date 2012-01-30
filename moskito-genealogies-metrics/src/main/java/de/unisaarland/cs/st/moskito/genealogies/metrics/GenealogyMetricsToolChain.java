@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -46,8 +42,8 @@ import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
 public class GenealogyMetricsToolChain extends AndamaChain {
 	
-	private GenealogyArguments genealogyArgs;
-	private AndamaPool         threadPool;
+	private GenealogyArguments  genealogyArgs;
+	private AndamaPool          threadPool;
 	private CoreChangeGenealogy genealogy;
 	private EnumArgument        granularityArg;
 	private OutputFileArgument  outputFileArgument;
@@ -59,11 +55,11 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		settings.setLoggerArg(false);
 		genealogyArgs = settings.setGenealogyArgs(true);
 		granularityArg = new EnumArgument(settings, "genealogy.metric.level",
-				"The granularity level the metrics should be computed on.", "CHANGEOPERATION", true, new String[] {
-				"CHANGEOPERATION", "OPERATIONPARTITION", "TRANSACTION" });
+		                                  "The granularity level the metrics should be computed on.",
+		                                  "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
+		                                          "OPERATIONPARTITION", "TRANSACTION" });
 		outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
-				"Filename to write result metric matrix into.", null,
-				true, false);
+		                                            "Filename to write result metric matrix into.", null, true, false);
 		
 		settings.parseArguments();
 	}
@@ -85,37 +81,35 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 	public void setup() {
 		genealogy = genealogyArgs.getValue();
 		
-		//allow different genealogy layers
+		// allow different genealogy layers
 		String granularity = granularityArg.getValue();
 		
 		/*
-		 * we always enable all metrics. Otherwise this would require far too
-		 * many arguments The idea is to load all classes that extend
-		 * GenealogyMetric. Each metric registers itself at the
-		 * GenealogyMetricManager, depending on the granularity level selected
-		 * for this run.
+		 * we always enable all metrics. Otherwise this would require far too many arguments The idea is to load all
+		 * classes that extend GenealogyMetric. Each metric registers itself at the GenealogyMetricManager, depending on
+		 * the granularity level selected for this run.
 		 */
 		
 		if (granularity.equals("CHANGEOPERATIONPARTITION")) {
-			PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(genealogy,
-					new DefaultPartitionGenerator(genealogy));
-			new PartitionGenealogyReader(this.threadPool.getThreadGroup(),
-					getSettings(),
-					partitionChangeGenealogy);
+			PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
+			                                                                                 genealogy,
+			                                                                                 new DefaultPartitionGenerator(
+			                                                                                                               genealogy));
+			new PartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), partitionChangeGenealogy);
 			new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
-			//start all partition metrics
+			// start all partition metrics
 			try {
 				
-				Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder
-						.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
-								GenealogyPartitionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
-								| Modifier.PRIVATE);
+				Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
+				                                                                                                           GenealogyPartitionMetric.class,
+				                                                                                                           Modifier.ABSTRACT
+				                                                                                                                   | Modifier.INTERFACE
+				                                                                                                                   | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass
-								.getConstructor(PartitionChangeGenealogy.class);
+						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
 						if (constructor != null) {
 							GenealogyPartitionMetric metric = constructor.newInstance(genealogy);
 							new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
@@ -131,26 +125,25 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			
 		} else if (granularity.equals("TRANSACTION")) {
 			TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(genealogy);
-			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
-					transactionChangeGenealogy);
+			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
-			//start all transaction metrics
+			// start all transaction metrics
 			
 			try {
-				Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder
-						.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
-								GenealogyTransactionMetric.class, Modifier.ABSTRACT | Modifier.INTERFACE
-								| Modifier.PRIVATE);
+				Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
+				                                                                                                             GenealogyTransactionMetric.class,
+				                                                                                                             Modifier.ABSTRACT
+				                                                                                                                     | Modifier.INTERFACE
+				                                                                                                                     | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass
-								.getConstructor(TransactionChangeGenealogy.class);
+						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
 						if (constructor != null) {
 							GenealogyTransactionMetric metric = constructor.newInstance(genealogy);
 							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-									metric);
+							                                     metric);
 						}
 					}
 				}
@@ -164,17 +157,18 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		} else {
 			new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), genealogy);
 			new GenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
-			//start all core metrics
+			// start all core metrics
 			
 			try {
-				Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(
-						GenealogyCoreMetric.class.getPackage(), GenealogyCoreMetric.class, Modifier.ABSTRACT
-						| Modifier.INTERFACE | Modifier.PRIVATE);
+				Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyCoreMetric.class.getPackage(),
+				                                                                                                      GenealogyCoreMetric.class,
+				                                                                                                      Modifier.ABSTRACT
+				                                                                                                              | Modifier.INTERFACE
+				                                                                                                              | Modifier.PRIVATE);
 				
 				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyCoreMetric> constructor = metricClass
-								.getConstructor(CoreChangeGenealogy.class);
+						Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(CoreChangeGenealogy.class);
 						if (constructor != null) {
 							GenealogyCoreMetric coreMetric = constructor.newInstance(genealogy);
 							new GenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), coreMetric);
@@ -189,11 +183,9 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			}
 		}
 		
-		
-		//start a demuxer and a sink that receives all the metric values
-		//and stores the overall result matrix
+		// start a demuxer and a sink that receives all the metric values
+		// and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(),
-				outputFileArgument.getValue());
+		new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(), outputFileArgument.getValue());
 	}
 }

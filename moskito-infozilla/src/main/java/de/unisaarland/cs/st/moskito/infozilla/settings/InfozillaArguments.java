@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -45,13 +42,13 @@ public class InfozillaArguments extends AndamaArgumentSet<InfozillaFilterChain> 
 		try {
 			Package package1 = InfozillaFilter.class.getPackage();
 			Collection<Class<? extends InfozillaFilter>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-					InfozillaFilter.class,
-					Modifier.ABSTRACT
-					| Modifier.INTERFACE
-					| Modifier.PRIVATE);
+			                                                                                                          InfozillaFilter.class,
+			                                                                                                          Modifier.ABSTRACT
+			                                                                                                                  | Modifier.INTERFACE
+			                                                                                                                  | Modifier.PRIVATE);
 			
 			addArgument(new ListArgument(settings, "mapping.filters", "A list of mapping filters that shall be used.",
-					buildFilterList(classesExtendingClass), false));
+			                             buildFilterList(classesExtendingClass), false));
 			
 			String filters = System.getProperty("mapping.filters");
 			Set<String> filterNames = new HashSet<String>();
@@ -104,8 +101,7 @@ public class InfozillaArguments extends AndamaArgumentSet<InfozillaFilterChain> 
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
+	 * @see de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
 	 */
 	@Override
 	public InfozillaFilterChain getValue() {

@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
@@ -29,7 +25,6 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-
 
 public class GenealogyTestEnvironment {
 	
@@ -52,10 +47,10 @@ public class GenealogyTestEnvironment {
 	private final File                                               tmpGraphDBFile;
 	
 	GenealogyTestEnvironment(PersistenceUtil persistenceUtil,
-			Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap,
-			Map<Integer, RCSTransaction> environmentTransactions,
-			Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations, Repository repository,
-			CoreChangeGenealogy changeGenealogy, File tmpGraphDBFile) {
+	        Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap,
+	        Map<Integer, RCSTransaction> environmentTransactions,
+	        Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations, Repository repository,
+	        CoreChangeGenealogy changeGenealogy, File tmpGraphDBFile) {
 		
 		this.persistenceUtil = persistenceUtil;
 		this.transactionMap = transactionMap;
@@ -70,74 +65,72 @@ public class GenealogyTestEnvironment {
 		
 		CompareCondition.equals(41, changeGenealogy.vertexSize(), "GenealogyTestEnvironment.consistenceCheck");
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition.check(
-				changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
-						environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.CallOnDefinition),
-				"");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
+		                                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition
-		.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				environmentOperations.get(TestEnvironmentOperation.T1F2),
-				GenealogyEdgeType.DefinitionOnDefinition), "");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
+		                                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		                                        GenealogyEdgeType.DefinitionOnDefinition), "");
 		
-		Condition.check(
-				changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
-						environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition),
-				"");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3D),
-				environmentOperations.get(TestEnvironmentOperation.T2F3), GenealogyEdgeType.DeletedCallOnCall), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T2F3),
+		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3A),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(
-				changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
-						environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition),
-				"");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(
-				changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
-						environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition),
-				"");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T6F2),
-				environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F2M),
+		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T7F2),
-				environmentOperations.get(TestEnvironmentOperation.T6F2),
-				GenealogyEdgeType.DefinitionOnDeletedDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T6F2),
+		                                        GenealogyEdgeType.DefinitionOnDeletedDefinition), "");
 		
-		Condition
-		.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
-				environmentOperations.get(TestEnvironmentOperation.T7F2),
-				GenealogyEdgeType.DefinitionOnDefinition), "");
+		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
+		                                        environmentOperations.get(TestEnvironmentOperation.T7F2),
+		                                        GenealogyEdgeType.DefinitionOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T9F1),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		                                        GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-		        GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		                                        GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-		        environmentOperations.get(TestEnvironmentOperation.T4F3A), GenealogyEdgeType.DeletedCallOnCall), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T4F3A),
+		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 		
 		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-		        environmentOperations.get(TestEnvironmentOperation.T5F4), GenealogyEdgeType.DeletedCallOnCall), "");
+		                                        environmentOperations.get(TestEnvironmentOperation.T5F4),
+		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 	}
 	
 	public CoreChangeGenealogy getChangeGenealogy() {

@@ -11,7 +11,7 @@ import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class CandidatesConverter extends AndamaTransformer<Candidate, Mapping> {

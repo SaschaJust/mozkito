@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.moskito.persistence.OpenJPAUtil;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @DatabaseSettings (unit = "rcs")

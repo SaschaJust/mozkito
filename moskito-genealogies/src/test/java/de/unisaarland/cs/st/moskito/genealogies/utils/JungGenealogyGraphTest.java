@@ -23,9 +23,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class JungGenealogyGraphTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings (unit = "ppa",
-	                   database = "moskito_genealogies_test_environment",
-	                   options = ConnectOptions.CREATE)
+	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void testCoreLayer() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);

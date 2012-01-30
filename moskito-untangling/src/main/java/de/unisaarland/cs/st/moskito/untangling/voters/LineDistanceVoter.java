@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -27,13 +24,9 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation.LineCover;
  */
 public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
-	
-	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getMaxPossibleScore()
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getMaxPossibleScore()
 	 */
 	@Override
 	public double getMaxPossibleScore() {
@@ -42,13 +35,12 @@ public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getScore(java.lang.Object, java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
+	 * java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,
-			final JavaChangeOperation op2) {
+	                       final JavaChangeOperation op2) {
 		
 		String path1 = op1.getChangedPath();
 		String path2 = op2.getChangedPath();
@@ -60,7 +52,7 @@ public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 		JavaElementLocation location1 = op1.getChangedElementLocation();
 		JavaElementLocation location2 = op2.getChangedElementLocation();
 		
-		//check if one location is covered by the other one => 1
+		// check if one location is covered by the other one => 1
 		if ((!location1.coversLine(location2.getStartLine()).equals(LineCover.FALSE))
 		        || (!location2.coversLine(location1.getStartLine()).equals(LineCover.FALSE))) {
 			return 1;
@@ -68,6 +60,6 @@ public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 		
 		double lineDistance = Math.abs(location1.getStartLine() - location2.getStartLine()) + 0.1;
 		return 1 / lineDistance;
-
+		
 	}
 }

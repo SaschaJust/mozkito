@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -35,13 +31,12 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
-
 public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 	
-	private File outputFile;
+	private File                     outputFile;
 	private boolean                  checkedConsistency = false;
 	
-	Map<String, Map<String, Double>> metricValues = new HashMap<String, Map<String, Double>>();
+	Map<String, Map<String, Double>> metricValues       = new HashMap<String, Map<String, Double>>();
 	
 	public GenealogyMetricSink(AndamaGroup threadGroup, AndamaSettings settings, File outputFile) {
 		super(threadGroup, settings, false);
@@ -81,7 +76,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				}
 				if (!GenealogyMetricSink.this.isConsistent()) {
 					throw new UnrecoverableError(
-					        "Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
+					                             "Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
 				}
 				if (Logger.logInfo()) {
 					Logger.info("done.");
@@ -97,7 +92,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			}
 			
 		};
-
+		
 	}
 	
 	public boolean isConsistent() {
@@ -115,11 +110,11 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			if (numMetrics != metricValues.get(nodeId).size()) {
 				if (Logger.logError()) {
 					Logger.error("Found " + metricValues.get(nodeId).size() + " metric values for node id `" + nodeId
-							+ "` but " + numMetrics
-							+ " were expected. Metric data not consistent. Don't trust the data!");
+					        + "` but " + numMetrics
+					        + " were expected. Metric data not consistent. Don't trust the data!");
 					if (numLines < 3) {
 						Logger.error("The previous error was caused by the second instance checked. It might be that the first instance was wrong. Instance id of the first entry: `"
-								+ firstNodeId + "`");
+						        + firstNodeId + "`");
 					}
 				}
 				return false;
@@ -144,9 +139,9 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			List<String> metricIDs = null;
 			
 			for (String nodeId : metricValues.keySet()) {
-				if(metricIDs == null){
+				if (metricIDs == null) {
 					metricIDs = new LinkedList<String>();
-					for(String metricId : metricValues.get(nodeId).keySet()){
+					for (String metricId : metricValues.get(nodeId).keySet()) {
 						metricIDs.add(metricId);
 						writer.write(",");
 						writer.write(metricId);
@@ -164,7 +159,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 					}
 				}
 				
-				for(String metricId : metricIDs){
+				for (String metricId : metricIDs) {
 					writer.write(",");
 					if (!metricValuesForNode.containsKey(metricId)) {
 						writer.write("NA");

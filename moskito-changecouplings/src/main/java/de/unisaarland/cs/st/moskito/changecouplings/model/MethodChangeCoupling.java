@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings.model;
 
@@ -29,14 +26,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
 public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
-	
 	private final Set<JavaMethodDefinition> premise;
 	private final JavaMethodDefinition      implication;
 	private final Integer                   support;
 	private final Double                    confidence;
 	
 	public MethodChangeCoupling(final String[] premise, final String implication, final Integer support,
-			final Double confidence, final PersistenceUtil persistenceUtil) {
+	        final Double confidence, final PersistenceUtil persistenceUtil) {
 		this.premise = new HashSet<JavaMethodDefinition>();
 		
 		boolean commit = false;
@@ -47,7 +43,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		for (String p : premise) {
 			
 			Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-					.eq("fullQualifiedName", p);
+			                                                         .eq("fullQualifiedName", p);
 			List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 			if ((defs == null) || (defs.size() != 1)) {
 				throw new UnrecoverableError("Could not retrieve RCSFile with id " + p);
@@ -56,7 +52,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		}
 		
 		Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-				.eq("fullQualifiedName", implication);
+		                                                         .eq("fullQualifiedName", implication);
 		List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 		if ((defs == null) || (defs.size() != 1)) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
@@ -112,8 +108,8 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	@Override
 	public String toString() {
 		return "ChangeCouplingRule [premise="
-				+ Arrays.toString(premise.toArray(new JavaMethodDefinition[premise.size()])) + ", implication="
-				+ implication + ", support=" + support + ", confidence=" + confidence + "]";
+		        + Arrays.toString(premise.toArray(new JavaMethodDefinition[premise.size()])) + ", implication="
+		        + implication + ", support=" + support + ", confidence=" + confidence + "]";
 	}
 	
 }

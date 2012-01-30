@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -94,9 +91,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath,
@@ -148,8 +143,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang.
-	 * String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang. String, java.lang.String)
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath,
@@ -221,8 +215,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Collection<Delta> diff(final String filePath,
@@ -446,21 +439,16 @@ public class GitRepository extends Repository {
 		return this.transactionIDs.get((int) (fromIndex + index));
 		
 		/*
-		 * else if (index < 0) { String[] args = new String[] { "log",
-		 * "--branches", "--remotes", "--pretty=format:%H", "-r", transactionId
-		 * }; Tuple<Integer, List<String>> response =
-		 * CommandExecutor.execute("git", args, this.cloneDir, null, null); if
-		 * (response.getFirst() != 0) { return null; } List<String> lines =
-		 * response.getSecond(); if (lines.size() < index) { return
-		 * lines.get(lines.size() - 1); } else { return lines.get((int) index);
-		 * } } else { String[] args = new String[] { "log", "--branches",
-		 * "--remotes", "--reverse", "--pretty=format:%H", "-r", transactionId +
-		 * ".." + getHEAD() }; Tuple<Integer, List<String>> response =
-		 * CommandExecutor.execute("git", args, this.cloneDir, null, null); if
-		 * (response.getFirst() != 0) { return null; } List<String> lines =
-		 * response.getSecond(); if (lines.isEmpty()) { return transactionId; }
-		 * if (lines.size() < (index - 1)) { return lines.get(lines.size() - 1);
-		 * } else { return lines.get((int) index - 1); } }
+		 * else if (index < 0) { String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H",
+		 * "-r", transactionId }; Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args,
+		 * this.cloneDir, null, null); if (response.getFirst() != 0) { return null; } List<String> lines =
+		 * response.getSecond(); if (lines.size() < index) { return lines.get(lines.size() - 1); } else { return
+		 * lines.get((int) index); } } else { String[] args = new String[] { "log", "--branches", "--remotes",
+		 * "--reverse", "--pretty=format:%H", "-r", transactionId + ".." + getHEAD() }; Tuple<Integer, List<String>>
+		 * response = CommandExecutor.execute("git", args, this.cloneDir, null, null); if (response.getFirst() != 0) {
+		 * return null; } List<String> lines = response.getSecond(); if (lines.isEmpty()) { return transactionId; } if
+		 * (lines.size() < (index - 1)) { return lines.get(lines.size() - 1); } else { return lines.get((int) index -
+		 * 1); } }
 		 */
 	}
 	
@@ -490,8 +478,7 @@ public class GitRepository extends Repository {
 	}
 	
 	/*
-	 * In case of git this method returns a file pointing to a bare repository
-	 * mirror!
+	 * In case of git this method returns a file pointing to a bare repository mirror!
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -501,8 +488,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -659,8 +645,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void setup(final URI address,

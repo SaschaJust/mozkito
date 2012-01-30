@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -43,16 +40,16 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@Table(name = "rcsbranch")
+@Table (name = "rcsbranch")
 public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
-	private static final long serialVersionUID   = 5419737140470855522L;
+	private static final long  serialVersionUID   = 5419737140470855522L;
 	
-	private String            name;
-	private RCSBranch         parent             = null;
-	private RCSTransaction    begin              = null;
-	private RCSTransaction    end                = null;
-	private Set<String>       mergedIn           = new HashSet<String>();
+	private String             name;
+	private RCSBranch          parent             = null;
+	private RCSTransaction     begin              = null;
+	private RCSTransaction     end                = null;
+	private Set<String>        mergedIn           = new HashSet<String>();
 	
 	public static final String MASTER_BRANCH_NAME = "master";
 	
@@ -83,7 +80,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -133,8 +129,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
-	 * Checks if the given transaction id was committed in this branch. Returns
-	 * the RCSTransaction if found, otherwise <code>null</code>.
+	 * Checks if the given transaction id was committed in this branch. Returns the RCSTransaction if found, otherwise
+	 * <code>null</code>.
 	 * 
 	 * @param tId
 	 *            the t id
@@ -183,7 +179,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the begin
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getBegin() {
 		return this.begin;
 	}
@@ -193,7 +189,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSTransaction getEnd() {
 		return this.end;
 	}
@@ -223,7 +219,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Id
 	@Basic
-	@Index(name = "idx_name")
+	@Index (name = "idx_name")
 	public String getName() {
 		return this.name;
 	}
@@ -233,7 +229,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * 
 	 * @return the parent
 	 */
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public RCSBranch getParent() {
 		return this.parent;
 	}
@@ -242,7 +238,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = (prime * result) + ((this.getName() == null)
+		                                                     ? 0
+		                                                     : this.getName().hashCode());
 		return result;
 	}
 	
@@ -316,7 +314,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

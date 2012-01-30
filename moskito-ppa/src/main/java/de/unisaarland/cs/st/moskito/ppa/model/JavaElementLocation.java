@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -84,15 +81,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * 
 	 * @param element
 	 *            the element
-	 * @return the java element location if successful. Returns
-	 *         <code>null</code> otherwise.
+	 * @return the java element location if successful. Returns <code>null</code> otherwise.
 	 */
 	public static JavaElementLocation fromXMLRepresentation(final org.jdom.Element element) {
 		
 		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
 			if (Logger.logWarn()) {
 				Logger.warn("Unrecognized JavaElementLocation tag. Expected <" + JAVA_ELEMENT_LOCATION_TAG
-						+ "> but got <" + element.getName() + ">. Retuning null.");
+				        + "> but got <" + element.getName() + ">. Retuning null.");
 			}
 			return null;
 		}
@@ -221,7 +217,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		}
 		
 		JavaElementLocation javaElementLocation = new JavaElementLocation(javaElement, startline, endline, position,
-				bodystart, path);
+		                                                                  bodystart, path);
 		javaElementLocation.setId(id);
 		return javaElementLocation;
 	}
@@ -273,17 +269,17 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 *            the file path
 	 */
 	public JavaElementLocation(@NotNull final JavaElement element, @NotNegative final int startLine,
-			@NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
-			@NotNull final String filePath) {
+	        @NotNegative final int endLine, @NotNegative final int position, final int bodyStartLine,
+	        @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		
 		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
 			Condition.check(bodyStartLine <= endLine,
-					"Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
-					+ " startLine=" + endLine);
+			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
+			                        + " startLine=" + endLine);
 			Condition.check(bodyStartLine >= startLine,
-					"Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
-					+ " startLine=" + startLine);
+			                "Body start line must be greater or equal than end line: bodyStartLine=" + bodyStartLine
+			                        + " startLine=" + startLine);
 		}
 		setElement(element);
 		setStartLine(startLine);
@@ -303,7 +299,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@Transient
 	public void addCommentLines(@NotNegative final int from,
-			@NotNegative final int to) {
+	                            @NotNegative final int to) {
 		Condition.check(from <= to, "You must supply a closed interval.");
 		for (int i = from; i <= to; ++i) {
 			getCommentLines().add(i);
@@ -577,11 +573,11 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((getElement() == null)
-				? 0
-						: getElement().hashCode());
+		                                                   ? 0
+		                                                   : getElement().hashCode());
 		result = (prime * result) + ((getFilePath() == null)
-				? 0
-						: getFilePath().hashCode());
+		                                                    ? 0
+		                                                    : getFilePath().hashCode());
 		if (getElement() instanceof JavaMethodCall) {
 			result = (prime * result) + getEndLine();
 			result = (prime * result) + getPosition();
@@ -612,8 +608,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	}
 	
 	/**
-	 * Sets the element. Careful! This can have nasty side effects when
-	 * persisting the JavaElementLocation using persistence middleware!
+	 * Sets the element. Careful! This can have nasty side effects when persisting the JavaElementLocation using
+	 * persistence middleware!
 	 * 
 	 * @param element
 	 *            the new element

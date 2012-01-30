@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.model;
 
@@ -37,23 +34,20 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 
-
-
 /**
  * The Class MinerCallGraph.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implements
-DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
-	
+        DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	/**
 	 * 
 	 */
-	private static final long                                serialVersionUID = -5019126219418574465L;
+	private static final long serialVersionUID = -5019126219418574465L;
 	
-	public static CallGraph unserialize(final File file){
+	public static CallGraph unserialize(final File file) {
 		try {
 			ObjectInputStream objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 			CallGraph graph = (CallGraph) objIn.readObject();
@@ -62,28 +56,30 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 		} catch (FileNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
-				             + FileUtils.lineSeparator + e.getMessage());
+				        + FileUtils.lineSeparator + e.getMessage());
 			}
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
-				             + FileUtils.lineSeparator + e.getMessage());
+				        + FileUtils.lineSeparator + e.getMessage());
 			}
 		} catch (ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
-				             + FileUtils.lineSeparator + e.getMessage());
+				        + FileUtils.lineSeparator + e.getMessage());
 			}
 		}
 		return null;
 	}
-	private DirectedSparseGraph<MethodVertex, CallGraphEdge> methodCallGraph  = new DirectedSparseGraph<MethodVertex, CallGraphEdge>();
+	
+	private DirectedSparseGraph<MethodVertex, CallGraphEdge> methodCallGraph = new DirectedSparseGraph<MethodVertex, CallGraphEdge>();
 	
 	private DirectedSparseGraph<ClassVertex, CallGraphEdge>  classCallGraph  = new DirectedSparseGraph<ClassVertex, CallGraphEdge>();
 	
 	public CallGraph() {
 		
 	}
+	
 	public CallGraph(final CallGraph other) {
 		this.methodCallGraph = other.methodCallGraph;
 		this.classCallGraph = other.classCallGraph;
@@ -91,8 +87,7 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object,
-	 * edu.uci.ics.jung.graph.util.Pair)
+	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object, edu.uci.ics.jung.graph.util.Pair)
 	 */
 	@Override
 	@Deprecated
@@ -122,12 +117,13 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object,
-	 * edu.uci.ics.jung.graph.util.Pair, edu.uci.ics.jung.graph.util.EdgeType)
+	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object, edu.uci.ics.jung.graph.util.Pair,
+	 * edu.uci.ics.jung.graph.util.EdgeType)
 	 */
 	@Override
 	@Deprecated
-	public boolean addEdge(final CallGraphEdge edge, final Pair<? extends MethodVertex> endpoints,
+	public boolean addEdge(final CallGraphEdge edge,
+	                       final Pair<? extends MethodVertex> endpoints,
 	                       final EdgeType edgeType) {
 		if (!edgeType.equals(EdgeType.DIRECTED)) {
 			return false;
@@ -145,7 +141,8 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	 *            the to
 	 * @return true, if successful
 	 */
-	public boolean addEdge(final MethodVertex from, final MethodVertex to) {
+	public boolean addEdge(final MethodVertex from,
+	                       final MethodVertex to) {
 		CallGraphEdge edge = this.methodCallGraph.findEdge(from, to);
 		if (edge != null) {
 			return this.addEdge(edge, new Pair<MethodVertex>(from, to));
@@ -191,23 +188,23 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
-	        return true;
-        }
+			return true;
+		}
 		if (obj == null) {
-	        return false;
-        }
+			return false;
+		}
 		if (getClass() != obj.getClass()) {
-	        return false;
-        }
+			return false;
+		}
 		CallGraph other = (CallGraph) obj;
 		if (classCallGraph == null) {
 			if (other.classCallGraph != null) {
-	            return false;
-            }
+				return false;
+			}
 		} else if (methodCallGraph == null) {
 			if (other.methodCallGraph != null) {
-	            return false;
-            }
+				return false;
+			}
 		} else {
 			boolean equal = true;
 			DirectedSparseGraph<ClassVertex, CallGraphEdge> otherClassCallGraph = other.getClassCallGraph();
@@ -228,7 +225,7 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 					equal &= (other.findEdge(v, n) != null);
 				}
 			}
-
+			
 			return equal;
 		}
 		return true;
@@ -272,9 +269,7 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * edu.uci.ics.jung.graph.Hypergraph#getEdgeCount(edu.uci.ics.jung.graph
-	 * .util.EdgeType)
+	 * @see edu.uci.ics.jung.graph.Hypergraph#getEdgeCount(edu.uci.ics.jung.graph .util.EdgeType)
 	 */
 	@Override
 	public int getEdgeCount(final EdgeType edge_type) {
@@ -292,9 +287,7 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * edu.uci.ics.jung.graph.Hypergraph#getEdges(edu.uci.ics.jung.graph.util
-	 * .EdgeType)
+	 * @see edu.uci.ics.jung.graph.Hypergraph#getEdges(edu.uci.ics.jung.graph.util .EdgeType)
 	 */
 	@Override
 	public Collection<CallGraphEdge> getEdges(final EdgeType edge_type) {
@@ -405,31 +398,31 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((classCallGraph == null)
-				? 0
-				: classCallGraph.hashCode());
+		                                                     ? 0
+		                                                     : classCallGraph.hashCode());
 		result = (prime * result) + ((methodCallGraph == null)
-				? 0
-				: methodCallGraph.hashCode());
+		                                                      ? 0
+		                                                      : methodCallGraph.hashCode());
 		return result;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.uci.ics.jung.graph.Graph#isDest(java.lang.Object,
-	 * java.lang.Object)
+	 * @see edu.uci.ics.jung.graph.Graph#isDest(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isDest(final MethodVertex vertex, final CallGraphEdge edge) {
+	public boolean isDest(final MethodVertex vertex,
+	                      final CallGraphEdge edge) {
 		return this.methodCallGraph.isDest(vertex, edge);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.uci.ics.jung.graph.Graph#isSource(java.lang.Object,
-	 * java.lang.Object)
+	 * @see edu.uci.ics.jung.graph.Graph#isSource(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isSource(final MethodVertex vertex, final CallGraphEdge edge) {
+	public boolean isSource(final MethodVertex vertex,
+	                        final CallGraphEdge edge) {
 		return this.methodCallGraph.isSource(vertex, edge);
 	}
 	
@@ -471,7 +464,8 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	 *            the to
 	 * @return true, if successful
 	 */
-	public boolean removeEdge(final MethodVertex from, final MethodVertex to) {
+	public boolean removeEdge(final MethodVertex from,
+	                          final MethodVertex to) {
 		if ((!this.containsVertex(from)) || (!this.containsVertex(to))) {
 			return false;
 		}
@@ -483,16 +477,16 @@ DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 		}
 	}
 	
-	public void removeRecursive(final ClassVertex vertex){
+	public void removeRecursive(final ClassVertex vertex) {
 		Collection<CallGraphEdge> outEdges = this.classCallGraph.getOutEdges(vertex);
-		if(outEdges == null){
+		if (outEdges == null) {
 			return;
 		}
 		outEdges = new HashSet<CallGraphEdge>(outEdges);
 		for (CallGraphEdge e : outEdges) {
 			this.classCallGraph.removeEdge(e);
 		}
-		for(MethodVertex v : vertex.getChildren()){
+		for (MethodVertex v : vertex.getChildren()) {
 			Collection<CallGraphEdge> childOutEdges = this.methodCallGraph.getOutEdges(v);
 			if (childOutEdges == null) {
 				continue;

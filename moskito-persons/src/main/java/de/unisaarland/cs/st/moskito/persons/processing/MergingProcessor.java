@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -32,7 +29,7 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class MergingProcessor {
 	
@@ -47,8 +44,8 @@ public class MergingProcessor {
 	}
 	
 	/**
-	 * The method is called after processing all {@link Person}s to consolidate 
-	 * the {@link Person}s in the created {@link PersonBucket}s.
+	 * The method is called after processing all {@link Person}s to consolidate the {@link Person}s in the created
+	 * {@link PersonBucket}s.
 	 */
 	public void consolidate() {
 		// delegate consolidation to the PersonManager:manager
@@ -58,8 +55,8 @@ public class MergingProcessor {
 	/**
 	 * Performs the actual merging algorithm using all active {@link MergingEngine}s.
 	 * 
-	 * @param container 
-	 *        the {@link PersonContainer} unter subject
+	 * @param container
+	 *            the {@link PersonContainer} unter subject
 	 */
 	public void process(final PersonContainer container) {
 		// process current PersonContainer:container
@@ -126,7 +123,8 @@ public class MergingProcessor {
 	/**
 	 * Provide the {@link PersistenceUtil} for database manipulation.
 	 * 
-	 * @param util the {@link PersistenceUtil} to be used
+	 * @param util
+	 *            the {@link PersistenceUtil} to be used
 	 */
 	public void providePersistenceUtil(final PersistenceUtil util) {
 		// Store the PersistenceUtil:util in the manager.

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.filters.stacktrace;
 
@@ -59,13 +56,10 @@ public class TalkBackFilter extends StackTraceFilter {
 		List<String> talkbackLines = new ArrayList<String>();
 		
 		/*
-		 * This regular expression can be used to filter TalkBackStacktrace
-		 * expressions ( ([ \\n\\r]*(?:.*)(?:::)(?:.*)[ \\n\\r]*\\[.*?,?[
-		 * \\n\\r]*line[ \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*[ \\n\\r]*\\[.*?,?[
-		 * \\n\\r]*line[ \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*?\\(\\)) (?:[
-		 * \\n\\r]*.*?\\+[ \\n\\r]*[0-9]x[0-9a-zA-Z]+[
-		 * \\n\\r]*\\([0-9]x[0-9a-zA-Z]+\\)) (?:[ \\n\\r]*[0-9]x[0-9a-zA-Z]+)
-		 * ){2,}
+		 * This regular expression can be used to filter TalkBackStacktrace expressions ( ([ \\n\\r]*(?:.*)(?:::)(?:.*)[
+		 * \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[
+		 * \\n\\r]*[0-9]+\\]) (?:[ \\n\\r]*.*?\\(\\)) (?:[ \\n\\r]*.*?\\+[ \\n\\r]*[0-9]x[0-9a-zA-Z]+[
+		 * \\n\\r]*\\([0-9]x[0-9a-zA-Z]+\\)) (?:[ \\n\\r]*[0-9]x[0-9a-zA-Z]+) ){2,}
 		 */
 		
 		String classmethodline = "([ \\n\\r]*(?:.*)(?:::)(?:.*)[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\])";

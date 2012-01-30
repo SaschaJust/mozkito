@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
@@ -82,8 +79,7 @@ public class GoogleTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
@@ -99,8 +95,7 @@ public class GoogleTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	@Override
@@ -110,22 +105,19 @@ public class GoogleTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
 		Condition.check(rawReport instanceof GoogleRawContent,
-		"The rawReport has to be an instance of GoogleRawContent.");
+		                "The rawReport has to be an instance of GoogleRawContent.");
 		return (GoogleRawContent) rawReport;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#fetchSource(java.
-	 * net.URI)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#fetchSource(java. net.URI)
 	 */
 	@Override
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
@@ -136,7 +128,7 @@ public class GoogleTracker extends Tracker {
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Fetching RawReport form url: " + iQuery.getFeedUrl().toString()
-				             + iQuery.getQueryUri().toString());
+				        + iQuery.getQueryUri().toString());
 			}
 			
 			IssuesFeed resultFeed = service.query(iQuery, IssuesFeed.class);
@@ -186,9 +178,7 @@ public class GoogleTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java
-	 * .lang.Long)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java .lang.Long)
 	 */
 	@Override
 	public URI getLinkFromId(final Long bugId) {
@@ -210,14 +200,13 @@ public class GoogleTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	@Override
 	public Report parse(final XmlReport xmlReport) {
 		Condition.check(xmlReport instanceof GoogleRawContent,
-		"The xmlReport has to be an instance of GoogleRawContent.");
+		                "The xmlReport has to be an instance of GoogleRawContent.");
 		
 		GoogleRawContent issue = (GoogleRawContent) xmlReport;
 		Report report = new Report(issue.getId());
@@ -252,7 +241,7 @@ public class GoogleTracker extends Tracker {
 				report.setPriority(Priority.UNKNOWN);
 				if (Logger.logWarn()) {
 					Logger.warn("Unknown priority `" + googlePriority + "` seen in issue `" + report.getId()
-					            + "`. Setting prioroty to UNKNOWN.");
+					        + "`. Setting prioroty to UNKNOWN.");
 				}
 			}
 		}
@@ -346,7 +335,7 @@ public class GoogleTracker extends Tracker {
 				report.setType(Type.UNKNOWN);
 				if (Logger.logWarn()) {
 					Logger.warn("Detected an unknown type `" + type + "` in issue `" + report.getId()
-					            + "`. Setting type to UNKNOWN.");
+					        + "`. Setting type to UNKNOWN.");
 				}
 			}
 		}
@@ -368,7 +357,7 @@ public class GoogleTracker extends Tracker {
 		URL baseFeedUrl = null;
 		try {
 			baseFeedUrl = new URL("https://code.google.com/feeds/issues/p/" + projectName + "/issues/" + report.getId()
-			                      + "/comments/full?max-result=" + max_result);
+			        + "/comments/full?max-result=" + max_result);
 			
 		} catch (MalformedURLException e) {
 			if (Logger.logWarn()) {
@@ -511,7 +500,7 @@ public class GoogleTracker extends Tracker {
 					
 					if (updates.getOwnerUpdate() != null) {
 						hElem.addChangedValue("assignedTo", unknownPerson, new Person(updates.getOwnerUpdate()
-						                                                              .getValue(), null, null));
+						                                                                     .getValue(), null, null));
 					}
 					
 					if (updates.getStatus() != null) {
@@ -583,17 +572,13 @@ public class GoogleTracker extends Tracker {
 	}
 	
 	/*
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI,
-	 * java.net.URI, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.Long, java.lang.Long, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.net.URI, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI,
-	 * java.net.URI, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.Long, java.lang.Long, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.net.URI, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	@Override
 	public void setup(URI fetchURI,
@@ -632,7 +617,7 @@ public class GoogleTracker extends Tracker {
 			int maxResults = 100;
 			
 			IssuesFeed resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-			                                                + "&max-results=" + maxResults), IssuesFeed.class);
+			        + "&max-results=" + maxResults), IssuesFeed.class);
 			if (Logger.logDebug()) {
 				Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
 			}
@@ -650,13 +635,12 @@ public class GoogleTracker extends Tracker {
 				}
 				startIndex += maxResults;
 				resultFeed = service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-				                                     + "&max-results=" + maxResults), IssuesFeed.class);
+				        + "&max-results=" + maxResults), IssuesFeed.class);
 				if (Logger.logDebug()) {
 					Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
 				}
 				feedEntries = resultFeed.getEntries();
 			}
-			
 			
 		} catch (AuthenticationException e) {
 			if (Logger.logError()) {

@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -44,7 +40,6 @@ import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
-
 public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	public static TestChangeGenealogy readFromDB(final File dbFile) {
@@ -52,6 +47,7 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		TestChangeGenealogy genealogy = new TestChangeGenealogy(graph, dbFile);
 		return genealogy;
 	}
+	
 	private GraphDatabaseService graph;
 	private File                 dbFile;
 	private IndexManager         indexManager;
@@ -69,9 +65,10 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	public boolean addEdge(@NotEmpty final String dependent,
-			@NotEmpty final String target, final GenealogyEdgeType edgeType) {
+	                       @NotEmpty final String target,
+	                       final GenealogyEdgeType edgeType) {
 		
-		//add both vertices
+		// add both vertices
 		if (!containsVertex(dependent)) {
 			addVertex(dependent);
 		}
@@ -79,7 +76,7 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 			addVertex(target);
 		}
 		
-		//we know that they have to exist
+		// we know that they have to exist
 		Node from = this.getNodeForVertex(dependent);
 		Node to = this.getNodeForVertex(target);
 		
@@ -138,7 +135,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public boolean containsEdge(String from, String to) {
+	public boolean containsEdge(String from,
+	                            String to) {
 		GenealogyEdgeType result = this.getEdge(from, to);
 		return result != null;
 	}
@@ -162,21 +160,24 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	@Override
 	public Collection<String> getAllDependants(String t) {
 		return getDependants(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	private Collection<Node> getAllDependents(Node node) {
 		return getDependents(node, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	@Override
 	public Collection<String> getAllParents(String t) {
 		return getParents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
+		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
 	@Override
@@ -186,7 +187,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public Collection<String> getDependants(String t, GenealogyEdgeType... edgeTypes) {
+	public Collection<String> getDependants(String t,
+	                                        GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(t);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -202,7 +204,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parentOperations;
 	}
 	
-	private Collection<Node> getDependents(Node node, GenealogyEdgeType... edgeTypes) {
+	private Collection<Node> getDependents(Node node,
+	                                       GenealogyEdgeType... edgeTypes) {
 		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		Set<Node> parents = new HashSet<Node>();
 		for (Relationship rel : relationships) {
@@ -211,7 +214,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parents;
 	}
 	
-	private GenealogyEdgeType getEdge(String from, String to) {
+	private GenealogyEdgeType getEdge(String from,
+	                                  String to) {
 		Node fromNode = getNodeForVertex(from);
 		Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -222,9 +226,12 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		}
 		
 		Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
-				GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-				GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition, GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                                                                 GenealogyEdgeType.CallOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDefinition,
+		                                                                 GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedCallOnCall,
+		                                                                 GenealogyEdgeType.DeletedCallOnDeletedDefinition,
+		                                                                 GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		for (Relationship rel : relationships) {
 			if (rel.getEndNode().equals(toNode)) {
@@ -236,7 +243,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(String from, String to) {
+	public Collection<GenealogyEdgeType> getEdges(String from,
+	                                              String to) {
 		Collection<GenealogyEdgeType> result = new ArrayList<GenealogyEdgeType>(1);
 		result.add(getEdge(from, to));
 		return result;
@@ -268,7 +276,7 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	private Node getNodeForVertex(String from) {
 		IndexHits<Node> indexHits = nodeIndex.query(CoreChangeGenealogy.NODE_ID, from);
-		if(!indexHits.hasNext()){
+		if (!indexHits.hasNext()) {
 			return null;
 		}
 		Node node = indexHits.next();
@@ -284,7 +292,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
-	private Collection<Node> getParents(Node node, GenealogyEdgeType[] edgeTypes) {
+	private Collection<Node> getParents(Node node,
+	                                    GenealogyEdgeType[] edgeTypes) {
 		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
 		Set<Node> parents = new HashSet<Node>();
 		for (Relationship rel : relationships) {
@@ -294,7 +303,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public Collection<String> getParents(String t, GenealogyEdgeType... edgeTypes) {
+	public Collection<String> getParents(String t,
+	                                     GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(t);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -330,11 +340,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public int inDegree(String s, GenealogyEdgeType... edgeTypes) {
+	public int inDegree(String s,
+	                    GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(s);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;
@@ -355,11 +367,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	}
 	
 	@Override
-	public int outDegree(String s, GenealogyEdgeType... edgeTypes) {
+	public int outDegree(String s,
+	                     GenealogyEdgeType... edgeTypes) {
 		Node node = getNodeForVertex(s);
 		Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
 		int numEdges = 0;
-		for (@SuppressWarnings("unused") Relationship r : relationships) {
+		for (@SuppressWarnings ("unused")
+		Relationship r : relationships) {
 			++numEdges;
 		}
 		return numEdges;

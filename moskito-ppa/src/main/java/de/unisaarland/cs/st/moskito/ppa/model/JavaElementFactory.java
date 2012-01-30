@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -57,7 +54,7 @@ public class JavaElementFactory {
 			methodCalls.put(call.getFullQualifiedName(), call);
 		}
 	}
-
+	
 	/**
 	 * Gets the class definition.
 	 * 
@@ -80,7 +77,7 @@ public class JavaElementFactory {
 	 * @return the class definition
 	 */
 	public JavaClassDefinition getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
-			@NotNull final String fullQualifiedName) {
+	                                                       @NotNull final String fullQualifiedName) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -113,7 +110,8 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName, @NotNull final String file) {
+	public JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName,
+	                                              @NotNull final String file) {
 		
 		JavaClassDefinition def = null;
 		if (!classDefs.containsKey(fullQualifiedName)) {
@@ -144,12 +142,14 @@ public class JavaElementFactory {
 	 *            the position
 	 * @return the method call
 	 */
-	public JavaMethodCall getMethodCall(@NotNull final String objectName, @NotNull final String methodName,
-			@NotNull final List<String> signature, @NotNull final JavaElement parent) {
+	public JavaMethodCall getMethodCall(@NotNull final String objectName,
+	                                    @NotNull final String methodName,
+	                                    @NotNull final List<String> signature,
+	                                    @NotNull final JavaElement parent) {
 		
 		boolean parentPass = ((parent instanceof JavaClassDefinition) || (parent instanceof JavaMethodDefinition));
 		Condition.check(parentPass,
-				"The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
+		                "The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
 		if (!parentPass) {
 			if (Logger.logError()) {
 				Logger.error("The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
@@ -188,8 +188,9 @@ public class JavaElementFactory {
 	 *            the body start line
 	 * @return the method definition
 	 */
-	public JavaMethodDefinition getMethodDefinition(@NotNull final String objectName, @NotNull final String methodName,
-			@NotNull final List<String> signature) {
+	public JavaMethodDefinition getMethodDefinition(@NotNull final String objectName,
+	                                                @NotNull final String methodName,
+	                                                @NotNull final List<String> signature) {
 		
 		JavaMethodDefinition def = null;
 		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);

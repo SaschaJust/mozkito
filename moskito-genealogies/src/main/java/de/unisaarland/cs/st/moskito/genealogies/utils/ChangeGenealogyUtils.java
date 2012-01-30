@@ -73,7 +73,8 @@ public class ChangeGenealogyUtils {
 	/** The genealogies. */
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
-	private static void exportToDOT(final CoreChangeGenealogy genealogy, final File dotFile) throws IOException {
+	private static void exportToDOT(final CoreChangeGenealogy genealogy,
+	                                final File dotFile) throws IOException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(dotFile));
 		
 		out.write("digraph g {");
@@ -94,7 +95,8 @@ public class ChangeGenealogyUtils {
 		out.close();
 	}
 	
-	public static void exportToGraphML(final CoreChangeGenealogy genealogy, final File outFile) {
+	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
+	                                   final File outFile) {
 		try {
 			FileOutputStream out = new FileOutputStream(outFile);
 			Graph g = new Neo4jGraph(genealogy.getGraphDBService());
@@ -131,7 +133,7 @@ public class ChangeGenealogyUtils {
 	}
 	
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
-			final PersistenceUtil persistenceUtil) {
+	                                                                   final PersistenceUtil persistenceUtil) {
 		
 		// UNZIP git repo
 		URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
@@ -141,8 +143,10 @@ public class ChangeGenealogyUtils {
 		
 		File baseDir = null;
 		try {
-			baseDir = new File((new URL(zipURL.toString().substring(0,
-					zipURL.toString().lastIndexOf(FileUtils.fileSeparator)))).toURI());
+			baseDir = new File(
+			                   (new URL(zipURL.toString().substring(0,
+			                                                        zipURL.toString()
+			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 			return null;
@@ -196,49 +200,49 @@ public class ChangeGenealogyUtils {
 			return null;
 		}
 		
-		//unzip the database dump
-		//		zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-		//				+ "moskito_genealogies_test_environment.psql.zip");
-		//		if (zipURL == null) {
-		//			return null;
-		//		}
-		//		try {
-		//			zipFile = new File(zipURL.toURI());
-		//		} catch (URISyntaxException e1) {
-		//			e1.printStackTrace();
-		//			return null;
-		//		}
-		//		if (Logger.logInfo()) {
-		//			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
-		//		}
-		//		FileUtils.unzip(zipFile, baseDir);
-		//		
-		//		//load the database dump into the test database
-		//		url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-		//		        + "moskito_genealogies_test_environment.psql");
-		//		try {
-		//			urlFile = new File(url.toURI());
-		//		} catch (URISyntaxException e1) {
-		//			e1.printStackTrace();
-		//			return null;
-		//		}
-		//		
-		//		String psqlString = null;
-		//		try {
-		//			psqlString = FileUtils.readFileToString(urlFile);
-		//		} catch (IOException e) {
-		//			e.printStackTrace();
-		//			return null;
-		//		}
-		//		persistenceUtil.executeNativeQuery(psqlString);
+		// unzip the database dump
+		// zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+		// + "moskito_genealogies_test_environment.psql.zip");
+		// if (zipURL == null) {
+		// return null;
+		// }
+		// try {
+		// zipFile = new File(zipURL.toURI());
+		// } catch (URISyntaxException e1) {
+		// e1.printStackTrace();
+		// return null;
+		// }
+		// if (Logger.logInfo()) {
+		// Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
+		// }
+		// FileUtils.unzip(zipFile, baseDir);
+		//
+		// //load the database dump into the test database
+		// url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
+		// + "moskito_genealogies_test_environment.psql");
+		// try {
+		// urlFile = new File(url.toURI());
+		// } catch (URISyntaxException e1) {
+		// e1.printStackTrace();
+		// return null;
+		// }
+		//
+		// String psqlString = null;
+		// try {
+		// psqlString = FileUtils.readFileToString(urlFile);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// return null;
+		// }
+		// persistenceUtil.executeNativeQuery(psqlString);
 		
-		//till here we loaded the database dump and extracted the repository.
+		// till here we loaded the database dump and extracted the repository.
 		
 		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
 		Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
 		Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 		
-		//read all transactions and JavaChangeOperations
+		// read all transactions and JavaChangeOperations
 		Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
 		List<RCSTransaction> transactionList = persistenceUtil.load(transactionCriteria);
 		
@@ -269,8 +273,7 @@ public class ChangeGenealogyUtils {
 			
 			Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
 			for (RCSRevision revision : transaction.getRevisions()) {
-				Criteria<JavaChangeOperation> operationCriteria = persistenceUtil
-						.createCriteria(JavaChangeOperation.class);
+				Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
 				List<JavaChangeOperation> changeOps = persistenceUtil.load(operationCriteria);
 				operations.addAll(changeOps);
@@ -336,11 +339,11 @@ public class ChangeGenealogyUtils {
 		}
 		
 		if (transactionMap.size() != 10) {
-			System.err.println("The imported database dump must contain exactly 10 transaction entries but was "+transactionMap.size());
+			System.err.println("The imported database dump must contain exactly 10 transaction entries but was "
+			        + transactionMap.size());
 			
 			return null;
 		}
-		
 		
 		CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		
@@ -357,85 +360,93 @@ public class ChangeGenealogyUtils {
 			}
 		}
 		
-		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		                        GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
-				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.CallOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		                        GenealogyEdgeType.CallOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-				environmentOperations.get(TestEnvironmentOperation.T1F1),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		                        GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				environmentOperations.get(TestEnvironmentOperation.T1F2), GenealogyEdgeType.DefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		                        GenealogyEdgeType.DefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                        GenealogyEdgeType.CallOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3D),
-				environmentOperations.get(TestEnvironmentOperation.T2F3), GenealogyEdgeType.DeletedCallOnCall);
+		                        environmentOperations.get(TestEnvironmentOperation.T2F3),
+		                        GenealogyEdgeType.DeletedCallOnCall);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3A),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                        GenealogyEdgeType.CallOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                        GenealogyEdgeType.CallOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A), GenealogyEdgeType.CallOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                        GenealogyEdgeType.CallOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T6F2),
-				environmentOperations.get(TestEnvironmentOperation.T3F2M),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F2M),
+		                        GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T7F2),
-				environmentOperations.get(TestEnvironmentOperation.T6F2),
-				GenealogyEdgeType.DefinitionOnDeletedDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T6F2),
+		                        GenealogyEdgeType.DefinitionOnDeletedDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
-				environmentOperations.get(TestEnvironmentOperation.T7F2), GenealogyEdgeType.DefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T7F2),
+		                        GenealogyEdgeType.DefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T9F1),
-				environmentOperations.get(TestEnvironmentOperation.T3F1A),
-				GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		                        GenealogyEdgeType.DeletedDefinitionOnDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		                        GenealogyEdgeType.DeletedCallOnDeletedDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-				environmentOperations.get(TestEnvironmentOperation.T9F1),
-				GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		                        GenealogyEdgeType.DeletedCallOnDeletedDefinition);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-				environmentOperations.get(TestEnvironmentOperation.T4F3A), GenealogyEdgeType.DeletedCallOnCall);
+		                        environmentOperations.get(TestEnvironmentOperation.T4F3A),
+		                        GenealogyEdgeType.DeletedCallOnCall);
 		
 		changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-				environmentOperations.get(TestEnvironmentOperation.T5F4), GenealogyEdgeType.DeletedCallOnCall);
+		                        environmentOperations.get(TestEnvironmentOperation.T5F4),
+		                        GenealogyEdgeType.DeletedCallOnCall);
 		
 		return new GenealogyTestEnvironment(persistenceUtil, transactionMap, environmentTransactions,
-				environmentOperations, repository, changeGenealogy, tmpGraphDBFile);
+		                                    environmentOperations, repository, changeGenealogy, tmpGraphDBFile);
 	}
 	
 	/**
-	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB
-	 * directory. If there exists a graph DB within the dbFile directory, the
-	 * ChangeGenealogy will load the ChangeGenealogy from this directory.
-	 * Otherwise it will create a new one.
+	 * Creates a ChangeGenealogy using the specified dbFile directory as graphDB directory. If there exists a graph DB
+	 * within the dbFile directory, the ChangeGenealogy will load the ChangeGenealogy from this directory. Otherwise it
+	 * will create a new one.
 	 * 
 	 * @param dbFile
 	 *            the db file
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @return the change genealogy stored within5 the graph DB directory, if
-	 *         possible. Otherwise, creates a new ChangeGenealogy using graph DB
-	 *         within specified directory.
+	 * @return the change genealogy stored within5 the graph DB directory, if possible. Otherwise, creates a new
+	 *         ChangeGenealogy using graph DB within specified directory.
 	 */
 	@NoneNull
-	public static CoreChangeGenealogy readFromDB(final File dbFile, final PersistenceUtil persistenceUtil) {
+	public static CoreChangeGenealogy readFromDB(final File dbFile,
+	                                             final PersistenceUtil persistenceUtil) {
 		GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		registerShutdownHook(graph);
 		CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
@@ -463,16 +474,22 @@ public class ChangeGenealogyUtils {
 		DatabaseArguments persistenceArgs = new DatabaseArguments(settings, true, "ppa");
 		
 		DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
-				"Directory in which to load the GraphDB from.", null, true, true);
+		                                                     "Directory in which to load the GraphDB from.", null,
+		                                                     true, true);
 		
 		BooleanArgument statsArg = new BooleanArgument(settings, "stats",
-				"Print vertex/edge statistic for ChangeGenealogy", "false", false);
+		                                               "Print vertex/edge statistic for ChangeGenealogy", "false",
+		                                               false);
 		
 		OutputFileArgument graphmlArg = new OutputFileArgument(settings, "graphml.out",
-				"Export the graph as GraphML file into this file.", null, false, false);
+		                                                       "Export the graph as GraphML file into this file.",
+		                                                       null, false, false);
 		
-		OutputFileArgument dotArg = new OutputFileArgument(settings, "dot.out",
-				"Export the graph as DOT file (must be processed using graphviz).", null, false, true);
+		OutputFileArgument dotArg = new OutputFileArgument(
+		                                                   settings,
+		                                                   "dot.out",
+		                                                   "Export the graph as DOT file (must be processed using graphviz).",
+		                                                   null, false, true);
 		
 		settings.parseArguments();
 		

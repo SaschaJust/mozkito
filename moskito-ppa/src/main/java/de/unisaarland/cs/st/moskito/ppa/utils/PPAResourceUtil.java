@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.utils;
 
@@ -43,14 +40,12 @@ import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
 public class PPAResourceUtil {
 	
 	/** The Constant logger. */
-	private final static Logger logger = Logger
-	.getLogger(PPAResourceUtil.class);
+	private final static Logger logger = Logger.getLogger(PPAResourceUtil.class);
 	
 	/**
 	 * <p>
-	 * Deletes a file and all the containing folders up to the source folder.
-	 * Folder containing multiple files are not deleted and the recursion stops
-	 * if such folder is encountered.
+	 * Deletes a file and all the containing folders up to the source folder. Folder containing multiple files are not
+	 * deleted and the recursion stops if such folder is encountered.
 	 * </p>
 	 * 
 	 * @param file
@@ -87,25 +82,23 @@ public class PPAResourceUtil {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static IFile copyJavaSourceFile(final IProject project, final File srcFile,
-			final String packageName, final String destFileName) throws CoreException,
-			IOException {
+	public static IFile copyJavaSourceFile(final IProject project,
+	                                       final File srcFile,
+	                                       final String packageName,
+	                                       final String destFileName) throws CoreException, IOException {
 		IFile file = null;
 		
 		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder,
-				PPABindingsUtil.getPackageArray(packageName));
+		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
 		if (!file.exists()) {
 			FileInputStream stream = new FileInputStream(srcFile);
-			file.create(stream, IFile.FORCE,
-					new NullProgressMonitor());
+			file.create(stream, IFile.FORCE, new NullProgressMonitor());
 			stream.close();
 		} else {
 			FileInputStream stream = new FileInputStream(srcFile);
-			file.setContents(stream, IFile.FORCE,
-					new NullProgressMonitor());
+			file.setContents(stream, IFile.FORCE, new NullProgressMonitor());
 			stream.close();
 		}
 		
@@ -114,8 +107,7 @@ public class PPAResourceUtil {
 	
 	/**
 	 * <p>
-	 * Creates a Java source file based on the provided Java snippet (contained
-	 * in a file).
+	 * Creates a Java source file based on the provided Java snippet (contained in a file).
 	 * </p>
 	 * 
 	 * @param project
@@ -127,9 +119,8 @@ public class PPAResourceUtil {
 	 * @param destFileName
 	 *            Name of the compilation unit (e.g., Bar)
 	 * @param isTypeBody
-	 *            True if the snippet could fit inside a class body (e.g.,
-	 *            contains a method declaration). False if it could fit inside a
-	 *            method body.
+	 *            True if the snippet could fit inside a class body (e.g., contains a method declaration). False if it
+	 *            could fit inside a method body.
 	 * @return the i file
 	 * @throws CoreException
 	 *             the core exception
@@ -137,27 +128,28 @@ public class PPAResourceUtil {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static IFile copyJavaSourceFileSnippet(final IProject project,
-			final File srcFile, final String packageName, final String destFileName,
-			final boolean isTypeBody) throws CoreException, IOException {
+	                                              final File srcFile,
+	                                              final String packageName,
+	                                              final String destFileName,
+	                                              final boolean isTypeBody) throws CoreException, IOException {
 		IFile file = null;
 		
 		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder,
-				PPABindingsUtil.getPackageArray(packageName));
+		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
-		String content = isTypeBody ? SnippetUtil
-				.getTypeBody(getContent(srcFile)) : SnippetUtil
-				.getMethodBody(getContent(srcFile));
-				InputStream iStream = new ByteArrayInputStream(content.getBytes());
-				
-				if (!file.exists()) {
-					file.create(iStream, IFile.FORCE, new NullProgressMonitor());
-				} else {
-					file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
-				}
-				
-				return file;
+		String content = isTypeBody
+		                           ? SnippetUtil.getTypeBody(getContent(srcFile))
+		                           : SnippetUtil.getMethodBody(getContent(srcFile));
+		InputStream iStream = new ByteArrayInputStream(content.getBytes());
+		
+		if (!file.exists()) {
+			file.create(iStream, IFile.FORCE, new NullProgressMonitor());
+		} else {
+			file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
+		}
+		
+		return file;
 	}
 	
 	/**
@@ -174,9 +166,8 @@ public class PPAResourceUtil {
 	 * @param destFileName
 	 *            Name of the compilation unit (e.g., Bar)
 	 * @param isTypeBody
-	 *            True if the snippet could fit inside a class body (e.g.,
-	 *            contains a method declaration). False if it could fit inside a
-	 *            method body.
+	 *            True if the snippet could fit inside a class body (e.g., contains a method declaration). False if it
+	 *            could fit inside a method body.
 	 * @return the i file
 	 * @throws CoreException
 	 *             the core exception
@@ -184,27 +175,28 @@ public class PPAResourceUtil {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static IFile copyJavaSourceFileSnippet(final IProject project,
-			final String snippetContent, final String packageName, final String destFileName,
-			final boolean isTypeBody) throws CoreException, IOException {
+	                                              final String snippetContent,
+	                                              final String packageName,
+	                                              final String destFileName,
+	                                              final boolean isTypeBody) throws CoreException, IOException {
 		IFile file = null;
 		
 		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder,
-				PPABindingsUtil.getPackageArray(packageName));
+		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
-		String newContent = isTypeBody ? SnippetUtil
-				.getTypeBody(snippetContent) : SnippetUtil
-				.getMethodBody(snippetContent);
-				InputStream iStream = new ByteArrayInputStream(newContent.getBytes());
-				
-				if (!file.exists()) {
-					file.create(iStream, IFile.FORCE, new NullProgressMonitor());
-				} else {
-					file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
-				}
-				
-				return file;
+		String newContent = isTypeBody
+		                              ? SnippetUtil.getTypeBody(snippetContent)
+		                              : SnippetUtil.getMethodBody(snippetContent);
+		InputStream iStream = new ByteArrayInputStream(newContent.getBytes());
+		
+		if (!file.exists()) {
+			file.create(iStream, IFile.FORCE, new NullProgressMonitor());
+		} else {
+			file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
+		}
+		
+		return file;
 	}
 	
 	/**
@@ -240,8 +232,7 @@ public class PPAResourceUtil {
 	 * Creates all the intermediate folders associated with package fragments.
 	 * </p>
 	 * <p>
-	 * For example, if the package is {"com","foo","bar"}, the following folders
-	 * will be created: src/com/foo/bar.
+	 * For example, if the package is {"com","foo","bar"}, the following folders will be created: src/com/foo/bar.
 	 * </p>
 	 * 
 	 * @param srcFolder
@@ -253,14 +244,13 @@ public class PPAResourceUtil {
 	 *             the core exception
 	 */
 	public static IFolder getCreatePackageFolder(final IFolder srcFolder,
-			final String[] packages) throws CoreException {
+	                                             final String[] packages) throws CoreException {
 		IFolder finalFolder = srcFolder;
 		
 		if (packages != null) {
 			int size = packages.length;
 			for (int i = 0; i < size; i++) {
-				if (!ValidatorUtil
-						.validateEmpty(packages[i], "packages", false)) {
+				if (!ValidatorUtil.validateEmpty(packages[i], "packages", false)) {
 					break;
 				}
 				IFolder tempFolder = finalFolder.getFolder(packages[i]);
@@ -305,6 +295,5 @@ public class PPAResourceUtil {
 	private static boolean isSrcFolder(final IFolder parentFolder) {
 		return parentFolder.getName().equals("src");
 	}
-	
 	
 }

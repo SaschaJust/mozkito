@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
@@ -26,24 +23,19 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
 /**
  * 
- * Engines analyze two candidates to match certain criteria and score neutral
- * (0) if they don't match or positive/negative according to the criterion under
- * suspect.
+ * Engines analyze two candidates to match certain criteria and score neutral (0) if they don't match or
+ * positive/negative according to the criterion under suspect.
  * 
- * Generating feature vectors for the candidates is a task that is accomplished
- * by the scoring node. In the scoring step, reposuite uses all enabled engines
- * to compute a vector consisting of confidence values. Every engine may have
- * its own configuration options that are required to execute reposuite as soon
- * as the engine is enabled. If the engine depends on certain storages, further
- * configuration dependencies might be pulled in. An engine takes a candidate
- * pair an checks for certain criteria and scores accordingly. Engines can score
- * in three ways: positive, if they consider a pair a valid mapping, negative if
- * they consider the pair to be a false positive or 0 if they can't decide on
- * any of that. A criterion of an engine should be as atomic as possible, that
- * means an engine shouldn't check for multiple criteria at a time. After all
- * engines have been execute on one candidate pair, the resulting feature vector
- * is stored to the database (incl. the information what has been scored by each
- * engine and what data was considered while computing the score).
+ * Generating feature vectors for the candidates is a task that is accomplished by the scoring node. In the scoring
+ * step, reposuite uses all enabled engines to compute a vector consisting of confidence values. Every engine may have
+ * its own configuration options that are required to execute reposuite as soon as the engine is enabled. If the engine
+ * depends on certain storages, further configuration dependencies might be pulled in. An engine takes a candidate pair
+ * an checks for certain criteria and scores accordingly. Engines can score in three ways: positive, if they consider a
+ * pair a valid mapping, negative if they consider the pair to be a false positive or 0 if they can't decide on any of
+ * that. A criterion of an engine should be as atomic as possible, that means an engine shouldn't check for multiple
+ * criteria at a time. After all engines have been execute on one candidate pair, the resulting feature vector is stored
+ * to the database (incl. the information what has been scored by each engine and what data was considered while
+ * computing the score).
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -59,32 +51,27 @@ public abstract class MappingEngine extends Node {
 	private final boolean      registered      = false;
 	
 	/**
-	 * Using this method, one can add features to a given {@link Mapping}. The
-	 * given score will be manipulated using the values given. The values are
-	 * automatically <code>null</code> checked and truncated if needed.
+	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
+	 * values given. The values are automatically <code>null</code> checked and truncated if needed.
 	 * 
 	 * @param score
 	 *            the {@link Mapping} a new feature shall be added
 	 * @param confidence
 	 *            a confidence value representing the impact of the feature
 	 * @param fromFieldName
-	 *            the name of the field (see {@link FieldKey}) of the "from"
-	 *            entity that caused this feature
+	 *            the name of the field (see {@link FieldKey}) of the "from" entity that caused this feature
 	 * @param fromFieldContent
-	 *            the content of the field (see {@link FieldKey}) of the "from"
-	 *            entity that caused this feature
+	 *            the content of the field (see {@link FieldKey}) of the "from" entity that caused this feature
 	 * @param fromSubstring
-	 *            the particular substring of the field (see {@link FieldKey})
-	 *            of the "from" entity that caused this feature
+	 *            the particular substring of the field (see {@link FieldKey}) of the "from" entity that caused this
+	 *            feature
 	 * @param toFieldName
-	 *            the name of the field (see {@link FieldKey}) of the "to"
-	 *            entity that caused this feature
+	 *            the name of the field (see {@link FieldKey}) of the "to" entity that caused this feature
 	 * @param toFieldContent
-	 *            the content of the field (see {@link FieldKey}) of the "to"
-	 *            entity that caused this feature
+	 *            the content of the field (see {@link FieldKey}) of the "to" entity that caused this feature
 	 * @param toSubstring
-	 *            the particular substring of the field (see {@link FieldKey})
-	 *            of the "to" entity that caused this feature
+	 *            the particular substring of the field (see {@link FieldKey}) of the "to" entity that caused this
+	 *            feature
 	 */
 	public final void addFeature(@NotNull final Mapping score,
 	                             final double confidence,
@@ -133,8 +120,7 @@ public abstract class MappingEngine extends Node {
 	 * @param to
 	 *            the 'to' entity
 	 * @param score
-	 *            the actual {@link Mapping} that will be manipulated by this
-	 *            method
+	 *            the actual {@link Mapping} that will be manipulated by this method
 	 */
 	@NoneNull
 	public abstract void score(final MappableEntity from,
@@ -142,8 +128,7 @@ public abstract class MappingEngine extends Node {
 	                           final Mapping score);
 	
 	/**
-	 * @return an instance of {@link Expression} that represents the support of
-	 *         this engine
+	 * @return an instance of {@link Expression} that represents the support of this engine
 	 */
 	public abstract Expression supported();
 	

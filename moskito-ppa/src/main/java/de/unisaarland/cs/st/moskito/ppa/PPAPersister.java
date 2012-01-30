@@ -16,14 +16,14 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class PPAPersister extends AndamaSink<JavaChangeOperation> {
 	
 	protected static final Semaphore available = new Semaphore(1, true);
 	
-	private Integer i = 0;
+	private Integer                  i         = 0;
 	
 	public PPAPersister(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);

@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
@@ -27,20 +23,19 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
-
 public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOperation> {
 	
 	protected static enum IteratorMode {
 		DD, MD, AD, DC, MC, AC;
 	}
 	
-	private List<JavaChangeOperation> deletedDefinitions = new LinkedList<JavaChangeOperation>();
-	private List<JavaChangeOperation> modifiedDefinitions = new LinkedList<JavaChangeOperation>();
-	private List<JavaChangeOperation> addedDefinitions    = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     deletedDefinitions  = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     modifiedDefinitions = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     addedDefinitions    = new LinkedList<JavaChangeOperation>();
 	
-	private List<JavaChangeOperation> deletedCalls        = new LinkedList<JavaChangeOperation>();
-	private List<JavaChangeOperation> modifiedCalls       = new LinkedList<JavaChangeOperation>();
-	private List<JavaChangeOperation> addedCalls          = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     deletedCalls        = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     modifiedCalls       = new LinkedList<JavaChangeOperation>();
+	private List<JavaChangeOperation>     addedCalls          = new LinkedList<JavaChangeOperation>();
 	
 	private Iterator<JavaChangeOperation> iterator            = null;
 	private IteratorMode                  iteratorMode        = IteratorMode.DD;
@@ -80,12 +75,11 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		} else {
 			if (Logger.logDebug()) {
 				Logger.debug("Cannot handle JavaElements that are neither JavaMethodDefinitions nor JavaMethodCalls. Got: "
-						+ element.getClass().getCanonicalName());
+				        + element.getClass().getCanonicalName());
 			}
 		}
 		return false;
 	}
-	
 	
 	@Override
 	public boolean hasNext() {

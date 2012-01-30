@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
@@ -30,9 +27,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	
-	
 	/** The transaction. */
-	private final RCSTransaction            transaction;
+	private final RCSTransaction                  transaction;
 	
 	/** The operations. */
 	private final Collection<JavaChangeOperation> operations;
@@ -49,7 +45,6 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		this.transaction = transaction;
 		this.operations = operations;
 	}
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -89,7 +84,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	public Set<JavaChangeOperation> getChangeOperation(final Class<? extends JavaElement> clazz) {
 		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		
-		for(JavaChangeOperation op : this.getOperations()){
+		for (JavaChangeOperation op : this.getOperations()) {
 			JavaElement element = op.getChangedElementLocation().getElement();
 			if (element.getClass().equals(clazz)) {
 				result.add(op);
@@ -125,8 +120,8 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((transaction == null)
-				? 0
-						: transaction.hashCode());
+		                                                  ? 0
+		                                                  : transaction.hashCode());
 		return result;
 	}
 	

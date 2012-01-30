@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -55,41 +52,50 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date,
-	 * long, java.lang.String, java.lang.String)
+	 * @see org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date, long, java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void handleLine(Date date, long revision, String author, String line) throws SVNException {
+	public void handleLine(Date date,
+	                       long revision,
+	                       String author,
+	                       String line) throws SVNException {
 		this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date,
-	 * long, java.lang.String, java.lang.String, java.util.Date, long,
-	 * java.lang.String, java.lang.String, int)
+	 * @see org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleLine(java.util.Date, long, java.lang.String,
+	 * java.lang.String, java.util.Date, long, java.lang.String, java.lang.String, int)
 	 */
 	@Override
-	public void handleLine(Date date, long revision, String author, String line, Date mergedDate, long mergedRevision,
-	        String mergedAuthor, String mergedPath, int lineNumber) throws SVNException {
+	public void handleLine(Date date,
+	                       long revision,
+	                       String author,
+	                       String line,
+	                       Date mergedDate,
+	                       long mergedRevision,
+	                       String mergedAuthor,
+	                       String mergedPath,
+	                       int lineNumber) throws SVNException {
 		if (revision > mergedRevision) {
 			this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
 		} else {
 			this.list.add(new AnnotationEntry(mergedRevision + "", mergedAuthor, new DateTime(mergedDate), line,
-			        mergedPath));
+			                                  mergedPath));
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleRevision(java.util
-	 * .Date, long, java.lang.String, java.io.File)
+	 * @see org.tmatesoft.svn.core.wc.ISVNAnnotateHandler#handleRevision(java.util .Date, long, java.lang.String,
+	 * java.io.File)
 	 */
 	@Override
-	public boolean handleRevision(Date date, long revision, String author, File contents) throws SVNException {
+	public boolean handleRevision(Date date,
+	                              long revision,
+	                              String author,
+	                              File contents) throws SVNException {
 		return false;
 	}
 }

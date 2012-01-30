@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa;
 
@@ -48,8 +45,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
- * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file
- * (or prints the XML to stdout).
+ * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file (or prints the XML to stdout).
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
@@ -57,7 +53,8 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
-	public static List<JavaChangeOperation> readOperations(final File file, PersistenceUtil persistenceUtil) {
+	public static List<JavaChangeOperation> readOperations(final File file,
+	                                                       PersistenceUtil persistenceUtil) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
@@ -79,12 +76,12 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	}
 	
 	public static List<JavaChangeOperation> readOperations(final org.jdom.Element element,
-			PersistenceUtil persistenceUtil) {
+	                                                       PersistenceUtil persistenceUtil) {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
 			if (Logger.logError()) {
 				Logger.error("RootElement for JavaChangeOperations must have be <" + ROOT_ELEMENT_NAME + "> but was <"
-						+ element.getName() + ">");
+				        + element.getName() + ">");
 			}
 			return result;
 		}
@@ -114,7 +111,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	 *             the parser configuration exception
 	 */
 	public PPAXMLTransformer(final AndamaGroup threadGroup, final AndamaSettings settings, final OutputStream outStream)
-			throws ParserConfigurationException {
+	        throws ParserConfigurationException {
 		super(threadGroup, settings, false);
 		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
 		final Document document = new org.jdom.Document(operationsElement);

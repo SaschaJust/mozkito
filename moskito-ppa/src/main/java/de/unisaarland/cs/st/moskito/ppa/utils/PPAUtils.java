@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.utils;
 
@@ -104,7 +101,7 @@ public class PPAUtils {
 		private IFile            iFile;
 		
 		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
-				final PPAOptions options) {
+		        final PPAOptions options) {
 			this.project = project;
 			this.file = file;
 			this.packagename = packagename;
@@ -151,22 +148,20 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Find previous call corresponding to the supplied JavaChangeOperation that
-	 * must be a JavaMethodCall delete operation.
+	 * Find previous call corresponding to the supplied JavaChangeOperation that must be a JavaMethodCall delete
+	 * operation.
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @param op
 	 *            the JavaChangeOperation to base the search on
-	 * @return the previous JavaChangeOperation on the very same JavaMethodCall
-	 *         within the same file, same method and closest location. Returns
-	 *         null if no such operation exists or if supplied
-	 *         JavaChangeOperation is not based on a JavaMethodCall or not a
-	 *         delete operation.
+	 * @return the previous JavaChangeOperation on the very same JavaMethodCall within the same file, same method and
+	 *         closest location. Returns null if no such operation exists or if supplied JavaChangeOperation is not
+	 *         based on a JavaMethodCall or not a delete operation.
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousCall(final PersistenceUtil persistenceUtil,
-			final JavaChangeOperation op) {
+	                                                   final JavaChangeOperation op) {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
@@ -193,24 +188,25 @@ public class PPAUtils {
 			return null;
 		}
 		
-		//should be in same method
-		//get the javaelement location of surrounding method definition
+		// should be in same method
+		// get the javaelement location of surrounding method definition
 		String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
-				+ location.getFilePath()
-				+ "' AND startline <= "
-				+ location.getStartLine()
-				+ " and endline >= "
-				+ location.getStartLine()
-				+ " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
-				+ location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
+		        + location.getFilePath()
+		        + "' AND startline <= "
+		        + location.getStartLine()
+		        + " and endline >= "
+		        + location.getStartLine()
+		        + " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
+		        + location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
 		Query defIdQuery = persistenceUtil.createNativeQuery(defIdQueryStr, JavaElementLocation.class);
 		
-		@SuppressWarnings("unchecked") List<JavaElementLocation> methodDefHits = defIdQuery.getResultList();
+		@SuppressWarnings ("unchecked")
+		List<JavaElementLocation> methodDefHits = defIdQuery.getResultList();
 		
 		if (!methodDefHits.isEmpty()) {
 			List<JavaElementLocation> strongCandidates = new LinkedList<JavaElementLocation>();
 			JavaElementLocation methodDefinition = methodDefHits.get(0);
-			//check	which hit is in the same method
+			// check which hit is in the same method
 			for (JavaElementLocation tmpLoc : hits) {
 				if (!methodDefinition.coversLine(tmpLoc.getStartLine()).equals(LineCover.FALSE)) {
 					strongCandidates.add(tmpLoc);
@@ -219,7 +215,7 @@ public class PPAUtils {
 			hits = strongCandidates;
 		}
 		
-		//now search for the closest call
+		// now search for the closest call
 		int minDistance = Integer.MAX_VALUE;
 		JavaElementLocation bestHit = null;
 		for (JavaElementLocation loc : hits) {
@@ -234,7 +230,7 @@ public class PPAUtils {
 			return null;
 		}
 		
-		//get the corresponding javachangeoperation
+		// get the corresponding javachangeoperation
 		
 		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 		operationCriteria.eq("changedElementLocation", bestHit);
@@ -247,38 +243,34 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Finds the change operation that touched the definition corresponding to
-	 * the JavaElement definition.
+	 * Finds the change operation that touched the definition corresponding to the JavaElement definition.
 	 * 
 	 * @param persistenceUtil
-	 *            the persistence util to use for accessing the relational
-	 *            database
+	 *            the persistence util to use for accessing the relational database
 	 * @param op
 	 *            the operation containing the JavaElement to search for
-	 * @return the JavaChangeOperation that touched the definition corresponding
-	 *         to the JavaElement associated to <code>op</code>. If no such
-	 *         operation exists, returns <code>null</code>.
+	 * @return the JavaChangeOperation that touched the definition corresponding to the JavaElement associated to
+	 *         <code>op</code>. If no such operation exists, returns <code>null</code>.
 	 */
 	@NoneNull
 	public static JavaChangeOperation findPreviousDefinition(final PersistenceUtil persistenceUtil,
-			final JavaChangeOperation op) {
+	                                                         final JavaChangeOperation op) {
 		
 		JavaElementLocation location = op.getChangedElementLocation();
 		JavaElement element = location.getElement();
 		JavaElement searchElement = element;
 		RCSTransaction opTransaction = op.getRevision().getTransaction();
 		
-		//distinguish between definitions and calls
+		// distinguish between definitions and calls
 		if (element instanceof JavaMethodCall) {
 			String[] defNames = getDefinitionNamesForCallName((JavaMethodCall) element);
 			
 			for (String elementName : defNames) {
-				Criteria<JavaMethodDefinition> elementCriteria = persistenceUtil
-						.createCriteria(JavaMethodDefinition.class);
+				Criteria<JavaMethodDefinition> elementCriteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
 				
 				CriteriaBuilder cb = elementCriteria.getBuilder();
 				Predicate like = cb.like(elementCriteria.getRoot().get(JavaMethodDefinition_.fullQualifiedName),
-						elementName);
+				                         elementName);
 				elementCriteria.getQuery().where(like);
 				List<JavaMethodDefinition> defHits = persistenceUtil.load(elementCriteria, 1);
 				if (defHits.isEmpty()) {
@@ -301,8 +293,7 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Generate change operations. The generated change operations will be
-	 * passed to the given visitors.
+	 * Generate change operations. The generated change operations will be passed to the given visitors.
 	 * 
 	 * @param repository
 	 *            the repository
@@ -312,8 +303,10 @@ public class PPAUtils {
 	 *            the visitors
 	 * @param usePPA
 	 */
-	public static void generateChangeOperations(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors, JavaElementFactory elementFactory) {
+	public static void generateChangeOperations(final Repository repository,
+	                                            final RCSTransaction transaction,
+	                                            final Collection<ChangeOperationVisitor> visitors,
+	                                            JavaElementFactory elementFactory) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -326,8 +319,8 @@ public class PPAUtils {
 			Set<RCSTransaction> parents = transaction.getParents();
 			if (parents.isEmpty()) {
 				throw new UnrecoverableError(
-						"Detected a transaction that has no parent within it's branch nor any parent at all: "
-								+ transaction.toString());
+				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
+				                                     + transaction.toString());
 			}
 			parentTransaction = parents.iterator().next();
 		}
@@ -371,7 +364,7 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			
 			// first copy files!
@@ -381,14 +374,14 @@ public class PPAUtils {
 				if (!file.exists()) {
 					if (Logger.logDebug()) {
 						Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-								+ " (might be added in next revision?)");
+						        + " (might be added in next revision?)");
 					}
 					continue;
 				}
 				try {
 					String packageName = getPackageFromFile(file);
 					IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-							file.getName());
+					                                                   file.getName());
 					iFiles.put(entry.getKey(), new Tuple<IFile, String>(newFile, entry.getValue()));
 				} catch (Exception e) {
 					if (Logger.logError()) {
@@ -399,7 +392,8 @@ public class PPAUtils {
 			for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 				CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-						.getSecond(), visitors, elementFactory);
+				                                                                                         .getSecond(),
+				                                       visitors, elementFactory);
 			}
 		}
 		
@@ -407,7 +401,7 @@ public class PPAUtils {
 		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 		if (!newCheckoutFile.exists()) {
 			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
-					+ ". Ignoring!");
+			        + ". Ignoring!");
 		}
 		
 		// first copy files!
@@ -417,14 +411,14 @@ public class PPAUtils {
 			if (!file.exists()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-							+ " (might be added in next revision?)");
+					        + " (might be added in next revision?)");
 				}
 				continue;
 			}
 			try {
 				String packageName = getPackageFromFile(file);
 				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-						file.getName());
+				                                                   file.getName());
 				iFiles.put(entry.getKey(), new Tuple<IFile, String>(newFile, entry.getValue()));
 			} catch (Exception e) {
 				if (Logger.logError()) {
@@ -435,7 +429,8 @@ public class PPAUtils {
 		for (Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 			CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
-					.getSecond(), visitors, elementFactory);
+			                                                                                       .getSecond(),
+			                                     visitors, elementFactory);
 		}
 		
 		// handle modified files
@@ -446,36 +441,37 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
-			JavaElementLocations oldElems = PPAUtils
-					.getJavaElementLocationsByCU(oldCU, entry.getValue(),
-							new String[0], elementFactory);
+			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),
+			                                                                     new String[0], elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCU(newFile, new PPAOptions());
-			JavaElementLocations newElems = PPAUtils
-					.getJavaElementLocationsByCU(newCU, entry.getValue(),
-							new String[0], elementFactory);
+			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(),
+			                                                                     new String[0], elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
-					entry.getValue(), visitors);
+			                                        entry.getValue(), visitors);
 		}
 	}
 	
 	private static void generateChangeOperationsForAddedFile(final Repository repository,
-			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
-			final String changedPath, final Collection<ChangeOperationVisitor> visitors,
-			JavaElementFactory elementFactory) {
+	                                                         final RCSTransaction transaction,
+	                                                         final RCSRevision revision,
+	                                                         final CompilationUnit cu,
+	                                                         final String changedPath,
+	                                                         final Collection<ChangeOperationVisitor> visitors,
+	                                                         JavaElementFactory elementFactory) {
 		ChangeOperations operations = new ChangeOperations();
 		JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
-				elementFactory);
+		                                                                     elementFactory);
 		for (JavaElementLocation classDef : newElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
 			operations.add(op);
@@ -498,14 +494,17 @@ public class PPAUtils {
 	}
 	
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
-			final RCSTransaction transaction, final RCSRevision revision, final CompilationUnit cu,
-			final String changedPath, final Collection<ChangeOperationVisitor> visitors,
-			JavaElementFactory elementFactory) {
+	                                                             final RCSTransaction transaction,
+	                                                             final RCSRevision revision,
+	                                                             final CompilationUnit cu,
+	                                                             final String changedPath,
+	                                                             final Collection<ChangeOperationVisitor> visitors,
+	                                                             JavaElementFactory elementFactory) {
 		
 		ChangeOperations operations = new ChangeOperations();
 		
 		JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
-				elementFactory);
+		                                                                     elementFactory);
 		
 		for (JavaElementLocation classDef : oldElems.getClassDefs(changedPath)) {
 			JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
@@ -527,8 +526,8 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Generate change operations for modified file. The generated change
-	 * operations will be passed to the given visitors.
+	 * Generate change operations for modified file. The generated change operations will be passed to the given
+	 * visitors.
 	 * 
 	 * @param repository
 	 *            the repository
@@ -537,20 +536,23 @@ public class PPAUtils {
 	 * @param visitors
 	 *            the visitors
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings ({ "unchecked" })
 	@NoneNull
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
-			final RCSTransaction transaction, final RCSRevision revision, final JavaElementLocations oldElems,
-			final JavaElementLocations newElems, final String changedPath,
-			final Collection<ChangeOperationVisitor> visitors) {
+	                                                              final RCSTransaction transaction,
+	                                                              final RCSRevision revision,
+	                                                              final JavaElementLocations oldElems,
+	                                                              final JavaElementLocations newElems,
+	                                                              final String changedPath,
+	                                                              final Collection<ChangeOperationVisitor> visitors) {
 		
 		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
 		if ((parentTransaction == null) && (!transaction.getBranch().isMasterBranch())) {
 			Set<RCSTransaction> parents = transaction.getParents();
 			if (parents.isEmpty()) {
 				throw new UnrecoverableError(
-						"Detected a transaction that has no parent within it's branch nor any parent at all: "
-								+ transaction.toString());
+				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
+				                                     + transaction.toString());
 			}
 			parentTransaction = parents.iterator().next();
 		}
@@ -637,7 +639,7 @@ public class PPAUtils {
 						if (!cover.equals(LineCover.FALSE)) {
 							if (!removeCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
 								removeCallCandidates.put(call.getElement().getFullQualifiedName(),
-										new TreeSet<JavaElementLocation>());
+								                         new TreeSet<JavaElementLocation>());
 							}
 							removeCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
 						}
@@ -650,7 +652,7 @@ public class PPAUtils {
 						if (!cover.equals(LineCover.FALSE)) {
 							if (!addCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
 								addCallCandidates.put(call.getElement().getFullQualifiedName(),
-										new TreeSet<JavaElementLocation>());
+								                      new TreeSet<JavaElementLocation>());
 							}
 							addCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
 						}
@@ -664,7 +666,7 @@ public class PPAUtils {
 						TreeSet<JavaElementLocation> delSet = removeCallCandidates.get(addedCallId);
 						TreeSet<JavaElementLocation> addSet = addCallCandidates.get(addedCallId);
 						for (JavaElementLocation addedCall : new TreeSet<JavaElementLocation>(
-								addCallCandidates.get(addedCallId))) {
+						                                                                      addCallCandidates.get(addedCallId))) {
 							JavaElementLocation ceiling = delSet.ceiling(addedCall);
 							JavaElementLocation floor = delSet.floor(addedCall);
 							if ((ceiling != null) || (floor != null)) {
@@ -725,8 +727,10 @@ public class PPAUtils {
 		}
 	}
 	
-	public static void generateChangeOperationsNOPPA(final Repository repository, final RCSTransaction transaction,
-			final Collection<ChangeOperationVisitor> visitors, JavaElementFactory elementFactory) {
+	public static void generateChangeOperationsNOPPA(final Repository repository,
+	                                                 final RCSTransaction transaction,
+	                                                 final Collection<ChangeOperationVisitor> visitors,
+	                                                 JavaElementFactory elementFactory) {
 		
 		Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -737,8 +741,8 @@ public class PPAUtils {
 			Set<RCSTransaction> parents = transaction.getParents();
 			if (parents.isEmpty()) {
 				throw new UnrecoverableError(
-						"Detected a transaction that has no parent within it's branch nor any parent at all: "
-								+ transaction.toString());
+				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
+				                                     + transaction.toString());
 			}
 			parentTransaction = parents.iterator().next();
 		}
@@ -778,14 +782,14 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			
 			for (Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
 				File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 				CompilationUnit cu = getCUNoPPA(file);
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-						visitors, elementFactory);
+				                                       visitors, elementFactory);
 			}
 		}
 		
@@ -793,14 +797,14 @@ public class PPAUtils {
 		File newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 		if (!newCheckoutFile.exists()) {
 			throw new UnrecoverableError("Could not access checkout directory: " + newCheckoutFile.getAbsolutePath()
-					+ ". Ignoring!");
+			        + ". Ignoring!");
 		}
 		
 		for (Entry<RCSRevision, String> entry : addRevs.entrySet()) {
 			File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit cu = getCUNoPPA(file);
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-			        visitors, elementFactory);
+			                                     visitors, elementFactory);
 		}
 		
 		// handle modified files
@@ -811,24 +815,24 @@ public class PPAUtils {
 			File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit oldCU = getCUNoPPA(oldFile);
 			JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),
-					new String[0], elementFactory);
+			                                                                     new String[0], elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-						+ newCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
 			File newFile = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			CompilationUnit newCU = getCUNoPPA(newFile);
 			JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(),
-					new String[0], elementFactory);
+			                                                                     new String[0], elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
-					entry.getValue(), visitors);
+			                                        entry.getValue(), visitors);
 		}
 		
 	}
@@ -842,7 +846,8 @@ public class PPAUtils {
 	 *            the options
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final File file, final PPAOptions options) {
+	public static CompilationUnit getCU(final File file,
+	                                    final PPAOptions options) {
 		return getCU(file, options, Thread.currentThread().getName());
 	}
 	
@@ -857,7 +862,9 @@ public class PPAUtils {
 	 *            the request name
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final File file, final PPAOptions options, final String requestName) {
+	public static CompilationUnit getCU(final File file,
+	                                    final PPAOptions options,
+	                                    final String requestName) {
 		CompilationUnit cu = null;
 		String fileName = file.getName();
 		
@@ -907,7 +914,8 @@ public class PPAUtils {
 	 *            the options
 	 * @return the cU
 	 */
-	public static CompilationUnit getCU(final IFile file, final PPAOptions options) {
+	public static CompilationUnit getCU(final IFile file,
+	                                    final PPAOptions options) {
 		CompilationUnit cu = null;
 		
 		try {
@@ -1020,7 +1028,8 @@ public class PPAUtils {
 	 *            the options
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final Collection<File> files, final PPAOptions options) {
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
+	                                                final PPAOptions options) {
 		return getCUs(files, options, Thread.currentThread().getName());
 	}
 	
@@ -1035,8 +1044,9 @@ public class PPAUtils {
 	 *            the request name
 	 * @return the c us
 	 */
-	public static Map<File, CompilationUnit> getCUs(final Collection<File> files, final PPAOptions options,
-			final String requestName) {
+	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
+	                                                final PPAOptions options,
+	                                                final String requestName) {
 		Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
 		Map<IFile, File> iFiles = new HashMap<IFile, File>();
 		try {
@@ -1052,7 +1062,7 @@ public class PPAUtils {
 				String packageName = getPackageFromFile(file);
 				IJavaProject javaProject = getProject(requestName);
 				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-						fileName);
+				                                                   fileName);
 				iFiles.put(newFile, file);
 			} catch (Exception e) {
 				if (Logger.logError()) {
@@ -1087,7 +1097,8 @@ public class PPAUtils {
 	}
 	
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
-			final RCSTransaction transaction, final ChangeType changeType) {
+	                                                                        final RCSTransaction transaction,
+	                                                                        final ChangeType changeType) {
 		
 		Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
 		Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
@@ -1096,7 +1107,7 @@ public class PPAUtils {
 		if (!oldCheckoutFile.exists()) {
 			if (Logger.logError()) {
 				Logger.error("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
-						+ ". Ignoring!");
+				        + ". Ignoring!");
 			}
 			return result;
 		}
@@ -1135,7 +1146,7 @@ public class PPAUtils {
 			if (!file.exists()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-							+ " (might be added in next revision?)");
+					        + " (might be added in next revision?)");
 				}
 				continue;
 			}
@@ -1146,7 +1157,7 @@ public class PPAUtils {
 				String packageName = getPackageFromFile(file);
 				IJavaProject javaProject = getProject(requestName);
 				IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-						fileName);
+				                                                   fileName);
 				ifiles.put(revision, newFile);
 			} catch (Exception e) {
 				if (Logger.logError()) {
@@ -1163,21 +1174,18 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Computes the possible matching method definition names based on the full
-	 * qualified name of the supplied JavaMethodCall; The returned array of
-	 * Strings is sorted in descending importance order.
+	 * Computes the possible matching method definition names based on the full qualified name of the supplied
+	 * JavaMethodCall; The returned array of Strings is sorted in descending importance order.
 	 * 
 	 * @param call
-	 *            the JavaMethodCall to base the method definition name
-	 *            generation on.
-	 * @return the definition names corresponding to the supplied
-	 *         JavaMethodCall. Sorted in descending importance and likelyhood
-	 *         order.
+	 *            the JavaMethodCall to base the method definition name generation on.
+	 * @return the definition names corresponding to the supplied JavaMethodCall. Sorted in descending importance and
+	 *         likelyhood order.
 	 */
 	protected static String[] getDefinitionNamesForCallName(final JavaMethodCall call) {
 		String name = String.valueOf(call.getFullQualifiedName());
 		
-		//replace "<init>" from name
+		// replace "<init>" from name
 		if (name.contains("<init>()")) {
 			int index = 0;
 			String[] nameParts = name.split("\\.");
@@ -1196,11 +1204,11 @@ public class PPAUtils {
 			String className = nameParts[index - 1];
 			name = name.replace("<init>()", className + "()");
 		}
-		//if it starts with src. get rid of prefix
+		// if it starts with src. get rid of prefix
 		if (name.startsWith("src.")) {
 			name = name.substring(4);
 		}
-		//the all might call an inner class
+		// the all might call an inner class
 		StringBuilder alternativeName = new StringBuilder();
 		String[] nameParts = name.split("\\.");
 		if (nameParts.length > 3) {
@@ -1217,7 +1225,7 @@ public class PPAUtils {
 		}
 		
 		return new String[] { name, alternativeName.toString(), name.replaceAll("UNKNOWN", "%"),
-				alternativeName.toString().replaceAll("UNKNOWN", "%") };
+		        alternativeName.toString().replaceAll("UNKNOWN", "%") };
 	}
 	
 	/**
@@ -1232,8 +1240,10 @@ public class PPAUtils {
 	 * @return the java element locations by file
 	 */
 	@NoneNull
-	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu, final String relativePath,
-			final String[] packageFilter, JavaElementFactory elementFactory) {
+	public static JavaElementLocations getJavaElementLocationsByCU(final CompilationUnit cu,
+	                                                               final String relativePath,
+	                                                               final String[] packageFilter,
+	                                                               JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		
 		JavaElementLocationSet locationSet = new JavaElementLocationSet(elementFactory);
@@ -1245,7 +1255,7 @@ public class PPAUtils {
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Could not analyze file " + relativePath
-						+ ". CompilationUnit cannot be created. Skipping ... ");
+				        + ". CompilationUnit cannot be created. Skipping ... ");
 			}
 		}
 		return locationSet.getJavaElementLocations();
@@ -1262,8 +1272,10 @@ public class PPAUtils {
 	 *            the package filter
 	 * @return the java element locations by file
 	 */
-	public static JavaElementLocations getJavaElementLocationsByFile(final File file, final String filePrefixPath,
-			final String[] packageFilter, JavaElementFactory elementFactory) {
+	public static JavaElementLocations getJavaElementLocationsByFile(final File file,
+	                                                                 final String filePrefixPath,
+	                                                                 final String[] packageFilter,
+	                                                                 JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
@@ -1289,7 +1301,7 @@ public class PPAUtils {
 			} else {
 				if (Logger.logError()) {
 					Logger.error("Could not analyze file " + file.getAbsolutePath()
-							+ ". CompilationUnit cannot be created. Skipping ... ");
+					        + ". CompilationUnit cannot be created. Skipping ... ");
 				}
 			}
 		}
@@ -1297,8 +1309,7 @@ public class PPAUtils {
 	}
 	
 	/**
-	 * Gets the java method elements of all java files within
-	 * <code>sourceDir</code>.
+	 * Gets the java method elements of all java files within <code>sourceDir</code>.
 	 * 
 	 * @param sourceDir
 	 *            the source dir
@@ -1307,12 +1318,13 @@ public class PPAUtils {
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
-			final String[] packageFilter, JavaElementFactory elementFactory) {
+	                                                                 final String[] packageFilter,
+	                                                                 JavaElementFactory elementFactory) {
 		
 		try {
 			Iterator<File> fileIterator = FileUtils.getFileIterator(sourceDir, new String[] { "java" }, true);
 			return getJavaElementLocationsByFile(fileIterator, sourceDir.getAbsolutePath(), packageFilter,
-					elementFactory);
+			                                     elementFactory);
 		} catch (IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -1333,7 +1345,9 @@ public class PPAUtils {
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
-			final String filePrefixPath, final String[] packageFilter, JavaElementFactory elementFactory) {
+	                                                                 final String filePrefixPath,
+	                                                                 final String[] packageFilter,
+	                                                                 JavaElementFactory elementFactory) {
 		PPAMethodCallVisitor methodCallVisitor = new PPAMethodCallVisitor();
 		PPAOptions ppaOptions = new PPAOptions();
 		
@@ -1351,7 +1365,7 @@ public class PPAUtils {
 			if (cu == null) {
 				if (Logger.logError()) {
 					Logger.error("Could not analyze file " + file.getAbsolutePath()
-							+ ". CompilationUnit cannot be created. Skipping ... ");
+					        + ". CompilationUnit cannot be created. Skipping ... ");
 				}
 				continue;
 			}
@@ -1370,19 +1384,21 @@ public class PPAUtils {
 	}
 	
 	private static JavaChangeOperation getLastOperationOnElement(final PersistenceUtil persistenceUtil,
-			JavaElement searchElement, RCSTransaction opTransaction, JavaElementLocation notMatch) {
+	                                                             JavaElement searchElement,
+	                                                             RCSTransaction opTransaction,
+	                                                             JavaElementLocation notMatch) {
 		Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
 		CriteriaBuilder cb = criteria.getBuilder();
 		Root<JavaElementLocation> root = criteria.getRoot();
 		Predicate eq = cb.equal(root.get("element"), searchElement);
 		
-		//it might be an operation within the same transaction having a larger id.
+		// it might be an operation within the same transaction having a larger id.
 		
-		//get the highest location id within the same transaction
+		// get the highest location id within the same transaction
 		
-		@SuppressWarnings("unchecked") List<Long> maxIdResultList = persistenceUtil
-				.executeNativeSelectQuery("select max(l.id) from javaelementlocation l, javachangeoperation o WHERE l.id = o.changedelementlocation_id and o.revision_revisionid IN (select revisionid from rcsrevision where transaction_id = '"
-						+ opTransaction.getId() + "')");
+		@SuppressWarnings ("unchecked")
+		List<Long> maxIdResultList = persistenceUtil.executeNativeSelectQuery("select max(l.id) from javaelementlocation l, javachangeoperation o WHERE l.id = o.changedelementlocation_id and o.revision_revisionid IN (select revisionid from rcsrevision where transaction_id = '"
+		        + opTransaction.getId() + "')");
 		
 		Long maxId = maxIdResultList.get(0);
 		
@@ -1400,7 +1416,7 @@ public class PPAUtils {
 		
 		JavaElementLocation hitLocation = hits.get(0);
 		
-		//search for corresponding JavaChangeOperation
+		// search for corresponding JavaChangeOperation
 		Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 		operationCriteria.eq("changedElementLocation", hitLocation);
 		List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);

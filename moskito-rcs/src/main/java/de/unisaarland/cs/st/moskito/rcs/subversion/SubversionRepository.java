@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -107,9 +104,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -143,9 +138,8 @@ public class SubversionRepository extends Repository {
 	 * {@link Repository#setup(URI, String, String)} to be executed.
 	 * 
 	 * @param revision
-	 *            the string representing an SVN revision. This is either a
-	 *            numeric of type long or a case insensitive version of the
-	 *            alias string versions. This may not be null.
+	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
+	 *            version of the alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) {
@@ -199,8 +193,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang.
-	 * String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang. String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -238,8 +231,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -301,9 +293,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#getChangedPaths(java.lang
-	 * .String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getChangedPaths(java.lang .String)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -370,8 +360,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java.
-	 * lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java. lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -447,8 +436,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId
-	 * (java.lang.String, long)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId (java.lang.String, long)
 	 */
 	@Override
 	public String getRelativeTransactionId(@NotNull final String transactionId,
@@ -503,8 +491,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -587,8 +574,7 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void setup(@NotNull final URI address,

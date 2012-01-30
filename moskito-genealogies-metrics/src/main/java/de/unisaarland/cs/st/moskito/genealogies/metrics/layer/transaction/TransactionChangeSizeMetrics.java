@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
@@ -30,17 +26,16 @@ import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-
-public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
+public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
-	private static final String changeSize = "changeSize";
-	private static final String avgDepChangeSize = "avgDepChangeSize";
-	private static final String maxDepChangeSize = "maxDepChangeSize";
-	private static final String sumDepChangeSize = "sumDepChangeSize";
+	private static final String changeSize          = "changeSize";
+	private static final String avgDepChangeSize    = "avgDepChangeSize";
+	private static final String maxDepChangeSize    = "maxDepChangeSize";
+	private static final String sumDepChangeSize    = "sumDepChangeSize";
 	private static final String avgParentChangeSize = "avgParentChangeSize";
 	private static final String maxParentChangeSize = "maxParentChangeSize";
 	private static final String sumParentChangeSize = "sumParentChangeSize";
-	private PersistenceUtil persistenceUtil;
+	private PersistenceUtil     persistenceUtil;
 	
 	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy, PersistenceUtil peristenceUtil) {
 		super(genealogy);
@@ -70,13 +65,13 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric{
 		DescriptiveStatistics dependantStats = new DescriptiveStatistics();
 		DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
-		metricValues.add(new GenealogyMetricValue(changeSize, nodeId, PPAPersistenceUtil.getChangeOperation(
-				persistenceUtil, transaction).size()));
+		metricValues.add(new GenealogyMetricValue(changeSize, nodeId,
+		                                          PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction)
+		                                                            .size()));
 		
 		for (RCSTransaction dependant : genealogy.getAllDependants(transaction)) {
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(persistenceUtil, dependant).size());
 		}
-		
 		
 		metricValues.add(new GenealogyMetricValue(avgDepChangeSize, nodeId, dependantStats.getMean()));
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId, dependantStats.getMax()));

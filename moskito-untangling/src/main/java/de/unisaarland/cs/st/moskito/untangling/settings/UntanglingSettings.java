@@ -6,7 +6,7 @@ package de.unisaarland.cs.st.moskito.untangling.settings;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class UntanglingSettings extends RepositorySettings {

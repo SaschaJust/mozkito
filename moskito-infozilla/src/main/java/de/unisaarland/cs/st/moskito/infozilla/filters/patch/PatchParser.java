@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.filters.patch;
 
@@ -29,8 +26,11 @@ public class PatchParser {
 	
 	/**
 	 * Find and extract all Hunks in a Patch
-	 * @param lines A set of Patch Lines
-	 * @param start The line to start looking for Hunks
+	 * 
+	 * @param lines
+	 *            A set of Patch Lines
+	 * @param start
+	 *            The line to start looking for Hunks
 	 * @return a List<PatchHunk> of Hunks that were found
 	 */
 	private List<PatchHunk> findAllHunks(final String[] lines,
@@ -112,9 +112,13 @@ public class PatchParser {
 	
 	/**
 	 * Find the first line that starts with a given String
-	 * @param text The text the line we look for starts with
-	 * @param lines An Array of lines
-	 * @param start The line number to start the search with
+	 * 
+	 * @param text
+	 *            The text the line we look for starts with
+	 * @param lines
+	 *            An Array of lines
+	 * @param start
+	 *            The line number to start the search with
 	 * @return The index of the first line starting at {@link start} or -1 if there is no such line
 	 */
 	private int findFirstLineBeginningWith(final String text,
@@ -132,9 +136,13 @@ public class PatchParser {
 	
 	/**
 	 * Find the first line that starts with a given String
-	 * @param text The text the line we look for starts with
-	 * @param lines An Array of lines
-	 * @param start The line number to start the search with
+	 * 
+	 * @param text
+	 *            The text the line we look for starts with
+	 * @param lines
+	 *            An Array of lines
+	 * @param start
+	 *            The line number to start the search with
 	 * @return The first line starting at {@link start} or an empty String if there is no such line
 	 */
 	private String findFirstLineBeginningWithS(final String text,
@@ -152,8 +160,11 @@ public class PatchParser {
 	
 	/**
 	 * Find the next Hunk start beginning from {@link start} in a set of {@link lines}.
-	 * @param lines The lines to search for the next Hunk start.
-	 * @param start The line from which to start looking for the next Hunk.
+	 * 
+	 * @param lines
+	 *            The lines to search for the next Hunk start.
+	 * @param start
+	 *            The line from which to start looking for the next Hunk.
 	 * @return The linenumber where the next Hunk start was found.
 	 */
 	private int findNextHunkHeader(final String[] lines,
@@ -171,8 +182,11 @@ public class PatchParser {
 	
 	/**
 	 * Find the next line among the set of lines[] that looks like a Patch Index: line.
-	 * @param lines	the lines in which to look for the patch start.
-	 * @param start the starting line number from where to start the search.
+	 * 
+	 * @param lines
+	 *            the lines in which to look for the patch start.
+	 * @param start
+	 *            the starting line number from where to start the search.
 	 * @return the linenumber where we found the next patch start from {@link start}.
 	 */
 	private int findNextIndex(final String[] lines,
@@ -194,7 +208,9 @@ public class PatchParser {
 	
 	/**
 	 * Checks whether the given line is a line that belongs to a hunk or not.
-	 * @param line the line to check for being a Hunk Line.
+	 * 
+	 * @param line
+	 *            the line to check for being a Hunk Line.
 	 * @return true if the {@link line} is a Hunk line, false otherwise.
 	 */
 	private boolean isHunkLine(final String line) {
@@ -204,7 +220,9 @@ public class PatchParser {
 	
 	/**
 	 * Parses a given text for all Patches inside using a 2 line lookahead Fuzzy Parser approach.
-	 * @param text The text to extract Patches from.
+	 * 
+	 * @param text
+	 *            The text to extract Patches from.
 	 * @return a list of {@link foundPatches}.
 	 */
 	public List<? extends Patch> parseForPatches(final String text) {
@@ -274,7 +292,9 @@ public class PatchParser {
 	
 	/**
 	 * Splits a text into a List of possible Patches.
-	 * @param text The text to split into patches.
+	 * 
+	 * @param text
+	 *            The text to split into patches.
 	 * @return a List of possible Patches.
 	 */
 	private List<String> partitionByIndex(final String text) {

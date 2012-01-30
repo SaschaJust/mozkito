@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph;
 
@@ -59,28 +56,28 @@ public class CallGraphToolChain {
 		
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.transactionArg = new StringArgument(settings, "transaction.id",
-				"The transaction id to create the call graph for.", null, false);
+		                                         "The transaction id to create the call graph for.", null, false);
 		this.dirArg = new DirectoryArgument(
-				settings,
-				"source.directory",
-				"(Only used when "
-						+ this.transactionArg.getName()
-						+ " not set) Use files from from.directory to build the call graph on.",
-						null, false, false);
+		                                    settings,
+		                                    "source.directory",
+		                                    "(Only used when "
+		                                            + this.transactionArg.getName()
+		                                            + " not set) Use files from from.directory to build the call graph on.",
+		                                    null, false, false);
 		this.packageFilterArg = new ListArgument(
-				settings,
-				"package.filter",
-				"A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-				"", false);
+		                                         settings,
+		                                         "package.filter",
+		                                         "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
+		                                         "", false);
 		
 		this.cacheDirArg = new DirectoryArgument(
-				settings,
-				"cache.dir",
-				"Directory containing call graphs using the name converntion <transaction_id>.cg",
-				null, false, false);
+		                                         settings,
+		                                         "cache.dir",
+		                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
+		                                         null, false, false);
 		
 		this.outArg = new OutputFileArgument(settings, "output", "File to store the serialized CallGraph in.", null,
-				true, true);
+		                                     true, true);
 		settings.parseArguments();
 		
 		this.transactionId = this.transactionArg.getValue();
@@ -90,7 +87,7 @@ public class CallGraphToolChain {
 			this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
 			if (this.sourceDir == null) {
 				throw new UnrecoverableError("Could not checkout transaction " + this.transactionId
-						+ " from repository " + this.repository.getUri().toString() + ". See errors above.");
+				        + " from repository " + this.repository.getUri().toString() + ". See errors above.");
 			}
 		} else {
 			this.sourceDir = this.dirArg.getValue();
@@ -113,9 +110,9 @@ public class CallGraphToolChain {
 		// generate the call graph
 		CallGraph callGraph = null;
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead())
-				&& (this.transactionId != null)) {
+		        && (this.transactionId != null)) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
-					+ ".cg");
+			        + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 			}
@@ -129,12 +126,12 @@ public class CallGraphToolChain {
 				}
 				relativePath = relativePath.substring(this.sourceDir.getAbsolutePath().length());
 				PPATypeVisitor typeVisitor = new PPATypeVisitor(
-						cuEntry.getValue(),
-						relativePath,
-						packageFilter.toArray(new String[packageFilter.size()]),
-						elemCache);
+				                                                cuEntry.getValue(),
+				                                                relativePath,
+				                                                packageFilter.toArray(new String[packageFilter.size()]),
+				                                                elemCache);
 				CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath,
-						elemCache);
+				                                                                  elemCache);
 				typeVisitor.registerVisitor(callGraphPPAVisitor);
 				cuEntry.getValue().accept(typeVisitor);
 			}

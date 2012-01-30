@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings.model;
 
@@ -33,11 +30,11 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	private Set<RCSFile>  premise;
 	private RCSFile       implication;
-	private final Integer      support;
-	private final Double       confidence;
+	private final Integer support;
+	private final Double  confidence;
 	
 	public FileChangeCoupling(final Integer[] premise, final Integer implication, final Integer support,
-			final Double confidence, final PersistenceUtil persistenceUtil) {
+	        final Double confidence, final PersistenceUtil persistenceUtil) {
 		this.premise = new HashSet<RCSFile>();
 		
 		boolean commit = false;
@@ -57,10 +54,9 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);
 		
 		Criteria<RCSFile> criteria = persistenceUtil.createCriteria(RCSFile.class)
-				.eq("generatedId", (long) implication);
+		                                            .eq("generatedId", (long) implication);
 		List<RCSFile> load = persistenceUtil.load(criteria);
 		rcsFile = load.get(0);
-		
 		
 		if (rcsFile == null) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
@@ -119,13 +115,13 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 			premise.add(file.getPath(transaction));
 		}
 		return new SerialFileChangeCoupling(premise, getImplication().getPath(transaction), getSupport(),
-				getConfidence());
+		                                    getConfidence());
 	}
 	
 	@Override
 	public String toString() {
 		return "ChangeCouplingRule [premise=" + Arrays.toString(premise.toArray(new RCSFile[premise.size()]))
-				+ ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
+		        + ", implication=" + implication + ", support=" + support + ", confidence=" + confidence + "]";
 	}
 	
 }

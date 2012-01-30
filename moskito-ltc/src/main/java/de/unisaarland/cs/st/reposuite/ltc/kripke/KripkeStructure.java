@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.reposuite.ltc.kripke;
 
@@ -30,19 +26,15 @@ import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.reposuite.ltc.ctl.CTLFormula;
 
 /**
- * Instances of this class represent Kripke structures. Basically, Kripke
- * structure is a nondeterministic finite state machine with a labeling
- * function. The labeling function maps each state to a set of properties that
- * hold in that state.
+ * Instances of this class represent Kripke structures. Basically, Kripke structure is a nondeterministic finite state
+ * machine with a labeling function. The labeling function maps each state to a set of properties that hold in that
+ * state.
  * 
- * The main intent of the CTL project is to generate CTL formulas that are true
- * for object usage models. The problem with this approach is that object usage
- * models have anonymous states and properties are not defined. My solution is
- * to transform them into Kripke structures, where each state will be labeled by
- * the event that happened most recently (e.g., a method call, a field access,
- * etc.). Thus, the set of properties is essentially a set of all events that
- * occur in the object usage model. Kripke structures can then be used for model
- * checking.
+ * The main intent of the CTL project is to generate CTL formulas that are true for object usage models. The problem
+ * with this approach is that object usage models have anonymous states and properties are not defined. My solution is
+ * to transform them into Kripke structures, where each state will be labeled by the event that happened most recently
+ * (e.g., a method call, a field access, etc.). Thus, the set of properties is essentially a set of all events that
+ * occur in the object usage model. Kripke structures can then be used for model checking.
  * 
  * @author Andrzej Wasylkowski
  */
@@ -58,8 +50,7 @@ public class KripkeStructure<V> {
 	// is consistent with it
 	
 	/**
-	 * This factory method creates a Kripke structure out of a given object
-	 * usage model.
+	 * This factory method creates a Kripke structure out of a given object usage model.
 	 * 
 	 * @param oum
 	 *            Object usage model to create a Kripke structure out of.
@@ -68,7 +59,7 @@ public class KripkeStructure<V> {
 	 * @return Kripke structure created from the given object usage model.
 	 */
 	public static <T> KripkeStructure<T> createFrom(final ChangeGenealogy<T> changeGenealogy,
-			final LabelGenerator<T> labelGenerator) {
+	                                                final LabelGenerator<T> labelGenerator) {
 		// This method creates a Kripke structure from the given OUM by
 		// following the method described in the following paper:
 		// Jonsson, Bengt, Ahmed Hussain Khan, and Joachim Parrow. 1990.
@@ -149,8 +140,8 @@ public class KripkeStructure<V> {
 	private final HashMap<State, V>           states2vertices;
 	
 	/**
-	 * Creates a new, empty Kripke structure. This constructor should not be
-	 * used directly. Use the <code>createFrom</code> factory method instead.
+	 * Creates a new, empty Kripke structure. This constructor should not be used directly. Use the
+	 * <code>createFrom</code> factory method instead.
 	 */
 	private KripkeStructure() {
 		this.initialStates = new HashSet<State>();
@@ -176,7 +167,7 @@ public class KripkeStructure<V> {
 	 *            Label to add.
 	 */
 	public void addLabelToState(final State state,
-			final Label label) {
+	                            final Label label) {
 		assert this.state2labels.containsKey(state);
 		this.state2labels.get(state).add(label);
 	}
@@ -190,7 +181,7 @@ public class KripkeStructure<V> {
 	 *            Final state of the transition.
 	 */
 	public void addState(final State from,
-			final State to) {
+	                     final State to) {
 		assert this.state2successors.containsKey(from);
 		assert this.state2successors.containsKey(to);
 		assert this.state2predecessors.containsKey(from);
@@ -218,9 +209,8 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * Creates a new, unique state, and adds it to this Kripke structure. This
-	 * method should not be used directly, because it violates important Kripke
-	 * structure invariants that have to be repaired later.
+	 * Creates a new, unique state, and adds it to this Kripke structure. This method should not be used directly,
+	 * because it violates important Kripke structure invariants that have to be repaired later.
 	 * 
 	 * @return The state that was created.
 	 */
@@ -298,9 +288,8 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * Partitions the states of this Kripke structure into equivalence classes,
-	 * where each class is uniquely defined by states' indegree, outdegree, and
-	 * set of labels.
+	 * Partitions the states of this Kripke structure into equivalence classes, where each class is uniquely defined by
+	 * states' indegree, outdegree, and set of labels.
 	 * 
 	 * @return Mapping from equivalence class definition to its content.
 	 */
@@ -329,8 +318,8 @@ public class KripkeStructure<V> {
 			Integer outdegree = state2outdegree.get(state);
 			Set<Label> labels = this.state2labels.get(state);
 			Triple<Integer, Integer, Set<Label>> equivClass = new Triple<Integer, Integer, Set<Label>>(indegree,
-					outdegree,
-					labels);
+			                                                                                           outdegree,
+			                                                                                           labels);
 			if (!result.containsKey(equivClass)) {
 				result.put(equivClass, new HashSet<State>());
 			}
@@ -365,20 +354,16 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * Checks if this Kripke structure is isomorphic with the given one,
-	 * provided the mapping from states of this structure to states of other
-	 * structure. This method assumes that both structures have the same number
-	 * of states, the mapping is both left- and right-total, and that the
-	 * mapping maps only pairs of states with the same labels.
+	 * Checks if this Kripke structure is isomorphic with the given one, provided the mapping from states of this
+	 * structure to states of other structure. This method assumes that both structures have the same number of states,
+	 * the mapping is both left- and right-total, and that the mapping maps only pairs of states with the same labels.
 	 * 
 	 * @param other
 	 *            Kripke structure to check isomorphism with.
 	 * @param this2other
-	 *            Mapping from states of this structure to stats of other
-	 *            structure. This mapping must be left- and right-total, and
-	 *            must map only pairs of states with the same labels.
-	 * @return <code>true</code> if both structures are isomorphic;
-	 *         <code>false</code> otherwise.
+	 *            Mapping from states of this structure to stats of other structure. This mapping must be left- and
+	 *            right-total, and must map only pairs of states with the same labels.
+	 * @return <code>true</code> if both structures are isomorphic; <code>false</code> otherwise.
 	 */
 	// private boolean isomorphicWith(KripkeStructure other,
 	// Map<State, State> this2other) {
@@ -440,39 +425,34 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * Checks if the given CTL formula does not hold in the given state. This
-	 * method simply consults the cache; it does not actually evaluate the
-	 * formula. If the formula was not evaluated, <code>false</code> will be
-	 * returned.
+	 * Checks if the given CTL formula does not hold in the given state. This method simply consults the cache; it does
+	 * not actually evaluate the formula. If the formula was not evaluated, <code>false</code> will be returned.
 	 * 
 	 * @param state
 	 *            State to check in.
 	 * @param formula
 	 *            Formula to check for.
-	 * @return <code>true</code> if the given CTL formula does not hold in the
-	 *         given state; <code>false</code> if the formula holds or was not
-	 *         evaluated at the given state.
+	 * @return <code>true</code> if the given CTL formula does not hold in the given state; <code>false</code> if the
+	 *         formula holds or was not evaluated at the given state.
 	 */
 	public boolean isFormulaFalse(final State state,
-			final CTLFormula formula) {
+	                              final CTLFormula formula) {
 		return this.falseFormulas.get(state).contains(formula);
 	}
 	
 	/**
-	 * Checks if the given CTL formula holds in the given state. This method
-	 * simply consults the cache; it does not actually evaluate the formula. If
-	 * the formula was not evaluated, <code>false</code> will be returned.
+	 * Checks if the given CTL formula holds in the given state. This method simply consults the cache; it does not
+	 * actually evaluate the formula. If the formula was not evaluated, <code>false</code> will be returned.
 	 * 
 	 * @param state
 	 *            State to check in.
 	 * @param formula
 	 *            Formula to check for.
-	 * @return <code>true</code> if the given CTL formula holds in the given
-	 *         state; <code>false</code> if the formula does not hold or was not
-	 *         evaluated at the given state.
+	 * @return <code>true</code> if the given CTL formula holds in the given state; <code>false</code> if the formula
+	 *         does not hold or was not evaluated at the given state.
 	 */
 	public boolean isFormulaTrue(final State state,
-			final CTLFormula formula) {
+	                             final CTLFormula formula) {
 		return this.trueFormulas.get(state).contains(formula);
 	}
 	
@@ -481,8 +461,7 @@ public class KripkeStructure<V> {
 	 * 
 	 * @param other
 	 *            Kripke structure to check isomorphism with.
-	 * @return <code>true</code> if both structures are isomorphic;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if both structures are isomorphic; <code>false</code> otherwise.
 	 */
 	public boolean isomorphicWith(final KripkeStructure<V> other) {
 		// first check that the numbers of states (total and initial) are equal
@@ -510,7 +489,7 @@ public class KripkeStructure<V> {
 		List<List<State>> otherClassesList = new ArrayList<List<State>>();
 		Map<State, State> this2other = new HashMap<State, State>();
 		for (Triple<Integer, Integer, Set<Label>> properties : new HashSet<Triple<Integer, Integer, Set<Label>>>(
-				thisClasses.keySet())) {
+		                                                                                                         thisClasses.keySet())) {
 			Set<State> thisClass = thisClasses.get(properties);
 			Set<State> otherClass = otherClasses.get(properties);
 			if (thisClass.size() != otherClass.size()) {
@@ -562,9 +541,8 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * Called to inform this Kripke structure that the given formula was
-	 * evaluated for the given state and that its truth value was evaluated to
-	 * be as given.
+	 * Called to inform this Kripke structure that the given formula was evaluated for the given state and that its
+	 * truth value was evaluated to be as given.
 	 * 
 	 * @param state
 	 *            State, in which the formula was evaluted.
@@ -574,8 +552,8 @@ public class KripkeStructure<V> {
 	 *            Truth value of the formula in that state.
 	 */
 	public void markEvaluatedFormula(final State state,
-			final CTLFormula formula,
-			final boolean truthValue) {
+	                                 final CTLFormula formula,
+	                                 final boolean truthValue) {
 		if (truthValue) {
 			this.trueFormulas.get(state).add(formula);
 		} else {
@@ -670,8 +648,7 @@ public class KripkeStructure<V> {
 	 * 
 	 * @param formula
 	 *            Formula to check.
-	 * @return <code>true</code> if the formula was evaluated in all the states;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the formula was evaluated in all the states; <code>false</code> otherwise.
 	 */
 	public boolean wasFormulaEvaluated(final CTLFormula formula) {
 		return this.evaluatedFormulas.contains(formula);
@@ -684,11 +661,11 @@ public class KripkeStructure<V> {
 	 *            State to check in.
 	 * @param formula
 	 *            Formula to check for.
-	 * @return <code>true</code> if the given CTL formula was evaluated for the
-	 *         given state; <code>false</code> otherwise.
+	 * @return <code>true</code> if the given CTL formula was evaluated for the given state; <code>false</code>
+	 *         otherwise.
 	 */
 	public boolean wasFormulaEvaluated(final State state,
-			final CTLFormula formula) {
+	                                   final CTLFormula formula) {
 		return this.trueFormulas.get(state).contains(formula) || this.falseFormulas.get(state).contains(formula);
 	}
 }

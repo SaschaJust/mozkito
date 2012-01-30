@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -82,10 +79,9 @@ public class MercurialRepository extends Repository {
 	protected static Regex             regex                = new Regex(MercurialRepository.pattern);
 	
 	/**
-	 * Pre-filters log lines. Mercurial cannot replace newlines in the log
-	 * messages. This method replaces newlines marked with br-tags by br-tags
-	 * only. This way, each entry in the returned list of strings represents a
-	 * single, atomic log entry.
+	 * Pre-filters log lines. Mercurial cannot replace newlines in the log messages. This method replaces newlines
+	 * marked with br-tags by br-tags only. This way, each entry in the returned list of strings represents a single,
+	 * atomic log entry.
 	 * 
 	 * @param lines
 	 *            the lines (not null)
@@ -113,8 +109,8 @@ public class MercurialRepository extends Repository {
 	}
 	
 	/**
-	 * Write a specific Mercurial log style into a temporary file. (should
-	 * always be {@link MercurialRepository#cloneDir}, not null)
+	 * Write a specific Mercurial log style into a temporary file. (should always be
+	 * {@link MercurialRepository#cloneDir}, not null)
 	 * 
 	 * @param dir
 	 *            the directory the template file will be written to (
@@ -142,9 +138,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -239,8 +233,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang.
-	 * String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#checkoutPath(java.lang. String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -302,8 +295,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -374,9 +366,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.rcs.Repository#getChangedPaths(java.lang
-	 * .String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getChangedPaths(java.lang .String)
 	 */
 	@Override
 	@NoneNull
@@ -478,8 +468,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java.
-	 * lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java. lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -540,8 +529,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId
-	 * (java.lang.String, long)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId (java.lang.String, long)
 	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId,
@@ -630,8 +618,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String,
-	 * java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -783,8 +770,7 @@ public class MercurialRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull

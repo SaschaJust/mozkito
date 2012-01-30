@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.eclipse;
 
@@ -72,16 +69,16 @@ public class EclipsePPALongTest {
 		
 		try {
 			repoZip = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-					+ "reposuite_28_01_2011.git.zip").toURI());
+			                                                                + "reposuite_28_01_2011.git.zip").toURI());
 			compXML = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp.xml").toURI());
 			compXML2 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_2.xml")
-					.toURI());
+			                                            .toURI());
 			compXML2_altern = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-					+ "ppa_comp_2_altern.xml").toURI());
+			                                                                        + "ppa_comp_2_altern.xml").toURI());
 			compXML3 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_3.xml")
-					.toURI());
+			                                            .toURI());
 			compXML4 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_4.xml")
-					.toURI());
+			                                            .toURI());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			fail();
@@ -132,12 +129,12 @@ public class EclipsePPALongTest {
 		eclipseBinDir = new File(eclipseBinDirPath.toString());
 		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("chmod", new String[] { "+x", "eclipse" },
-				eclipseBinDir, null, null);
+		                                                                eclipseBinDir, null, null);
 		
 		if (response.getFirst() != 0) {
 			if (Logger.logError()) {
 				Logger.error("Could not make eclipse executable in dir `" + eclipseBinDir.getAbsolutePath()
-						+ "` with arguments. Abort");
+				        + "` with arguments. Abort");
 			}
 			fail();
 		}
@@ -151,7 +148,7 @@ public class EclipsePPALongTest {
 	}
 	
 	private static boolean compareXML(final File original,
-			final File tocompare) {
+	                                  final File tocompare) {
 		
 		String result = "fail!";
 		try {
@@ -170,10 +167,10 @@ public class EclipsePPALongTest {
 	private static Tuple<Integer, List<String>> runEclipse(final String[] args) {
 		CommandExecutor.execute("chmod", new String[] { "+x", "eclipse" }, eclipseBinDir, null, null);
 		Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseBinDir + FileUtils.fileSeparator
-				+ "eclipse", args, eclipseBinDir, null, null);
+		        + "eclipse", args, eclipseBinDir, null, null);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not execute eclipse in directory `" + eclipseBinDir.getAbsolutePath()
-					+ "` with arguments `" + StringUtils.join(args, " ") + "`. Abort");
+			        + "` with arguments `" + StringUtils.join(args, " ") + "`. Abort");
 		}
 		return response;
 	}
@@ -181,7 +178,7 @@ public class EclipsePPALongTest {
 	@Test
 	public void testEclipseApp1() {
 		String VMARGS = BASIC_VMARGS
-				+ " -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
+		        + " -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
 		runEclipse(VMARGS.split(" "));
 		File tmpFile = new File("/tmp/ppa.xml");
 		assertTrue(compareXML(compXML, tmpFile));
@@ -204,7 +201,7 @@ public class EclipsePPALongTest {
 	@Test
 	public void testEclipseApp3() {
 		String VMARGS = BASIC_VMARGS
-				+ " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
+		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
 		runEclipse(VMARGS.split(" "));
 		File tmpFile = new File("/tmp/ppa3.xml");
 		assertTrue(compareXML(compXML3, tmpFile));
@@ -214,7 +211,7 @@ public class EclipsePPALongTest {
 	@Test
 	public void testEclipseApp4() {
 		String VMARGS = BASIC_VMARGS
-				+ " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
+		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
 		runEclipse(VMARGS.split(" "));
 		File tmpFile = new File("/tmp/ppa4.xml");
 		assertTrue(compareXML(compXML4, tmpFile));

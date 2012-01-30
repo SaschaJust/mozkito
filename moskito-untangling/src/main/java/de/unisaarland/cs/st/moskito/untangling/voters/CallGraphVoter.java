@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -51,6 +48,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	/** The dijkstra transformer. */
 	private static EdgeWeightTransformer dijkstraTransformer = new EdgeWeightTransformer();
 	private File                         usedGraphFile;
+	
 	/**
 	 * Instantiates a new call graph handler.
 	 * 
@@ -63,11 +61,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 *            the transaction id
 	 */
 	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
-			final File cacheDir) {
+	        final File cacheDir) {
 		
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
 			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-					+ ".cg");
+			        + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
 				usedGraphFile = serialFile;
@@ -87,10 +85,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
 			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-					+ FileUtils.fileSeparator
-					+ "eclipse",
-					arguments.toArray(new String[arguments.size()]),
-					eclipseDir, null, environment);
+			                                                                        + FileUtils.fileSeparator
+			                                                                        + "eclipse",
+			                                                                arguments.toArray(new String[arguments.size()]),
+			                                                                eclipseDir,
+			                                                                null, environment);
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
 					StringBuilder sb = new StringBuilder();
@@ -154,7 +153,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @return the double
 	 */
 	private double distance(final MethodVertex v1,
-			final MethodVertex v2) {
+	                        final MethodVertex v2) {
 		
 		if (v1.equals(v2)) {
 			return 0;
@@ -165,8 +164,8 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 		
 		DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
-				callGraph,
-				dijkstraTransformer);
+		                                                                                                                   callGraph,
+		                                                                                                                   dijkstraTransformer);
 		
 		List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
 		double d1 = Double.MAX_VALUE;
@@ -183,9 +182,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getMaxPossibleScore()
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getMaxPossibleScore()
 	 */
 	@Override
 	public double getMaxPossibleScore() {
@@ -194,13 +191,12 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getScore(java.lang.Object, java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
+	 * java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,
-			final JavaChangeOperation op2) {
+	                       final JavaChangeOperation op2) {
 		
 		if (callGraph == null) {
 			if (Logger.logError()) {
@@ -238,9 +234,9 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				distance = Math.min(2d, distance);
 				double result = 1d - (distance / 2d);
 				Condition.check(result <= 1, "The returned distance must be a value between 0 and 1, but was: "
-						+ distance);
+				        + distance);
 				Condition.check(result >= 0, "The returned distance must be a value between 0 and 1, but was: "
-						+ distance);
+				        + distance);
 				return result;
 			}
 		}

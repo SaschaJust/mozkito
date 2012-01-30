@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -19,12 +16,10 @@
  * 
  * @author Nicolas Bettenburg � 2009-2010, all rights reserved.
  ******************************************************************** 
- *         This file is part of infoZilla. * * InfoZilla is non-free software:
- *         you may not redistribute it * and/or modify it without the permission
- *         of the original author. * * InfoZilla is distributed in the hope that
- *         it will be useful, * but WITHOUT ANY WARRANTY; without even the
- *         implied warranty of * MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *         PURPOSE. *
+ *         This file is part of infoZilla. * * InfoZilla is non-free software: you may not redistribute it * and/or
+ *         modify it without the permission of the original author. * * InfoZilla is distributed in the hope that it
+ *         will be useful, * but WITHOUT ANY WARRANTY; without even the implied warranty of * MERCHANTABILITY or FITNESS
+ *         FOR A PARTICULAR PURPOSE. *
  ******************************************************************** 
  * 
  */
@@ -51,16 +46,18 @@ import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
 import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 /**
- * The JavaSourceCodeFilter class implements the InfozillaFilter interface for
- * JAVA source code structural elements. 
+ * The JavaSourceCodeFilter class implements the InfozillaFilter interface for JAVA source code structural elements.
+ * 
  * @author Nicolas Bettenburg
- *
+ * 
  */
 public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Given a List of Code Regions transform that list to a minimal including set
-	 * @param regionList a List of Code Regions that should be minimized
+	 * 
+	 * @param regionList
+	 *            a List of Code Regions that should be minimized
 	 * @return a minimal inclusion set of Code Regions.
 	 */
 	public static List<CodeRegion> makeMinimalSet(final List<CodeRegion> regionList) {
@@ -107,7 +104,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Overloaded Constructor
-	 * @param filename the name of the file to read Code Patterns from.
+	 * 
+	 * @param filename
+	 *            the name of the file to read Code Patterns from.
 	 */
 	public JavaSourceCodeFilter(final String filename) {
 		this.codePatterns = new HashMap<String, Pattern>();
@@ -122,7 +121,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Overloaded Constructor
-	 * @param fileurl a URL to a file to read Code Patterns from.
+	 * 
+	 * @param fileurl
+	 *            a URL to a file to read Code Patterns from.
 	 */
 	public JavaSourceCodeFilter(final URL fileurl) {
 		this.codePatterns = new HashMap<String, Pattern>();
@@ -163,7 +164,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Get a List of Source Code Regions contained in a given Text {@link s}
-	 * @param s the Text we shall look inside for Source Code
+	 * 
+	 * @param s
+	 *            the Text we shall look inside for Source Code
 	 * @return a List of Source Code Occurences as {@link CodeRegion}s
 	 */
 	private List<CodeRegion> getCodeRegions(final String s,
@@ -218,8 +221,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Read in some Code Patterns from an input stream name {@link instream}
-	 * @param instream the input stream to read the code patterns from
-	 * @throws Exception if something goes wrong with I/O
+	 * 
+	 * @param instream
+	 *            the input stream to read the code patterns from
+	 * @throws Exception
+	 *             if something goes wrong with I/O
 	 */
 	private void readCodePatterns(final InputStream instream) throws Exception {
 		BufferedReader fileInput = new BufferedReader(new InputStreamReader(instream));
@@ -248,8 +254,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Read in some Code Patterns from a file named {@link filename}
-	 * @param filename the full qualified filename from which to read the code patterns.
-	 * @throws Exception if there did something go wrong with I/O
+	 * 
+	 * @param filename
+	 *            the full qualified filename from which to read the code patterns.
+	 * @throws Exception
+	 *             if there did something go wrong with I/O
 	 */
 	private void readCodePatterns(final String filename) throws Exception {
 		BufferedReader fileInput = new BufferedReader(new FileReader(filename));

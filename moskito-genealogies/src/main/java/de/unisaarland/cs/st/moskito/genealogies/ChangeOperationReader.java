@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
@@ -41,7 +37,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
-			final PersistenceUtil persistenceUtil) {
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
@@ -49,8 +45,9 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 			@Override
 			public void preExecution() {
 				
-				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq(
-						"branch", BranchFactory.getMasterBranch(persistenceUtil));
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class)
+				                                                         .eq("branch",
+				                                                             BranchFactory.getMasterBranch(persistenceUtil));
 				
 				TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
 				
@@ -60,7 +57,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				
 				if (Logger.logInfo()) {
 					Logger.info("Added " + list.size()
-							+ " RCSTransactions that were found in MASTER branch to build the change genealogy.");
+					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
 				}
 			}
 		};
@@ -72,7 +69,7 @@ public class ChangeOperationReader extends AndamaSource<OperationCollection> {
 				if (ChangeOperationReader.this.iterator.hasNext()) {
 					final RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
 					final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-							transaction);
+					                                                                                               transaction);
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + transaction);

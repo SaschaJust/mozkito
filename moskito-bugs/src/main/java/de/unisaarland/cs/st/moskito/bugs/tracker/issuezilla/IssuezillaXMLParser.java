@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.issuezilla;
 
@@ -45,7 +42,7 @@ public class IssuezillaXMLParser {
 	protected static Namespace namespace    = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	protected static Regex     siblingRegex = new Regex(
-	"\\*\\*\\* This issue has been marked as a duplicate of\\s+({sibling}\\d+) \\*\\*\\*");
+	                                                    "\\*\\*\\* This issue has been marked as a duplicate of\\s+({sibling}\\d+) \\*\\*\\*");
 	protected static Regex     dateRegex    = new Regex("yyyy-MM-dd HH:mm:ss Z");
 	
 	/**
@@ -247,7 +244,7 @@ public class IssuezillaXMLParser {
 					if (!id.equals(report.getId())) {
 						if (Logger.logError()) {
 							Logger.error("Attempting to parse bug " + id.toString() + " for bug report "
-							             + report.getId());
+							        + report.getId());
 						}
 						skip = true;
 					}
@@ -286,7 +283,7 @@ public class IssuezillaXMLParser {
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Issuezila modification time `" + element.getText()
-						            + "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setLastUpdateTimestamp(modificationTime);
@@ -305,7 +302,7 @@ public class IssuezillaXMLParser {
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
-						            + "` cannot be interpreted as timestamp. Ignoring.");
+						        + "` cannot be interpreted as timestamp. Ignoring.");
 					}
 				} else {
 					report.setCreationTimestamp(creationTime);
@@ -327,7 +324,7 @@ public class IssuezillaXMLParser {
 			} else if (element.getName().equals("long_desc")) {
 				handleLongDesc(report, element);
 			} else if ((element.getName().equals("blocks")) || (element.getName().equals("dependson"))
-					|| (element.getName().equals("has_duplicates")) || (element.getName().equals("is_duplicates"))) {
+			        || (element.getName().equals("has_duplicates")) || (element.getName().equals("is_duplicates"))) {
 				Element linkElem = element.getChild("issue_id", element.getNamespace());
 				try {
 					report.addSibling(new Long(linkElem.getText()));

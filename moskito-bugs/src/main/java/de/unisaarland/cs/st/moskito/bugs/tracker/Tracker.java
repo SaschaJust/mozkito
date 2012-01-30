@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -50,8 +47,8 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
- * {@link Tracker} is the super class all BTS classes have to extend. The
- * {@link Tracker} handles all mining/parsing/analyzing of a {@link Report}.
+ * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
+ * mining/parsing/analyzing of a {@link Report}.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
@@ -115,10 +112,9 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * The method takes a string containing one bug report and analyzes its
-	 * content. If this method returns false, the report will be dropped from
-	 * the corresponding {@link RepoSuiteToolchain}. Applications are broken
-	 * documents, etc...
+	 * The method takes a string containing one bug report and analyzes its content. If this method returns false, the
+	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents,
+	 * etc...
 	 * 
 	 * @param rawString
 	 *            the bug report without further processing
@@ -130,11 +126,9 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * The method takes a XML document representing a bug report and checks this
-	 * document for consistency, i.e. if all required nodes are available or if
-	 * the document matches a given XML scheme. If this method returns false,
-	 * the report will be dropped from the corresponding
-	 * {@link RepoSuiteToolchain}. Applications are broken documents or
+	 * The method takes a XML document representing a bug report and checks this document for consistency, i.e. if all
+	 * required nodes are available or if the document matches a given XML scheme. If this method returns false, the
+	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents or
 	 * unsupported versions.
 	 * 
 	 * @param xmlReport
@@ -146,8 +140,7 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * The method takes a bug report in raw format and creates the corresponding
-	 * XML document.
+	 * The method takes a bug report in raw format and creates the corresponding XML document.
 	 * 
 	 * @param rawReport
 	 *            the raw bug report
@@ -210,9 +203,8 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * Creates an {@link URI} that corresponds to the given bugId. This method
-	 * is used to create {@link URI}s for the {@link Tracker#fetchSource(URI)}
-	 * method.
+	 * Creates an {@link URI} that corresponds to the given bugId. This method is used to create {@link URI}s for the
+	 * {@link Tracker#fetchSource(URI)} method.
 	 * 
 	 * @param bugId
 	 *            the id of the bug an URI shall be created to
@@ -339,25 +331,19 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * sets up the current tracker and fills the queue with the corresponding
-	 * bug report ids
+	 * sets up the current tracker and fills the queue with the corresponding bug report ids
 	 * 
 	 * @param fetchURI
-	 *            The {@link URI} to be appended by the pattern filled with the
-	 *            bug id. If pattern is null, this is a direct link to a site
-	 *            composing all reports in one document.
+	 *            The {@link URI} to be appended by the pattern filled with the bug id. If pattern is null, this is a
+	 *            direct link to a site composing all reports in one document.
 	 * @param overviewURI
-	 *            The {@link URI} to an overview site where all bug ids can be
-	 *            found. May be null.
+	 *            The {@link URI} to an overview site where all bug ids can be found. May be null.
 	 * @param pattern
-	 *            The pattern to be appended to the {@link URI} when fetching
-	 *            bug reports. May be null.
+	 *            The pattern to be appended to the {@link URI} when fetching bug reports. May be null.
 	 * @param username
-	 *            The username to be used to login to a bug tracking system. May
-	 *            be null iff password is null.
+	 *            The username to be used to login to a bug tracking system. May be null iff password is null.
 	 * @param password
-	 *            The password to be used to login to a bug tracking system. May
-	 *            be null iff username is null.
+	 *            The password to be used to login to a bug tracking system. May be null iff username is null.
 	 * @param startAt
 	 *            The first bug id to be mined. May be null.
 	 * @param stopAt

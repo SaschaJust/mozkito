@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -74,7 +71,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 @Entity
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
-
+	
 	/**
 	 * 
 	 */
@@ -105,11 +102,11 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                summary;
 	private Type                  type              = Type.UNKNOWN;
 	private String                version;
-
+	
 	private Report() {
 		super();
 	}
-
+	
 	/**
 	 * @param id
 	 */
@@ -118,7 +115,7 @@ public class Report implements Annotated, Comparable<Report> {
 		setId(id);
 		setHistory(new History(getId()));
 	}
-
+	
 	/**
 	 * @param entry
 	 */
@@ -127,7 +124,7 @@ public class Report implements Annotated, Comparable<Report> {
 		getAttachmentEntries().add(entry);
 		setAttachmentEntries(getAttachmentEntries());
 	}
-
+	
 	/**
 	 * @param comment
 	 * @return
@@ -135,10 +132,10 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public boolean addComment(@NotNull final Comment comment) {
 		Condition.notNull(getComments(),
-				"The container holding the comments must be initialized before adding a comment to the report.");
+		                  "The container holding the comments must be initialized before adding a comment to the report.");
 		CollectionCondition.notContains(getComments(), comment,
-				"The comment with id %d is already contained in the report.", comment.getId());
-
+		                                "The comment with id %d is already contained in the report.", comment.getId());
+		
 		final SortedSet<Comment> comments = getComments();
 		final boolean ret = comments.add(comment);
 		setComments(comments);
@@ -146,7 +143,7 @@ public class Report implements Annotated, Comparable<Report> {
 		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
 		return ret;
 	}
-
+	
 	/**
 	 * @param historyElement
 	 * @return
@@ -160,7 +157,7 @@ public class Report implements Annotated, Comparable<Report> {
 		historyElement.setBugId(getId());
 		return ret;
 	}
-
+	
 	/**
 	 * @param sibling
 	 * @return
@@ -173,7 +170,7 @@ public class Report implements Annotated, Comparable<Report> {
 		setSiblings(siblings);
 		return ret;
 	}
-
+	
 	@Override
 	protected Report clone() throws CloneNotSupportedException {
 		final Report report = new Report();
@@ -201,7 +198,7 @@ public class Report implements Annotated, Comparable<Report> {
 		report.setSubmitter(getSubmitter());
 		return report;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -216,7 +213,7 @@ public class Report implements Annotated, Comparable<Report> {
 			return 0;
 		}
 	}
-
+	
 	/**
 	 * @return the assignedTo
 	 */
@@ -224,7 +221,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Person getAssignedTo() {
 		return getPersonContainer().get("assignedTo");
 	}
-
+	
 	/**
 	 * @return the attachmentEntries
 	 */
@@ -232,7 +229,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public List<AttachmentEntry> getAttachmentEntries() {
 		return this.attachmentEntries;
 	}
-
+	
 	/**
 	 * @return the category
 	 */
@@ -240,7 +237,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getCategory() {
 		return this.category;
 	}
-
+	
 	/**
 	 * @return the comments
 	 */
@@ -249,7 +246,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public SortedSet<Comment> getComments() {
 		return this.comments;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -257,7 +254,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getComponent() {
 		return this.component;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -266,10 +263,10 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
-				? getCreationTimestamp().toDate()
-						: null;
+		                                     ? getCreationTimestamp().toDate()
+		                                     : null;
 	}
-
+	
 	/**
 	 * @return the creationTimestamp
 	 */
@@ -277,7 +274,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public DateTime getCreationTimestamp() {
 		return this.creationTimestamp;
 	}
-
+	
 	/**
 	 * @return the description
 	 */
@@ -287,11 +284,11 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getDescription() {
 		return this.description;
 	}
-
+	
 	public Object getField(final String lowerFieldName) {
 		final Method[] methods = this.getClass().getDeclaredMethods();
 		final String getter = "get" + lowerFieldName;
-
+		
 		for (final Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter)) {
 				try {
@@ -311,14 +308,14 @@ public class Report implements Annotated, Comparable<Report> {
 				}
 			}
 		}
-
+		
 		if (Logger.logWarn()) {
 			Logger.warn("Did not find a matching field for: " + lowerFieldName);
 		}
-
+		
 		return null;
 	}
-
+	
 	/**
 	 * @return the hash
 	 */
@@ -326,7 +323,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public byte[] getHash() {
 		return this.hash;
 	}
-
+	
 	/**
 	 * @return the history
 	 */
@@ -334,7 +331,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public History getHistory() {
 		return this.history;
 	}
-
+	
 	/**
 	 * @return the id
 	 */
@@ -342,7 +339,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public long getId() {
 		return this.id;
 	}
-
+	
 	/**
 	 * @return the lastFetch
 	 */
@@ -350,7 +347,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public DateTime getLastFetch() {
 		return this.lastFetch;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -359,10 +356,10 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
 		return getLastFetch() != null
-				? getLastFetch().toDate()
-						: null;
+		                             ? getLastFetch().toDate()
+		                             : null;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -371,10 +368,10 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
-				? getLastUpdateTimestamp().toDate()
-						: null;
+		                                       ? getLastUpdateTimestamp().toDate()
+		                                       : null;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -382,7 +379,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public DateTime getLastUpdateTimestamp() {
 		return this.lastUpdateTimestamp;
 	}
-
+	
 	/**
 	 * @return the personContainer
 	 */
@@ -390,7 +387,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public PersonContainer getPersonContainer() {
 		return this.personContainer;
 	}
-
+	
 	/**
 	 * @return the priority
 	 */
@@ -398,7 +395,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Priority getPriority() {
 		return this.priority;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -406,7 +403,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getProduct() {
 		return this.product;
 	}
-
+	
 	/**
 	 * @return the resolution
 	 */
@@ -414,7 +411,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Resolution getResolution() {
 		return this.resolution;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -423,10 +420,10 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
-				? getResolutionTimestamp().toDate()
-						: null;
+		                                       ? getResolutionTimestamp().toDate()
+		                                       : null;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -434,7 +431,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public DateTime getResolutionTimestamp() {
 		return this.resolutionTimestamp;
 	}
-
+	
 	/**
 	 * @return the resolver
 	 */
@@ -443,7 +440,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Person getResolver() {
 		return getPersonContainer().get("resolver");
 	}
-
+	
 	/**
 	 * @return the severity
 	 */
@@ -451,7 +448,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Severity getSeverity() {
 		return this.severity;
 	}
-
+	
 	/**
 	 * @return the siblings
 	 */
@@ -460,7 +457,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public SortedSet<Long> getSiblings() {
 		return this.siblings;
 	}
-
+	
 	/**
 	 * @return the status
 	 */
@@ -468,7 +465,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Status getStatus() {
 		return this.status;
 	}
-
+	
 	/**
 	 * @return the subject
 	 */
@@ -478,7 +475,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getSubject() {
 		return this.subject;
 	}
-
+	
 	/**
 	 * @return the submitter
 	 */
@@ -487,7 +484,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public Person getSubmitter() {
 		return getPersonContainer().get("submitter");
 	}
-
+	
 	/**
 	 * @return the summary
 	 */
@@ -497,15 +494,15 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getSummary() {
 		return this.summary;
 	}
-
+	
 	/**
 	 * @return the type
 	 */
-	@Enumerated(EnumType.STRING)
+	@Enumerated (EnumType.STRING)
 	public Type getType() {
 		return this.type;
 	}
-
+	
 	/**
 	 * @return the version
 	 */
@@ -513,7 +510,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public String getVersion() {
 		return this.version;
 	}
-
+	
 	/**
 	 * @param assignedTo
 	 *            the assignedTo to set
@@ -521,7 +518,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setAssignedTo(final Person assignedTo) {
 		getPersonContainer().add("assignedTo", assignedTo);
 	}
-
+	
 	/**
 	 * @param attachmentEntries
 	 *            the attachmentEntries to set
@@ -529,7 +526,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setAttachmentEntries(final List<AttachmentEntry> attachmentEntries) {
 		this.attachmentEntries = attachmentEntries;
 	}
-
+	
 	/**
 	 * @param category
 	 *            the category to set
@@ -537,7 +534,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setCategory(final String category) {
 		this.category = category;
 	}
-
+	
 	/**
 	 * @param comments
 	 *            the comments to set
@@ -545,24 +542,24 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setComments(final SortedSet<Comment> comments) {
 		this.comments = comments;
 	}
-
+	
 	/**
 	 * @param component
 	 */
 	public void setComponent(final String component) {
 		this.component = component;
 	}
-
+	
 	/**
 	 * @param creationTimestamp
 	 */
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		setCreationTimestamp(creationTimestamp != null
-				? new DateTime(creationTimestamp)
-		: null);
+		                                              ? new DateTime(creationTimestamp)
+		                                              : null);
 	}
-
+	
 	/**
 	 * @param creationTimestamp
 	 *            the creationTimestamp to set
@@ -570,7 +567,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setCreationTimestamp(final DateTime creationTimestamp) {
 		this.creationTimestamp = creationTimestamp;
 	}
-
+	
 	/**
 	 * @param description
 	 *            the description to set
@@ -578,21 +575,21 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-
+	
 	/**
 	 * @param fieldName
 	 * @param fieldValue
 	 */
 	@Transient
 	public void setField(final String fieldName,
-			final Object fieldValue) {
+	                     final Object fieldValue) {
 		final String lowerFieldName = fieldName.toLowerCase();
 		final Method[] methods = this.getClass().getDeclaredMethods();
 		final String getter = "set" + lowerFieldName;
-
+		
 		for (final Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
-					&& ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
+			        && ((fieldValue == null) || (method.getParameterTypes()[0] == fieldValue.getClass()))) {
 				try {
 					method.invoke(this, fieldValue);
 				} catch (final IllegalArgumentException e) {
@@ -610,12 +607,12 @@ public class Report implements Annotated, Comparable<Report> {
 				}
 			}
 		}
-
+		
 		if (Logger.logWarn()) {
 			Logger.warn("Did not find a matching field for: " + lowerFieldName);
 		}
 	}
-
+	
 	/**
 	 * @param hash
 	 *            the hash to set
@@ -623,7 +620,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setHash(final byte[] hash) {
 		this.hash = hash;
 	}
-
+	
 	/**
 	 * @param history
 	 *            the history to set
@@ -631,7 +628,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private void setHistory(final History history) {
 		this.history = history;
 	}
-
+	
 	/**
 	 * @param id
 	 *            the id to set
@@ -639,7 +636,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private void setId(final long id) {
 		this.id = id;
 	}
-
+	
 	/**
 	 * @param lastFetch
 	 *            the lastFetch to set
@@ -647,34 +644,34 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setLastFetch(final DateTime lastFetch) {
 		this.lastFetch = lastFetch;
 	}
-
+	
 	/**
 	 * @param lastFetch
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
 		setLastFetch(lastFetch != null
-				? new DateTime(lastFetch)
-		: null);
+		                              ? new DateTime(lastFetch)
+		                              : null);
 	}
-
+	
 	/**
 	 * @param date
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
 		setLastUpdateTimestamp(date != null
-				? new DateTime(date)
-		: null);
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
-
+	
 	/**
 	 * @param lastUpdateTimestamp
 	 */
 	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
 		this.lastUpdateTimestamp = lastUpdateTimestamp;
 	}
-
+	
 	/**
 	 * @param personContainer
 	 *            the personContainer to set
@@ -682,7 +679,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
 	}
-
+	
 	/**
 	 * @param priority
 	 *            the priority to set
@@ -690,14 +687,14 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setPriority(final Priority priority) {
 		this.priority = priority;
 	}
-
+	
 	/**
 	 * @param product
 	 */
 	public void setProduct(final String product) {
 		this.product = product;
 	}
-
+	
 	/**
 	 * @param resolution
 	 *            the resolution to set
@@ -705,24 +702,24 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setResolution(final Resolution resolution) {
 		this.resolution = resolution;
 	}
-
+	
 	/**
 	 * @param date
 	 */
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
 		setResolutionTimestamp(date != null
-				? new DateTime(date)
-		: null);
+		                                   ? new DateTime(date)
+		                                   : null);
 	}
-
+	
 	/**
 	 * @param resolutionTimestamp
 	 */
 	public void setResolutionTimestamp(final DateTime resolutionTimestamp) {
 		this.resolutionTimestamp = resolutionTimestamp;
 	}
-
+	
 	/**
 	 * @param resolver
 	 *            the resolver to set
@@ -730,7 +727,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setResolver(final Person resolver) {
 		getPersonContainer().add("resolver", resolver);
 	}
-
+	
 	/**
 	 * @param severity
 	 *            the severity to set
@@ -738,7 +735,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setSeverity(final Severity severity) {
 		this.severity = severity;
 	}
-
+	
 	/**
 	 * @param siblings
 	 *            the siblings to set
@@ -746,7 +743,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setSiblings(final SortedSet<Long> siblings) {
 		this.siblings = siblings;
 	}
-
+	
 	/**
 	 * @param status
 	 *            the status to set
@@ -754,7 +751,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setStatus(final Status status) {
 		this.status = status;
 	}
-
+	
 	/**
 	 * @param subject
 	 *            the subject to set
@@ -762,7 +759,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
-
+	
 	/**
 	 * @param submitter
 	 *            the submitter to set
@@ -770,7 +767,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setSubmitter(final Person submitter) {
 		getPersonContainer().add("submitter", submitter);
 	}
-
+	
 	/**
 	 * @param summary
 	 *            the summary to set
@@ -778,7 +775,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setSummary(final String summary) {
 		this.summary = summary;
 	}
-
+	
 	/**
 	 * @param type
 	 *            the type to set
@@ -786,7 +783,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setType(final Type type) {
 		this.type = type;
 	}
-
+	
 	/**
 	 * @param version
 	 *            the version to set
@@ -794,7 +791,7 @@ public class Report implements Annotated, Comparable<Report> {
 	public void setVersion(final String version) {
 		this.version = version;
 	}
-
+	
 	/**
 	 * @param timestamp
 	 * @return
@@ -802,18 +799,18 @@ public class Report implements Annotated, Comparable<Report> {
 	public Report timewarp(final DateTime timestamp) {
 		return getHistory().rollback(this, timestamp);
 	}
-
+	
 	/**
 	 * @param interval
 	 * @return
 	 */
 	public Collection<Report> timewarp(final Interval interval,
-			final String field) {
+	                                   final String field) {
 		final LinkedList<Report> reports = new LinkedList<Report>();
 		Report report = timewarp(interval.getEnd());
-
+		
 		final History history = report.getHistory().get(field);
-
+		
 		final LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
 		final ListIterator<HistoryElement> iterator = list.listIterator(list.size());
 		while (iterator.hasPrevious()) {
@@ -826,10 +823,10 @@ public class Report implements Annotated, Comparable<Report> {
 				break;
 			}
 		}
-
+		
 		return reports;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -844,28 +841,28 @@ public class Report implements Annotated, Comparable<Report> {
 			hash = "encoding failed"; // this will never be executed
 		}
 		return "BugReport [id="
-		+ getId()
-		+ ", assignedTo="
-		+ getAssignedTo()
-		+ ", category="
-		+ getCategory()
-		+ ", comments="
-		+ (getComments() != null
-		? getComments().size()
-				: 0)
-				+ ", description="
-						+ getDescription().substring(0,
-								getDescription().length() > 10
-								? 10
-										: Math.max(getDescription().length() - 1, 0))
-										+ "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
-										+ ", submitter=" + getSubmitter() + ", subject="
-										+ getSubject().substring(0, getSubject().length() > 10
-												? 10
-														: Math.max(getSubject().length() - 1, 0))
-														+ "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
-														+ ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
-														+ "]";
+		        + getId()
+		        + ", assignedTo="
+		        + getAssignedTo()
+		        + ", category="
+		        + getCategory()
+		        + ", comments="
+		        + (getComments() != null
+		                                ? getComments().size()
+		                                : 0)
+		        + ", description="
+		        + getDescription().substring(0,
+		                                     getDescription().length() > 10
+		                                                                   ? 10
+		                                                                   : Math.max(getDescription().length() - 1, 0))
+		        + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
+		        + ", submitter=" + getSubmitter() + ", subject="
+		        + getSubject().substring(0, getSubject().length() > 10
+		                                                              ? 10
+		                                                              : Math.max(getSubject().length() - 1, 0))
+		        + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
+		        + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
+		        + "]";
 	}
-
+	
 }

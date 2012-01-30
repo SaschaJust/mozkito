@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -56,12 +53,13 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	@NoneNull
-	public static String composeFullQualifiedName(final String objectName, final String methodName,
-			final List<String> signature) {
+	public static String composeFullQualifiedName(final String objectName,
+	                                              final String methodName,
+	                                              final List<String> signature) {
 		
 		String localParentName = objectName;
 		
-		if(objectName.startsWith("src.")){
+		if (objectName.startsWith("src.")) {
 			localParentName = localParentName.substring(4);
 		}
 		
@@ -192,9 +190,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElement#equals(java.lang
-	 * .Object)
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#equals(java.lang .Object)
 	 */
 	@Override
 	public boolean equals(final Object obj) {
@@ -240,11 +236,11 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/**
 	 * Gets the called method name.
-	 *
+	 * 
 	 * @return the called method name
 	 */
 	@Transient
-	public String getCalledMethodName(){
+	public String getCalledMethodName() {
 		return extractMethodName(this.getFullQualifiedName());
 	}
 	
@@ -269,9 +265,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation ()
 	 */
 	@Override
 	@NoneNull

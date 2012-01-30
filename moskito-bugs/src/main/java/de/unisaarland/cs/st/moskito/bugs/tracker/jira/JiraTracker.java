@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -85,8 +82,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(java.lang
-	 * .String)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(java.lang .String)
 	 */
 	@Override
 	@NoneNull
@@ -192,8 +188,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#fetchSource(java.
-	 * net.URI)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#fetchSource(java. net.URI)
 	 */
 	@Override
 	@NoneNull
@@ -282,8 +277,7 @@ public class JiraTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	@Override
@@ -330,23 +324,17 @@ public class JiraTracker extends Tracker {
 	}
 	
 	/*
-	 * The given uri can either point to an overall XML or an pattern string
-	 * that contains one or multiple {@link
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#bugIdPlaceholder} that
-	 * will be replaced by a bug id while fetching bug reports. If the string
-	 * contains no such place holder, the uri will be considered to point to an
+	 * The given uri can either point to an overall XML or an pattern string that contains one or multiple {@link
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#bugIdPlaceholder} that will be replaced by a bug id while
+	 * fetching bug reports. If the string contains no such place holder, the uri will be considered to point to an
 	 * overall XML file
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI,
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI,
-	 * java.net.URI, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.Long, java.lang.Long)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.net.URI, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Long, java.lang.Long)
 	 */
 	@Override
 	public void setup(final URI fetchURI,

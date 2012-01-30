@@ -19,13 +19,13 @@ import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChangeOperation> {
 	
 	public PPATransformer(AndamaGroup threadGroup, AndamaSettings settings, final Repository repository,
-			final Boolean usePPA, JavaElementFactory factory) {
+	        final Boolean usePPA, JavaElementFactory factory) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
@@ -38,7 +38,7 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 			@Override
 			public void process() {
 				
-				if((iterator == null) || (!iterator.hasNext())){
+				if ((iterator == null) || (!iterator.hasNext())) {
 					
 					RCSTransaction transaction = getInputData();
 					
@@ -53,23 +53,25 @@ public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChange
 					}
 					if (usePPA) {
 						
-						PPAUtils.generateChangeOperations(repository, transaction, new HashSet<ChangeOperationVisitor>() {
-							private static final long serialVersionUID = -6294280837922825955L;
-							
-							{
-								add(visitor);
-							}
-						}, elementFactory);
+						PPAUtils.generateChangeOperations(repository, transaction,
+						                                  new HashSet<ChangeOperationVisitor>() {
+							                                  
+							                                  private static final long serialVersionUID = -6294280837922825955L;
+							                                  
+							                                  {
+								                                  add(visitor);
+							                                  }
+						                                  }, elementFactory);
 					} else {
 						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
-								new HashSet<ChangeOperationVisitor>() {
-							
-							private static final long serialVersionUID = -3888102603870272730L;
-							
-							{
-								add(visitor);
-							}
-						}, elementFactory);
+						                                       new HashSet<ChangeOperationVisitor>() {
+							                                       
+							                                       private static final long serialVersionUID = -3888102603870272730L;
+							                                       
+							                                       {
+								                                       add(visitor);
+							                                       }
+						                                       }, elementFactory);
 					}
 					PPAPersister.available.release();
 					

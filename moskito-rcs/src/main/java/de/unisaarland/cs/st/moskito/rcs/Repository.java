@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs;
 
@@ -52,15 +49,14 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import difflib.Delta;
 
 /**
- * The Class Repository. Every repository connector that extends this class has
- * to be named [Repotype]Repository. E.g. DarksRepository. Additionally it is
- * mandatory to add a new enum constant in {@link RepositoryType}.
+ * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
+ * DarksRepository. Additionally it is mandatory to add a new enum constant in {@link RepositoryType}.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public abstract class Repository {
@@ -88,17 +84,15 @@ public abstract class Repository {
 	                                               String revision);
 	
 	/**
-	 * Checks out the given relative path in repository and returns the file
-	 * handle to the checked out file. If the path is a directory, the file
-	 * handle will point to the specified directory. If the relative path points
-	 * to a file, the file handle will do so too.
+	 * Checks out the given relative path in repository and returns the file handle to the checked out file. If the path
+	 * is a directory, the file handle will point to the specified directory. If the relative path points to a file, the
+	 * file handle will do so too.
 	 * 
 	 * @param relativeRepoPath
 	 *            the relative repository path
 	 * @param revision
 	 *            the revision
-	 * @return The file handle to the checked out, corresponding file or
-	 *         directory.
+	 * @return The file handle to the checked out, corresponding file or directory.
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
 	                                  String revision);
@@ -265,8 +259,7 @@ public abstract class Repository {
 	                                       String revisedRevision);
 	
 	/**
-	 * @return a string containing information about the instrumented
-	 *         library/tool (e.g. version, ...)
+	 * @return a string containing information about the instrumented library/tool (e.g. version, ...)
 	 */
 	public abstract String gatherToolInformation();
 	
@@ -302,8 +295,7 @@ public abstract class Repository {
 	 *            (not null)
 	 * @param pathName
 	 *            (not null)
-	 * @return Returns the former path name iff the file/directory was renamed.
-	 *         Null otherwise.
+	 * @return Returns the former path name iff the file/directory was renamed. Null otherwise.
 	 */
 	public abstract String getFormerPathName(String revision,
 	                                         String pathName);
@@ -329,8 +321,7 @@ public abstract class Repository {
 	public abstract String getHEADRevisionId();
 	
 	/**
-	 * Returns the relative transaction id to the given one. Result is bounded
-	 * by startRevision and endRevision.
+	 * Returns the relative transaction id to the given one. Result is bounded by startRevision and endRevision.
 	 * 
 	 * @param transactionId
 	 * @param index
@@ -341,9 +332,8 @@ public abstract class Repository {
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
-	 * @return the {@link RepositoryType} of the connector class determined by
-	 *         naming convention. See the java-doc of {@link Repository} for
-	 *         details.
+	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
+	 *         {@link Repository} for details.
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass()
@@ -375,20 +365,17 @@ public abstract class Repository {
 	}
 	
 	/**
-	 * @return the total number of revisions in the repository, -1 if error
-	 *         occured
+	 * @return the total number of revisions in the repository, -1 if error occured
 	 */
 	public abstract long getTransactionCount();
 	
 	/**
-	 * Returns the transaction id string to the transaction determined by the
-	 * given index.
+	 * Returns the transaction id string to the transaction determined by the given index.
 	 * 
 	 * @param index
 	 *            Starts at 0
-	 * @return the corresponding transaction id (e.g. for reposuite
-	 *         {@link MercurialRepository#getTransactionId(long)} returns
-	 *         021e7e97724b for 3.
+	 * @return the corresponding transaction id (e.g. for reposuite {@link MercurialRepository#getTransactionId(long)}
+	 *         returns 021e7e97724b for 3.
 	 */
 	public abstract String getTransactionId(long index);
 	
@@ -439,8 +426,8 @@ public abstract class Repository {
 	// }
 	
 	/**
-	 * Returns the path of the directory that contains the local
-	 * copy/clone/checkout of the repository (the working copy)
+	 * Returns the path of the directory that contains the local copy/clone/checkout of the repository (the working
+	 * copy)
 	 * 
 	 * @return
 	 */
@@ -467,8 +454,7 @@ public abstract class Repository {
 	 *            the to revision
 	 * @param cacheSize
 	 *            the cache size
-	 * @return Iterator running from <code>fromRevisions</code> to
-	 *         <code>toRevision</code>
+	 * @return Iterator running from <code>fromRevisions</code> to <code>toRevision</code>
 	 */
 	public Iterator<LogEntry> log(final String fromRevision,
 	                              final String toRevision,

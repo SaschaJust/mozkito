@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -38,7 +35,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
-
 /**
  * The Class IssuezillaTracker.
  * 
@@ -46,12 +42,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
  */
 public class IssuezillaTracker extends Tracker {
 	
-	
-	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
@@ -61,8 +54,7 @@ public class IssuezillaTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
@@ -93,8 +85,7 @@ public class IssuezillaTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	@Override
@@ -112,10 +103,8 @@ public class IssuezillaTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI,
-	 * java.net.URI, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.Long, java.lang.Long, java.lang.String)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.net.URI, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	@Override
 	public void setup(final URI fetchURI,

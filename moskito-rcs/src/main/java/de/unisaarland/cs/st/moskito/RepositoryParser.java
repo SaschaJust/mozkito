@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -38,9 +35,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage,
- * parses the data and stores the produced {@link RCSTransaction} in the output
- * storage.
+ * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced
+ * {@link RCSTransaction} in the output storage.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -54,7 +50,7 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 	 * @param repository
 	 */
 	public RepositoryParser(final AndamaGroup threadGroup, final RepositorySettings settings,
-			final Repository repository, PersistenceUtil persistenceUtil) {
+	        final Repository repository, PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();
@@ -72,11 +68,14 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 				
 				if (tids.contains(data.getRevision())) {
 					throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
-							+ data.getRevision() + ")");
+					        + data.getRevision() + ")");
 				}
 				
 				final RCSTransaction rcsTransaction = RCSTransaction.createTransaction(data.getRevision(),
-						data.getMessage(), data.getDateTime(), data.getAuthor(), data.getOriginalId(), pUtil);
+				                                                                       data.getMessage(),
+				                                                                       data.getDateTime(),
+				                                                                       data.getAuthor(),
+				                                                                       data.getOriginalId(), pUtil);
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {
@@ -84,13 +83,13 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
 						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(),
-								
-								fileName));
+						
+						fileName));
 						if (file == null) {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-										+ changedPaths.get(fileName));
+								        + changedPaths.get(fileName));
 							}
 							file = fileManager.getFile(fileName);
 							

@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
@@ -37,7 +33,6 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
 
-
 public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaChangeOperation> {
 	
 	public enum SampleType {
@@ -45,14 +40,14 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 	}
 	
 	public Map<SampleType, List<List<Double>>> getSamples(final Collection<AtomicTransaction> transactionSet,
-			final double trainFraction, final Untangling untangling) {
-		Condition
-		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+	                                                      final double trainFraction,
+	                                                      final Untangling untangling) {
+		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
 		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
-		//get random 30% of the transactions
+		// get random 30% of the transactions
 		int numSamples = (int) (transactions.size() * trainFraction);
 		
 		if (Logger.logInfo()) {
@@ -74,14 +69,13 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		
 		List<List<Double>> positiveValues = new LinkedList<List<Double>>();
 		
-		//generate the positive examples
+		// generate the positive examples
 		for (Entry<AtomicTransaction, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
 			AtomicTransaction t = e.getKey();
 			JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue().size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling
-							.generateScoreVisitors(t.getTransaction());
+					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
 					List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
 					for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 						values.add(v.getScore(operationArray[i], operationArray[j]));
@@ -93,7 +87,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		
 		Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
 		
-		//generate the negative examples
+		// generate the negative examples
 		List<List<Double>> negativeValues = new LinkedList<List<Double>>();
 		List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
 		selectedTransactionList.addAll(selectedTransactions.keySet());
@@ -107,7 +101,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 				t2Index = Untangling.random.nextInt(selectedTransactionList.size());
 			}
 			
-			//get two random atomic transactions from the selected transaction
+			// get two random atomic transactions from the selected transaction
 			AtomicTransaction t1 = selectedTransactionList.get(t1Index);
 			AtomicTransaction t2 = selectedTransactionList.get(t2Index);
 			

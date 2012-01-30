@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
@@ -49,7 +45,8 @@ public interface ChangeGenealogy<T> {
 	 *            the to
 	 * @return true, if successful
 	 */
-	public boolean containsEdge(final T from, final T to);
+	public boolean containsEdge(final T from,
+	                            final T to);
 	
 	/**
 	 * Contains vertex.
@@ -101,7 +98,8 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the dependents
 	 */
-	public Collection<T> getDependants(T t, GenealogyEdgeType... edgeTypes);
+	public Collection<T> getDependants(T t,
+	                                   GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.
@@ -112,7 +110,8 @@ public interface ChangeGenealogy<T> {
 	 *            the to
 	 * @return the edges
 	 */
-	public Collection<GenealogyEdgeType> getEdges(final T from, final T to);
+	public Collection<GenealogyEdgeType> getEdges(final T from,
+	                                              final T to);
 	
 	/**
 	 * Gets the existing edge types.
@@ -140,8 +139,7 @@ public interface ChangeGenealogy<T> {
 	 * 
 	 * @param t
 	 *            the t
-	 * @return the node id if node within this genealogy vertex. Returns null
-	 *         otherwise.
+	 * @return the node id if node within this genealogy vertex. Returns null otherwise.
 	 */
 	public String getNodeId(T t);
 	
@@ -154,7 +152,8 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the parents
 	 */
-	public Collection<T> getParents(T t, GenealogyEdgeType... edgeTypes);
+	public Collection<T> getParents(T t,
+	                                GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the roots.
@@ -165,8 +164,9 @@ public interface ChangeGenealogy<T> {
 	
 	/**
 	 * In degree.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the int
 	 */
 	public int inDegree(T node);
@@ -180,12 +180,14 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the int
 	 */
-	public int inDegree(T node, GenealogyEdgeType... edgeTypes);
+	public int inDegree(T node,
+	                    GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Out degree.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the int
 	 */
 	public int outDegree(T node);
@@ -199,7 +201,8 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the int
 	 */
-	public int outDegree(T node, GenealogyEdgeType... edgeTypes);
+	public int outDegree(T node,
+	                     GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Vertex set.

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.elements;
 
@@ -43,8 +40,7 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 	private final HashSet<RCSBranch>                  currentBranches = new HashSet<RCSBranch>();
 	
 	/**
-	 * Instantiates a new iterator iterating across all transactions that were
-	 * visible before this transaction.
+	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
 	 * 
 	 * @param root
 	 *            the root
@@ -63,7 +59,7 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 			this.elementLocks.put(branchOpeningTransaction, new HashSet<RCSBranch>());
 			for (RCSTransaction tmpChild : branchOpeningTransaction.getChildren()) {
 				if (!tmpChild.getBranch().equals(branchOpeningTransaction.getBranch())
-						&& (!this.currentBranches.contains(tmpChild.getBranch()))) {
+				        && (!this.currentBranches.contains(tmpChild.getBranch()))) {
 					this.elementLocks.get(branchOpeningTransaction).add(tmpChild.getBranch());
 				}
 			}
@@ -119,8 +115,8 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 				Set<RCSTransaction> parents = t.getParents();
 				if (parents.isEmpty()) {
 					throw new UnrecoverableError(
-							"Detected a transaction that has no parent within it's branch nor any parent at all: "
-									+ t.toString());
+					                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
+					                                     + t.toString());
 				}
 				parent = parents.iterator().next();
 			}
@@ -128,12 +124,11 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 			if (parent == null) {
 				continue;
 			}
-
+			
 			// add the parent within the current branch. If the parent is not
 			// within the same branch (this was the begin of the current
 			// branch), check if the branch of the parent is processed already.
 			
-
 			if (parent.getBranch().equals(t.getBranch())) {
 				nextChildren.add(parent);
 			} else {
@@ -166,8 +161,8 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 							Set<RCSTransaction> beginOfBranchParents = beginOfBranch.getParents();
 							if (beginOfBranchParents.isEmpty()) {
 								throw new UnrecoverableError(
-										"Detected a transaction that has no parent within it's branch nor any parent at all: "
-												+ beginOfBranch.toString());
+								                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
+								                                     + beginOfBranch.toString());
 							}
 							RCSTransaction branchOpeningTransaction = beginOfBranchParents.iterator().next();
 							

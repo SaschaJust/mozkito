@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -53,16 +50,14 @@ public class JavaChangeOperation implements Annotated {
 	private static final long serialVersionUID     = 8988140924725401608L;
 	
 	/**
-	 * Creates an JavaChangeOperation instance by parsing a corresponding XML
-	 * representation.
+	 * Creates an JavaChangeOperation instance by parsing a corresponding XML representation.
 	 * 
 	 * @param element
 	 *            the element
-	 * @return the java change operation if successfull. Otherwise returns
-	 *         <node>null</code>
+	 * @return the java change operation if successfull. Otherwise returns <node>null</code>
 	 */
 	public static JavaChangeOperation fromXMLRepresentation(final org.jdom.Element element,
-			PersistenceUtil persistenceUtil) {
+	                                                        PersistenceUtil persistenceUtil) {
 		
 		ChangeType changeType = null;
 		RCSRevision revision = null;
@@ -73,7 +68,7 @@ public class JavaChangeOperation implements Annotated {
 		} catch (IllegalArgumentException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not detect ChangeType of JavaChangeOperation. Unknown value '" + element.getName()
-						+ "'. Returning null.");
+				        + "'. Returning null.");
 			}
 			return null;
 		}
@@ -148,7 +143,6 @@ public class JavaChangeOperation implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -185,7 +179,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the changed element
 	 */
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElementLocation getChangedElementLocation() {
 		return changedElementLocation;
 	}
@@ -205,7 +199,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the change type
 	 */
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated (EnumType.ORDINAL)
 	public ChangeType getChangeType() {
 		return changeType;
 	}
@@ -216,7 +210,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getId() {
 		return id;
 	}
@@ -226,7 +220,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the revision
 	 */
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
 	public RCSRevision getRevision() {
 		return revision;
 	}
@@ -248,25 +242,28 @@ public class JavaChangeOperation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result)
-				+ ((getChangedElementLocation() == null) ? 0 : getChangedElementLocation().hashCode());
-		result = (prime * result) + ((getRevision() == null) ? 0 : getRevision().hashCode());
+		result = (prime * result) + ((getChangedElementLocation() == null)
+		                                                                  ? 0
+		                                                                  : getChangedElementLocation().hashCode());
+		result = (prime * result) + ((getRevision() == null)
+		                                                    ? 0
+		                                                    : getRevision().hashCode());
 		return result;
 	}
 	
 	@NoneNull
 	public boolean isAfter(JavaChangeOperation other) {
 		return this.getRevision().getTransaction().getTimestamp()
-				.isAfter(other.getRevision().getTransaction().getTimestamp());
+		           .isAfter(other.getRevision().getTransaction().getTimestamp());
 	}
 	
 	@NoneNull
 	public boolean isBefore(JavaChangeOperation other) {
 		return this.getRevision().getTransaction().getTimestamp()
-				.isBefore(other.getRevision().getTransaction().getTimestamp());
+		           .isBefore(other.getRevision().getTransaction().getTimestamp());
 	}
 	
-	@Column(columnDefinition = "boolean default 'TRUE'")
+	@Column (columnDefinition = "boolean default 'TRUE'")
 	public boolean isEssential() {
 		return essential;
 	}

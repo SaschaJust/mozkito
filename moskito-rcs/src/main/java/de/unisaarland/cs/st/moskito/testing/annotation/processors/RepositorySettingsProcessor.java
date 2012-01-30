@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
 import de.unisaarland.cs.st.moskito.testing.annotation.type.SourceType;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {

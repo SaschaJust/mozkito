@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.RepositorySettingsProcessor;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @Documented

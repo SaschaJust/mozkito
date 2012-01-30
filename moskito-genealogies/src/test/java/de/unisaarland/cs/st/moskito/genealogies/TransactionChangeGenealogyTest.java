@@ -30,18 +30,18 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class TransactionChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "ppa", database="moskito_genealogies_test_environment", options=ConnectOptions.CREATE)
+	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void test() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.DELETE);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		        getPersistenceUtil());
+		                                                                                            getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
 		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, persistenceUtil,
-				new TransactionPartitioner());
+		                                                                         new TransactionPartitioner());
 		
 		assertEquals(16, tdg.edgeSize());
 		
@@ -69,7 +69,7 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		
 		assertTrue(tdg.containsEdge(environmentTransactions.get(2), environmentTransactions.get(1)));
 		Collection<GenealogyEdgeType> edges = tdg.getEdges(environmentTransactions.get(2),
-				environmentTransactions.get(1));
+		                                                   environmentTransactions.get(1));
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(GenealogyEdgeType.CallOnDefinition));
 		

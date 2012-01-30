@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class PPASource extends AndamaSource<RCSTransaction> {
@@ -29,12 +29,12 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public PPASource(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil,
-			final String startWith, final HashSet<String> transactionLimit) {
+	        final String startWith, final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("transactionLimit: "
-					+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
+			        + StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
 		}
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
@@ -50,7 +50,7 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 				if ((transactionLimit != null) && (!transactionLimit.isEmpty())) {
 					if (Logger.logDebug()) {
 						Logger.debug("Added transaction input criteria limit: "
-								+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
+						        + StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
 					}
 					criteria.in("id", transactionLimit);
 				}

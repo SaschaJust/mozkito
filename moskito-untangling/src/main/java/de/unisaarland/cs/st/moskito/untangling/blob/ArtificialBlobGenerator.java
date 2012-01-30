@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
@@ -40,29 +37,22 @@ import org.apache.commons.collections.CollectionUtils;
 public class ArtificialBlobGenerator {
 	
 	/**
-	 * Generate all artificial blobs from the set of atomicChanges supplied.
-	 * This algorithm combines all transactions that change files within the
-	 * same file path directory or files whose file paths are not more that
-	 * <code>packageDistance</code> file path directories apart. The distance
-	 * between two file paths is determined as follows: 1) compute the longest
-	 * common sub-path between both file paths. 2) split the remaining file
-	 * paths by '<FileUtils.fileSeparator>' 3) The longest array of split
-	 * remaining file path segments defines the distance.
+	 * Generate all artificial blobs from the set of atomicChanges supplied. This algorithm combines all transactions
+	 * that change files within the same file path directory or files whose file paths are not more that
+	 * <code>packageDistance</code> file path directories apart. The distance between two file paths is determined as
+	 * follows: 1) compute the longest common sub-path between both file paths. 2) split the remaining file paths by
+	 * '<FileUtils.fileSeparator>' 3) The longest array of split remaining file path segments defines the distance.
 	 * 
 	 * @param transactions
 	 *            the transactions
 	 * @param packageDistance
-	 *            The maximal number of path segements allowed to combine two
-	 *            transactions. E.g. <code>a/b/x</code> and
-	 *            <code>a/b/c/d/y</code> have a distance of two, while
-	 *            <code>a/b/x</code> and <code>a/c/d/e/y</code> have a distance
-	 *            of three.
+	 *            The maximal number of path segements allowed to combine two transactions. E.g. <code>a/b/x</code> and
+	 *            <code>a/b/c/d/y</code> have a distance of two, while <code>a/b/x</code> and <code>a/c/d/e/y</code>
+	 *            have a distance of three.
 	 * @param minBlobSize
-	 *            generate no artificial blobs smaller than
-	 *            <code>minBlobSize</code> transactions.
+	 *            generate no artificial blobs smaller than <code>minBlobSize</code> transactions.
 	 * @param maxBlobSize
-	 *            generate no artificial blobs larger than
-	 *            <code>maxBlobSize</code> transactions.
+	 *            generate no artificial blobs larger than <code>maxBlobSize</code> transactions.
 	 * @param long1
 	 * @return the set of generated artificial blobs
 	 */

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa;
 
@@ -80,22 +77,26 @@ public class PPAToolChain extends AndamaChain {
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
 		settings.setLoggerArg(true);
-		this.testCaseTransactionArg = new ListArgument(settings, "testCaseTransactions",
-				"List of transactions that will be passed for test case purposes. "
-						+ "If this option is set, this module will start in test case mode. "
-						+ "If will generate change operations to specified transactions, only;"
-						+ "outputting result as XML either to sdtout (if option -DasXML not set) "
-						+ "or to specified XML file.", null, false);
+		this.testCaseTransactionArg = new ListArgument(
+		                                               settings,
+		                                               "testCaseTransactions",
+		                                               "List of transactions that will be passed for test case purposes. "
+		                                                       + "If this option is set, this module will start in test case mode. "
+		                                                       + "If will generate change operations to specified transactions, only;"
+		                                                       + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                                                       + "or to specified XML file.", null, false);
 		
 		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
-				"false", false);
+		                                  "false", false);
 		
-		this.asXML = new OutputFileArgument(settings, "output.xml",
-				"Instead of writing the source code change operations to the DB, output them as XML into this file.",
-				null, false, true);
+		this.asXML = new OutputFileArgument(
+		                                    settings,
+		                                    "output.xml",
+		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+		                                    null, false, true);
 		
 		this.startWithArg = new StringArgument(settings, "startTransaction",
-				"Use this transaction ID as the first one.", null, false);
+		                                       "Use this transaction ID as the first one.", null, false);
 		
 		settings.parseArguments();
 		
@@ -103,7 +104,6 @@ public class PPAToolChain extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -124,7 +124,6 @@ public class PPAToolChain extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#setup()
 	 */
 	@Override
@@ -155,17 +154,17 @@ public class PPAToolChain extends AndamaChain {
 			} else {
 				try {
 					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
-							new FileOutputStream(xmlFile));
+					                      new FileOutputStream(xmlFile));
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-								+ "Writing to sstdout!");
+						        + "Writing to sstdout!");
 					}
 					stdout = true;
 				} catch (ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
-								+ "Writing to sstdout!");
+						        + "Writing to sstdout!");
 					}
 					stdout = true;
 				}
@@ -185,9 +184,9 @@ public class PPAToolChain extends AndamaChain {
 		
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, this.startWithArg.getValue(),
-				testCaseTransactionArg.getValue());
+		              testCaseTransactionArg.getValue());
 		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
-		        elementFactory);
+		                   elementFactory);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Setup done.");
@@ -197,9 +196,7 @@ public class PPAToolChain extends AndamaChain {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
+	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
 	 */
 	@Override
 	public void shutdown() {

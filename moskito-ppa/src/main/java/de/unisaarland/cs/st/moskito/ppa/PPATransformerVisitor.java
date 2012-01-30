@@ -11,7 +11,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class PPATransformerVisitor implements ChangeOperationVisitor {
@@ -20,10 +20,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
-	 * #endVisit()
+	 * @see de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor #endVisit()
 	 */
 	@Override
 	public void endVisit() {
@@ -38,9 +35,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
+	 * @see de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
 	 * #visit(de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation)
 	 */
 	@Override
@@ -50,9 +45,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
+	 * @see de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor
 	 * #visit(de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction)
 	 */
 	@Override

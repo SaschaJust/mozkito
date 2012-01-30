@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
@@ -29,11 +25,9 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 
-
 /**
- * Represents a ChangeGenealogy as a Jung2 graph. This graph cannot be modified.
- * This class should only be used for representation, drawing or algorithm
- * purposes.
+ * Represents a ChangeGenealogy as a Jung2 graph. This graph cannot be modified. This class should only be used for
+ * representation, drawing or algorithm purposes.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
@@ -73,7 +67,6 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 		
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -87,7 +80,8 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			@SuppressWarnings("rawtypes") Edge other = (Edge) obj;
+			@SuppressWarnings ("rawtypes")
+			Edge other = (Edge) obj;
 			if (from == null) {
 				if (other.from != null) {
 					return false;
@@ -110,16 +104,21 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 		
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = (prime * result) + ((from == null) ? 0 : from.hashCode());
-			result = (prime * result) + ((to == null) ? 0 : to.hashCode());
-			result = (prime * result) + ((type == null) ? 0 : type.hashCode());
+			result = (prime * result) + ((from == null)
+			                                           ? 0
+			                                           : from.hashCode());
+			result = (prime * result) + ((to == null)
+			                                         ? 0
+			                                         : to.hashCode());
+			result = (prime * result) + ((type == null)
+			                                           ? 0
+			                                           : type.hashCode());
 			return result;
 		}
 		
@@ -127,12 +126,10 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	
 	private int                           edgeCount = -1;
 	
-	private ChangeGenealogy<T> genealogy;
+	private ChangeGenealogy<T>            genealogy;
 	private Collection<GenealogyEdgeType> edgeTypeFilter;
 	
-	
-	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public JungGenealogyGraph(ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 		this.edgeTypeFilter = Arrays.asList(GenealogyEdgeType.values());
@@ -145,55 +142,56 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see edu.uci.ics.jung.graph.Hypergraph#addEdge(java.lang.Object,
-	 * java.util.Collection)
+	 * @see edu.uci.ics.jung.graph.Hypergraph#addEdge(java.lang.Object, java.util.Collection)
 	 */
 	@Override
 	@Deprecated
-	public boolean addEdge(Edge<T> edge, Collection<? extends T> vertices) {
+	public boolean addEdge(Edge<T> edge,
+	                       Collection<? extends T> vertices) {
 		return false;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see edu.uci.ics.jung.graph.Hypergraph#addEdge(java.lang.Object,
-	 * java.util.Collection, edu.uci.ics.jung.graph.util.EdgeType)
+	 * @see edu.uci.ics.jung.graph.Hypergraph#addEdge(java.lang.Object, java.util.Collection,
+	 * edu.uci.ics.jung.graph.util.EdgeType)
 	 */
 	@Override
 	@Deprecated
-	public boolean addEdge(Edge<T> edge, Collection<? extends T> vertices, EdgeType edge_type) {
+	public boolean addEdge(Edge<T> edge,
+	                       Collection<? extends T> vertices,
+	                       EdgeType edge_type) {
 		return false;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see edu.uci.ics.jung.graph.Graph#addEdge(java.lang.Object,
-	 * java.lang.Object, java.lang.Object)
+	 * @see edu.uci.ics.jung.graph.Graph#addEdge(java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	@Deprecated
-	public boolean addEdge(Edge<T> e, T v1, T v2) {
+	public boolean addEdge(Edge<T> e,
+	                       T v1,
+	                       T v2) {
 		return false;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see edu.uci.ics.jung.graph.Graph#addEdge(java.lang.Object,
-	 * java.lang.Object, java.lang.Object, edu.uci.ics.jung.graph.util.EdgeType)
+	 * @see edu.uci.ics.jung.graph.Graph#addEdge(java.lang.Object, java.lang.Object, java.lang.Object,
+	 * edu.uci.ics.jung.graph.util.EdgeType)
 	 */
 	@Override
 	@Deprecated
-	public boolean addEdge(Edge<T> e, T v1, T v2, EdgeType edgeType) {
+	public boolean addEdge(Edge<T> e,
+	                       T v1,
+	                       T v2,
+	                       EdgeType edgeType) {
 		return false;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see edu.uci.ics.jung.graph.Hypergraph#addVertex(java.lang.Object)
 	 */
 	@Override
@@ -218,7 +216,8 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	}
 	
 	@Override
-	public Edge<T> findEdge(T v1, T v2) {
+	public Edge<T> findEdge(T v1,
+	                        T v2) {
 		Collection<GenealogyEdgeType> edges = genealogy.getEdges(v1, v2);
 		for (GenealogyEdgeType type : edges) {
 			if (this.edgeTypeFilter.contains(type)) {
@@ -229,7 +228,8 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	}
 	
 	@Override
-	public Collection<Edge<T>> findEdgeSet(T v1, T v2) {
+	public Collection<Edge<T>> findEdgeSet(T v1,
+	                                       T v2) {
 		Collection<GenealogyEdgeType> edges = genealogy.getEdges(v1, v2);
 		Set<Edge<T>> result = new HashSet<Edge<T>>();
 		for (GenealogyEdgeType t : edges) {
@@ -256,7 +256,8 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 			edgeCount = 0;
 			for (T vertex : genealogy.vertexSet()) {
 				edgeCount += genealogy.getDependants(vertex,
-						edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()])).size();
+				                                     edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))
+				                      .size();
 			}
 		}
 		return edgeCount;
@@ -273,9 +274,8 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	@Override
 	public Collection<Edge<T>> getEdges() {
 		Collection<Edge<T>> result = new HashSet<Edge<T>>();
-		for(T v : getVertices()){
-			for(T to : genealogy.getDependants(v,
-					edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))){
+		for (T v : getVertices()) {
+			for (T to : genealogy.getDependants(v, edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
 				result.addAll(this.findEdgeSet(v, to));
 			}
 		}
@@ -300,7 +300,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 		return new Pair<T>(edge.from, edge.to);
 	}
 	
-	public ChangeGenealogy<T> getGenealogy(){
+	public ChangeGenealogy<T> getGenealogy() {
 		return this.genealogy;
 	}
 	
@@ -329,7 +329,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public Collection<Edge<T>> getInEdges(T vertex) {
 		Collection<Edge<T>> edges = new HashSet<Edge<T>>();
 		for (T dependant : genealogy.getDependants(vertex,
-				edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
+		                                           edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
 			edges.addAll(findEdgeSet(dependant, vertex));
 		}
 		return edges;
@@ -347,18 +347,19 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public Collection<T> getNeighbors(T vertex) {
 		Collection<T> neighbors = new HashSet<T>();
 		for (T dependant : genealogy.getDependants(vertex,
-				edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
+		                                           edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
 			neighbors.add(dependant);
 		}
 		for (T parent : genealogy.getParents(vertex,
-				edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
+		                                     edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
 			neighbors.add(parent);
 		}
 		return neighbors;
 	}
 	
 	@Override
-	public T getOpposite(T vertex, Edge<T> edge) {
+	public T getOpposite(T vertex,
+	                     Edge<T> edge) {
 		if (edge.from.equals(vertex)) {
 			return edge.to;
 		} else if (edge.to.equals(vertex)) {
@@ -371,7 +372,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public Collection<Edge<T>> getOutEdges(T vertex) {
 		Collection<Edge<T>> edges = new HashSet<Edge<T>>();
 		for (T parent : genealogy.getParents(vertex,
-				edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
+		                                     edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))) {
 			edges.addAll(findEdgeSet(vertex, parent));
 		}
 		return edges;
@@ -382,7 +383,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public int getPredecessorCount(T vertex) {
 		int count = 0;
 		count += genealogy.getParents(vertex, edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))
-				.size();
+		                  .size();
 		return count;
 	}
 	
@@ -400,7 +401,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public int getSuccessorCount(T vertex) {
 		int count = 0;
 		count += genealogy.getDependants(vertex, edgeTypeFilter.toArray(new GenealogyEdgeType[edgeTypeFilter.size()]))
-				.size();
+		                  .size();
 		return count;
 	}
 	
@@ -429,32 +430,38 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	}
 	
 	@Override
-	public boolean isDest(T vertex, Edge<T> edge) {
+	public boolean isDest(T vertex,
+	                      Edge<T> edge) {
 		return edge.to.equals(vertex);
 	}
 	
 	@Override
-	public boolean isIncident(T vertex, Edge<T> edge) {
+	public boolean isIncident(T vertex,
+	                          Edge<T> edge) {
 		return edge.from.equals(vertex) || edge.to.equals(vertex);
 	}
 	
 	@Override
-	public boolean isNeighbor(T v1, T v2) {
+	public boolean isNeighbor(T v1,
+	                          T v2) {
 		return getNeighbors(v1).contains(v2);
 	}
 	
 	@Override
-	public boolean isPredecessor(T v1, T v2) {
+	public boolean isPredecessor(T v1,
+	                             T v2) {
 		return findEdge(v2, v1) != null;
 	}
 	
 	@Override
-	public boolean isSource(T vertex, Edge<T> edge) {
+	public boolean isSource(T vertex,
+	                        Edge<T> edge) {
 		return edge.from.equals(vertex);
 	}
 	
 	@Override
-	public boolean isSuccessor(T v1, T v2) {
+	public boolean isSuccessor(T v1,
+	                           T v2) {
 		return findEdge(v1, v2) != null;
 	}
 	

@@ -14,7 +14,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.processors.RepositorySett
 import de.unisaarland.cs.st.moskito.testing.annotation.type.SourceType;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @Documented

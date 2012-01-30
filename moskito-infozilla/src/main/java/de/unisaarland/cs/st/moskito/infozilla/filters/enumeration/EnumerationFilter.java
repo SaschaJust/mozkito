@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.filters.enumeration;
 
@@ -34,9 +31,13 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Create an Itemization by a given regions
-	 * @param startline the line where some enumeration starts
-	 * @param endline the last line where an enumerator symbol was found
-	 * @param text the complete text where the enumeration is in
+	 * 
+	 * @param startline
+	 *            the line where some enumeration starts
+	 * @param endline
+	 *            the last line where an enumerator symbol was found
+	 * @param text
+	 *            the complete text where the enumeration is in
 	 * @return an {@link Itemization}
 	 */
 	private Itemization createEnumeration(final int startline,
@@ -85,6 +86,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Used internally to remove enumeration lines later
+	 * 
 	 * @param lineNum
 	 * @param text
 	 */
@@ -101,10 +103,9 @@ public class EnumerationFilter extends InfozillaFilter {
 		// Calculate end position
 		int end = start + lines[lineNum].length();
 		/*
-		 * System.err.println("Filtering Line: " + lines[lineNum]);
-		 * System.err.println("Range: " + start + " - " + (end+1));
-		 * System.err.println(textRemover.getText().substring(start, (end+1)));
-		 * System.out.println("}}}}" + textRemover.getText() + "{{{{\n\n");
+		 * System.err.println("Filtering Line: " + lines[lineNum]); System.err.println("Range: " + start + " - " +
+		 * (end+1)); System.err.println(textRemover.getText().substring(start, (end+1))); System.out.println("}}}}" +
+		 * textRemover.getText() + "{{{{\n\n");
 		 */
 		// Mark this range for deletion
 		this.textRemover.markForDeletion(start, end + 1);
@@ -112,7 +113,9 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Retrieve all Enumerations that have some alphabetical letter as enumerator
-	 * @param s The text to look inside for character enumerations
+	 * 
+	 * @param s
+	 *            The text to look inside for character enumerations
 	 * @return a List of {@link Itemization}s
 	 */
 	private List<Itemization> getCharEnums(final String s) {
@@ -203,7 +206,9 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Runs this method to extract all Character- and Number Enumerations as well as Itemizations
-	 * @param s The Text to look inside for enumerations and itemizations
+	 * 
+	 * @param s
+	 *            The Text to look inside for enumerations and itemizations
 	 * @return a List of all {@Itemization}s found.
 	 */
 	private List<Itemization> getEnumerationsAndItemizations(final String s) {
@@ -234,7 +239,9 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Find all Itemizations in a given Text
-	 * @param s The text to look inside for itemizations
+	 * 
+	 * @param s
+	 *            The text to look inside for itemizations
 	 * @return a list of {@link Itemization}s for each Itemization
 	 */
 	private List<Itemization> getItemizations(final String s) {
@@ -303,7 +310,9 @@ public class EnumerationFilter extends InfozillaFilter {
 	
 	/**
 	 * Retrieve all Enumerations that have some number as enumerator
-	 * @param s The text to look inside for number enumerations
+	 * 
+	 * @param s
+	 *            The text to look inside for number enumerations
 	 * @return a List of {@link Itemization}s
 	 */
 	private List<Itemization> getNumEnums(final String s) {
@@ -402,8 +411,8 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * get the text after being processed by getEnumerationsAndItemizations() method
-	 * this is initially empty string
+	 * get the text after being processed by getEnumerationsAndItemizations() method this is initially empty string
+	 * 
 	 * @return a String that contains the text after being processed.
 	 */
 	private String getProcessedText() {

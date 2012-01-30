@@ -25,14 +25,13 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 	
 	@Test
-	@DatabaseSettings(unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
+	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void test() {
 		File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "", FileShutdownAction.KEEP);
 		GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		        getPersistenceUtil());
+		                                                                                            getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment
-				.getEnvironmentOperations();
+		Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
 		
 		JavaChangeOperationProcessQueue queue = new JavaChangeOperationProcessQueue();
 		
@@ -41,7 +40,6 @@ public class JavaChangeOperationProcessQueueTest extends MoskitoTest {
 		}
 		
 		int counter = 0;
-		
 		
 		Set<JavaChangeOperation> deletedDefinitions = new HashSet<JavaChangeOperation>();
 		deletedDefinitions.add(environmentOperations.get(TestEnvironmentOperation.T3F1D));
