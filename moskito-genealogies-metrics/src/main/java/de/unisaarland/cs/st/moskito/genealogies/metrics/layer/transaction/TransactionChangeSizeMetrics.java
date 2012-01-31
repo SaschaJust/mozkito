@@ -28,23 +28,23 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
-	private static final String changeSize          = "changeSize";
-	private static final String avgDepChangeSize    = "avgDepChangeSize";
-	private static final String maxDepChangeSize    = "maxDepChangeSize";
-	private static final String sumDepChangeSize    = "sumDepChangeSize";
-	private static final String avgParentChangeSize = "avgParentChangeSize";
-	private static final String maxParentChangeSize = "maxParentChangeSize";
-	private static final String sumParentChangeSize = "sumParentChangeSize";
-	private PersistenceUtil     persistenceUtil;
+	private static final String   changeSize          = "changeSize";
+	private static final String   avgDepChangeSize    = "avgDepChangeSize";
+	private static final String   maxDepChangeSize    = "maxDepChangeSize";
+	private static final String   sumDepChangeSize    = "sumDepChangeSize";
+	private static final String   avgParentChangeSize = "avgParentChangeSize";
+	private static final String   maxParentChangeSize = "maxParentChangeSize";
+	private static final String   sumParentChangeSize = "sumParentChangeSize";
+	private final PersistenceUtil persistenceUtil;
 	
-	public TransactionChangeSizeMetrics(TransactionChangeGenealogy genealogy, PersistenceUtil peristenceUtil) {
+	public TransactionChangeSizeMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.persistenceUtil = peristenceUtil;
+		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
 	}
 	
 	@Override
 	public Collection<String> getMetricNames() {
-		List<String> metricNames = new ArrayList<String>(7);
+		final List<String> metricNames = new ArrayList<String>(7);
 		metricNames.add(changeSize);
 		metricNames.add(avgDepChangeSize);
 		metricNames.add(maxDepChangeSize);
@@ -56,29 +56,29 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
-		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
+	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
-		RCSTransaction transaction = item.getNode();
-		String nodeId = genealogy.getNodeId(transaction);
+		final RCSTransaction transaction = item.getNode();
+		final String nodeId = this.genealogy.getNodeId(transaction);
 		
-		DescriptiveStatistics dependantStats = new DescriptiveStatistics();
-		DescriptiveStatistics parentStats = new DescriptiveStatistics();
+		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
+		final DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
 		metricValues.add(new GenealogyMetricValue(changeSize, nodeId,
-		                                          PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction)
-		                                                            .size()));
+		                                          PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
+		                                                                                transaction).size()));
 		
-		for (RCSTransaction dependant : genealogy.getAllDependants(transaction)) {
-			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(persistenceUtil, dependant).size());
+		for (final RCSTransaction dependant : this.genealogy.getAllDependants(transaction)) {
+			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgDepChangeSize, nodeId, dependantStats.getMean()));
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId, dependantStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId, dependantStats.getSum()));
 		
-		for (RCSTransaction parent : genealogy.getAllParents(transaction)) {
-			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(persistenceUtil, parent).size());
+		for (final RCSTransaction parent : this.genealogy.getAllParents(transaction)) {
+			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgParentChangeSize, nodeId, parentStats.getMean()));
