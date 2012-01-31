@@ -156,6 +156,7 @@ public class GraphBuilder extends AndamaSink<RCSTransaction> {
 							// remove branch from cache
 							latest.remove(parentTransaction.getBranch().getName());
 							
+							// FIXME this must not be true. Fix me after MSR deadline
 							parentTransaction.getBranch().setEnd(parentTransaction);
 							persistenceUtil.saveOrUpdate(parentTransaction.getBranch());
 						}
