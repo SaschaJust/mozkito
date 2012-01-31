@@ -51,7 +51,7 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		for (final List<RegexGroup> hit : regexHits) {
 			final String reportId = hit.get(0).getMatch();
 			try {
-				final int rId = Integer.valueOf(reportId);
+				final long rId = Long.valueOf(reportId);
 				final Report report = this.persistenceUtil.loadById(rId, Report.class);
 				if (report == null) {
 					continue;
