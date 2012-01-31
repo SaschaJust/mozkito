@@ -29,7 +29,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -53,6 +52,9 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 		
 		this.cloneDir = cloneDir;
 		this.revision = revision;
+		
+		final Map<String, String> branchNameReplacements = new HashMap<String, String>();
+		
 		try {
 			final LineIterator revListFileIterator = FileUtils.getLineIterator(getRevListFile());
 			final LineIterator decorateListIterator = FileUtils.getLineIterator(getDecorateListFile());
@@ -71,11 +73,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				} else {
 					continue;
 				}
-				this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
-				if (Logger.logDebug()) {
-					Logger.debug("Storing branch reference " + branchName + " along with associated commit id "
-					        + lsRemote[0]);
-				}
+				branchNameReplacements.put(lsRemote[0] + "Branch", branchName);
 			}
 			
 			final List<String> mergeTransactions = getMerges();
@@ -154,7 +152,11 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					final String parent = parents.get(i);
 					
 					if (!this.branches.containsKey(parent)) {
-						final RCSBranch newBranch = branchFactory.getBranch(parent + "Branch");
+						String newBranchName = parent + "Branch";
+						if (branchNameReplacements.containsKey(newBranchName)) {
+							newBranchName = branchNameReplacements.get(newBranchName);
+						}
+						final RCSBranch newBranch = branchFactory.getBranch(newBranchName);
 						if (newBranch.getParent() == null) {
 							newBranch.setParent(commitBranch);
 						}
