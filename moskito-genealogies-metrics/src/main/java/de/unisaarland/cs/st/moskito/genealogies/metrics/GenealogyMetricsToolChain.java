@@ -61,7 +61,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		                                               "OPERATIONPARTITION", "TRANSACTION" });
 		this.outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
 		                                                 "Filename to write result metric matrix into.", null, true,
-		                                                 false);
+		                                                 true);
 		new StringArgument(
 		                   settings,
 		                   "fix.pattern",
