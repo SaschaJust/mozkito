@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
@@ -33,9 +34,8 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
-		// TODO Auto-generated method stub
-		
-		final int numFixes = 0;
+		int numFixes = 0;
+		int fixType = -1;
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		
@@ -49,10 +49,28 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		
 		for (final List<RegexGroup> hit : regexHits) {
 			final String reportId = hit.get(0).getMatch();
-			
+			try {
+				final int rId = Integer.valueOf(reportId);
+				final Report report = this.persistenceUtil.loadById(rId, Report.class);
+				if (report == null) {
+					continue;
+				}
+				
+				final int typeOrdinal = report.getType().ordinal();
+				if ((fixType == -1) || (fixType == typeOrdinal)) {
+					fixType = typeOrdinal;
+				} else {
+					fixType = 100;
+				}
+				++numFixes;
+			} catch (final NumberFormatException e) {
+				continue;
+			}
 		}
+		final String nodeId = this.genealogy.getNodeId(rcsTransaction);
+		result.add(new GenealogyMetricValue(numFixesName, nodeId, numFixes));
+		result.add(new GenealogyMetricValue(fixTypeName, nodeId, fixType));
 		
-		return null;
+		return result;
 	}
-	
 }
