@@ -171,10 +171,15 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	/**
 	 * @return the settings
 	 */
+	@Override
 	public final AndamaSettings getSettings() {
 		return this.settings;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
+	 */
 	@Override
 	public final T getValue() {
 		if (!this.init) {

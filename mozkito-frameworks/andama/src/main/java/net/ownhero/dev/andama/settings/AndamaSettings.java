@@ -423,7 +423,7 @@ public class AndamaSettings {
 						defaultValueArgs.add(argument);
 					}
 				}
-				if (argument.required() && (this.arguments.get(argument).getValue() == null)) {
+				if (argument.required() && (argument.getValue() == null)) {
 					if (Logger.logError()) {
 						Logger.error("Required argument `" + arg.getName() + "` is not set.");
 					}

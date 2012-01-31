@@ -27,6 +27,11 @@ public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInt
 	/**
 	 * @return
 	 */
+	AndamaSettings getSettings();
+	
+	/**
+	 * @return
+	 */
 	T getValue();
 	
 	/**

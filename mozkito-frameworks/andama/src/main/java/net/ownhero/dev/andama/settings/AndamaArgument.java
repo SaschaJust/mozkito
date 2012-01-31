@@ -33,8 +33,9 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	protected String                        stringValue;
 	private boolean                         wasSet;
 	private T                               cachedValue;
-	private boolean                         init = false;
-	private Set<AndamaArgumentInterface<?>> dependees;
+	private boolean                         init      = false;
+	private Set<AndamaArgumentInterface<?>> dependees = new HashSet<AndamaArgumentInterface<?>>();
+	private AndamaSettings                  settings;
 	
 	/**
 	 * @param settings
@@ -77,7 +78,8 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 			this.defaultValue = defaultValue;
 		}
 		
-		settings.addArgument(this);
+		setSettings(settings);
+		getSettings().addArgument(this);
 	}
 	
 	/**
@@ -98,7 +100,9 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 			this.defaultValue = defaultValue;
 		}
 		
-		settings.addArgument(this);
+		setSettings(settings);
+		getSettings().addArgument(this);
+		getDependees().addAll(dependees);
 	}
 	
 	/*
@@ -195,6 +199,16 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
+	 */
+	@Override
+	public final AndamaSettings getSettings() {
+		return this.settings;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
 	 */
 	@Override
@@ -237,6 +251,13 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	protected final void setCachedValue(final T cachedValue) {
 		this.init = true;
 		this.cachedValue = cachedValue;
+	}
+	
+	/**
+	 * @param settings
+	 */
+	private void setSettings(final AndamaSettings settings) {
+		this.settings = settings;
 	}
 	
 	/**

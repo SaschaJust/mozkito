@@ -49,19 +49,19 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 			private static final long serialVersionUID = -4075576523389682827L;
 			
 			{
-				put("mail.smtp.host", getArgument("mail.host").getValue());
+				put("mail.smtp.host", getSettings().getSetting("mail.host"));
 				put("mail.transport.protocol", "smtp");
-				put("mail.to", getArgument("mail.to").getValue());
-				put("mail.subject", getArgument("mail.subject").getValue());
-				put("mail.sender.name", getArgument("mail.sender.name").getValue());
-				put("mail.sender.address", getArgument("mail.sender.address").getValue());
-				put("mail.sender.host", getArgument("mail.sender.host").getValue());
-				if (getArgument("mail.username").getValue() != null) {
-					put("mail.username", getArgument("mail.username").getValue());
+				put("mail.to", getSettings().getSetting("mail.to"));
+				put("mail.subject", getSettings().getSetting("mail.subject"));
+				put("mail.sender.name", getSettings().getSetting("mail.sender.name"));
+				put("mail.sender.address", getSettings().getSetting("mail.sender.address"));
+				put("mail.sender.host", getSettings().getSetting("mail.sender.host"));
+				if (getSettings().getSetting("mail.username") != null) {
+					put("mail.username", getSettings().getSetting("mail.username"));
 				}
 				
-				if (getArgument("mail.password").getValue() != null) {
-					put("mail.password", getArgument("mail.password").getValue());
+				if (getSettings().getSetting("mail.password") != null) {
+					put("mail.password", getSettings().getSetting("mail.password"));
 				}
 				
 			}
