@@ -92,7 +92,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public String getNodeId(final RCSTransaction t) {
-		return this.partitionChangeGenealogy.getNodeId(transactionToPartition(t));
+		return t.getId();
 	}
 	
 	@Override
