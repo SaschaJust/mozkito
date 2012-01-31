@@ -40,9 +40,11 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 		return new TransactionChangeGenealogy(partitionChangeGenealogy);
 	}
 	
-	private final Map<RCSTransaction, Collection<JavaChangeOperation>> partitionCache = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+	private final Map<RCSTransaction, Collection<JavaChangeOperation>>                      partitionCache  = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
 	
-	private final PartitionChangeGenealogy                             partitionChangeGenealogy;
+	private final Map<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>> dependencyCache = new HashMap<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>>();
+	
+	private final PartitionChangeGenealogy                                                  partitionChangeGenealogy;
 	
 	public TransactionChangeGenealogy(final CoreChangeGenealogy coreGenealogy) {
 		super(coreGenealogy);
@@ -71,20 +73,29 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	@Override
 	public Collection<RCSTransaction> getDependants(final RCSTransaction t,
 	                                                final GenealogyEdgeType... edgeTypes) {
-		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		final Collection<Collection<JavaChangeOperation>> dependents = this.partitionChangeGenealogy.getDependants(fromPartition,
-		                                                                                                           edgeTypes);
-		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
-		// FIXME this is pretty inefficient. Actually we need a mechanism that ensures that partition always belong to
-		// the same transaction
-		// but this is actually inforced by the partition generator
-		for (final Collection<JavaChangeOperation> partition : dependents) {
-			for (final JavaChangeOperation parent : partition) {
-				result.add(parent.getRevision().getTransaction());
+		if ((!this.dependencyCache.containsKey(t)) || (!this.dependencyCache.get(t).containsKey(edgeTypes))) {
+			final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
+			final Collection<Collection<JavaChangeOperation>> dependents = this.partitionChangeGenealogy.getDependants(fromPartition,
+			                                                                                                           edgeTypes);
+			final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+			
+			// FIXME this is pretty inefficient. Actually we need a mechanism that ensures that partition always belong
+			// to
+			// the same transaction
+			// but this is actually inforced by the partition generator
+			for (final Collection<JavaChangeOperation> partition : dependents) {
+				for (final JavaChangeOperation parent : partition) {
+					result.add(parent.getRevision().getTransaction());
+				}
 			}
+			if (!this.dependencyCache.containsKey(t)) {
+				this.dependencyCache.put(t, new HashMap<GenealogyEdgeType[], Collection<RCSTransaction>>());
+			}
+			this.dependencyCache.get(t).put(edgeTypes, result);
 		}
-		return result;
+		
+		return this.dependencyCache.get(t).get(edgeTypes);
 	}
 	
 	@Override
@@ -160,9 +171,6 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	private synchronized Collection<JavaChangeOperation> transactionToPartition(final RCSTransaction transaction) {
 		if (!this.partitionCache.containsKey(transaction)) {
 			
-			if (this.partitionCache.size() > 700) {
-				this.partitionCache.clear();
-			}
 			if (Logger.logDebug()) {
 				Logger.debug("Loading partition from database: " + transaction.toString());
 			}
