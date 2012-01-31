@@ -22,8 +22,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
@@ -38,14 +36,10 @@ public class PPAPersistenceUtil {
 	
 	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
 	                                                                 final RCSTransaction transaction) {
-		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
-		if (Logger.logDebug()) {
-			Logger.debug(persistenceUtil.getToolInformation());
-		}
-		
-		for (RCSRevision revision : transaction.getRevisions()) {
-			Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		for (final RCSRevision revision : transaction.getRevisions()) {
+			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
 			result.addAll(persistenceUtil.load(criteria));
 		}
@@ -54,9 +48,9 @@ public class PPAPersistenceUtil {
 	
 	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
 	                                                                 final String transactionId) {
-		List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
+		final List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
-		RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		final RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 		if (transaction != null) {
 			return getChangeOperation(persistenceUtil, transaction);
 		}
@@ -75,14 +69,14 @@ public class PPAPersistenceUtil {
 	 */
 	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil,
 	                                         final JavaElement e) {
-		Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
-		CriteriaBuilder cb = criteria.getBuilder();
-		Root<? extends JavaElement> root = criteria.getRoot();
-		Predicate predicate = cb.and(cb.equal(root.get("fullQualifiedName"), e.getFullQualifiedName()),
-		                             cb.equal(root.get("elementType"), e.getElementType()));
+		final Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
+		final CriteriaBuilder cb = criteria.getBuilder();
+		final Root<? extends JavaElement> root = criteria.getRoot();
+		final Predicate predicate = cb.and(cb.equal(root.get("fullQualifiedName"), e.getFullQualifiedName()),
+		                                   cb.equal(root.get("elementType"), e.getElementType()));
 		criteria.getQuery().where(predicate);
 		
-		List<? extends JavaElement> elements = persistenceUtil.load(criteria);
+		final List<? extends JavaElement> elements = persistenceUtil.load(criteria);
 		if (elements.isEmpty()) {
 			return null;
 		}
