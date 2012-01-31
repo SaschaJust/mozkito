@@ -16,6 +16,8 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 import java.util.Collection;
 import java.util.Comparator;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
@@ -30,17 +32,15 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	
 	private static int                             dayDiffSize = 14;
 	
-	public TransactionDwReachMetric(TransactionChangeGenealogy genealogy) {
+	public TransactionDwReachMetric(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalDwReachMetric<RCSTransaction>(genealogy, new Comparator<RCSTransaction>() {
+		this.universalMetric = new UniversalDwReachMetric<RCSTransaction>(genealogy, new Comparator<RCSTransaction>() {
 			
 			@Override
-			public int compare(RCSTransaction original,
-			                   RCSTransaction t) {
-				Days daysBetween = Days.daysBetween(original.getTimestamp(), t.getTimestamp());
-				if (daysBetween.getDays() > dayDiffSize) {
-					return 1;
-				}
+			public int compare(final RCSTransaction original,
+			                   final RCSTransaction t) {
+				final Days daysBetween = Days.daysBetween(original.getTimestamp(), t.getTimestamp());
+				if (daysBetween.getDays() > dayDiffSize) { return 1; }
 				return -1;
 			}
 		});
@@ -52,8 +52,10 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
-		return universalMetric.handle(item.getNode());
+	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getCanonicalName() + " handles node " + item.getNodeId());
+		}
+		return this.universalMetric.handle(item.getNode());
 	}
-	
 }

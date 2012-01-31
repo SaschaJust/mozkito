@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
@@ -57,6 +59,9 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getCanonicalName() + " handles node " + item.getNodeId());
+		}
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
 		final RCSTransaction transaction = item.getNode();

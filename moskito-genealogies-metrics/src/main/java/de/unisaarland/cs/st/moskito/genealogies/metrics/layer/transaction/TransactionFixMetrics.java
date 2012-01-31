@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
@@ -34,6 +35,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getCanonicalName() + " handles node " + item.getNodeId());
+		}
 		int numFixes = 0;
 		int fixType = -1;
 		

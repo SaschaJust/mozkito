@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
@@ -23,11 +24,11 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChildrenMetrics extends GenealogyTransactionMetric {
 	
-	private UniversalChildrenMetrics<RCSTransaction> universalMetric;
+	private final UniversalChildrenMetrics<RCSTransaction> universalMetric;
 	
-	public TransactionChildrenMetrics(TransactionChangeGenealogy genealogy) {
+	public TransactionChildrenMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalChildrenMetrics<RCSTransaction>(genealogy);
+		this.universalMetric = new UniversalChildrenMetrics<RCSTransaction>(genealogy);
 	}
 	
 	@Override
@@ -36,8 +37,11 @@ public class TransactionChildrenMetrics extends GenealogyTransactionMetric {
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
-		return universalMetric.handle(item.getNode());
+	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getCanonicalName() + " handles node " + item.getNodeId());
+		}
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

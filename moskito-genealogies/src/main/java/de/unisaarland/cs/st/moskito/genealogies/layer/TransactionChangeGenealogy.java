@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
@@ -162,7 +163,9 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 			if (this.partitionCache.size() > 700) {
 				this.partitionCache.clear();
 			}
-			
+			if (Logger.logDebug()) {
+				Logger.debug("Loading partition from database: " + transaction.toString());
+			}
 			this.partitionCache.put(transaction,
 			                        PPAPersistenceUtil.getChangeOperation(this.core.getPersistenceUtil(), transaction));
 		}
