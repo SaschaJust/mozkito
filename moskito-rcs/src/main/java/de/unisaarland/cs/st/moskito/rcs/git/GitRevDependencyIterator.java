@@ -66,11 +66,15 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 				}
 				if (branchName.startsWith("refs/heads/")) {
 					branchName = branchName.substring(11);
-					this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
-					if (Logger.logDebug()) {
-						Logger.debug("Storing branch reference " + branchName + " along with associated commit id "
-						        + lsRemote[0]);
-					}
+				} else if (branchName.startsWith("refs/remotes/")) {
+					branchName = branchName.substring(13);
+				} else {
+					continue;
+				}
+				this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
+				if (Logger.logDebug()) {
+					Logger.debug("Storing branch reference " + branchName + " along with associated commit id "
+					        + lsRemote[0]);
 				}
 			}
 			
