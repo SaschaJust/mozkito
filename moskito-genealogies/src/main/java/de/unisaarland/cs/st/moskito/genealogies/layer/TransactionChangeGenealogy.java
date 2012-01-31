@@ -28,52 +28,54 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransaction> {
 	
-	public static TransactionChangeGenealogy readFromFile(File graphDBDir,
-	                                                      PersistenceUtil persistenceUtil,
-	                                                      PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
-		PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir, persistenceUtil,
-		                                                                                 partitionGenerator);
+	public static TransactionChangeGenealogy readFromFile(final File graphDBDir,
+	                                                      final PersistenceUtil persistenceUtil,
+	                                                      final PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
+		final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(graphDBDir,
+		                                                                                       persistenceUtil,
+		                                                                                       partitionGenerator);
 		return new TransactionChangeGenealogy(partitionChangeGenealogy);
 	}
 	
-	private PartitionChangeGenealogy partitionChangeGenealogy;
+	private final PartitionChangeGenealogy partitionChangeGenealogy;
 	
-	public TransactionChangeGenealogy(CoreChangeGenealogy coreGenealogy) {
+	public TransactionChangeGenealogy(final CoreChangeGenealogy coreGenealogy) {
 		super(coreGenealogy);
+		this.partitionChangeGenealogy = new PartitionChangeGenealogy(coreGenealogy, new TransactionPartitioner());
 	}
 	
-	private TransactionChangeGenealogy(PartitionChangeGenealogy partitionChangeGenealogy) {
+	private TransactionChangeGenealogy(final PartitionChangeGenealogy partitionChangeGenealogy) {
 		super(partitionChangeGenealogy.getCore());
 		this.partitionChangeGenealogy = partitionChangeGenealogy;
 	}
 	
 	@Override
-	public boolean containsEdge(RCSTransaction from,
-	                            RCSTransaction to) {
-		Collection<JavaChangeOperation> fromPartition = transactionToPartition(from);
-		Collection<JavaChangeOperation> toPartition = transactionToPartition(to);
-		return partitionChangeGenealogy.containsEdge(fromPartition, toPartition);
+	public boolean containsEdge(final RCSTransaction from,
+	                            final RCSTransaction to) {
+		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(from);
+		final Collection<JavaChangeOperation> toPartition = transactionToPartition(to);
+		return this.partitionChangeGenealogy.containsEdge(fromPartition, toPartition);
 	}
 	
 	@Override
-	public boolean containsVertex(RCSTransaction vertex) {
-		Collection<JavaChangeOperation> vertexPartition = transactionToPartition(vertex);
-		return partitionChangeGenealogy.containsVertex(vertexPartition);
+	public boolean containsVertex(final RCSTransaction vertex) {
+		final Collection<JavaChangeOperation> vertexPartition = transactionToPartition(vertex);
+		return this.partitionChangeGenealogy.containsVertex(vertexPartition);
 	}
 	
 	@Override
-	public Collection<RCSTransaction> getDependants(RCSTransaction t,
-	                                                GenealogyEdgeType... edgeTypes) {
-		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		Collection<Collection<JavaChangeOperation>> dependents = partitionChangeGenealogy.getDependants(fromPartition,
-		                                                                                                edgeTypes);
-		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+	public Collection<RCSTransaction> getDependants(final RCSTransaction t,
+	                                                final GenealogyEdgeType... edgeTypes) {
+		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
+		final Collection<Collection<JavaChangeOperation>> dependents = this.partitionChangeGenealogy.getDependants(fromPartition,
+		                                                                                                           edgeTypes);
+		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
 		// FIXME this is pretty inefficient. Actually we need a mechanism that ensures that partition always belong to
 		// the same transaction
 		// but this is actually inforced by the partition generator
-		for (Collection<JavaChangeOperation> partition : dependents) {
-			for (JavaChangeOperation parent : partition) {
+		for (final Collection<JavaChangeOperation> partition : dependents) {
+			for (final JavaChangeOperation parent : partition) {
 				result.add(parent.getRevision().getTransaction());
 			}
 		}
@@ -81,28 +83,28 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(RCSTransaction from,
-	                                              RCSTransaction to) {
-		Collection<JavaChangeOperation> fromPartition = transactionToPartition(from);
-		Collection<JavaChangeOperation> toPartition = transactionToPartition(to);
-		return partitionChangeGenealogy.getEdges(fromPartition, toPartition);
+	public Collection<GenealogyEdgeType> getEdges(final RCSTransaction from,
+	                                              final RCSTransaction to) {
+		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(from);
+		final Collection<JavaChangeOperation> toPartition = transactionToPartition(to);
+		return this.partitionChangeGenealogy.getEdges(fromPartition, toPartition);
 	}
 	
 	@Override
-	public String getNodeId(RCSTransaction t) {
-		return partitionChangeGenealogy.getNodeId(transactionToPartition(t));
+	public String getNodeId(final RCSTransaction t) {
+		return this.partitionChangeGenealogy.getNodeId(transactionToPartition(t));
 	}
 	
 	@Override
-	public Collection<RCSTransaction> getParents(RCSTransaction t,
-	                                             GenealogyEdgeType... edgeTypes) {
-		Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		Collection<Collection<JavaChangeOperation>> parents = partitionChangeGenealogy.getParents(fromPartition,
-		                                                                                          edgeTypes);
-		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+	public Collection<RCSTransaction> getParents(final RCSTransaction t,
+	                                             final GenealogyEdgeType... edgeTypes) {
+		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
+		final Collection<Collection<JavaChangeOperation>> parents = this.partitionChangeGenealogy.getParents(fromPartition,
+		                                                                                                     edgeTypes);
+		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
-		for (Collection<JavaChangeOperation> partition : parents) {
-			for (JavaChangeOperation parent : partition) {
+		for (final Collection<JavaChangeOperation> partition : parents) {
+			for (final JavaChangeOperation parent : partition) {
 				result.add(parent.getRevision().getTransaction());
 			}
 		}
@@ -111,8 +113,8 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public Collection<RCSTransaction> getRoots() {
-		Collection<RCSTransaction> roots = new HashSet<RCSTransaction>();
-		for (RCSTransaction t : vertexSet()) {
+		final Collection<RCSTransaction> roots = new HashSet<RCSTransaction>();
+		for (final RCSTransaction t : vertexSet()) {
 			if (getAllParents(t).isEmpty()) {
 				roots.add(t);
 			}
@@ -121,44 +123,44 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	@Override
-	public int inDegree(RCSTransaction node) {
+	public int inDegree(final RCSTransaction node) {
 		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
-	public int inDegree(RCSTransaction node,
-	                    GenealogyEdgeType... edgeTypes) {
+	public int inDegree(final RCSTransaction node,
+	                    final GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (RCSTransaction parent : this.getParents(node, edgeTypes)) {
-			numEdges += this.getEdges(node, parent).size();
+		for (final RCSTransaction parent : getParents(node, edgeTypes)) {
+			numEdges += getEdges(node, parent).size();
 		}
 		return numEdges;
 	}
 	
 	@Override
-	public int outDegree(RCSTransaction node) {
+	public int outDegree(final RCSTransaction node) {
 		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
-	public int outDegree(RCSTransaction node,
-	                     GenealogyEdgeType... edgeTypes) {
+	public int outDegree(final RCSTransaction node,
+	                     final GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (RCSTransaction parent : this.getParents(node, edgeTypes)) {
-			numEdges += this.getEdges(node, parent).size();
+		for (final RCSTransaction parent : getParents(node, edgeTypes)) {
+			numEdges += getEdges(node, parent).size();
 		}
 		return numEdges;
 	}
 	
-	private Collection<JavaChangeOperation> transactionToPartition(RCSTransaction transaction) {
-		return PPAPersistenceUtil.getChangeOperation(core.getPersistenceUtil(), transaction);
+	private Collection<JavaChangeOperation> transactionToPartition(final RCSTransaction transaction) {
+		return PPAPersistenceUtil.getChangeOperation(this.core.getPersistenceUtil(), transaction);
 	}
 	
 	@Override
 	public Iterable<RCSTransaction> vertexSet() {
-		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
-		for (Collection<JavaChangeOperation> operations : partitionChangeGenealogy.vertexSet()) {
-			for (JavaChangeOperation operation : operations) {
+		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+		for (final Collection<JavaChangeOperation> operations : this.partitionChangeGenealogy.vertexSet()) {
+			for (final JavaChangeOperation operation : operations) {
 				result.add(operation.getRevision().getTransaction());
 			}
 		}
@@ -167,9 +169,9 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	@Override
 	public int vertexSize() {
-		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
-		for (Collection<JavaChangeOperation> operations : partitionChangeGenealogy.vertexSet()) {
-			for (JavaChangeOperation operation : operations) {
+		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+		for (final Collection<JavaChangeOperation> operations : this.partitionChangeGenealogy.vertexSet()) {
+			for (final JavaChangeOperation operation : operations) {
 				result.add(operation.getRevision().getTransaction());
 			}
 		}
