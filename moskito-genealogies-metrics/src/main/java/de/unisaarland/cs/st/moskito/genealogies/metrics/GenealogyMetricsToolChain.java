@@ -118,7 +118,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						final Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
 						if (constructor != null) {
-							final GenealogyPartitionMetric metric = constructor.newInstance(this.genealogy);
+							final GenealogyPartitionMetric metric = constructor.newInstance(partitionChangeGenealogy);
 							new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
 						}
 					}
@@ -148,7 +148,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
 						final Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
 						if (constructor != null) {
-							final GenealogyTransactionMetric metric = constructor.newInstance(this.genealogy);
+							final GenealogyTransactionMetric metric = constructor.newInstance(transactionChangeGenealogy);
 							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
 							                                     metric);
 						}
