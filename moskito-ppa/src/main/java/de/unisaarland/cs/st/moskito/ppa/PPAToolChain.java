@@ -72,7 +72,7 @@ public class PPAToolChain extends AndamaChain {
 		super(new RepositorySettings());
 		
 		this.threadPool = new AndamaPool(PPAToolChain.class.getSimpleName(), this);
-		RepositorySettings settings = (RepositorySettings) getSettings();
+		final RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);
 		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
@@ -128,8 +128,8 @@ public class PPAToolChain extends AndamaChain {
 	 */
 	@Override
 	public void setup() {
-		persistenceUtil = this.databaseSettings.getValue();
-		if (persistenceUtil == null) {
+		this.persistenceUtil = this.databaseSettings.getValue();
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not connect to database!");
 			}
@@ -137,10 +137,11 @@ public class PPAToolChain extends AndamaChain {
 			throw new Shutdown();
 		}
 		
-		File xmlFile = this.asXML.getValue();
-		Repository repository = this.repoSettings.getValue();
+		final File xmlFile = this.asXML.getValue();
+		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
+		final Repository repository = this.repoSettings.getValue();
 		
-		JavaElementFactory elementFactory = new JavaElementFactory(this.persistenceUtil);
+		final JavaElementFactory elementFactory = new JavaElementFactory(this.persistenceUtil);
 		
 		// the xml file set, create XMLSinkThread. Otherwise the persistence
 		// middleware persister thread
@@ -155,13 +156,13 @@ public class PPAToolChain extends AndamaChain {
 				try {
 					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(),
 					                      new FileOutputStream(xmlFile));
-				} catch (FileNotFoundException e) {
+				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
 						        + "Writing to sstdout!");
 					}
 					stdout = true;
-				} catch (ParserConfigurationException e) {
+				} catch (final ParserConfigurationException e) {
 					if (Logger.logError()) {
 						Logger.error("Cannot write XML document to file: " + e.getMessage() + FileUtils.lineSeparator
 						        + "Writing to sstdout!");
@@ -173,7 +174,7 @@ public class PPAToolChain extends AndamaChain {
 			if (stdout) {
 				try {
 					new PPAXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), System.out);
-				} catch (ParserConfigurationException e) {
+				} catch (final ParserConfigurationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
@@ -183,8 +184,8 @@ public class PPAToolChain extends AndamaChain {
 		}
 		
 		// generate the change operation reader
-		new PPASource(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, this.startWithArg.getValue(),
-		              testCaseTransactionArg.getValue());
+		new PPASource(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil,
+		              this.startWithArg.getValue(), this.testCaseTransactionArg.getValue());
 		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
 		                   elementFactory);
 		
