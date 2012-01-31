@@ -57,5 +57,5 @@ public abstract class AndamaArgumentSet<T> {
 		return this.arguments;
 	}
 	
-	public abstract T getValue();
+	protected abstract boolean init();
 }

@@ -12,6 +12,9 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
 /**
@@ -28,6 +31,16 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	private boolean      wasSet;
 	private T            cachedValue;
 	private boolean      init = false;
+	
+	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
+	        final String defaultValue, final AndamaArgument<?> dependee) {
+		this(settings, name, description, defaultValue, new HashSet<AndamaArgument<?>>() {
+			
+			{
+				add(dependee);
+			}
+		});
+	}
 	
 	/**
 	 * @param settings
@@ -46,6 +59,20 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		this.name = name;
 		this.description = description;
 		this.isRequired = isRequired;
+		
+		if (defaultValue != null) {
+			this.stringValue = defaultValue;
+			this.defaultValue = defaultValue;
+		}
+		
+		settings.addArgument(this);
+	}
+	
+	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
+	        final String defaultValue, final Set<AndamaArgument<?>> dependees) {
+		this.name = name;
+		this.description = description;
+		this.isRequired = true;
 		
 		if (defaultValue != null) {
 			this.stringValue = defaultValue;
@@ -82,7 +109,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 			return false;
 		}
 		
-		AndamaArgument<?> other = (AndamaArgument<?>) obj;
+		final AndamaArgument<?> other = (AndamaArgument<?>) obj;
 		if (this.name == null) {
 			if (other.name != null) {
 				return false;
@@ -94,7 +121,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	}
 	
 	protected T getCachedValue() {
-		return cachedValue;
+		return this.cachedValue;
 	}
 	
 	/**
@@ -126,7 +153,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	}
 	
 	public final T getValue() {
-		if (!init) {
+		if (!this.init) {
 			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
 			        + getName() + " before calling init() is not allowed! Please fix your code.");
 		}
@@ -156,8 +183,8 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return this.isRequired;
 	}
 	
-	protected void setCachedValue(T cachedValue) {
-		init = true;
+	protected void setCachedValue(final T cachedValue) {
+		this.init = true;
 		this.cachedValue = cachedValue;
 	}
 	
