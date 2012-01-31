@@ -59,7 +59,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 			
 			final LineIterator lsRemoteListIterator = FileUtils.getLineIterator(getLsRemoteFile());
 			while (lsRemoteListIterator.hasNext()) {
-				final String[] lsRemote = lsRemoteListIterator.next().split("\\t");
+				final String[] lsRemote = lsRemoteListIterator.next().split("\\s+");
 				String branchName = lsRemote[1];
 				if (branchName.endsWith("^{}")) {
 					continue;
@@ -68,7 +68,7 @@ public class GitRevDependencyIterator implements RevDependencyIterator {
 					branchName = branchName.substring(11);
 					this.branches.put(lsRemote[0], branchFactory.getBranch(branchName));
 					if (Logger.logDebug()) {
-						Logger.debug("Stroing branch reference " + branchName + " along with associated commit id "
+						Logger.debug("Storing branch reference " + branchName + " along with associated commit id "
 						        + lsRemote[0]);
 					}
 				}
