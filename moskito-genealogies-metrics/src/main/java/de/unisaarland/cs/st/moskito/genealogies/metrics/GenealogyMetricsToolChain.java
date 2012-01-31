@@ -22,6 +22,7 @@ import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
 import net.ownhero.dev.andama.settings.EnumArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -42,24 +43,30 @@ import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
 public class GenealogyMetricsToolChain extends AndamaChain {
 	
-	private GenealogyArguments  genealogyArgs;
-	private AndamaPool          threadPool;
-	private CoreChangeGenealogy genealogy;
-	private EnumArgument        granularityArg;
-	private OutputFileArgument  outputFileArgument;
+	private final GenealogyArguments genealogyArgs;
+	private final AndamaPool         threadPool;
+	private CoreChangeGenealogy      genealogy;
+	private final EnumArgument       granularityArg;
+	private final OutputFileArgument outputFileArgument;
 	
 	public GenealogyMetricsToolChain() {
 		super(new GenealogySettings());
-		GenealogySettings settings = (GenealogySettings) getSettings();
+		final GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new AndamaPool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		settings.setLoggerArg(false);
-		genealogyArgs = settings.setGenealogyArgs(true);
-		granularityArg = new EnumArgument(settings, "genealogy.metric.level",
-		                                  "The granularity level the metrics should be computed on.",
-		                                  "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
-		                                          "OPERATIONPARTITION", "TRANSACTION" });
-		outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
-		                                            "Filename to write result metric matrix into.", null, true, false);
+		this.genealogyArgs = settings.setGenealogyArgs(true);
+		this.granularityArg = new EnumArgument(settings, "genealogy.metric.level",
+		                                       "The granularity level the metrics should be computed on.",
+		                                       "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
+		                                               "OPERATIONPARTITION", "TRANSACTION" });
+		this.outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
+		                                                 "Filename to write result metric matrix into.", null, true,
+		                                                 false);
+		new StringArgument(
+		                   settings,
+		                   "fix.pattern",
+		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
+		                   null, true);
 		
 		settings.parseArguments();
 	}
@@ -79,10 +86,10 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 	
 	@Override
 	public void setup() {
-		genealogy = genealogyArgs.getValue();
+		this.genealogy = this.genealogyArgs.getValue();
 		
 		// allow different genealogy layers
-		String granularity = granularityArg.getValue();
+		final String granularity = this.granularityArg.getValue();
 		
 		/*
 		 * we always enable all metrics. Otherwise this would require far too many arguments The idea is to load all
@@ -91,32 +98,32 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		 */
 		
 		if (granularity.equals("CHANGEOPERATIONPARTITION")) {
-			PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
-			                                                                                 genealogy,
-			                                                                                 new DefaultPartitionGenerator(
-			                                                                                                               genealogy));
+			final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
+			                                                                                       this.genealogy,
+			                                                                                       new DefaultPartitionGenerator(
+			                                                                                                                     this.genealogy));
 			new PartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), partitionChangeGenealogy);
 			new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
 			// start all partition metrics
 			try {
 				
-				Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
-				                                                                                                           GenealogyPartitionMetric.class,
-				                                                                                                           Modifier.ABSTRACT
-				                                                                                                                   | Modifier.INTERFACE
-				                                                                                                                   | Modifier.PRIVATE);
+				final Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
+				                                                                                                                 GenealogyPartitionMetric.class,
+				                                                                                                                 Modifier.ABSTRACT
+				                                                                                                                         | Modifier.INTERFACE
+				                                                                                                                         | Modifier.PRIVATE);
 				
-				for (Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
+				for (final Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
+						final Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
 						if (constructor != null) {
-							GenealogyPartitionMetric metric = constructor.newInstance(genealogy);
+							final GenealogyPartitionMetric metric = constructor.newInstance(this.genealogy);
 							new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
@@ -124,30 +131,30 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			}
 			
 		} else if (granularity.equals("TRANSACTION")) {
-			TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(genealogy);
+			final TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(this.genealogy);
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
 			// start all transaction metrics
 			
 			try {
-				Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
-				                                                                                                             GenealogyTransactionMetric.class,
-				                                                                                                             Modifier.ABSTRACT
-				                                                                                                                     | Modifier.INTERFACE
-				                                                                                                                     | Modifier.PRIVATE);
+				final Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
+				                                                                                                                   GenealogyTransactionMetric.class,
+				                                                                                                                   Modifier.ABSTRACT
+				                                                                                                                           | Modifier.INTERFACE
+				                                                                                                                           | Modifier.PRIVATE);
 				
-				for (Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
+				for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
+						final Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
 						if (constructor != null) {
-							GenealogyTransactionMetric metric = constructor.newInstance(genealogy);
+							final GenealogyTransactionMetric metric = constructor.newInstance(this.genealogy);
 							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
 							                                     metric);
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
@@ -155,27 +162,27 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			}
 			
 		} else {
-			new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+			new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 			new GenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			// start all core metrics
 			
 			try {
-				Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyCoreMetric.class.getPackage(),
-				                                                                                                      GenealogyCoreMetric.class,
-				                                                                                                      Modifier.ABSTRACT
-				                                                                                                              | Modifier.INTERFACE
-				                                                                                                              | Modifier.PRIVATE);
+				final Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyCoreMetric.class.getPackage(),
+				                                                                                                            GenealogyCoreMetric.class,
+				                                                                                                            Modifier.ABSTRACT
+				                                                                                                                    | Modifier.INTERFACE
+				                                                                                                                    | Modifier.PRIVATE);
 				
-				for (Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
+				for (final Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(CoreChangeGenealogy.class);
+						final Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(CoreChangeGenealogy.class);
 						if (constructor != null) {
-							GenealogyCoreMetric coreMetric = constructor.newInstance(genealogy);
+							final GenealogyCoreMetric coreMetric = constructor.newInstance(this.genealogy);
 							new GenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), coreMetric);
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
@@ -186,6 +193,6 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		// start a demuxer and a sink that receives all the metric values
 		// and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		new GenealogyMetricSink(threadPool.getThreadGroup(), getSettings(), outputFileArgument.getValue());
+		new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(), this.outputFileArgument.getValue());
 	}
 }

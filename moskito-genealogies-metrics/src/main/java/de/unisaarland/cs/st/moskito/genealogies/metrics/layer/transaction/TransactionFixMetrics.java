@@ -42,6 +42,7 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		final RCSTransaction rcsTransaction = item.getNode();
 		final String commitMessage = rcsTransaction.getMessage();
 		
+		// FIXME This should be done using the appropriate argument
 		final String fixPattern = System.getProperty("fix.pattern", "(\\d+)");
 		
 		final Regex regex = new Regex(fixPattern);
