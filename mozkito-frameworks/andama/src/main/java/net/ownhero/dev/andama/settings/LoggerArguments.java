@@ -1,14 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -27,7 +30,7 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	 * @param isRequired
 	 */
 	public LoggerArguments(final AndamaSettings settings, final boolean isRequired) {
-		super();
+		super(settings, "Used to configure kisa logging options.", isRequired);
 		
 		final LogLevel[] values = LogLevel.values();
 		final String[] argEnums = new String[values.length];
@@ -67,11 +70,12 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgumentSet#getValue()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#init()
 	 */
 	@Override
-	public final Boolean getValue() {
+	protected final boolean init() {
 		Logger.readConfiguration();
+		setCachedValue(true);
 		return true;
 	}
 	

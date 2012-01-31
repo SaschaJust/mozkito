@@ -28,18 +28,6 @@ public class RegisteredTest {
 			}
 			
 			@Override
-			public void init() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isEnabled() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
 			public void register(final AndamaSettings settings,
 			                     final AndamaArgumentSet<?> arguments) {
 				// TODO Auto-generated method stub

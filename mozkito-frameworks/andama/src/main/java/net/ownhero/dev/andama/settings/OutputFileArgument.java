@@ -60,7 +60,7 @@ public class OutputFileArgument extends AndamaArgument<File> {
 		// combinations!
 		if (this.stringValue == null) {
 			setCachedValue(null);
-			if (isRequired()) {
+			if (required()) {
 				return false;
 			} else {
 				return true;
@@ -76,7 +76,7 @@ public class OutputFileArgument extends AndamaArgument<File> {
 			setCachedValue(null);
 		}
 		if (file.exists() && (!this.overwrite)) {
-			if (isRequired()) {
+			if (required()) {
 				if (Logger.logError()) {
 					
 					Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()

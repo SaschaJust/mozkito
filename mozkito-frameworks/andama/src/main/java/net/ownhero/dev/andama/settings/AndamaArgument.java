@@ -1,14 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -21,20 +24,29 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>> {
+public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
-	private String       defaultValue;
-	private final String description;
-	private boolean      isRequired;
-	private final String name;
-	protected String     stringValue;
-	private boolean      wasSet;
-	private T            cachedValue;
-	private boolean      init = false;
+	private String                          defaultValue;
+	private final String                    description;
+	private boolean                         required;
+	private final String                    name;
+	protected String                        stringValue;
+	private boolean                         wasSet;
+	private T                               cachedValue;
+	private boolean                         init = false;
+	private Set<AndamaArgumentInterface<?>> dependees;
 	
+	/**
+	 * @param settings
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param dependee
+	 */
+	@SuppressWarnings ("serial")
 	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
 	        final String defaultValue, final AndamaArgument<?> dependee) {
-		this(settings, name, description, defaultValue, new HashSet<AndamaArgument<?>>() {
+		this(settings, name, description, defaultValue, new HashSet<AndamaArgumentInterface<?>>() {
 			
 			{
 				add(dependee);
@@ -51,14 +63,14 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 *            The help string description
 	 * @param defaultValue
 	 *            The default value given as string will be interpreted as path
-	 * @param isRequired
+	 * @param required
 	 *            Set to <code>true</code> if this argument will be required
 	 */
 	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
+	        final String defaultValue, final boolean required) {
 		this.name = name;
 		this.description = description;
-		this.isRequired = isRequired;
+		this.required = required;
 		
 		if (defaultValue != null) {
 			this.stringValue = defaultValue;
@@ -68,11 +80,18 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		settings.addArgument(this);
 	}
 	
+	/**
+	 * @param settings
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param dependees
+	 */
 	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
-	        final String defaultValue, final Set<AndamaArgument<?>> dependees) {
+	        final String defaultValue, final Set<AndamaArgumentInterface<?>> dependees) {
 		this.name = name;
 		this.description = description;
-		this.isRequired = true;
+		this.dependees = dependees;
 		
 		if (defaultValue != null) {
 			this.stringValue = defaultValue;
@@ -84,11 +103,13 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#compareTo(net
+	 * .ownhero.dev.andama.settings.AndamaArgumentInterface)
 	 */
 	@Override
-	public int compareTo(final AndamaArgument<T> arg0) {
-		return this.name.compareTo(arg0.name);
+	public final int compareTo(final AndamaArgumentInterface<T> arg0) {
+		return getName().compareTo(arg0.getName());
 	}
 	
 	/*
@@ -96,7 +117,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(final Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -120,38 +141,63 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 		return true;
 	}
 	
-	protected T getCachedValue() {
+	/**
+	 * @return
+	 */
+	protected final T getCachedValue() {
 		return this.cachedValue;
 	}
 	
 	/**
 	 * @return
 	 */
-	public String getDefaultValue() {
+	public final String getDefaultValue() {
 		return this.defaultValue;
 	}
 	
-	/**
-	 * @return The description of the argument (as printed in help string).
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDependees()
 	 */
-	public String getDescription() {
+	@Override
+	public final Set<AndamaArgumentInterface<?>> getDependees() {
+		return this.dependees;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
+	 */
+	@Override
+	public final String getDescription() {
 		return this.description;
 	}
 	
-	/**
-	 * @return the simple class name
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHandle()
 	 */
+	@Override
 	public final String getHandle() {
 		return this.getClass().getSimpleName();
 	}
 	
-	/**
-	 * @return The name of the argument (as printed in help string).
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getName()
 	 */
-	public String getName() {
+	@Override
+	public final String getName() {
 		return this.name;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
+	 */
+	@Override
 	public final T getValue() {
 		if (!this.init) {
 			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
@@ -165,7 +211,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((this.name == null)
@@ -176,25 +222,21 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	
 	protected abstract boolean init();
 	
-	/**
-	 * @return <code>true</code> if the argument is set to be required
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#required()
 	 */
-	public boolean isRequired() {
-		return this.isRequired;
+	@Override
+	public final boolean required() {
+		return this.required;
 	}
 	
-	protected void setCachedValue(final T cachedValue) {
+	/**
+	 * @param cachedValue
+	 */
+	protected final void setCachedValue(final T cachedValue) {
 		this.init = true;
 		this.cachedValue = cachedValue;
-	}
-	
-	/**
-	 * Sets the argument to be required
-	 * 
-	 * @param required
-	 */
-	public void setRequired(final boolean required) {
-		this.isRequired = required;
 	}
 	
 	/**
@@ -202,7 +244,7 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 * 
 	 * @param value
 	 */
-	protected void setStringValue(final String value) {
+	protected final void setStringValue(final String value) {
 		this.stringValue = value;
 		this.wasSet = true;
 	}
@@ -213,14 +255,14 @@ public abstract class AndamaArgument<T> implements Comparable<AndamaArgument<T>>
 	 */
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " [required=" + this.isRequired + ", name=" + this.name + ", default="
+		return this.getClass().getSimpleName() + " [required=" + this.required + ", name=" + this.name + ", default="
 		        + this.defaultValue + ", value=" + this.stringValue + ", description=" + this.description + "]";
 	}
 	
 	/**
 	 * @return
 	 */
-	public boolean wasSet() {
+	public final boolean wasSet() {
 		return this.wasSet;
 	}
 	

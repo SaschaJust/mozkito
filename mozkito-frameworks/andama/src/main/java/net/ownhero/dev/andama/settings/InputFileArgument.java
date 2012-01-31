@@ -69,7 +69,7 @@ public class InputFileArgument extends AndamaArgument<File> {
 			return false;
 		}
 		
-		if (!file.exists() && isRequired()) {
+		if (!file.exists() && required()) {
 			if (Logger.logError()) {
 				Logger.error("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` does not exists but is required!");
@@ -77,7 +77,7 @@ public class InputFileArgument extends AndamaArgument<File> {
 			return false;
 		}
 		
-		if (!file.exists() && !isRequired()) {
+		if (!file.exists() && !required()) {
 			if (Logger.logWarn()) {
 				Logger.warn("The file `" + this.stringValue + "` specified for argument `" + getName()
 				        + "` does not exists and is not required! Ignoring file argument!");

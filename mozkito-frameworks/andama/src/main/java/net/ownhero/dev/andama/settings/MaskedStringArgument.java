@@ -27,7 +27,7 @@ public class MaskedStringArgument extends StringArgument {
 	 */
 	@Override
 	public String toString() {
-		return "Argument [required=" + isRequired() + ", description=" + getDescription() + ", name=" + getName()
+		return "Argument [required=" + required() + ", description=" + getDescription() + ", name=" + getName()
 		        + ", value=********* (masked)]";
 	}
 	

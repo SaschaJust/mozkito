@@ -13,13 +13,11 @@ import java.util.Properties;
  */
 public class MailArguments extends AndamaArgumentSet<Properties> {
 	
-	private final AndamaSettings settings;
-	
 	/**
 	 * 
 	 */
 	public MailArguments(final AndamaSettings settings, final boolean isRequired) {
-		this.settings = settings;
+		super(settings, "Used configure mailer arguments for the crash reporter.", isRequired);
 		
 		addArgument(new StringArgument(settings, "mail.host", "The hostname of the mail server",
 		                               "mail.st.cs.uni-saarland.de", isRequired));
@@ -44,34 +42,33 @@ public class MailArguments extends AndamaArgumentSet<Properties> {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#getValue()
-	 */
 	@Override
-	public final Properties getValue() {
-		return new Properties() {
+	protected boolean init() {
+		Properties properties = new Properties() {
 			
 			private static final long serialVersionUID = -4075576523389682827L;
 			
 			{
-				put("mail.smtp.host", MailArguments.this.settings.getSetting("mail.host"));
+				put("mail.smtp.host", getArgument("mail.host").getValue());
 				put("mail.transport.protocol", "smtp");
-				put("mail.to", MailArguments.this.settings.getSetting("mail.to"));
-				put("mail.subject", MailArguments.this.settings.getSetting("mail.subject"));
-				put("mail.sender.name", MailArguments.this.settings.getSetting("mail.sender.name"));
-				put("mail.sender.address", MailArguments.this.settings.getSetting("mail.sender.address"));
-				put("mail.sender.host", MailArguments.this.settings.getSetting("mail.sender.host"));
-				if (MailArguments.this.settings.getSetting("mail.username") != null) {
-					put("mail.username", MailArguments.this.settings.getSetting("mail.username"));
+				put("mail.to", getArgument("mail.to").getValue());
+				put("mail.subject", getArgument("mail.subject").getValue());
+				put("mail.sender.name", getArgument("mail.sender.name").getValue());
+				put("mail.sender.address", getArgument("mail.sender.address").getValue());
+				put("mail.sender.host", getArgument("mail.sender.host").getValue());
+				if (getArgument("mail.username").getValue() != null) {
+					put("mail.username", getArgument("mail.username").getValue());
 				}
 				
-				if (MailArguments.this.settings.getSetting("mail.password") != null) {
-					put("mail.password", MailArguments.this.settings.getSetting("mail.password"));
+				if (getArgument("mail.password").getValue() != null) {
+					put("mail.password", getArgument("mail.password").getValue());
 				}
 				
 			}
 		};
+		
+		setCachedValue(properties);
+		return true;
 	}
 	
 }
