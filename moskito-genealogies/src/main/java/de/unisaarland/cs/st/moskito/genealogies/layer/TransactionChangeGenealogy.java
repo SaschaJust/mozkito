@@ -15,7 +15,9 @@ package de.unisaarland.cs.st.moskito.genealogies.layer;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
@@ -37,7 +39,9 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 		return new TransactionChangeGenealogy(partitionChangeGenealogy);
 	}
 	
-	private final PartitionChangeGenealogy partitionChangeGenealogy;
+	private final Map<RCSTransaction, Collection<JavaChangeOperation>> partitionCache = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+	
+	private final PartitionChangeGenealogy                             partitionChangeGenealogy;
 	
 	public TransactionChangeGenealogy(final CoreChangeGenealogy coreGenealogy) {
 		super(coreGenealogy);
@@ -153,7 +157,16 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	}
 	
 	private Collection<JavaChangeOperation> transactionToPartition(final RCSTransaction transaction) {
-		return PPAPersistenceUtil.getChangeOperation(this.core.getPersistenceUtil(), transaction);
+		if (!this.partitionCache.containsKey(transaction)) {
+			
+			if (this.partitionCache.size() > 700) {
+				this.partitionCache.clear();
+			}
+			
+			this.partitionCache.put(transaction,
+			                        PPAPersistenceUtil.getChangeOperation(this.core.getPersistenceUtil(), transaction));
+		}
+		return this.partitionCache.get(transaction);
 	}
 	
 	@Override
