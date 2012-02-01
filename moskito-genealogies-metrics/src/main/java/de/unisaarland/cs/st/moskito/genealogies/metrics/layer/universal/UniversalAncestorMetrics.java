@@ -38,31 +38,31 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalAncestorMetrics<T> {
 	
 	/** The all dependants. */
-	private static final String allDependants          = "NumDependants";
+	private static final String allDependants        = "NumDependants";
 	
 	/** The all dependants d2. */
-	private static final String allDependantsD2        = "NumDependants_depth_2";
+	// private static final String allDependantsD2 = "NumDependants_depth_2";
 	
 	/** The all dependants d3. */
-	private static final String allDependantsD3        = "NumDependants_depth_3";
+	// private static final String allDependantsD3 = "NumDependants_depth_3";
 	
 	/** The definition dependants. */
-	private static final String definitionDependants   = "NumDefinitionDependants";
+	private static final String definitionDependants = "NumDefinitionDependants";
 	
 	/** The definition dependants d2. */
-	private static final String definitionDependantsD2 = "NumDefinitionDependants_depth_2";
+	// private static final String definitionDependantsD2 = "NumDefinitionDependants_depth_2";
 	
 	/** The definition dependants d3. */
-	private static final String definitionDependantsD3 = "NumDefinitionDependants_depth_3";
+	// private static final String definitionDependantsD3 = "NumDefinitionDependants_depth_3";
 	
 	/** The call dependants. */
-	private static final String callDependants         = "NumCallDependants";
+	private static final String callDependants       = "NumCallDependants";
 	
 	/** The call dependants d2. */
-	private static final String callDependantsD2       = "NumCallDependants_depth_2";
+	// private static final String callDependantsD2 = "NumCallDependants_depth_2";
 	
 	/** The call dependants d3. */
-	private static final String callDependantsD3       = "NumCallDependants_depth_3";
+	// private static final String callDependantsD3 = "NumCallDependants_depth_3";
 	
 	/** The metric names. */
 	private static List<String> metricNames;
@@ -76,8 +76,8 @@ public class UniversalAncestorMetrics<T> {
 	 *            the depth
 	 * @return the string
 	 */
-	private static final String composeMetricName(GenealogyEdgeType eType,
-	                                              int depth) {
+	private static final String composeMetricName(final GenealogyEdgeType eType,
+	                                              final int depth) {
 		if (depth < 2) {
 			return "Num" + eType.toString() + "Dependants";
 		}
@@ -95,24 +95,24 @@ public class UniversalAncestorMetrics<T> {
 		}
 		metricNames = new LinkedList<String>();
 		metricNames.add(allDependants);
-		metricNames.add(allDependantsD2);
-		metricNames.add(allDependantsD3);
+		// metricNames.add(allDependantsD2);
+		// metricNames.add(allDependantsD3);
 		metricNames.add(definitionDependants);
-		metricNames.add(definitionDependantsD2);
-		metricNames.add(definitionDependantsD3);
+		// metricNames.add(definitionDependantsD2);
+		// metricNames.add(definitionDependantsD3);
 		metricNames.add(callDependants);
-		metricNames.add(callDependantsD2);
-		metricNames.add(callDependantsD3);
-		for (GenealogyEdgeType eType : GenealogyEdgeType.values()) {
+		// metricNames.add(callDependantsD2);
+		// metricNames.add(callDependantsD3);
+		for (final GenealogyEdgeType eType : GenealogyEdgeType.values()) {
 			metricNames.add(composeMetricName(eType, 1));
-			metricNames.add(composeMetricName(eType, 2));
-			metricNames.add(composeMetricName(eType, 3));
+			// metricNames.add(composeMetricName(eType, 2));
+			// metricNames.add(composeMetricName(eType, 3));
 		}
 		return metricNames;
 	}
 	
 	/** The genealogy. */
-	private ChangeGenealogy<T> genealogy;
+	private final ChangeGenealogy<T> genealogy;
 	
 	/**
 	 * Instantiates a new universal dependants metrics.
@@ -120,7 +120,7 @@ public class UniversalAncestorMetrics<T> {
 	 * @param genealogy
 	 *            the genealogy
 	 */
-	public UniversalAncestorMetrics(ChangeGenealogy<T> genealogy) {
+	public UniversalAncestorMetrics(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 	}
 	
@@ -136,20 +136,20 @@ public class UniversalAncestorMetrics<T> {
 	 * @return the num dependants
 	 */
 	@SuppressWarnings ("unchecked")
-	private int getNumDependants(T t,
-	                             int depth,
-	                             GenealogyEdgeType... types) {
+	private int getNumDependants(final T t,
+	                             final int depth,
+	                             final GenealogyEdgeType... types) {
 		
 		int result = 0;
-		List<T> nodes = new LinkedList<T>();
-		List<T> nextNodes = new LinkedList<T>();
-		Set<T> seenNodes = new HashSet<T>();
+		final List<T> nodes = new LinkedList<T>();
+		final List<T> nextNodes = new LinkedList<T>();
+		final Set<T> seenNodes = new HashSet<T>();
 		nodes.add(t);
 		
 		if (depth != -1) {
 			for (int i = 0; i < depth; ++i) {
-				for (T node : nodes) {
-					Collection<T> children = genealogy.getDependants(node, types);
+				for (final T node : nodes) {
+					final Collection<T> children = this.genealogy.getDependants(node, types);
 					result += children.size();
 					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
 					seenNodes.addAll(children);
@@ -160,8 +160,8 @@ public class UniversalAncestorMetrics<T> {
 			}
 		} else {
 			while (!nodes.isEmpty()) {
-				for (T node : nodes) {
-					Collection<T> children = genealogy.getDependants(node, types);
+				for (final T node : nodes) {
+					final Collection<T> children = this.genealogy.getDependants(node, types);
 					result += children.size();
 					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
 					seenNodes.addAll(children);
@@ -182,56 +182,62 @@ public class UniversalAncestorMetrics<T> {
 	 *            the node
 	 * @return the collection
 	 */
-	public Collection<GenealogyMetricValue> handle(T node) {
-		List<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
+	public Collection<GenealogyMetricValue> handle(final T node) {
+		final List<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
 		// NumDependencies
-		int numAllDependants = getNumDependants(node, 1, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(allDependants, genealogy.getNodeId(node), numAllDependants));
+		final int numAllDependants = getNumDependants(node, 1, GenealogyEdgeType.values());
+		result.add(new GenealogyMetricValue(allDependants, this.genealogy.getNodeId(node), numAllDependants));
 		
-		numAllDependants = getNumDependants(node, 2, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(allDependantsD2, genealogy.getNodeId(node), numAllDependants));
+		// numAllDependants = getNumDependants(node, 2, GenealogyEdgeType.values());
+		// result.add(new GenealogyMetricValue(allDependantsD2, this.genealogy.getNodeId(node), numAllDependants));
 		
-		numAllDependants = getNumDependants(node, 3, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(allDependantsD3, genealogy.getNodeId(node), numAllDependants));
+		// numAllDependants = getNumDependants(node, 3, GenealogyEdgeType.values());
+		// result.add(new GenealogyMetricValue(allDependantsD3, this.genealogy.getNodeId(node), numAllDependants));
 		
 		// for each GenealogyEdgeType
-		for (GenealogyEdgeType eType : GenealogyEdgeType.values()) {
-			int numDependants = getNumDependants(node, 1, eType);
-			result.add(new GenealogyMetricValue(composeMetricName(eType, 1), genealogy.getNodeId(node), numDependants));
-			numDependants = getNumDependants(node, 2, eType);
-			result.add(new GenealogyMetricValue(composeMetricName(eType, 2), genealogy.getNodeId(node), numDependants));
-			numDependants = getNumDependants(node, 3, eType);
-			result.add(new GenealogyMetricValue(composeMetricName(eType, 3), genealogy.getNodeId(node), numDependants));
+		for (final GenealogyEdgeType eType : GenealogyEdgeType.values()) {
+			final int numDependants = getNumDependants(node, 1, eType);
+			result.add(new GenealogyMetricValue(composeMetricName(eType, 1), this.genealogy.getNodeId(node),
+			                                    numDependants));
+			// numDependants = getNumDependants(node, 2, eType);
+			// result.add(new GenealogyMetricValue(composeMetricName(eType, 2), this.genealogy.getNodeId(node),
+			// numDependants));
+			// numDependants = getNumDependants(node, 3, eType);
+			// result.add(new GenealogyMetricValue(composeMetricName(eType, 3), this.genealogy.getNodeId(node),
+			// numDependants));
 		}
 		
 		// Definition dependants
-		int numDefinitionDependants = getNumDependants(node, 1, GenealogyEdgeType.DefinitionOnDefinition,
-		                                               GenealogyEdgeType.DefinitionOnDeletedDefinition,
-		                                               GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(definitionDependants, genealogy.getNodeId(node), numDefinitionDependants));
-		numDefinitionDependants = getNumDependants(node, 2, GenealogyEdgeType.DefinitionOnDefinition,
-		                                           GenealogyEdgeType.DefinitionOnDeletedDefinition,
-		                                           GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(definitionDependantsD2, genealogy.getNodeId(node), numDefinitionDependants));
-		numDefinitionDependants = getNumDependants(node, 3, GenealogyEdgeType.DefinitionOnDefinition,
-		                                           GenealogyEdgeType.DefinitionOnDeletedDefinition,
-		                                           GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(definitionDependantsD3, genealogy.getNodeId(node), numDefinitionDependants));
+		final int numDefinitionDependants = getNumDependants(node, 1, GenealogyEdgeType.DefinitionOnDefinition,
+		                                                     GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		                                                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		result.add(new GenealogyMetricValue(definitionDependants, this.genealogy.getNodeId(node),
+		                                    numDefinitionDependants));
+		// numDefinitionDependants = getNumDependants(node, 2, GenealogyEdgeType.DefinitionOnDefinition,
+		// GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		// GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		// result.add(new GenealogyMetricValue(definitionDependantsD2, this.genealogy.getNodeId(node),
+		// numDefinitionDependants));
+		// numDefinitionDependants = getNumDependants(node, 3, GenealogyEdgeType.DefinitionOnDefinition,
+		// GenealogyEdgeType.DefinitionOnDeletedDefinition,
+		// GenealogyEdgeType.DeletedDefinitionOnDefinition);
+		// result.add(new GenealogyMetricValue(definitionDependantsD3, this.genealogy.getNodeId(node),
+		// numDefinitionDependants));
 		
 		// Call dependants
-		int numCallDependants = getNumDependants(node, 1, GenealogyEdgeType.CallOnDefinition,
-		                                         GenealogyEdgeType.DeletedCallOnCall,
-		                                         GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(callDependants, genealogy.getNodeId(node), numCallDependants));
-		numCallDependants = getNumDependants(node, 2, GenealogyEdgeType.CallOnDefinition,
-		                                     GenealogyEdgeType.DeletedCallOnCall,
-		                                     GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(callDependantsD2, genealogy.getNodeId(node), numCallDependants));
-		numCallDependants = getNumDependants(node, 3, GenealogyEdgeType.CallOnDefinition,
-		                                     GenealogyEdgeType.DeletedCallOnCall,
-		                                     GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(callDependantsD3, genealogy.getNodeId(node), numCallDependants));
+		final int numCallDependants = getNumDependants(node, 1, GenealogyEdgeType.CallOnDefinition,
+		                                               GenealogyEdgeType.DeletedCallOnCall,
+		                                               GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		result.add(new GenealogyMetricValue(callDependants, this.genealogy.getNodeId(node), numCallDependants));
+		// numCallDependants = getNumDependants(node, 2, GenealogyEdgeType.CallOnDefinition,
+		// GenealogyEdgeType.DeletedCallOnCall,
+		// GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		// result.add(new GenealogyMetricValue(callDependantsD2, this.genealogy.getNodeId(node), numCallDependants));
+		// numCallDependants = getNumDependants(node, 3, GenealogyEdgeType.CallOnDefinition,
+		// GenealogyEdgeType.DeletedCallOnCall,
+		// GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+		// result.add(new GenealogyMetricValue(callDependantsD3, this.genealogy.getNodeId(node), numCallDependants));
 		
 		// check for data integrity
 		Condition.check(result.size() == getMetricNames().size(), "The number of "
