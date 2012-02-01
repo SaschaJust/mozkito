@@ -147,6 +147,12 @@
 		<class>de.unisaarland.cs.st.moskito.rcs.model.RCSFile</class>
 		<class>de.unisaarland.cs.st.moskito.rcs.model.RCSRevision</class>
 		<class>de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.AttachmentEntry</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.CommentPrimaryKey</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.History</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement</class>
+		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.Report</class>
 		<class>de.unisaarland.cs.st.moskito.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaElement</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition</class>
