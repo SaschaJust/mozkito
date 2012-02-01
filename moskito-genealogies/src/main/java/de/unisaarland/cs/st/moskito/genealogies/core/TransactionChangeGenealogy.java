@@ -143,8 +143,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	@NoneNull
 	boolean addVertex(@NotNull final RCSTransaction v) {
 		if (hasVertex(v)) {
-			if (Logger.logDebug()) {
-				Logger.debug("RCSTransaction with id `" + v.getId() + "` already exists");
+			if (Logger.logTrace()) {
+				Logger.trace("RCSTransaction with id `" + v.getId() + "` already exists");
 			}
 			return false;
 		}
