@@ -42,7 +42,8 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	
 	private final Map<RCSTransaction, Collection<JavaChangeOperation>>                      partitionCache  = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
 	
-	private final Map<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>> dependencyCache = new HashMap<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>>();
+	private final Map<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>> dependentsCache = new HashMap<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>>();
+	private final Map<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>> parentsCache    = new HashMap<RCSTransaction, Map<GenealogyEdgeType[], Collection<RCSTransaction>>>();
 	
 	private final PartitionChangeGenealogy                                                  partitionChangeGenealogy;
 	
@@ -74,7 +75,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	public Collection<RCSTransaction> getDependants(final RCSTransaction t,
 	                                                final GenealogyEdgeType... edgeTypes) {
 		
-		if ((!this.dependencyCache.containsKey(t)) || (!this.dependencyCache.get(t).containsKey(edgeTypes))) {
+		if ((!this.dependentsCache.containsKey(t)) || (!this.dependentsCache.get(t).containsKey(edgeTypes))) {
 			final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
 			final Collection<Collection<JavaChangeOperation>> dependents = this.partitionChangeGenealogy.getDependants(fromPartition,
 			                                                                                                           edgeTypes);
@@ -89,13 +90,13 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 					result.add(parent.getRevision().getTransaction());
 				}
 			}
-			if (!this.dependencyCache.containsKey(t)) {
-				this.dependencyCache.put(t, new HashMap<GenealogyEdgeType[], Collection<RCSTransaction>>());
+			if (!this.dependentsCache.containsKey(t)) {
+				this.dependentsCache.put(t, new HashMap<GenealogyEdgeType[], Collection<RCSTransaction>>());
 			}
-			this.dependencyCache.get(t).put(edgeTypes, result);
+			this.dependentsCache.get(t).put(edgeTypes, result);
 		}
 		
-		return this.dependencyCache.get(t).get(edgeTypes);
+		return this.dependentsCache.get(t).get(edgeTypes);
 	}
 	
 	@Override
@@ -114,17 +115,24 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 	@Override
 	public Collection<RCSTransaction> getParents(final RCSTransaction t,
 	                                             final GenealogyEdgeType... edgeTypes) {
-		final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
-		final Collection<Collection<JavaChangeOperation>> parents = this.partitionChangeGenealogy.getParents(fromPartition,
-		                                                                                                     edgeTypes);
-		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		
-		for (final Collection<JavaChangeOperation> partition : parents) {
-			for (final JavaChangeOperation parent : partition) {
-				result.add(parent.getRevision().getTransaction());
+		if ((!this.parentsCache.containsKey(t)) || (!this.parentsCache.get(t).containsKey(edgeTypes))) {
+			final Collection<JavaChangeOperation> fromPartition = transactionToPartition(t);
+			final Collection<Collection<JavaChangeOperation>> parents = this.partitionChangeGenealogy.getParents(fromPartition,
+			                                                                                                     edgeTypes);
+			final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
+			
+			for (final Collection<JavaChangeOperation> partition : parents) {
+				for (final JavaChangeOperation parent : partition) {
+					result.add(parent.getRevision().getTransaction());
+				}
 			}
+			if (!this.parentsCache.containsKey(t)) {
+				this.parentsCache.put(t, new HashMap<GenealogyEdgeType[], Collection<RCSTransaction>>());
+			}
+			this.parentsCache.get(t).put(edgeTypes, result);
 		}
-		return result;
+		return this.parentsCache.get(t).get(edgeTypes);
 	}
 	
 	@Override
