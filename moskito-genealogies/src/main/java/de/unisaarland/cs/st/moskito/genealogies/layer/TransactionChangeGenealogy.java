@@ -176,7 +176,7 @@ public class TransactionChangeGenealogy extends ChangeGenealogyLayer<RCSTransact
 		return numEdges;
 	}
 	
-	private synchronized Collection<JavaChangeOperation> transactionToPartition(final RCSTransaction transaction) {
+	private Collection<JavaChangeOperation> transactionToPartition(final RCSTransaction transaction) {
 		if (!this.partitionCache.containsKey(transaction)) {
 			
 			if (Logger.logDebug()) {
