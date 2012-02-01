@@ -49,8 +49,8 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		// FIXME This should be done using the appropriate argument
 		final String fixPattern = System.getProperty("fix.pattern", "(\\d+)");
 		
-		final Regex regex = new Regex(fixPattern);
-		final List<List<RegexGroup>> regexHits = regex.findAll(commitMessage);
+		final Regex regex = new Regex(fixPattern.toLowerCase());
+		final List<List<RegexGroup>> regexHits = regex.findAll(commitMessage.toLowerCase());
 		if (regexHits != null) {
 			for (final List<RegexGroup> hit : regexHits) {
 				final String reportId = hit.get(0).getMatch();

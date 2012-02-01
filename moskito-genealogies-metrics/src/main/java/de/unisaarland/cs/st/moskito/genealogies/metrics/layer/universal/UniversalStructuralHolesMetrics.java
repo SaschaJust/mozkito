@@ -66,7 +66,9 @@ public class UniversalStructuralHolesMetrics<T> {
 			inEffStat.addValue(CollectionUtils.intersection(incoming, inTies).size());
 		}
 		final double inEgoSize = incoming.size();
-		final double inEffValue = inEgoSize - inEffStat.getMean();
+		final double inEffValue = inEgoSize - ((inEffStat.getN() < 0)
+		                                                             ? 0
+		                                                             : inEffStat.getMean());
 		result.add(new GenealogyMetricValue(inEffSize, nodeId, inEffValue));
 		result.add(new GenealogyMetricValue(inEfficiency, nodeId, (inEffValue / (inEgoSize + 1))));
 		
@@ -78,7 +80,9 @@ public class UniversalStructuralHolesMetrics<T> {
 			outEffStat.addValue(CollectionUtils.intersection(outgoing, outTies).size());
 		}
 		final double outEgoSize = outgoing.size();
-		final double outEffValue = outEgoSize - inEffStat.getMean();
+		final double outEffValue = outEgoSize - ((outEffStat.getN() < 0)
+		                                                                ? 0
+		                                                                : outEffStat.getMean());
 		result.add(new GenealogyMetricValue(outEffSize, nodeId, outEffValue));
 		result.add(new GenealogyMetricValue(outEfficiency, nodeId, (outEffValue / (outEgoSize + 1))));
 		
@@ -87,14 +91,15 @@ public class UniversalStructuralHolesMetrics<T> {
 			// get the number of connections between in and all other ego-network
 			final Collection<T> ties = this.genealogy.getAllDependants(ego);
 			ties.addAll(this.genealogy.getAllParents(ego));
-			inEffStat.addValue(CollectionUtils.intersection(egoNetwork, ties).size());
+			effStat.addValue(CollectionUtils.intersection(egoNetwork, ties).size());
 		}
 		final double egoSize = egoNetwork.size();
-		final double effValue = egoSize - effStat.getMean();
+		final double effValue = egoSize - ((effStat.getN() < 0)
+		                                                       ? 0
+		                                                       : effStat.getMean());
 		result.add(new GenealogyMetricValue(effSize, nodeId, effValue));
 		result.add(new GenealogyMetricValue(efficiency, nodeId, (effValue / (egoSize + 1))));
 		
 		return result;
 	}
-	
 }
