@@ -33,7 +33,7 @@ public class UniversalChildrenMetrics<T> {
 	private static String avgChildrenIn       = "AvgChildrenIn";
 	
 	public static Collection<String> getMetricNames() {
-		Collection<String> result = new LinkedList<String>();
+		final Collection<String> result = new LinkedList<String>();
 		result.add(numChildrenChildren);
 		result.add(numChildrenOut);
 		result.add(avgChildrenChildren);
@@ -45,28 +45,28 @@ public class UniversalChildrenMetrics<T> {
 		return result;
 	}
 	
-	private ChangeGenealogy<T> genealogy;
+	private final ChangeGenealogy<T> genealogy;
 	
-	public UniversalChildrenMetrics(ChangeGenealogy<T> genealogy) {
+	public UniversalChildrenMetrics(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 	}
 	
-	public Collection<GenealogyMetricValue> handle(T node) {
-		Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
+	public Collection<GenealogyMetricValue> handle(final T node) {
+		final Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
-		DescriptiveStatistics childrenChildren = new DescriptiveStatistics();
-		DescriptiveStatistics childrenOut = new DescriptiveStatistics();
-		DescriptiveStatistics childrenParents = new DescriptiveStatistics();
-		DescriptiveStatistics childrenIn = new DescriptiveStatistics();
+		final DescriptiveStatistics childrenChildren = new DescriptiveStatistics();
+		final DescriptiveStatistics childrenOut = new DescriptiveStatistics();
+		final DescriptiveStatistics childrenParents = new DescriptiveStatistics();
+		final DescriptiveStatistics childrenIn = new DescriptiveStatistics();
 		
-		for (T child : genealogy.getAllDependants(node)) {
-			childrenChildren.addValue(genealogy.getAllDependants(child).size());
-			childrenOut.addValue(genealogy.outDegree(node));
-			childrenParents.addValue(genealogy.getAllParents(child).size());
-			childrenIn.addValue(genealogy.inDegree(node));
+		for (final T child : this.genealogy.getAllDependants(node)) {
+			childrenChildren.addValue(this.genealogy.getAllDependants(child).size());
+			childrenOut.addValue(this.genealogy.outDegree(node));
+			childrenParents.addValue(this.genealogy.getAllParents(child).size());
+			childrenIn.addValue(this.genealogy.inDegree(node));
 		}
 		
-		String nodeId = genealogy.getNodeId(node);
+		final String nodeId = this.genealogy.getNodeId(node);
 		
 		result.add(new GenealogyMetricValue(numChildrenChildren, nodeId,
 		                                    (childrenChildren.getN() < 1)
