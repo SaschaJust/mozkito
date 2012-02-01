@@ -88,22 +88,22 @@ public class UniversalDwReachMetric<T> {
 	public Collection<GenealogyMetricValue> handle(final T node) {
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(1);
 		
-		// final Set<T> roots = new HashSet<T>();
-		// final Set<T> seen = new HashSet<T>();
-		// roots.add(node);
-		// seen.add(node);
-		// final List<Set<T>> reach = getReach(node, roots, seen);
-		//
-		// // System.out.println("########## " + genealogy.getNodeId(node));
-		// // System.out.println(StringUtils.join(reach.toArray(new
-		// // Object[reach.size()])));
-		//
-		// double dwReachValue = 0;
-		// for (int i = 0; i < reach.size(); ++i) {
-		// dwReachValue += (reach.get(i).size() / ((double) i + 1));
-		// }
+		final Set<T> roots = new HashSet<T>();
+		final Set<T> seen = new HashSet<T>();
+		roots.add(node);
+		seen.add(node);
+		final List<Set<T>> reach = getReach(node, roots, seen);
 		
-		metricValues.add(new GenealogyMetricValue(dwReach, this.genealogy.getNodeId(node), 0.0));
+		// System.out.println("########## " + genealogy.getNodeId(node));
+		// System.out.println(StringUtils.join(reach.toArray(new
+		// Object[reach.size()])));
+		
+		double dwReachValue = 0;
+		for (int i = 0; i < reach.size(); ++i) {
+			dwReachValue += (reach.get(i).size() / ((double) i + 1));
+		}
+		
+		metricValues.add(new GenealogyMetricValue(dwReach, this.genealogy.getNodeId(node), dwReachValue));
 		
 		return metricValues;
 	}
