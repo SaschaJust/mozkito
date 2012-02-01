@@ -26,6 +26,7 @@ public class GenealogyToolChain extends AndamaChain {
 	
 	private final AndamaPool         threadPool;
 	private final GenealogyArguments genealogyArgs;
+	private CoreChangeGenealogy genealogy;
 	
 	public GenealogyToolChain() {
 		super(new GenealogySettings());
@@ -47,11 +48,13 @@ public class GenealogyToolChain extends AndamaChain {
 		if (Logger.logInfo()) {
 			Logger.info("Terminating.");
 		}
+		this.genealogy.getTransactionLayer().close();
+		this.genealogy.close();
 	}
 	
 	@Override
 	public void setup() {
-		final CoreChangeGenealogy genealogy = this.genealogyArgs.getValue();
+		genealogy = this.genealogyArgs.getValue();
 		
 		final BranchFactory branchFactory = new BranchFactory(genealogy.getPersistenceUtil());
 		

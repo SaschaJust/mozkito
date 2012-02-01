@@ -82,6 +82,8 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		if (Logger.logInfo()) {
 			Logger.info("Terminating threads.");
 		}
+		this.genealogy.getTransactionLayer().close();
+		this.genealogy.close();
 	}
 	
 	@Override
