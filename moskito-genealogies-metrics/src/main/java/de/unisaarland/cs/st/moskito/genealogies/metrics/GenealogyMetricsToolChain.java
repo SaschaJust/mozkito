@@ -36,8 +36,8 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.Genealog
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionAncestorMetrics;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionChildrenMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionAuthorMetrics;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionChangeSizeMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
@@ -159,9 +159,9 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				// }
 				
 				new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-				                                     new TransactionAncestorMetrics(transactionChangeGenealogy));
+				                                     new TransactionAuthorMetrics(transactionChangeGenealogy));
 				new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-				                                     new TransactionChildrenMetrics(transactionChangeGenealogy));
+				                                     new TransactionChangeSizeMetrics(transactionChangeGenealogy));
 				
 			} catch (final Exception e) {
 				if (Logger.logError()) {
