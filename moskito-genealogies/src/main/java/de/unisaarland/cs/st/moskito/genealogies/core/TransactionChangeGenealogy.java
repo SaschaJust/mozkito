@@ -16,9 +16,11 @@ package de.unisaarland.cs.st.moskito.genealogies.core;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -41,22 +43,24 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransaction> {
 	
-	public static final String         NODE_ID       = "transaction_id";
-	public static final String         ROOT_VERTICES = "root_vertices";
+	public static final String                NODE_ID       = "transaction_id";
+	public static final String                ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
-	private final GraphDatabaseService graph;
+	private final GraphDatabaseService        graph;
 	
 	/** The persistence util. */
-	private final PersistenceUtil      persistenceUtil;
+	private final PersistenceUtil             persistenceUtil;
 	
-	private final File                 dbFile;
+	private final File                        dbFile;
 	
-	private final IndexManager         indexManager;
+	private final IndexManager                indexManager;
 	
-	private final Index<Node>          nodeIndex;
-	private final Index<Node>          rootIndex;
-	private final CoreChangeGenealogy  core;
+	private final Index<Node>                 nodeIndex;
+	private final Index<Node>                 rootIndex;
+	private final CoreChangeGenealogy         core;
+	
+	private final Map<String, RCSTransaction> nodeCache     = new HashMap<String, RCSTransaction>();
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -516,7 +520,10 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	
 	public RCSTransaction loadById(final String id,
 	                               final Class<? extends RCSTransaction> clazz) {
-		return this.persistenceUtil.loadById(id, clazz);
+		if (!this.nodeCache.containsKey(id)) {
+			this.nodeCache.put(id, this.persistenceUtil.loadById(id, clazz));
+		}
+		return this.nodeCache.get(id);
 	}
 	
 	/**
