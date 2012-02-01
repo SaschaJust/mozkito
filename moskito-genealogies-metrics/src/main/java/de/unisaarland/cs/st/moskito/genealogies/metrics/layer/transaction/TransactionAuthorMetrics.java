@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;

@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.core;
 
 import java.io.File;
@@ -8,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -22,40 +34,29 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-/**
- * The Class ChangeGenealogy.
- * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
- */
-public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
+public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransaction> {
 	
-	public static final String               NODE_ID       = "javachangeooeration_id";
-	public static final String               ROOT_VERTICES = "root_vertices";
+	public static final String         NODE_ID       = "transaction_id";
+	public static final String         ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
-	private final GraphDatabaseService       graph;
+	private final GraphDatabaseService graph;
 	
 	/** The persistence util. */
-	private final PersistenceUtil            persistenceUtil;
+	private final PersistenceUtil      persistenceUtil;
 	
-	private final File                       dbFile;
+	private final File                 dbFile;
 	
-	private final IndexManager               indexManager;
+	private final IndexManager         indexManager;
 	
-	private final Index<Node>                nodeIndex;
-	private final Index<Node>                rootIndex;
-	
-	private final TransactionChangeGenealogy transactionGenealogy;
+	private final Index<Node>          nodeIndex;
+	private final Index<Node>          rootIndex;
+	private final CoreChangeGenealogy  core;
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -64,29 +65,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *            the graph
 	 * @param dbFile
 	 */
-	public CoreChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull final File dbFile,
-	        final PersistenceUtil persistenceUtil) {
+	public TransactionChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull final File dbFile,
+	        final PersistenceUtil persistenceUtil, @NotNull final CoreChangeGenealogy core) {
 		this.graph = graph;
 		this.dbFile = dbFile;
 		this.persistenceUtil = persistenceUtil;
 		this.indexManager = graph.index();
 		this.nodeIndex = this.indexManager.forNodes(NODE_ID);
 		this.rootIndex = this.indexManager.forNodes(ROOT_VERTICES);
-		
-		final File transactionDbFile = new File(dbFile.getAbsolutePath() + FileUtils.fileSeparator + "transactionLayer");
-		
-		final GraphDatabaseService transactionGraphService = new EmbeddedGraphDatabase(
-		                                                                               transactionDbFile.getAbsolutePath());
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			
-			@Override
-			public void run() {
-				transactionGraphService.shutdown();
-			}
-		});
-		
-		this.transactionGenealogy = new TransactionChangeGenealogy(transactionGraphService, transactionDbFile,
-		                                                           persistenceUtil, this);
+		this.core = core;
 	}
 	
 	/**
@@ -102,180 +89,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return true, if successful
 	 */
 	@NoneNull
-	public boolean addEdge(final JavaChangeOperation dependent,
-	                       final JavaChangeOperation target,
-	                       final GenealogyEdgeType edgeType) {
-		
-		final ChangeType depChangeType = dependent.getChangeType();
-		final JavaElement depElement = dependent.getChangedElementLocation().getElement();
-		final JavaElement targetElement = target.getChangedElementLocation().getElement();
-		final ChangeType targetChangeType = target.getChangeType();
-		
-		if (dependent.getRevision().getTransaction().getTimestamp()
-		             .isBefore(target.getRevision().getTransaction().getTimestamp())) {
-			if (Logger.logError()) {
-				Logger.error("Trying to add edge between dependent and target for which "
-				        + "the dependant occured before the target. THIS IS IMPOSSIBLE. "
-				        + "The future cannot influence the past: " + dependent + " --> " + target);
-			}
-			return false;
-		}
-		
-		switch (edgeType) {
-			case DefinitionOnDefinition:
-			case DefinitionOnDeletedDefinition:
-				if (depChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge starting from delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (!(depElement instanceof JavaMethodDefinition)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge starting from non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				if (!(targetElement instanceof JavaMethodDefinition)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge pointing to non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				
-				switch (edgeType) {
-					case DefinitionOnDefinition:
-						if (targetChangeType.equals(ChangeType.Deleted)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DefinitionOnDefinition` edge pointing to delete operation. Edge not added.");
-							}
-							return false;
-						}
-						break;
-					case DefinitionOnDeletedDefinition:
-						if (!targetChangeType.equals(ChangeType.Deleted)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DefinitionOnDefinition` edge pointing to non-delete operation. Edge not added.");
-							}
-							return false;
-						}
-						break;
-					default:
-						if (Logger.logError()) {
-							Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
-							        + dependent.toString() + " target=" + target.toString());
-						}
-						return false;
-				}
-				break;
-			
-			case DeletedDefinitionOnDefinition:
-				if (!depChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge starting from non-delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (!(depElement instanceof JavaMethodDefinition)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge starting from non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				if (targetChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge pointing to delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (!(targetElement instanceof JavaMethodDefinition)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedDefinitionOnDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				break;
-			case CallOnDefinition:
-				if (depChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `CallOnDefinition` edge starting from delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (targetChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `CallOnDefinition` edge starting from delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (!(depElement instanceof JavaMethodCall)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `CallOnDefinition` edge starting from non JavaMethodCall. Edge not added.");
-					}
-					return false;
-				}
-				if (!(targetElement instanceof JavaMethodDefinition)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `CallOnDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				break;
-			case DeletedCallOnCall:
-			case DeletedCallOnDeletedDefinition:
-				
-				if (!depChangeType.equals(ChangeType.Deleted)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedCallOn[DeletedDefinition|Call]` edge starting from non-delete operation. Edge not added.");
-					}
-					return false;
-				}
-				if (!(depElement instanceof JavaMethodCall)) {
-					if (Logger.logError()) {
-						Logger.error("Cannot add `DeletedCallOn[DeletedDefinition|Call]` edge starting from non JavaMethodDefinition. Edge not added.");
-					}
-					return false;
-				}
-				switch (edgeType) {
-					case DeletedCallOnCall:
-						if (targetChangeType.equals(ChangeType.Deleted)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DeletedCallOnCall` edge pointing to delete operation. Edge not added.");
-							}
-							return false;
-						}
-						if (!(targetElement instanceof JavaMethodCall)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DeletedCallOnCall` edge pointing to non JavaMethodCall. Edge not added.");
-							}
-							return false;
-						}
-						break;
-					case DeletedCallOnDeletedDefinition:
-						if (!targetChangeType.equals(ChangeType.Deleted)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DeletedCallOnDeletedDefinition` edge pointing to non-delete operation. Edge not added.");
-							}
-							return false;
-						}
-						if (!(targetElement instanceof JavaMethodDefinition)) {
-							if (Logger.logError()) {
-								Logger.error("Cannot add `DeletedCallOnDeletedDefinition` edge pointing to non JavaMethodDefinition. Edge not added.");
-							}
-							return false;
-						}
-						break;
-					default:
-						return false;
-				}
-				break;
-			default:
-				if (Logger.logError()) {
-					Logger.error("Unhandled situation found: edgeType=" + edgeType.toString() + " dependent="
-					        + dependent.toString() + " target=" + target.toString());
-				}
-				return false;
-		}
+	boolean addEdge(final RCSTransaction dependent,
+	                final RCSTransaction target,
+	                final GenealogyEdgeType edgeType) {
 		
 		// add both vertices
 		if (!containsVertex(dependent)) {
@@ -312,13 +128,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			tx.success();
 			tx.finish();
 		}
-		
-		if (!dependent.getRevision().getTransaction().getId().equals(target.getRevision().getTransaction().getId())) {
-			this.transactionGenealogy.addEdge(dependent.getRevision().getTransaction(), target.getRevision()
-			                                                                                  .getTransaction(),
-			                                  edgeType);
-		}
-		
 		return true;
 	}
 	
@@ -332,10 +141,10 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 *         already).
 	 */
 	@NoneNull
-	public boolean addVertex(@NotNull final JavaChangeOperation v) {
+	boolean addVertex(@NotNull final RCSTransaction v) {
 		if (hasVertex(v)) {
-			if (Logger.logWarn()) {
-				Logger.warn("JavaChangeOperations with id `" + v.getId() + "` already exists");
+			if (Logger.logDebug()) {
+				Logger.debug("RCSTransaction with id `" + v.getId() + "` already exists");
 			}
 			return false;
 		}
@@ -353,8 +162,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		
 		tx.success();
 		tx.finish();
-		
-		this.transactionGenealogy.addVertex(v.getRevision().getTransaction());
 		
 		return true;
 		
@@ -379,14 +186,14 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return true, if an edge from <code>from</code> to <code>to</code> exists, false otherwise.
 	 */
 	@Override
-	public boolean containsEdge(final JavaChangeOperation from,
-	                            final JavaChangeOperation to) {
+	public boolean containsEdge(final RCSTransaction from,
+	                            final RCSTransaction to) {
 		final GenealogyEdgeType result = getEdge(from, to);
 		return result != null;
 	}
 	
 	@Override
-	public boolean containsVertex(final JavaChangeOperation vertex) {
+	public boolean containsVertex(final RCSTransaction vertex) {
 		return hasVertex(vertex);
 	}
 	
@@ -407,7 +214,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getAllDependants(final JavaChangeOperation operation) {
+	public Collection<RCSTransaction> getAllDependants(final RCSTransaction operation) {
 		return getDependants(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -432,7 +239,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<JavaChangeOperation> getAllParents(final JavaChangeOperation operation) {
+	public Collection<RCSTransaction> getAllParents(final RCSTransaction operation) {
 		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -441,7 +248,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	@Override
 	public CoreChangeGenealogy getCore() {
-		return this;
+		return this.core;
 	}
 	
 	/**
@@ -454,22 +261,24 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 */
 	@Override
 	@NoneNull
-	public Collection<JavaChangeOperation> getDependants(final JavaChangeOperation operation,
-	                                                     final GenealogyEdgeType... edgeTypes) {
+	public Collection<RCSTransaction> getDependants(final RCSTransaction operation,
+	                                                final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
 			}
-			return new HashSet<JavaChangeOperation>();
+			return new HashSet<RCSTransaction>();
 		}
 		final Collection<Node> dependentNodes = getDependents(node, edgeTypes);
-		final Set<JavaChangeOperation> parentOperations = new HashSet<JavaChangeOperation>();
+		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
 		for (final Node dependentNode : dependentNodes) {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
 		return parentOperations;
 	}
+	
+	// /////////////
 	
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
@@ -490,8 +299,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return parents;
 	}
 	
-	// /////////////
-	
 	/**
 	 * Returns the directed edge type between the two specified vertices.
 	 * 
@@ -502,8 +309,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return the edge or <code>null</code> if no such edge exists.
 	 */
 	@NoneNull
-	public GenealogyEdgeType getEdge(final JavaChangeOperation from,
-	                                 final JavaChangeOperation to) {
+	public GenealogyEdgeType getEdge(final RCSTransaction from,
+	                                 final RCSTransaction to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -531,8 +338,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(final JavaChangeOperation from,
-	                                              final JavaChangeOperation to) {
+	public Collection<GenealogyEdgeType> getEdges(final RCSTransaction from,
+	                                              final RCSTransaction to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -593,7 +400,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return this.graph;
 	}
 	
-	private Node getNodeForVertex(final JavaChangeOperation op) {
+	private Node getNodeForVertex(final RCSTransaction op) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, op.getId());
 		if (!indexHits.hasNext()) {
 			return null;
@@ -604,36 +411,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public String getNodeId(final JavaChangeOperation t) {
+	public String getNodeId(final RCSTransaction t) {
 		if (containsVertex(t)) {
-			return String.valueOf(t.getId());
+			return t.getId();
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns a collection containing nodes connected though outgoing edges.
-	 * 
-	 * @param types
-	 *            consider only edges of these types
-	 * @return the dependents
-	 */
-	@Override
-	public Collection<JavaChangeOperation> getParents(final JavaChangeOperation operation,
-	                                                  final GenealogyEdgeType... edgeTypes) {
-		final Node node = getNodeForVertex(operation);
-		if (node == null) {
-			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
-			}
-			return new HashSet<JavaChangeOperation>();
-		}
-		final Collection<Node> dependentNodes = getParents(node, edgeTypes);
-		final Set<JavaChangeOperation> parentOperations = new HashSet<JavaChangeOperation>();
-		for (final Node dependentNode : dependentNodes) {
-			parentOperations.add(getVertexForNode(dependentNode));
-		}
-		return parentOperations;
 	}
 	
 	/**
@@ -654,6 +436,31 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	/**
+	 * Returns a collection containing nodes connected though outgoing edges.
+	 * 
+	 * @param types
+	 *            consider only edges of these types
+	 * @return the dependents
+	 */
+	@Override
+	public Collection<RCSTransaction> getParents(final RCSTransaction operation,
+	                                             final GenealogyEdgeType... edgeTypes) {
+		final Node node = getNodeForVertex(operation);
+		if (node == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
+			}
+			return new HashSet<RCSTransaction>();
+		}
+		final Collection<Node> dependentNodes = getParents(node, edgeTypes);
+		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
+		for (final Node dependentNode : dependentNodes) {
+			parentOperations.add(getVertexForNode(dependentNode));
+		}
+		return parentOperations;
+	}
+	
+	/**
 	 * Gets the PersistenceUtil registered with the ChangeGenealogy.
 	 * 
 	 * @return the persistence util. Returns <code>null</code> if none set.
@@ -663,8 +470,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public Collection<JavaChangeOperation> getRoots() {
-		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+	public Collection<RCSTransaction> getRoots() {
+		final Collection<RCSTransaction> result = new HashSet<RCSTransaction>();
 		final IndexHits<Node> indexHits = this.rootIndex.query(ROOT_VERTICES, 1);
 		while (indexHits.hasNext()) {
 			result.add(getVertexForNode(indexHits.next()));
@@ -672,21 +479,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return result;
 	}
 	
-	public TransactionChangeGenealogy getTransactionLayer() {
-		return this.transactionGenealogy;
+	private RCSTransaction getVertexForNode(final Node dependentNode) {
+		final String operationId = (String) dependentNode.getProperty(NODE_ID);
+		return loadById(operationId, RCSTransaction.class);
 	}
 	
-	private JavaChangeOperation getVertexForNode(final Node dependentNode) {
-		final Long operationId = (Long) dependentNode.getProperty(NODE_ID);
-		return loadById(operationId, JavaChangeOperation.class);
-	}
-	
-	public boolean hasVertex(final JavaChangeOperation vertex) {
+	public boolean hasVertex(final RCSTransaction vertex) {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
 	@Override
-	public int inDegree(final JavaChangeOperation op) {
+	public int inDegree(final RCSTransaction op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING,
 		                                                                   GenealogyEdgeType.values());
@@ -699,7 +502,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public int inDegree(final JavaChangeOperation op,
+	public int inDegree(final RCSTransaction op,
 	                    final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
@@ -711,8 +514,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
-	public JavaChangeOperation loadById(final long id,
-	                                    final Class<? extends JavaChangeOperation> clazz) {
+	public RCSTransaction loadById(final String id,
+	                               final Class<? extends RCSTransaction> clazz) {
 		return this.persistenceUtil.loadById(id, clazz);
 	}
 	
@@ -726,7 +529,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public int outDegree(final JavaChangeOperation op) {
+	public int outDegree(final RCSTransaction op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING,
 		                                                                   GenealogyEdgeType.values());
@@ -739,7 +542,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public int outDegree(final JavaChangeOperation op,
+	public int outDegree(final RCSTransaction op,
 	                     final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
@@ -751,17 +554,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
-	public Iterator<JavaChangeOperation> vertexIterator() {
+	public Iterator<RCSTransaction> vertexIterator() {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
 		
-		final Set<Long> operations = new HashSet<Long>();
+		final Set<String> ids = new HashSet<String>();
 		for (final Node node : indexHits) {
-			operations.add((Long) node.getProperty(NODE_ID));
+			ids.add((String) node.getProperty(NODE_ID));
 		}
 		indexHits.close();
-		return new Iterator<JavaChangeOperation>() {
+		return new Iterator<RCSTransaction>() {
 			
-			private final Iterator<Long> idIter = operations.iterator();
+			private final Iterator<String> idIter = ids.iterator();
 			
 			@Override
 			public boolean hasNext() {
@@ -769,8 +572,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			}
 			
 			@Override
-			public JavaChangeOperation next() {
-				return loadById(this.idIter.next(), JavaChangeOperation.class);
+			public RCSTransaction next() {
+				return loadById(this.idIter.next(), RCSTransaction.class);
 			}
 			
 			@Override
@@ -781,11 +584,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	@Override
-	public Iterable<JavaChangeOperation> vertexSet() {
-		return new Iterable<JavaChangeOperation>() {
+	public Iterable<RCSTransaction> vertexSet() {
+		return new Iterable<RCSTransaction>() {
 			
 			@Override
-			public Iterator<JavaChangeOperation> iterator() {
+			public Iterator<RCSTransaction> iterator() {
 				return vertexIterator();
 			}
 		};

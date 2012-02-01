@@ -26,9 +26,9 @@ import net.ownhero.dev.andama.settings.StringArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
@@ -133,7 +133,8 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 			}
 			
 		} else if (granularity.equals("TRANSACTION")) {
-			final TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(this.genealogy);
+			
+			final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			

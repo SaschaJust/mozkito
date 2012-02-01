@@ -21,14 +21,14 @@ import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactionNode> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public TransactionGenealogyReader(AndamaGroup threadGroup, AndamaSettings settings,
+	public TransactionGenealogyReader(final AndamaGroup threadGroup, final AndamaSettings settings,
 	        final TransactionChangeGenealogy changeGenealogy) {
 		super(threadGroup, settings, false);
 		
@@ -36,7 +36,7 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet().iterator();
+				TransactionGenealogyReader.this.iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		
@@ -44,21 +44,21 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					RCSTransaction t = iterator.next();
+				if (TransactionGenealogyReader.this.iterator.hasNext()) {
+					final RCSTransaction t = TransactionGenealogyReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
 					}
 					
 					GenealogyTransactionNode node = null;
-					if (iterator.hasNext()) {
+					if (TransactionGenealogyReader.this.iterator.hasNext()) {
 						node = new GenealogyTransactionNode(t, changeGenealogy.getNodeId(t));
 					} else {
 						node = new GenealogyTransactionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
-					if (!iterator.hasNext()) {
+					if (!TransactionGenealogyReader.this.iterator.hasNext()) {
 						setCompleted();
 					}
 				}

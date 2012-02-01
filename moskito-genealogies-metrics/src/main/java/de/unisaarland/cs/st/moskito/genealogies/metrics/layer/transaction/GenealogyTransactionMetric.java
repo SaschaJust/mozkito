@@ -14,7 +14,7 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;

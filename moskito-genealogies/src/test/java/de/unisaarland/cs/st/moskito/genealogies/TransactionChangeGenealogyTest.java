@@ -17,12 +17,10 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionPartitioner;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
@@ -39,12 +37,10 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
 		                                                                                                  branchFactory);
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		final TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, persistenceUtil,
-		                                                                               new TransactionPartitioner());
+		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
 		
 		assertEquals(16, tdg.edgeSize());
 		
