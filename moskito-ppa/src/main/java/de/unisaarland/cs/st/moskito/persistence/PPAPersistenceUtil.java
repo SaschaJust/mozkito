@@ -38,6 +38,10 @@ public class PPAPersistenceUtil {
 	                                                                 final RCSTransaction transaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Loading change operations for transaction " + transaction.getId() + " from database.");
+		}
+		
 		for (final RCSRevision revision : transaction.getRevisions()) {
 			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
