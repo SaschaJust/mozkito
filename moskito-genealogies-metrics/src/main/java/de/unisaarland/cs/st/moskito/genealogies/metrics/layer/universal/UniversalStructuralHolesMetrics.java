@@ -66,7 +66,7 @@ public class UniversalStructuralHolesMetrics<T> {
 			inEffStat.addValue(CollectionUtils.intersection(incoming, inTies).size());
 		}
 		final double inEgoSize = incoming.size();
-		final double inEffValue = inEgoSize - ((inEffStat.getN() < 0)
+		final double inEffValue = inEgoSize - ((inEffStat.getN() < 1)
 		                                                             ? 0
 		                                                             : inEffStat.getMean());
 		result.add(new GenealogyMetricValue(inEffSize, nodeId, inEffValue));
@@ -80,7 +80,7 @@ public class UniversalStructuralHolesMetrics<T> {
 			outEffStat.addValue(CollectionUtils.intersection(outgoing, outTies).size());
 		}
 		final double outEgoSize = outgoing.size();
-		final double outEffValue = outEgoSize - ((outEffStat.getN() < 0)
+		final double outEffValue = outEgoSize - ((outEffStat.getN() < 1)
 		                                                                ? 0
 		                                                                : outEffStat.getMean());
 		result.add(new GenealogyMetricValue(outEffSize, nodeId, outEffValue));
@@ -94,7 +94,7 @@ public class UniversalStructuralHolesMetrics<T> {
 			effStat.addValue(CollectionUtils.intersection(egoNetwork, ties).size());
 		}
 		final double egoSize = egoNetwork.size();
-		final double effValue = egoSize - ((effStat.getN() < 0)
+		final double effValue = egoSize - ((effStat.getN() < 1)
 		                                                       ? 0
 		                                                       : effStat.getMean());
 		result.add(new GenealogyMetricValue(effSize, nodeId, effValue));

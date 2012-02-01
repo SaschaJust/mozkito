@@ -79,15 +79,15 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgDepChangeSize, nodeId,
-		                                          (dependantStats.getN() < 0)
+		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMean()));
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId,
-		                                          (dependantStats.getN() < 0)
+		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId,
-		                                          (dependantStats.getN() < 0)
+		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getSum()));
 		
@@ -96,19 +96,18 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgParentChangeSize, nodeId,
-		                                          (parentStats.getN() < 0)
+		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMean()));
 		metricValues.add(new GenealogyMetricValue(maxParentChangeSize, nodeId,
-		                                          (parentStats.getN() < 0)
+		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumParentChangeSize, nodeId,
-		                                          (parentStats.getN() < 0)
+		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getSum()));
 		
 		return metricValues;
 	}
-	
 }
