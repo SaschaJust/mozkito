@@ -36,6 +36,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.Genealog
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionAncestorMetrics;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
@@ -144,16 +145,21 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				                                                                                                                           | Modifier.INTERFACE
 				                                                                                                                           | Modifier.PRIVATE);
 				
-				for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
-					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						final Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
-						if (constructor != null) {
-							final GenealogyTransactionMetric metric = constructor.newInstance(transactionChangeGenealogy);
-							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-							                                     metric);
-						}
-					}
-				}
+				// for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
+				// if (!Modifier.isAbstract(metricClass.getModifiers())) {
+				// final Constructor<? extends GenealogyTransactionMetric> constructor =
+				// metricClass.getConstructor(TransactionChangeGenealogy.class);
+				// if (constructor != null) {
+				// final GenealogyTransactionMetric metric = constructor.newInstance(transactionChangeGenealogy);
+				// new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
+				// metric);
+				// }
+				// }
+				// }
+				
+				new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
+				                                     new TransactionAncestorMetrics(transactionChangeGenealogy));
+				
 			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
