@@ -51,27 +51,29 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		
 		final Regex regex = new Regex(fixPattern);
 		final List<List<RegexGroup>> regexHits = regex.findAll(commitMessage);
-		
-		for (final List<RegexGroup> hit : regexHits) {
-			final String reportId = hit.get(0).getMatch();
-			try {
-				final long rId = Long.valueOf(reportId);
-				final Report report = this.persistenceUtil.loadById(rId, Report.class);
-				if (report == null) {
+		if (regexHits != null) {
+			for (final List<RegexGroup> hit : regexHits) {
+				final String reportId = hit.get(0).getMatch();
+				try {
+					final long rId = Long.valueOf(reportId);
+					final Report report = this.persistenceUtil.loadById(rId, Report.class);
+					if (report == null) {
+						continue;
+					}
+					
+					final int typeOrdinal = report.getType().ordinal();
+					if ((fixType == -1) || (fixType == typeOrdinal)) {
+						fixType = typeOrdinal;
+					} else {
+						fixType = 100;
+					}
+					++numFixes;
+				} catch (final NumberFormatException e) {
 					continue;
 				}
-				
-				final int typeOrdinal = report.getType().ordinal();
-				if ((fixType == -1) || (fixType == typeOrdinal)) {
-					fixType = typeOrdinal;
-				} else {
-					fixType = 100;
-				}
-				++numFixes;
-			} catch (final NumberFormatException e) {
-				continue;
 			}
 		}
+		
 		final String nodeId = this.genealogy.getNodeId(rcsTransaction);
 		result.add(new GenealogyMetricValue(numFixesName, nodeId, numFixes));
 		result.add(new GenealogyMetricValue(fixTypeName, nodeId, fixType));
