@@ -17,3 +17,9 @@ package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/jaxen/
+
+##### Genealogy Metrics #####
+fix.pattern=JAXEN-(\\d+)
+genealogy.graphdb=/data/kim/genealogies/jaxen/june2010/
+genealogy.metric.level=TRANSACTION
+genealogy.metric.out=/tmp/jaxen_genealogies_transaction_metrics.csv

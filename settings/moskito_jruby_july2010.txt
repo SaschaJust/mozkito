@@ -9,7 +9,7 @@ tracker.type=JIRA
 tracker.stop=5811
 tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
 headless
-#mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
+#mapping.config.regexFile=file:///scratch/just/moskito/settings/moskito_xstream_may2011.regex
 #mapping.score.AuthorEquality=1
 #mapping.score.AuthorInequality=0
 #mapping.score.ReportCreatedAfterTransaction=1
@@ -19,8 +19,8 @@ headless
 
 ##### Untangling options: #####
 
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/jruby/eclipse-moskito-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/jruby/eclipse-moskito-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/jruby/
 changecouplings.cache.dir = /data/kim/cache.filechangecouplings/jruby/
 package.distance = 2

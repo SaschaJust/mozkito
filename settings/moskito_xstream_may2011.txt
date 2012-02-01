@@ -19,11 +19,18 @@ mapping.strategies=MajorityStrategy
 
 ##### Untangling options: #####
 
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/xstream
 changecouplings.cache.dir = /data/kim/cache.filechangecouplings/xstream
 package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/xstream/
+
+##### Genealogy Metrics #####
+fix.pattern=XSTR-(\\d+)
+genealogy.graphdb=/data/kim/genealogies/xstream/may2011/
+genealogy.metric.level=TRANSACTION
+genealogy.metric.out=/tmp/xstream_genealogies_transaction_metrics.csv
+
