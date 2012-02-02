@@ -7,41 +7,104 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
+import net.ownhero.dev.andama.settings.dependencies.IsSet;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class MailArguments extends AndamaArgumentSet<Properties> {
 	
+	private final StringArgument       username;
+	private final MaskedStringArgument password;
+	private final StringArgument       host;
+	private final StringArgument       to;
+	private final StringArgument       subject;
+	private final StringArgument       senderName;
+	private final StringArgument       senderAddress;
+	
 	/**
 	 * @param argumentSet
 	 * @param isRequired
 	 */
-	public MailArguments(final AndamaArgumentSet<?> argumentSet, final boolean isRequired) {
-		super(argumentSet, "Used configure mailer arguments for the crash reporter.", isRequired);
+	public MailArguments(final AndamaArgumentSet<?> argumentSet, final Requirement requirements) {
+		super(argumentSet, "Used configure mailer arguments for the crash reporter.", requirements);
 		
-		addArgument(new StringArgument(argumentSet, "mail.host", "The hostname of the mail server",
-		                               "mail.st.cs.uni-saarland.de", isRequired));
-		addArgument(new StringArgument(argumentSet, "mail.to", "The recipient of the crash mail",
-		                               "project_reposuite@st.cs.uni-saarland.de", isRequired));
-		addArgument(new StringArgument(argumentSet, "mail.subject", "The subject of the crash mail",
-		                               "Application Crash Report", isRequired));
-		addArgument(new StringArgument(argumentSet, "mail.sender.name", "The name of the sender of the crash mail",
-		                               "Andama Application", isRequired));
-		addArgument(new StringArgument(argumentSet, "mail.sender.address",
-		                               "The address of the sender of the crash mail",
-		                               "andama-crasher@st.cs.uni-saarland.de", isRequired));
-		addArgument(new StringArgument(argumentSet, "mail.username", "The smtp login username", null,
-		                               argumentSet.getSettings().getSetting("mail.password") != null));
-		addArgument(new MaskedStringArgument(argumentSet, "mail.password", "The smtp login password", null, false));
-		
+		this.host = new StringArgument(argumentSet, "mail.host", "The hostname of the mail server",
+		                               "mail.st.cs.uni-saarland.de", new Required());
+		this.to = new StringArgument(argumentSet, "mail.to", "The recipient of the crash mail",
+		                             "project_reposuite@st.cs.uni-saarland.de", new Required());
+		this.subject = new StringArgument(argumentSet, "mail.subject", "The subject of the crash mail",
+		                                  "Application Crash Report", new Required());
+		this.senderName = new StringArgument(argumentSet, "mail.sender.name",
+		                                     "The name of the sender of the crash mail", "Andama Application",
+		                                     new Required());
+		this.senderAddress = new StringArgument(argumentSet, "mail.sender.address",
+		                                        "The address of the sender of the crash mail",
+		                                        "andama-crasher@st.cs.uni-saarland.de", new Required());
+		this.password = new MaskedStringArgument(argumentSet, "mail.password", "The smtp login password", null,
+		                                         new Optional());
+		this.username = new StringArgument(argumentSet, "mail.username", "The smtp login username", null,
+		                                   new IsSet(this.username));
 		try {
 			addArgument(new StringArgument(argumentSet, "mail.sender.host", "The hostname the crash mail is sent from",
-			                               InetAddress.getLocalHost().getHostName(), isRequired));
+			                               InetAddress.getLocalHost().getHostName(), new Required()));
 		} catch (final UnknownHostException e) {
 			addArgument(new StringArgument(argumentSet, "mail.sender.host", "The hostname the crash mail is sent from",
-			                               "localhost", isRequired));
+			                               "localhost", new Required()));
 		}
+	}
+	
+	/**
+	 * @return the host
+	 */
+	public final StringArgument getHost() {
+		return this.host;
+	}
+	
+	/**
+	 * @return the password
+	 */
+	public final MaskedStringArgument getPassword() {
+		return this.password;
+	}
+	
+	/**
+	 * @return the senderAddress
+	 */
+	public final StringArgument getSenderAddress() {
+		return this.senderAddress;
+	}
+	
+	/**
+	 * @return the senderName
+	 */
+	public final StringArgument getSenderName() {
+		return this.senderName;
+	}
+	
+	/**
+	 * @return the subject
+	 */
+	public final StringArgument getSubject() {
+		return this.subject;
+	}
+	
+	/**
+	 * @return the to
+	 */
+	public final StringArgument getTo() {
+		return this.to;
+	}
+	
+	/**
+	 * @return the username
+	 */
+	public final StringArgument getUsername() {
+		return this.username;
 	}
 	
 	/*

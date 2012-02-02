@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -43,8 +44,8 @@ public class URIArgument extends AndamaArgument<URI> {
 	 * @throws DuplicateArgumentException
 	 */
 	public URIArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		
 	}
 	

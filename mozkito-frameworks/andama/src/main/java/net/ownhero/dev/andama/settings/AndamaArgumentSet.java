@@ -16,11 +16,13 @@
 package net.ownhero.dev.andama.settings;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -29,53 +31,23 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T> {
 	
 	private final HashMap<String, AndamaArgumentInterface<?>> arguments   = new HashMap<String, AndamaArgumentInterface<?>>();
-	private final Set<AndamaArgumentInterface<?>>             dependees   = new HashSet<AndamaArgumentInterface<?>>();
 	private final String                                      name;
 	private final String                                      description;
-	private final boolean                                     required;
+	private final Requirement                                 requirements;
 	private final AndamaSettings                              settings;
 	private boolean                                           init        = false;
 	private T                                                 cachedValue = null;
 	
 	/**
-	 * @param name
-	 * @param description
-	 */
-	private AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description) {
-		this(argumentSet, description, false);
-	}
-	
-	/**
-	 * @param name
-	 * @param description
-	 * @param dependee
-	 */
-	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description,
-	        final AndamaArgumentInterface<?> dependee) {
-		this(argumentSet, description);
-		getDependees().add(dependee);
-	}
-	
-	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 */
-	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description, final boolean required) {
+	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description,
+	        final Requirement requirements) {
 		this.name = getHandle();
 		this.description = description;
 		this.settings = argumentSet.getSettings();
 		argumentSet.addArgument(this);
-		this.required = required;
-	}
-	
-	/**
-	 * @param name
-	 * @param description
-	 * @param dependees
-	 */
-	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description,
-	        final Set<AndamaArgumentInterface<?>> dependees) {
-		this(argumentSet, description);
-		getDependees().addAll(dependees);
+		this.requirements = requirements;
 	}
 	
 	/**
@@ -86,7 +58,7 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 		this.settings = settings;
 		this.description = description;
 		this.name = getHandle();
-		this.required = false;
+		this.requirements = new Required();
 		getSettings().addArgument(this);
 	}
 	
@@ -105,6 +77,8 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 		}
 		
 		this.arguments.put(argument.getName(), argument);
+		
+		getSettings().addArgumentMapping(argument.getName(), this);
 		
 		return true;
 	}
@@ -148,8 +122,8 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	 * @return the dependees
 	 */
 	@Override
-	public final Set<AndamaArgumentInterface<?>> getDependees() {
-		return this.dependees;
+	public final Set<AndamaArgumentInterface<?>> getDependencies() {
+		return this.requirements.getDependencies();
 	}
 	
 	/*
@@ -180,6 +154,16 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 		return this.name;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getRequirements()
+	 */
+	@Override
+	public Requirement getRequirements() {
+		return this.requirements;
+	}
+	
 	/**
 	 * @return the settings
 	 */
@@ -206,6 +190,10 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	 */
 	protected abstract boolean init();
 	
+	final boolean initSubArguments() {
+		return false;
+	}
+	
 	/**
 	 * @return the init
 	 */
@@ -213,12 +201,13 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 		return this.init;
 	}
 	
-	/**
-	 * @return the required
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#required()
 	 */
 	@Override
-	public final boolean required() {
-		return this.required;
+	public boolean required() {
+		return getRequirements().check();
 	}
 	
 	/**
@@ -227,6 +216,33 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	protected final void setCachedValue(final T cachedValue) {
 		this.init = true;
 		this.cachedValue = cachedValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		return toString(0);
+	}
+	
+	@Override
+	public String toString(final int indentation) {
+		StringBuilder builder = new StringBuilder();
+		String indent = String.format("%-" + indentation + "s", "");
+		
+		builder.append(indent).append("===== ").append(getName()).append(" =====").append(FileUtils.lineSeparator);
+		builder.append(indent).append("Description: ").append(getDescription());
+		builder.append(indent).append(required()
+		                                        ? " (Required, due to" + getRequirements() + ")"
+		                                        : "").append(FileUtils.lineSeparator);
+		
+		for (AndamaArgumentInterface<?> argument : this.arguments.values()) {
+			builder.append(argument.toString(indentation + 2));
+		}
+		
+		return builder.toString();
 	}
 	
 }

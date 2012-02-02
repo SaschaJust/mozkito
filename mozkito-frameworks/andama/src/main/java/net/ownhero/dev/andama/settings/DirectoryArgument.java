@@ -17,6 +17,7 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -41,8 +42,8 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	 *            Attempts to create directory if not exist
 	 */
 	public DirectoryArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean create) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements, final boolean create) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		this.create = create;
 	}
 	

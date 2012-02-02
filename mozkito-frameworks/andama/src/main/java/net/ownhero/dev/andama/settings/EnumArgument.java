@@ -17,6 +17,7 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.HashSet;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -33,8 +34,8 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * 
 	 */
 	public EnumArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean required, final String[] possibleValues) {
-		super(argumentSet, name, description, defaultValue, required);
+	        final String defaultValue, final Requirement requirements, final String[] possibleValues) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		this.possibleValues = new HashSet<String>();
 		for (final String s : possibleValues) {
 			this.possibleValues.add(s);

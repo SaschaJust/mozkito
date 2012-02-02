@@ -17,6 +17,7 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -50,8 +51,8 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 *            location must already exist.
 	 */
 	public InputFileArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements) {
+		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
 	/*

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
@@ -32,8 +34,8 @@ public class StringArgument extends AndamaArgument<String> {
 	 * @throws DuplicateArgumentException
 	 */
 	public StringArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		
 	}
 	

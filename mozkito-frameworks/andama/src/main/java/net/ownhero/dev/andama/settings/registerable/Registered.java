@@ -20,7 +20,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,13 +28,10 @@ import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaArgumentSet;
 import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.ListArgument;
-import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * Classes extending {@link Registered} can dynamically register config options
@@ -131,64 +127,76 @@ public abstract class Registered {
 	                                                         final boolean isRequired) {
 		final Set<Registered> registereds = new HashSet<Registered>();
 		
-		final Collection<Class<? extends Registered>> registeredClasses = new LinkedList<Class<? extends Registered>>();
-		try {
-			registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(), superClass,
-			                                                              Modifier.ABSTRACT | Modifier.INTERFACE
-			                                                                      | Modifier.PRIVATE));
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		}
-		
-		final StringBuilder builder = new StringBuilder();
-		
-		for (final Class<? extends Registered> clazz : registeredClasses) {
-			if (builder.length() > 0) {
-				builder.append(",");
-			}
-			builder.append(clazz.getSimpleName());
-		}
-		arguments.addArgument(new ListArgument(settings.getRootArgumentSet(), chain.getName().toLowerCase() + "."
-		        + argumentName, "A list of " + chain.getName() + " " + argumentName + "s that shall be used: "
-		        + buildRegisteredList(registeredClasses), builder.toString(), isRequired));
-		
-		final String registeredstring = System.getProperty(chain.getName().toLowerCase() + "." + argumentName);
-		final Set<String> registeredNames = new HashSet<String>();
-		
-		if (registeredstring != null) {
-			for (final String registeredName : registeredstring.split(",")) {
-				registeredNames.add(superClass.getPackage().getName() + "." + registeredName);
-			}
-			
-		}
-		
-		for (final Class<? extends Registered> klass : registeredClasses) {
-			if (registeredNames.isEmpty() || registeredNames.contains(klass.getCanonicalName())) {
-				if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
-					if (Logger.logInfo()) {
-						Logger.info("Adding new " + klass.getSuperclass().getSimpleName() + " "
-						        + klass.getCanonicalName());
-					}
-					
-					try {
-						final Registered instance = klass.newInstance();
-						instance.register(settings, arguments);
-						instance.setSettings(settings);
-						registereds.add(instance);
-					} catch (final Exception e) {
-						
-						if (Logger.logWarn()) {
-							Logger.warn("Skipping registration of " + klass.getSimpleName() + " due to errors: "
-							                    + e.getMessage(), e);
-						}
-					}
-				}
-			} else {
-				if (Logger.logInfo()) {
-					Logger.info("Not loading available engine: " + klass.getSimpleName());
-				}
-			}
-		}
+		// final Collection<Class<? extends Registered>> registeredClasses = new
+		// LinkedList<Class<? extends Registered>>();
+		// try {
+		// registeredClasses.addAll(ClassFinder.getClassesExtendingClass(superClass.getPackage(),
+		// superClass,
+		// Modifier.ABSTRACT | Modifier.INTERFACE
+		// | Modifier.PRIVATE));
+		// } catch (final Exception e) {
+		// throw new UnrecoverableError(e.getMessage(), e);
+		// }
+		//
+		// final StringBuilder builder = new StringBuilder();
+		//
+		// for (final Class<? extends Registered> clazz : registeredClasses) {
+		// if (builder.length() > 0) {
+		// builder.append(",");
+		// }
+		// builder.append(clazz.getSimpleName());
+		// }
+		// arguments.addArgument(new ListArgument(settings.getRootArgumentSet(),
+		// chain.getName().toLowerCase() + "."
+		// + argumentName, "A list of " + chain.getName() + " " + argumentName +
+		// "s that shall be used: "
+		// + buildRegisteredList(registeredClasses), builder.toString(),
+		// isRequired));
+		//
+		// final String registeredstring =
+		// System.getProperty(chain.getName().toLowerCase() + "." +
+		// argumentName);
+		// final Set<String> registeredNames = new HashSet<String>();
+		//
+		// if (registeredstring != null) {
+		// for (final String registeredName : registeredstring.split(",")) {
+		// registeredNames.add(superClass.getPackage().getName() + "." +
+		// registeredName);
+		// }
+		//
+		// }
+		//
+		// for (final Class<? extends Registered> klass : registeredClasses) {
+		// if (registeredNames.isEmpty() ||
+		// registeredNames.contains(klass.getCanonicalName())) {
+		// if ((klass.getModifiers() & Modifier.ABSTRACT) == 0) {
+		// if (Logger.logInfo()) {
+		// Logger.info("Adding new " + klass.getSuperclass().getSimpleName() +
+		// " "
+		// + klass.getCanonicalName());
+		// }
+		//
+		// try {
+		// final Registered instance = klass.newInstance();
+		// instance.register(settings, arguments);
+		// instance.setSettings(settings);
+		// registereds.add(instance);
+		// } catch (final Exception e) {
+		//
+		// if (Logger.logWarn()) {
+		// Logger.warn("Skipping registration of " + klass.getSimpleName() +
+		// " due to errors: "
+		// + e.getMessage(), e);
+		// }
+		// }
+		// }
+		// } else {
+		// if (Logger.logInfo()) {
+		// Logger.info("Not loading available engine: " +
+		// klass.getSimpleName());
+		// }
+		// }
+		// }
 		
 		return registereds;
 	}

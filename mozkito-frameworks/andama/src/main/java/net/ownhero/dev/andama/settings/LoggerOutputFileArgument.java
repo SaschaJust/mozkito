@@ -16,11 +16,13 @@
 
 package net.ownhero.dev.andama.settings;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+
 public class LoggerOutputFileArgument extends OutputFileArgument {
 	
 	LoggerOutputFileArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
-		super(argumentSet, name, description, defaultValue, isRequired, overwrite);
+	        final String defaultValue, final Requirement requirements, final boolean overwrite) {
+		super(argumentSet, name, description, defaultValue, requirements, overwrite);
 	}
 	
 	/*

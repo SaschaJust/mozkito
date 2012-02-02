@@ -15,6 +15,7 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -34,8 +35,8 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	 * @throws DuplicateArgumentException
 	 */
 	public DoubleArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean required) {
-		super(argumentSet, name, description, defaultValue, required);
+	        final String defaultValue, final Requirement requirements) {
+		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
 	/*

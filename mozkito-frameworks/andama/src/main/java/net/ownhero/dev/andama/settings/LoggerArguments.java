@@ -15,6 +15,8 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
@@ -29,8 +31,8 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	 * @param settings
 	 * @param isRequired
 	 */
-	public LoggerArguments(final AndamaArgumentSet<?> argumentSet, final boolean isRequired) {
-		super(argumentSet, "Used to configure kisa logging options.", isRequired);
+	public LoggerArguments(final AndamaArgumentSet<?> argumentSet, final Requirement requirements) {
+		super(argumentSet, "Used to configure kisa logging options.", requirements);
 		
 		final LogLevel[] values = LogLevel.values();
 		final String[] argEnums = new String[values.length];
@@ -39,18 +41,18 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 		}
 		
 		new EnumArgument(argumentSet, "log.console.level", "determines the log level for the console log", "WARN",
-		                 false, argEnums);
+		                 new Optional(), argEnums);
 		new EnumArgument(argumentSet, "log.file.level", "determines the log level for the oevrall log file", "INFO",
-		                 false, argEnums);
+		                 new Optional(), argEnums);
 		new LoggerOutputFileArgument(argumentSet, "log.file",
-		                             "specifies the path to a file the file log shall be written to.", "./.log", false,
-		                             true);
+		                             "specifies the path to a file the file log shall be written to.", "./.log",
+		                             new Optional(), true);
 		new StringArgument(
 		                   argumentSet,
 		                   "log.class.<class_name>",
 		                   "This is a special option. You can use also multiple of them. Should be used to specify individual log level for particular classes (also works for categories). Replace <class_name> by the name of the class (full qualified, e.g. net.ownhero.dev.kisa.Logger). The value of the option is the log level to be set for this particula class. Optionally you can also a file path the class log will be written to behind the log level, seperated by a colon. The complete format would look like this:"
 		                           + FileUtils.lineSeparator + "-Dlog.class.<class_name>=<log_level>[,<log_file_path>]",
-		                   null, false);
+		                   null, new Optional());
 		System.setProperty("log.class.org.tmatesoft.svn", "WARN");
 		System.setProperty("log.class.org.hibernate", "WARN");
 		System.setProperty("log.class.org.hibernate.type", "WARN");

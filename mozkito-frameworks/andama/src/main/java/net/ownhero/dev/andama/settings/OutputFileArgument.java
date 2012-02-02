@@ -18,6 +18,7 @@ package net.ownhero.dev.andama.settings;
 import java.io.File;
 import java.io.IOException;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -50,8 +51,8 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 *            possible.
 	 */
 	public OutputFileArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final boolean overwrite) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements, final boolean overwrite) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		this.overwrite = overwrite;
 	}
 	

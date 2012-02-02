@@ -17,6 +17,8 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.HashSet;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
@@ -39,8 +41,8 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		this.delimiter = ",";
 	}
 	
@@ -61,8 +63,8 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final boolean isRequired, final String delimiter) {
-		super(argumentSet, name, description, defaultValue, isRequired);
+	        final String defaultValue, final Requirement requirements, final String delimiter) {
+		super(argumentSet, name, description, defaultValue, requirements);
 		this.delimiter = delimiter;
 	}
 	

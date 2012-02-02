@@ -2,12 +2,14 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.Set;
 
+import net.ownhero.dev.andama.settings.dependencies.Requirement;
+
 public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInterface<T>> {
 	
 	/**
 	 * @return
 	 */
-	Set<AndamaArgumentInterface<?>> getDependees();
+	Set<AndamaArgumentInterface<?>> getDependencies();
 	
 	/**
 	 * @return The description of the argument (as printed in help string).
@@ -27,6 +29,11 @@ public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInt
 	/**
 	 * @return
 	 */
+	Requirement getRequirements();
+	
+	/**
+	 * @return
+	 */
 	AndamaSettings getSettings();
 	
 	/**
@@ -39,4 +46,9 @@ public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInt
 	 */
 	boolean required();
 	
+	/**
+	 * @param indentation
+	 * @return
+	 */
+	String toString(int indentation);
 }
