@@ -30,10 +30,10 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	
 	private final HashMap<String, AndamaArgumentInterface<?>> arguments   = new HashMap<String, AndamaArgumentInterface<?>>();
 	private final Set<AndamaArgumentInterface<?>>             dependees   = new HashSet<AndamaArgumentInterface<?>>();
-	private String                                            name;
-	private String                                            description;
-	private boolean                                           required;
-	private AndamaSettings                                    settings;
+	private final String                                      name;
+	private final String                                      description;
+	private final boolean                                     required;
+	private final AndamaSettings                              settings;
 	private boolean                                           init        = false;
 	private T                                                 cachedValue = null;
 	
@@ -41,11 +41,8 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	 * @param name
 	 * @param description
 	 */
-	private AndamaArgumentSet(final AndamaSettings settings, final String description) {
-		setName(getHandle());
-		setDescription(description);
-		setSettings(settings);
-		getSettings().addArgument(this);
+	private AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description) {
+		this(argumentSet, description, false);
 	}
 	
 	/**
@@ -53,18 +50,21 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	 * @param description
 	 * @param dependee
 	 */
-	public AndamaArgumentSet(final AndamaSettings settings, final String description,
+	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description,
 	        final AndamaArgumentInterface<?> dependee) {
-		this(settings, description);
+		this(argumentSet, description);
 		getDependees().add(dependee);
 	}
 	
 	/**
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 */
-	public AndamaArgumentSet(final AndamaSettings settings, final String description, final boolean required) {
-		this(settings, description);
-		setRequired(required);
+	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description, final boolean required) {
+		this.name = getHandle();
+		this.description = description;
+		this.settings = argumentSet.getSettings();
+		argumentSet.addArgument(this);
+		this.required = required;
 	}
 	
 	/**
@@ -72,10 +72,22 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	 * @param description
 	 * @param dependees
 	 */
-	public AndamaArgumentSet(final AndamaSettings settings, final String description,
+	public AndamaArgumentSet(final AndamaArgumentSet<?> argumentSet, final String description,
 	        final Set<AndamaArgumentInterface<?>> dependees) {
-		this(settings, description);
+		this(argumentSet, description);
 		getDependees().addAll(dependees);
+	}
+	
+	/**
+	 * @param settings
+	 * @param description
+	 */
+	AndamaArgumentSet(final AndamaSettings settings, final String description) {
+		this.settings = settings;
+		this.description = description;
+		this.name = getHandle();
+		this.required = false;
+		getSettings().addArgument(this);
 	}
 	
 	/**
@@ -195,6 +207,13 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	protected abstract boolean init();
 	
 	/**
+	 * @return the init
+	 */
+	protected final boolean isInitialized() {
+		return this.init;
+	}
+	
+	/**
 	 * @return the required
 	 */
 	@Override
@@ -208,38 +227,6 @@ public abstract class AndamaArgumentSet<T> implements AndamaArgumentInterface<T>
 	protected final void setCachedValue(final T cachedValue) {
 		this.init = true;
 		this.cachedValue = cachedValue;
-	}
-	
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	private final void setDescription(final String description) {
-		this.description = description;
-	}
-	
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	private final void setName(final String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * @param required
-	 *            the required to set
-	 */
-	private final void setRequired(final boolean required) {
-		this.required = required;
-	}
-	
-	/**
-	 * @param settings
-	 *            the settings to set
-	 */
-	private final void setSettings(final AndamaSettings settings) {
-		this.settings = settings;
 	}
 	
 }

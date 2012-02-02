@@ -7,7 +7,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import net.ownhero.dev.andama.utils.AndamaUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author just
@@ -76,7 +76,9 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause ()
+	 * @see
+	 * net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause
+	 * ()
 	 */
 	@Override
 	public String analyzeFailureCause() {
@@ -117,19 +119,19 @@ public class InstantiationError extends UnrecoverableError {
 					builder.append("The class does not have a default constructor");
 				} else {
 					builder.append("The constructor used to instantiate the class does not match the given arguments: ")
-					       .append(AndamaUtils.lineSeparator);
+					       .append(FileUtils.lineSeparator);
 					builder.append("Valid: ").append(getConstructorString(this.constructor))
-					       .append(AndamaUtils.lineSeparator);
+					       .append(FileUtils.lineSeparator);
 					builder.append("Used:  ")
 					       .append(getConstructorString(this.constructor.getName(),
 					                                    getModifierString(this.constructor.getModifiers()),
-					                                    getArguments())).append(AndamaUtils.lineSeparator);
+					                                    getArguments())).append(FileUtils.lineSeparator);
 				}
 			}
 			
 		}
 		
-		return builder.append(AndamaUtils.lineSeparator).toString();
+		return builder.append(FileUtils.lineSeparator).toString();
 	}
 	
 	/**

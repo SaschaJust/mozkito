@@ -148,11 +148,9 @@ public abstract class Registered {
 			}
 			builder.append(clazz.getSimpleName());
 		}
-		arguments.addArgument(new ListArgument(settings, chain.getName().toLowerCase() + "." + argumentName,
-		                                       "A list of " + chain.getName() + " " + argumentName
-		                                               + "s that shall be used: "
-		                                               + buildRegisteredList(registeredClasses), builder.toString(),
-		                                       isRequired));
+		arguments.addArgument(new ListArgument(settings.getRootArgumentSet(), chain.getName().toLowerCase() + "."
+		        + argumentName, "A list of " + chain.getName() + " " + argumentName + "s that shall be used: "
+		        + buildRegisteredList(registeredClasses), builder.toString(), isRequired));
 		
 		final String registeredstring = System.getProperty(chain.getName().toLowerCase() + "." + argumentName);
 		final Set<String> registeredNames = new HashSet<String>();

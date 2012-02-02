@@ -16,9 +16,9 @@ public class MaskedStringArgument extends StringArgument {
 	 * @param defaultValue
 	 * @param isRequired
 	 */
-	public MaskedStringArgument(final AndamaSettings settings, final String name, final String description,
+	public MaskedStringArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final boolean isRequired) {
-		super(settings, name, description, defaultValue, isRequired);
+		super(argumentSet, name, description, defaultValue, isRequired);
 	}
 	
 	/*

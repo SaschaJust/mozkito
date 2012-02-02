@@ -23,7 +23,7 @@ import javax.mail.internet.MimeMessage;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.utils.AndamaUtils;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -69,7 +69,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		builder.append("total: ").append(bean.getTotalLoadedClassCount()).append(" ");
 		builder.append("current: ").append(bean.getLoadedClassCount()).append(" ");
 		builder.append("unloaded: ").append(bean.getUnloadedClassCount());
-		builder.append(AndamaUtils.lineSeparator);
+		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
 	
@@ -82,27 +82,27 @@ public class AndamaCrashHandler extends ThreadGroup {
 		final StringBuilder body = new StringBuilder();
 		
 		body.append("Application crashed. An automated, anonymous crash report will be send to help us fix the problem.");
-		body.append(AndamaUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
 		body.append("This report does NOT contain any usernames or passwords.");
-		body.append(AndamaUtils.lineSeparator);
-		body.append(AndamaUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
+		body.append(FileUtils.lineSeparator);
 		
 		try {
 			body.append(">>> Crash Report >>>");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			
 			StringWriter stack = new StringWriter();
 			PrintWriter writer = new PrintWriter(stack);
 			e.printStackTrace(writer);
 			
-			// body.append(AndamaUtils.lineSeparator);
-			// body.append(AndamaUtils.lineSeparator);
+			// body.append(FileUtils.lineSeparator);
+			// body.append(FileUtils.lineSeparator);
 			body.append("Stacktrace:");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append(stack.toString());
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			
 			Throwable t = e.getCause();
 			while (t != null) {
@@ -110,12 +110,12 @@ public class AndamaCrashHandler extends ThreadGroup {
 				writer = new PrintWriter(stack);
 				t.printStackTrace(writer);
 				
-				body.append(AndamaUtils.lineSeparator);
+				body.append(FileUtils.lineSeparator);
 				body.append("Cause Stacktrace:");
-				body.append(AndamaUtils.lineSeparator);
-				body.append(AndamaUtils.lineSeparator);
+				body.append(FileUtils.lineSeparator);
+				body.append(FileUtils.lineSeparator);
 				body.append(stack.toString());
-				body.append(AndamaUtils.lineSeparator);
+				body.append(FileUtils.lineSeparator);
 				
 				t = t.getCause();
 			}
@@ -123,70 +123,72 @@ public class AndamaCrashHandler extends ThreadGroup {
 			if (e instanceof UnrecoverableError) {
 				final String failureCause = ((UnrecoverableError) e).analyzeFailureCause();
 				if (failureCause != null) {
-					body.append("Analization of failure cause:").append(AndamaUtils.lineSeparator);
-					body.append(failureCause).append(AndamaUtils.lineSeparator);
+					body.append("Analization of failure cause:").append(FileUtils.lineSeparator);
+					body.append(failureCause).append(FileUtils.lineSeparator);
 				}
 			}
 			
 			body.append("<<< Crash Report <<<");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 		} catch (final Throwable t) {
 			
 		}
 		
 		try {
 			body.append(">>> System Information >>>");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append(getSystemInformation());
 			body.append(getClassLoadingInformation());
 			body.append(getRuntimeInformation());
 			body.append(getJavaInformation());
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append("<<< System Information <<<");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 		} catch (final Throwable t) {
 			
 		}
 		
 		try {
 			body.append(">>> Application Setup >>>");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append(getSettings());
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append("<<< Application Setup <<<");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 		} catch (final Throwable t) {
 			
 		}
 		try {
 			body.append(">>> Application ToolInfo >>>");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append(getToolInformation());
 			body.append("<<< Application ToolInfo <<<");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 		} catch (final Throwable t) {
 			
 		}
 		
 		try {
 			body.append(">>> Active Threads >>>");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 			body.append(getThreadInformation());
 			body.append("<<< Active Threads <<<");
-			body.append(AndamaUtils.lineSeparator);
-			body.append(AndamaUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
+			body.append(FileUtils.lineSeparator);
 		} catch (final Throwable t) {
 			
 		}
+		
+		body.append(this.application.getSettings().getBugReportArgument().getValue()).append(FileUtils.lineSeparator);
 		
 		return body.toString();
 	}
@@ -198,18 +200,17 @@ public class AndamaCrashHandler extends ThreadGroup {
 		final StringBuilder builder = new StringBuilder();
 		
 		builder.append("Java class path: ").append(System.getProperty("java.class.path"))
-		       .append(AndamaUtils.lineSeparator);
+		       .append(FileUtils.lineSeparator);
 		builder.append("Java class version: ").append(System.getProperty("java.class.version"))
-		       .append(AndamaUtils.lineSeparator);
-		builder.append("Java compiler: ").append(System.getProperty("java.compiler")).append(AndamaUtils.lineSeparator);
-		builder.append("Java home: ").append(System.getProperty("java.home")).append(AndamaUtils.lineSeparator);
-		builder.append("Java tempdir: ").append(System.getProperty("java.io.tmpdir")).append(AndamaUtils.lineSeparator);
-		builder.append("Java version: ").append(System.getProperty("java.version")).append(AndamaUtils.lineSeparator);
-		builder.append("Java vendor: ").append(System.getProperty("java.vendor")).append(AndamaUtils.lineSeparator);
-		builder.append("OS name: ").append(System.getProperty("os.name")).append(AndamaUtils.lineSeparator);
-		builder.append("OS architecture: ").append(System.getProperty("os.arch")).append(AndamaUtils.lineSeparator);
-		builder.append("OS version: ").append(System.getProperty("os.version")).append(AndamaUtils.lineSeparator);
-		
+		       .append(FileUtils.lineSeparator);
+		builder.append("Java compiler: ").append(System.getProperty("java.compiler")).append(FileUtils.lineSeparator);
+		builder.append("Java home: ").append(System.getProperty("java.home")).append(FileUtils.lineSeparator);
+		builder.append("Java tempdir: ").append(System.getProperty("java.io.tmpdir")).append(FileUtils.lineSeparator);
+		builder.append("Java version: ").append(System.getProperty("java.version")).append(FileUtils.lineSeparator);
+		builder.append("Java vendor: ").append(System.getProperty("java.vendor")).append(FileUtils.lineSeparator);
+		builder.append("OS name: ").append(System.getProperty("os.name")).append(FileUtils.lineSeparator);
+		builder.append("OS architecture: ").append(System.getProperty("os.arch")).append(FileUtils.lineSeparator);
+		builder.append("OS version: ").append(System.getProperty("os.version")).append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
 	
@@ -223,7 +224,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		builder.append(bean.getVmVendor()).append(" ");
 		builder.append(bean.getVmName()).append(" ");
 		builder.append(bean.getVmVersion());
-		builder.append(AndamaUtils.lineSeparator);
+		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 		
 	}
@@ -246,7 +247,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		builder.append("Operating System: ");
 		builder.append(systemMXBean.getName()).append(" ").append(systemMXBean.getVersion()).append(" ")
 		       .append(systemMXBean.getArch());
-		builder.append(AndamaUtils.lineSeparator);
+		builder.append(FileUtils.lineSeparator);
 		return builder.toString();
 	}
 	
@@ -260,7 +261,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 		}
 		
 		// Visit each thread group
-		return visit(root, 0) + AndamaUtils.lineSeparator;
+		return visit(root, 0) + FileUtils.lineSeparator;
 	}
 	
 	/**
@@ -273,7 +274,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Sends the given report to the email address using the mail settings in mailProps
+	 * Sends the given report to the email address using the mail settings in
+	 * mailProps
 	 * 
 	 * @param report
 	 *            the report to be send
@@ -314,7 +316,9 @@ public class AndamaCrashHandler extends ThreadGroup {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang .Thread, java.lang.Throwable)
+	 * @see
+	 * java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang
+	 * .Thread, java.lang.Throwable)
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0,
@@ -360,7 +364,8 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Used by {@link #getThreadInformation()} for a traversal search of {@link Thread}s/{@link ThreadGroup}s
+	 * Used by {@link #getThreadInformation()} for a traversal search of
+	 * {@link Thread}s/{@link ThreadGroup}s
 	 * 
 	 * @param group
 	 * @param level
@@ -389,14 +394,14 @@ public class AndamaCrashHandler extends ThreadGroup {
 			builder.append(thread.getClass().getSimpleName()).append("], ");
 			builder.append(thread.getPriority()).append(", ");
 			builder.append(thread.getState().name());
-			builder.append(AndamaUtils.lineSeparator);
+			builder.append(FileUtils.lineSeparator);
 			for (final StackTraceElement element : thread.getStackTrace()) {
 				builder.append(indent);
 				builder.append("| ");
 				builder.append(element.toString());
-				builder.append(AndamaUtils.lineSeparator);
+				builder.append(FileUtils.lineSeparator);
 			}
-			// builder.append(AndamaUtils.lineSeparator);
+			// builder.append(FileUtils.lineSeparator);
 		}
 		
 		// Get thread subgroups of `group'

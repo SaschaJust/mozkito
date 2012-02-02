@@ -1,14 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -28,9 +31,9 @@ public class BooleanArgument extends AndamaArgument<Boolean> {
 	 * @param isRequired
 	 * 
 	 */
-	public BooleanArgument(final AndamaSettings settings, final String name, final String description,
+	public BooleanArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final boolean isRequired) {
-		super(settings, name, description, defaultValue, isRequired);
+		super(argumentSet, name, description, defaultValue, isRequired);
 	}
 	
 	/*
@@ -39,14 +42,24 @@ public class BooleanArgument extends AndamaArgument<Boolean> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (this.stringValue == null) {
-			setCachedValue(null);
-		} else if (this.stringValue.trim().equals("")) {
-			setCachedValue(true);
+		if (!isInitialized()) {
+			synchronized (this) {
+				if (!isInitialized()) {
+					if (getStringValue() == null) {
+						setCachedValue(null);
+					} else if (getStringValue().trim().equals("")) {
+						setCachedValue(true);
+					} else {
+						setCachedValue(Boolean.parseBoolean(getStringValue()));
+					}
+					return true;
+				} else {
+					return true;
+				}
+			}
 		} else {
-			setCachedValue(Boolean.parseBoolean(this.stringValue));
+			return true;
 		}
-		return true;
 	}
 	
 }

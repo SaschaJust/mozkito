@@ -12,7 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
-import net.ownhero.dev.andama.utils.AndamaUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -205,7 +205,7 @@ public class UnrecoverableError extends Error {
 		try {
 			reader = new BufferedReader(new FileReader(file));
 			
-			builder.append("Source code: ").append(AndamaUtils.lineSeparator);
+			builder.append("Source code: ").append(FileUtils.lineSeparator);
 			
 			try {
 				int line = 1;
@@ -221,14 +221,14 @@ public class UnrecoverableError extends Error {
 					++line;
 					builder.append(String.format(" %-" + charLength + "s:  ", line));
 					builder.append(theLine);
-					builder.append(AndamaUtils.lineSeparator);
+					builder.append(FileUtils.lineSeparator);
 				}
 				
 			} catch (final IOException e) {
 				builder.append("Source code providing failed while reading from file: ")
 				       .append(file != null
 				                           ? file.getAbsolutePath()
-				                           : "(null)").append(AndamaUtils.lineSeparator);
+				                           : "(null)").append(FileUtils.lineSeparator);
 			}
 		} catch (final FileNotFoundException e1) {
 		}

@@ -29,8 +29,8 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	 * @param settings
 	 * @param isRequired
 	 */
-	public LoggerArguments(final AndamaSettings settings, final boolean isRequired) {
-		super(settings, "Used to configure kisa logging options.", isRequired);
+	public LoggerArguments(final AndamaArgumentSet<?> argumentSet, final boolean isRequired) {
+		super(argumentSet, "Used to configure kisa logging options.", isRequired);
 		
 		final LogLevel[] values = LogLevel.values();
 		final String[] argEnums = new String[values.length];
@@ -38,15 +38,15 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 			argEnums[i] = values[i].toString();
 		}
 		
-		new EnumArgument(settings, "log.console.level", "determines the log level for the console log", "WARN", false,
-		                 argEnums);
-		new EnumArgument(settings, "log.file.level", "determines the log level for the oevrall log file", "INFO",
+		new EnumArgument(argumentSet, "log.console.level", "determines the log level for the console log", "WARN",
 		                 false, argEnums);
-		new LoggerOutputFileArgument(settings, "log.file",
+		new EnumArgument(argumentSet, "log.file.level", "determines the log level for the oevrall log file", "INFO",
+		                 false, argEnums);
+		new LoggerOutputFileArgument(argumentSet, "log.file",
 		                             "specifies the path to a file the file log shall be written to.", "./.log", false,
 		                             true);
 		new StringArgument(
-		                   settings,
+		                   argumentSet,
 		                   "log.class.<class_name>",
 		                   "This is a special option. You can use also multiple of them. Should be used to specify individual log level for particular classes (also works for categories). Replace <class_name> by the name of the class (full qualified, e.g. net.ownhero.dev.kisa.Logger). The value of the option is the log level to be set for this particula class. Optionally you can also a file path the class log will be written to behind the log level, seperated by a colon. The complete format would look like this:"
 		                           + FileUtils.lineSeparator + "-Dlog.class.<class_name>=<log_level>[,<log_file_path>]",
@@ -74,8 +74,15 @@ public class LoggerArguments extends AndamaArgumentSet<Boolean> {
 	 */
 	@Override
 	protected final boolean init() {
-		Logger.readConfiguration();
-		setCachedValue(true);
+		if (!isInitialized()) {
+			synchronized (this) {
+				if (!isInitialized()) {
+					Logger.readConfiguration();
+					setCachedValue(true);
+					return true;
+				}
+			}
+		}
 		return true;
 	}
 	

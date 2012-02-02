@@ -26,16 +26,17 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
  */
 public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
-	private String                          defaultValue;
-	private final String                    description;
-	private boolean                         required;
-	private final String                    name;
-	protected String                        stringValue;
-	private boolean                         wasSet;
-	private T                               cachedValue;
-	private boolean                         init      = false;
-	private Set<AndamaArgumentInterface<?>> dependees = new HashSet<AndamaArgumentInterface<?>>();
-	private AndamaSettings                  settings;
+	private final String                          defaultValue;
+	private final String                          description;
+	private final boolean                         required;
+	private final String                          name;
+	private final Set<AndamaArgumentInterface<?>> dependees = new HashSet<AndamaArgumentInterface<?>>();
+	private final AndamaSettings                  settings;
+	
+	private String                                stringValue;
+	private boolean                               wasSet;
+	private boolean                               init      = false;
+	private T                                     cachedValue;
 	
 	/**
 	 * @param settings
@@ -45,9 +46,9 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 * @param dependee
 	 */
 	@SuppressWarnings ("serial")
-	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
+	public AndamaArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final AndamaArgument<?> dependee) {
-		this(settings, name, description, defaultValue, new HashSet<AndamaArgumentInterface<?>>() {
+		this(argumentSet, name, description, defaultValue, new HashSet<AndamaArgumentInterface<?>>() {
 			
 			{
 				add(dependee);
@@ -67,19 +68,16 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 * @param required
 	 *            Set to <code>true</code> if this argument will be required
 	 */
-	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
+	public AndamaArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final boolean required) {
 		this.name = name;
 		this.description = description;
 		this.required = required;
+		this.stringValue = defaultValue;
+		this.defaultValue = defaultValue;
 		
-		if (defaultValue != null) {
-			this.stringValue = defaultValue;
-			this.defaultValue = defaultValue;
-		}
-		
-		setSettings(settings);
-		getSettings().addArgument(this);
+		this.settings = argumentSet.getSettings();
+		argumentSet.addArgument(this);
 	}
 	
 	/**
@@ -89,19 +87,9 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 * @param defaultValue
 	 * @param dependees
 	 */
-	public AndamaArgument(final AndamaSettings settings, final String name, final String description,
+	public AndamaArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final Set<AndamaArgumentInterface<?>> dependees) {
-		this.name = name;
-		this.description = description;
-		this.dependees = dependees;
-		
-		if (defaultValue != null) {
-			this.stringValue = defaultValue;
-			this.defaultValue = defaultValue;
-		}
-		
-		setSettings(settings);
-		getSettings().addArgument(this);
+		this(argumentSet, name, description, defaultValue, false);
 		getDependees().addAll(dependees);
 	}
 	
@@ -207,6 +195,13 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 		return this.settings;
 	}
 	
+	/**
+	 * @return the stringValue
+	 */
+	public final String getStringValue() {
+		return this.stringValue;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
@@ -228,13 +223,20 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.name == null)
+		result = (prime * result) + ((getName() == null)
 		                                                ? 0
-		                                                : this.name.hashCode());
+		                                                : getName().hashCode());
 		return result;
 	}
 	
 	protected abstract boolean init();
+	
+	/**
+	 * @return the init
+	 */
+	protected final boolean isInitialized() {
+		return this.init;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -254,13 +256,6 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	}
 	
 	/**
-	 * @param settings
-	 */
-	private void setSettings(final AndamaSettings settings) {
-		this.settings = settings;
-	}
-	
-	/**
 	 * Sets the string value for the argument.
 	 * 
 	 * @param value
@@ -276,8 +271,8 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 */
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " [required=" + this.required + ", name=" + this.name + ", default="
-		        + this.defaultValue + ", value=" + this.stringValue + ", description=" + this.description + "]";
+		return getHandle() + " [name=" + getName() + ", required=" + required() + ", default=" + getDefaultValue()
+		        + ", value=" + getStringValue() + ", description=" + getDescription() + "]";
 	}
 	
 	/**

@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.andama.utils.AndamaUtils;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -121,7 +120,9 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause ()
+	 * @see
+	 * net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause
+	 * ()
 	 */
 	@Override
 	public String analyzeFailureCause() {
@@ -154,8 +155,8 @@ public class ClassLoadingError extends UnrecoverableError {
 			
 			if (element != null) {
 				builder.append("The initialization provoked by loading the class '" + getClassName() + "' failed.")
-				       .append(AndamaUtils.lineSeparator);
-				builder.append("Origin: ").append(element.toString()).append(AndamaUtils.lineSeparator);
+				       .append(FileUtils.lineSeparator);
+				builder.append("Origin: ").append(element.toString()).append(FileUtils.lineSeparator);
 				
 				final Iterator<File> iterator = FileUtils.findFiles(new File("."), element.getFileName());
 				File file = null;
@@ -210,7 +211,7 @@ public class ClassLoadingError extends UnrecoverableError {
 				} else {
 					builder.append("Class '" + getClassName()
 					                       + "' is not contained in the classpath. Did you mean one of these: ")
-					       .append(AndamaUtils.lineSeparator);
+					       .append(FileUtils.lineSeparator);
 					final Directory directory = new RAMDirectory();
 					try {
 						final Set<String> simpleClassNames = new HashSet<String>();
@@ -231,7 +232,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						final Dictionary dictionary = new PlainTextDictionary(
 						                                                      new StringReader(
 						                                                                       StringUtils.join(simpleClassNames,
-						                                                                                        AndamaUtils.lineSeparator)));
+						                                                                                        FileUtils.lineSeparator)));
 						spellChecker.indexDictionary(dictionary, indexWriterConfig, true);
 						
 						final String fqClassName = getClassName();
@@ -243,7 +244,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						
 						final Set<String> fqSuggestions = new HashSet<String>();
 						for (final String suggestion : sameName) {
-							builder.append("  ").append(suggestion).append(AndamaUtils.lineSeparator);
+							builder.append("  ").append(suggestion).append(FileUtils.lineSeparator);
 						}
 						for (final String suggestion : suggestions) {
 							for (final String theClassName : classNames) {
@@ -255,7 +256,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						}
 						
 						for (final String fqSuggestion : fqSuggestions) {
-							builder.append("  ").append(fqSuggestion).append(AndamaUtils.lineSeparator);
+							builder.append("  ").append(fqSuggestion).append(FileUtils.lineSeparator);
 						}
 					} catch (final IOException e) {
 						// TODO Auto-generated catch block
@@ -267,20 +268,20 @@ public class ClassLoadingError extends UnrecoverableError {
 			}
 		} else if (cause instanceof UnrecoverableError) {
 			builder.append("Failure raised from another " + UnrecoverableError.class.getSimpleName() + ". Cause:")
-			       .append(AndamaUtils.lineSeparator);
+			       .append(FileUtils.lineSeparator);
 			builder.append(((UnrecoverableError) cause).analyzeFailureCause());
 			
 		} else if (cause instanceof LinkageError) {
 			// if cause == LinkageError
-			builder.append("Linkage error: " + cause.getMessage()).append(AndamaUtils.lineSeparator);
+			builder.append("Linkage error: " + cause.getMessage()).append(FileUtils.lineSeparator);
 			for (final StackTraceElement element : cause.getStackTrace()) {
-				builder.append(element.toString()).append(AndamaUtils.lineSeparator);
+				builder.append(element.toString()).append(FileUtils.lineSeparator);
 			}
 		} else {
 			builder.append("Could not determine failure cause.");
 		}
 		
-		return builder.append(AndamaUtils.lineSeparator).toString();
+		return builder.append(FileUtils.lineSeparator).toString();
 	}
 	
 	/**

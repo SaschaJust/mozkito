@@ -7,7 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
-import net.ownhero.dev.andama.utils.AndamaUtils;
+import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * @author just
@@ -44,7 +44,9 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause ()
+	 * @see
+	 * net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause
+	 * ()
 	 */
 	@Override
 	public String analyzeFailureCause() {
@@ -52,7 +54,7 @@ public class NoSuchConstructorError extends UnrecoverableError {
 		builder.append("The class ").append(getClazz().getCanonicalName()).append(" does not have a constructor: ")
 		       .append(getClazz().getSimpleName()).append('(');
 		
-		builder.append(')').append(AndamaUtils.lineSeparator);
+		builder.append(')').append(FileUtils.lineSeparator);
 		if ((getClazz().getModifiers() & Modifier.ABSTRACT) != 0) {
 			builder.append("The class is abstract.");
 		} else if (getClazz().isInterface()) {
@@ -88,11 +90,11 @@ public class NoSuchConstructorError extends UnrecoverableError {
 				}
 				builder.append(sb);
 				
-				builder.append(';').append(AndamaUtils.lineSeparator);
+				builder.append(';').append(FileUtils.lineSeparator);
 			}
 			
 		}
-		return builder.append(AndamaUtils.lineSeparator).toString();
+		return builder.append(FileUtils.lineSeparator).toString();
 	}
 	
 	/**

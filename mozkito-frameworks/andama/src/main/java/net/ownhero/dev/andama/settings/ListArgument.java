@@ -1,14 +1,17 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -23,8 +26,8 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	private final String delimiter;
 	
 	/**
-	 * General Arguments as described in RepoSuiteArgument. The string value will be split using delimiter `,` to
-	 * receive the list of values.
+	 * General Arguments as described in RepoSuiteArgument. The string value
+	 * will be split using delimiter `,` to receive the list of values.
 	 * 
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 * 
@@ -35,9 +38,9 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @param isRequired
 	 * @throws DuplicateArgumentException
 	 */
-	public ListArgument(final AndamaSettings settings, final String name, final String description,
+	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final boolean isRequired) {
-		super(settings, name, description, defaultValue, isRequired);
+		super(argumentSet, name, description, defaultValue, isRequired);
 		this.delimiter = ",";
 	}
 	
@@ -53,12 +56,13 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * @param defaultValue
 	 * @param isRequired
 	 * @param delimiter
-	 *            The string value will be split using this delimiter to receive the list of values
+	 *            The string value will be split using this delimiter to receive
+	 *            the list of values
 	 * @throws DuplicateArgumentException
 	 */
-	public ListArgument(final AndamaSettings settings, final String name, final String description,
+	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final boolean isRequired, final String delimiter) {
-		super(settings, name, description, defaultValue, isRequired);
+		super(argumentSet, name, description, defaultValue, isRequired);
 		this.delimiter = delimiter;
 	}
 	
@@ -68,15 +72,22 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (this.stringValue == null) {
-			setCachedValue(null);
-			return true;
+		if (!isInitialized()) {
+			synchronized (this) {
+				if (!isInitialized()) {
+					if (getStringValue() == null) {
+						setCachedValue(null);
+						return true;
+					}
+					final HashSet<String> result = new HashSet<String>();
+					for (final String s : getStringValue().split(this.delimiter)) {
+						result.add(s.trim());
+					}
+					setCachedValue(result);
+					return true;
+				}
+			}
 		}
-		final HashSet<String> result = new HashSet<String>();
-		for (final String s : this.stringValue.split(this.delimiter)) {
-			result.add(s.trim());
-		}
-		setCachedValue(result);
 		return true;
 	}
 }
