@@ -16,6 +16,8 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.AndamaChain;
@@ -48,27 +50,29 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 	private CoreChangeGenealogy      genealogy;
 	private final EnumArgument       granularityArg;
 	private final OutputFileArgument outputFileArgument;
+	private GenealogyMetricSink      genealogyMetricSink;
 	
-	public GenealogyMetricsToolChain() {
-		super(new GenealogySettings());
-		final GenealogySettings settings = (GenealogySettings) getSettings();
+	public GenealogyMetricsToolChain(final GenealogySettings settings, final EnumArgument granularityArg,
+	        final GenealogyArguments genealogyArgs) {
+		super(settings);
 		this.threadPool = new AndamaPool(GenealogyMetricsToolChain.class.getSimpleName(), this);
-		settings.setLoggerArg(false);
-		this.genealogyArgs = settings.setGenealogyArgs(true);
-		this.granularityArg = new EnumArgument(settings, "genealogy.metric.level",
-		                                       "The granularity level the metrics should be computed on.",
-		                                       "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
-		                                               "OPERATIONPARTITION", "TRANSACTION" });
+		this.granularityArg = granularityArg;
 		this.outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
 		                                                 "Filename to write result metric matrix into.", null, true,
 		                                                 true);
+		this.genealogyArgs = genealogyArgs;
 		new StringArgument(
 		                   settings,
 		                   "fix.pattern",
 		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
 		                   null, true);
-		
-		settings.parseArguments();
+	}
+	
+	public Map<String, Map<String, Double>> getMetricsValues() {
+		if (this.genealogyMetricSink == null) {
+			return new HashMap<String, Map<String, Double>>();
+		}
+		return this.genealogyMetricSink.getMetricValues();
 	}
 	
 	/*
@@ -197,6 +201,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		// start a demuxer and a sink that receives all the metric values
 		// and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(), this.outputFileArgument.getValue());
+		this.genealogyMetricSink = new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(),
+		                                                   this.outputFileArgument.getValue());
 	}
 }

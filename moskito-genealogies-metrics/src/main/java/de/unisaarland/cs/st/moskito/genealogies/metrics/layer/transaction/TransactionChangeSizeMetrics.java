@@ -26,11 +26,28 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
-	private static final String   changeSize          = "changeSize";
+	private static final String   changeSize          = "numChangeOperations";
+	
+	private static final String   numAddOperations    = "numAddOperations";
+	private static final String   numDelOperations    = "numDelOperations";
+	private static final String   numAddedMethDefs    = "numAddedMethDefs";
+	private static final String   numDeletedMethDefs  = "numDeletedMethDefs";
+	
+	private static final String   numAddedClassDefs   = "numAddedClassDefs";
+	private static final String   numDeletedClassDefs = "numDeletedClassDefs";
+	
+	private static final String   numAddedCalls       = "numAddedCalls";
+	private static final String   numDeletedCalls     = "numDeletedCalls";
+	
 	private static final String   avgDepChangeSize    = "avgDepChangeSize";
 	private static final String   maxDepChangeSize    = "maxDepChangeSize";
 	private static final String   sumDepChangeSize    = "sumDepChangeSize";
@@ -70,9 +87,61 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
 		final DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
-		metricValues.add(new GenealogyMetricValue(changeSize, nodeId,
-		                                          PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-		                                                                                transaction).size()));
+		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
+		                                                                                               transaction);
+		
+		metricValues.add(new GenealogyMetricValue(changeSize, nodeId, changeOperations.size()));
+		
+		int numAddOperations = 0;
+		int numDelOperations = 0;
+		int numAddedMethDefs = 0;
+		int numAddedClassDefs = 0;
+		int numDeletedMethDefs = 0;
+		int numDeletedClassDefs = 0;
+		int numAddedCalls = 0;
+		int numDeletedCalls = 0;
+		
+		for (final JavaChangeOperation op : changeOperations) {
+			
+			final JavaElement element = op.getChangedElementLocation().getElement();
+			
+			if (op.getChangeType().equals(ChangeType.Added)) {
+				++numAddOperations;
+				if (element instanceof JavaMethodDefinition) {
+					++numAddedMethDefs;
+				} else if (element instanceof JavaMethodCall) {
+					++numAddedCalls;
+				} else if (element instanceof JavaMethodCall) {
+					++numAddedClassDefs;
+				}
+			} else if (op.getChangeType().equals(ChangeType.Deleted)) {
+				++numDelOperations;
+				if (element instanceof JavaMethodDefinition) {
+					++numDeletedMethDefs;
+				} else if (element instanceof JavaMethodCall) {
+					++numDeletedCalls;
+				} else if (element instanceof JavaMethodCall) {
+					++numDeletedClassDefs;
+				}
+			}
+		}
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddOperations, nodeId,
+		                                          numAddOperations));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDelOperations, nodeId,
+		                                          numDelOperations));
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedMethDefs, nodeId,
+		                                          numAddedMethDefs));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedClassDefs, nodeId,
+		                                          numAddedClassDefs));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedCalls, nodeId, numAddedCalls));
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedMethDefs, nodeId,
+		                                          numDeletedMethDefs));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedClassDefs, nodeId,
+		                                          numDeletedClassDefs));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedCalls, nodeId, numDeletedCalls));
 		
 		for (final RCSTransaction dependant : this.genealogy.getAllDependants(transaction)) {
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());

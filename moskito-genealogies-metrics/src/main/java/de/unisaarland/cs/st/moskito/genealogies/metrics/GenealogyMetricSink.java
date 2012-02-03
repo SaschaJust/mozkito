@@ -33,12 +33,12 @@ import net.ownhero.dev.kisa.Logger;
 
 public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 	
-	private File                     outputFile;
+	private final File               outputFile;
 	private boolean                  checkedConsistency = false;
 	
 	Map<String, Map<String, Double>> metricValues       = new HashMap<String, Map<String, Double>>();
 	
-	public GenealogyMetricSink(AndamaGroup threadGroup, AndamaSettings settings, File outputFile) {
+	public GenealogyMetricSink(final AndamaGroup threadGroup, final AndamaSettings settings, final File outputFile) {
 		super(threadGroup, settings, false);
 		this.outputFile = outputFile;
 		
@@ -46,16 +46,16 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			
 			@Override
 			public void process() {
-				GenealogyMetricValue metricValue = getInputData();
+				final GenealogyMetricValue metricValue = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Receving metric value: " + metricValue);
 				}
 				
-				if (!metricValues.containsKey(metricValue.getNodeId())) {
-					metricValues.put(metricValue.getNodeId(), new HashMap<String, Double>());
+				if (!GenealogyMetricSink.this.metricValues.containsKey(metricValue.getNodeId())) {
+					GenealogyMetricSink.this.metricValues.put(metricValue.getNodeId(), new HashMap<String, Double>());
 				}
-				Map<String, Double> nodeMetricValues = metricValues.get(metricValue.getNodeId());
+				final Map<String, Double> nodeMetricValues = GenealogyMetricSink.this.metricValues.get(metricValue.getNodeId());
 				
 				if (nodeMetricValues.containsKey(metricValue.getMetricId())) {
 					if (Logger.logError()) {
@@ -95,22 +95,26 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 		
 	}
 	
+	public Map<String, Map<String, Double>> getMetricValues() {
+		return this.metricValues;
+	}
+	
 	public boolean isConsistent() {
-		checkedConsistency = true;
+		this.checkedConsistency = true;
 		int numMetrics = -1;
 		String firstNodeId = null;
 		int numLines = 0;
-		for (String nodeId : metricValues.keySet()) {
+		for (final String nodeId : this.metricValues.keySet()) {
 			++numLines;
 			if (numMetrics == -1) {
-				numMetrics = metricValues.get(nodeId).size();
+				numMetrics = this.metricValues.get(nodeId).size();
 				firstNodeId = nodeId;
 				continue;
 			}
-			if (numMetrics != metricValues.get(nodeId).size()) {
+			if (numMetrics != this.metricValues.get(nodeId).size()) {
 				if (Logger.logError()) {
-					Logger.error("Found " + metricValues.get(nodeId).size() + " metric values for node id `" + nodeId
-					        + "` but " + numMetrics
+					Logger.error("Found " + this.metricValues.get(nodeId).size() + " metric values for node id `"
+					        + nodeId + "` but " + numMetrics
 					        + " were expected. Metric data not consistent. Don't trust the data!");
 					if (numLines < 3) {
 						Logger.error("The previous error was caused by the second instance checked. It might be that the first instance was wrong. Instance id of the first entry: `"
@@ -125,23 +129,23 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 	}
 	
 	public void writeToFile() {
-		if (!checkedConsistency) {
+		if (!this.checkedConsistency) {
 			if (Logger.logWarn()) {
 				Logger.warn("You did not check whether the metric data is consistent. This may result in wrong metric data sets written to output file. We strongly recommend data consistency checks. Use metric data at own risk.");
 			}
 		}
 		
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+			final BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile));
 			
 			writer.write("NodeID");
 			
 			List<String> metricIDs = null;
 			
-			for (String nodeId : metricValues.keySet()) {
+			for (final String nodeId : this.metricValues.keySet()) {
 				if (metricIDs == null) {
 					metricIDs = new LinkedList<String>();
-					for (String metricId : metricValues.get(nodeId).keySet()) {
+					for (final String metricId : this.metricValues.get(nodeId).keySet()) {
 						metricIDs.add(metricId);
 						writer.write(",");
 						writer.write(metricId);
@@ -151,7 +155,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				writer.write(FileUtils.lineSeparator);
 				writer.write(nodeId);
 				
-				Map<String, Double> metricValuesForNode = metricValues.get(nodeId);
+				final Map<String, Double> metricValuesForNode = this.metricValues.get(nodeId);
 				
 				if (metricIDs.size() < metricValuesForNode.size()) {
 					if (Logger.logWarn()) {
@@ -159,7 +163,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 					}
 				}
 				
-				for (String metricId : metricIDs) {
+				for (final String metricId : metricIDs) {
 					writer.write(",");
 					if (!metricValuesForNode.containsKey(metricId)) {
 						writer.write("NA");
@@ -171,13 +175,9 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 					}
 				}
 			}
-			
 			writer.close();
-			
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UnrecoverableError(e);
 		}
-		
 	}
-	
 }

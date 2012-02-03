@@ -13,8 +13,18 @@
 
 package genealogies.metrics;
 
+import java.io.File;
+import java.util.Map;
+
+import net.ownhero.dev.andama.settings.EnumArgument;
+import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsAggregateToolChain;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
 public class Main {
 	
@@ -25,9 +35,53 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain();
+	public static void main(final String[] args) {
+		
+		final GenealogySettings settings = new GenealogySettings();
+		settings.setLoggerArg(true);
+		final GenealogyArguments genealogyArgs = settings.setGenealogyArgs(true);
+		
+		final OutputFileArgument fileMetricsFileArgument = new OutputFileArgument(
+		                                                                          settings,
+		                                                                          "genealogy.metric.fileAggregate.out",
+		                                                                          "Filename that will contain genealogy metrics aggregated to RCSFile level as matrix.",
+		                                                                          null, false, true);
+		final EnumArgument granularityArg = new EnumArgument(
+		                                                     settings,
+		                                                     "genealogy.metric.level",
+		                                                     "The granularity level the metrics should be computed on.",
+		                                                     "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
+		                                                             "OPERATIONPARTITION", "TRANSACTION" });
+		
+		final GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain(settings, granularityArg,
+		                                                                                 genealogyArgs);
+		
+		settings.parseArguments();
+		
 		genealogyMetrics.run();
+		
+		final File aggregateFile = fileMetricsFileArgument.getValue();
+		
+		final Map<String, Map<String, Double>> metricsValues = genealogyMetrics.getMetricsValues();
+		
+		if ((aggregateFile != null) && (!metricsValues.isEmpty())) {
+			final CoreChangeGenealogy coreChangeGenealogy = genealogyArgs.getValue();
+			if (granularityArg.getValue().equals("TRANSACTION")) {
+				final GenealogyMetricsAggregateToolChain aggregateToolChain = new GenealogyMetricsAggregateToolChain(
+				                                                                                                     settings,
+				                                                                                                     aggregateFile,
+				                                                                                                     metricsValues,
+				                                                                                                     granularityArg.getValue(),
+				                                                                                                     coreChangeGenealogy.getPersistenceUtil());
+				aggregateToolChain.run();
+				coreChangeGenealogy.getTransactionLayer().close();
+				coreChangeGenealogy.close();
+			} else {
+				if (Logger.logError()) {
+					Logger.error("Metric aggregation for granularity " + granularityArg.getValue()
+					        + " not supported yet.");
+				}
+			}
+		}
 	}
-	
 }

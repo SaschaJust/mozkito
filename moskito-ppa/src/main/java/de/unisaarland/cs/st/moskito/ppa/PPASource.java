@@ -5,7 +5,7 @@ package de.unisaarland.cs.st.moskito.ppa;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.TreeSet;
 
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
@@ -28,8 +28,8 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public PPASource(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil,
-	        final String startWith, final HashSet<String> transactionLimit) {
+	public PPASource(final AndamaGroup threadGroup, final AndamaSettings settings,
+	        final PersistenceUtil persistenceUtil, final String startWith, final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
@@ -41,7 +41,7 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 			
 			@Override
 			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
 				if (Logger.logDebug()) {
 					Logger.debug(criteria.toString());
@@ -54,14 +54,16 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 					}
 					criteria.in("id", transactionLimit);
 				}
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
+				final TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
+				list.addAll(persistenceUtil.load(criteria));
 				if (Logger.logDebug()) {
 					Logger.debug("Loaded " + list.size() + " transactions as tool chain input.");
 				}
-				iterator = list.iterator();
+				PPASource.this.iterator = list.iterator();
 				
 				if (startWith != null) {
-					while (iterator.hasNext() && !(iterator.next().getId().equals(startWith))) {
+					while (PPASource.this.iterator.hasNext()
+					        && !(PPASource.this.iterator.next().getId().equals(startWith))) {
 						// drop
 					}
 				}
@@ -72,8 +74,8 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					RCSTransaction transaction = iterator.next();
+				if (PPASource.this.iterator.hasNext()) {
+					final RCSTransaction transaction = PPASource.this.iterator.next();
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + transaction);
