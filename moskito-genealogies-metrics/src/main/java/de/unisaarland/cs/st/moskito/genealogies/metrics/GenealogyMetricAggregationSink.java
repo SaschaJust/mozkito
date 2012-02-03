@@ -37,6 +37,10 @@ public class GenealogyMetricAggregationSink extends AndamaSink<GenealogyMetricVa
 				
 				final GenealogyMetricValue input = getInputData();
 				
+				if (Logger.logDebug()) {
+					Logger.debug("Handling input data " + input);
+				}
+				
 				final String nodeId = input.getNodeId();
 				final String metricId = input.getMetricId();
 				final Double value = input.getValue();

@@ -11,6 +11,7 @@ import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSource;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -61,7 +62,13 @@ public class GenealogyMetricAggregationReader extends AndamaSource<GenealogyMetr
 					}
 				}
 				
-				this.provideOutputData(GenealogyMetricAggregationReader.this.outputIter.next());
+				final GenealogyMetricValue metricValue = GenealogyMetricAggregationReader.this.outputIter.next();
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Providing GenealogyMetricValue " + metricValue);
+				}
+				
+				this.provideOutputData(metricValue);
 				
 				if ((!GenealogyMetricAggregationReader.this.outputIter.hasNext())
 				        && (!GenealogyMetricAggregationReader.this.nodeIditerator.hasNext())) {
