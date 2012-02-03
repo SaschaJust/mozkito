@@ -68,7 +68,7 @@ public class GenealogyMetricAggregationReader extends AndamaSource<GenealogyMetr
 					Logger.debug("Providing GenealogyMetricValue " + metricValue);
 				}
 				
-				this.provideOutputData(metricValue);
+				providePartialOutputData(metricValue);
 				
 				if ((!GenealogyMetricAggregationReader.this.outputIter.hasNext())
 				        && (!GenealogyMetricAggregationReader.this.nodeIditerator.hasNext())) {
