@@ -44,7 +44,7 @@ public class GenealogyMetricAggregationSink extends AndamaSink<GenealogyMetricVa
 				if (!GenealogyMetricAggregationSink.this.stats.containsKey(nodeId)) {
 					GenealogyMetricAggregationSink.this.stats.put(nodeId, new HashMap<String, DescriptiveStatistics>());
 				}
-				if (GenealogyMetricAggregationSink.this.stats.get(nodeId).containsKey(metricId)) {
+				if (!GenealogyMetricAggregationSink.this.stats.get(nodeId).containsKey(metricId)) {
 					GenealogyMetricAggregationSink.this.stats.get(nodeId).put(metricId, new DescriptiveStatistics());
 				}
 				
