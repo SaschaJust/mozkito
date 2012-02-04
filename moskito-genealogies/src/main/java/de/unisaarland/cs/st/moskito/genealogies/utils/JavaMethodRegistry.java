@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -43,7 +42,7 @@ public class JavaMethodRegistry {
 	
 	protected HashMap<String, HashMap<String, ArrayList<JavaChangeOperation>>> methodInvocationDeletions;
 	
-	public JavaMethodRegistry(CoreChangeGenealogy coreGenealogy) {
+	public JavaMethodRegistry(final CoreChangeGenealogy coreGenealogy) {
 		
 		// TODO fill collections with data from change genealogy
 		
@@ -61,17 +60,17 @@ public class JavaMethodRegistry {
 	 * @return <code>true</code> if element could be added; <code>false</code> if invocation with same signature in same
 	 *         line exists
 	 */
-	public void addCall(JavaChangeOperation call) {
-		JavaElement element = call.getChangedElementLocation().getElement();
+	public void addCall(final JavaChangeOperation call) {
+		final JavaElement element = call.getChangedElementLocation().getElement();
 		
 		Condition.check(element instanceof JavaMethodCall,
 		                "JavaChangeOperations not touching JavaMethodCalls cannot be added as JavaMethodCall");
 		
-		JavaMethodCall methodCall = ((JavaMethodCall) element);
+		final JavaMethodCall methodCall = ((JavaMethodCall) element);
 		
-		String fullQualifiedName = methodCall.getFullQualifiedName();
-		String shortClassName = methodCall.getCalledClassNameShort();
-		String callingPosition = call.getChangedElementLocation().getFilePath();
+		final String fullQualifiedName = methodCall.getFullQualifiedName();
+		final String shortClassName = methodCall.getCalledClassNameShort();
+		final String callingPosition = call.getChangedElementLocation().getFilePath();
 		
 		if (fullQualifiedName.contains("UNKNOWN(") || shortClassName.contains("UNKNOWN")) {
 			if (Logger.logWarn()) {
@@ -82,17 +81,20 @@ public class JavaMethodRegistry {
 		if (!this.methodInvocations.containsKey(callingPosition)) {
 			this.methodInvocations.put(callingPosition, new HashMap<String, ArrayList<JavaChangeOperation>>());
 		}
-		HashMap<String, ArrayList<JavaChangeOperation>> invocationsInClass = this.methodInvocations.get(callingPosition);
+		final HashMap<String, ArrayList<JavaChangeOperation>> invocationsInClass = this.methodInvocations.get(callingPosition);
 		if (!invocationsInClass.containsKey(fullQualifiedName)) {
 			invocationsInClass.put(fullQualifiedName, new ArrayList<JavaChangeOperation>());
 		}
-		ArrayList<JavaChangeOperation> invList = invocationsInClass.get(fullQualifiedName);
+		final ArrayList<JavaChangeOperation> invList = invocationsInClass.get(fullQualifiedName);
 		if ((!invList.isEmpty()) && (call.isBefore(invList.get(invList.size() - 1)))) {
-			throw new UnrecoverableError("Attempt to add an earlier JavaChangeOperation to the "
-			        + "JavaMethodRegistry than the previous registered event. "
-			        + "This might lead to serious problems. Abort! "
-			        + "Please ensure to process JavaChangeOperations following repository timeline: previousCall="
-			        + invList.get(invList.size() - 1) + " tried to add=" + call);
+			if (Logger.logError()) {
+				Logger.error("Attempt to add an earlier JavaChangeOperation to the "
+				        + "JavaMethodRegistry than the previous registered event. "
+				        + "This might lead to serious problems. Abort! "
+				        + "Please ensure to process JavaChangeOperations following repository timeline: previousCall="
+				        + invList.get(invList.size() - 1) + " tried to add=" + call);
+			}
+			return;
 		}
 		invList.add(call);
 	}
@@ -105,8 +107,8 @@ public class JavaMethodRegistry {
 	 * @return <code>true</code> if element could be added; <code>false</code> if element with same signature already
 	 *         exists
 	 */
-	public boolean addMethodDefiniton(JavaChangeOperation def) {
-		String fullQualifiedName = def.getChangedElementLocation().getElement().getFullQualifiedName();
+	public boolean addMethodDefiniton(final JavaChangeOperation def) {
+		final String fullQualifiedName = def.getChangedElementLocation().getElement().getFullQualifiedName();
 		if (!this.methodDefinitions.containsKey(fullQualifiedName)) {
 			this.methodDefinitions.put(fullQualifiedName, def);
 			return true;
@@ -123,11 +125,11 @@ public class JavaMethodRegistry {
 	 *            Set to <code>true</code> if you want to search for definition deletions too.
 	 * @return <code>true</code> when coresponding method definition was found.
 	 */
-	public boolean existsDefinition(JavaElement element,
-	                                boolean includeDeletions) {
-		boolean directSuccess = this.methodDefinitions.containsKey(element.getFullQualifiedName());
+	public boolean existsDefinition(final JavaElement element,
+	                                final boolean includeDeletions) {
+		final boolean directSuccess = this.methodDefinitions.containsKey(element.getFullQualifiedName());
 		if ((!directSuccess) && includeDeletions) {
-			return (this.findPreviousDefinitionDeletion(element) != null);
+			return (findPreviousDefinitionDeletion(element) != null);
 		}
 		return directSuccess;
 	}
@@ -145,17 +147,17 @@ public class JavaMethodRegistry {
 	 */
 	public boolean existsInvocation(final JavaMethodCall call,
 	                                final JavaElementLocation location,
-	                                boolean matchLines) {
+	                                final boolean matchLines) {
 		
-		String callingLocation = location.getFilePath();
+		final String callingLocation = location.getFilePath();
 		if (!this.methodInvocations.containsKey(callingLocation)) {
 			return false;
 		}
 		if (!this.methodInvocations.get(callingLocation).containsKey(call.getFullQualifiedName())) {
 			return false;
 		}
-		ArrayList<JavaChangeOperation> invocations = this.methodInvocations.get(callingLocation)
-		                                                                   .get(call.getFullQualifiedName());
+		final ArrayList<JavaChangeOperation> invocations = this.methodInvocations.get(callingLocation)
+		                                                                         .get(call.getFullQualifiedName());
 		
 		if (invocations.isEmpty()) {
 			return false;
@@ -164,10 +166,10 @@ public class JavaMethodRegistry {
 		if (!matchLines) {
 			return true;
 		} else {
-			Iterator<JavaChangeOperation> invIter = invocations.iterator();
+			final Iterator<JavaChangeOperation> invIter = invocations.iterator();
 			while (invIter.hasNext()) {
-				JavaChangeOperation i = invIter.next();
-				JavaElementLocation l = i.getChangedElementLocation();
+				final JavaChangeOperation i = invIter.next();
+				final JavaElementLocation l = i.getChangedElementLocation();
 				if (l.getStartLine() == location.getStartLine()) {
 					return true;
 				}
@@ -187,19 +189,19 @@ public class JavaMethodRegistry {
 	 *            the invocations
 	 * @return the java change operation
 	 */
-	private JavaChangeOperation findClosestMethodCall(JavaMethodCall methodCall,
-	                                                  JavaElementLocation location,
-	                                                  ArrayList<JavaChangeOperation> invocations) {
+	private JavaChangeOperation findClosestMethodCall(final JavaMethodCall methodCall,
+	                                                  final JavaElementLocation location,
+	                                                  final ArrayList<JavaChangeOperation> invocations) {
 		JavaChangeOperation closest = null;
 		int distance = -1;
-		Iterator<JavaChangeOperation> opIter = invocations.iterator();
+		final Iterator<JavaChangeOperation> opIter = invocations.iterator();
 		while (opIter.hasNext()) {
-			JavaChangeOperation tmpOperation = opIter.next();
-			JavaElementLocation tmpLocation = tmpOperation.getChangedElementLocation();
+			final JavaChangeOperation tmpOperation = opIter.next();
+			final JavaElementLocation tmpLocation = tmpOperation.getChangedElementLocation();
 			if (location.getStartLine() == location.getStartLine()) {
 				return tmpOperation;
 			} else {
-				int d = Math.abs(location.getStartLine() - tmpLocation.getStartLine());
+				final int d = Math.abs(location.getStartLine() - tmpLocation.getStartLine());
 				if (distance == -1) {
 					distance = d;
 					closest = tmpOperation;
@@ -224,14 +226,14 @@ public class JavaMethodRegistry {
 	 * @return The method definition matching the signature of the given method expression. If no invocation is found an
 	 *         exception is thrown. Return <code>null</code> if no such element could be found.
 	 */
-	public JavaChangeOperation findPreviousDefinition(JavaElement element,
-	                                                  boolean includeDeletions) {
+	public JavaChangeOperation findPreviousDefinition(final JavaElement element,
+	                                                  final boolean includeDeletions) {
 		
-		String signature = element.getFullQualifiedName();
+		final String signature = element.getFullQualifiedName();
 		
 		if (!this.methodDefinitions.containsKey(signature)) {
 			if (includeDeletions) {
-				return this.findPreviousDefinitionDeletion(element);
+				return findPreviousDefinitionDeletion(element);
 			}
 			return null;
 		}
@@ -246,11 +248,11 @@ public class JavaMethodRegistry {
 	 * @return The last MethodDefinitionDeletion object that matches the signature of the given MethodExpression.
 	 *         Returns <code>null</code> if no element could be found.
 	 */
-	public JavaChangeOperation findPreviousDefinitionDeletion(JavaElement element) {
+	public JavaChangeOperation findPreviousDefinitionDeletion(final JavaElement element) {
 		if (!this.methodDefinitionDeletions.containsKey(element.getFullQualifiedName())) {
 			return null;
 		}
-		int index = this.methodDefinitionDeletions.get(element.getFullQualifiedName()).size() - 1;
+		final int index = this.methodDefinitionDeletions.get(element.getFullQualifiedName()).size() - 1;
 		if (index < 0) {
 			return null;
 		}
@@ -271,39 +273,39 @@ public class JavaMethodRegistry {
 	 * @return The method invocation matching the signature and origin class of the given method invocation. If no
 	 *         invocation is found an exception is thrown. Return <code>null</code> if no such element could be found.
 	 */
-	public JavaChangeOperation findPreviousInvocation(JavaMethodCall call,
-	                                                  JavaElementLocation location,
-	                                                  boolean matchLine) {
+	public JavaChangeOperation findPreviousInvocation(final JavaMethodCall call,
+	                                                  final JavaElementLocation location,
+	                                                  final boolean matchLine) {
 		
-		String callingLocation = location.getFilePath();
-		String signature = call.getFullQualifiedName();
+		final String callingLocation = location.getFilePath();
+		final String signature = call.getFullQualifiedName();
 		
 		if (!this.methodInvocations.containsKey(callingLocation)) {
 			return null;
 		}
-		HashMap<String, ArrayList<JavaChangeOperation>> signatures = this.methodInvocations.get(callingLocation);
+		final HashMap<String, ArrayList<JavaChangeOperation>> signatures = this.methodInvocations.get(callingLocation);
 		if (!signatures.containsKey(signature)) {
 			
 			// check for method calls with same method name and args but
 			// different type of object method called on. If only one different
 			// type existed, take it.
-			return this.findPreviousSimilarCall(call, location, matchLine);
+			return findPreviousSimilarCall(call, location, matchLine);
 			
 		}
-		ArrayList<JavaChangeOperation> invocations = signatures.get(signature);
+		final ArrayList<JavaChangeOperation> invocations = signatures.get(signature);
 		if (invocations.isEmpty()) {
 			return null;
 		}
 		if (matchLine) {
-			for (JavaChangeOperation tmpOperation : invocations) {
-				JavaElementLocation tmpLocation = tmpOperation.getChangedElementLocation();
+			for (final JavaChangeOperation tmpOperation : invocations) {
+				final JavaElementLocation tmpLocation = tmpOperation.getChangedElementLocation();
 				if (tmpLocation.getStartLine() == location.getStartLine()) {
 					return tmpOperation;
 				}
 			}
 			return null;
 		} else {
-			JavaChangeOperation closest = this.findClosestMethodCall(call, location, invocations);
+			final JavaChangeOperation closest = findClosestMethodCall(call, location, invocations);
 			return closest;
 		}
 		
@@ -320,30 +322,30 @@ public class JavaMethodRegistry {
 	 *            the match line
 	 * @return the java change operation
 	 */
-	private JavaChangeOperation findPreviousSimilarCall(JavaMethodCall call,
-	                                                    JavaElementLocation location,
-	                                                    boolean matchLine) {
+	private JavaChangeOperation findPreviousSimilarCall(final JavaMethodCall call,
+	                                                    final JavaElementLocation location,
+	                                                    final boolean matchLine) {
 		
-		String callingLocation = location.getFilePath();
-		String callSignature = call.getFullQualifiedName();
+		final String callingLocation = location.getFilePath();
+		final String callSignature = call.getFullQualifiedName();
 		
 		if (!this.methodInvocations.containsKey(callingLocation)) {
 			return null;
 		}
 		
-		HashMap<String, ArrayList<JavaChangeOperation>> signatures = this.methodInvocations.get(callingLocation);
+		final HashMap<String, ArrayList<JavaChangeOperation>> signatures = this.methodInvocations.get(callingLocation);
 		ArrayList<JavaChangeOperation> candidates = null;
 		
-		for (String signature : signatures.keySet()) {
+		for (final String signature : signatures.keySet()) {
 			
-			boolean sameMethodName = JavaElement.extractMethodName(signature)
-			                                    .equals(JavaElement.extractMethodName(callSignature));
+			final boolean sameMethodName = JavaElement.extractMethodName(signature)
+			                                          .equals(JavaElement.extractMethodName(callSignature));
 			if (signatures.get(signature).isEmpty()) {
 				continue;
 			}
-			boolean sameArguments = ((JavaMethodCall) signatures.get(signature).get(0).getChangedElementLocation()
-			                                                    .getElement()).getSignature()
-			                                                                  .equals(call.getSignature());
+			final boolean sameArguments = ((JavaMethodCall) signatures.get(signature).get(0)
+			                                                          .getChangedElementLocation().getElement()).getSignature()
+			                                                                                                    .equals(call.getSignature());
 			
 			if (sameMethodName && sameArguments) {
 				candidates = signatures.get(signature);
@@ -353,7 +355,7 @@ public class JavaMethodRegistry {
 		if ((candidates == null) || (candidates.size() < 1)) {
 			return null;
 		} else {
-			return this.findClosestMethodCall(call, location, candidates);
+			return findClosestMethodCall(call, location, candidates);
 		}
 		
 	}
@@ -590,14 +592,14 @@ public class JavaMethodRegistry {
 	 *            The method definition deletion event specifying the method definition to be deleted
 	 * @return The removed method definition iff found
 	 */
-	public JavaChangeOperation removeDefiniton(JavaChangeOperation del) {
+	public JavaChangeOperation removeDefiniton(final JavaChangeOperation del) {
 		Condition.check(del.getChangedElementLocation().getElement() instanceof JavaMethodDefinition,
 		                "You try to remove a java method definition that is no definition.");
-		String fullName = del.getChangedElementLocation().getElement().getFullQualifiedName();
+		final String fullName = del.getChangedElementLocation().getElement().getFullQualifiedName();
 		if (!this.methodDefinitions.containsKey(fullName)) {
 			return null;
 		}
-		JavaChangeOperation def = this.methodDefinitions.get(fullName);
+		final JavaChangeOperation def = this.methodDefinitions.get(fullName);
 		this.methodDefinitions.remove(fullName);
 		if (!this.methodDefinitionDeletions.containsKey(fullName)) {
 			this.methodDefinitionDeletions.put(fullName, new ArrayList<JavaChangeOperation>());
@@ -622,26 +624,28 @@ public class JavaMethodRegistry {
 	 *            The method invocation deletion event specifying the method invocation to be deleted
 	 * @return The removed method invocation iff found
 	 */
-	public JavaChangeOperation removeMethodCall(JavaChangeOperation del) {
+	public JavaChangeOperation removeMethodCall(final JavaChangeOperation del) {
 		Condition.check(del.getChangedElementLocation().getElement() instanceof JavaMethodCall,
 		                "You try to remove a java method call that is no call.");
 		
-		JavaElementLocation location = del.getChangedElementLocation();
-		JavaMethodCall element = (JavaMethodCall) location.getElement();
-		String fullName = element.getFullQualifiedName();
+		final JavaElementLocation location = del.getChangedElementLocation();
+		final JavaMethodCall element = (JavaMethodCall) location.getElement();
+		final String fullName = element.getFullQualifiedName();
 		
-		String callingPosition = location.getFilePath();
+		final String callingPosition = location.getFilePath();
 		
-		JavaChangeOperation toDelete = this.findPreviousInvocation(element, location, false);
+		final JavaChangeOperation toDelete = findPreviousInvocation(element, location, false);
 		
 		if (toDelete == null) {
 			return null;
 		}
 		
 		if (del.isBefore(toDelete)) {
-			throw new UnrecoverableError(
-			                             "Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
-			                                     + del + ", previous definition=" + toDelete);
+			if (Logger.logError()) {
+				Logger.error("Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
+				        + del + ", previous definition=" + toDelete);
+			}
+			return null;
 		}
 		
 		if (!this.methodInvocations.containsKey(callingPosition)) {
@@ -654,7 +658,7 @@ public class JavaMethodRegistry {
 		if (!this.methodInvocationDeletions.containsKey(callingPosition)) {
 			this.methodInvocationDeletions.put(callingPosition, new HashMap<String, ArrayList<JavaChangeOperation>>());
 		}
-		HashMap<String, ArrayList<JavaChangeOperation>> deletions = this.methodInvocationDeletions.get(callingPosition);
+		final HashMap<String, ArrayList<JavaChangeOperation>> deletions = this.methodInvocationDeletions.get(callingPosition);
 		if (!deletions.containsKey(fullName)) {
 			deletions.put(fullName, new ArrayList<JavaChangeOperation>());
 		}
