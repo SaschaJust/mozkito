@@ -93,6 +93,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 											Logger.error("Fatal error occured. Found previous method definition that were added after the current operation: current operation="
 											        + operation + ", previous definition=" + previousDefinition);
 										}
+										break;
 									}
 									GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 									                                                    previousDefinition,
@@ -126,6 +127,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 												        + ", previous definition="
 												        + previousDefinitionDeletion);
 											}
+											break;
 										}
 										GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 										                                                    previousDefinitionDeletion,
@@ -154,6 +156,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 										        + " in transaction "
 										        + previousDefinition.getRevision().getTransaction().getId());
 									}
+									break;
 								}
 								
 								if (previousDefinition != null) {
