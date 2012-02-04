@@ -13,7 +13,6 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaSink;
@@ -90,10 +89,10 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									}
 								} else {
 									if (operation.isBefore(previousDefinition)) {
-										throw new UnrecoverableError(
-										                             "Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-										                                     + operation + ", previous definition="
-										                                     + previousDefinition);
+										if (Logger.logError()) {
+											Logger.error("Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+											        + operation + ", previous definition=" + previousDefinition);
+										}
 									}
 									GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 									                                                    previousDefinition,
@@ -121,11 +120,12 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 									final JavaChangeOperation previousDefinitionDeletion = GenealogyDependencyPersister.this.registry.findPreviousDefinitionDeletion(element);
 									if (previousDefinitionDeletion != null) {
 										if (operation.isBefore(previousDefinitionDeletion)) {
-											throw new UnrecoverableError(
-											                             "Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
-											                                     + operation
-											                                     + ", previous definition="
-											                                     + previousDefinitionDeletion);
+											if (Logger.logError()) {
+												Logger.error("Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
+												        + operation
+												        + ", previous definition="
+												        + previousDefinitionDeletion);
+											}
 										}
 										GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 										                                                    previousDefinitionDeletion,
@@ -144,17 +144,16 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 								                                                                                                                 true);
 								
 								if (operation.isBefore(previousDefinition)) {
-									throw new UnrecoverableError(
-									                             "Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-									                                     + operation
-									                                     + " in transaction "
-									                                     + operation.getRevision().getTransaction()
-									                                                .getId()
-									                                     + ", previous definition="
-									                                     + previousDefinition
-									                                     + " in transaction "
-									                                     + previousDefinition.getRevision()
-									                                                         .getTransaction().getId());
+									if (Logger.logError()) {
+										Logger.error("Fatal error occured. Found previous method definition that were added after the current operation: current operation="
+										        + operation
+										        + " in transaction "
+										        + operation.getRevision().getTransaction().getId()
+										        + ", previous definition="
+										        + previousDefinition
+										        + " in transaction "
+										        + previousDefinition.getRevision().getTransaction().getId());
+									}
 								}
 								
 								if (previousDefinition != null) {
