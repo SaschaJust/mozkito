@@ -270,7 +270,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
+				Logger.warn("You cannot retrieve dependent genealogy vertives for RCSTrabsaction `"
+				        + operation.toString()
+				        + " that has no correspondence within the ChangeGenealogy. Returning empty collection.");
 			}
 			return new HashSet<RCSTransaction>();
 		}
