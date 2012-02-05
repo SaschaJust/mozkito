@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.kisa.Logger;
@@ -23,6 +24,25 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	public TransactionFixMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
+	}
+	
+	private List<String> getBugId(final Regex regex,
+	                              final String message) {
+		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
+		final List<String> result = new LinkedList<String>();
+		for (final List<RegexGroup> regexGroups : findAll) {
+			for (final RegexGroup regexGroup : regexGroups) {
+				if (regexGroup.getName().equals("bugids")) {
+					if (regexGroup.getMatch() != null) {
+						final String[] bugids = regexGroup.getMatch().split(",");
+						for (final String bugid : bugids) {
+							result.add(bugid.trim());
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 	
 	@Override
@@ -47,30 +67,28 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		final String commitMessage = rcsTransaction.getMessage();
 		
 		// FIXME This should be done using the appropriate argument
-		final String fixPattern = System.getProperty("fix.pattern", "(\\d+)");
+		// FIXME This should be based on moskito-mappings
+		final String fixPattern = System.getProperty("fix.pattern", "({bugids}\\d+)");
 		
 		final Regex regex = new Regex(fixPattern.toLowerCase());
-		final List<List<RegexGroup>> regexHits = regex.findAll(commitMessage.toLowerCase());
-		if (regexHits != null) {
-			for (final List<RegexGroup> hit : regexHits) {
-				final String reportId = hit.get(0).getMatch();
-				try {
-					final long rId = Long.valueOf(reportId);
-					final Report report = this.persistenceUtil.loadById(rId, Report.class);
-					if (report == null) {
-						continue;
-					}
-					
-					final int typeOrdinal = report.getType().ordinal();
-					if ((fixType == -1) || (fixType == typeOrdinal)) {
-						fixType = typeOrdinal;
-					} else {
-						fixType = 100;
-					}
-					++numFixes;
-				} catch (final NumberFormatException e) {
+		final List<String> reportIds = getBugId(regex, commitMessage);
+		for (final String reportId : reportIds) {
+			try {
+				final long rId = Long.valueOf(reportId);
+				final Report report = this.persistenceUtil.loadById(rId, Report.class);
+				if (report == null) {
 					continue;
 				}
+				
+				final int typeOrdinal = report.getType().ordinal();
+				if ((fixType == -1) || (fixType == typeOrdinal)) {
+					fixType = typeOrdinal;
+				} else {
+					fixType = 100;
+				}
+				++numFixes;
+			} catch (final NumberFormatException e) {
+				continue;
 			}
 		}
 		
@@ -80,4 +98,5 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		
 		return result;
 	}
+	
 }
