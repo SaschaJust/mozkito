@@ -321,7 +321,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
 			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve edges for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty null.");
+				Logger.warn("You cannot retrieve edges for RCSTransction `" + from.toString() + "` or `"
+				        + to.toString()
+				        + "` that have no corresponce within the ChangeGenealogy. Returning empty null.");
 			}
 			return null;
 		}
@@ -350,7 +352,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
 			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve edges for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty null.");
+				Logger.warn("You cannot retrieve edges for RCSTransction `" + from.toString() + "` or `"
+				        + to.toString()
+				        + "` that have no corresponce within the ChangeGenealogy. Returning empty null.");
 			}
 			return null;
 		}
@@ -454,7 +458,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve dependent genealogy vertives for JavaChangeOperations that have no corresponding within the ChangeGenealogy. Returning empty collection.");
+				Logger.warn("You cannot retrieve edges for RCSTransction `" + operation.toString()
+				        + "` that has no corresponce within the ChangeGenealogy. Returning empty null.");
 			}
 			return new HashSet<RCSTransaction>();
 		}
