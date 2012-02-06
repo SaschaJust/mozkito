@@ -1,5 +1,6 @@
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,6 +30,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	private List<String> getBugId(final Regex regex,
 	                              final String message) {
 		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
+		if (findAll == null) {
+			return new ArrayList<String>(0);
+		}
 		final List<String> result = new LinkedList<String>();
 		for (final List<RegexGroup> regexGroups : findAll) {
 			for (final RegexGroup regexGroup : regexGroups) {
