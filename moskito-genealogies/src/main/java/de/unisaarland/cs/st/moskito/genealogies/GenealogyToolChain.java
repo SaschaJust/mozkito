@@ -55,6 +55,10 @@ public class GenealogyToolChain extends AndamaChain {
 				Logger.info("Statistic on change genealogy graph:");
 				Logger.info("Number of vertices: " + this.genealogy.vertexSize());
 				Logger.info("Number of edges: " + this.genealogy.edgeSize());
+				
+				Logger.info("Statistic on change genealogy transaction layer:");
+				Logger.info("Number of vertices: " + this.genealogy.getTransactionLayer().vertexSize());
+				Logger.info("Number of edges: " + this.genealogy.getTransactionLayer().edgeSize());
 			}
 			
 			return;
