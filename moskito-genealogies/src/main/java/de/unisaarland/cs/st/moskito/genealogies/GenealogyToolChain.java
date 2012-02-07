@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 import net.ownhero.dev.andama.model.AndamaChain;
 import net.ownhero.dev.andama.model.AndamaPool;
+import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -26,7 +27,8 @@ public class GenealogyToolChain extends AndamaChain {
 	
 	private final AndamaPool         threadPool;
 	private final GenealogyArguments genealogyArgs;
-	private CoreChangeGenealogy genealogy;
+	private CoreChangeGenealogy      genealogy;
+	private final BooleanArgument    infoArg;
 	
 	public GenealogyToolChain() {
 		super(new GenealogySettings());
@@ -34,6 +36,10 @@ public class GenealogyToolChain extends AndamaChain {
 		this.threadPool = new AndamaPool(GenealogyToolChain.class.getSimpleName(), this);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
 		final LoggerArguments loggerArg = settings.setLoggerArg(false);
+		
+		this.infoArg = new BooleanArgument(settings, "genealogyInfoOnly", "Only prints standard genealogy infos",
+		                                   "false", false);
+		
 		loggerArg.getValue();
 		this.genealogyArgs = settings.setGenealogyArgs(true);
 		settings.parseArguments();
@@ -42,6 +48,17 @@ public class GenealogyToolChain extends AndamaChain {
 	@Override
 	public void run() {
 		
+		if (this.infoArg.getValue()) {
+			
+			this.genealogy = this.genealogyArgs.getValue();
+			if (Logger.logInfo()) {
+				Logger.info("Statistic on change genealogy graph:");
+				Logger.info("Number of vertices: " + this.genealogy.vertexSize());
+				Logger.info("Number of edges: " + this.genealogy.edgeSize());
+			}
+			
+			return;
+		}
 		setup();
 		this.threadPool.execute();
 		
@@ -54,13 +71,13 @@ public class GenealogyToolChain extends AndamaChain {
 	
 	@Override
 	public void setup() {
-		genealogy = this.genealogyArgs.getValue();
+		this.genealogy = this.genealogyArgs.getValue();
 		
-		final BranchFactory branchFactory = new BranchFactory(genealogy.getPersistenceUtil());
+		final BranchFactory branchFactory = new BranchFactory(this.genealogy.getPersistenceUtil());
 		
 		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory);
-		new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
-		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), genealogy);
+		new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
+		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 		
 	}
 }
