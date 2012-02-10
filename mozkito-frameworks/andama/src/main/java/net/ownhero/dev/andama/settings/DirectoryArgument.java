@@ -17,7 +17,11 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+import net.ownhero.dev.kanuni.conditions.FileCondition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -29,20 +33,21 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	private boolean create = false;
 	
 	/**
+	 * 
 	 * This is similar to FileArgument but requires the file to be a directory
 	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
-	 * 
-	 * @param settings
+	 * @param argumentSet
 	 * @param name
 	 * @param description
 	 * @param defaultValue
-	 * @param isRequired
+	 * @param requirements
 	 * @param create
 	 *            Attempts to create directory if not exist
+	 * @throws ArgumentRegistrationException
 	 */
-	public DirectoryArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements, final boolean create) {
+	public DirectoryArgument(@NotNull final AndamaArgumentSet<?> argumentSet,
+	        @NotNull @NotEmptyString final String name, final String description, final String defaultValue,
+	        final @NotNull Requirement requirements, final boolean create) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 		this.create = create;
 	}
@@ -53,56 +58,88 @@ public class DirectoryArgument extends AndamaArgument<File> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
-					}
-					
-					final File file = new File(getStringValue().trim());
-					
-					if (!file.exists()) {
-						if (!isCreate()) {
-							if (Logger.logError()) {
-								Logger.error("The file `" + getStringValue() + "` specified for argument `" + getName()
-								        + "` does not exist.");
-							}
-							return false;
-						} else {
-							if (!file.mkdirs()) {
-								if (Logger.logError()) {
-									Logger.error("The file `" + getStringValue() + "` specified for argument `"
-									        + getName() + "` does not exist and cannot be created.");
-								}
-								return false;
-							}
-						}
-					} else if (!file.isDirectory()) {
-						if (Logger.logError()) {
-							Logger.error("The directory `" + getStringValue() + "` specified for argument `"
-							        + getName()
-							        + "` is not a directory. Please remove file or choose different argument value.");
-						}
-						return false;
-					} else if (!file.canExecute()) {
-						if (Logger.logError()) {
-							Logger.error("The directory `" + getStringValue() + "` specified for argument `"
-							        + getName() + "` is not executable. Please fix the modifiers for this directory.");
-						}
-						return false;
-					}
-					setCachedValue(file);
-					return true;
-				} else {
-					return true;
-				}
-			}
-		} else {
-			return true;
-		}
+		boolean ret = false;
 		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (!validStringValue()) {
+							if (required()) {
+								if (Logger.logError()) {
+									Logger.error("The required file argument '" + getName() + "' is not set.");
+								}
+							} else {
+								setCachedValue(null);
+								ret = true;
+							}
+						} else {
+							
+							File directory = new File(getStringValue().trim());
+							
+							if (!directory.exists()) {
+								if (!isCreate()) {
+									if (Logger.logError()) {
+										Logger.error("The file '" + getStringValue() + "' specified for argument '"
+										        + getName() + "' does not exist.");
+									}
+								} else {
+									if (!directory.mkdirs()) {
+										if (Logger.logError()) {
+											Logger.error("The file '" + getStringValue() + "' specified for argument '"
+											        + getName() + "' does not exist and cannot be created.");
+										}
+									} else {
+										if (!directory.canExecute() || !directory.canRead() || !directory.canWrite()) {
+											if (Logger.logError()) {
+												Logger.error("The file '" + getStringValue()
+												        + "' specified for argument '" + getName()
+												        + "' could be created bu has wrong permissions.");
+											}
+										} else {
+											setCachedValue(directory);
+											ret = true;
+										}
+									}
+								}
+							} else if (!directory.isDirectory()) {
+								if (Logger.logError()) {
+									Logger.error("The directory '"
+									        + getStringValue()
+									        + "' specified for argument '"
+									        + getName()
+									        + "' is not a directory. Please remove file or choose different argument value.");
+								}
+							} else if (!directory.canExecute()) {
+								if (Logger.logError()) {
+									Logger.error("The directory '" + getStringValue() + "' specified for argument '"
+									        + getName()
+									        + "' is not executable. Please fix the modifiers for this directory.");
+								}
+							} else {
+								setCachedValue(directory);
+								ret = true;
+							}
+						}
+					} else {
+						ret = true;
+					}
+				}
+			} else {
+				ret = true;
+			}
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
+			
+			if (ret && required()) {
+				FileCondition.readableWritableDirectory(getCachedValue(),
+				                                        "%s has been successful initialized with config value '%s' but the target directory does not match the following criteria: EXISTS, DIRECTORY, READABLE, WRITABLE, EXECUTABLE",
+				                                        getHandle(), getStringValue());
+				
+			}
+		}
 	}
 	
 	/**

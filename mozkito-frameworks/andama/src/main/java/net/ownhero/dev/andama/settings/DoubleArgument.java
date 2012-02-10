@@ -15,7 +15,10 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -32,10 +35,12 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	 * @param description
 	 * @param defaultValue
 	 * @param required
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public DoubleArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	public DoubleArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String defaultValue,
+	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
@@ -45,31 +50,39 @@ public class DoubleArgument extends AndamaArgument<Double> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
-					}
-					
-					try {
-						setCachedValue(Double.valueOf(getStringValue()));
-					} catch (final NumberFormatException e) {
-						if (Logger.logError()) {
-							Logger.error("Value given for argument `" + getName()
-							        + "` could not be interpreted as a Double value. Abort!");
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (validStringValue()) {
+							setCachedValue(null);
+							ret = true;
+						} else {
+							try {
+								setCachedValue(Double.valueOf(getStringValue()));
+								ret = true;
+							} catch (final NumberFormatException e) {
+								if (Logger.logError()) {
+									Logger.error("Value given for argument `" + getName()
+									        + "` could not be interpreted as a Double value. Abort!");
+								}
+								
+								ret = false;
+							}
 						}
-						
-						return false;
+					} else {
+						ret = true;
 					}
-					return true;
-				} else {
-					return true;
 				}
+			} else {
+				ret = true;
 			}
-		} else {
-			return true;
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
 	}
 }

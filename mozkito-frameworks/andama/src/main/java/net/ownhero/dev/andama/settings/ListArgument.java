@@ -17,7 +17,10 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.HashSet;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -31,41 +34,55 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 * General Arguments as described in RepoSuiteArgument. The string value
 	 * will be split using delimiter `,` to receive the list of values.
 	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
+	 * @see AndamaArgument
 	 * 
 	 * @param settings
 	 * @param name
 	 * @param description
 	 * @param defaultValue
 	 * @param isRequired
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
 	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	        final String defaultValue, final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
-		this.delimiter = ",";
+		try {
+			this.delimiter = ",";
+		} finally {
+			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
+			StringCondition.notEmpty(this.delimiter, "The delimiter in %s must not be empty.", getHandle());
+		}
 	}
 	
 	/**
 	 * 
-	 * General Arguments as described in RepoSuiteArgument
+	 * General Arguments as described in {@link AndamaArgument}
 	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
-	 * 
-	 * @param settings
+	 * @param argumentSet
 	 * @param name
 	 * @param description
 	 * @param defaultValue
-	 * @param isRequired
+	 * @param requirements
 	 * @param delimiter
 	 *            The string value will be split using this delimiter to receive
 	 *            the list of values
-	 * @throws DuplicateArgumentException
+	 * @throws ArgumentRegistrationException
 	 */
 	public ListArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements, final String delimiter) {
+	        final String defaultValue, final Requirement requirements, final String delimiter)
+	        throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
-		this.delimiter = delimiter;
+		try {
+			this.delimiter = delimiter;
+		} finally {
+			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
+			StringCondition.notEmpty(this.delimiter, "The delimiter in %s must not be empty.", getHandle());
+			StringCondition.equals(this.delimiter,
+			                       delimiter,
+			                       "The delimiter in %s is not equal to the one give in the constructor ('%s' vs '%s').",
+			                       getHandle(), this.delimiter, delimiter);
+		}
 	}
 	
 	/*
@@ -74,22 +91,36 @@ public class ListArgument extends AndamaArgument<HashSet<String>> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (getStringValue() == null) {
+							setCachedValue(null);
+							ret = true;
+						} else {
+							final HashSet<String> result = new HashSet<String>();
+							
+							for (final String s : getStringValue().split(this.delimiter)) {
+								result.add(s.trim());
+							}
+							
+							setCachedValue(result);
+							ret = true;
+						}
+					} else {
+						ret = true;
 					}
-					final HashSet<String> result = new HashSet<String>();
-					for (final String s : getStringValue().split(this.delimiter)) {
-						result.add(s.trim());
-					}
-					setCachedValue(result);
-					return true;
 				}
+			} else {
+				ret = true;
 			}
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
-		return true;
 	}
 }

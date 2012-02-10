@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.settings.dependencies;
+package net.ownhero.dev.andama.settings.requirements;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,6 +23,10 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -41,16 +45,26 @@ public final class Any extends Requirement {
 	 * @param requirements
 	 *            a collection of inner expressions
 	 */
-	public Any(final Collection<Requirement> requirements) {
-		this.requirements.addAll(this.requirements);
+	public Any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
+		try {
+			this.requirements.addAll(this.requirements);
+		} finally {
+			Condition.notNull(this.requirements, "Requirement values may never be null.");
+			CollectionCondition.notEmpty(this.requirements, "Requirement values may never be empty.");
+		}
 	}
 	
 	/**
 	 * @param expressions
 	 *            sa collection of inner expressions
 	 */
-	public Any(final Requirement... expressions) {
-		CollectionUtils.addAll(this.requirements, expressions);
+	public Any(@NotNull @NotEmpty final Requirement... expressions) {
+		try {
+			CollectionUtils.addAll(this.requirements, expressions);
+		} finally {
+			Condition.notNull(this.requirements, "Requirement values may never be null.");
+			CollectionCondition.notEmpty(this.requirements, "Requirement values may never be empty.");
+		}
 	}
 	
 	/*
@@ -60,9 +74,9 @@ public final class Any extends Requirement {
 	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check() {
+	public boolean required() {
 		for (final Requirement requirement : this.requirements) {
-			if (requirement.check()) {
+			if (requirement.required()) {
 				return true;
 			}
 		}
@@ -78,10 +92,14 @@ public final class Any extends Requirement {
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
 		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
-		for (Requirement requirement : this.requirements) {
-			dependencies.addAll(requirement.getDependencies());
+		try {
+			for (Requirement requirement : this.requirements) {
+				dependencies.addAll(requirement.getDependencies());
+			}
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
 		}
-		return dependencies;
 	}
 	
 	/**
@@ -100,7 +118,7 @@ public final class Any extends Requirement {
 	 */
 	@Override
 	public List<Requirement> getMissingRequirements() {
-		if (!check()) {
+		if (!required()) {
 			return new LinkedList<Requirement>() {
 				
 				private static final long serialVersionUID = 1L;

@@ -1,27 +1,28 @@
 /**
  * 
  */
-package net.ownhero.dev.andama.settings.dependencies;
+package net.ownhero.dev.andama.settings.requirements;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Optional extends Requirement {
+public class Required extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
 	@Override
-	public boolean check() {
-		return false;
+	public boolean required() {
+		return true;
 	}
 	
 	/*
@@ -31,7 +32,12 @@ public class Optional extends Requirement {
 	 */
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		return new HashSet<AndamaArgumentInterface<?>>();
+		Set<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
+		try {
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
 	}
 	
 	/*
@@ -44,4 +50,12 @@ public class Optional extends Requirement {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "(required)";
+	}
 }

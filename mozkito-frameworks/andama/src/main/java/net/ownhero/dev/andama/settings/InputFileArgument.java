@@ -17,7 +17,10 @@ package net.ownhero.dev.andama.settings;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -49,59 +52,88 @@ public class InputFileArgument extends AndamaArgument<File> {
 	 * @param mustExist
 	 *            Set to true if you want to ensure that the file at given
 	 *            location must already exist.
+	 * @throws ArgumentRegistrationException
 	 */
-	public InputFileArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	public InputFileArgument(@NotNull final AndamaArgumentSet<?> argumentSet,
+	        @NotNull @NotEmptyString final String name, @NotNull @NotEmptyString final String description,
+	        final String defaultValue, @NotNull final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgument#init()
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
-					}
-					
-					final File file = new File(getStringValue().trim());
-					
-					if (file.isDirectory()) {
-						if (Logger.logError()) {
-							Logger.error("The file `" + getStringValue() + "` specified for argument `" + getName()
-							        + "` is a directory. Expected file. Abort.");
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (!validStringValue()) {
+							if (required()) {
+								// TODO error log
+							} else {
+								setCachedValue(null);
+								ret = true;
+							}
+						} else {
+							
+							final File file = new File(getStringValue().trim());
+							
+							if (file.isDirectory()) {
+								if (Logger.logError()) {
+									Logger.error("The file `" + getStringValue() + "` specified for argument `"
+									        + getName() + "` is a directory. Expected file. Abort.");
+								}
+							} else if (!file.exists()) {
+								if (required()) {
+									if (Logger.logError()) {
+										Logger.error("The file `" + getStringValue() + "` specified for argument `"
+										        + getName() + "` does not exists but is required!");
+									}
+								} else {
+									if (Logger.logWarn()) {
+										Logger.warn("The file `" + getStringValue() + "` specified for argument `"
+										        + getName()
+										        + "` does not exists and is not required! Ignoring file argument!");
+									}
+									setCachedValue(null);
+									ret = true;
+								}
+							} else if (!file.canRead()) {
+								if (required()) {
+									if (Logger.logError()) {
+										Logger.error("The required file `" + getStringValue()
+										        + "` specified for argument `" + getName()
+										        + "` exists but is not readable.");
+									}
+								} else {
+									if (Logger.logWarn()) {
+										Logger.warn("The file `" + getStringValue() + "` specified for argument `"
+										        + getName() + "` exists but is not readable. Ignoring file argument!");
+									}
+									setCachedValue(null);
+									ret = true;
+								}
+							} else {
+								setCachedValue(file);
+								ret = true;
+							}
 						}
-						return false;
+					} else {
+						ret = true;
 					}
-					
-					if (!file.exists() && required()) {
-						if (Logger.logError()) {
-							Logger.error("The file `" + getStringValue() + "` specified for argument `" + getName()
-							        + "` does not exists but is required!");
-						}
-						return false;
-					}
-					
-					if (!file.exists() && !required()) {
-						if (Logger.logWarn()) {
-							Logger.warn("The file `" + getStringValue() + "` specified for argument `" + getName()
-							        + "` does not exists and is not required! Ignoring file argument!");
-						}
-						return false;
-					}
-					
-					setCachedValue(file);
-					return true;
-				} else {
-					return true;
 				}
+			} else {
+				ret = true;
 			}
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
-		return true;
 	}
 }

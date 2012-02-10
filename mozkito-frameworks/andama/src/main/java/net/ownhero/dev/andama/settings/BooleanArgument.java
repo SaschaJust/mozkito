@@ -15,7 +15,10 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -24,43 +27,57 @@ import net.ownhero.dev.andama.settings.dependencies.Requirement;
 public class BooleanArgument extends AndamaArgument<Boolean> {
 	
 	/**
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
-	 * 
-	 * @param settings
+	 * @param argumentSet
 	 * @param name
 	 * @param description
 	 * @param defaultValue
-	 * @param isRequired
-	 * 
+	 * @param requirements
+	 * @throws ArgumentRegistrationException
 	 */
-	public BooleanArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	public BooleanArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String defaultValue,
+	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgument#getValue()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgument#init()
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-					} else if (getStringValue().trim().equals("")) {
-						setCachedValue(true);
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (getStringValue() == null) {
+							if (required()) {
+								// TODO Error log
+							} else {
+								// TODO Warn log
+								setCachedValue(null);
+								ret = true;
+							}
+						} else if (getStringValue().trim().equals("")) {
+							setCachedValue(true);
+							ret = true;
+						} else {
+							setCachedValue(Boolean.parseBoolean(getStringValue()));
+							ret = true;
+						}
 					} else {
-						setCachedValue(Boolean.parseBoolean(getStringValue()));
+						ret = true;
 					}
-					return true;
-				} else {
-					return true;
 				}
+			} else {
+				ret = true;
 			}
-		} else {
-			return true;
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
 	}
 	

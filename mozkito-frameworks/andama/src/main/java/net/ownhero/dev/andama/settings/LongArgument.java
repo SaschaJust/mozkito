@@ -15,7 +15,10 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -32,10 +35,12 @@ public class LongArgument extends AndamaArgument<Long> {
 	 * @param description
 	 * @param defaultValue
 	 * @param isRequired
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public LongArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	public LongArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String defaultValue,
+	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 	}
 	
@@ -45,28 +50,42 @@ public class LongArgument extends AndamaArgument<Long> {
 	 */
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
-					}
-					
-					try {
-						setCachedValue(Long.valueOf(getStringValue()));
-					} catch (final NumberFormatException e) {
-						if (Logger.logError()) {
-							Logger.error("Value given for argument `" + getName()
-							        + "` could not be interpreted as a Long value. Abort!");
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (validStringValue()) {
+							if (required()) {
+								// TODO error log
+							} else {
+								setCachedValue(null);
+								ret = true;
+							}
+						} else {
+							try {
+								setCachedValue(Long.valueOf(getStringValue()));
+								ret = true;
+							} catch (final NumberFormatException e) {
+								if (Logger.logError()) {
+									Logger.error("Value given for argument `" + getName()
+									        + "` could not be interpreted as a Long value. Abort!");
+								}
+								
+							}
 						}
-						
-						return false;
+					} else {
+						ret = true;
 					}
-					return true;
 				}
+			} else {
+				ret = true;
 			}
+			
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
-		return true;
 	}
 }

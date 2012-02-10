@@ -15,30 +15,76 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class EnumArgument extends AndamaArgument<String> {
+public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 	
-	private final HashSet<String> possibleValues;
+	private final HashSet<String> possibleValues = new HashSet<String>();
 	
 	/**
-	 * 
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
-	 * 
+	 * @param argumentSet
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param requirements
+	 * @throws ArgumentRegistrationException
 	 */
-	public EnumArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements, final String[] possibleValues) {
-		super(argumentSet, name, description, defaultValue, requirements);
-		this.possibleValues = new HashSet<String>();
-		for (final String s : possibleValues) {
-			this.possibleValues.add(s);
+	public EnumArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final T defaultValue,
+	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
+		super(argumentSet, name, description, defaultValue.toString(), requirements);
+		try {
+			Class<?> enumType = ((Class<?>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
+			for (int i = 0; i < enumType.getEnumConstants().length; ++i) {
+				this.possibleValues.add(enumType.getEnumConstants()[i].toString());
+			}
+		} finally {
+			Condition.notNull(this.possibleValues, "The set of possible values for %s must not be null.", getHandle());
+			CollectionCondition.notEmpty(this.possibleValues, "The set of possible values for %s must not be empty.",
+			                             getHandle());
+		}
+	}
+	
+	/**
+	 * @param argumentSet
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param requirements
+	 * @param possibleValues
+	 * @throws ArgumentRegistrationException
+	 */
+	public EnumArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final T defaultValue,
+	        @NotNull final Requirement requirements, @NotNull @NotEmpty final String[] possibleValues)
+	        throws ArgumentRegistrationException {
+		super(argumentSet, name, description, defaultValue.toString(), requirements);
+		try {
+			for (final String possibleValue : possibleValues) {
+				this.possibleValues.add(possibleValue);
+			}
+		} finally {
+			Condition.notNull(this.possibleValues, "The set of possible values for %s must not be null.", getHandle());
+			CollectionCondition.notEmpty(this.possibleValues, "The set of possible values for %s must not be empty.",
+			                             getHandle());
+			CollectionCondition.sameSize(this.possibleValues,
+			                             possibleValues,
+			                             "The size of the set of possible values for %s must be exactly the same as the one given in the constructor.",
+			                             getHandle());
 		}
 	}
 	
@@ -46,48 +92,69 @@ public class EnumArgument extends AndamaArgument<String> {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected final boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						return true;
-					}
-					
-					final String value = getStringValue().toUpperCase();
-					
-					if (!this.possibleValues.contains(value)) {
-						if (Logger.logError()) {
-							final StringBuilder ss = new StringBuilder();
-							ss.append("Value `" + value + "` set for argument `");
-							ss.append(getName());
-							ss.append("` is invalid.");
-							ss.append(System.getProperty("line.separator"));
-							ss.append("Please choose one of the following possible values:");
-							ss.append(System.getProperty("line.separator"));
-							
-							for (final String s : this.possibleValues) {
-								ss.append("\t");
-								ss.append(s);
-								ss.append(System.getProperty("line.separator"));
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (validStringValue()) {
+							if (required()) {
+								// TODO error logs
+							} else {
+								setCachedValue(null);
+								ret = true;
 							}
+						} else {
 							
-							Logger.error(ss.toString());
+							final String value = getStringValue().toUpperCase();
+							
+							if (!this.possibleValues.contains(value)) {
+								if (Logger.logError()) {
+									final StringBuilder ss = new StringBuilder();
+									ss.append("Value `" + value + "` set for argument `");
+									ss.append(getName());
+									ss.append("` is invalid.");
+									ss.append(System.getProperty("line.separator"));
+									ss.append("Please choose one of the following possible values:");
+									ss.append(System.getProperty("line.separator"));
+									
+									for (final String s : this.possibleValues) {
+										ss.append("\t");
+										ss.append(s);
+										ss.append(System.getProperty("line.separator"));
+									}
+									
+									Logger.error(ss.toString());
+								}
+								
+								ret = false;
+							} else {
+								Class<?> enumType = ((Class<?>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
+								
+								for (int i = 0; i < enumType.getEnumConstants().length; ++i) {
+									if (enumType.getEnumConstants()[i].toString()
+									                                  .equalsIgnoreCase(getStringValue().trim())) {
+										setCachedValue((T) enumType.getEnumConstants()[i]);
+										ret = true;
+										break;
+									}
+								}
+							}
 						}
-						
-						return false;
+					} else {
+						ret = true;
 					}
-					
-					setCachedValue(value);
-					return true;
-				} else {
-					return true;
 				}
+			} else {
+				ret = true;
 			}
-		} else {
-			return true;
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
 	}
 	

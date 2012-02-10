@@ -18,7 +18,10 @@ package net.ownhero.dev.andama.settings;
 import java.io.File;
 import java.io.IOException;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -49,174 +52,178 @@ public class OutputFileArgument extends AndamaArgument<File> {
 	 *            Set to <code>true</code> if you want the RepoSuite tool to
 	 *            attempt overwriting the file located at given path if
 	 *            possible.
+	 * @throws ArgumentRegistrationException
 	 */
-	public OutputFileArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements, final boolean overwrite) {
+	public OutputFileArgument(@NotNull final AndamaArgumentSet<?> argumentSet,
+	        @NotNull @NotEmptyString final String name, @NotNull @NotEmptyString final String description,
+	        final String defaultValue, @NotNull final Requirement requirements, final boolean overwrite)
+	        throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 		this.overwrite = overwrite;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
+	/**
+	 * @param file
+	 * @return
 	 */
-	@Override
-	protected boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					if (getStringValue() == null) {
-						setCachedValue(null);
-						if (required()) {
-							return false;
-						} else {
-							return true;
-						}
-					}
-					final File file = new File(getStringValue().trim());
-					
-					if (file.isDirectory()) {
+	private final boolean createFile(final File file) {
+		boolean ret = false;
+		
+		try {
+			try {
+				if (!file.createNewFile()) {
+					if (required()) {
 						if (Logger.logError()) {
-							Logger.error("The file `" + getStringValue() + "` specified for argument `" + getName()
-							        + "` is a directory. Expected file. Abort.");
-						}
-					}
-					if (file.exists()) {
-						if (!isOverwrite()) {
-							
-							if (required()) {
-								if (Logger.logError()) {
-									
-									Logger.error("The file `"
-									        + getStringValue()
-									        + "` specified for argument `"
-									        + getName()
-									        + "` exists already. Please remove file or choose different argument value.");
-								}
-								return false;
-							} else {
-								if (Logger.logWarn()) {
-									Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-									        + getName()
-									        + "` exists already and cannot be overwritten. Ignoring argument!.");
-								}
-								return true;
-							}
-							
-						} else {
-							
-							if (Logger.logDebug()) {
-								if (Logger.logDebug()) {
-									Logger.debug("Attempt overwriting file `" + file.getAbsolutePath() + "` ...");
-								}
-							}
-							
-							if (!file.delete()) {
-								if (required()) {
-									if (Logger.logError()) {
-										Logger.error("Could not delete file `" + file.getAbsolutePath() + "`. Abort.");
-									}
-									
-									return false;
-								} else {
-									if (Logger.logWarn()) {
-										Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-										        + getName()
-										        + "` exists already and cannot be deleted. Ignoring argument!.");
-									}
-									return true;
-								}
-							}
-							
-							try {
-								if (!file.createNewFile()) {
-									if (required()) {
-										if (Logger.logError()) {
-											Logger.error("Could not re-create file `" + file.getAbsolutePath()
-											        + "`. Abort.");
-										}
-										return false;
-									} else {
-										if (Logger.logWarn()) {
-											Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-											        + getName()
-											        + "` exists already and cannot be re-created. Ignoring argument!.");
-										}
-										return true;
-									}
-								}
-							} catch (final IOException e) {
-								if (required()) {
-									if (Logger.logError()) {
-										Logger.error("Could not re-create file `" + file.getAbsolutePath()
-										        + "`. Abort.");
-									}
-									return false;
-								} else {
-									if (Logger.logWarn()) {
-										Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-										        + getName()
-										        + "` exists already and cannot be re-created. Ignoring argument!.");
-									}
-									return true;
-								}
-							}
+							Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
 						}
 					} else {
-						// file does not exist so far
-						try {
-							if (!file.createNewFile()) {
-								if (required()) {
-									if (Logger.logError()) {
-										Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
-									}
-									return false;
-								} else {
-									if (Logger.logWarn()) {
-										Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-										        + getName() + "` cannot be created. Ignoring argument!.");
-									}
-									return true;
-								}
-							}
-						} catch (final IOException e) {
-							if (required()) {
-								if (Logger.logError()) {
-									Logger.error("Could not create file `" + file.getAbsolutePath() + "`. Abort.");
-								}
-								return false;
-							} else {
-								if (Logger.logWarn()) {
-									Logger.warn("The file `" + getStringValue() + "` specified for argument `"
-									        + getName() + "` cannot be created. Ignoring argument!.");
-								}
-								return true;
-							}
+						if (Logger.logWarn()) {
+							Logger.warn("The file `" + getStringValue() + "` specified for argument `" + getName()
+							        + "` exists already and cannot be re-created. Ignoring argument!.");
 						}
+						setCachedValue(null);
+						ret = true;
 					}
-					
+				} else {
 					if (!file.canWrite()) {
 						if (required()) {
 							if (Logger.logError()) {
 								Logger.error("Permissions do not allow writing to file `" + file.getAbsolutePath()
 								        + "`. Abort.");
 							}
-							return false;
 						} else {
 							if (Logger.logWarn()) {
 								Logger.warn("The file `" + getStringValue() + "` specified for argument `" + getName()
 								        + "` is not writable (due to permissions). Ignoring argument!.");
 							}
-							return true;
+							setCachedValue(null);
+							ret = true;
 						}
 					}
-					
-					setCachedValue(file);
-					return true;
+				}
+			} catch (final IOException e) {
+				if (required()) {
+					if (Logger.logError()) {
+						Logger.error("Could not re-create file `" + file.getAbsolutePath() + "`. Abort.");
+					}
+					ret = false;
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("The file `" + getStringValue() + "` specified for argument `" + getName()
+						        + "` exists already and cannot be re-created. Ignoring argument!.");
+					}
+					setCachedValue(null);
+					ret = true;
 				}
 			}
+			
+			return ret;
+		} finally {
+			
 		}
-		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgument#init()
+	 */
+	@Override
+	protected boolean init() {
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						if (!validStringValue()) {
+							if (required()) {
+								// TODO error log
+							} else {
+								// TODO warn log
+								setCachedValue(null);
+								ret = true;
+							}
+						} else {
+							final File file = new File(getStringValue().trim());
+							
+							if (file.exists()) {
+								if (!file.isFile()) {
+									if (Logger.logError()) {
+										Logger.error("The file `" + getStringValue() + "` specified for argument `"
+										        + getName() + "` is not a regular file. Abort.");
+									}
+								} else if (!isOverwrite()) {
+									
+									if (required()) {
+										if (Logger.logError()) {
+											
+											Logger.error("The file `"
+											        + getStringValue()
+											        + "` specified for argument `"
+											        + getName()
+											        + "` exists already. Please remove file or choose different argument value.");
+										}
+									} else {
+										if (Logger.logWarn()) {
+											Logger.warn("The file `" + getStringValue() + "` specified for argument `"
+											        + getName()
+											        + "` exists already and cannot be overwritten. Ignoring argument!.");
+										}
+										setCachedValue(null);
+										ret = true;
+									}
+									
+								} else {
+									
+									if (Logger.logDebug()) {
+										if (Logger.logDebug()) {
+											Logger.debug("Attempt overwriting file `" + file.getAbsolutePath()
+											        + "` ...");
+										}
+									}
+									
+									if (!file.delete()) {
+										if (required()) {
+											if (Logger.logError()) {
+												Logger.error("Could not delete file `" + file.getAbsolutePath()
+												        + "`. Abort.");
+											}
+										} else {
+											if (Logger.logWarn()) {
+												Logger.warn("The file `" + getStringValue()
+												        + "` specified for argument `" + getName()
+												        + "` exists already and cannot be deleted. Ignoring argument!.");
+											}
+											setCachedValue(null);
+											ret = true;
+										}
+									} else {
+										// file does not exist now
+										ret = createFile(file);
+										if (ret) {
+											setCachedValue(file);
+										}
+									}
+								}
+							} else {
+								// file does not exist so far
+								ret = createFile(file);
+								if (ret) {
+									setCachedValue(file);
+								}
+							}
+						}
+					} else {
+						ret = true;
+					}
+				}
+			} else {
+				ret = true;
+			}
+			return ret;
+		} finally {
+			__initPostCondition(ret);
+		}
 	}
 	
 	/**

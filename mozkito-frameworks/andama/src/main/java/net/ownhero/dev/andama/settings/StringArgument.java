@@ -15,7 +15,10 @@
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -31,28 +34,54 @@ public class StringArgument extends AndamaArgument<String> {
 	 * @param description
 	 * @param defaultValue
 	 * @param isRequired
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public StringArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
+	public StringArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String defaultValue,
+	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
-		
+	}
+	
+	/**
+	 * @param argumentSet
+	 * @param name
+	 * @param description
+	 * @param defaultValue
+	 * @param requirements
+	 * @param mask
+	 * @throws ArgumentRegistrationException
+	 */
+	public StringArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String defaultValue,
+	        @NotNull final Requirement requirements, final boolean mask) throws ArgumentRegistrationException {
+		super(argumentSet, name, description, defaultValue, requirements, mask);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgument#init()
 	 */
 	@Override
 	protected boolean init() {
-		if (!isInitialized()) {
-			synchronized (this) {
-				if (!isInitialized()) {
-					setCachedValue(getStringValue());
-					return true;
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						setCachedValue(getStringValue());
+						ret = true;
+					} else {
+						ret = true;
+					}
 				}
+			} else {
+				ret = true;
 			}
+			return ret;
+		} finally {
+			__initPostCondition(ret);
 		}
-		return true;
 	}
 }

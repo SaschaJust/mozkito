@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.settings.dependencies;
+package net.ownhero.dev.andama.settings.requirements;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * The not expression evaluates to true if the innerexpression evaluates to
@@ -37,7 +38,11 @@ public class Not extends Requirement {
 	 *            the inner expression used in the evaluation
 	 */
 	public Not(final Requirement requirement) {
-		this.requirement = requirement;
+		try {
+			this.requirement = requirement;
+		} finally {
+			Condition.notNull(this.requirement, "Requirements in %s may never be null.", getHandle());
+		}
 	}
 	
 	/*
@@ -45,8 +50,8 @@ public class Not extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
 	@Override
-	public boolean check() {
-		return !this.requirement.check();
+	public boolean required() {
+		return !this.requirement.required();
 	}
 	
 	/*
@@ -56,7 +61,13 @@ public class Not extends Requirement {
 	 */
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		return this.requirement.getDependencies();
+		Set<AndamaArgumentInterface<?>> dependencies = null;
+		try {
+			dependencies = this.requirement.getDependencies();
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
 	}
 	
 	/**
@@ -76,7 +87,7 @@ public class Not extends Requirement {
 		final List<Requirement> failureCause = this.requirement.getMissingRequirements();
 		
 		if (failureCause == null) {
-			return check()
+			return required()
 			              ? null
 			              : new LinkedList<Requirement>() {
 				              
@@ -87,7 +98,7 @@ public class Not extends Requirement {
 				              }
 			              };
 		} else {
-			return check()
+			return required()
 			              ? null
 			              : failureCause;
 		}

@@ -17,12 +17,23 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
+ */
+/**
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * 
+ * @param <T>
  */
 public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
@@ -34,8 +45,10 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	private String               stringValue;
 	private boolean              wasSet;
-	private boolean              init = false;
+	private boolean              init       = false;
 	private T                    cachedValue;
+	private final boolean        masked;
+	private final static String  maskString = "******** (masked)";
 	
 	/**
 	 * @param settings
@@ -48,28 +61,81 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 *            The default value given as string will be interpreted as path
 	 * @param required
 	 *            Set to <code>true</code> if this argument will be required
+	 * @throws ArgumentRegistrationException
 	 */
-	public AndamaArgument(final AndamaArgumentSet<?> argumentSet, final String name, final String description,
-	        final String defaultValue, final Requirement requirements) {
-		this.name = name;
-		this.description = description;
-		this.requirements = requirements;
-		this.stringValue = defaultValue;
-		this.defaultValue = defaultValue;
-		
-		this.settings = argumentSet.getSettings();
-		argumentSet.addArgument(this);
+	public AndamaArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull final String name,
+	        @NotNull final String description, final String defaultValue, @NotNull final Requirement requirements)
+	        throws ArgumentRegistrationException {
+		this(argumentSet, name, description, defaultValue, requirements, false);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#compareTo(net
-	 * .ownhero.dev.andama.settings.AndamaArgumentInterface)
+	public AndamaArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull final String name,
+	        @NotNull final String description, final String defaultValue, @NotNull final Requirement requirements,
+	        final boolean mask) throws ArgumentRegistrationException {
+		
+		try {
+			this.name = name;
+			this.description = description;
+			this.requirements = requirements;
+			this.stringValue = defaultValue;
+			this.defaultValue = defaultValue;
+			this.settings = argumentSet.getSettings();
+			this.masked = mask;
+			
+			if (!argumentSet.addArgument(this)) {
+				throw new ArgumentRegistrationException("Could not register argument set " + getHandle() + ".");
+			}
+		} finally {
+			Condition.notNull(this.name, "Field '%s' in %s.", "name", getHandle());
+			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
+			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
+			Condition.notNull(this.settings, "Field '%s' in %s.", "settings", getHandle());
+		}
+	}
+	
+	/**
+	 * @param retval
+	 */
+	protected void __initPostCondition(final boolean retval) {
+		if (retval) {
+			Condition.check(isInitialized(), "If init() returns true, the %s has to be set to initialized.",
+			                getHandle());
+			if (required()) {
+				Condition.notNull(getCachedValue(),
+				                  "%s has been successful initialized with config value '%s' but the stored data is null.",
+				                  getHandle(), getStringValue());
+			}
+		} else {
+			Condition.check(!isInitialized(), "If init() returns false, the %s has to be set to uninitialized.",
+			                getHandle());
+		}
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
 	 */
 	@Override
-	public final int compareTo(final AndamaArgumentInterface<T> arg0) {
-		return getName().compareTo(arg0.getName());
+	public final int compareTo(final AndamaArgumentInterface<?> arg0) {
+		if (this == arg0) {
+			return 0;
+		}
+		
+		Set<AndamaArgumentInterface<?>> dependencies = getDependencies();
+		if (dependencies.contains(arg0)) {
+			return 1;
+		} else if (dependencies.contains(this)) {
+			return 0;
+		} else {
+			int ret = -1;
+			for (AndamaArgumentInterface<?> argX : dependencies) {
+				ret = argX.compareTo(arg0);
+				if (ret != 0) {
+					return ret;
+				}
+			}
+			return ret;
+		}
 	}
 	
 	/*
@@ -141,6 +207,52 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString()
+	 */
+	@Override
+	public String getHelpString() {
+		return String.format("%s ['%s', value='%s', default='%s', description='%s', required=%s, required if=%s]",
+		                     getHandle(), getName(), getStringValue() == null
+		                                                                     ? "(unset)"
+		                                                                     : getStringValue(), getDefaultValue(),
+		                     getDescription(), required(), getRequirements());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString
+	 * (int)
+	 */
+	@Override
+	public String getHelpString(final int indentation) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (int i = 0; i < indentation; ++i) {
+			builder.append("| ");
+		}
+		
+		return "|-" + getHelpString();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
+	 */
+	@Override
+	public Tuple<Integer, Integer> getKeyValueSpan() {
+		return new Tuple<Integer, Integer>(getName().length(),
+		                                   getStringValue() == null
+		                                                           ? "(unset)".length()
+		                                                           : this.masked
+		                                                                        ? maskString.length()
+		                                                                        : getStringValue().length());
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getName()
 	 */
 	@Override
@@ -177,8 +289,8 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	@Override
 	public final T getValue() {
 		if (!this.init) {
-			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
-			        + getName() + " before calling init() is not allowed! Please fix your code.");
+			throw new UnrecoverableError("Calling getValue() on " + getHandle() + " and instance '" + getName()
+			        + "' before calling init() is not allowed! Please fix your code.");
 		}
 		return this.getCachedValue();
 	}
@@ -197,13 +309,34 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 		return result;
 	}
 	
+	/**
+	 * @return
+	 */
 	protected abstract boolean init();
 	
 	/**
 	 * @return the init
 	 */
-	protected final boolean isInitialized() {
+	@Override
+	public final boolean isInitialized() {
 		return this.init;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
+	 */
+	@Override
+	public void parse() throws SettingsParseError {
+		String value = (String) getSettings().getProperties().get(getName());
+		
+		if (value != null) {
+			setStringValue(value);
+		}
+		
+		if (!init()) {
+			throw new SettingsParseError("Could not initialize " + getHandle() + " instance '" + getName() + "'.", this);
+		}
 	}
 	
 	/*
@@ -212,7 +345,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 */
 	@Override
 	public boolean required() {
-		return getRequirements().check();
+		return getRequirements().required() && !(getRequirements() instanceof Optional);
 	}
 	
 	/**
@@ -239,7 +372,8 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 */
 	@Override
 	public final String toString() {
-		return toString(0);
+		Tuple<Integer, Integer> span = getKeyValueSpan();
+		return toString(span.getFirst(), span.getSecond());
 	}
 	
 	/*
@@ -248,10 +382,24 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
-	public String toString(final int indentation) {
-		return String.format("%-" + indentation + "s", "") + getHandle() + " [name=" + getName() + ", requirements="
-		        + getRequirements() + ", default=" + getDefaultValue() + ", value=" + getStringValue()
-		        + ", description=" + getDescription() + "]";
+	public String toString(final int keyWidth,
+	                       final int valueWidth) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("%-").append(keyWidth).append("s = %-").append(valueWidth).append("s\t%s");
+		
+		return String.format(builder.toString(), getName(), getStringValue() == null
+		                                                                            ? "(unset)"
+		                                                                            : this.masked
+		                                                                                         ? maskString
+		                                                                                         : getStringValue(),
+		                     getHelpString());
+	}
+	
+	/**
+	 * @return
+	 */
+	protected final boolean validStringValue() {
+		return (getStringValue() != null) && !getStringValue().trim().isEmpty();
 	}
 	
 	/**

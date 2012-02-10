@@ -1,38 +1,28 @@
 /**
  * 
  */
-package net.ownhero.dev.andama.settings.dependencies;
+package net.ownhero.dev.andama.settings.requirements;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgument;
 import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class IsSet extends Requirement {
-	
-	private final AndamaArgument<?> argument;
-	
-	/**
-	 * @param argument
-	 */
-	public IsSet(final AndamaArgument<?> argument) {
-		this.argument = argument;
-	}
+public class Optional extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
 	@Override
-	public boolean check() {
-		return this.argument.wasSet();
+	public boolean required() {
+		return false;
 	}
 	
 	/*
@@ -43,9 +33,11 @@ public class IsSet extends Requirement {
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
 		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
-		dependencies.add(this.argument);
-		
-		return dependencies;
+		try {
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
 	}
 	
 	/*
@@ -55,16 +47,7 @@ public class IsSet extends Requirement {
 	 */
 	@Override
 	public List<Requirement> getMissingRequirements() {
-		return check()
-		              ? null
-		              : new LinkedList<Requirement>() {
-			              
-			              private static final long serialVersionUID = 1L;
-			              
-			              {
-				              add(IsSet.this);
-			              }
-		              };
+		return null;
 	}
 	
 	/*
@@ -73,7 +56,6 @@ public class IsSet extends Requirement {
 	 */
 	@Override
 	public String toString() {
-		return "(ISSET: " + this.argument.getName() + ")";
+		return "(optional)";
 	}
-	
 }

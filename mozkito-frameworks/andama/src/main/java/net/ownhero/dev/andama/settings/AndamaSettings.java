@@ -20,16 +20,21 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Properties;
-import java.util.TreeSet;
+import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -40,19 +45,30 @@ import net.ownhero.dev.kisa.Logger;
 public class AndamaSettings {
 	
 	public static void main(final String[] args) {
+		// System.setProperty("mail.password", "test");
 		AndamaSettings settings = new AndamaSettings();
-		System.err.println(settings.toString());
+		try {
+			settings.parse();
+			Requirement.printGraph(settings.argumentSets.values());
+			System.err.println(settings.toString());
+			System.err.println(settings.getHelpString());
+		} catch (SettingsParseError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		
 	}
 	
 	private final Map<String, AndamaArgumentSet<?>> argumentSets     = new HashMap<String, AndamaArgumentSet<?>>();
 	private final Map<String, String>               toolInformation  = new HashMap<String, String>();
 	
 	private final Properties                        commandlineProps = (Properties) System.getProperties().clone();
-	private final BooleanArgument                   noDefaultValueArg;
-	private final BooleanArgument                   helpArg;
-	private final BooleanArgument                   disableCrashArg;
-	private final URIArgument                       settingsArg;
-	private final MailArguments                     mailArguments;
+	private BooleanArgument                         noDefaultValueArg;
+	private BooleanArgument                         helpArg;
+	private BooleanArgument                         disableCrashArg;
+	private URIArgument                             settingsArg;
+	private MailArguments                           mailArguments    = null;
 	private AndamaArgumentSet<Boolean>              rootArgumentSet;
 	
 	private StringArgument                          bugReportArgument;
@@ -64,55 +80,63 @@ public class AndamaSettings {
 	 */
 	public AndamaSettings() {
 		Logger.readConfiguration();
-		this.rootArgumentSet = new AndamaArgumentSet<Boolean>(this, "ROOT arguments") {
-			
-			@Override
-			protected boolean init() {
-				setCachedValue(true);
-				return true;
-			}
-		};
-		this.bugReportArgument = new StringArgument(
-		                                            getRootArgumentSet(),
-		                                            "bug.report",
-		                                            "Determines the error string yielding the URL to the bug tracker for this project.",
-		                                            "Please file a bug report with this error message here: https://dev.own-hero.net",
-		                                            new Required());
-		this.noDefaultValueArg = new BooleanArgument(getRootArgumentSet(), "denyDefaultValues",
-		                                             "Ignore default values!", "false", new Optional());
-		this.helpArg = new BooleanArgument(getRootArgumentSet(), "help", "Shows this help menu.", "false",
-		                                   new Optional());
-		this.disableCrashArg = new BooleanArgument(getRootArgumentSet(), "disableCrashEmail",
-		                                           "If set to `true` no crash emails will be send!", null,
-		                                           new Optional());
-		this.settingsArg = new URIArgument(
-		                                   getRootArgumentSet(),
-		                                   "andamaSettings",
-		                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
-		                                   null, new Optional());
-		
-		this.mailArguments = new MailArguments(getRootArgumentSet(), new Required());
-		
-		if (System.getProperty("andamaSettings") != null) {
-			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
-			if (!this.settingsArg.init()) {
-				// FIXME ERROR
-			} else {
-				try {
-					InputStream stream = this.settingsArg.getValue().toURL().openStream();
-					this.fileProps.load(stream);
-					
-				} catch (MalformedURLException e) {
-					// FIXME ERROR
-				} catch (IOException e) {
-					// FIXME ERROR
-				}
+		try {
+			this.rootArgumentSet = new AndamaArgumentSet<Boolean>(this, "ROOT arguments") {
 				
+				@Override
+				protected boolean init() {
+					setCachedValue(true);
+					return true;
+				}
+			};
+			
+			this.bugReportArgument = new StringArgument(
+			                                            getRootArgumentSet(),
+			                                            "bug.report",
+			                                            "Determines the error string yielding the URL to the bug tracker for this project.",
+			                                            "Please file a bug report with this error message here: https://dev.own-hero.net",
+			                                            new Required());
+			this.noDefaultValueArg = new BooleanArgument(getRootArgumentSet(), "denyDefaultValues",
+			                                             "Ignore default values!", "false", new Optional());
+			this.helpArg = new BooleanArgument(getRootArgumentSet(), "help", "Shows this help menu.", "false",
+			                                   new Optional());
+			this.disableCrashArg = new BooleanArgument(getRootArgumentSet(), "disableCrashEmail",
+			                                           "If set to `true` no crash emails will be send!", null,
+			                                           new Optional());
+			this.settingsArg = new URIArgument(
+			                                   getRootArgumentSet(),
+			                                   "andamaSettings",
+			                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
+			                                   null, new Optional());
+			
+			this.mailArguments = new MailArguments(getRootArgumentSet(), new Required());
+			
+			// check to load settings from URI
+			if (System.getProperty("andamaSettings") != null) {
+				this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
+				if (!this.settingsArg.init()) {
+					// FIXME ERROR
+				} else {
+					try {
+						InputStream stream = this.settingsArg.getValue().toURL().openStream();
+						this.fileProps.load(stream);
+						
+					} catch (MalformedURLException e) {
+						// FIXME ERROR
+					} catch (IOException e) {
+						// FIXME ERROR
+					}
+					
+				}
 			}
+			
+			this.getProperties().putAll(this.fileProps);
+			
+			// overwrite properties with the one from the command line
+			this.getProperties().putAll(this.commandlineProps);
+		} catch (ArgumentRegistrationException e) {
+			// TODO: handle exception
 		}
-		
-		this.properties.putAll(this.fileProps);
-		this.properties.putAll(this.commandlineProps);
 		
 	}
 	
@@ -160,12 +184,16 @@ public class AndamaSettings {
 		this.toolInformation.put(tool, information);
 	}
 	
+	boolean frozen() {
+		return false;
+	}
+	
 	/**
 	 * @param argument
 	 * @return
 	 */
 	private final AndamaArgument<?> getArgument(final String argument) {
-		return null;
+		return this.argumentSets.get(argument).getArgument(argument);
 	}
 	
 	/**
@@ -195,32 +223,7 @@ public class AndamaSettings {
 		ss.append("Available JavaVM arguments:");
 		ss.append(System.getProperty("line.separator"));
 		
-		TreeSet<AndamaArgumentInterface<?>> args = new TreeSet<AndamaArgumentInterface<?>>();
-		args.addAll(this.argumentSets.values());
-		
-		for (AndamaArgumentInterface<?> arg : args) {
-			ss.append(arg).append(FileUtils.lineSeparator);
-			// if (arg instanceof AndamaArgument<?>) {
-			// AndamaArgument<?> argument = (AndamaArgument<?>) arg;
-			// ss.append("\t");
-			// ss.append("-D");
-			// ss.append(argument.getName());
-			// ss.append(": ");
-			// ss.append(argument.getDescription());
-			//
-			// if ((argument.getDefaultValue() != null) &&
-			// (argument.getDefaultValue().trim().length() > 0)) {
-			// ss.append("| DEFAULT=");
-			// ss.append(argument.getDefaultValue().trim());
-			// }
-			//
-			// ss.append(" (" + argument.getRequirements() + ")");
-			//
-			// ss.append(System.getProperty("line.separator"));
-			// }
-		}
-		
-		return ss.toString();
+		return getRootArgumentSet().getHelpString();
 	}
 	
 	/**
@@ -228,6 +231,13 @@ public class AndamaSettings {
 	 */
 	public MailArguments getMailArguments() {
 		return this.mailArguments;
+	}
+	
+	/**
+	 * @return the properties
+	 */
+	public Properties getProperties() {
+		return this.properties;
 	}
 	
 	/**
@@ -269,6 +279,10 @@ public class AndamaSettings {
 		return builder.toString();
 	}
 	
+	public boolean hasSetting(final String name) {
+		return this.argumentSets.containsKey(name);
+	}
+	
 	/**
 	 * @return
 	 */
@@ -277,13 +291,11 @@ public class AndamaSettings {
 	}
 	
 	/**
-	 * Calling this method, the specified setting file will be parsed (iff
-	 * option -DrepoSuiteSettings is set) before parsing given JavaVM arguments.
-	 * Options set in setting file will be overwritten by command line
-	 * arguments.
+	 * @throws SettingsParseError
+	 * 
 	 */
-	public void parseArguments() {
-		for (Entry<Object, Object> entry : this.properties.entrySet()) {
+	public void parse() throws SettingsParseError {
+		for (Entry<Object, Object> entry : this.getProperties().entrySet()) {
 			String argName = entry.getKey().toString().trim();
 			String value = entry.getValue().toString().trim();
 			
@@ -293,8 +305,51 @@ public class AndamaSettings {
 			}
 		}
 		
-		for (AndamaArgumentSet<?> argument : this.argumentSets.values()) {
-			if (!((AndamaArgumentSet<?>) argument).init()) {
+		getRootArgumentSet().parse();
+		
+		if (!validateSettings()) {
+			System.err.println(getHelpString());
+			throw new Shutdown();
+		}
+		
+		if (this.helpArg.getValue()) {
+			System.err.println(getHelpString());
+			throw new Shutdown();
+		}
+		
+		if (Logger.logInfo()) {
+			Logger.info("Using settings: ");
+			Logger.info(toString());
+		}
+	}
+	
+	public void parseArguments(final Collection<AndamaArgumentInterface<?>> arguments) {
+		
+		PriorityQueue<AndamaArgumentInterface<?>> queue = new PriorityQueue<AndamaArgumentInterface<?>>(arguments);
+		AndamaArgumentInterface<?> argument = null;
+		while ((argument = queue.poll()) != null) {
+			
+			parseArguments(argument.getDependencies());
+			
+			if (!argument.getRequirements().required()) {
+				
+				if (Logger.logError()) {
+					String errorMessage = "Could not resolved dependencies. Argument: " + argument
+					        + " has unresolved dependencies: "
+					        + JavaUtils.collectionToString(argument.getRequirements().getMissingRequirements());
+					Logger.error(errorMessage);
+					throw new Shutdown(errorMessage);
+				}
+			}
+			
+			boolean initResult = false;
+			if (argument instanceof AndamaArgument<?>) {
+				initResult = ((AndamaArgument<?>) argument).init();
+			} else {
+				initResult = ((AndamaArgumentSet<?>) argument).init();
+			}
+			
+			if (!initResult) {
 				if (Logger.logError()) {
 					Logger.error("Could not initialize " + argument
 					        + ". Please see error earlier error messages, refer to the argument help information, "
@@ -304,21 +359,6 @@ public class AndamaSettings {
 				throw new Shutdown("Could not initialize " + argument
 				        + ". Please see error earlier error messages, refer to the argument help information, "
 				        + "or review the init() method of the corresponding " + argument.getHandle() + ".");
-			} else {
-				if (argument instanceof AndamaArgumentSet<?>) {
-					if (!((AndamaArgumentSet<?>) argument).initSubArguments()) {
-						if (Logger.logError()) {
-							Logger.error("Could not initialize sub-arguments of "
-							        + argument
-							        + ". Please see error earlier error messages, refer to the argument help information, "
-							        + "or review the init() method of the corresponding " + argument.getHandle() + ".");
-						}
-						System.err.println(getHelpString());
-						throw new Shutdown("Could not initialize sub-arguments of " + argument
-						        + ". Please see error earlier error messages, refer to the argument help information, "
-						        + "or review the init() method of the corresponding " + argument.getHandle() + ".");
-					}
-				}
 			}
 		}
 		
@@ -363,9 +403,10 @@ public class AndamaSettings {
 	 * @param isRequired
 	 *            Set to <code>true</code> if the database settings required.
 	 * @return
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public LoggerArguments setLoggerArg(final Requirement requirements) {
+	public LoggerArguments setLoggerArg(final Requirement requirements) throws ArgumentRegistrationException {
 		return new LoggerArguments(getRootArgumentSet(), requirements);
 	}
 	
@@ -377,43 +418,16 @@ public class AndamaSettings {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append(AndamaSettings.class.getSimpleName() + ":");
+		builder.append(getClass().getSimpleName() + ":");
 		builder.append(FileUtils.lineSeparator);
 		
-		for (int i = 0; i < (AndamaSettings.class.getSimpleName().length() + ":".length()); ++i) {
+		for (int i = 0; i < (getClass().getSimpleName().length() + ":".length()); ++i) {
 			builder.append('-');
 		}
-		//
-		// String passwordMask = "******** (masked)";
-		// int maxNameLength = 0;
-		// int maxValueLength = passwordMask.length();
-		TreeSet<AndamaArgumentSet<?>> set = new TreeSet<AndamaArgumentSet<?>>(this.argumentSets.values());
-		// for (AndamaArgumentSet<?> arg : set) {
-		// if (arg.getValue() != null) {
-		// if (arg.getName().length() > maxNameLength) {
-		// maxNameLength = arg.getName().length();
-		// }
-		//
-		// if (arg.getValue().toString().length() > maxValueLength) {
-		// maxValueLength = arg.getValue().toString().length();
-		// }
-		// }
-		// }
 		
-		for (AndamaArgumentInterface<?> arg : set) {
-			if (arg.getValue() != null) {
-				builder.append(FileUtils.lineSeparator);
-				// new Formatter();
-				// builder.append(formatter.format("%-" + maxNameLength +
-				// "s : %-" + maxValueLength + "s (%s)",
-				// arg.getName(), arg instanceof MaskedStringArgument
-				// ? passwordMask
-				// : arg.getValue(),
-				// arg.toString()));
-				builder.append(arg.toString());
-				
-			}
-		}
+		builder.append(FileUtils.lineSeparator);
+		
+		builder.append(getRootArgumentSet().toString());
 		
 		return builder.toString();
 	}
@@ -425,44 +439,41 @@ public class AndamaSettings {
 	 *         required argument with no value set first found.
 	 */
 	private boolean validateSettings() {
-		// Set<AndamaArgument<?>> defaultValueArgs = new
-		// HashSet<AndamaArgument<?>>();
-		//
-		// for (AndamaArgumentSet<?> args : this.argumentSets.values()) {
-		// for (AndamaArgument<?> argument : args.getArguments().values()) {
-		// if (!argument.wasSet()) {
-		// if (this.noDefaultValueArg.getValue()) {
-		// argument.setStringValue(null);
-		// } else if ((argument.getDefaultValue() != null) &&
-		// argument.getRequirements().check()) {
-		// defaultValueArgs.add(argument);
-		// }
-		// }
-		// if (argument.getRequirements().check() && (argument.getValue() ==
-		// null)) {
-		// if (Logger.logError()) {
-		// Logger.error("Required argument `" + arg.getName() +
-		// "` is not set.");
-		// }
-		// return false;
-		// }
-		// }
-		//
-		// if (defaultValueArgs.size() > 0) {
-		// StringBuilder sb = new StringBuilder();
-		// sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
-		// sb.append(FileUtils.lineSeparator);
-		// for (AndamaArgument<?> arg : defaultValueArgs) {
-		// sb.append(arg.getName());
-		// sb.append(": ");
-		// sb.append(arg.getDefaultValue());
-		// sb.append(FileUtils.lineSeparator);
-		// }
-		// sb.append("Use -DdenyDefaultValues=T to allow only manually set arguments");
-		// if (Logger.logWarn()) {
-		// Logger.warn(sb.toString());
-		// }
-		// }
+		Set<AndamaArgument<?>> defaultValueArgs = new HashSet<AndamaArgument<?>>();
+		
+		for (AndamaArgumentSet<?> args : this.argumentSets.values()) {
+			for (AndamaArgument<?> argument : args.getArguments().values()) {
+				if (!argument.wasSet()) {
+					if (this.noDefaultValueArg.getValue()) {
+						argument.setStringValue(null);
+					} else if (argument.getDefaultValue() != null) {
+						defaultValueArgs.add(argument);
+					}
+				}
+				if (argument.required() && (argument.getValue() == null)) {
+					if (Logger.logError()) {
+						Logger.error("Required argument `" + argument.getName() + "` is not set.");
+					}
+					return false;
+				}
+			}
+		}
+		
+		if (defaultValueArgs.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
+			sb.append(FileUtils.lineSeparator);
+			for (AndamaArgument<?> arg : defaultValueArgs) {
+				sb.append(arg.getName());
+				sb.append(": ");
+				sb.append(arg.getDefaultValue());
+				sb.append(FileUtils.lineSeparator);
+			}
+			sb.append("Use -DdenyDefaultValues=T to allow only manually set arguments");
+			if (Logger.logWarn()) {
+				Logger.warn(sb.toString());
+			}
+		}
 		
 		return true;
 	}

@@ -2,9 +2,11 @@ package net.ownhero.dev.andama.settings;
 
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.dependencies.Requirement;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.Tuple;
 
-public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInterface<T>> {
+public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInterface<?>> {
 	
 	/**
 	 * @return
@@ -20,6 +22,19 @@ public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInt
 	 * @return the simple class name
 	 */
 	String getHandle();
+	
+	String getHelpString();
+	
+	/**
+	 * @param indentation
+	 * @return
+	 */
+	String getHelpString(int indentation);
+	
+	/**
+	 * @return
+	 */
+	Tuple<Integer, Integer> getKeyValueSpan();
 	
 	/**
 	 * @return The name of the argument (as printed in help string).
@@ -44,11 +59,25 @@ public interface AndamaArgumentInterface<T> extends Comparable<AndamaArgumentInt
 	/**
 	 * @return
 	 */
+	boolean isInitialized();
+	
+	/**
+	 * @throws SettingsParseError
+	 * 
+	 */
+	void parse() throws SettingsParseError;
+	
+	/**
+	 * @return
+	 */
 	boolean required();
 	
 	/**
-	 * @param indentation
+	 * 
+	 * @param keyWidth
+	 * @param valueWidth
 	 * @return
 	 */
-	String toString(int indentation);
+	String toString(int keyWidth,
+	                int valueWidth);
 }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.ownhero.dev.andama.settings.dependencies;
+package net.ownhero.dev.andama.settings.requirements;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * The and expression evaluates to true if and only if both inner expressions
@@ -31,27 +33,30 @@ import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
  */
 public final class And extends Requirement {
 	
-	private final Requirement expression1;
-	private final Requirement expression2;
+	private final Requirement requirement1;
+	private final Requirement requirement2;
 	
 	/**
-	 * @param expression1
-	 * @param expression2
+	 * @param requirement1
+	 * @param requirement2
 	 */
-	public And(final Requirement expression1, final Requirement expression2) {
-		this.expression1 = expression1;
-		this.expression2 = expression2;
+	public And(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
+		try {
+			this.requirement1 = requirement1;
+			this.requirement2 = requirement2;
+		} finally {
+			Condition.notNull(this.requirement1, "Requirements in %s may never be null.", getHandle());
+			Condition.notNull(this.requirement2, "Requirements in %s may never be null.", getHandle());
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check(
-	 * java.lang.Class, java.lang.Class,
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
 	 */
 	@Override
-	public boolean check() {
-		return getExpression1().check() && getExpression2().check();
+	public boolean required() {
+		return getRequirement1().required() && getRequirement2().required();
 	}
 	
 	/*
@@ -62,24 +67,14 @@ public final class And extends Requirement {
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
 		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
-		dependencies.addAll(this.expression1.getDependencies());
-		dependencies.addAll(this.expression2.getDependencies());
-		
-		return dependencies;
-	}
-	
-	/**
-	 * @return the first expression
-	 */
-	public Requirement getExpression1() {
-		return this.expression1;
-	}
-	
-	/**
-	 * @return the second expression
-	 */
-	public Requirement getExpression2() {
-		return this.expression2;
+		try {
+			dependencies.addAll(this.requirement1.getDependencies());
+			dependencies.addAll(this.requirement2.getDependencies());
+			
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
 	}
 	
 	/*
@@ -91,11 +86,11 @@ public final class And extends Requirement {
 	 */
 	@Override
 	public List<Requirement> getMissingRequirements() {
-		List<Requirement> failureCause = this.expression1.getMissingRequirements();
-		final boolean check = check();
+		List<Requirement> failureCause = this.requirement1.getMissingRequirements();
+		final boolean check = required();
 		if (!check) {
 			if (failureCause == null) {
-				failureCause = this.expression2.getMissingRequirements();
+				failureCause = this.requirement2.getMissingRequirements();
 				if (failureCause == null) {
 					return check
 					            ? null
@@ -116,6 +111,20 @@ public final class And extends Requirement {
 		return failureCause;
 	}
 	
+	/**
+	 * @return the first expression
+	 */
+	public Requirement getRequirement1() {
+		return this.requirement1;
+	}
+	
+	/**
+	 * @return the second expression
+	 */
+	public Requirement getRequirement2() {
+		return this.requirement2;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -123,6 +132,6 @@ public final class And extends Requirement {
 	 */
 	@Override
 	public String toString() {
-		return "(" + this.expression1.toString() + " && " + this.expression2.toString() + ")";
+		return "(" + this.requirement1.toString() + " && " + this.requirement2.toString() + ")";
 	}
 }
