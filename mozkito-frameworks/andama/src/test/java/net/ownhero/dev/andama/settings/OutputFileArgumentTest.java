@@ -19,6 +19,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
@@ -34,10 +36,10 @@ public class OutputFileArgumentTest {
 	public void blaTest() {
 		final AndamaSettings settings = new AndamaSettings();
 		this.arg = new OutputFileArgument(
-		                                  settings,
+		                                  settings.getRootArgumentSet(),
 		                                  "output.xml",
 		                                  "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                                  null, false, true);
+		                                  null, new Optional(), true);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertEquals(null, value);
@@ -55,7 +57,8 @@ public class OutputFileArgumentTest {
 	public void testNotRequiredExistsNoOverwrite() {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final AndamaSettings settings = new AndamaSettings();
-		this.arg = new OutputFileArgument(settings, name, "test argument", file.getAbsolutePath(), false, false);
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
+		                                  new Optional(), false);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertTrue(value == null);
@@ -65,7 +68,8 @@ public class OutputFileArgumentTest {
 	public void testNotRequiredExistsOverwrite() {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final AndamaSettings settings = new AndamaSettings();
-		this.arg = new OutputFileArgument(settings, name, "test argument", file.getAbsolutePath(), false, true);
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
+		                                  new Optional(), true);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertTrue(value != null);
@@ -75,7 +79,8 @@ public class OutputFileArgumentTest {
 	@Test
 	public void testNotRequiredNotExistsNoOverwrite() {
 		final AndamaSettings settings = new AndamaSettings();
-		this.arg = new OutputFileArgument(settings, name, "test argument", "/tmp/fhdjkshfjksdhfjk.kim", false, false);
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                  "/tmp/fhdjkshfjksdhfjk.kim", new Optional(), false);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertEquals("/tmp/fhdjkshfjksdhfjk.kim", value.getAbsolutePath());
@@ -84,7 +89,8 @@ public class OutputFileArgumentTest {
 	@Test
 	public void testNotRequiredNotExistsOverwrite() {
 		final AndamaSettings settings = new AndamaSettings();
-		this.arg = new OutputFileArgument(settings, name, "test argument", "/tmp/fhdjkshfjksdhfjk.kim", false, true);
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                  "/tmp/fhdjkshfjksdhfjk.kim", new Optional(), true);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertTrue(value != null);
@@ -94,7 +100,8 @@ public class OutputFileArgumentTest {
 	public void testRequiredExistsNoOverwrite() {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final AndamaSettings settings = new AndamaSettings();
-		new OutputFileArgument(settings, name, "test argument", file.getAbsolutePath(), true, false);
+		new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
+		                       new Required(), false);
 		try {
 			settings.parseArguments();
 			fail();
@@ -107,13 +114,12 @@ public class OutputFileArgumentTest {
 	public void testRequiredExistsOverwrite() {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		final AndamaSettings settings = new AndamaSettings();
-		this.arg = new OutputFileArgument(settings, name, "test argument", file.getAbsolutePath(), true, true);
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
+		                                  new Required(), true);
 		settings.parseArguments();
 		final File value = this.arg.getValue();
 		assertTrue(value != null);
 		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
 	}
-	
-	// TODO write remaining test cases
 	
 }

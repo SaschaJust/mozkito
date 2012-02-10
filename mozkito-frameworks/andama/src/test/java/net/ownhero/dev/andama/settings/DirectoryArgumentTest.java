@@ -17,6 +17,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
@@ -44,14 +46,14 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredExistsCreate() {
-		AndamaSettings settings = new AndamaSettings();
+		final AndamaSettings settings = new AndamaSettings();
 		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
-		                                              true, true);
+		final DirectoryArgument arg = new DirectoryArgument(settings.getRootArgumentSet(), "testArg", "test argument",
+		                                                    this.dir.getAbsolutePath(), new Required(), true);
 		try {
 			settings.parseArguments();
 			arg.getValue().delete();
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			fail();
 		}
 		
@@ -59,14 +61,14 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredExistsNoCreate() {
-		AndamaSettings settings = new AndamaSettings();
+		final AndamaSettings settings = new AndamaSettings();
 		this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dir.getAbsolutePath(),
-		                                              true, false);
+		final DirectoryArgument arg = new DirectoryArgument(settings.getRootArgumentSet(), "testArg", "test argument",
+		                                                    this.dir.getAbsolutePath(), new Optional(), true);
 		try {
 			settings.parseArguments();
 			arg.getValue().delete();
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			fail();
 		}
 		
@@ -74,12 +76,13 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredNotExistsCreate() {
-		AndamaSettings settings = new AndamaSettings();
-		DirectoryArgument arg = new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, true);
+		final AndamaSettings settings = new AndamaSettings();
+		final DirectoryArgument arg = new DirectoryArgument(settings.getRootArgumentSet(), "testArg", "test argument",
+		                                                    this.dirName, new Required(), true);
 		try {
 			settings.parseArguments();
 			arg.getValue().delete();
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -88,12 +91,13 @@ public class DirectoryArgumentTest {
 	
 	@Test
 	public void testRequiredNotExistsNoCreate() {
-		AndamaSettings settings = new AndamaSettings();
-		new DirectoryArgument(settings, "testArg", "test argument", this.dirName, true, false);
+		final AndamaSettings settings = new AndamaSettings();
+		new DirectoryArgument(settings.getRootArgumentSet(), "testArg", "test argument", this.dirName, new Optional(),
+		                      true);
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 		

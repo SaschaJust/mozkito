@@ -17,6 +17,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 
 import org.junit.After;
 import org.junit.Test;
@@ -34,12 +36,13 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testInValidPropertiesDelimiter() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", null, true, "@");
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Required(), "@");
 		System.setProperty(name, listString);
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(1, arg.getValue().size());
@@ -48,12 +51,13 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testNotRequiredGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", listString, true);
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
+		                                          new Required());
 		assertEquals(name, arg.getName());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2, arg.getValue().size());
@@ -63,31 +67,33 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", null, false);
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Optional());
 		settings.parseArguments();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
 	public void testRequiredProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		new ListArgument(settings, name, "test description", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		new ListArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testValidDefault() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", listString, true);
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
+		                                          new Required());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2, arg.getValue().size());
@@ -97,12 +103,13 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Required());
 		System.setProperty(name, listString);
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2, arg.getValue().size());
@@ -112,12 +119,13 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testValidPropertiesDelimiter() {
-		AndamaSettings settings = new AndamaSettings();
-		ListArgument arg = new ListArgument(settings, name, "test description", null, true, "@");
+		final AndamaSettings settings = new AndamaSettings();
+		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Required(), "@");
 		System.setProperty(name, "one@two");
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2, arg.getValue().size());

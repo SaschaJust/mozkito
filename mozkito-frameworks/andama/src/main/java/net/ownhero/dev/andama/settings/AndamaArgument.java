@@ -1,20 +1,18 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -24,8 +22,9 @@ import net.ownhero.dev.andama.settings.dependencies.Requirement;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
+public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T>, Serializable {
 	
+	private static final long    serialVersionUID = 7665787937519866372L;
 	private final String         defaultValue;
 	private final String         description;
 	private final String         name;
@@ -34,7 +33,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	private String               stringValue;
 	private boolean              wasSet;
-	private boolean              init = false;
+	private boolean              init             = false;
 	private T                    cachedValue;
 	
 	/**
@@ -63,8 +62,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#compareTo(net
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#compareTo(net
 	 * .ownhero.dev.andama.settings.AndamaArgumentInterface)
 	 */
 	@Override
@@ -122,8 +120,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
 	 */
 	@Override
 	public final String getDescription() {
@@ -155,8 +152,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
 	 */
 	@Override
 	public final AndamaSettings getSettings() {
@@ -244,8 +240,7 @@ public abstract class AndamaArgument<T> implements AndamaArgumentInterface<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
 	public String toString(final int indentation) {

@@ -1,20 +1,18 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -40,7 +38,7 @@ import net.ownhero.dev.kisa.Logger;
 public class AndamaSettings {
 	
 	public static void main(final String[] args) {
-		AndamaSettings settings = new AndamaSettings();
+		final AndamaSettings settings = new AndamaSettings();
 		System.err.println(settings.toString());
 	}
 	
@@ -99,12 +97,12 @@ public class AndamaSettings {
 				// FIXME ERROR
 			} else {
 				try {
-					InputStream stream = this.settingsArg.getValue().toURL().openStream();
+					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
 					this.fileProps.load(stream);
 					
-				} catch (MalformedURLException e) {
+				} catch (final MalformedURLException e) {
 					// FIXME ERROR
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					// FIXME ERROR
 				}
 				
@@ -117,18 +115,15 @@ public class AndamaSettings {
 	}
 	
 	/**
-	 * adds an argument to the andama suite settings. Leave default value
-	 * <code>null</code> if none to be set.
+	 * adds an argument to the andama suite settings. Leave default value <code>null</code> if none to be set.
 	 * 
 	 * @param name
 	 *            Name of the JavaVM argument (-D<name>
 	 * @param description
 	 *            Short description that will be displayed when requesting help
 	 * @param defaultValue
-	 *            String that will be set as default value. If none to be set
-	 *            pass <code>null</code>.
-	 * @return <code>true</code> if the argument could be added.
-	 *         <code>false</code> otherwise.
+	 *            String that will be set as default value. If none to be set pass <code>null</code>.
+	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
 	protected boolean addArgument(@NotNull final AndamaArgumentSet<?> argument) {
 		
@@ -185,20 +180,19 @@ public class AndamaSettings {
 	}
 	
 	/**
-	 * Return the help string that will contain all possible command line
-	 * arguments.
+	 * Return the help string that will contain all possible command line arguments.
 	 * 
 	 * @return
 	 */
 	public String getHelpString() {
-		StringBuilder ss = new StringBuilder();
+		final StringBuilder ss = new StringBuilder();
 		ss.append("Available JavaVM arguments:");
 		ss.append(System.getProperty("line.separator"));
 		
-		TreeSet<AndamaArgumentInterface<?>> args = new TreeSet<AndamaArgumentInterface<?>>();
+		final TreeSet<AndamaArgumentInterface<?>> args = new TreeSet<AndamaArgumentInterface<?>>();
 		args.addAll(this.argumentSets.values());
 		
-		for (AndamaArgumentInterface<?> arg : args) {
+		for (final AndamaArgumentInterface<?> arg : args) {
 			ss.append(arg).append(FileUtils.lineSeparator);
 			// if (arg instanceof AndamaArgument<?>) {
 			// AndamaArgument<?> argument = (AndamaArgument<?>) arg;
@@ -242,7 +236,7 @@ public class AndamaSettings {
 	 * @return
 	 */
 	public AndamaArgumentInterface<?> getSetting(final String name) {
-		AndamaArgumentSet<?> argumentSet = this.argumentSets.get(name);
+		final AndamaArgumentSet<?> argumentSet = this.argumentSets.get(name);
 		if (argumentSet.getArgument(name) == null) {
 			return argumentSet;
 		} else {
@@ -254,9 +248,9 @@ public class AndamaSettings {
 	 * @return
 	 */
 	public String getToolInformation() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (String tool : this.toolInformation.keySet()) {
+		for (final String tool : this.toolInformation.keySet()) {
 			builder.append("[[");
 			builder.append(tool);
 			builder.append("]]");
@@ -277,15 +271,13 @@ public class AndamaSettings {
 	}
 	
 	/**
-	 * Calling this method, the specified setting file will be parsed (iff
-	 * option -DrepoSuiteSettings is set) before parsing given JavaVM arguments.
-	 * Options set in setting file will be overwritten by command line
-	 * arguments.
+	 * Calling this method, the specified setting file will be parsed (iff option -DrepoSuiteSettings is set) before
+	 * parsing given JavaVM arguments. Options set in setting file will be overwritten by command line arguments.
 	 */
 	public void parseArguments() {
-		for (Entry<Object, Object> entry : this.properties.entrySet()) {
-			String argName = entry.getKey().toString().trim();
-			String value = entry.getValue().toString().trim();
+		for (final Entry<Object, Object> entry : this.properties.entrySet()) {
+			final String argName = entry.getKey().toString().trim();
+			final String value = entry.getValue().toString().trim();
 			
 			if (this.argumentSets.containsKey(argName)) {
 				getArgument(argName).setStringValue(value);
@@ -293,7 +285,7 @@ public class AndamaSettings {
 			}
 		}
 		
-		for (AndamaArgumentSet<?> argument : this.argumentSets.values()) {
+		for (final AndamaArgumentSet<?> argument : this.argumentSets.values()) {
 			if (!((AndamaArgumentSet<?>) argument).init()) {
 				if (Logger.logError()) {
 					Logger.error("Could not initialize " + argument
@@ -339,6 +331,13 @@ public class AndamaSettings {
 	}
 	
 	/**
+	 * @param file
+	 */
+	public void save(final File file) {
+		// TODO: getRootArgumentSet() and store tree to file
+	}
+	
+	/**
 	 * Set the value of a registered argument field
 	 * 
 	 * @param argument
@@ -375,7 +374,7 @@ public class AndamaSettings {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append(AndamaSettings.class.getSimpleName() + ":");
 		builder.append(FileUtils.lineSeparator);
@@ -387,7 +386,7 @@ public class AndamaSettings {
 		// String passwordMask = "******** (masked)";
 		// int maxNameLength = 0;
 		// int maxValueLength = passwordMask.length();
-		TreeSet<AndamaArgumentSet<?>> set = new TreeSet<AndamaArgumentSet<?>>(this.argumentSets.values());
+		final TreeSet<AndamaArgumentSet<?>> set = new TreeSet<AndamaArgumentSet<?>>(this.argumentSets.values());
 		// for (AndamaArgumentSet<?> arg : set) {
 		// if (arg.getValue() != null) {
 		// if (arg.getName().length() > maxNameLength) {
@@ -400,7 +399,7 @@ public class AndamaSettings {
 		// }
 		// }
 		
-		for (AndamaArgumentInterface<?> arg : set) {
+		for (final AndamaArgumentInterface<?> arg : set) {
 			if (arg.getValue() != null) {
 				builder.append(FileUtils.lineSeparator);
 				// new Formatter();
@@ -421,8 +420,8 @@ public class AndamaSettings {
 	/**
 	 * Check if all required arguments are set.
 	 * 
-	 * @return <code>null</code> if all required arguments are set. Returns the
-	 *         required argument with no value set first found.
+	 * @return <code>null</code> if all required arguments are set. Returns the required argument with no value set
+	 *         first found.
 	 */
 	private boolean validateSettings() {
 		// Set<AndamaArgument<?>> defaultValueArgs = new

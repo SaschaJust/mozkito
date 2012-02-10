@@ -274,8 +274,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Sends the given report to the email address using the mail settings in
-	 * mailProps
+	 * Sends the given report to the email address using the mail settings in mailProps
 	 * 
 	 * @param report
 	 *            the report to be send
@@ -316,9 +315,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang
-	 * .Thread, java.lang.Throwable)
+	 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang .Thread, java.lang.Throwable)
 	 */
 	@Override
 	public synchronized void uncaughtException(final Thread arg0,
@@ -364,8 +361,7 @@ public class AndamaCrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * Used by {@link #getThreadInformation()} for a traversal search of
-	 * {@link Thread}s/{@link ThreadGroup}s
+	 * Used by {@link #getThreadInformation()} for a traversal search of {@link Thread}s/{@link ThreadGroup}s
 	 * 
 	 * @param group
 	 * @param level

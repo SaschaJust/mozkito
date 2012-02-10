@@ -23,6 +23,16 @@ public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public final Class<? extends AndamaThread<K, K>> getBaseType() {
+		return (Class<? extends AndamaThread<K, K>>) getClass();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.AndamaGeneralThread#hasInputConnector()
 	 */
 	@Override
@@ -45,9 +55,9 @@ public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		builder.append('[').append(this.getThreadGroup().getName()).append("] ");
+		builder.append('[').append(getThreadGroup().getName()).append("] ");
 		
 		builder.append(getHandle());
 		

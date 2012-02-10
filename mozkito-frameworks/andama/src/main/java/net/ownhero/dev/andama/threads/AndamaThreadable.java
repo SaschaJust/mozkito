@@ -137,6 +137,11 @@ public interface AndamaThreadable<K, V> extends Runnable {
 	public void finish();
 	
 	/**
+	 * @return
+	 */
+	public Class<? extends AndamaThread<K, V>> getBaseType();
+	
+	/**
 	 * @return the simple class name of the actual instance
 	 */
 	public String getHandle();

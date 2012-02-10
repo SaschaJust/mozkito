@@ -3,17 +3,14 @@ package net.ownhero.dev.andama.settings.registerable;
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
 import java.lang.reflect.Modifier;
@@ -34,9 +31,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
- * Classes extending {@link Registered} can dynamically register config options
- * to the tool chain. Additionally there is support to automatically generate
- * config option names following the standard naming convention.
+ * Classes extending {@link Registered} can dynamically register config options to the tool chain. Additionally there is
+ * support to automatically generate config option names following the standard naming convention.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -66,8 +62,8 @@ public abstract class Registered {
 	/**
 	 * @param clazz
 	 *            the base class extending {@link Registered}
-	 * @return the lowercase part of the name specifies the category of the
-	 *         registered class, e.g. "engine" for MappingEngine.
+	 * @return the lowercase part of the name specifies the category of the registered class, e.g. "engine" for
+	 *         MappingEngine.
 	 */
 	private static final String findRegisteredSuper(final Class<? extends Registered> clazz,
 	                                                final Set<String> superTags) {

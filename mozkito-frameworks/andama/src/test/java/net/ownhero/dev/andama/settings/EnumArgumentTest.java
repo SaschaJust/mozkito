@@ -16,6 +16,8 @@ package net.ownhero.dev.andama.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 
 import org.junit.After;
 import org.junit.Test;
@@ -26,8 +28,8 @@ public class EnumArgumentTest {
 		ONE, TWO;
 		
 		public static String[] getValues() {
-			TestEnum[] values = values();
-			String[] result = new String[values.length];
+			final TestEnum[] values = values();
+			final String[] result = new String[values.length];
 			for (int i = 0; i < values.length; ++i) {
 				result[i] = values[i].toString();
 			}
@@ -44,37 +46,40 @@ public class EnumArgumentTest {
 	
 	@Test
 	public void testInValidDefault() {
-		AndamaSettings settings = new AndamaSettings();
-		new EnumArgument(settings, name, "test description", "hubba", true, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		new EnumArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required(),
+		                 TestEnum.getValues());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testInValidProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		new EnumArgument(settings, name, "test description", "hubba", true, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		new EnumArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required(),
+		                 TestEnum.getValues());
 		System.setProperty(name, "hubba");
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testNotRequiredGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		EnumArgument arg = new EnumArgument(settings, name, "test description", "ONE", false, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", "ONE",
+		                                          new Optional(), TestEnum.getValues());
 		assertEquals(name, arg.getName());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(TestEnum.ONE.toString(), arg.getValue());
@@ -82,31 +87,34 @@ public class EnumArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		EnumArgument arg = new EnumArgument(settings, name, "test description", null, false, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Optional(), TestEnum.getValues());
 		settings.parseArguments();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
 	public void testRequiredProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		new EnumArgument(settings, name, "test description", null, true, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		new EnumArgument(settings.getRootArgumentSet(), name, "test description", null, new Required(),
+		                 TestEnum.getValues());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testValidDefault() {
-		AndamaSettings settings = new AndamaSettings();
-		EnumArgument arg = new EnumArgument(settings, name, "test description", "TWO", true, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", "TWO",
+		                                          new Required(), TestEnum.getValues());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(TestEnum.TWO.toString(), arg.getValue());
@@ -114,12 +122,13 @@ public class EnumArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		EnumArgument arg = new EnumArgument(settings, name, "test description", null, true, TestEnum.getValues());
+		final AndamaSettings settings = new AndamaSettings();
+		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                          new Required(), TestEnum.getValues());
 		System.setProperty(name, "TWO");
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(TestEnum.TWO.toString(), arg.getValue());

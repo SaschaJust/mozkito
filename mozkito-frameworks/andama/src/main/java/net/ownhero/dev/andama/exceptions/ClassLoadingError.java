@@ -120,9 +120,7 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause
-	 * ()
+	 * @see net.ownhero.dev.andama.exceptions.UnrecoverableError#analyzeFailureCause ()
 	 */
 	@Override
 	public String analyzeFailureCause() {

@@ -29,6 +29,16 @@ public abstract class AndamaFilter<T> extends AndamaThread<T, T> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public final Class<? extends AndamaThread<T, T>> getBaseType() {
+		return (Class<? extends AndamaThread<T, T>>) getClass();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
 	 */
 	@Override
@@ -51,9 +61,9 @@ public abstract class AndamaFilter<T> extends AndamaThread<T, T> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		builder.append('[').append(this.getThreadGroup().getName()).append("] ");
+		builder.append('[').append(getThreadGroup().getName()).append("] ");
 		
 		builder.append(getHandle());
 		
