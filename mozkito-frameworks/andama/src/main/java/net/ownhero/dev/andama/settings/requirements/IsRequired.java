@@ -43,8 +43,7 @@ public class IsRequired extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
 	public Set<AndamaArgumentInterface<?>> getDependencies() {
@@ -60,8 +59,7 @@ public class IsRequired extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
 	public List<Requirement> getMissingRequirements() {

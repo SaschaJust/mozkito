@@ -19,6 +19,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
@@ -33,79 +35,84 @@ public class InputFileArgumentTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		this.file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		if (file.exists()) {
-			file.delete();
+		if (this.file.exists()) {
+			this.file.delete();
 		}
 	}
 	
 	@Test
 	public void testNotRequiredExists() {
-		AndamaSettings settings = new AndamaSettings();
-		InputFileArgument arg = new InputFileArgument(settings, name, "test argument", file.getAbsolutePath(), false);
+		final AndamaSettings settings = new AndamaSettings();
+		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                                    this.file.getAbsolutePath(), new Optional());
 		settings.parseArguments();
-		File value = arg.getValue();
+		final File value = arg.getValue();
 		assertTrue(value != null);
-		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
+		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 	@Test
 	public void testNotRequiredNotExists() {
-		AndamaSettings settings = new AndamaSettings();
-		new InputFileArgument(settings, name, "test argument", file.getAbsolutePath(), false);
-		file.delete();
+		final AndamaSettings settings = new AndamaSettings();
+		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
+		                      new Optional());
+		this.file.delete();
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown s) {
+		} catch (final Shutdown s) {
 			
 		}
 	}
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		InputFileArgument arg = new InputFileArgument(settings, name, "test argument", null, false);
+		final AndamaSettings settings = new AndamaSettings();
+		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null,
+		                                                    new Optional());
 		settings.parseArguments();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
 	public void testRequiredExists() {
-		AndamaSettings settings = new AndamaSettings();
-		InputFileArgument arg = new InputFileArgument(settings, name, "test argument", file.getAbsolutePath(), true);
+		final AndamaSettings settings = new AndamaSettings();
+		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                                    this.file.getAbsolutePath(), new Required());
 		assertEquals(name, arg.getName());
 		settings.parseArguments();
-		File value = arg.getValue();
+		final File value = arg.getValue();
 		assertTrue(value != null);
-		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
+		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 	@Test
 	public void testRequiredNotExists() {
-		AndamaSettings settings = new AndamaSettings();
-		new InputFileArgument(settings, name, "test argument", file.getAbsolutePath(), true);
-		file.delete();
+		final AndamaSettings settings = new AndamaSettings();
+		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
+		                      new Required());
+		this.file.delete();
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testRequiredNotGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		new InputFileArgument(settings, name, "test argument", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null, new Required());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}

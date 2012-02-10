@@ -16,6 +16,8 @@ package net.ownhero.dev.andama.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.dependencies.Optional;
+import net.ownhero.dev.andama.settings.dependencies.Required;
 
 import org.junit.After;
 import org.junit.Before;
@@ -37,37 +39,38 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testInValidDefault() {
-		AndamaSettings settings = new AndamaSettings();
-		new DoubleArgument(settings, name, "test description", "hubba", true);
+		final AndamaSettings settings = new AndamaSettings();
+		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testInValidProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		new DoubleArgument(settings, name, "test description", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		System.setProperty(name, "hubba");
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testNotRequiredGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		DoubleArgument arg = new DoubleArgument(settings, name, "test description", "2.5", false);
+		final AndamaSettings settings = new AndamaSettings();
+		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "2.5",
+		                                              new Optional());
 		assertEquals(name, arg.getName());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2.5, arg.getValue(), 0);
@@ -75,31 +78,33 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		AndamaSettings settings = new AndamaSettings();
-		DoubleArgument arg = new DoubleArgument(settings, name, "test description", null, false);
+		final AndamaSettings settings = new AndamaSettings();
+		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                              new Optional());
 		settings.parseArguments();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
 	public void testRequiredProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		new DoubleArgument(settings, name, "test description", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
 			settings.parseArguments();
 			fail();
-		} catch (Shutdown e) {
+		} catch (final Shutdown e) {
 			
 		}
 	}
 	
 	@Test
 	public void testValidDefault() {
-		AndamaSettings settings = new AndamaSettings();
-		DoubleArgument arg = new DoubleArgument(settings, name, "test description", "2.5", true);
+		final AndamaSettings settings = new AndamaSettings();
+		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "2.5",
+		                                              new Required());
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2.5, arg.getValue(), 0);
@@ -107,12 +112,13 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		AndamaSettings settings = new AndamaSettings();
-		DoubleArgument arg = new DoubleArgument(settings, name, "test description", null, true);
+		final AndamaSettings settings = new AndamaSettings();
+		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null,
+		                                              new Required());
 		System.setProperty(name, "2.5");
 		try {
 			settings.parseArguments();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail();
 		}
 		assertEquals(2.5, arg.getValue(), 0);

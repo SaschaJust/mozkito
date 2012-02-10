@@ -250,11 +250,6 @@
 			<version>3.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-			<version>1.5.M02</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-spellchecker</artifactId>
 			<version>3.5.0</version>

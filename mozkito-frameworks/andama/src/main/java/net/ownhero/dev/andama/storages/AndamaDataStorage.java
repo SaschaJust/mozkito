@@ -23,7 +23,7 @@ import net.ownhero.dev.kisa.Logger;
  *            the element type {@link AndamaChain} and used for the communication between the threads.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class AndamaDataStorage<E> {
+public final class AndamaDataStorage<E> {
 	
 	/** The queue. */
 	private final Queue<Tuple<E, CountDownLatch>>       queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
@@ -59,7 +59,7 @@ public class AndamaDataStorage<E> {
 	 * 
 	 * @return the num readers
 	 */
-	public int getNumReaders() {
+	public final int getNumReaders() {
 		return this.readers.size();
 	}
 	
@@ -71,7 +71,7 @@ public class AndamaDataStorage<E> {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public Tuple<E, CountDownLatch> read() throws InterruptedException {
+	public final Tuple<E, CountDownLatch> read() throws InterruptedException {
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Entering read method.");
@@ -79,7 +79,7 @@ public class AndamaDataStorage<E> {
 		
 		synchronized (this.queue) {
 			if (this.queue.size() > 0) {
-				Tuple<E, CountDownLatch> poll = this.queue.poll();
+				final Tuple<E, CountDownLatch> poll = this.queue.poll();
 				this.queue.notifyAll();
 				return poll;
 			} else {
@@ -88,7 +88,7 @@ public class AndamaDataStorage<E> {
 				}
 				
 				if (this.queue.size() > 0) {
-					Tuple<E, CountDownLatch> poll = this.queue.poll();
+					final Tuple<E, CountDownLatch> poll = this.queue.poll();
 					this.queue.notifyAll();
 					return poll;
 				} else {
@@ -109,7 +109,7 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public final void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Registering input " + ((AndamaThreadable<?, E>) writerThread).getName());
@@ -127,7 +127,7 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public final void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Registering output " + ((AndamaThreadable<E, ?>) readerThread).getName());
@@ -144,7 +144,7 @@ public class AndamaDataStorage<E> {
 	 * 
 	 * @return the current size of the queue. This is guaranteed to be &ge; 0.
 	 */
-	public int size() {
+	public final int size() {
 		return this.queue.size();
 	}
 	
@@ -155,7 +155,7 @@ public class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public final void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
 			this.writers.remove(writerThread);
 			
@@ -182,7 +182,7 @@ public class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public final void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			this.readers.remove(readerThread);
 			
@@ -211,7 +211,7 @@ public class AndamaDataStorage<E> {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public CountDownLatch write(@NotNull ("Writing null data is now allowed.") final E data) throws InterruptedException {
+	public final CountDownLatch write(@NotNull ("Writing null data is now allowed.") final E data) throws InterruptedException {
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Entering write method.");
@@ -221,7 +221,7 @@ public class AndamaDataStorage<E> {
 			while (!this.readers.isEmpty() && (this.queue.size() >= this.cacheSize)) {
 				this.queue.wait();
 			}
-			CountDownLatch countDownLatch = new CountDownLatch(1);
+			final CountDownLatch countDownLatch = new CountDownLatch(1);
 			
 			if (!this.readers.isEmpty()) {
 				this.queue.add(new Tuple<E, CountDownLatch>(data, countDownLatch));
