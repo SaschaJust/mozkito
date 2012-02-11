@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -30,25 +27,20 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-/**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
- * @param <T>
- */
 public abstract class Argument<T> implements IArgument<T> {
 	
-	private final String         defaultValue;
-	private final String         description;
-	private final String         name;
-	private final Settings settings;
-	private final Requirement    requirements;
+	private final String        defaultValue;
+	private final String        description;
+	private String              name;
+	private final Settings      settings;
+	private final Requirement   requirements;
 	
-	private String               stringValue;
-	private boolean              wasSet;
-	private boolean              init       = false;
-	private T                    cachedValue;
-	private final boolean        masked;
-	private final static String  maskString = "******** (masked)";
+	private String              stringValue;
+	private boolean             wasSet;
+	private boolean             init       = false;
+	private T                   cachedValue;
+	private final boolean       masked;
+	private final static String maskString = "******** (masked)";
 	
 	/**
 	 * @param settings
@@ -74,7 +66,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	        final boolean mask) throws ArgumentRegistrationException {
 		
 		try {
-			this.name = name;
+			this.setName(name);
 			this.description = description;
 			this.requirements = requirements;
 			this.stringValue = defaultValue;
@@ -86,7 +78,7 @@ public abstract class Argument<T> implements IArgument<T> {
 				throw new ArgumentRegistrationException("Could not register argument set " + getHandle() + ".");
 			}
 		} finally {
-			Condition.notNull(this.name, "Field '%s' in %s.", "name", getHandle());
+			Condition.notNull(this.getName(), "Field '%s' in %s.", "name", getHandle());
 			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
 			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
 			Condition.notNull(this.settings, "Field '%s' in %s.", "settings", getHandle());
@@ -121,14 +113,14 @@ public abstract class Argument<T> implements IArgument<T> {
 			return 0;
 		}
 		
-		Set<IArgument<?>> dependencies = getDependencies();
+		final Set<IArgument<?>> dependencies = getDependencies();
 		if (dependencies.contains(arg0)) {
 			return 1;
 		} else if (dependencies.contains(this)) {
 			return 0;
 		} else {
 			int ret = -1;
-			for (IArgument<?> argX : dependencies) {
+			for (final IArgument<?> argX : dependencies) {
 				ret = argX.compareTo(arg0);
 				if (ret != 0) {
 					return ret;
@@ -157,11 +149,11 @@ public abstract class Argument<T> implements IArgument<T> {
 		}
 		
 		final Argument<?> other = (Argument<?>) obj;
-		if (this.name == null) {
-			if (other.name != null) {
+		if (this.getName() == null) {
+			if (other.getName() != null) {
 				return false;
 			}
-		} else if (!this.name.equals(other.name)) {
+		} else if (!this.getName().equals(other.getName())) {
 			return false;
 		}
 		return true;
@@ -188,8 +180,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
 	 */
 	@Override
 	public final String getDescription() {
@@ -207,8 +198,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString()
 	 */
 	@Override
 	public String getHelpString() {
@@ -221,13 +211,11 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString
-	 * (int)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString (int)
 	 */
 	@Override
 	public String getHelpString(final int indentation) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		for (int i = 0; i < indentation; ++i) {
 			builder.append("| ");
@@ -238,8 +226,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
 	 */
 	@Override
 	public Tuple<Integer, Integer> getKeyValueSpan() {
@@ -267,8 +254,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
 	 */
 	@Override
 	public final Settings getSettings() {
@@ -328,7 +314,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public void parse() throws SettingsParseError {
-		String value = (String) getSettings().getProperties().get(getName());
+		final String value = (String) getSettings().getProperties().get(getName());
 		
 		if (value != null) {
 			setStringValue(value);
@@ -357,6 +343,13 @@ public abstract class Argument<T> implements IArgument<T> {
 	}
 	
 	/**
+	 * @param name
+	 */
+	void setName(final String name) {
+		this.name = name;
+	}
+	
+	/**
 	 * Sets the string value for the argument.
 	 * 
 	 * @param value
@@ -372,19 +365,18 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public final String toString() {
-		Tuple<Integer, Integer> span = getKeyValueSpan();
+		final Tuple<Integer, Integer> span = getKeyValueSpan();
 		return toString(span.getFirst(), span.getSecond());
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
 	public String toString(final int keyWidth,
 	                       final int valueWidth) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("%-").append(keyWidth).append("s = %-").append(valueWidth).append("s\t%s");
 		
 		return String.format(builder.toString(), getName(), getStringValue() == null

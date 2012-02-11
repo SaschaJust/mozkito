@@ -19,8 +19,9 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  */
 public class Contains extends Requirement {
 	
-	private final ListArgument               argument;
-	private final IArgument<?> depender;
+	private final ListArgument argument;
+	private IArgument<?>       depender = null;
+	private String             value    = null;
 	
 	public Contains(@NotNull final ListArgument argument, @NotNull final IArgument<?> depender) {
 		try {
@@ -33,16 +34,14 @@ public class Contains extends Requirement {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		if (this.argument != null) {
-			return this.argument.isInitialized() && this.argument.getValue().contains(this.depender.getName());
-		} else {
-			return false;
+	public Contains(@NotNull final ListArgument argument, @NotNull final String value) {
+		try {
+			this.argument = argument;
+			this.value = value;
+		} finally {
+			Condition.notNull(this.argument, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
+			                  getHandle());
 		}
 	}
 	
@@ -52,7 +51,7 @@ public class Contains extends Requirement {
 	 */
 	@Override
 	public Set<IArgument<?>> getDependencies() {
-		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+		final HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			dependencies.add(this.argument);
 			
@@ -69,15 +68,31 @@ public class Contains extends Requirement {
 	@Override
 	public List<Requirement> getMissingRequirements() {
 		return required()
-		              ? null
-		              : new LinkedList<Requirement>() {
-			              
-			              private static final long serialVersionUID = 1L;
-			              
-			              {
-				              add(Contains.this);
-			              }
-		              };
+		                 ? null
+		                 : new LinkedList<Requirement>() {
+			                 
+			                 private static final long serialVersionUID = 1L;
+			                 
+			                 {
+				                 add(Contains.this);
+			                 }
+		                 };
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		if (this.argument != null) {
+			return this.argument.isInitialized()
+			        && this.argument.getValue().contains(this.depender != null
+			                                                                  ? this.depender.getName()
+			                                                                  : this.value);
+		} else {
+			return false;
+		}
 	}
 	
 	/*

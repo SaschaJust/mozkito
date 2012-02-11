@@ -1,20 +1,19 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,8 +23,14 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.arguments.ListArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
+import net.ownhero.dev.andama.settings.requirements.Contains;
+import net.ownhero.dev.andama.settings.requirements.Equals;
 import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -41,22 +46,107 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
  */
 public abstract class ArgumentSet<T> implements IArgument<T> {
 	
+	public static <T> Collection<T> provideDynamicArguments(final ArgumentSet<?> argumentSet,
+	                                                        final Class<T> superClass,
+	                                                        final String description,
+	                                                        final Requirement requirement,
+	                                                        final String defaultValue,
+	                                                        final String moduleName,
+	                                                        final String provideGroupName,
+	                                                        final boolean multiEnable) throws ArgumentRegistrationException {
+		try {
+			final Collection<T> instances = new LinkedList<T>();
+			final Collection<Class<T>> classes = ClassFinder.getClassesOfInterface(superClass.getPackage(), superClass,
+			                                                                       Modifier.ABSTRACT
+			                                                                               | Modifier.INTERFACE
+			                                                                               | Modifier.PRIVATE
+			                                                                               | Modifier.PROTECTED);
+			
+			final DynamicArgumentSet<Boolean> set = new DynamicArgumentSet<Boolean>(argumentSet, "Arguments",
+			        description, requirement, provideGroupName, provideGroupName) {
+				
+				@Override
+				protected boolean init() {
+					return true;
+				}
+			};
+			
+			final StringBuilder validArguments = new StringBuilder();
+			for (final Class<?> c : classes) {
+				validArguments.append(c.getSimpleName());
+			}
+			
+			ListArgument listArgument = null;
+			StringArgument stringArgument = null;
+			
+			if (multiEnable) {
+				listArgument = new ListArgument(set, moduleName.toLowerCase() + "." + provideGroupName.toLowerCase(),
+				                                "Enables " + provideGroupName + " in the " + moduleName
+				                                        + " module. Valid arguments: " + validArguments, defaultValue,
+				                                requirement);
+			} else {
+				stringArgument = new StringArgument(set, moduleName.toLowerCase() + "."
+				        + provideGroupName.toLowerCase(), "Enables " + provideGroupName + " in the " + moduleName
+				        + " module. Valid arguments: " + validArguments, defaultValue, requirement);
+			}
+			
+			for (final Class<?> c : classes) {
+				DynamicArgumentSet<Boolean> specificSet = null;
+				if (multiEnable) {
+					if (listArgument != null) {
+						specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(),
+						        "Bundles the settings for " + c.getSimpleName(), new Contains(listArgument,
+						                                                                      c.getSimpleName()),
+						        provideGroupName, provideGroupName) {
+							
+							@Override
+							protected boolean init() {
+								return true;
+							}
+						};
+					}
+				} else {
+					specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(), "Bundles the settings for "
+					        + c.getSimpleName(), new Equals(stringArgument, c.getSimpleName()), provideGroupName,
+					        provideGroupName) {
+						
+						@Override
+						protected boolean init() {
+							return true;
+						}
+					};
+				}
+				
+				@SuppressWarnings ("unchecked")
+				final T o = (T) c.newInstance();
+				final Method method = c.getMethod(ArgumentProvider.class.getMethods()[0].getName(),
+				                                  DynamicArgumentSet.class);
+				method.invoke(o, specificSet);
+				instances.add(o);
+			}
+			
+			return instances;
+		} catch (final Exception e) {
+			throw new UnrecoverableError(e);
+		}
+		
+	}
+	
 	private final HashMap<String, Argument<?>>    arguments    = new HashMap<String, Argument<?>>();
 	private final HashMap<String, ArgumentSet<?>> argumentSets = new HashMap<String, ArgumentSet<?>>();
-	private final String                                name;
-	private final String                                description;
-	private final Requirement                           requirements;
+	private final String                          description;
+	private final Requirement                     requirements;
 	private final Settings                        settings;
-	private boolean                                     init         = false;
-	private T                                           cachedValue  = null;
+	private boolean                               init         = false;
+	
+	private T                                     cachedValue  = null;
 	
 	/**
 	 * @throws ArgumentRegistrationException
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 */
-	public ArgumentSet(final ArgumentSet<?> argumentSet, final String description,
-	        final Requirement requirements) throws ArgumentRegistrationException {
-		this.name = getHandle();
+	public ArgumentSet(final ArgumentSet<?> argumentSet, final String description, final Requirement requirements)
+	        throws ArgumentRegistrationException {
 		this.description = description;
 		this.settings = argumentSet.getSettings();
 		if (!argumentSet.addArgument(this)) {
@@ -72,23 +162,19 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	ArgumentSet(final Settings settings, final String description) {
 		this.settings = settings;
 		this.description = description;
-		this.name = (getHandle() != null) && (getHandle().length() > 0)
-		                                                               ? getHandle()
-		                                                               : "ROOT";
 		this.requirements = new Required();
 		getSettings().addArgument(this);
 	}
 	
 	/**
-	 * Call this method to add an argument to the set of arguments. But be aware
-	 * that you have to set all arguments before adding it to the MinerSettings!
+	 * Call this method to add an argument to the set of arguments. But be aware that you have to set all arguments
+	 * before adding it to the MinerSettings!
 	 * 
 	 * @param argument
 	 *            MinerArgument to be added
-	 * @return <code>true</code> if the argument could be added.
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
-	public final boolean addArgument(@NotNull final Argument<?> argument) {
+	protected boolean addArgument(@NotNull final Argument<?> argument) {
 		if (!getSettings().frozen()) {
 			if (getSettings().hasSetting(argument.getName())) {
 				// TODO Warn log
@@ -146,14 +232,14 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 			return 0;
 		}
 		
-		Set<IArgument<?>> dependencies = getDependencies();
+		final Set<IArgument<?>> dependencies = getDependencies();
 		if (dependencies.contains(arg0)) {
 			return 1;
 		} else if (dependencies.contains(this)) {
 			return 0;
 		} else {
 			int ret = -1;
-			for (IArgument<?> argX : dependencies) {
+			for (final IArgument<?> argX : dependencies) {
 				ret = argX.compareTo(arg0);
 				if (ret != 0) {
 					return ret;
@@ -176,7 +262,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 * 
 	 * @return
 	 */
-	public Map<String, Argument<?>> getArguments() {
+	Map<String, Argument<?>> getArguments() {
 		return this.arguments;
 	}
 	
@@ -195,7 +281,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	}
 	
 	public Collection<IArgument<?>> getChildren() {
-		LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>();
+		final LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>();
 		list.addAll(getArguments().values());
 		list.addAll(getArgumentSets().values());
 		return list;
@@ -211,8 +297,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getDescription()
 	 */
 	@Override
 	public final String getDescription() {
@@ -234,7 +319,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public final String getHelpString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append("[ ").append(getName()).append(" ]").append(FileUtils.lineSeparator);
 		builder.append("|-Description: ").append(getDescription());
@@ -242,7 +327,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 		                         ? " (Required, due to " + getRequirements() + ")"
 		                         : "");
 		
-		for (IArgument<?> argument : getChildren()) {
+		for (final IArgument<?> argument : getChildren()) {
 			builder.append(FileUtils.lineSeparator).append(argument.getHelpString(1));
 		}
 		
@@ -251,15 +336,14 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
 	public String getHelpString(final int indentation) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		StringBuilder indent = new StringBuilder();
-		StringBuilder header = new StringBuilder();
+		final StringBuilder indent = new StringBuilder();
+		final StringBuilder header = new StringBuilder();
 		for (int i = 0, j = 0; i < indentation; ++i, ++j) {
 			indent.append("| ");
 			if ((j + 1) < indentation) {
@@ -273,7 +357,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 		                         ? " (Required, due to " + getRequirements() + ")"
 		                         : "");
 		
-		for (IArgument<?> argument : getChildren()) {
+		for (final IArgument<?> argument : getChildren()) {
 			builder.append(FileUtils.lineSeparator).append(indent).append(argument.getHelpString(indentation + 1));
 		}
 		
@@ -282,15 +366,14 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
 	 */
 	@Override
 	public Tuple<Integer, Integer> getKeyValueSpan() {
-		Tuple<Integer, Integer> tuple = new Tuple<Integer, Integer>(0, 0);
+		final Tuple<Integer, Integer> tuple = new Tuple<Integer, Integer>(0, 0);
 		
-		for (IArgument<?> arg : getChildren()) {
-			Tuple<Integer, Integer> span = arg.getKeyValueSpan();
+		for (final IArgument<?> arg : getChildren()) {
+			final Tuple<Integer, Integer> span = arg.getKeyValueSpan();
 			if (span.getFirst() > tuple.getFirst()) {
 				tuple.setFirst(span.getFirst());
 			}
@@ -307,14 +390,13 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getName()
 	 */
 	@Override
-	public final String getName() {
-		return this.name;
+	public String getName() {
+		return getHandle();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#getRequirements()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getRequirements()
 	 */
 	@Override
 	public Requirement getRequirements() {
@@ -349,8 +431,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#isInitialized()
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#isInitialized()
 	 */
 	@Override
 	public final boolean isInitialized() {
@@ -363,13 +444,12 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public void parse() throws SettingsParseError {
-		LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>(
-		                                                                                         this.arguments.values());
+		LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>(this.arguments.values());
 		list.addAll(this.argumentSets.values());
 		LinkedList<IArgument<?>> list2 = new LinkedList<IArgument<?>>();
 		
 		while (!list.isEmpty()) {
-			for (IArgument<?> argument : list) {
+			for (final IArgument<?> argument : list) {
 				argument.parse();
 				
 				if (argument.getRequirements().getMissingRequirements() != null) {
@@ -422,23 +502,22 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public String toString() {
-		Tuple<Integer, Integer> span = getKeyValueSpan();
+		final Tuple<Integer, Integer> span = getKeyValueSpan();
 		return toString(span.getFirst(), span.getSecond());
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
+	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
 	public String toString(final int keyWidth,
 	                       final int valueWidth) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append("[").append(getName()).append(" - ").append(getDescription()).append("]");
 		
-		for (IArgument<?> arg : getChildren()) {
+		for (final IArgument<?> arg : getChildren()) {
 			builder.append(FileUtils.lineSeparator).append(arg.toString(keyWidth, valueWidth));
 		}
 		

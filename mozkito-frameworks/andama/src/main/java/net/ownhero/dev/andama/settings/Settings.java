@@ -71,20 +71,20 @@ public class Settings {
 	
 	private final Map<String, ArgumentSet<?>> argumentSets    = new HashMap<String, ArgumentSet<?>>();
 	
-	private final Map<String, String>               toolInformation = new HashMap<String, String>();
-	private Properties                              commandlineProps;
-	private BooleanArgument                         noDefaultValueArg;
-	private BooleanArgument                         helpArg;
-	private BooleanArgument                         disableCrashArg;
-	private URIArgument                             settingsArg;
-	private MailArguments                           mailArguments   = null;
+	private final Map<String, String>         toolInformation = new HashMap<String, String>();
+	private Properties                        commandlineProps;
+	private BooleanArgument                   noDefaultValueArg;
+	private BooleanArgument                   helpArg;
+	private BooleanArgument                   disableCrashArg;
+	private URIArgument                       settingsArg;
+	private MailArguments                     mailArguments   = null;
 	
 	private ArgumentSet<Boolean>              rootArgumentSet;
-	private StringArgument                          bugReportArgument;
-	private final Properties                        fileProps       = new Properties();
-	private final Properties                        properties      = new Properties();
+	private StringArgument                    bugReportArgument;
+	private final Properties                  fileProps       = new Properties();
+	private final Properties                  properties      = new Properties();
 	
-	private static String                           reportThis      = "Please file a bug report with this error message here: https://dev.own-hero.net";
+	private static String                     reportThis      = "Please file a bug report with this error message here: https://dev.own-hero.net";
 	
 	/**
 	 * 
@@ -169,7 +169,11 @@ public class Settings {
 		this.toolInformation.put(tool, information);
 	}
 	
+	/**
+	 * @return
+	 */
 	boolean frozen() {
+		// TODO: implement this
 		return false;
 	}
 	
