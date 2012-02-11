@@ -53,7 +53,7 @@ public class KimTest {
 		new KimSink(group, settings, false);
 		
 		try {
-			AndamaGraph.buildGraph(group);
+			new Graph(group).buildGraph();
 		} catch (final Throwable e) {
 			e.printStackTrace();
 			fail(e.getMessage());

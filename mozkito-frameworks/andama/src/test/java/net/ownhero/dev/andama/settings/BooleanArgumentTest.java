@@ -14,24 +14,25 @@ package net.ownhero.dev.andama.settings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.junit.Test;
 
 public class BooleanArgumentTest {
 	
 	@Test
-	public void testGetValue_DefaultFalse_NotRequired() {
+	public void testGetValue_DefaultFalse_NotRequired() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "fAlse", new Optional());
 		assertEquals("this is only a test argument", arg.getDescription());
 		assertEquals("testArg", arg.getName());
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(false, arg.getValue());
@@ -39,7 +40,7 @@ public class BooleanArgumentTest {
 	}
 	
 	@Test
-	public void testGetValue_DefaultFalse_Required() {
+	public void testGetValue_DefaultFalse_Required() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "fAlse", new Required());
@@ -47,15 +48,15 @@ public class BooleanArgumentTest {
 		assertEquals("testArg", arg.getName());
 		assertEquals(true, arg.required());
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(false, arg.getValue());
 	}
 	
 	@Test
-	public void testGetValue_DefaultTrue_NotRequired() {
+	public void testGetValue_DefaultTrue_NotRequired() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "TRuE", new Optional());
@@ -63,15 +64,15 @@ public class BooleanArgumentTest {
 		assertEquals("testArg", arg.getName());
 		assertEquals(false, arg.required());
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(true, arg.getValue());
 	}
 	
 	@Test
-	public void testGetValue_DefaultTrue_Required() {
+	public void testGetValue_DefaultTrue_Required() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "trUe", new Required());
@@ -79,15 +80,15 @@ public class BooleanArgumentTest {
 		assertEquals("testArg", arg.getName());
 		assertEquals(true, arg.required());
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(true, arg.getValue());
 	}
 	
 	@Test
-	public void testGetValue_NoDefault_NotRequired() {
+	public void testGetValue_NoDefault_NotRequired() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Optional());
@@ -95,15 +96,15 @@ public class BooleanArgumentTest {
 		assertEquals("testArg", arg.getName());
 		assertEquals(false, arg.required());
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testGetValue_NoDefault_Required() {
+	public void testGetValue_NoDefault_Required() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Required());
@@ -111,44 +112,44 @@ public class BooleanArgumentTest {
 		assertEquals("testArg", arg.getName());
 		assertEquals(true, arg.required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testSetValue() {
+	public void testSetValue() throws ArgumentRegistrationException {
 		final AndamaSettings settings = new AndamaSettings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 		
 		arg.setStringValue("false");
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(false, arg.getValue());
 		arg.setStringValue(null);
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 		arg.setStringValue("tRuE");
 		try {
-			settings.parseArguments();
-		} catch (final Shutdown e) {
+			settings.parse();
+		} catch (final SettingsParseError e) {
 			fail();
 		}
 		assertEquals(true, arg.getValue());

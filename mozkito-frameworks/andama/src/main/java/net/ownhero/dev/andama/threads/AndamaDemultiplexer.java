@@ -28,7 +28,7 @@ public abstract class AndamaDemultiplexer<K> extends AndamaThread<K, K> {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public final Class<? extends AndamaThread<K, K>> getBaseType() {
-		return (Class<? extends AndamaThread<K, K>>) getClass();
+		return (Class<? extends AndamaThread<K, K>>) AndamaDemultiplexer.class;
 	}
 	
 	/*

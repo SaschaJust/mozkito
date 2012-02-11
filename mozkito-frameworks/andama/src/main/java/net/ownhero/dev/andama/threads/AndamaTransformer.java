@@ -41,7 +41,7 @@ public abstract class AndamaTransformer<K, V> extends AndamaThread<K, V> {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public final Class<? extends AndamaThread<K, V>> getBaseType() {
-		return (Class<? extends AndamaThread<K, V>>) getClass();
+		return (Class<? extends AndamaThread<K, V>>) AndamaTransformer.class;
 	}
 	
 	/*

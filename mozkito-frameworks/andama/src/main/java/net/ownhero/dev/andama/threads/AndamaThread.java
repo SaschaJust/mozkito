@@ -30,7 +30,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
 import net.ownhero.dev.andama.settings.AndamaSettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
@@ -214,17 +213,10 @@ abstract class AndamaThread<K, V> extends Thread implements AndamaThreadable<K, 
 		setThreadID(threadGroup.addThread(this));
 		this.threadGroup = threadGroup;
 		this.settings = settings;
-		@SuppressWarnings ("unchecked")
-		final AndamaArgumentInterface<Long> setting = (AndamaArgumentInterface<Long>) settings.getSetting("cache.size");
 		
 		if (hasInputConnector()) {
-			if (setting != null) {
-				this.inputStorage = new AndamaDataStorage<K>(setting.getValue().intValue());
-				this.inputStorage.registerOutput(this);
-			} else {
-				this.inputStorage = new AndamaDataStorage<K>();
-				this.inputStorage.registerOutput(this);
-			}
+			this.inputStorage = new AndamaDataStorage<K>();
+			this.inputStorage.registerOutput(this);
 		}
 		
 		setShutdown(false);

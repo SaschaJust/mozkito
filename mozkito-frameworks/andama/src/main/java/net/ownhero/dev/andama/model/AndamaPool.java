@@ -4,9 +4,9 @@
 package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.threads.AndamaGraph;
 import net.ownhero.dev.andama.threads.AndamaGroup;
 import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.andama.threads.Graph;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -37,7 +37,7 @@ public class AndamaPool {
 	 * 
 	 */
 	private void connectThreads() {
-		AndamaGraph.buildGraph(getThreadGroup());
+		new Graph(getThreadGroup()).buildGraph();
 	}
 	
 	/**

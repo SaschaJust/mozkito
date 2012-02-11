@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings;
 
@@ -44,15 +41,22 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class AndamaSettings {
 	
+	/**
+	 * @return
+	 */
+	public static String getReportThis() {
+		return reportThis;
+	}
+	
 	public static void main(final String[] args) {
 		// System.setProperty("mail.password", "test");
-		AndamaSettings settings = new AndamaSettings();
+		final AndamaSettings settings = new AndamaSettings();
 		try {
 			settings.parse();
 			Requirement.printGraph(settings.argumentSets.values());
 			System.err.println(settings.toString());
 			System.err.println(settings.getHelpString());
-		} catch (SettingsParseError e) {
+		} catch (final SettingsParseError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
@@ -60,20 +64,22 @@ public class AndamaSettings {
 		
 	}
 	
-	private final Map<String, AndamaArgumentSet<?>> argumentSets     = new HashMap<String, AndamaArgumentSet<?>>();
-	private final Map<String, String>               toolInformation  = new HashMap<String, String>();
+	private final Map<String, AndamaArgumentSet<?>> argumentSets    = new HashMap<String, AndamaArgumentSet<?>>();
 	
-	private final Properties                        commandlineProps = (Properties) System.getProperties().clone();
+	private final Map<String, String>               toolInformation = new HashMap<String, String>();
+	private Properties                              commandlineProps;
 	private BooleanArgument                         noDefaultValueArg;
 	private BooleanArgument                         helpArg;
 	private BooleanArgument                         disableCrashArg;
 	private URIArgument                             settingsArg;
-	private MailArguments                           mailArguments    = null;
-	private AndamaArgumentSet<Boolean>              rootArgumentSet;
+	private MailArguments                           mailArguments   = null;
 	
+	private AndamaArgumentSet<Boolean>              rootArgumentSet;
 	private StringArgument                          bugReportArgument;
-	private final Properties                        fileProps        = new Properties();
-	private final Properties                        properties       = new Properties();
+	private final Properties                        fileProps       = new Properties();
+	private final Properties                        properties      = new Properties();
+	
+	private static String                           reportThis      = "Please file a bug report with this error message here: https://dev.own-hero.net";
 	
 	/**
 	 * 
@@ -111,48 +117,22 @@ public class AndamaSettings {
 			
 			this.mailArguments = new MailArguments(getRootArgumentSet(), new Required());
 			
-			// check to load settings from URI
-			if (System.getProperty("andamaSettings") != null) {
-				this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
-				if (!this.settingsArg.init()) {
-					// FIXME ERROR
-				} else {
-					try {
-						InputStream stream = this.settingsArg.getValue().toURL().openStream();
-						this.fileProps.load(stream);
-						
-					} catch (MalformedURLException e) {
-						// FIXME ERROR
-					} catch (IOException e) {
-						// FIXME ERROR
-					}
-					
-				}
-			}
-			
-			this.getProperties().putAll(this.fileProps);
-			
-			// overwrite properties with the one from the command line
-			this.getProperties().putAll(this.commandlineProps);
-		} catch (ArgumentRegistrationException e) {
+		} catch (final ArgumentRegistrationException e) {
 			// TODO: handle exception
 		}
 		
 	}
 	
 	/**
-	 * adds an argument to the andama suite settings. Leave default value
-	 * <code>null</code> if none to be set.
+	 * adds an argument to the andama suite settings. Leave default value <code>null</code> if none to be set.
 	 * 
 	 * @param name
 	 *            Name of the JavaVM argument (-D<name>
 	 * @param description
 	 *            Short description that will be displayed when requesting help
 	 * @param defaultValue
-	 *            String that will be set as default value. If none to be set
-	 *            pass <code>null</code>.
-	 * @return <code>true</code> if the argument could be added.
-	 *         <code>false</code> otherwise.
+	 *            String that will be set as default value. If none to be set pass <code>null</code>.
+	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
 	protected boolean addArgument(@NotNull final AndamaArgumentSet<?> argument) {
 		
@@ -213,13 +193,12 @@ public class AndamaSettings {
 	}
 	
 	/**
-	 * Return the help string that will contain all possible command line
-	 * arguments.
+	 * Return the help string that will contain all possible command line arguments.
 	 * 
 	 * @return
 	 */
 	public String getHelpString() {
-		StringBuilder ss = new StringBuilder();
+		final StringBuilder ss = new StringBuilder();
 		ss.append("Available JavaVM arguments:");
 		ss.append(System.getProperty("line.separator"));
 		
@@ -252,7 +231,7 @@ public class AndamaSettings {
 	 * @return
 	 */
 	public AndamaArgumentInterface<?> getSetting(final String name) {
-		AndamaArgumentSet<?> argumentSet = this.argumentSets.get(name);
+		final AndamaArgumentSet<?> argumentSet = this.argumentSets.get(name);
 		if (argumentSet.getArgument(name) == null) {
 			return argumentSet;
 		} else {
@@ -264,9 +243,9 @@ public class AndamaSettings {
 	 * @return
 	 */
 	public String getToolInformation() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (String tool : this.toolInformation.keySet()) {
+		for (final String tool : this.toolInformation.keySet()) {
 			builder.append("[[");
 			builder.append(tool);
 			builder.append("]]");
@@ -295,9 +274,35 @@ public class AndamaSettings {
 	 * 
 	 */
 	public void parse() throws SettingsParseError {
-		for (Entry<Object, Object> entry : this.getProperties().entrySet()) {
-			String argName = entry.getKey().toString().trim();
-			String value = entry.getValue().toString().trim();
+		// check to load settings from URI
+		if (System.getProperty("andamaSettings") != null) {
+			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
+			if (!this.settingsArg.init()) {
+				// FIXME ERROR
+			} else {
+				try {
+					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
+					this.fileProps.load(stream);
+					
+				} catch (final MalformedURLException e) {
+					// FIXME ERROR
+				} catch (final IOException e) {
+					// FIXME ERROR
+				}
+				
+			}
+		}
+		
+		getProperties().putAll(this.fileProps);
+		
+		this.commandlineProps = (Properties) System.getProperties().clone();
+		
+		// overwrite properties with the one from the command line
+		getProperties().putAll(this.commandlineProps);
+		
+		for (final Entry<Object, Object> entry : getProperties().entrySet()) {
+			final String argName = entry.getKey().toString().trim();
+			final String value = entry.getValue().toString().trim();
 			
 			if (this.argumentSets.containsKey(argName)) {
 				getArgument(argName).setStringValue(value);
@@ -321,11 +326,13 @@ public class AndamaSettings {
 			Logger.info("Using settings: ");
 			Logger.info(toString());
 		}
+		
+		reportThis = this.bugReportArgument.getValue();
 	}
 	
 	public void parseArguments(final Collection<AndamaArgumentInterface<?>> arguments) {
 		
-		PriorityQueue<AndamaArgumentInterface<?>> queue = new PriorityQueue<AndamaArgumentInterface<?>>(arguments);
+		final PriorityQueue<AndamaArgumentInterface<?>> queue = new PriorityQueue<AndamaArgumentInterface<?>>(arguments);
 		AndamaArgumentInterface<?> argument = null;
 		while ((argument = queue.poll()) != null) {
 			
@@ -334,7 +341,7 @@ public class AndamaSettings {
 			if (!argument.getRequirements().required()) {
 				
 				if (Logger.logError()) {
-					String errorMessage = "Could not resolved dependencies. Argument: " + argument
+					final String errorMessage = "Could not resolved dependencies. Argument: " + argument
 					        + " has unresolved dependencies: "
 					        + JavaUtils.collectionToString(argument.getRequirements().getMissingRequirements());
 					Logger.error(errorMessage);
@@ -416,7 +423,7 @@ public class AndamaSettings {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		builder.append(getClass().getSimpleName() + ":");
 		builder.append(FileUtils.lineSeparator);
@@ -435,14 +442,14 @@ public class AndamaSettings {
 	/**
 	 * Check if all required arguments are set.
 	 * 
-	 * @return <code>null</code> if all required arguments are set. Returns the
-	 *         required argument with no value set first found.
+	 * @return <code>null</code> if all required arguments are set. Returns the required argument with no value set
+	 *         first found.
 	 */
 	private boolean validateSettings() {
-		Set<AndamaArgument<?>> defaultValueArgs = new HashSet<AndamaArgument<?>>();
+		final Set<AndamaArgument<?>> defaultValueArgs = new HashSet<AndamaArgument<?>>();
 		
-		for (AndamaArgumentSet<?> args : this.argumentSets.values()) {
-			for (AndamaArgument<?> argument : args.getArguments().values()) {
+		for (final AndamaArgumentSet<?> args : this.argumentSets.values()) {
+			for (final AndamaArgument<?> argument : args.getArguments().values()) {
 				if (!argument.wasSet()) {
 					if (this.noDefaultValueArg.getValue()) {
 						argument.setStringValue(null);
@@ -460,10 +467,10 @@ public class AndamaSettings {
 		}
 		
 		if (defaultValueArgs.size() > 0) {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
 			sb.append(FileUtils.lineSeparator);
-			for (AndamaArgument<?> arg : defaultValueArgs) {
+			for (final AndamaArgument<?> arg : defaultValueArgs) {
 				sb.append(arg.getName());
 				sb.append(": ");
 				sb.append(arg.getDefaultValue());

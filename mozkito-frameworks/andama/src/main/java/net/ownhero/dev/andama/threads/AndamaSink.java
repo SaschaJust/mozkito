@@ -33,7 +33,7 @@ public abstract class AndamaSink<T> extends AndamaThread<T, T> {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public final Class<? extends AndamaThread<T, T>> getBaseType() {
-		return (Class<? extends AndamaThread<T, T>>) getClass();
+		return (Class<? extends AndamaThread<T, T>>) AndamaSink.class;
 	}
 	
 	/*

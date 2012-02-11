@@ -13,6 +13,7 @@
 package net.ownhero.dev.andama.settings;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashSet;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
@@ -30,7 +31,17 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 	
-	private final HashSet<String> possibleValues = new HashSet<String>();
+	private static Class<?> getEnum(final Type type) {
+		if (type instanceof Enum) {
+			return (Class<?>) type;
+		} else if (type instanceof ParameterizedType) {
+			return getEnum(((ParameterizedType) type).getRawType());
+		} else {
+			return null;
+		}
+	}
+	
+	private final HashSet<T> possibleValues = new HashSet<T>();
 	
 	/**
 	 * @param argumentSet
@@ -40,14 +51,22 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 	 * @param requirements
 	 * @throws ArgumentRegistrationException
 	 */
+	@SuppressWarnings ("unchecked")
 	public EnumArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
-	        @NotNull @NotEmptyString final String description, final T defaultValue,
+	        @NotNull @NotEmptyString final String description, @NotNull final T defaultValue,
 	        @NotNull final Requirement requirements) throws ArgumentRegistrationException {
-		super(argumentSet, name, description, defaultValue.toString(), requirements);
+		super(argumentSet, name, description, defaultValue != null
+		                                                          ? defaultValue.toString()
+		                                                          : null, requirements);
 		try {
-			Class<?> enumType = ((Class<?>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
+			if (defaultValue == null) {
+				throw new ArgumentRegistrationException(
+				                                        "Default values may not be null when not specifying possible values.");
+			}
+			
+			final Class<?> enumType = defaultValue.getClass();
 			for (int i = 0; i < enumType.getEnumConstants().length; ++i) {
-				this.possibleValues.add(enumType.getEnumConstants()[i].toString());
+				this.possibleValues.add((T) enumType.getEnumConstants()[i]);
 			}
 		} finally {
 			Condition.notNull(this.possibleValues, "The set of possible values for %s must not be null.", getHandle());
@@ -67,11 +86,13 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 	 */
 	public EnumArgument(@NotNull final AndamaArgumentSet<?> argumentSet, @NotNull @NotEmptyString final String name,
 	        @NotNull @NotEmptyString final String description, final T defaultValue,
-	        @NotNull final Requirement requirements, @NotNull @NotEmpty final String[] possibleValues)
+	        @NotNull final Requirement requirements, @NotNull @NotEmpty final T[] possibleValues)
 	        throws ArgumentRegistrationException {
-		super(argumentSet, name, description, defaultValue.toString(), requirements);
+		super(argumentSet, name, description, defaultValue != null
+		                                                          ? defaultValue.toString()
+		                                                          : null, requirements);
 		try {
-			for (final String possibleValue : possibleValues) {
+			for (final T possibleValue : possibleValues) {
 				this.possibleValues.add(possibleValue);
 			}
 		} finally {
@@ -89,7 +110,6 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	protected final boolean init() {
 		boolean ret = false;
@@ -98,7 +118,7 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 			if (!isInitialized()) {
 				synchronized (this) {
 					if (!isInitialized()) {
-						if (validStringValue()) {
+						if (!validStringValue()) {
 							if (required()) {
 								// TODO error logs
 							} else {
@@ -108,8 +128,12 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 						} else {
 							
 							final String value = getStringValue().toUpperCase();
-							
-							if (!this.possibleValues.contains(value)) {
+							@SuppressWarnings ({ "unchecked", "static-access" })
+							final T valueOf = (T) this.possibleValues.iterator()
+							                                         .next()
+							                                         .valueOf(this.possibleValues.iterator().next()
+							                                                                     .getClass(), value);
+							if (!this.possibleValues.contains(valueOf)) {
 								if (Logger.logError()) {
 									final StringBuilder ss = new StringBuilder();
 									ss.append("Value `" + value + "` set for argument `");
@@ -119,7 +143,7 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 									ss.append("Please choose one of the following possible values:");
 									ss.append(System.getProperty("line.separator"));
 									
-									for (final String s : this.possibleValues) {
+									for (final T s : this.possibleValues) {
 										ss.append("\t");
 										ss.append(s);
 										ss.append(System.getProperty("line.separator"));
@@ -130,12 +154,9 @@ public class EnumArgument<T extends Enum<?>> extends AndamaArgument<T> {
 								
 								ret = false;
 							} else {
-								Class<?> enumType = ((Class<?>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
-								
-								for (int i = 0; i < enumType.getEnumConstants().length; ++i) {
-									if (enumType.getEnumConstants()[i].toString()
-									                                  .equalsIgnoreCase(getStringValue().trim())) {
-										setCachedValue((T) enumType.getEnumConstants()[i]);
+								for (final T val : this.possibleValues) {
+									if (val.toString().equalsIgnoreCase(getStringValue().trim())) {
+										setCachedValue(val);
 										ret = true;
 										break;
 									}
